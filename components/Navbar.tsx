@@ -30,13 +30,13 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="#"
+            href="/auth"
             className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
           >
             로그인
           </Link>
           <Link
-            href="#"
+            href="/auth"
             className="inline-flex h-7 items-center rounded-lg bg-indigo-600 px-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
           >
             회원가입

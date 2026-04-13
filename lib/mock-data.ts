@@ -20,6 +20,9 @@ export interface Scholarship {
   maxIncomeLevel?: number; // 소득분위
   targetGrade?: string[]; // ["1학년", "2학년", ...]
   isNew: boolean;
+  posterUrl?: string;
+  bookmarkCount: number;
+  viewCount: number;
 }
 
 export const scholarships: Scholarship[] = [
@@ -37,6 +40,8 @@ export const scholarships: Scholarship[] = [
     minGpa: 3.5,
     maxIncomeLevel: 3,
     isNew: false,
+    bookmarkCount: 312,
+    viewCount: 4821,
   },
   {
     id: 2,
@@ -51,6 +56,8 @@ export const scholarships: Scholarship[] = [
       "삼성전자가 운영하는 이공계 인재 육성 장학금. 멘토링 및 인턴십 기회 제공.",
     minGpa: 3.0,
     isNew: true,
+    bookmarkCount: 528,
+    viewCount: 7203,
   },
   {
     id: 3,
@@ -65,6 +72,8 @@ export const scholarships: Scholarship[] = [
       "소득분위에 따라 차등 지원하는 대표적인 국가 장학금입니다. 별도의 성적 기준 없음.",
     maxIncomeLevel: 8,
     isNew: false,
+    bookmarkCount: 1042,
+    viewCount: 18540,
   },
   {
     id: 4,
@@ -80,6 +89,8 @@ export const scholarships: Scholarship[] = [
     minGpa: 2.5,
     maxIncomeLevel: 4,
     isNew: false,
+    bookmarkCount: 247,
+    viewCount: 3190,
   },
   {
     id: 5,
@@ -95,6 +106,8 @@ export const scholarships: Scholarship[] = [
     minGpa: 3.0,
     maxIncomeLevel: 3,
     isNew: false,
+    bookmarkCount: 389,
+    viewCount: 5670,
   },
   {
     id: 6,
@@ -109,6 +122,8 @@ export const scholarships: Scholarship[] = [
       "금융권 취업을 희망하는 경영·경제 계열 우수 학생을 위한 장학금입니다.",
     minGpa: 3.5,
     isNew: true,
+    bookmarkCount: 203,
+    viewCount: 2980,
   },
   {
     id: 7,
@@ -122,6 +137,8 @@ export const scholarships: Scholarship[] = [
     description:
       "운동 특기를 가진 학생 중 국가대표 수준의 성과를 낸 학생에게 지원합니다.",
     isNew: false,
+    bookmarkCount: 88,
+    viewCount: 1420,
   },
   {
     id: 8,
@@ -136,6 +153,8 @@ export const scholarships: Scholarship[] = [
       "글로벌 역량을 갖춘 이공계 인재 육성을 위한 전액 장학금으로 해외 연수 기회를 제공합니다.",
     minGpa: 3.8,
     isNew: true,
+    bookmarkCount: 615,
+    viewCount: 9340,
   },
   {
     id: 9,
@@ -150,6 +169,8 @@ export const scholarships: Scholarship[] = [
       "부산 출신 또는 부산 거주 대학생을 지원하는 지자체 장학금입니다.",
     maxIncomeLevel: 5,
     isNew: false,
+    bookmarkCount: 134,
+    viewCount: 2010,
   },
   {
     id: 10,
@@ -163,6 +184,8 @@ export const scholarships: Scholarship[] = [
     description:
       "음악, 미술, 무용 등 예술 분야에서 뛰어난 재능을 보유한 학생을 지원합니다.",
     isNew: false,
+    bookmarkCount: 97,
+    viewCount: 1650,
   },
   {
     id: 11,
@@ -178,6 +201,8 @@ export const scholarships: Scholarship[] = [
     minGpa: 3.2,
     maxIncomeLevel: 5,
     isNew: false,
+    bookmarkCount: 276,
+    viewCount: 4030,
   },
   {
     id: 12,
@@ -192,6 +217,8 @@ export const scholarships: Scholarship[] = [
       "사회적 책임을 이해하고 미래를 준비하는 인재를 위한 GS칼텍스 장학 프로그램.",
     minGpa: 3.3,
     isNew: false,
+    bookmarkCount: 158,
+    viewCount: 2340,
   },
 ];
 

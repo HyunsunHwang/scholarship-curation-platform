@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
     if (!isOnboardingPage && !isApiRoute) {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_onboarded")
+        .select("is_onboarded, role")
         .eq("id", user.id)
         .single();
 
@@ -55,12 +55,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * 다음 경로를 제외한 모든 요청에 실행:
-     * - _next/static (정적 파일)
-     * - _next/image (이미지 최적화)
-     * - favicon.ico, 이미지 파일
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
