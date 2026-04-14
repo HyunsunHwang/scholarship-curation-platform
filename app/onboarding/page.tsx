@@ -314,7 +314,7 @@ function Step2({ form, update, updateMultiple }: {
     createClient()
       .from("university_colleges")
       .select("id, name")
-      .eq("university_id", form.university_id)
+      .eq("university_id", parseInt(form.university_id))
       .order("name")
       .then(({ data }) => { setColleges(data ?? []); setLoadingC(false); });
   }, [form.university_id]);
@@ -327,7 +327,7 @@ function Step2({ form, update, updateMultiple }: {
     createClient()
       .from("university_departments")
       .select("id, name")
-      .eq("college_id", form.college_id)
+      .eq("college_id", parseInt(form.college_id))
       .order("name")
       .then(({ data }) => { setDepartments(data ?? []); setLoadingD(false); });
   }, [form.college_id]);
@@ -339,7 +339,7 @@ function Step2({ form, update, updateMultiple }: {
     createClient()
       .from("university_departments")
       .select("id, name")
-      .eq("college_id", form.double_major_college_id)
+      .eq("college_id", parseInt(form.double_major_college_id))
       .order("name")
       .then(({ data }) => setDoubleDepts(data ?? []));
   }, [form.double_major_college_id]);
