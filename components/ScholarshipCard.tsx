@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
 
@@ -129,8 +130,8 @@ export default function ScholarshipCard({
 
   return (
     <div className="group flex flex-col rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5">
-      {/* 포스터 영역 */}
-      <div className="relative aspect-video overflow-hidden">
+      {/* 포스터 영역 — 클릭 시 상세페이지 */}
+      <Link href={`/scholarships/${scholarship.id}`} className="block relative aspect-video overflow-hidden">
         {scholarship.poster_image_url ? (
           <img
             src={scholarship.poster_image_url}
@@ -151,7 +152,7 @@ export default function ScholarshipCard({
             )}
           </div>
         )}
-      </div>
+      </Link>
 
       {/* 콘텐츠 영역 */}
       <div className="flex flex-1 flex-col p-4 gap-3">
@@ -182,15 +183,15 @@ export default function ScholarshipCard({
           </button>
         </div>
 
-        {/* 제목 + 기관 */}
-        <div>
+        {/* 제목 + 기관 — 클릭 시 상세페이지 */}
+        <Link href={`/scholarships/${scholarship.id}`} className="block">
           <h3 className="text-base font-bold leading-snug text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
             {scholarship.name}
           </h3>
           <p className="mt-0.5 text-xs text-gray-400 font-medium">
             {scholarship.organization}
           </p>
-        </div>
+        </Link>
 
         {/* 지원 형태 태그 */}
         {scholarship.support_types.length > 0 && (

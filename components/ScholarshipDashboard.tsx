@@ -26,9 +26,11 @@ function getDays(dateStr: string): number {
 export default function ScholarshipDashboard({
   scholarships,
   bookmarkedIds = [],
+  heading = "전체 장학금",
 }: {
   scholarships: CardScholarship[];
   bookmarkedIds?: number[];
+  heading?: string;
 }) {
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
   const [activeType, setActiveType] = useState<string>("전체");
@@ -66,7 +68,7 @@ export default function ScholarshipDashboard({
         {/* 헤더 */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">전체 장학금</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{heading}</h2>
             <p className="mt-1 text-sm text-gray-500">
               총{" "}
               <span className="font-semibold text-indigo-600">
