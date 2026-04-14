@@ -224,7 +224,7 @@ export interface Database {
     Functions: {
       get_matched_scholarships: {
         Args: { p_user_id: string };
-        Returns: unknown;
+        Returns: Database["public"]["Tables"]["scholarships"]["Row"][];
       };
       is_admin: {
         Args: Record<string, never>;

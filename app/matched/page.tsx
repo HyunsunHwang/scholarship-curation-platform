@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import { createClient } from "@/lib/supabase/server";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import type { Database } from "@/lib/database.types";
 
 export default async function MatchedPage() {
   const supabase = await createClient();
@@ -38,7 +39,9 @@ export default async function MatchedPage() {
   const bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
 
   // RPC 반환 타입을 CardScholarship으로 변환
-  const scholarships: CardScholarship[] = (matched ?? []).map((s) => ({
+  const scholarships: CardScholarship[] = (
+    (matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]
+  ).map((s) => ({
     id: s.id,
     name: s.name,
     organization: s.organization,
