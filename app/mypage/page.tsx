@@ -18,23 +18,31 @@ export default async function MyPage() {
     supabase.from("profiles").select("name, email").eq("id", user.id).single(),
     supabase
       .from("bookmarks")
-      .select(
-        `scholarship_id,
-         scholarships (
-           id, name, organization, institution_type,
-           support_types, support_amount, apply_end_date,
-           poster_image_url, created_at
-         )`
-      )
+      .select("scholarship_id")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
   ]);
 
-  const bookmarkedScholarships = (bookmarkRows ?? [])
-    .map((row) => row.scholarships as CardScholarship | null)
-    .filter((s): s is CardScholarship => s !== null);
+  const bookmarkedIds = (bookmarkRows ?? []).map((b) => b.scholarship_id);
 
-  const bookmarkedIds = bookmarkedScholarships.map((s) => s.id);
+  // 북마크된 장학금 상세 정보를 별도 쿼리로 조회
+  const { data: scholarshipRows } =
+    bookmarkedIds.length > 0
+      ? await supabase
+          .from("scholarships")
+          .select(
+            "id, name, organization, institution_type, support_types, support_amount, apply_end_date, poster_image_url, created_at"
+          )
+          .in("id", bookmarkedIds)
+      : { data: [] };
+
+  // bookmarks 순서(최신 북마크순) 유지
+  const scholarshipMap = new Map(
+    (scholarshipRows ?? []).map((s) => [s.id, s])
+  );
+  const bookmarkedScholarships: CardScholarship[] = bookmarkedIds
+    .map((id) => scholarshipMap.get(id))
+    .filter((s): s is CardScholarship => s !== undefined);
 
   const displayName = profile?.name ?? user.email ?? "";
   const initial = displayName.charAt(0).toUpperCase();
