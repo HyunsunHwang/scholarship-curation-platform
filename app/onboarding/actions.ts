@@ -2,6 +2,17 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import type {
+  GenderType,
+  NationalityType,
+  MaritalStatusType,
+  SchoolLocationType,
+  SchoolCategoryType,
+  EnrollmentStatusType,
+  MilitaryStatusType,
+  SpecialInfoType,
+  ParentOccupationType,
+} from "@/lib/database.types";
 
 export type OnboardingFormData = {
   // 인적사항
@@ -71,14 +82,14 @@ export async function saveProfile(
       // 인적사항
       name: data.name || null,
       birth_date,
-      gender: data.gender || null,
+      gender: (data.gender || null) as GenderType | null,
       phone: data.phone || null,
       address: data.address || null,
-      nationality: data.nationality || null,
-      marital_status: data.marital_status || null,
+      nationality: (data.nationality || null) as NationalityType | null,
+      marital_status: (data.marital_status || null) as MaritalStatusType | null,
       // 학적사항
-      school_location: data.school_location || null,
-      school_category: data.school_category || null,
+      school_location: (data.school_location || null) as SchoolLocationType | null,
+      school_category: (data.school_category || null) as SchoolCategoryType | null,
       school_name: data.school_name || null,
       department: data.department || null,
       university_id: data.university_id ? parseInt(data.university_id) : null,
@@ -96,7 +107,7 @@ export async function saveProfile(
       academic_semester: data.academic_semester
         ? parseInt(data.academic_semester)
         : null,
-      enrollment_status: data.enrollment_status || null,
+      enrollment_status: (data.enrollment_status || null) as EnrollmentStatusType | null,
       gpa: data.gpa ? parseFloat(data.gpa) : null,
       gpa_last_semester: data.gpa_last_semester
         ? parseFloat(data.gpa_last_semester)
@@ -105,10 +116,9 @@ export async function saveProfile(
       income_level,
       household_size: data.household_size ? parseInt(data.household_size) : null,
       // 기타/특수
-      special_info: data.special_info.length > 0 ? data.special_info : null,
-      parent_occupation:
-        data.parent_occupation.length > 0 ? data.parent_occupation : null,
-      military_status: data.military_status || null,
+      special_info: (data.special_info.length > 0 ? data.special_info : null) as SpecialInfoType[] | null,
+      parent_occupation: (data.parent_occupation.length > 0 ? data.parent_occupation : null) as ParentOccupationType[] | null,
+      military_status: (data.military_status || null) as MilitaryStatusType | null,
       is_onboarded: true,
     })
     .eq("id", user.id);
