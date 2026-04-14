@@ -40,9 +40,21 @@ export default async function MyPage() {
   const scholarshipMap = new Map(
     (scholarshipRows ?? []).map((s) => [s.id, s])
   );
-  const bookmarkedScholarships: CardScholarship[] = bookmarkedIds
-    .map((id) => scholarshipMap.get(id))
-    .filter((s): s is CardScholarship => s !== undefined);
+  const bookmarkedScholarships: CardScholarship[] = bookmarkedIds.flatMap((id) => {
+    const s = scholarshipMap.get(id);
+    if (!s) return [];
+    return [{
+      id: s.id,
+      name: s.name,
+      organization: s.organization,
+      institution_type: s.institution_type as string,
+      support_types: s.support_types as string[],
+      support_amount: s.support_amount,
+      apply_end_date: s.apply_end_date,
+      poster_image_url: s.poster_image_url ?? null,
+      created_at: s.created_at,
+    }];
+  });
 
   const displayName = profile?.name ?? user.email ?? "";
   const initial = displayName.charAt(0).toUpperCase();
