@@ -195,8 +195,8 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["scholarships"]["Row"],
-          "id" | "created_at" | "updated_at"
-        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at">>;
+          "id" | "created_at" | "updated_at" | "poster_image_url"
+        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at" | "poster_image_url">>;
         Update: Partial<Database["public"]["Tables"]["scholarships"]["Insert"]>;
         Relationships: [];
       };

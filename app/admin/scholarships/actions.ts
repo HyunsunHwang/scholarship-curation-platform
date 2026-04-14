@@ -22,8 +22,21 @@ export async function createScholarship(formData: FormData) {
 
   const payload = buildPayload(formData);
 
-  const { error } = await supabase.from("scholarships").insert(payload);
+  const { data: inserted, error } = await supabase
+    .from("scholarships")
+    .insert(payload)
+    .select("id")
+    .single();
   if (error) return { error: error.message };
+
+  // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)
+  const posterUrl = (formData.get("poster_image_url") as string) || null;
+  if (posterUrl && inserted?.id) {
+    await supabase
+      .from("scholarships")
+      .update({ poster_image_url: posterUrl })
+      .eq("id", inserted.id);
+  }
 
   revalidatePath("/admin/scholarships");
   redirect("/admin/scholarships");
@@ -49,6 +62,15 @@ export async function updateScholarship(id: number, formData: FormData) {
     .eq("id", id);
 
   if (error) return { error: error.message };
+
+  // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)
+  const posterUrl = (formData.get("poster_image_url") as string) || null;
+  if (posterUrl !== undefined) {
+    await supabase
+      .from("scholarships")
+      .update({ poster_image_url: posterUrl })
+      .eq("id", id);
+  }
 
   revalidatePath("/admin/scholarships");
   redirect("/admin/scholarships");
@@ -176,7 +198,6 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     selection_stage_3_schedule: g("selection_stage_3_schedule") || null,
     selection_stage_4_schedule: g("selection_stage_4_schedule") || null,
     selection_stage_5_schedule: g("selection_stage_5_schedule") || null,
-    poster_image_url: g("poster_image_url") || null,
     collected_at: new Date().toISOString(),
     is_verified: g("is_verified") === "true",
   };

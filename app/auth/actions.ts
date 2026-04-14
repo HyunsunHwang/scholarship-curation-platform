@@ -83,3 +83,9 @@ export async function signup(
   // 이메일 인증 없이 바로 가입 완료된 경우
   redirect("/onboarding");
 }
+
+export async function logout(): Promise<never> {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
+}
