@@ -129,7 +129,7 @@ export default async function ScholarshipDetailPage({
 
             {/* 왼쪽 — 포스터 + 버튼 */}
             <div className="w-full md:w-64 shrink-0">
-              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm aspect-[3/4]">
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm aspect-3/4">
                 {scholarship.poster_image_url ? (
                   <img
                     src={scholarship.poster_image_url}

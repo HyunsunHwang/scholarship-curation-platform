@@ -137,6 +137,23 @@ export interface Database {
         Relationships: [];
       };
 
+      // ── 북마크 ───────────────────────────────────────────────────────────
+      bookmarks: {
+        Row: {
+          id: number;
+          user_id: string;
+          scholarship_id: number;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          scholarship_id: number;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["bookmarks"]["Insert"]>;
+        Relationships: [];
+      };
+
       // ── 장학금 ───────────────────────────────────────────────────────────
       scholarships: {
         Row: {

@@ -14,7 +14,7 @@ export function ToggleVerifiedButton({
 
   return (
     <button
-      onClick={() => startTransition(() => toggleVerified(id, isVerified))}
+      onClick={() => startTransition(() => void toggleVerified(id, isVerified))}
       disabled={isPending}
       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium transition-colors disabled:opacity-50 ${
         isVerified
@@ -32,7 +32,7 @@ export function DeleteButton({ id, name }: { id: number; name: string }) {
 
   const handleDelete = () => {
     if (!confirm(`"${name}" 장학금을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
-    startTransition(() => deleteScholarship(id));
+    startTransition(() => void deleteScholarship(id));
   };
 
   return (
