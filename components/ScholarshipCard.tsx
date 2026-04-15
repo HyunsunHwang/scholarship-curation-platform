@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
+import { isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 
 export type CardScholarship = {
   id: number;
@@ -60,6 +61,14 @@ function isNewScholarship(createdAt: string): boolean {
 }
 
 function DeadlineBadge({ dateStr }: { dateStr: string }) {
+  if (isAlwaysOpenRecruitment(dateStr)) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+        상시모집
+      </span>
+    );
+  }
+
   const days = getDaysUntilDeadline(dateStr);
 
   if (days < 0) {

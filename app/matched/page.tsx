@@ -5,6 +5,7 @@ import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import { createClient } from "@/lib/supabase/server";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import type { Database } from "@/lib/database.types";
+import { isScholarshipExpired } from "@/lib/scholarship-dates";
 
 export default async function MatchedPage() {
   const supabase = await createClient();
@@ -41,17 +42,19 @@ export default async function MatchedPage() {
   // RPC 반환 타입을 CardScholarship으로 변환
   const scholarships: CardScholarship[] = (
     (matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]
-  ).map((s) => ({
-    id: s.id,
-    name: s.name,
-    organization: s.organization,
-    institution_type: s.institution_type,
-    support_types: s.support_types as string[],
-    support_amount: s.support_amount,
-    apply_end_date: s.apply_end_date,
-    poster_image_url: s.poster_image_url ?? null,
-    created_at: s.created_at,
-  }));
+  )
+    .filter((s) => !isScholarshipExpired(s.apply_end_date))
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      organization: s.organization,
+      institution_type: s.institution_type,
+      support_types: s.support_types as string[],
+      support_amount: s.support_amount,
+      apply_end_date: s.apply_end_date,
+      poster_image_url: s.poster_image_url ?? null,
+      created_at: s.created_at,
+    }));
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">

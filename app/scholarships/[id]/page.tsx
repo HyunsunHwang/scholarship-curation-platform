@@ -3,6 +3,10 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
+import {
+  formatApplyPeriodRange,
+  isAlwaysOpenRecruitment,
+} from "@/lib/scholarship-dates";
 
 // yyyy-mm-dd → yyyy/mm/dd
 function formatDate(dateStr: string | null): string {
@@ -66,7 +70,10 @@ export default async function ScholarshipDetailPage({
     initialBookmarked = !!bm;
   }
 
-  const days = getDaysUntilDeadline(scholarship.apply_end_date);
+  const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
+  const days = alwaysOpen
+    ? 0
+    : getDaysUntilDeadline(scholarship.apply_end_date);
   const gradient = institutionGradient[scholarship.institution_type] ?? "from-gray-400 to-gray-600";
 
   return (
@@ -91,7 +98,7 @@ export default async function ScholarshipDetailPage({
           <div className="mb-6">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex-1 min-w-0">
-                <DeadlineBadge days={days} />
+                <DeadlineBadge days={days} alwaysOpen={alwaysOpen} />
                 <h1 className="mt-2 text-2xl font-bold text-gray-900 leading-snug">
                   {scholarship.name}
                 </h1>
@@ -203,10 +210,11 @@ export default async function ScholarshipDetailPage({
                   <InfoRow
                     label="접수 기간"
                     value={
-                      <span>
-                        {formatDate(scholarship.apply_start_date)}
-                        <span className="mx-1.5 text-gray-400">~</span>
-                        {formatDate(scholarship.apply_end_date)}
+                      <span className={alwaysOpen ? "font-medium text-indigo-700" : undefined}>
+                        {formatApplyPeriodRange(
+                          scholarship.apply_start_date,
+                          scholarship.apply_end_date
+                        )}
                       </span>
                     }
                   />
@@ -385,7 +393,14 @@ function InfoRow({
   );
 }
 
-function DeadlineBadge({ days }: { days: number }) {
+function DeadlineBadge({ days, alwaysOpen }: { days: number; alwaysOpen?: boolean }) {
+  if (alwaysOpen) {
+    return (
+      <span className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+        상시모집
+      </span>
+    );
+  }
   if (days < 0) {
     return (
       <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">

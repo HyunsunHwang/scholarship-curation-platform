@@ -2,9 +2,11 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import { createClient } from "@/lib/supabase/server";
+import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 
 export default async function Home() {
   const supabase = await createClient();
+  const today = todayKoreaYYYYMMDD();
 
   const [{ data: scholarships }, { data: { user } }] = await Promise.all([
     supabase
@@ -13,6 +15,7 @@ export default async function Home() {
         "id, name, organization, institution_type, support_types, support_amount, apply_end_date, poster_image_url, created_at"
       )
       .eq("is_verified", true)
+      .gte("apply_end_date", today)
       .order("apply_end_date", { ascending: true }),
     supabase.auth.getUser(),
   ]);

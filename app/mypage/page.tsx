@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/Navbar";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import { isScholarshipExpired } from "@/lib/scholarship-dates";
 
 export default async function MyPage() {
   const supabase = await createClient();
@@ -43,6 +44,7 @@ export default async function MyPage() {
   const bookmarkedScholarships: CardScholarship[] = bookmarkedIds.flatMap((id) => {
     const s = scholarshipMap.get(id);
     if (!s) return [];
+    if (isScholarshipExpired(s.apply_end_date)) return [];
     return [{
       id: s.id,
       name: s.name,
