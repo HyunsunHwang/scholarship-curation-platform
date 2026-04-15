@@ -123,6 +123,54 @@ export async function toggleVerified(id: number, current: boolean) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// 목록에서 포스터 이미지 URL만 빠르게 수정
+// ─────────────────────────────────────────────────────────────────
+export async function updatePosterImageUrl(
+  id: number,
+  posterImageUrl: string | null
+): Promise<{ error?: string; success?: true }> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const isAdmin = await supabase.rpc("is_admin");
+  if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
+
+  const parsed = parsePosterUrl(posterImageUrl);
+  if (!parsed.ok) return { error: parsed.error };
+
+  const { error } = await supabase
+    .from("scholarships")
+    .update({ poster_image_url: parsed.value })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/scholarships");
+  revalidatePath(`/scholarships/${id}`);
+  return { success: true };
+}
+
+function parsePosterUrl(
+  raw: string | null
+): { ok: true; value: string | null } | { ok: false; error: string } {
+  if (raw === null || raw.trim() === "") return { ok: true, value: null };
+  const t = raw.trim();
+  try {
+    const u = new URL(t);
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      return { ok: false, error: "http 또는 https URL만 입력할 수 있습니다." };
+    }
+    return { ok: true, value: u.href };
+  } catch {
+    return { ok: false, error: "올바른 URL 형식이 아닙니다." };
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
 // FormData → DB payload 변환 헬퍼
 // ─────────────────────────────────────────────────────────────────
 function parseOptionalFloat(val: string | null): number | null {

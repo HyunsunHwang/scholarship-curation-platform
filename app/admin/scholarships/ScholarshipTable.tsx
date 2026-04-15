@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ToggleVerifiedButton, DeleteButton } from "./ScholarshipRowActions";
+import { updatePosterImageUrl } from "./actions";
 
 type ScholarshipRow = {
   id: number;
@@ -13,7 +15,64 @@ type ScholarshipRow = {
   support_amount: number;
   is_verified: boolean;
   support_types: string[];
+  poster_image_url: string | null;
 };
+
+function PosterUrlCell({
+  id,
+  initialUrl,
+}: {
+  id: number;
+  initialUrl: string | null;
+}) {
+  const router = useRouter();
+  const [value, setValue] = useState(initialUrl ?? "");
+  const [error, setError] = useState("");
+  const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setValue(initialUrl ?? "");
+  }, [initialUrl]);
+
+  const save = () => {
+    setError("");
+    startTransition(async () => {
+      const result = await updatePosterImageUrl(id, value.trim() || null);
+      if ("error" in result && result.error) {
+        setError(result.error);
+        return;
+      }
+      router.refresh();
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-1 min-w-[200px] max-w-[280px]">
+      <div className="flex gap-1.5">
+        <input
+          type="url"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setError("");
+          }}
+          placeholder="https://..."
+          className="min-w-0 flex-1 rounded border border-gray-200 px-2 py-1.5 text-xs text-gray-900 placeholder:text-gray-400 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+          disabled={pending}
+        />
+        <button
+          type="button"
+          onClick={save}
+          disabled={pending}
+          className="shrink-0 rounded border border-blue-200 bg-blue-50 px-2 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+        >
+          {pending ? "..." : "저장"}
+        </button>
+      </div>
+      {error && <p className="text-[11px] text-red-600 leading-tight">{error}</p>}
+    </div>
+  );
+}
 
 export default function ScholarshipTable({
   scholarships,
@@ -73,11 +132,12 @@ export default function ScholarshipTable({
         </p>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+        <table className="w-full text-sm min-w-[1000px]">
           <thead>
             <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
               <th className="px-4 py-3">이름 / 기관</th>
+              <th className="px-4 py-3">포스터 URL</th>
               <th className="px-4 py-3">지원 유형</th>
               <th className="px-4 py-3">지원금액</th>
               <th className="px-4 py-3">신청 기간</th>
@@ -92,6 +152,9 @@ export default function ScholarshipTable({
                   <td className="px-4 py-3">
                     <p className="font-medium text-gray-900">{s.name}</p>
                     <p className="text-gray-500 text-xs">{s.organization}</p>
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <PosterUrlCell id={s.id} initialUrl={s.poster_image_url} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
@@ -130,7 +193,7 @@ export default function ScholarshipTable({
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center text-gray-400">
+                <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
                   {q ? (
                     <>
                       <span className="font-medium">&ldquo;{query}&rdquo;</span>에 대한 검색 결과가 없습니다.
