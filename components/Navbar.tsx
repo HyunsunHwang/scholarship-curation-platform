@@ -35,22 +35,6 @@ export default async function Navbar() {
           </span>
         </Link>
 
-        {/* 중앙 내비 */}
-        <nav className="hidden items-center gap-6 md:flex">
-          <Link
-            href="#scholarships"
-            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-          >
-            장학금 둘러보기
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-          >
-            이용 방법
-          </Link>
-        </nav>
-
         {/* 우측 액션 영역 */}
         <div className="flex items-center gap-2">
           {user ? (
