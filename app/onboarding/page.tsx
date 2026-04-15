@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { saveProfile, type OnboardingFormData } from "./actions";
+import { loadProfile, saveProfile, type OnboardingFormData } from "./actions";
 
 // ── Kakao Postcode 타입 ──────────────────────────────────────────────────
 declare global {
@@ -687,6 +687,18 @@ export default function OnboardingPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    loadProfile().then((data) => {
+      if (data) {
+        setForm(data);
+        setIsEditing(true);
+      }
+      setProfileLoading(false);
+    });
+  }, []);
 
   const update = <K extends keyof OnboardingFormData>(
     field: K,
@@ -719,9 +731,48 @@ export default function OnboardingPage() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const result = await saveProfile(form);
+    const result = await saveProfile(form, isEditing ? "/matched" : "/");
     if (result?.error) { setErrorMsg(result.error); setLoading(false); }
   };
+
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 px-4 py-10">
+        <div className="mx-auto max-w-lg">
+          <div className="mb-8 flex flex-col items-center gap-2 text-center">
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600">
+                <span className="text-base font-bold text-white">K</span>
+              </div>
+              <span className="text-xl font-bold tracking-tight text-gray-900">쿠넥트</span>
+            </div>
+          </div>
+          <div className="mb-8 flex items-center justify-center">
+            {STEPS.map((s, i) => (
+              <div key={s} className="flex items-center">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="h-8 w-8 rounded-full bg-gray-100 animate-pulse" />
+                  <span className="hidden sm:block h-3 w-10 rounded bg-gray-100 animate-pulse" />
+                </div>
+                {i < STEPS.length - 1 && <div className="mx-2 mb-4 h-0.5 w-10 bg-gray-200 sm:w-16" />}
+              </div>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
+            <div className="h-6 w-24 rounded bg-gray-100 animate-pulse mb-6" />
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="space-y-1.5">
+                  <div className="h-4 w-16 rounded bg-gray-100 animate-pulse" />
+                  <div className="h-10 w-full rounded-lg bg-gray-100 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -742,7 +793,11 @@ export default function OnboardingPage() {
               </div>
               <span className="text-xl font-bold tracking-tight text-gray-900">쿠넥트</span>
             </Link>
-            <p className="text-sm text-gray-500">프로필을 완성하면 맞춤 장학금을 추천해드립니다.</p>
+            {isEditing ? (
+              <p className="text-sm text-gray-500">수정할 정보를 변경한 뒤 저장해주세요.</p>
+            ) : (
+              <p className="text-sm text-gray-500">프로필을 완성하면 맞춤 장학금을 추천해드립니다.</p>
+            )}
           </div>
 
           <StepIndicator current={step} steps={STEPS} />
@@ -780,7 +835,7 @@ export default function OnboardingPage() {
               ) : (
                 <button type="button" onClick={handleSubmit} disabled={loading}
                   className="flex-1 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
-                  {loading ? "저장 중..." : "프로필 완성하기"}
+                  {loading ? "저장 중..." : isEditing ? "프로필 저장하기" : "프로필 완성하기"}
                 </button>
               )}
             </div>

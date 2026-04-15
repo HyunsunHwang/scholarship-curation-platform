@@ -54,8 +54,91 @@ export type OnboardingFormData = {
   military_status: string;
 };
 
+export async function loadProfile(): Promise<OnboardingFormData | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || !profile.is_onboarded) return null;
+
+  let birth_year = "",
+    birth_month = "",
+    birth_day = "";
+  if (profile.birth_date) {
+    const parts = profile.birth_date.split("-");
+    birth_year = parts[0];
+    birth_month = String(parseInt(parts[1]));
+    birth_day = String(parseInt(parts[2]));
+  }
+
+  const phone = profile.phone ?? "";
+  const digits = phone.replace(/\D/g, "");
+  let formattedPhone = phone;
+  if (digits.length === 11) {
+    formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  } else if (digits.length === 10) {
+    formattedPhone = `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+
+  return {
+    name: profile.name ?? "",
+    birth_year,
+    birth_month,
+    birth_day,
+    gender: profile.gender ?? "",
+    phone: formattedPhone,
+    address: profile.address ?? "",
+    nationality: profile.nationality ?? "",
+    marital_status: profile.marital_status ?? "",
+    school_location: profile.school_location ?? "",
+    school_category: profile.school_category ?? "",
+    school_name: profile.school_name ?? "",
+    department: profile.department ?? "",
+    university_id: profile.university_id ? String(profile.university_id) : "",
+    college_id: profile.college_id ? String(profile.college_id) : "",
+    department_id: profile.department_id ? String(profile.department_id) : "",
+    has_double_major: profile.has_double_major ?? false,
+    double_major_college_id: profile.double_major_college_id
+      ? String(profile.double_major_college_id)
+      : "",
+    double_major_department_id: profile.double_major_department_id
+      ? String(profile.double_major_department_id)
+      : "",
+    double_major_department: profile.double_major_department ?? "",
+    academic_year: profile.academic_year ? String(profile.academic_year) : "",
+    academic_semester: profile.academic_semester
+      ? String(profile.academic_semester)
+      : "",
+    enrollment_status: profile.enrollment_status ?? "",
+    gpa: profile.gpa ? String(profile.gpa) : "",
+    gpa_last_semester: profile.gpa_last_semester
+      ? String(profile.gpa_last_semester)
+      : "",
+    income_level:
+      profile.income_level !== null && profile.income_level !== undefined
+        ? String(profile.income_level)
+        : "",
+    household_size: profile.household_size
+      ? String(profile.household_size)
+      : "",
+    special_info: (profile.special_info as string[]) ?? [],
+    parent_occupation: (profile.parent_occupation as string[]) ?? [],
+    military_status: profile.military_status ?? "",
+  };
+}
+
 export async function saveProfile(
-  data: OnboardingFormData
+  data: OnboardingFormData,
+  redirectTo: string = "/"
 ): Promise<{ error: string } | void> {
   const supabase = await createClient();
 
@@ -125,5 +208,5 @@ export async function saveProfile(
 
   if (error) return { error: error.message };
 
-  redirect("/");
+  redirect(redirectTo);
 }
