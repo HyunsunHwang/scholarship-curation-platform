@@ -179,7 +179,7 @@ export default function ScholarshipForm({
             </label>
           </div>
           <p className="text-xs text-gray-500 pl-6">
-            끄면 특정 학교(대상)만 해당되는 장학금처럼, 홈에서는 숨기고 맞춤 장학금에서만 조건에 맞을 때 노출됩니다.
+            등록된 대학명이 장학금명·기관명에 포함되면 홈에서는 자동으로 숨깁니다. 끄면 그 외 장학금도 홈에서 숨기고 맞춤 장학금에서만 노출합니다.
           </p>
         </div>
       </Section>

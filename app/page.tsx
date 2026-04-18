@@ -3,12 +3,17 @@ import Hero from "@/components/Hero";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import { createClient } from "@/lib/supabase/server";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
+import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 
 export default async function Home() {
   const supabase = await createClient();
   const today = todayKoreaYYYYMMDD();
 
-  const [{ data: scholarships }, { data: { user } }] = await Promise.all([
+  const [
+    { data: scholarships },
+    { data: universities },
+    { data: { user } },
+  ] = await Promise.all([
     supabase
       .from("scholarships")
       .select(
@@ -18,8 +23,14 @@ export default async function Home() {
       .eq("list_on_home", true)
       .gte("apply_end_date", today)
       .order("apply_end_date", { ascending: true }),
+    supabase.from("universities").select("name"),
     supabase.auth.getUser(),
   ]);
+
+  const universityNames = (universities ?? []).map((u) => u.name);
+  const homeScholarships = (scholarships ?? []).filter(
+    (s) => !isUniversitySpecificScholarship(s, universityNames)
+  );
 
   let bookmarkedIds: number[] = [];
   if (user) {
@@ -31,7 +42,7 @@ export default async function Home() {
   }
 
   // Hero 통계 계산 (전액 장학금은 700만원으로 추산)
-  const list = scholarships ?? [];
+  const list = homeScholarships;
   const totalAmountMan = list.reduce((sum, s) => {
     const man = s.support_amount / 10000;
     return sum + (man === 0 ? 700 : man);
@@ -47,7 +58,7 @@ export default async function Home() {
           isLoggedIn={!!user}
         />
         <ScholarshipDashboard
-          scholarships={scholarships ?? []}
+          scholarships={homeScholarships}
           bookmarkedIds={bookmarkedIds}
         />
       </main>
