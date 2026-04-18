@@ -5,17 +5,18 @@ import ScholarshipCard, { type CardScholarship } from "./ScholarshipCard";
 
 type SortOption = "deadline" | "amount";
 
-const INSTITUTION_LABEL: Record<string, string> = {
-  국가기관: "국가기관",
-  공공기관: "공공기관",
-  지방자치단체: "지역",
-  기업: "기업",
-  재단법인: "재단",
-  학교법인: "학교",
-  "언론/방송": "언론",
-  종교단체: "종교",
-  기타: "기타",
-};
+function matchesSearch(
+  name: string,
+  organization: string,
+  query: string
+): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    name.toLowerCase().includes(q) ||
+    organization.toLowerCase().includes(q)
+  );
+}
 
 function getDays(dateStr: string): number {
   const today = new Date();
@@ -33,23 +34,13 @@ export default function ScholarshipDashboard({
   heading?: string;
 }) {
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
-  const [activeType, setActiveType] = useState<string>("전체");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("deadline");
 
-  // 실제 데이터에 존재하는 institution_type만 카테고리로 노출
-  const categories = useMemo(() => {
-    const types = Array.from(new Set(scholarships.map((s) => s.institution_type)));
-    return [
-      { label: "전체", value: "전체" },
-      ...types.map((t) => ({ label: INSTITUTION_LABEL[t] ?? t, value: t })),
-    ];
-  }, [scholarships]);
-
   const filtered = useMemo(() => {
-    const list =
-      activeType === "전체"
-        ? scholarships
-        : scholarships.filter((s) => s.institution_type === activeType);
+    const list = scholarships.filter((s) =>
+      matchesSearch(s.name, s.organization, searchQuery)
+    );
 
     return [...list].sort((a, b) => {
       if (sortBy === "deadline") {
@@ -60,7 +51,7 @@ export default function ScholarshipDashboard({
       const bVal = b.support_amount === 0 ? Infinity : b.support_amount;
       return bVal - aVal;
     });
-  }, [scholarships, activeType, sortBy]);
+  }, [scholarships, searchQuery, sortBy]);
 
   return (
     <section id="scholarships" className="bg-gray-50 py-16">
@@ -103,24 +94,57 @@ export default function ScholarshipDashboard({
           </div>
         </div>
 
-        {/* 카테고리 필터 */}
-        {categories.length > 1 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setActiveType(cat.value)}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                  activeType === cat.value
-                    ? "bg-gray-900 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
+        {/* 검색 */}
+        <div className="mt-6 relative max-w-xl">
+          <span className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+          </span>
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="장학금 이름 또는 기관명 검색"
+            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-10 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none ring-indigo-500/0 transition-shadow focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
+            autoComplete="off"
+            aria-label="장학금 검색"
+          />
+          {searchQuery.trim() !== "" && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              aria-label="검색어 지우기"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
               >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
 
         {/* 카드 그리드 */}
         {filtered.length === 0 ? (
@@ -153,9 +177,11 @@ export default function ScholarshipDashboard({
             ) : (
               <>
                 <p className="text-lg font-medium text-gray-900">
-                  해당 유형의 장학금이 없습니다.
+                  검색 결과가 없습니다.
                 </p>
-                <p className="text-sm text-gray-500">다른 카테고리를 선택해보세요.</p>
+                <p className="text-sm text-gray-500">
+                  다른 검색어로 시도하거나 검색어를 지워 전체 목록을 보세요.
+                </p>
               </>
             )}
           </div>
