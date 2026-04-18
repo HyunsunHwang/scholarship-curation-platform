@@ -69,16 +69,39 @@ export default async function MyPage() {
         {/* 프로필 헤더 */}
         <div className="bg-white border-b border-gray-100">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xl font-bold text-white">
-                {initial}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xl font-bold text-white">
+                  {initial}
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-xl font-bold text-gray-900 truncate">
+                    {displayName}
+                  </h1>
+                  <p className="mt-0.5 text-sm text-gray-500 truncate">
+                    {user.email}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  {displayName}
-                </h1>
-                <p className="mt-0.5 text-sm text-gray-500">{user.email}</p>
-              </div>
+              <Link
+                href="/onboarding"
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors sm:self-center"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"
+                  />
+                </svg>
+                프로필 수정
+              </Link>
             </div>
           </div>
         </div>
