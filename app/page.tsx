@@ -15,6 +15,7 @@ export default async function Home() {
         "id, name, organization, institution_type, support_types, support_amount, apply_end_date, poster_image_url, created_at"
       )
       .eq("is_verified", true)
+      .eq("list_on_home", true)
       .gte("apply_end_date", today)
       .order("apply_end_date", { ascending: true }),
     supabase.auth.getUser(),

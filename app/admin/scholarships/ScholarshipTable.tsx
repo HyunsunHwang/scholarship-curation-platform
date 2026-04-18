@@ -16,6 +16,7 @@ type ScholarshipRow = {
   is_verified: boolean;
   support_types: string[];
   poster_image_url: string | null;
+  list_on_home: boolean;
 };
 
 function PosterUrlCell({
@@ -150,7 +151,17 @@ export default function ScholarshipTable({
               filtered.map((s) => (
                 <tr key={s.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{s.name}</p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <p className="font-medium text-gray-900">{s.name}</p>
+                      {s.list_on_home === false && (
+                        <span
+                          className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-800 ring-1 ring-amber-200"
+                          title="홈 전체 목록에는 표시되지 않고 맞춤 장학금에서만 노출"
+                        >
+                          맞춤만
+                        </span>
+                      )}
+                    </div>
                     <p className="text-gray-500 text-xs">{s.organization}</p>
                   </td>
                   <td className="px-4 py-3 align-top">

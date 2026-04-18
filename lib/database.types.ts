@@ -207,6 +207,8 @@ export interface Database {
           poster_image_url: string | null; // 공지 포스터 이미지 URL
           collected_at: string;
           is_verified: boolean;
+          /** false면 홈 전체 목록 숨김, 맞춤 장학금(RPC)에서만 노출 */
+          list_on_home: boolean;
           created_at: string;
           updated_at: string;
         };

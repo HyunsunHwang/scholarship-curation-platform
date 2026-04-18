@@ -39,6 +39,8 @@ export async function createScholarship(formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/");
+  revalidatePath("/matched");
   redirect("/admin/scholarships");
 }
 
@@ -73,6 +75,8 @@ export async function updateScholarship(id: number, formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/");
+  revalidatePath("/matched");
   redirect("/admin/scholarships");
 }
 
@@ -96,6 +100,8 @@ export async function deleteScholarship(id: number) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/");
+  revalidatePath("/matched");
   return { success: true };
 }
 
@@ -119,6 +125,8 @@ export async function toggleVerified(id: number, current: boolean) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/");
+  revalidatePath("/matched");
   return { success: true };
 }
 
@@ -248,5 +256,6 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     selection_stage_5_schedule: g("selection_stage_5_schedule") || null,
     collected_at: new Date().toISOString(),
     is_verified: g("is_verified") === "true",
+    list_on_home: g("list_on_home") === "true",
   };
 }

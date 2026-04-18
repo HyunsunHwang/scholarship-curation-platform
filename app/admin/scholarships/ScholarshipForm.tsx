@@ -163,6 +163,25 @@ export default function ScholarshipForm({
             검증 완료 (검증된 장학금은 사용자에게 노출)
           </label>
         </div>
+        <div className="md:col-span-2 flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <input type="hidden" name="list_on_home" value="false" />
+            <input
+              type="checkbox"
+              id="list_on_home"
+              name="list_on_home"
+              value="true"
+              defaultChecked={dv.list_on_home !== false}
+              className="rounded"
+            />
+            <label htmlFor="list_on_home" className="text-sm text-gray-700">
+              홈 전체 장학금 목록에 표시
+            </label>
+          </div>
+          <p className="text-xs text-gray-500 pl-6">
+            끄면 특정 학교(대상)만 해당되는 장학금처럼, 홈에서는 숨기고 맞춤 장학금에서만 조건에 맞을 때 노출됩니다.
+          </p>
+        </div>
       </Section>
 
       <div className="flex gap-3 pt-2">
