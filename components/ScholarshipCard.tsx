@@ -118,6 +118,13 @@ export default function ScholarshipCard({
           </div>
         )}
 
+        {/* 기관명 — 이미지 좌측 하단 오버레이 */}
+        <div className="absolute bottom-3 left-3 max-w-[70%]">
+          <span className="inline-block rounded-full bg-black/40 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm truncate max-w-full">
+            {scholarship.organization}
+          </span>
+        </div>
+
         {/* 북마크 버튼 (에어비엔비 스타일 — 이미지 위 오버레이) */}
         <button
           type="button"
@@ -154,9 +161,6 @@ export default function ScholarshipCard({
         <p className="text-sm font-semibold leading-snug text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">
           {scholarship.name}
         </p>
-
-        {/* 기관명 */}
-        <p className="text-xs text-gray-400">{scholarship.organization}</p>
 
         {/* 마감일 */}
         <p className={`mt-0.5 text-xs font-medium ${color}`}>{deadlineLabel}</p>
