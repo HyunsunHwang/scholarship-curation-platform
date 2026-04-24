@@ -29,18 +29,6 @@ const institutionGradient: Record<string, string> = {
   기타: "from-gray-400 to-gray-600",
 };
 
-const institutionTagColor: Record<string, string> = {
-  국가기관: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  공공기관: "bg-blue-50 text-blue-700 border-blue-200",
-  지방자치단체: "bg-orange-50 text-orange-700 border-orange-200",
-  기업: "bg-violet-50 text-violet-700 border-violet-200",
-  재단법인: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  학교법인: "bg-cyan-50 text-cyan-700 border-cyan-200",
-  "언론/방송": "bg-red-50 text-red-700 border-red-200",
-  종교단체: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  기타: "bg-gray-50 text-gray-700 border-gray-200",
-};
-
 function getDaysUntilDeadline(dateStr: string): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -56,57 +44,24 @@ function formatAmount(won: number): string {
   return `연 ${won.toLocaleString()}원`;
 }
 
-function isNewScholarship(createdAt: string): boolean {
-  return Date.now() - new Date(createdAt).getTime() < 14 * 24 * 60 * 60 * 1000;
+function formatDeadline(dateStr: string): string {
+  if (isAlwaysOpenRecruitment(dateStr)) return "상시모집";
+  const days = getDaysUntilDeadline(dateStr);
+  if (days < 0) return "마감됨";
+  if (days === 0) return "오늘 마감";
+  if (days <= 7) return `D-${days} · 마감 임박`;
+  // yyyy-mm-dd → mm월 dd일
+  const [, m, d] = dateStr.split("-");
+  return `${parseInt(m)}월 ${parseInt(d)}일 마감`;
 }
 
-function DeadlineBadge({ dateStr }: { dateStr: string }) {
-  if (isAlwaysOpenRecruitment(dateStr)) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-        상시모집
-      </span>
-    );
-  }
-
+function deadlineColor(dateStr: string): string {
+  if (isAlwaysOpenRecruitment(dateStr)) return "text-indigo-600";
   const days = getDaysUntilDeadline(dateStr);
-
-  if (days < 0) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-400">
-        마감됨
-      </span>
-    );
-  }
-  if (days === 0) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-bold text-red-600">
-        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-        D-Day
-      </span>
-    );
-  }
-  if (days <= 7) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600">
-        <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-        D-{days}
-      </span>
-    );
-  }
-  if (days <= 30) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-        D-{days}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
-      D-{days}
-    </span>
-  );
+  if (days < 0) return "text-gray-400";
+  if (days <= 7) return "text-red-500";
+  if (days <= 30) return "text-amber-600";
+  return "text-gray-500";
 }
 
 export default function ScholarshipCard({
@@ -119,17 +74,17 @@ export default function ScholarshipCard({
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [isPending, startTransition] = useTransition();
 
-  const gradient = institutionGradient[scholarship.institution_type] ?? "from-gray-400 to-gray-600";
-  const tagColorClass = institutionTagColor[scholarship.institution_type] ?? "bg-gray-50 text-gray-700 border-gray-200";
-  const showNew = isNewScholarship(scholarship.created_at);
+  const gradient =
+    institutionGradient[scholarship.institution_type] ?? "from-gray-400 to-gray-600";
 
-  function handleBookmark() {
+  function handleBookmark(e: React.MouseEvent) {
+    e.preventDefault();
     const next = !bookmarked;
-    setBookmarked(next); // 낙관적 업데이트
+    setBookmarked(next);
     startTransition(async () => {
       const result = await toggleBookmark(scholarship.id);
       if ("error" in result) {
-        setBookmarked(!next); // 실패 시 되돌리기
+        setBookmarked(!next);
         if (result.error === "로그인이 필요합니다.") {
           alert("북마크하려면 로그인이 필요합니다.");
         }
@@ -137,10 +92,16 @@ export default function ScholarshipCard({
     });
   }
 
+  const color = deadlineColor(scholarship.apply_end_date);
+  const deadlineLabel = formatDeadline(scholarship.apply_end_date);
+
   return (
-    <div className="group flex flex-col rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5">
-      {/* 포스터 영역 — 클릭 시 상세페이지 */}
-      <Link href={`/scholarships/${scholarship.id}`} className="block relative aspect-video overflow-hidden">
+    <div className="group flex flex-col">
+      {/* ── 이미지 영역 ── */}
+      <Link
+        href={`/scholarships/${scholarship.id}`}
+        className="relative block overflow-hidden rounded-2xl aspect-4/3"
+      >
         {scholarship.poster_image_url ? (
           <img
             src={scholarship.poster_image_url}
@@ -151,81 +112,60 @@ export default function ScholarshipCard({
           <div
             className={`h-full w-full bg-linear-to-br ${gradient} flex items-end p-4 transition-transform duration-300 group-hover:scale-105`}
           >
-            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-white/20 border-white/30 text-white backdrop-blur-sm">
+            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
               {scholarship.institution_type}
             </span>
-            {showNew && (
-              <span className="ml-2 inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-indigo-600">
-                NEW
-              </span>
-            )}
           </div>
         )}
+
+        {/* 북마크 버튼 (에어비엔비 스타일 — 이미지 위 오버레이) */}
+        <button
+          type="button"
+          onClick={handleBookmark}
+          disabled={isPending}
+          aria-label={bookmarked ? "북마크 해제" : "북마크"}
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full transition-opacity disabled:opacity-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className={`h-6 w-6 drop-shadow-sm transition-colors ${
+              bookmarked
+                ? "fill-indigo-500 stroke-indigo-500"
+                : "fill-black/20 stroke-white"
+            }`}
+            strokeWidth={1.8}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+            />
+          </svg>
+        </button>
       </Link>
 
-      {/* 콘텐츠 영역 */}
-      <div className="flex flex-1 flex-col p-4 gap-3">
-        {/* 마감일 + 북마크 버튼 */}
-        <div className="flex items-center justify-between">
-          <DeadlineBadge dateStr={scholarship.apply_end_date} />
-          <button
-            type="button"
-            onClick={handleBookmark}
-            disabled={isPending}
-            aria-label={bookmarked ? "북마크 해제" : "북마크"}
-            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-100 active:scale-90 disabled:opacity-50"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className={`h-5 w-5 transition-colors ${
-                bookmarked ? "fill-indigo-500 stroke-indigo-500" : "fill-none stroke-gray-400"
-              }`}
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-              />
-            </svg>
-          </button>
-        </div>
+      {/* ── 텍스트 영역 ── */}
+      <Link
+        href={`/scholarships/${scholarship.id}`}
+        className="mt-3 flex flex-col gap-0.5"
+      >
+        {/* 장학금 이름 */}
+        <p className="text-sm font-semibold leading-snug text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+          {scholarship.name}
+        </p>
 
-        {/* 제목 + 기관 — 클릭 시 상세페이지 */}
-        <Link href={`/scholarships/${scholarship.id}`} className="block">
-          <h3 className="text-base font-bold leading-snug text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
-            {scholarship.name}
-          </h3>
-          <p className="mt-0.5 text-xs text-gray-400 font-medium">
-            {scholarship.organization}
-          </p>
-        </Link>
+        {/* 기관명 */}
+        <p className="text-xs text-gray-400">{scholarship.organization}</p>
 
-        {/* 지원 형태 태그 */}
-        {scholarship.support_types.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {scholarship.support_types.map((tag) => (
-              <span
-                key={tag}
-                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${tagColorClass}`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {/* 마감일 */}
+        <p className={`mt-0.5 text-xs font-medium ${color}`}>{deadlineLabel}</p>
 
-        {/* 지원 규모 */}
-        <div className="mt-auto pt-3 border-t border-gray-50">
-          <p className="text-[10px] uppercase tracking-wide text-gray-400 font-medium">
-            지원 규모
-          </p>
-          <p className="mt-0.5 text-xl font-extrabold text-gray-900 leading-none">
-            {formatAmount(scholarship.support_amount)}
-          </p>
-        </div>
-      </div>
+        {/* 지원 금액 */}
+        <p className="mt-1 text-sm font-bold text-gray-900">
+          {formatAmount(scholarship.support_amount)}
+        </p>
+      </Link>
     </div>
   );
 }
