@@ -29,7 +29,9 @@ export type ScholarshipDetail = {
   qual_special_info: string[] | null;
   qual_nationality: string | null;
   qual_enrollment_status: string[] | null;
-  qual_university_type: string | null;
+  qual_school_location: string[] | null;
+  qual_school_category: string[] | null;
+  qual_academic_year: number[] | null;
   apply_method: string | null;
   required_documents: string[] | null;
   contact: string | null;
@@ -57,8 +59,10 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     (s.qual_major && s.qual_major.length > 0) ||
     (s.qual_special_info && s.qual_special_info.length > 0) ||
     (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) ||
-    s.qual_nationality ||
-    s.qual_university_type
+    (s.qual_school_location && s.qual_school_location.length > 0) ||
+    (s.qual_school_category && s.qual_school_category.length > 0) ||
+    (s.qual_academic_year && s.qual_academic_year.length > 0) ||
+    s.qual_nationality
   );
 }
 
@@ -85,11 +89,17 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_region && s.qual_region.length > 0) {
     rows.push({ icon: "📍", label: "지역", value: s.qual_region.join(", ") });
   }
-  if (s.qual_university_type) {
-    rows.push({ icon: "🏫", label: "대학 유형", value: s.qual_university_type });
+  if (s.qual_school_category && s.qual_school_category.length > 0) {
+    rows.push({ icon: "🏫", label: "대학 유형", value: s.qual_school_category.join(", ") });
+  }
+  if (s.qual_school_location && s.qual_school_location.length > 0) {
+    rows.push({ icon: "📍", label: "학교 소재지", value: s.qual_school_location.join(", ") });
   }
   if (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) {
     rows.push({ icon: "🎓", label: "재학 상태", value: s.qual_enrollment_status.join(", ") });
+  }
+  if (s.qual_academic_year && s.qual_academic_year.length > 0) {
+    rows.push({ icon: "📆", label: "학년", value: s.qual_academic_year.map((y) => `${y}학년`).join(", ") });
   }
   if (s.qual_major && s.qual_major.length > 0) {
     rows.push({ icon: "📚", label: "전공", value: s.qual_major.join(", ") });
