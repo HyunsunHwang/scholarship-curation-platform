@@ -100,7 +100,7 @@ export default function ScholarshipCard({
       {/* ── 이미지 영역 ── */}
       <Link
         href={`/scholarships/${scholarship.id}`}
-        className="relative block overflow-hidden rounded-2xl aspect-4/3"
+        className="relative block overflow-hidden rounded-2xl aspect-2/3"
       >
         {scholarship.poster_image_url ? (
           <img
