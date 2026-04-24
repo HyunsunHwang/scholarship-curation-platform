@@ -28,6 +28,7 @@ export type ScholarshipDetail = {
   qual_major: string[] | null;
   qual_special_info: string[] | null;
   qual_nationality: string | null;
+  qual_university: string[] | null;
   qual_enrollment_status: string[] | null;
   qual_school_location: string[] | null;
   qual_school_category: string[] | null;
@@ -58,6 +59,7 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     (s.qual_region && s.qual_region.length > 0) ||
     (s.qual_major && s.qual_major.length > 0) ||
     (s.qual_special_info && s.qual_special_info.length > 0) ||
+    (s.qual_university && s.qual_university.length > 0) ||
     (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) ||
     (s.qual_school_location && s.qual_school_location.length > 0) ||
     (s.qual_school_category && s.qual_school_category.length > 0) ||
@@ -88,6 +90,9 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   }
   if (s.qual_region && s.qual_region.length > 0) {
     rows.push({ icon: "📍", label: "지역", value: s.qual_region.join(", ") });
+  }
+  if (s.qual_university && s.qual_university.length > 0) {
+    rows.push({ icon: "🏛️", label: "대상 대학교", value: s.qual_university.join(", ") });
   }
   if (s.qual_school_category && s.qual_school_category.length > 0) {
     rows.push({ icon: "🏫", label: "대학 유형", value: s.qual_school_category.join(", ") });

@@ -215,6 +215,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     announcement_date: g("announcement_date") || null,
     selection_count: parseOptionalInt(g("selection_count")),
     // 자격 요건
+    qual_university: parseTextArray(g("qual_university")) || null,
     qual_school_location: parseTextArray(g("qual_school_location")) as ScholarshipInsert["qual_school_location"] || null,
     qual_school_category: parseTextArray(g("qual_school_category")) as ScholarshipInsert["qual_school_category"] || null,
     qual_academic_year: g("qual_academic_year")

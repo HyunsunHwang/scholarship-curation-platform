@@ -167,11 +167,12 @@ export interface Database {
           apply_end_date: string;
           announcement_date: string | null;
           selection_count: number | null;
+          qual_university: string[] | null;       // 특정 대학교명 배열
           qual_school_location: SchoolLocationType[] | null;
           qual_school_category: SchoolCategoryType[] | null;
           qual_academic_year: number[] | null;
           qual_enrollment_status: EnrollmentStatusType[] | null;
-          qual_major: string[] | null;
+          qual_major: string[] | null;             // 전공/학과명 배열
           qual_gpa_min: number | null;               // 누적 학점 최소
           qual_gpa_last_semester_min: number | null; // 직전 학기 학점 최소
           qual_income_level_min: number | null;

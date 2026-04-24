@@ -88,6 +88,28 @@ export default function ScholarshipForm({
 
       {/* ── 자격 요건 ─────────────────────────────────────────── */}
       <Section title="자격 요건 (비워두면 제한 없음)">
+        <div className="md:col-span-2">
+          <Field
+            label="대상 대학교 (쉼표 구분)"
+            name="qual_university"
+            defaultValue={(dv.qual_university ?? []).join(", ")}
+            placeholder="예: 연세대학교, 고려대학교"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            특정 학교 학생만 신청 가능한 경우 입력. 비워두면 모든 학교 대상.
+          </p>
+        </div>
+        <div className="md:col-span-2">
+          <Field
+            label="대상 학과 (쉼표 구분)"
+            name="qual_major"
+            defaultValue={(dv.qual_major ?? []).join(", ")}
+            placeholder="예: 컴퓨터공학과, 전자공학과, 공과대학"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            특정 학과/단과대 학생만 신청 가능한 경우 입력. 부분 일치로 검색됩니다.
+          </p>
+        </div>
         <Field label="최소 누적 학점" name="qual_gpa_min" type="number" step="0.01" defaultValue={dv.qual_gpa_min?.toString() ?? ""} placeholder="예: 3.0" />
         <Field label="최소 직전 학기 학점" name="qual_gpa_last_semester_min" type="number" step="0.01" defaultValue={dv.qual_gpa_last_semester_min?.toString() ?? ""} placeholder="예: 3.5" />
         <Field label="소득 분위 최소" name="qual_income_level_min" type="number" defaultValue={dv.qual_income_level_min?.toString() ?? ""} />
@@ -96,7 +118,6 @@ export default function ScholarshipForm({
         <Field label="최소 나이" name="qual_age_min" type="number" defaultValue={dv.qual_age_min?.toString() ?? ""} />
         <Field label="최대 나이" name="qual_age_max" type="number" defaultValue={dv.qual_age_max?.toString() ?? ""} />
         <Field label="지역 (쉼표 구분)" name="qual_region" defaultValue={(dv.qual_region ?? []).join(", ")} placeholder="예: 서울, 경기" />
-        <Field label="전공 (쉼표 구분)" name="qual_major" defaultValue={(dv.qual_major ?? []).join(", ")} placeholder="예: 컴퓨터공학, 전자공학" />
       </Section>
 
       {/* ── 신청 방법 ─────────────────────────────────────────── */}
