@@ -1,8 +1,16 @@
 import Link from "next/link";
 import ScholarshipForm from "../ScholarshipForm";
 import { createScholarship } from "../actions";
+import { createClient } from "@/lib/supabase/server";
 
-export default function NewScholarshipPage() {
+export default async function NewScholarshipPage() {
+  const supabase = await createClient();
+  const { data: universities } = await supabase
+    .from("universities")
+    .select("name")
+    .order("name");
+  const universityNames = (universities ?? []).map((u) => u.name);
+
   return (
     <div>
       <div className="mb-6">
@@ -14,7 +22,11 @@ export default function NewScholarshipPage() {
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mt-2">장학금 추가</h1>
       </div>
-      <ScholarshipForm action={createScholarship} submitLabel="장학금 등록" />
+      <ScholarshipForm
+        action={createScholarship}
+        submitLabel="장학금 등록"
+        universities={universityNames}
+      />
     </div>
   );
 }

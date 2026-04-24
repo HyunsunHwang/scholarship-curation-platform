@@ -15,11 +15,11 @@ export default async function EditScholarshipPage({
   if (isNaN(scholarshipId)) notFound();
 
   const supabase = await createClient();
-  const { data: scholarship } = await supabase
-    .from("scholarships")
-    .select("*")
-    .eq("id", scholarshipId)
-    .single();
+  const [{ data: scholarship }, { data: universities }] = await Promise.all([
+    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+    supabase.from("universities").select("name").order("name"),
+  ]);
+  const universityNames = (universities ?? []).map((u) => u.name);
 
   if (!scholarship) notFound();
 
@@ -42,6 +42,7 @@ export default async function EditScholarshipPage({
         defaultValues={scholarship}
         action={boundAction}
         submitLabel="변경사항 저장"
+        universities={universityNames}
       />
     </div>
   );

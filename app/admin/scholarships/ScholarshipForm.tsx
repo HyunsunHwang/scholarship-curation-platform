@@ -1,12 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState, useRef, useEffect } from "react";
 import type { Scholarship } from "@/lib/database.types";
 
 type Props = {
   defaultValues?: Partial<Scholarship>;
   action: (formData: FormData) => Promise<{ error?: string } | void>;
   submitLabel?: string;
+  universities?: string[];
 };
 
 const INSTITUTION_TYPES = [
@@ -22,6 +23,7 @@ export default function ScholarshipForm({
   defaultValues: dv = {},
   action,
   submitLabel = "저장",
+  universities = [],
 }: Props) {
   const [isPending, startTransition] = useTransition();
 
@@ -89,25 +91,25 @@ export default function ScholarshipForm({
       {/* ── 자격 요건 ─────────────────────────────────────────── */}
       <Section title="자격 요건 (비워두면 제한 없음)">
         <div className="md:col-span-2">
-          <Field
-            label="대상 대학교 (쉼표 구분)"
+          <label className="block text-sm font-medium text-gray-700 mb-1">대상 대학교</label>
+          <UniversityTagSelect
             name="qual_university"
-            defaultValue={(dv.qual_university ?? []).join(", ")}
-            placeholder="예: 연세대학교, 고려대학교"
+            universities={universities}
+            defaultSelected={dv.qual_university ?? []}
           />
           <p className="mt-1 text-xs text-gray-400">
-            특정 학교 학생만 신청 가능한 경우 입력. 비워두면 모든 학교 대상.
+            특정 학교 학생만 신청 가능한 경우 선택. 비워두면 모든 학교 대상.
           </p>
         </div>
         <div className="md:col-span-2">
-          <Field
-            label="대상 학과 (쉼표 구분)"
+          <label className="block text-sm font-medium text-gray-700 mb-1">대상 학과</label>
+          <TagInput
             name="qual_major"
-            defaultValue={(dv.qual_major ?? []).join(", ")}
-            placeholder="예: 컴퓨터공학과, 전자공학과, 공과대학"
+            defaultTags={dv.qual_major ?? []}
+            placeholder="학과명 입력 후 Enter (예: 컴퓨터공학과)"
           />
           <p className="mt-1 text-xs text-gray-400">
-            특정 학과/단과대 학생만 신청 가능한 경우 입력. 부분 일치로 검색됩니다.
+            특정 학과/단과대만 대상인 경우 추가. 부분 일치로 매칭됩니다.
           </p>
         </div>
         <Field label="최소 누적 학점" name="qual_gpa_min" type="number" step="0.01" defaultValue={dv.qual_gpa_min?.toString() ?? ""} placeholder="예: 3.0" />
@@ -293,6 +295,174 @@ function CheckboxToHidden({
         sync();
       }}
     />
+  );
+}
+
+// ── 대학교 검색 태그 선택기 ───────────────────────────────────────
+function UniversityTagSelect({
+  name,
+  universities,
+  defaultSelected,
+}: {
+  name: string;
+  universities: string[];
+  defaultSelected: string[];
+}) {
+  const [selected, setSelected] = useState<string[]>(defaultSelected);
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const filtered = universities.filter(
+    (u) => u.toLowerCase().includes(search.toLowerCase()) && !selected.includes(u)
+  );
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const add = (u: string) => {
+    setSelected((prev) => [...prev, u]);
+    setSearch("");
+    setOpen(false);
+  };
+
+  const remove = (u: string) => {
+    setSelected((prev) => prev.filter((s) => s !== u));
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <input type="hidden" name={name} value={selected.join(",")} />
+
+      {/* 선택된 태그 + 검색 입력 */}
+      <div
+        className="min-h-[42px] flex flex-wrap gap-1.5 items-center border border-gray-300 rounded-lg px-3 py-2 cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 bg-white"
+        onClick={() => { setOpen(true); }}
+      >
+        {selected.map((u) => (
+          <span
+            key={u}
+            className="inline-flex items-center gap-1 rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"
+          >
+            {u}
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); remove(u); }}
+              className="hover:text-blue-600"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          placeholder={selected.length === 0 ? "대학교 검색..." : ""}
+          className="flex-1 min-w-[120px] text-sm outline-none bg-transparent"
+        />
+      </div>
+
+      {/* 드롭다운 */}
+      {open && (
+        <div className="absolute z-10 mt-1 w-full max-h-52 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-gray-400">
+              {search ? "검색 결과 없음" : "모든 대학교가 선택됨"}
+            </p>
+          ) : (
+            filtered.map((u) => (
+              <button
+                key={u}
+                type="button"
+                onMouseDown={(e) => { e.preventDefault(); add(u); }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              >
+                {u}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── 자유 입력 태그 인풋 (학과 등) ────────────────────────────────
+function TagInput({
+  name,
+  defaultTags,
+  placeholder,
+}: {
+  name: string;
+  defaultTags: string[];
+  placeholder?: string;
+}) {
+  const [tags, setTags] = useState<string[]>(defaultTags);
+  const [input, setInput] = useState("");
+
+  const add = () => {
+    const v = input.trim();
+    if (v && !tags.includes(v)) setTags((prev) => [...prev, v]);
+    setInput("");
+  };
+
+  const remove = (t: string) => setTags((prev) => prev.filter((x) => x !== t));
+
+  return (
+    <div>
+      <input type="hidden" name={name} value={tags.join(",")} />
+
+      {/* 선택된 태그 */}
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {tags.map((t) => (
+            <span
+              key={t}
+              className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+            >
+              {t}
+              <button
+                type="button"
+                onClick={() => remove(t)}
+                className="hover:text-emerald-600"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* 입력 */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") { e.preventDefault(); add(); }
+          }}
+          placeholder={placeholder}
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          type="button"
+          onClick={add}
+          className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+        >
+          추가
+        </button>
+      </div>
+    </div>
   );
 }
 
