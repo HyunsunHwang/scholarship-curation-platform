@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition, useState, useRef, useEffect } from "react";
+import { useTransition, useState, useRef, useEffect, useCallback } from "react";
 import type { Scholarship } from "@/lib/database.types";
+import { createClient } from "@/lib/supabase/client";
 
 type Props = {
   defaultValues?: Partial<Scholarship>;
@@ -162,7 +163,9 @@ export default function ScholarshipForm({
 
       {/* ── 기타 ──────────────────────────────────────────────── */}
       <Section title="기타">
-        <Field label="포스터 이미지 URL" name="poster_image_url" type="url" defaultValue={dv.poster_image_url ?? ""} placeholder="https://" />
+        <div className="md:col-span-2">
+          <PosterImageInput defaultUrl={dv.poster_image_url ?? ""} />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">비고</label>
           <textarea
@@ -462,6 +465,195 @@ function TagInput({
           추가
         </button>
       </div>
+    </div>
+  );
+}
+
+// ── 포스터 이미지 붙여넣기/드롭/파일 업로드 ──────────────────────
+function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
+  const [url, setUrl] = useState(defaultUrl);
+  const [preview, setPreview] = useState(defaultUrl || "");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
+
+  const upload = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setError("이미지 파일만 업로드할 수 있습니다.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError("파일 크기는 10MB 이하여야 합니다.");
+      return;
+    }
+
+    setError("");
+    setUploading(true);
+
+    // 로컬 미리보기 먼저 표시
+    const localUrl = URL.createObjectURL(file);
+    setPreview(localUrl);
+
+    try {
+      const supabase = createClient();
+      const ext = file.name.split(".").pop() ?? "png";
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("scholarship-posters")
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from("scholarship-posters")
+        .getPublicUrl(path);
+
+      setUrl(data.publicUrl);
+      setPreview(data.publicUrl);
+      URL.revokeObjectURL(localUrl);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "업로드 실패");
+      setPreview("");
+      setUrl("");
+    } finally {
+      setUploading(false);
+    }
+  }, []);
+
+  // 붙여넣기 (Ctrl+V)
+  useEffect(() => {
+    const zone = dropZoneRef.current;
+    if (!zone) return;
+
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith("image/")) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) upload(file);
+          break;
+        }
+      }
+    };
+
+    // 드롭존이 포커스를 받아야 paste가 동작하므로 document에도 등록
+    document.addEventListener("paste", handlePaste);
+    return () => document.removeEventListener("paste", handlePaste);
+  }, [upload]);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) upload(file);
+  };
+
+  const handleRemove = () => {
+    setUrl("");
+    setPreview("");
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">포스터 이미지</label>
+      <input type="hidden" name="poster_image_url" value={url} />
+
+      {/* 드롭/붙여넣기 영역 */}
+      {!preview ? (
+        <div
+          ref={dropZoneRef}
+          tabIndex={0}
+          onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={handleDrop}
+          className={`relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 cursor-pointer transition-colors select-none ${
+            isDragOver
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50/40"
+          }`}
+        >
+          {uploading ? (
+            <>
+              <svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4l-3 3-3-3h4z" />
+              </svg>
+              <span className="text-sm text-blue-600 font-medium">업로드 중...</span>
+            </>
+          ) : (
+            <>
+              <svg className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5V19a1.5 1.5 0 001.5 1.5h15A1.5 1.5 0 0021 19v-2.5M16 9l-4-4m0 0L8 9m4-4v12" />
+              </svg>
+              <p className="text-sm font-medium text-gray-700">
+                클릭하거나 이미지를 드래그하세요
+              </p>
+              <p className="text-xs text-gray-400">
+                또는 <kbd className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-300 font-mono text-xs">Ctrl + V</kbd> 로 클립보드에서 붙여넣기
+              </p>
+              <p className="text-xs text-gray-400">JPG, PNG, WebP, GIF · 최대 10MB</p>
+            </>
+          )}
+        </div>
+      ) : (
+        /* 미리보기 */
+        <div className="relative rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+          {uploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
+              <svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4l-3 3-3-3h4z" />
+              </svg>
+            </div>
+          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={preview}
+            alt="포스터 미리보기"
+            className="w-full max-h-96 object-contain"
+          />
+          <div className="absolute top-2 right-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-medium text-gray-700 shadow hover:bg-white transition-colors border border-gray-200"
+            >
+              교체
+            </button>
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="rounded-lg bg-red-500/90 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-red-600 transition-colors"
+            >
+              삭제
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="mt-1.5 text-xs text-red-600">{error}</p>
+      )}
+
+      {/* 숨겨진 파일 인풋 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) upload(file);
+        }}
+      />
     </div>
   );
 }
