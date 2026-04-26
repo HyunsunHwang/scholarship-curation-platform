@@ -5,6 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ── 브랜드 커스텀 팔레트 ── */
+  --color-brand:   #ff3131;
+  --color-ink:     #56352c;
+  --color-skyblue: #b3e4fb;
+  --color-peach:   #fea276;
+  --color-cream:   #fbeca8;
+  --color-beige:   #fff2df;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -49,24 +57,24 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #fff2df;
+  --foreground: #56352c;
+  --card: #ffffff;
+  --card-foreground: #56352c;
+  --popover: #ffffff;
+  --popover-foreground: #56352c;
+  --primary: #ff3131;
+  --primary-foreground: #ffffff;
+  --secondary: #fbeca8;
+  --secondary-foreground: #56352c;
+  --muted: #fdf5e8;
+  --muted-foreground: #8a6555;
+  --accent: #b3e4fb;
+  --accent-foreground: #56352c;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #e8d9c8;
+  --input: #e8d9c8;
+  --ring: #fea276;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

@@ -54,15 +54,15 @@ export default function ScholarshipDashboard({
   }, [scholarships, searchQuery, sortBy]);
 
   return (
-    <section id="scholarships" className="bg-gray-50 py-16">
+    <section id="scholarships" className="bg-beige py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{heading}</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-2xl font-bold text-ink">{heading}</h2>
+            <p className="mt-1 text-sm text-ink/60">
               총{" "}
-              <span className="font-semibold text-indigo-600">
+              <span className="font-semibold text-brand">
                 {filtered.length}개
               </span>
               의 장학금
@@ -70,13 +70,13 @@ export default function ScholarshipDashboard({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">정렬:</span>
+            <span className="text-sm text-ink/60">정렬:</span>
             <button
               onClick={() => setSortBy("deadline")}
               className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                 sortBy === "deadline"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  ? "bg-brand text-white"
+                  : "bg-white text-ink/70 hover:bg-[#fbeca8] border border-[#e8d9c8]"
               }`}
             >
               마감임박순
@@ -85,8 +85,8 @@ export default function ScholarshipDashboard({
               onClick={() => setSortBy("amount")}
               className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                 sortBy === "amount"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  ? "bg-brand text-white"
+                  : "bg-white text-ink/70 hover:bg-[#fbeca8] border border-[#e8d9c8]"
               }`}
             >
               금액순
@@ -96,7 +96,7 @@ export default function ScholarshipDashboard({
 
         {/* 검색 */}
         <div className="mt-6 relative max-w-xl">
-          <span className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400">
+          <span className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -117,7 +117,7 @@ export default function ScholarshipDashboard({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="장학금 이름 또는 기관명 검색"
-            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-10 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none ring-indigo-500/0 transition-shadow focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
+            className="w-full rounded-xl border border-[#e8d9c8] bg-white py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-ink/40 shadow-sm outline-none transition-shadow focus:border-[#fea276] focus:ring-2 focus:ring-[#fea276]/20"
             autoComplete="off"
             aria-label="장학금 검색"
           />
@@ -125,7 +125,7 @@ export default function ScholarshipDashboard({
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-[#fbeca8] hover:text-ink"
               aria-label="검색어 지우기"
             >
               <svg
@@ -151,10 +151,10 @@ export default function ScholarshipDashboard({
           <div className="mt-16 flex flex-col items-center justify-center gap-3 text-center">
             {scholarships.length === 0 ? (
               <>
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fbeca8]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-gray-400"
+                    className="h-8 w-8 text-peach"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -167,19 +167,19 @@ export default function ScholarshipDashboard({
                     />
                   </svg>
                 </div>
-                <p className="text-base font-semibold text-gray-900">
+                <p className="text-base font-semibold text-ink">
                   등록된 장학금이 없습니다
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-ink/50">
                   관리자 패널에서 장학금을 추가해보세요.
                 </p>
               </>
             ) : (
               <>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-lg font-medium text-ink">
                   검색 결과가 없습니다.
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-ink/50">
                   다른 검색어로 시도하거나 검색어를 지워 전체 목록을 보세요.
                 </p>
               </>

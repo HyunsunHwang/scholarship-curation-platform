@@ -57,29 +57,29 @@ export default async function MatchedPage() {
     }));
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-beige">
       <Navbar />
 
       <main className="flex-1">
         {/* 상단 헤더 배너 */}
-        <div className="bg-white border-b border-gray-100 py-8">
+        <div className="bg-white border-b border-[#e8d9c8] py-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-1">
                   맞춤 큐레이션
                 </p>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-ink">
                   {profile.name ? `${profile.name}님` : "나"}에게 맞는 장학금
                 </h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-ink/60">
                   프로필 정보를 기반으로 자격 조건이 충족되는 장학금만 모았습니다.
                 </p>
               </div>
               <div className="flex gap-3 shrink-0">
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e8d9c8] bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fbeca8]/50 transition-colors"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
@@ -88,7 +88,7 @@ export default async function MatchedPage() {
                 </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e8d9c8] bg-white px-4 py-2 text-sm font-medium text-ink/60 hover:bg-[#fbeca8]/50 transition-colors"
                 >
                   전체 보기
                 </Link>
@@ -97,7 +97,7 @@ export default async function MatchedPage() {
 
             {/* 오류 안내 */}
             {error && (
-              <div className="mt-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              <div className="mt-4 rounded-lg bg-brand/10 border border-brand/30 px-4 py-3 text-sm text-brand">
                 매칭 중 오류가 발생했습니다: {error.message}
               </div>
             )}
@@ -107,25 +107,25 @@ export default async function MatchedPage() {
         {/* 결과 없음 상태 */}
         {!error && scholarships.length === 0 ? (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 mb-4">
-              <svg className="h-8 w-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fbeca8] mb-4">
+              <svg className="h-8 w-8 text-peach" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6" />
               </svg>
             </div>
-            <p className="text-lg font-semibold text-gray-900">현재 조건에 맞는 장학금이 없습니다</p>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="text-lg font-semibold text-ink">현재 조건에 맞는 장학금이 없습니다</p>
+            <p className="mt-2 text-sm text-ink/60">
               프로필 정보를 최신 상태로 업데이트하거나, 전체 장학금 목록을 확인해보세요.
             </p>
             <div className="mt-6 flex justify-center gap-3">
               <Link
                 href="/onboarding"
-                className="inline-flex items-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center rounded-lg bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-brand/85 transition-colors"
               >
                 프로필 업데이트
               </Link>
               <Link
                 href="/"
-                className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center rounded-lg border border-[#e8d9c8] bg-white px-5 py-2.5 text-sm font-medium text-ink hover:bg-[#fbeca8]/50 transition-colors"
               >
                 전체 장학금 보기
               </Link>
@@ -140,16 +140,16 @@ export default async function MatchedPage() {
         )}
       </main>
 
-      <footer className="border-t border-gray-100 bg-white py-8">
+      <footer className="border-t border-[#e8d9c8] bg-[#fff2df] py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-indigo-600">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-brand">
                 <span className="text-xs font-bold text-white">K</span>
               </div>
-              <span className="text-sm font-semibold text-gray-700">쿠넥트</span>
+              <span className="text-sm font-semibold text-ink">쿠넥트</span>
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-ink/40">
               © 2026 쿠넥트. 장학금 정보는 각 기관의 공식 발표를 기준으로 합니다.
             </p>
           </div>

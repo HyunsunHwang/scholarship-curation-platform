@@ -214,7 +214,7 @@ export default function ScholarshipForm({
         <button
           type="submit"
           disabled={isPending}
-          className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
+          className="px-6 py-2.5 bg-brand text-white text-sm font-semibold rounded-lg hover:bg-brand/85 disabled:opacity-60 transition-colors"
         >
           {isPending ? "저장 중..." : submitLabel}
         </button>

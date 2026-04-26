@@ -58,14 +58,14 @@ function PosterUrlCell({
             setError("");
           }}
           placeholder="https://..."
-          className="min-w-0 flex-1 rounded border border-gray-200 px-2 py-1.5 text-xs text-gray-900 placeholder:text-gray-400 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+          className="min-w-0 flex-1 rounded border border-[#e8d9c8] px-2 py-1.5 text-xs text-ink placeholder:text-ink/40 outline-none focus:border-peach focus:ring-1 focus:ring-[#fea276]/20"
           disabled={pending}
         />
         <button
           type="button"
           onClick={save}
           disabled={pending}
-          className="shrink-0 rounded border border-blue-200 bg-blue-50 px-2 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+          className="shrink-0 rounded border border-skyblue/60 bg-skyblue/30 px-2 py-1.5 text-xs font-medium text-ink hover:bg-skyblue/60 disabled:opacity-50"
         >
           {pending ? "..." : "저장"}
         </button>

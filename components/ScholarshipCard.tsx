@@ -18,15 +18,15 @@ export type CardScholarship = {
 };
 
 const institutionGradient: Record<string, string> = {
-  국가기관: "from-indigo-400 to-blue-700",
-  공공기관: "from-blue-400 to-cyan-600",
-  지방자치단체: "from-orange-400 to-amber-600",
-  기업: "from-violet-400 to-purple-600",
-  재단법인: "from-emerald-400 to-teal-600",
-  학교법인: "from-cyan-400 to-sky-600",
-  "언론/방송": "from-red-400 to-rose-600",
-  종교단체: "from-yellow-400 to-amber-600",
-  기타: "from-gray-400 to-gray-600",
+  국가기관:     "from-[#ff3131] to-[#c00000]",
+  공공기관:     "from-[#b3e4fb] to-[#5ab8e8]",
+  지방자치단체: "from-[#fea276] to-[#e06030]",
+  기업:         "from-violet-400 to-purple-600",
+  재단법인:     "from-emerald-400 to-teal-600",
+  학교법인:     "from-[#fbeca8] to-[#f0c040]",
+  "언론/방송":  "from-rose-400 to-red-600",
+  종교단체:     "from-[#fbeca8] to-[#fea276]",
+  기타:         "from-stone-300 to-stone-500",
 };
 
 function getDaysUntilDeadline(dateStr: string): number {
@@ -50,18 +50,17 @@ function formatDeadline(dateStr: string): string {
   if (days < 0) return "마감됨";
   if (days === 0) return "오늘 마감";
   if (days <= 7) return `D-${days} · 마감 임박`;
-  // yyyy-mm-dd → mm월 dd일
   const [, m, d] = dateStr.split("-");
   return `${parseInt(m)}월 ${parseInt(d)}일 마감`;
 }
 
 function deadlineColor(dateStr: string): string {
-  if (isAlwaysOpenRecruitment(dateStr)) return "text-indigo-600";
+  if (isAlwaysOpenRecruitment(dateStr)) return "text-brand";
   const days = getDaysUntilDeadline(dateStr);
-  if (days < 0) return "text-gray-400";
-  if (days <= 7) return "text-red-500";
-  if (days <= 30) return "text-amber-600";
-  return "text-gray-500";
+  if (days < 0) return "text-ink/40";
+  if (days <= 7) return "text-brand";
+  if (days <= 30) return "text-[#e07030]";
+  return "text-ink/50";
 }
 
 export default function ScholarshipCard({
@@ -75,7 +74,7 @@ export default function ScholarshipCard({
   const [isPending, startTransition] = useTransition();
 
   const gradient =
-    institutionGradient[scholarship.institution_type] ?? "from-gray-400 to-gray-600";
+    institutionGradient[scholarship.institution_type] ?? "from-stone-300 to-stone-500";
 
   function handleBookmark(e: React.MouseEvent) {
     e.preventDefault();
@@ -118,14 +117,14 @@ export default function ScholarshipCard({
           </div>
         )}
 
-        {/* 기관명 — 이미지 좌측 하단 오버레이 */}
+        {/* 기관명 오버레이 */}
         <div className="absolute bottom-3 left-3 max-w-[70%]">
           <span className="inline-block rounded-full bg-black/40 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm truncate max-w-full">
             {scholarship.organization}
           </span>
         </div>
 
-        {/* 북마크 버튼 (에어비엔비 스타일 — 이미지 위 오버레이) */}
+        {/* 북마크 버튼 */}
         <button
           type="button"
           onClick={handleBookmark}
@@ -138,7 +137,7 @@ export default function ScholarshipCard({
             viewBox="0 0 24 24"
             className={`h-6 w-6 drop-shadow-sm transition-colors ${
               bookmarked
-                ? "fill-indigo-500 stroke-indigo-500"
+                ? "fill-brand stroke-brand"
                 : "fill-black/20 stroke-white"
             }`}
             strokeWidth={1.8}
@@ -157,16 +156,11 @@ export default function ScholarshipCard({
         href={`/scholarships/${scholarship.id}`}
         className="mt-3 flex flex-col gap-0.5"
       >
-        {/* 장학금 이름 */}
-        <p className="text-sm font-semibold leading-snug text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+        <p className="text-sm font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors">
           {scholarship.name}
         </p>
-
-        {/* 마감일 */}
         <p className={`mt-0.5 text-xs font-medium ${color}`}>{deadlineLabel}</p>
-
-        {/* 지원 금액 */}
-        <p className="mt-1 text-sm font-bold text-gray-900">
+        <p className="mt-1 text-sm font-bold text-ink">
           {formatAmount(scholarship.support_amount)}
         </p>
       </Link>

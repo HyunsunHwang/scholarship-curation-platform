@@ -23,14 +23,14 @@ export default async function Navbar() {
   const displayName = profile?.name ?? user?.email ?? "";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+    <header className="sticky top-0 z-50 w-full border-b border-[#e8d9c8] bg-[#fff2df]/95 backdrop-blur supports-backdrop-filter:bg-[#fff2df]/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand">
             <span className="text-sm font-bold text-white">K</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-gray-900">
+          <span className="text-lg font-bold tracking-tight text-ink">
             쿠넥트
           </span>
         </Link>
@@ -43,7 +43,7 @@ export default async function Navbar() {
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#fea276]/60 bg-[#fbeca8] px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-[#fea276]/40"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,7 @@ export default async function Navbar() {
               <Link
                 href="/mypage"
                 aria-label="마이페이지"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-indigo-600"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-ink/60 transition-colors hover:bg-[#fbeca8] hover:text-brand"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -93,20 +93,20 @@ export default async function Navbar() {
               {/* 유저 아바타 + 이름 */}
               <Link
                 href="/mypage"
-                className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-gray-50"
+                className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-[#fbeca8]"
               >
                 <div
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                    isAdmin ? "bg-indigo-600" : "bg-gray-400"
+                    isAdmin ? "bg-brand" : "bg-peach"
                   }`}
                 >
                   {displayName.charAt(0).toUpperCase()}
                 </div>
-                <span className="hidden text-sm font-medium text-gray-700 sm:block max-w-[120px] truncate">
+                <span className="hidden text-sm font-medium text-ink sm:block max-w-[120px] truncate">
                   {displayName}
                 </span>
                 {isAdmin && (
-                  <span className="hidden sm:inline-flex items-center rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-bold text-indigo-700">
+                  <span className="hidden sm:inline-flex items-center rounded-full bg-[#fbeca8] px-1.5 py-0.5 text-[10px] font-bold text-brand">
                     ADMIN
                   </span>
                 )}
@@ -116,7 +116,7 @@ export default async function Navbar() {
               <form action={logout}>
                 <button
                   type="submit"
-                  className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                  className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-ink/60 transition-colors hover:bg-[#fbeca8] hover:text-ink"
                 >
                   로그아웃
                 </button>
@@ -126,13 +126,13 @@ export default async function Navbar() {
             <>
               <Link
                 href="/auth"
-                className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-ink/70 transition-colors hover:bg-[#fbeca8] hover:text-ink"
               >
                 로그인
               </Link>
               <Link
                 href="/auth"
-                className="inline-flex h-7 items-center rounded-lg bg-indigo-600 px-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                className="inline-flex h-7 items-center rounded-lg bg-brand px-2.5 text-sm font-medium text-white transition-colors hover:bg-brand/85"
               >
                 회원가입
               </Link>
