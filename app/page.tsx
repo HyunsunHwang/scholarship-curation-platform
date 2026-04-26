@@ -41,20 +41,11 @@ export default async function Home() {
     bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
   }
 
-  // Hero 통계 계산 (전액 장학금은 700만원으로 추산)
-  const list = homeScholarships;
-  const totalAmountMan = list.reduce((sum, s) => {
-    const man = s.support_amount / 10000;
-    return sum + (man === 0 ? 700 : man);
-  }, 0);
-
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
         <Hero
-          scholarshipCount={list.length}
-          totalAmountMan={Math.round(totalAmountMan)}
           isLoggedIn={!!user}
         />
         <ScholarshipDashboard

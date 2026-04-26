@@ -1,16 +1,10 @@
 import Link from "next/link";
 
 type HeroProps = {
-  scholarshipCount: number;
-  totalAmountMan: number;
   isLoggedIn: boolean;
 };
 
-export default function Hero({ scholarshipCount, totalAmountMan, isLoggedIn }: HeroProps) {
-  const totalDisplay =
-    totalAmountMan >= 10000
-      ? `${(totalAmountMan / 10000).toFixed(0)}억+`
-      : `${totalAmountMan.toLocaleString()}만+`;
+export default function Hero({ isLoggedIn }: HeroProps) {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#fff2df] via-[#fbeca8]/60 to-[#fea276]/30 pt-16 pb-0">
@@ -82,79 +76,47 @@ export default function Hero({ scholarshipCount, totalAmountMan, isLoggedIn }: H
             </div>
           </div>
 
-          {/* ── 우측: 추천 카드 목업 ── */}
+          {/* ── 우측: 평균 지원금 돋보기 ── */}
           <div className="relative hidden lg:flex lg:justify-center lg:pb-10">
-            {/* 장식 */}
+            {/* 장식 이모지 */}
             <div className="absolute -top-4 left-10 text-3xl select-none animate-bounce" style={{ animationDuration: "3s" }}>🎓</div>
             <div className="absolute top-16 -right-2 text-2xl select-none animate-bounce" style={{ animationDuration: "4s", animationDelay: "1s" }}>🌸</div>
             <div className="absolute bottom-8 left-4 text-xl select-none animate-bounce" style={{ animationDuration: "3.5s", animationDelay: "0.5s" }}>⭐</div>
 
-            {/* 카드 */}
-            <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl shadow-[#fea276]/20 border border-[#e8d9c8]">
-              <div className="mb-4">
-                <p className="text-base font-bold text-ink">안녕하세요! 👋</p>
-                <p className="mt-0.5 text-xs text-ink/50">당신에게 추천하는 장학금이에요.</p>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                {[
-                  { icon: "🎓", name: "미래 인재 장학금", amount: "500만원", d: "D-15", pct: 95, color: "text-emerald-700 bg-emerald-50" },
-                  { icon: "🌸", name: "꿈나무 장학금",   amount: "300만원", d: "D-7",  pct: 90, color: "text-brand bg-[#fff2df]" },
-                  { icon: "⭐", name: "지역 인재 장학금", amount: "400만원", d: "D-20", pct: 85, color: "text-ink bg-skyblue/40" },
-                ].map((item) => (
-                  <div key={item.name} className="flex items-center justify-between rounded-xl bg-[#fff2df] px-3.5 py-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{item.icon}</span>
-                      <div>
-                        <p className="text-xs font-semibold text-ink">{item.name}</p>
-                        <p className="text-[11px] text-ink/50">{item.amount} · {item.d}</p>
-                      </div>
-                    </div>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${item.color}`}>
-                      추천도 {item.pct}%
-                    </span>
+            <div className="flex flex-col items-center gap-6">
+              {/* 돋보기 */}
+              <div className="relative flex items-center justify-center">
+                {/* 손잡이 */}
+                <div
+                  className="absolute z-0 h-[56px] w-[22px] rounded-full bg-[#56352c]/80"
+                  style={{ bottom: "-36px", right: "30px", transform: "rotate(40deg)", transformOrigin: "top center" }}
+                />
+                {/* 렌즈 원 */}
+                <div className="relative z-10 flex h-56 w-56 flex-col items-center justify-center rounded-full bg-ink shadow-2xl overflow-hidden">
+                  {/* 장식 원들 */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 opacity-30">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-7 w-7 rounded-full bg-white/60" />
+                    ))}
                   </div>
-                ))}
+                  {/* 텍스트 */}
+                  <p className="relative z-10 text-sm font-medium text-white/70">평균</p>
+                  <p className="relative z-10 text-3xl font-extrabold tracking-tight text-white leading-tight">
+                    300만원
+                  </p>
+                  <p className="relative z-10 mt-1 text-[11px] text-white/50">장학금 지원 혜택*</p>
+                </div>
               </div>
 
-              {/* 브랜드 아이콘 */}
-              <div className="absolute -bottom-5 -right-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-2xl shadow-lg shadow-brand/30">
-                🤖
-              </div>
+              {/* 안내 문구 */}
+              <p className="text-center text-xs text-ink/40 leading-relaxed">
+                *플랫폼 등록 장학금 기준 평균 지원 금액
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── 통계 바 ── */}
-      <div className="mt-4 border-t border-[#e8d9c8]/60 bg-white/60 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 divide-x divide-[#e8d9c8] py-6">
-            <div className="flex flex-col items-center gap-0.5 px-4 text-center">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbeca8] text-lg">📄</div>
-              <p className="mt-1.5 text-2xl font-extrabold text-ink">
-                {scholarshipCount > 0 ? `${scholarshipCount}+` : "—"}
-              </p>
-              <p className="text-xs text-ink/60">등록된 장학금</p>
-              <p className="text-[10px] text-ink/40">다양한 장학금을 한 곳에서</p>
-            </div>
-            <div className="flex flex-col items-center gap-0.5 px-4 text-center">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fea276]/30 text-lg">💰</div>
-              <p className="mt-1.5 text-2xl font-extrabold text-ink">
-                {totalAmountMan > 0 ? totalDisplay : "—"}
-              </p>
-              <p className="text-xs text-ink/60">총 장학금 규모</p>
-              <p className="text-[10px] text-ink/40">더 많은 기회, 더 큰 꿈을 위해</p>
-            </div>
-            <div className="flex flex-col items-center gap-0.5 px-4 text-center">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-skyblue/40 text-lg">🔄</div>
-              <p className="mt-1.5 text-2xl font-extrabold text-ink">매일</p>
-              <p className="text-xs text-ink/60">새로운 장학금 업데이트</p>
-              <p className="text-[10px] text-ink/40">놓치지 않고 최신 정보를 받아보세요</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
