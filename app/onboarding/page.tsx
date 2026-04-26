@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { loadProfile, saveProfile, type OnboardingFormData } from "./actions";
 
-// ?€?€ Kakao Postcode ?€???€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ Kakao Postcode íƒ€ì… â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 declare global {
   interface Window {
     daum: {
@@ -19,7 +19,7 @@ declare global {
   }
 }
 
-// ?€?€ ì£¼ì†Œ ê²€??ëª¨ë‹¬ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ì£¼ì†Œ ê²€ìƒ‰ ëª¨ë‹¬ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AddressModal({
   onSelect,
   onClose,
@@ -42,8 +42,8 @@ function AddressModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
       <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <h3 className="text-sm font-semibold text-gray-900">ì£¼ì†Œ ê²€??/h3>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">??/button>
+          <h3 className="text-sm font-semibold text-gray-900">ì£¼ì†Œ ê²€ìƒ‰</h3>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">âœ•</button>
         </div>
         <div ref={containerRef} style={{ height: 460 }} />
       </div>
@@ -51,37 +51,37 @@ function AddressModal({
   );
 }
 
-// ?€?€ ?ìˆ˜ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ìƒìˆ˜ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const THIS_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - 18 - i));
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1));
 
-const SCHOOL_CATEGORIES = ["4?„ì œ", "?„ë¬¸?€", "?€?™ì›", "?¬ì´ë²„ë?", "ë°©í†µ?€"];
-const ENROLLMENT_STATUSES = ["? ì…??, "?¬í•™", "?´í•™", "ì´ˆê³¼?™ê¸°", "?˜ë£Œ", "ì¡¸ì—…? ì˜ˆ", "ì¡¸ì—…"];
+const SCHOOL_CATEGORIES = ["4ë…„ì œ", "ì „ë¬¸ëŒ€", "ëŒ€í•™ì›", "ì‚¬ì´ë²„ëŒ€", "ë°©í†µëŒ€"];
+const ENROLLMENT_STATUSES = ["ì‹ ì…í•™", "ì¬í•™", "íœ´í•™", "ì´ˆê³¼í•™ê¸°", "ìˆ˜ë£Œ", "ì¡¸ì—…ìœ ì˜ˆ", "ì¡¸ì—…"];
 const ACADEMIC_YEARS = [
-  { value: "1", label: "1?™ë…„" }, { value: "2", label: "2?™ë…„" },
-  { value: "3", label: "3?™ë…„" }, { value: "4", label: "4?™ë…„" },
-  { value: "5", label: "ì´ˆê³¼?™ê¸° ?´ìƒ" },
+  { value: "1", label: "1í•™ë…„" }, { value: "2", label: "2í•™ë…„" },
+  { value: "3", label: "3í•™ë…„" }, { value: "4", label: "4í•™ë…„" },
+  { value: "5", label: "ì´ˆê³¼í•™ê¸° ì´ìƒ" },
 ];
 const INCOME_LEVELS = [
-  { value: "0", label: "0êµ¬ê°„ (ê¸°ì´ˆ/ì°¨ìƒ??" },
+  { value: "0", label: "0êµ¬ê°„ (ê¸°ì´ˆ/ì°¨ìƒìœ„)" },
   ...Array.from({ length: 10 }, (_, i) => ({ value: String(i + 1), label: `${i + 1}êµ¬ê°„` })),
-  { value: "unknown", label: "ë¯¸íŒŒ?? },
+  { value: "unknown", label: "ë¯¸íŒŒì•…" },
 ];
 const SPECIAL_INFO_OPTIONS = [
-  "?¤ë¬¸?”ê???, "ê¸°ì´ˆ?í™œ?˜ê¸‰??, "ì°¨ìƒ?„ê³„ì¸?, "?¥ì• ??, "?ˆí„°ë¯?,
-  "?ì–´ì´Œì?€", "ë³´í›ˆ?€?ì", "ì¡°ë?ëª¨ê???, "?¤ì?€", "?œë?ëª¨ê???,
-  "?™ìƒê°€??, "ë¶í•œ?´íƒˆì£¼ë?", "?ë¦½ì¤€ë¹„ì²­??,
+  "ë‹¤ë¬¸í™”ê°€ì •", "ê¸°ì´ˆìƒí™œìˆ˜ê¸‰ì", "ì°¨ìƒìœ„ê³„ì¸µ", "ì¥ì• ì¸", "ìƒˆí„°ë¯¼",
+  "ë†ì–´ì´Œìë…€", "ë³´í›ˆëŒ€ìƒì", "ì¡°ë¶€ëª¨ê°€ì •", "ë‹¤ìë…€", "í•œë¶€ëª¨ê°€ì •",
+  "í•™ìƒê°€ì¥", "ë¶í•œì´íƒˆì£¼ë¯¼", "ìë¦½ì¤€ë¹„ì²­ë…„",
 ];
 const PARENT_OCCUPATION_OPTIONS = [
-  "ì§ì—…êµ°ì¸", "êµ°ë¬´??, "?ì¶•?´ì—…??, "ê±´ì„¤ê·¼ë¡œ??, "?Œìƒê³µì¸",
-  "ê²½ì°°/?Œë°©ê´€", "?ë°°ê¸°ì‚¬", "?˜ê²½ë¯¸í™”??, "?°ê·¹??,
+  "ì§ì—…êµ°ì¸", "êµ°ë¬´ì›", "ë†ì¶•ì–´ì—…ì¸", "ê±´ì„¤ê·¼ë¡œì", "ì†Œìƒê³µì¸",
+  "ê²½ì°°/ì†Œë°©ê´€", "íƒë°°ê¸°ì‚¬", "í™˜ê²½ë¯¸í™”ì›", "ì—°ê·¹ì¸",
 ];
-const MILITARY_STATUS_OPTIONS = ["êµ°í•„", "ë¯¸í•„", "ë¹„ë???, "ë©´ì œ"];
-const STEPS = ["?¸ì ?¬í•­", "?™ì ?¬í•­", "?¬ì •/ê°€ê³?, "ê¸°í?/?¹ìˆ˜"];
+const MILITARY_STATUS_OPTIONS = ["êµ°í•„", "ë¯¸í•„", "ë¹„ëŒ€ìƒ", "ë©´ì œ"];
+const STEPS = ["ì¸ì ì‚¬í•­", "í•™ì ì‚¬í•­", "ì¬ì •/ê°€ê³„", "ê¸°íƒ€/íŠ¹ìˆ˜"];
 
-// ?€?€ ? í‹¸ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ìœ í‹¸ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 11);
   if (digits.length <= 3) return digits;
@@ -89,7 +89,7 @@ function formatPhone(value: string) {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
 }
 
-// ?€?€ ê³µí†µ ì»´í¬?ŒíŠ¸ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ê³µí†µ ì»´í¬ë„ŒíŠ¸ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Field({ label, optional = false, children }: {
   label: string; optional?: boolean; children: React.ReactNode;
 }) {
@@ -97,7 +97,7 @@ function Field({ label, optional = false, children }: {
     <div className="flex flex-col gap-1.5">
       <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
         {label}
-        {optional && <span className="text-xs font-normal text-gray-400">? íƒ</span>}
+        {optional && <span className="text-xs font-normal text-gray-400">ì„ íƒ</span>}
       </label>
       {children}
     </div>
@@ -108,7 +108,7 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-gray-50 disabled:text-gray-400"
+      className="w-full rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-beige disabled:text-ink/40"
     />
   );
 }
@@ -117,7 +117,7 @@ function SelectInput({ children, ...props }: React.SelectHTMLAttributes<HTMLSele
   return (
     <select
       {...props}
-      className="w-full cursor-pointer appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+      className="w-full cursor-pointer appearance-none rounded-lg border border-[#e8d9c8] bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-beige disabled:text-ink/40 disabled:cursor-not-allowed"
     >
       {children}
     </select>
@@ -134,7 +134,7 @@ function RadioChip({ label, selected, onClick }: {
       className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
         selected
           ? "border-brand bg-brand/10 text-brand"
-          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+          : "border-[#e8d9c8] bg-white text-ink/70 hover:border-[#fea276]/60 hover:bg-[#fbeca8]/40"
       }`}
     >
       {label}
@@ -152,7 +152,7 @@ function CheckChip({ label, selected, onClick }: {
       className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all ${
         selected
           ? "border-brand bg-brand text-white"
-          : "border-gray-200 bg-white text-gray-600 hover:border-peach hover:text-brand"
+          : "border-[#e8d9c8] bg-white text-ink/70 hover:border-peach hover:text-brand"
       }`}
     >
       {label}
@@ -165,14 +165,14 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${on ? "bg-brand" : "bg-gray-200"}`}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${on ? "bg-brand" : "bg-[#e8d9c8]"}`}
     >
       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${on ? "translate-x-6" : "translate-x-1"}`} />
     </button>
   );
 }
 
-// ?€?€ ?¤í… ?¸ë””ì¼€?´í„° ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ìŠ¤í… ì¸ë””ì¼€ì´í„° â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function StepIndicator({ current, steps }: { current: number; steps: string[] }) {
   return (
     <div className="mb-8 flex items-center justify-center">
@@ -182,16 +182,16 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
             <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${
               i < current ? "bg-brand text-white"
               : i === current ? "bg-brand text-white ring-4 ring-brand/20"
-              : "bg-gray-100 text-gray-400"
+              : "bg-[#fbeca8] text-ink/50"
             }`}>
-              {i < current ? "?? : i + 1}
+              {i < current ? "âœ“" : i + 1}
             </div>
             <span className={`hidden text-xs font-medium sm:block ${
-              i === current ? "text-brand" : i < current ? "text-gray-600" : "text-gray-400"
+              i === current ? "text-brand" : i < current ? "text-ink/70" : "text-ink/40"
             }`}>{step}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`mx-2 mb-4 h-0.5 w-10 transition-all sm:w-16 ${i < current ? "bg-brand" : "bg-gray-200"}`} />
+            <div className={`mx-2 mb-4 h-0.5 w-10 transition-all sm:w-16 ${i < current ? "bg-brand" : "bg-[#e8d9c8]"}`} />
           )}
         </div>
       ))}
@@ -199,7 +199,7 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
   );
 }
 
-// ?€?€ Step 1: ?¸ì ?¬í•­ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ Step 1: ì¸ì ì‚¬í•­ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Step1({ form, update, openAddress }: {
   form: OnboardingFormData;
   update: <K extends keyof OnboardingFormData>(field: K, value: OnboardingFormData[K]) => void;
@@ -207,36 +207,36 @@ function Step1({ form, update, openAddress }: {
 }) {
   return (
     <div className="flex flex-col gap-5">
-      <Field label="?´ë¦„">
-        <TextInput value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="?ê¸¸?? />
+      <Field label="ì´ë¦„">
+        <TextInput value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="í™ê¸¸ë™" />
       </Field>
 
-      <Field label="?ë…„?”ì¼">
+      <Field label="ìƒë…„ì›”ì¼">
         <div className="flex gap-2">
           <SelectInput value={form.birth_year} onChange={(e) => update("birth_year", e.target.value)}>
-            <option value="">?„ë„</option>
-            {YEARS.map((y) => <option key={y} value={y}>{y}??/option>)}
+            <option value="">ë…„ë„</option>
+            {YEARS.map((y) => <option key={y} value={y}>{y}ë…„</option>)}
           </SelectInput>
           <SelectInput value={form.birth_month} onChange={(e) => update("birth_month", e.target.value)}>
-            <option value="">??/option>
-            {MONTHS.map((m) => <option key={m} value={m}>{m}??/option>)}
+            <option value="">ì›”</option>
+            {MONTHS.map((m) => <option key={m} value={m}>{m}ì›”</option>)}
           </SelectInput>
           <SelectInput value={form.birth_day} onChange={(e) => update("birth_day", e.target.value)}>
-            <option value="">??/option>
-            {DAYS.map((d) => <option key={d} value={d}>{d}??/option>)}
+            <option value="">ì¼</option>
+            {DAYS.map((d) => <option key={d} value={d}>{d}ì¼</option>)}
           </SelectInput>
         </div>
       </Field>
 
-      <Field label="?±ë³„">
+      <Field label="ì„±ë³„">
         <div className="flex gap-2">
-          {["?¨ì„±", "?¬ì„±"].map((g) => (
+          {["ë‚¨ì„±", "ì—¬ì„±"].map((g) => (
             <RadioChip key={g} label={g} selected={form.gender === g} onClick={() => update("gender", g)} />
           ))}
         </div>
       </Field>
 
-      <Field label="?°ë½ì²?>
+      <Field label="ì—°ë½ì²˜">
         <TextInput
           type="tel"
           value={form.phone}
@@ -248,26 +248,26 @@ function Step1({ form, update, openAddress }: {
 
       <Field label="ì£¼ì†Œì§€">
         <div className="flex gap-2">
-          <TextInput value={form.address} readOnly placeholder="ê²€??ë²„íŠ¼???ŒëŸ¬ ì£¼ì†Œë¥?? íƒ?´ì£¼?¸ìš”" />
+          <TextInput value={form.address} readOnly placeholder="ê²€ìƒ‰ ë²„íŠ¼ì„ ëˆŒëŸ¬ ì£¼ì†Œë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”" />
           <button
             type="button"
             onClick={openAddress}
-            className="shrink-0 rounded-lg border border-[#fea276]/60 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-[#fbeca8]"
+            className="shrink-0 rounded-lg border border-[#fea276]/60 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-[#fbeca8]/40"
           >
-            ê²€??
+            ê²€ìƒ‰
           </button>
         </div>
       </Field>
 
-      <Field label="êµ? ">
+      <Field label="êµ­ì ">
         <div className="flex gap-2">
-          {["?´êµ­??, "?¸êµ­??].map((n) => (
+          {["ë‚´êµ­ì¸", "ì™¸êµ­ì¸"].map((n) => (
             <RadioChip key={n} label={n} selected={form.nationality === n} onClick={() => update("nationality", n)} />
           ))}
         </div>
       </Field>
 
-      <Field label="ê¸°í˜¼ ?¬ë?" optional>
+      <Field label="ê¸°í˜¼ ì—¬ë¶€" optional>
         <div className="flex gap-2">
           {["ë¯¸í˜¼", "ê¸°í˜¼"].map((m) => (
             <RadioChip key={m} label={m} selected={form.marital_status === m}
@@ -279,7 +279,7 @@ function Step1({ form, update, openAddress }: {
   );
 }
 
-// ?€?€ Step 2: ?™ì ?¬í•­ (ê³„ì¸µ??? íƒ) ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ Step 2: í•™ì ì‚¬í•­ (ê³„ì¸µí˜• ì„ íƒ) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type PickItem = { id: number; name: string };
 
 function Step2({ form, update, updateMultiple }: {
@@ -295,9 +295,9 @@ function Step2({ form, update, updateMultiple }: {
   const [loadingC, setLoadingC] = useState(false);
   const [loadingD, setLoadingD] = useState(false);
 
-  // êµ?‚´ ?€??? íƒ ???€?™êµ ëª©ë¡ ë¡œë“œ
+  // êµ­ë‚´ ëŒ€í•™ ì„ íƒ ì‹œ ëŒ€í•™êµ ëª©ë¡ ë¡œë“œ
   useEffect(() => {
-    if (form.school_location !== "êµ?‚´ ?€??) return;
+    if (form.school_location !== "êµ­ë‚´ ëŒ€í•™") return;
     setLoadingU(true);
     createClient()
       .from("universities")
@@ -306,7 +306,7 @@ function Step2({ form, update, updateMultiple }: {
       .then(({ data }) => { setUniversities(data ?? []); setLoadingU(false); });
   }, [form.school_location]);
 
-  // ?€?™êµ ? íƒ ???¨ê³¼?€ ëª©ë¡ ë¡œë“œ
+  // ëŒ€í•™êµ ì„ íƒ ì‹œ ë‹¨ê³¼ëŒ€ ëª©ë¡ ë¡œë“œ
   useEffect(() => {
     setColleges([]);
     if (!form.university_id) return;
@@ -319,7 +319,7 @@ function Step2({ form, update, updateMultiple }: {
       .then(({ data }) => { setColleges(data ?? []); setLoadingC(false); });
   }, [form.university_id]);
 
-  // ?¨ê³¼?€ ? íƒ ???™ê³¼ ëª©ë¡ ë¡œë“œ (ë³¸ì „ê³?
+  // ë‹¨ê³¼ëŒ€ ì„ íƒ ì‹œ í•™ê³¼ ëª©ë¡ ë¡œë“œ (ë³¸ì „ê³µ)
   useEffect(() => {
     setDepartments([]);
     if (!form.college_id) return;
@@ -332,7 +332,7 @@ function Step2({ form, update, updateMultiple }: {
       .then(({ data }) => { setDepartments(data ?? []); setLoadingD(false); });
   }, [form.college_id]);
 
-  // ë³µìˆ˜?„ê³µ ?¨ê³¼?€ ? íƒ ???™ê³¼ ëª©ë¡ ë¡œë“œ
+  // ë³µìˆ˜ì „ê³µ ë‹¨ê³¼ëŒ€ ì„ íƒ ì‹œ í•™ê³¼ ëª©ë¡ ë¡œë“œ
   useEffect(() => {
     setDoubleDepts([]);
     if (!form.double_major_college_id) return;
@@ -344,14 +344,14 @@ function Step2({ form, update, updateMultiple }: {
       .then(({ data }) => setDoubleDepts(data ?? []));
   }, [form.double_major_college_id]);
 
-  const isKorean = form.school_location === "êµ?‚´ ?€??;
+  const isKorean = form.school_location === "êµ­ë‚´ ëŒ€í•™";
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ?™êµ ?Œì¬ */}
-      <Field label="?™êµ ?Œì¬">
+      {/* í•™êµ ì†Œì¬ */}
+      <Field label="í•™êµ ì†Œì¬">
         <div className="flex gap-2">
-          {["êµ?‚´ ?€??, "?´ì™¸ ?€??].map((l) => (
+          {["êµ­ë‚´ ëŒ€í•™", "í•´ì™¸ ëŒ€í•™"].map((l) => (
             <RadioChip key={l} label={l} selected={form.school_location === l}
               onClick={() => updateMultiple({
                 school_location: l,
@@ -365,18 +365,18 @@ function Step2({ form, update, updateMultiple }: {
         </div>
       </Field>
 
-      {/* ?™êµ ? í˜• */}
-      <Field label="?™êµ ? í˜•">
+      {/* í•™êµ ìœ í˜• */}
+      <Field label="í•™êµ ìœ í˜•">
         <SelectInput value={form.school_category} onChange={(e) => update("school_category", e.target.value)}>
-          <option value="">? íƒ?´ì£¼?¸ìš”</option>
+          <option value="">ì„ íƒí•´ì£¼ì„¸ìš”</option>
           {SCHOOL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </SelectInput>
       </Field>
 
       {isKorean ? (
         <>
-          {/* ???€?™êµ */}
-          <Field label="?Œì† ?€?™êµ">
+          {/* â‘  ëŒ€í•™êµ */}
+          <Field label="ì†Œì† ëŒ€í•™êµ">
             <SelectInput
               value={form.university_id}
               disabled={loadingU}
@@ -390,13 +390,13 @@ function Step2({ form, update, updateMultiple }: {
                 });
               }}
             >
-              <option value="">{loadingU ? "ë¶ˆëŸ¬?¤ëŠ” ì¤?.." : "?€?™êµ ? íƒ"}</option>
+              <option value="">{loadingU ? "ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘..." : "ëŒ€í•™êµ ì„ íƒ"}</option>
               {universities.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
             </SelectInput>
           </Field>
 
-          {/* ???¨ê³¼?€??*/}
-          <Field label="?Œì† ?¨ê³¼?€??>
+          {/* â‘¡ ë‹¨ê³¼ëŒ€í•™ */}
+          <Field label="ì†Œì† ë‹¨ê³¼ëŒ€í•™">
             <SelectInput
               value={form.college_id}
               disabled={!form.university_id || loadingC}
@@ -405,14 +405,14 @@ function Step2({ form, update, updateMultiple }: {
               }}
             >
               <option value="">
-                {!form.university_id ? "ë¨¼ì? ?€?™êµë¥?? íƒ?´ì£¼?¸ìš”" : loadingC ? "ë¶ˆëŸ¬?¤ëŠ” ì¤?.." : "?¨ê³¼?€??? íƒ"}
+                {!form.university_id ? "ë¨¼ì € ëŒ€í•™êµë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”" : loadingC ? "ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘..." : "ë‹¨ê³¼ëŒ€í•™ ì„ íƒ"}
               </option>
               {colleges.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </SelectInput>
           </Field>
 
-          {/* ???™ê³¼ (ë³¸ì „ê³? */}
-          <Field label="?Œì† ?™ê³¼ (ë³¸ì „ê³?">
+          {/* â‘¢ í•™ê³¼ (ë³¸ì „ê³µ) */}
+          <Field label="ì†Œì† í•™ê³¼ (ë³¸ì „ê³µ)">
             <SelectInput
               value={form.department_id}
               disabled={!form.college_id || loadingD}
@@ -423,14 +423,14 @@ function Step2({ form, update, updateMultiple }: {
               }}
             >
               <option value="">
-                {!form.college_id ? "ë¨¼ì? ?¨ê³¼?€?™ì„ ? íƒ?´ì£¼?¸ìš”" : loadingD ? "ë¶ˆëŸ¬?¤ëŠ” ì¤?.." : "?™ê³¼ ? íƒ"}
+                {!form.college_id ? "ë¨¼ì € ë‹¨ê³¼ëŒ€í•™ì„ ì„ íƒí•´ì£¼ì„¸ìš”" : loadingD ? "ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘..." : "í•™ê³¼ ì„ íƒ"}
               </option>
               {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </SelectInput>
           </Field>
 
-          {/* ë³µìˆ˜?„ê³µ ? ê? */}
-          <Field label="ë³µìˆ˜(?´ì¤‘/ë¶€)?„ê³µ" optional>
+          {/* ë³µìˆ˜ì „ê³µ í† ê¸€ */}
+          <Field label="ë³µìˆ˜(ì´ì¤‘/ë¶€)ì „ê³µ" optional>
             <div className="flex items-center gap-3">
               <Toggle
                 on={form.has_double_major}
@@ -447,17 +447,17 @@ function Step2({ form, update, updateMultiple }: {
                 }}
               />
               <span className="text-sm text-gray-600">
-                {form.has_double_major ? "?ˆìŒ" : "?†ìŒ"}
+                {form.has_double_major ? "ìˆìŒ" : "ì—†ìŒ"}
               </span>
             </div>
           </Field>
 
-          {/* ë³µìˆ˜?„ê³µ ?ì„¸ */}
+          {/* ë³µìˆ˜ì „ê³µ ìƒì„¸ */}
           {form.has_double_major && (
-            <div className="flex flex-col gap-4 rounded-xl border border-[#fea276]/30 bg-[#fbeca8]/40 p-4">
-              <p className="text-xs font-semibold text-brand">???„ê³µ ?•ë³´</p>
+            <div className="flex flex-col gap-4 rounded-xl border border-[#fea276]/30 bg-[#fbeca8]/30 p-4">
+              <p className="text-xs font-semibold text-brand">ì œ2ì „ê³µ ì •ë³´</p>
 
-              <Field label="?¨ê³¼?€??>
+              <Field label="ë‹¨ê³¼ëŒ€í•™">
                 <SelectInput
                   value={form.double_major_college_id}
                   disabled={!form.university_id}
@@ -467,12 +467,12 @@ function Step2({ form, update, updateMultiple }: {
                     double_major_department: "",
                   })}
                 >
-                  <option value="">?¨ê³¼?€??? íƒ</option>
+                  <option value="">ë‹¨ê³¼ëŒ€í•™ ì„ íƒ</option>
                   {colleges.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </SelectInput>
               </Field>
 
-              <Field label="?™ê³¼">
+              <Field label="í•™ê³¼">
                 <SelectInput
                   value={form.double_major_department_id}
                   disabled={!form.double_major_college_id}
@@ -482,7 +482,7 @@ function Step2({ form, update, updateMultiple }: {
                     updateMultiple({ double_major_department_id: id, double_major_department: name });
                   }}
                 >
-                  <option value="">?™ê³¼ ? íƒ</option>
+                  <option value="">í•™ê³¼ ì„ íƒ</option>
                   {doubleDepts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </SelectInput>
               </Field>
@@ -491,95 +491,95 @@ function Step2({ form, update, updateMultiple }: {
         </>
       ) : (
         <>
-          {/* ?´ì™¸ ?€?? ?ìŠ¤??ì§ì ‘ ?…ë ¥ */}
-          <Field label="?Œì† ?€?™êµ">
+          {/* í•´ì™¸ ëŒ€í•™: í…ìŠ¤íŠ¸ ì§ì ‘ ì…ë ¥ */}
+          <Field label="ì†Œì† ëŒ€í•™êµ">
             <TextInput
               value={form.school_name}
               onChange={(e) => update("school_name", e.target.value)}
-              placeholder="?? University of Toronto"
+              placeholder="ì˜ˆ: University of Toronto"
             />
           </Field>
-          <Field label="?Œì† ?™ê³¼">
+          <Field label="ì†Œì† í•™ê³¼">
             <TextInput
               value={form.department}
               onChange={(e) => update("department", e.target.value)}
-              placeholder="?? Computer Science"
+              placeholder="ì˜ˆ: Computer Science"
             />
           </Field>
         </>
       )}
 
-      {/* ?™ë…„ / ?™ê¸° */}
-      <Field label="?™ë…„ / ?™ê¸°">
+      {/* í•™ë…„ / í•™ê¸° */}
+      <Field label="í•™ë…„ / í•™ê¸°">
         <div className="flex gap-2">
           <SelectInput value={form.academic_year} onChange={(e) => update("academic_year", e.target.value)}>
-            <option value="">?™ë…„</option>
+            <option value="">í•™ë…„</option>
             {ACADEMIC_YEARS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
           </SelectInput>
           <SelectInput value={form.academic_semester} onChange={(e) => update("academic_semester", e.target.value)}>
-            <option value="">?™ê¸°</option>
-            <option value="1">1?™ê¸°</option>
-            <option value="2">2?™ê¸°</option>
+            <option value="">í•™ê¸°</option>
+            <option value="1">1í•™ê¸°</option>
+            <option value="2">2í•™ê¸°</option>
           </SelectInput>
         </div>
       </Field>
 
-      {/* ?¬í•™ ?íƒœ */}
-      <Field label="?¬í•™ ?íƒœ">
+      {/* ì¬í•™ ìƒíƒœ */}
+      <Field label="ì¬í•™ ìƒíƒœ">
         <SelectInput value={form.enrollment_status} onChange={(e) => update("enrollment_status", e.target.value)}>
-          <option value="">? íƒ?´ì£¼?¸ìš”</option>
+          <option value="">ì„ íƒí•´ì£¼ì„¸ìš”</option>
           {ENROLLMENT_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </SelectInput>
       </Field>
 
-      {/* ?™ì  */}
+      {/* í•™ì  */}
       <div className="grid grid-cols-2 gap-4">
-        <Field label="?„ì  ?™ì " optional>
+        <Field label="ëˆ„ì  í•™ì " optional>
           <TextInput
             type="number"
             value={form.gpa}
             onChange={(e) => update("gpa", e.target.value)}
-            placeholder="?? 3.8"
+            placeholder="ì˜ˆ: 3.8"
             min="0" max="4.5" step="0.01"
           />
         </Field>
-        <Field label="ì§ì „ ?™ê¸° ?™ì " optional>
+        <Field label="ì§ì „ í•™ê¸° í•™ì " optional>
           <TextInput
             type="number"
             value={form.gpa_last_semester}
             onChange={(e) => update("gpa_last_semester", e.target.value)}
-            placeholder="?? 4.1"
+            placeholder="ì˜ˆ: 4.1"
             min="0" max="4.5" step="0.01"
           />
         </Field>
       </div>
-      <p className="text-xs text-gray-400 -mt-2">4.5 ë§Œì  ê¸°ì??¼ë¡œ ?…ë ¥?´ì£¼?¸ìš”.</p>
+      <p className="text-xs text-gray-400 -mt-2">4.5 ë§Œì  ê¸°ì¤€ìœ¼ë¡œ ì…ë ¥í•´ì£¼ì„¸ìš”.</p>
     </div>
   );
 }
 
-// ?€?€ Step 3: ?¬ì •/ê°€ê³??€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ Step 3: ì¬ì •/ê°€ê³„ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Step3({ form, update }: {
   form: OnboardingFormData;
   update: <K extends keyof OnboardingFormData>(field: K, value: OnboardingFormData[K]) => void;
 }) {
   const householdOptions = [
-    { value: "1", label: "1?? }, { value: "2", label: "2?? },
-    { value: "3", label: "3?? }, { value: "4", label: "4?? },
-    { value: "5", label: "5???´ìƒ" },
+    { value: "1", label: "1ì¸" }, { value: "2", label: "2ì¸" },
+    { value: "3", label: "3ì¸" }, { value: "4", label: "4ì¸" },
+    { value: "5", label: "5ì¸ ì´ìƒ" },
   ];
   return (
     <div className="flex flex-col gap-6">
-      <Field label="?Œë“ë¶„ìœ„">
+      <Field label="ì†Œë“ë¶„ìœ„">
         <SelectInput value={form.income_level} onChange={(e) => update("income_level", e.target.value)}>
-          <option value="">? íƒ?´ì£¼?¸ìš”</option>
+          <option value="">ì„ íƒí•´ì£¼ì„¸ìš”</option>
           {INCOME_LEVELS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </SelectInput>
         <p className="text-xs text-gray-400">
-          ?œêµ­?¥í•™?¬ë‹¨ ê¸°ì? ?Œë“ë¶„ìœ„?…ë‹ˆ?? ëª¨ë¥´??ê²½ìš° &apos;ë¯¸íŒŒ??apos;??? íƒ?˜ì„¸??
+          í•œêµ­ì¥í•™ì¬ë‹¨ ê¸°ì¤€ ì†Œë“ë¶„ìœ„ì…ë‹ˆë‹¤. ëª¨ë¥´ì‹¤ ê²½ìš° &apos;ë¯¸íŒŒì•…&apos;ì„ ì„ íƒí•˜ì„¸ìš”.
         </p>
       </Field>
-      <Field label="ê°€êµ¬ì› ?? optional>
+      <Field label="ê°€êµ¬ì› ìˆ˜" optional>
         <div className="flex flex-wrap gap-2">
           {householdOptions.map(({ value, label }) => (
             <RadioChip key={value} label={label} selected={form.household_size === value}
@@ -591,7 +591,7 @@ function Step3({ form, update }: {
   );
 }
 
-// ?€?€ Step 4: ê¸°í?/?¹ìˆ˜ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ Step 4: ê¸°íƒ€/íŠ¹ìˆ˜ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Step4({ form, toggleArray, update }: {
   form: OnboardingFormData;
   toggleArray: (field: "special_info" | "parent_occupation", value: string) => void;
@@ -599,8 +599,8 @@ function Step4({ form, toggleArray, update }: {
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <Field label="?¹ìˆ˜?•ë³´" optional>
-        <p className="text-xs text-gray-400">?´ë‹¹?˜ëŠ” ??ª©??ëª¨ë‘ ? íƒ?´ì£¼?¸ìš”.</p>
+      <Field label="íŠ¹ìˆ˜ì •ë³´" optional>
+        <p className="text-xs text-gray-400">í•´ë‹¹ë˜ëŠ” í•­ëª©ì„ ëª¨ë‘ ì„ íƒí•´ì£¼ì„¸ìš”.</p>
         <div className="flex flex-wrap gap-2 pt-1">
           {SPECIAL_INFO_OPTIONS.map((opt) => (
             <CheckChip key={opt} label={opt} selected={form.special_info.includes(opt)}
@@ -609,7 +609,7 @@ function Step4({ form, toggleArray, update }: {
         </div>
       </Field>
       <Field label="ë¶€ëª¨ë‹˜ ì§ì—…" optional>
-        <p className="text-xs text-gray-400">?´ë‹¹?˜ëŠ” ??ª©??ëª¨ë‘ ? íƒ?´ì£¼?¸ìš”.</p>
+        <p className="text-xs text-gray-400">í•´ë‹¹ë˜ëŠ” í•­ëª©ì„ ëª¨ë‘ ì„ íƒí•´ì£¼ì„¸ìš”.</p>
         <div className="flex flex-wrap gap-2 pt-1">
           {PARENT_OCCUPATION_OPTIONS.map((opt) => (
             <CheckChip key={opt} label={opt} selected={form.parent_occupation.includes(opt)}
@@ -617,7 +617,7 @@ function Step4({ form, toggleArray, update }: {
           ))}
         </div>
       </Field>
-      <Field label="ë³‘ì—­?¬í•­" optional>
+      <Field label="ë³‘ì—­ì‚¬í•­" optional>
         <div className="flex flex-wrap gap-2">
           {MILITARY_STATUS_OPTIONS.map((opt) => (
             <RadioChip key={opt} label={opt} selected={form.military_status === opt}
@@ -626,13 +626,13 @@ function Step4({ form, toggleArray, update }: {
         </div>
       </Field>
       <div className="rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-        ?…ë ¥?˜ì‹  ?•ë³´???¥í•™ê¸?ë§¤ì¹­?ë§Œ ?œìš©?˜ë©°, ?¸ë???ê³µê°œ?˜ì? ?ŠìŠµ?ˆë‹¤.
+        ì…ë ¥í•˜ì‹  ì •ë³´ëŠ” ì¥í•™ê¸ˆ ë§¤ì¹­ì—ë§Œ í™œìš©ë˜ë©°, ì™¸ë¶€ì— ê³µê°œë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
       </div>
     </div>
   );
 }
 
-// ?€?€ ì´ˆê¸°ê°?& ê²€ì¦??€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ì´ˆê¸°ê°’ & ê²€ì¦ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const INITIAL_FORM: OnboardingFormData = {
   name: "", birth_year: "", birth_month: "", birth_day: "",
   gender: "", phone: "", address: "", nationality: "", marital_status: "",
@@ -648,39 +648,39 @@ const INITIAL_FORM: OnboardingFormData = {
 
 function validateStep(step: number, form: OnboardingFormData): string {
   if (step === 0) {
-    if (!form.name.trim()) return "?´ë¦„???…ë ¥?´ì£¼?¸ìš”.";
-    if (!form.birth_year || !form.birth_month || !form.birth_day) return "?ë…„?”ì¼??? íƒ?´ì£¼?¸ìš”.";
-    if (!form.gender) return "?±ë³„??? íƒ?´ì£¼?¸ìš”.";
-    if (!form.phone) return "?°ë½ì²˜ë? ?…ë ¥?´ì£¼?¸ìš”.";
-    if (!form.address) return "ì£¼ì†Œì§€ë¥??…ë ¥?´ì£¼?¸ìš”.";
-    if (!form.nationality) return "êµ? ??? íƒ?´ì£¼?¸ìš”.";
+    if (!form.name.trim()) return "ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+    if (!form.birth_year || !form.birth_month || !form.birth_day) return "ìƒë…„ì›”ì¼ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (!form.gender) return "ì„±ë³„ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (!form.phone) return "ì—°ë½ì²˜ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+    if (!form.address) return "ì£¼ì†Œì§€ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+    if (!form.nationality) return "êµ­ì ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
   }
   if (step === 1) {
-    if (!form.school_location) return "?™êµ ?Œì¬ë¥?? íƒ?´ì£¼?¸ìš”.";
-    if (!form.school_category) return "?™êµ ? í˜•??? íƒ?´ì£¼?¸ìš”.";
-    if (form.school_location === "êµ?‚´ ?€??) {
-      if (!form.university_id) return "?€?™êµë¥?? íƒ?´ì£¼?¸ìš”.";
-      if (!form.college_id) return "?¨ê³¼?€?™ì„ ? íƒ?´ì£¼?¸ìš”.";
-      if (!form.department_id) return "?™ê³¼ë¥?? íƒ?´ì£¼?¸ìš”.";
+    if (!form.school_location) return "í•™êµ ì†Œì¬ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (!form.school_category) return "í•™êµ ìœ í˜•ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (form.school_location === "êµ­ë‚´ ëŒ€í•™") {
+      if (!form.university_id) return "ëŒ€í•™êµë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
+      if (!form.college_id) return "ë‹¨ê³¼ëŒ€í•™ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
+      if (!form.department_id) return "í•™ê³¼ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
     } else {
-      if (!form.school_name.trim()) return "?Œì† ?€?™êµë¥??…ë ¥?´ì£¼?¸ìš”.";
-      if (!form.department.trim()) return "?Œì† ?™ê³¼ë¥??…ë ¥?´ì£¼?¸ìš”.";
+      if (!form.school_name.trim()) return "ì†Œì† ëŒ€í•™êµë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+      if (!form.department.trim()) return "ì†Œì† í•™ê³¼ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.";
     }
-    if (!form.academic_year) return "?™ë…„??? íƒ?´ì£¼?¸ìš”.";
-    if (!form.academic_semester) return "?™ê¸°ë¥?? íƒ?´ì£¼?¸ìš”.";
-    if (!form.enrollment_status) return "?¬í•™ ?íƒœë¥?? íƒ?´ì£¼?¸ìš”.";
+    if (!form.academic_year) return "í•™ë…„ì„ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (!form.academic_semester) return "í•™ê¸°ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
+    if (!form.enrollment_status) return "ì¬í•™ ìƒíƒœë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
     if (form.gpa && (parseFloat(form.gpa) < 0 || parseFloat(form.gpa) > 4.5))
-      return "?„ì  ?™ì ?€ 0.0 ~ 4.5 ?¬ì´ë¡??…ë ¥?´ì£¼?¸ìš”.";
+      return "ëˆ„ì  í•™ì ì€ 0.0 ~ 4.5 ì‚¬ì´ë¡œ ì…ë ¥í•´ì£¼ì„¸ìš”.";
     if (form.gpa_last_semester && (parseFloat(form.gpa_last_semester) < 0 || parseFloat(form.gpa_last_semester) > 4.5))
-      return "ì§ì „ ?™ê¸° ?™ì ?€ 0.0 ~ 4.5 ?¬ì´ë¡??…ë ¥?´ì£¼?¸ìš”.";
+      return "ì§ì „ í•™ê¸° í•™ì ì€ 0.0 ~ 4.5 ì‚¬ì´ë¡œ ì…ë ¥í•´ì£¼ì„¸ìš”.";
   }
   if (step === 2) {
-    if (!form.income_level) return "?Œë“ë¶„ìœ„ë¥?? íƒ?´ì£¼?¸ìš”.";
+    if (!form.income_level) return "ì†Œë“ë¶„ìœ„ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.";
   }
   return "";
 }
 
-// ?€?€ ë©”ì¸ ?˜ì´ì§€ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+// â”€â”€ ë©”ì¸ í˜ì´ì§€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<OnboardingFormData>(INITIAL_FORM);
@@ -737,14 +737,14 @@ export default function OnboardingPage() {
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-10">
+      <div className="min-h-screen bg-beige px-4 py-10">
         <div className="mx-auto max-w-lg">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand">
                 <span className="text-base font-bold text-white">K</span>
               </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900">ì¿ ë„¥??/span>
+              <span className="text-xl font-bold tracking-tight text-ink">ì¿ ë„¥íŠ¸</span>
             </div>
           </div>
           <div className="mb-8 flex items-center justify-center">
@@ -784,26 +784,26 @@ export default function OnboardingPage() {
         />
       )}
 
-      <div className="min-h-screen bg-gray-50 px-4 py-10">
+      <div className="min-h-screen bg-beige px-4 py-10">
         <div className="mx-auto max-w-lg">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand">
                 <span className="text-base font-bold text-white">K</span>
               </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900">ì¿ ë„¥??/span>
+              <span className="text-xl font-bold tracking-tight text-ink">ì¿ ë„¥íŠ¸</span>
             </Link>
             {isEditing ? (
-              <p className="text-sm text-gray-500">?˜ì •???•ë³´ë¥?ë³€ê²½í•œ ???€?¥í•´ì£¼ì„¸??</p>
+              <p className="text-sm text-ink/60">ìˆ˜ì •í•  ì •ë³´ë¥¼ ë³€ê²½í•œ ë’¤ ì €ì¥í•´ì£¼ì„¸ìš”.</p>
             ) : (
-              <p className="text-sm text-gray-500">?„ë¡œ?„ì„ ?„ì„±?˜ë©´ ë§ì¶¤ ?¥í•™ê¸ˆì„ ì¶”ì²œ?´ë“œë¦½ë‹ˆ??</p>
+              <p className="text-sm text-ink/60">í”„ë¡œí•„ì„ ì™„ì„±í•˜ë©´ ë§ì¶¤ ì¥í•™ê¸ˆì„ ì¶”ì²œí•´ë“œë¦½ë‹ˆë‹¤.</p>
             )}
           </div>
 
           <StepIndicator current={step} steps={STEPS} />
 
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="mb-6 text-lg font-bold text-gray-900">{STEPS[step]}</h2>
+          <div className="rounded-2xl border border-[#e8d9c8] bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="mb-6 text-lg font-bold text-ink">{STEPS[step]}</h2>
 
             {step === 0 && (
               <Step1 form={form} update={update} openAddress={() => setShowAddressModal(true)} />
@@ -823,25 +823,25 @@ export default function OnboardingPage() {
             <div className="mt-8 flex gap-3">
               {step > 0 && (
                 <button type="button" onClick={handleBack}
-                  className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50">
-                  ?´ì „
+                  className="flex-1 rounded-lg border border-[#e8d9c8] py-2.5 text-sm font-medium text-ink/70 transition hover:bg-[#fbeca8]/40">
+                  ì´ì „
                 </button>
               )}
               {step < STEPS.length - 1 ? (
                 <button type="button" onClick={handleNext}
-                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/85">
-                  ?¤ìŒ
+                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90">
+                  ë‹¤ìŒ
                 </button>
               ) : (
                 <button type="button" onClick={handleSubmit} disabled={loading}
-                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/85 disabled:cursor-not-allowed disabled:opacity-60">
-                  {loading ? "?€??ì¤?.." : isEditing ? "?„ë¡œ???€?¥í•˜ê¸? : "?„ë¡œ???„ì„±?˜ê¸°"}
+                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-60">
+                  {loading ? "ì €ì¥ ì¤‘..." : isEditing ? "í”„ë¡œí•„ ì €ì¥í•˜ê¸°" : "í”„ë¡œí•„ ì™„ì„±í•˜ê¸°"}
                 </button>
               )}
             </div>
           </div>
 
-          <p className="mt-4 text-center text-xs text-gray-400">{step + 1} / {STEPS.length} ?¨ê³„</p>
+          <p className="mt-4 text-center text-xs text-ink/40">{step + 1} / {STEPS.length} ë‹¨ê³„</p>
         </div>
       </div>
     </>
