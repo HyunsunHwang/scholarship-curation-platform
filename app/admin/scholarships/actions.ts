@@ -203,6 +203,9 @@ function parseTextArray(val: string | null): string[] {
 
 function buildPayload(formData: FormData): ScholarshipInsert {
   const g = (key: string) => formData.get(key) as string | null;
+  // hidden+checkbox 패턴은 formData.get()이 hidden(false)을 먼저 반환하므로
+  // getAll()로 "true"가 포함됐는지 확인해야 함
+  const bool = (key: string) => formData.getAll(key).includes("true");
 
   return {
     name: g("name") ?? "",
@@ -236,7 +239,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     qual_special_info: parseTextArray(g("qual_special_info")) as ScholarshipInsert["qual_special_info"] || null,
     qual_parent_occupation: parseTextArray(g("qual_parent_occupation")) as ScholarshipInsert["qual_parent_occupation"] || null,
     qual_military_status: (g("qual_military_status") || null) as ScholarshipInsert["qual_military_status"],
-    can_overlap: g("can_overlap") === "true",
+    can_overlap: bool("can_overlap"),
     required_documents: parseTextArray(g("required_documents")),
     apply_method: g("apply_method") ?? "",
     apply_url: g("apply_url") ?? "",
@@ -256,7 +259,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     selection_stage_4_schedule: g("selection_stage_4_schedule") || null,
     selection_stage_5_schedule: g("selection_stage_5_schedule") || null,
     collected_at: new Date().toISOString(),
-    is_verified: g("is_verified") === "true",
-    list_on_home: g("list_on_home") === "true",
+    is_verified: bool("is_verified"),
+    list_on_home: bool("list_on_home"),
   };
 }
