@@ -77,38 +77,108 @@ export default function Hero({ isLoggedIn }: HeroProps) {
           </div>
 
           {/* ── 우측: 평균 지원금 돋보기 ── */}
-          <div className="relative hidden lg:flex lg:justify-center lg:pb-10">
+          <div className="relative hidden lg:flex lg:justify-center lg:items-center lg:pb-16">
             {/* 장식 이모지 */}
             <div className="absolute -top-4 left-10 text-3xl select-none animate-bounce" style={{ animationDuration: "3s" }}>🎓</div>
-            <div className="absolute top-16 -right-2 text-2xl select-none animate-bounce" style={{ animationDuration: "4s", animationDelay: "1s" }}>🌸</div>
-            <div className="absolute bottom-8 left-4 text-xl select-none animate-bounce" style={{ animationDuration: "3.5s", animationDelay: "0.5s" }}>⭐</div>
+            <div className="absolute top-20 -right-2 text-2xl select-none animate-bounce" style={{ animationDuration: "4s", animationDelay: "1s" }}>🌸</div>
+            <div className="absolute bottom-16 left-0 text-xl select-none animate-bounce" style={{ animationDuration: "3.5s", animationDelay: "0.5s" }}>⭐</div>
 
-            <div className="flex flex-col items-center gap-6">
-              {/* 돋보기 */}
-              <div className="relative flex items-center justify-center">
+            <div className="flex flex-col items-center gap-5">
+              {/* 돋보기 컨테이너 */}
+              <div className="relative" style={{ width: 280, height: 320 }}>
+
                 {/* 손잡이 */}
-                <div
-                  className="absolute z-0 h-[56px] w-[22px] rounded-full bg-[#56352c]/80"
-                  style={{ bottom: "-36px", right: "30px", transform: "rotate(40deg)", transformOrigin: "top center" }}
-                />
-                {/* 렌즈 원 */}
-                <div className="relative z-10 flex h-56 w-56 flex-col items-center justify-center rounded-full bg-ink shadow-2xl overflow-hidden">
-                  {/* 장식 원들 */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 opacity-30">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="h-7 w-7 rounded-full bg-white/60" />
+                <div style={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: 62,
+                  width: 26,
+                  height: 100,
+                  borderRadius: 13,
+                  transform: "rotate(38deg)",
+                  transformOrigin: "top center",
+                  background: "linear-gradient(160deg, #cdeefa 0%, #8ec9e4 60%, #76b8d6 100%)",
+                  boxShadow: "inset 3px 0 6px rgba(255,255,255,0.55), inset -2px 0 4px rgba(0,0,0,0.12), 0 6px 20px rgba(142,201,228,0.45)",
+                }} />
+
+                {/* 외부 링 (3D 효과) */}
+                <div style={{
+                  position: "absolute",
+                  top: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 260,
+                  height: 260,
+                  borderRadius: "50%",
+                  background: "linear-gradient(145deg, #ddf3fd 0%, #b3e4fb 45%, #8ec9e4 100%)",
+                  boxShadow: [
+                    "0 28px 70px rgba(142,201,228,0.55)",
+                    "0 8px 20px rgba(100,170,200,0.3)",
+                    "inset 0 6px 14px rgba(255,255,255,0.75)",
+                    "inset 0 -8px 18px rgba(80,150,180,0.25)",
+                  ].join(", "),
+                }} />
+
+                {/* 렌즈 내부 */}
+                <div style={{
+                  position: "absolute",
+                  top: 22,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 216,
+                  height: 216,
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  background: "linear-gradient(160deg, #fdf6ec 0%, #f5e9d8 100%)",
+                }}>
+                  {/* 버블 (아래쪽) */}
+                  <div style={{ position: "absolute", bottom: 6, left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "flex-end", gap: 5 }}>
+                    {[{ w: 38, h: 38 }, { w: 26, h: 26 }, { w: 44, h: 44 }, { w: 22, h: 22 }, { w: 34, h: 34 }].map((b, i) => (
+                      <div key={i} style={{ width: b.w, height: b.h, borderRadius: "50%", background: "rgba(179,228,251,0.68)", boxShadow: "inset 0 2px 4px rgba(255,255,255,0.6)" }} />
                     ))}
                   </div>
-                  {/* 텍스트 */}
-                  <p className="relative z-10 text-sm font-medium text-white/70">평균</p>
-                  <p className="relative z-10 text-3xl font-extrabold tracking-tight text-white leading-tight">
-                    300만원
-                  </p>
-                  <p className="relative z-10 mt-1 text-[11px] text-white/50">장학금 지원 혜택*</p>
+                  {/* 작은 보조 버블 */}
+                  <div style={{ position: "absolute", bottom: 52, left: 18, display: "flex", gap: 4 }}>
+                    {[14, 10, 16].map((s, i) => (
+                      <div key={i} style={{ width: s, height: s, borderRadius: "50%", background: "rgba(254,162,118,0.38)" }} />
+                    ))}
+                  </div>
+
+                  {/* 텍스트 카드 (기울어짐) */}
+                  <div style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -54%) rotate(-9deg)",
+                    width: "83%",
+                    background: "linear-gradient(145deg, #3e2418 0%, #56352c 100%)",
+                    borderRadius: 16,
+                    padding: "18px 14px 14px",
+                    textAlign: "center",
+                    boxShadow: "0 10px 28px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
+                  }}>
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", marginBottom: 2, letterSpacing: "0.05em" }}>평균</p>
+                    <p style={{ fontSize: 34, fontWeight: 900, color: "#fff", lineHeight: 1.1, letterSpacing: "-0.02em" }}>300만원</p>
+                    <p style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginTop: 5 }}>장학금 지원 혜택*</p>
+                  </div>
                 </div>
+
+                {/* 렌즈 상단 하이라이트 반사 */}
+                <div style={{
+                  position: "absolute",
+                  top: 34,
+                  left: "calc(50% - 44px)",
+                  width: 76,
+                  height: 32,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.52)",
+                  filter: "blur(7px)",
+                  transform: "rotate(-18deg)",
+                  pointerEvents: "none",
+                }} />
               </div>
 
-              {/* 안내 문구 */}
+              {/* 소각주 */}
               <p className="text-center text-xs text-ink/40 leading-relaxed">
                 *플랫폼 등록 장학금 기준 평균 지원 금액
               </p>
