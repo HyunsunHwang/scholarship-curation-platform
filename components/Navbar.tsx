@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/auth/actions";
@@ -26,13 +27,18 @@ export default async function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* 로고 */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand">
-            <span className="text-sm font-bold text-white">K</span>
-          </div>
-          <span className="text-lg font-bold tracking-tight text-ink">
-            쿠넥트
-          </span>
+        <Link
+          href="/"
+          className="relative block h-8 w-[7.5rem] shrink-0 sm:w-[8.5rem]"
+        >
+          <Image
+            src="/koonect-logo.png"
+            alt="쿠넥트"
+            fill
+            className="object-contain object-left"
+            priority
+            sizes="(max-width: 640px) 120px, 136px"
+          />
         </Link>
 
         {/* 우측 액션 영역 */}
