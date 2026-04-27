@@ -12,7 +12,7 @@ export default function BrandLogo() {
         alt="쿠넥트"
         width={WORDMARK_W}
         height={WORDMARK_H}
-        className="h-8 w-auto"
+        className="h-8 w-auto invert"
         priority
         unoptimized
       />
