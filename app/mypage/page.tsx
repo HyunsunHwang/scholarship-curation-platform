@@ -62,12 +62,12 @@ export default async function MyPage() {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex min-h-screen flex-col bg-beige">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
 
       <main className="flex-1">
         {/* 프로필 헤더 */}
-        <div className="bg-white border-b border-[#e8d9c8]">
+        <div className="bg-white border-b border-gray-200">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
@@ -85,7 +85,7 @@ export default async function MyPage() {
               </div>
               <Link
                 href="/onboarding"
-                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-[#e8d9c8] bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fbeca8]/50 transition-colors sm:self-center"
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors sm:self-center"
               >
                 <svg
                   className="h-4 w-4"
@@ -109,7 +109,7 @@ export default async function MyPage() {
         {/* 북마크 섹션 */}
         {bookmarkedScholarships.length === 0 ? (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 flex flex-col items-center text-center gap-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#fbeca8]">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ export default async function MyPage() {
                   />
                 </svg>
                 <h2 className="text-lg font-bold text-ink">내 북마크</h2>
-                <span className="inline-flex items-center rounded-full bg-[#fbeca8] px-2.5 py-0.5 text-xs font-semibold text-brand">
+                <span className="inline-flex items-center rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand">
                   {bookmarkedScholarships.length}개
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default async function MyPage() {
         )}
       </main>
 
-      <footer className="border-t border-[#e8d9c8] bg-[#fff2df] py-8">
+      <footer className="border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">

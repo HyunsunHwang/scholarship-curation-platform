@@ -234,10 +234,10 @@ export default async function ScholarshipDetailPage({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-indigo-600">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-brand">
                 <span className="text-xs font-bold text-white">K</span>
               </div>
-              <span className="text-sm font-semibold text-gray-700">쿠넥트</span>
+              <span className="text-sm font-semibold text-ink">쿠넥트</span>
             </div>
             <p className="text-xs text-gray-400">
               © 2026 쿠넥트. 장학금 정보는 각 기관의 공식 발표를 기준으로 합니다.

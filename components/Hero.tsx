@@ -7,10 +7,10 @@ type HeroProps = {
 export default function Hero({ isLoggedIn }: HeroProps) {
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#fff2df] via-[#fbeca8]/60 to-[#fea276]/30 pt-16 pb-0">
+    <section className="relative overflow-hidden bg-white pt-16 pb-0">
       {/* 배경 장식 원 */}
-      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#fea276]/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 -left-16 h-64 w-64 rounded-full bg-[#b3e4fb]/25 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand/8 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 -left-16 h-64 w-64 rounded-full bg-brand/5 blur-3xl" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
@@ -52,7 +52,7 @@ export default function Hero({ isLoggedIn }: HeroProps) {
               </Link>
               <Link
                 href="#scholarships"
-                className="inline-flex h-12 items-center rounded-xl border border-[#e8d9c8] bg-white px-7 text-sm font-semibold text-ink shadow-sm transition hover:bg-[#fbeca8]/50 active:scale-95"
+                className="inline-flex h-12 items-center rounded-xl border border-gray-200 bg-white px-7 text-sm font-semibold text-ink shadow-sm transition hover:bg-[#fff0f0] active:scale-95"
               >
                 전체 보기
               </Link>
@@ -61,10 +61,10 @@ export default function Hero({ isLoggedIn }: HeroProps) {
             {/* 소셜 프루프 */}
             <div className="mt-8 flex items-center gap-3">
               <div className="flex -space-x-2">
-                {["bg-brand", "bg-peach", "bg-[#fbeca8]", "bg-skyblue"].map((c, i) => (
+                {["bg-brand", "bg-[#c00000]", "bg-[#ff6060]", "bg-[#ff9090]"].map((c, i) => (
                   <div
                     key={i}
-                    className={`h-8 w-8 rounded-full border-2 border-white ${c} flex items-center justify-center text-xs font-bold ${c === "bg-[#fbeca8]" ? "text-ink" : "text-white"}`}
+                    className={`h-8 w-8 rounded-full border-2 border-white ${c} flex items-center justify-center text-xs font-bold text-white`}
                   >
                     {["김", "이", "박", "최"][i]}
                   </div>

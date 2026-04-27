@@ -54,7 +54,7 @@ export default function ScholarshipDashboard({
   }, [scholarships, searchQuery, sortBy]);
 
   return (
-    <section id="scholarships" className="bg-beige py-16">
+    <section id="scholarships" className="bg-[#fafafa] py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -76,7 +76,7 @@ export default function ScholarshipDashboard({
               className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                 sortBy === "deadline"
                   ? "bg-brand text-white"
-                  : "bg-white text-ink/70 hover:bg-[#fbeca8] border border-[#e8d9c8]"
+                  : "bg-white text-ink/70 hover:bg-[#fff0f0] border border-gray-200"
               }`}
             >
               마감임박순
@@ -86,7 +86,7 @@ export default function ScholarshipDashboard({
               className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                 sortBy === "amount"
                   ? "bg-brand text-white"
-                  : "bg-white text-ink/70 hover:bg-[#fbeca8] border border-[#e8d9c8]"
+                  : "bg-white text-ink/70 hover:bg-[#fff0f0] border border-gray-200"
               }`}
             >
               금액순
@@ -117,7 +117,7 @@ export default function ScholarshipDashboard({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="장학금 이름 또는 기관명 검색"
-            className="w-full rounded-xl border border-[#e8d9c8] bg-white py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-ink/40 shadow-sm outline-none transition-shadow focus:border-[#fea276] focus:ring-2 focus:ring-[#fea276]/20"
+            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-ink/40 shadow-sm outline-none transition-shadow focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
             autoComplete="off"
             aria-label="장학금 검색"
           />
@@ -125,7 +125,7 @@ export default function ScholarshipDashboard({
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-[#fbeca8] hover:text-ink"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-[#fff0f0] hover:text-ink"
               aria-label="검색어 지우기"
             >
               <svg
@@ -151,7 +151,7 @@ export default function ScholarshipDashboard({
           <div className="mt-16 flex flex-col items-center justify-center gap-3 text-center">
             {scholarships.length === 0 ? (
               <>
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fbeca8]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/10">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-8 w-8 text-peach"

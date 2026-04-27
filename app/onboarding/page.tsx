@@ -108,7 +108,7 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="w-full rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-beige disabled:text-ink/40"
+      className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10 disabled:bg-gray-50 disabled:text-ink/40"
     />
   );
 }
@@ -117,7 +117,7 @@ function SelectInput({ children, ...props }: React.SelectHTMLAttributes<HTMLSele
   return (
     <select
       {...props}
-      className="w-full cursor-pointer appearance-none rounded-lg border border-[#e8d9c8] bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20 disabled:bg-beige disabled:text-ink/40 disabled:cursor-not-allowed"
+      className="w-full cursor-pointer appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10 disabled:bg-gray-50 disabled:text-ink/40 disabled:cursor-not-allowed"
     >
       {children}
     </select>
@@ -134,7 +134,7 @@ function RadioChip({ label, selected, onClick }: {
       className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
         selected
           ? "border-brand bg-brand/10 text-brand"
-          : "border-[#e8d9c8] bg-white text-ink/70 hover:border-[#fea276]/60 hover:bg-[#fbeca8]/40"
+          : "border-gray-200 bg-white text-ink/70 hover:border-brand/40 hover:bg-[#fff0f0]"
       }`}
     >
       {label}
@@ -152,7 +152,7 @@ function CheckChip({ label, selected, onClick }: {
       className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all ${
         selected
           ? "border-brand bg-brand text-white"
-          : "border-[#e8d9c8] bg-white text-ink/70 hover:border-peach hover:text-brand"
+          : "border-gray-200 bg-white text-ink/70 hover:border-brand/50 hover:text-brand"
       }`}
     >
       {label}
@@ -165,7 +165,7 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${on ? "bg-brand" : "bg-[#e8d9c8]"}`}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${on ? "bg-brand" : "bg-gray-200"}`}
     >
       <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${on ? "translate-x-6" : "translate-x-1"}`} />
     </button>
@@ -182,7 +182,7 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
             <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${
               i < current ? "bg-brand text-white"
               : i === current ? "bg-brand text-white ring-4 ring-brand/20"
-              : "bg-[#fbeca8] text-ink/50"
+              : "bg-gray-100 text-ink/50"
             }`}>
               {i < current ? "✓" : i + 1}
             </div>
@@ -191,7 +191,7 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
             }`}>{step}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`mx-2 mb-4 h-0.5 w-10 transition-all sm:w-16 ${i < current ? "bg-brand" : "bg-[#e8d9c8]"}`} />
+            <div className={`mx-2 mb-4 h-0.5 w-10 transition-all sm:w-16 ${i < current ? "bg-brand" : "bg-gray-200"}`} />
           )}
         </div>
       ))}
@@ -252,7 +252,7 @@ function Step1({ form, update, openAddress }: {
           <button
             type="button"
             onClick={openAddress}
-            className="shrink-0 rounded-lg border border-[#fea276]/60 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-[#fbeca8]/40"
+            className="shrink-0 rounded-lg border border-brand/40 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-[#fff0f0]"
           >
             검색
           </button>
@@ -454,7 +454,7 @@ function Step2({ form, update, updateMultiple }: {
 
           {/* 복수전공 상세 */}
           {form.has_double_major && (
-            <div className="flex flex-col gap-4 rounded-xl border border-[#fea276]/30 bg-[#fbeca8]/30 p-4">
+            <div className="flex flex-col gap-4 rounded-xl border border-brand/20 bg-brand/5 p-4">
               <p className="text-xs font-semibold text-brand">제2전공 정보</p>
 
               <Field label="단과대학">
@@ -737,7 +737,7 @@ export default function OnboardingPage() {
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen bg-beige px-4 py-10">
+      <div className="min-h-screen bg-white px-4 py-10">
         <div className="mx-auto max-w-lg">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <div className="flex items-center gap-2">
@@ -784,7 +784,7 @@ export default function OnboardingPage() {
         />
       )}
 
-      <div className="min-h-screen bg-beige px-4 py-10">
+      <div className="min-h-screen bg-white px-4 py-10">
         <div className="mx-auto max-w-lg">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <Link href="/" className="flex items-center gap-2">
@@ -802,7 +802,7 @@ export default function OnboardingPage() {
 
           <StepIndicator current={step} steps={STEPS} />
 
-          <div className="rounded-2xl border border-[#e8d9c8] bg-white p-6 shadow-sm sm:p-8">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-6 text-lg font-bold text-ink">{STEPS[step]}</h2>
 
             {step === 0 && (
@@ -823,7 +823,7 @@ export default function OnboardingPage() {
             <div className="mt-8 flex gap-3">
               {step > 0 && (
                 <button type="button" onClick={handleBack}
-                  className="flex-1 rounded-lg border border-[#e8d9c8] py-2.5 text-sm font-medium text-ink/70 transition hover:bg-[#fbeca8]/40">
+                  className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-ink/70 transition hover:bg-gray-50">
                   이전
                 </button>
               )}

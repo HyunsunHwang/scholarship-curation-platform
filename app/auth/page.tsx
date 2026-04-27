@@ -53,7 +53,7 @@ function LoginForm() {
           autoComplete="email"
           placeholder="example@email.com"
           required
-          className="rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20"
+          className="rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
         />
       </div>
 
@@ -70,7 +70,7 @@ function LoginForm() {
           autoComplete="current-password"
           placeholder="비밀번호 입력"
           required
-          className="rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20"
+          className="rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
         />
       </div>
 
@@ -101,7 +101,7 @@ function SignupForm() {
           autoComplete="email"
           placeholder="example@email.com"
           required
-          className="rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20"
+          className="rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
         />
       </div>
 
@@ -121,7 +121,7 @@ function SignupForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-lg border border-[#e8d9c8] px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-peach focus:ring-2 focus:ring-[#fea276]/20"
+          className="rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
         />
       </div>
 
@@ -141,7 +141,7 @@ function SignupForm() {
           className={`rounded-lg border px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 outline-none transition focus:ring-2 ${
             passwordMismatch
               ? "border-brand/50 focus:border-brand focus:ring-brand/20"
-              : "border-[#e8d9c8] focus:border-peach focus:ring-[#fea276]/20"
+              : "border-gray-200 focus:border-brand/60 focus:ring-brand/10"
           }`}
         />
         {passwordMismatch && (
@@ -170,7 +170,7 @@ export default function AuthPage() {
   const [tab, setTab] = useState<Tab>("login");
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-beige px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-12">
       {/* 로고 */}
       <Link href="/" className="mb-8 flex items-center gap-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand">
@@ -182,9 +182,9 @@ export default function AuthPage() {
       </Link>
 
       {/* 카드 */}
-      <div className="w-full max-w-sm rounded-2xl border border-[#e8d9c8] bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
         {/* 탭 */}
-        <div className="mb-6 flex rounded-lg bg-[#fbeca8]/60 p-1">
+        <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
           <button
             type="button"
             onClick={() => setTab("login")}

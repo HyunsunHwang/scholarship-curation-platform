@@ -57,12 +57,12 @@ export default async function MatchedPage() {
     }));
 
   return (
-    <div className="flex min-h-screen flex-col bg-beige">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
 
       <main className="flex-1">
         {/* 상단 헤더 배너 */}
-        <div className="bg-white border-b border-[#e8d9c8] py-8">
+        <div className="bg-white border-b border-gray-200 py-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
@@ -79,7 +79,7 @@ export default async function MatchedPage() {
               <div className="flex gap-3 shrink-0">
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e8d9c8] bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fbeca8]/50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
@@ -88,7 +88,7 @@ export default async function MatchedPage() {
                 </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#e8d9c8] bg-white px-4 py-2 text-sm font-medium text-ink/60 hover:bg-[#fbeca8]/50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink/60 hover:bg-[#fff0f0] transition-colors"
                 >
                   전체 보기
                 </Link>
@@ -107,7 +107,7 @@ export default async function MatchedPage() {
         {/* 결과 없음 상태 */}
         {!error && scholarships.length === 0 ? (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fbeca8] mb-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/10 mb-4">
               <svg className="h-8 w-8 text-peach" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6" />
               </svg>
@@ -123,10 +123,10 @@ export default async function MatchedPage() {
               >
                 프로필 업데이트
               </Link>
-              <Link
-                href="/"
-                className="inline-flex items-center rounded-lg border border-[#e8d9c8] bg-white px-5 py-2.5 text-sm font-medium text-ink hover:bg-[#fbeca8]/50 transition-colors"
-              >
+                <Link
+                  href="/"
+                  className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors"
+                >
                 전체 장학금 보기
               </Link>
             </div>
@@ -140,7 +140,7 @@ export default async function MatchedPage() {
         )}
       </main>
 
-      <footer className="border-t border-[#e8d9c8] bg-[#fff2df] py-8">
+      <footer className="border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2">
