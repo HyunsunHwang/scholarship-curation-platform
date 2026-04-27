@@ -1,17 +1,21 @@
+import Image from "next/image";
 import Link from "next/link";
+
+const WORDMARK_W = 1024;
+const WORDMARK_H = 576;
 
 export default function BrandLogo() {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-2.5">
-      <img
-        src="/koonect-mark.svg"
-        alt=""
-        width={28}
-        height={23}
-        className="h-7 w-auto shrink-0"
-        decoding="async"
+    <Link href="/" className="flex h-8 shrink-0 items-center">
+      <Image
+        src="/brand-wordmark.jpg"
+        alt="장학쌤"
+        width={WORDMARK_W}
+        height={WORDMARK_H}
+        className="h-8 w-auto"
+        priority
+        sizes="(max-width: 768px) 200px, 220px"
       />
-      <span className="text-lg font-bold tracking-tight text-ink">쿠넥트</span>
     </Link>
   );
 }
