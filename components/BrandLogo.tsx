@@ -6,15 +6,15 @@ const WORDMARK_H = 576;
 
 export default function BrandLogo() {
   return (
-    <Link href="/" className="flex h-8 shrink-0 items-center">
+    <Link href="/" className="flex shrink-0 items-center">
       <Image
         src="/brand-wordmark.jpg"
         alt="장학쌤"
         width={WORDMARK_W}
         height={WORDMARK_H}
-        className="h-8 w-auto"
+        className="h-40 w-auto max-w-full"
         priority
-        sizes="(max-width: 768px) 200px, 220px"
+        sizes="(max-width: 768px) 100vw, 900px"
       />
     </Link>
   );
