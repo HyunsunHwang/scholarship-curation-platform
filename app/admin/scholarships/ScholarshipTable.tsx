@@ -75,21 +75,47 @@ function PosterUrlCell({
   );
 }
 
+type SortDir = "none" | "asc" | "desc";
+
+function nextSortDir(current: SortDir): SortDir {
+  if (current === "none") return "asc";
+  if (current === "asc") return "desc";
+  return "none";
+}
+
+function sortByDeadline(rows: ScholarshipRow[], dir: SortDir): ScholarshipRow[] {
+  if (dir === "none") return rows;
+  return [...rows].sort((a, b) => {
+    const aVal = a.apply_end_date ?? "";
+    const bVal = b.apply_end_date ?? "";
+    // null/empty values always go to the end regardless of sort direction
+    if (!aVal && !bVal) return 0;
+    if (!aVal) return 1;
+    if (!bVal) return -1;
+    const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    return dir === "asc" ? cmp : -cmp;
+  });
+}
+
 export default function ScholarshipTable({
   scholarships,
 }: {
   scholarships: ScholarshipRow[];
 }) {
   const [query, setQuery] = useState("");
+  const [deadlineSort, setDeadlineSort] = useState<SortDir>("none");
 
   const q = query.trim().toLowerCase();
-  const filtered = q
-    ? scholarships.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.organization.toLowerCase().includes(q)
-      )
-    : scholarships;
+  const filtered = sortByDeadline(
+    q
+      ? scholarships.filter(
+          (s) =>
+            s.name.toLowerCase().includes(q) ||
+            s.organization.toLowerCase().includes(q)
+        )
+      : scholarships,
+    deadlineSort
+  );
 
   return (
     <>
@@ -141,7 +167,38 @@ export default function ScholarshipTable({
               <th className="px-4 py-3">포스터 URL</th>
               <th className="px-4 py-3">지원 유형</th>
               <th className="px-4 py-3">지원금액</th>
-              <th className="px-4 py-3">신청 기간</th>
+              <th className="px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => setDeadlineSort(nextSortDir(deadlineSort))}
+                  className="inline-flex items-center gap-1 hover:text-gray-800 transition-colors"
+                  title={
+                    deadlineSort === "none"
+                      ? "마감일 오름차순 정렬"
+                      : deadlineSort === "asc"
+                      ? "마감일 내림차순 정렬"
+                      : "정렬 해제"
+                  }
+                >
+                  신청 기간
+                  <span className="flex flex-col leading-none -space-y-px">
+                    <svg
+                      className={`w-2.5 h-2.5 ${deadlineSort === "asc" ? "text-blue-600" : "text-gray-300"}`}
+                      viewBox="0 0 10 6"
+                      fill="currentColor"
+                    >
+                      <path d="M5 0L10 6H0z" />
+                    </svg>
+                    <svg
+                      className={`w-2.5 h-2.5 ${deadlineSort === "desc" ? "text-blue-600" : "text-gray-300"}`}
+                      viewBox="0 0 10 6"
+                      fill="currentColor"
+                    >
+                      <path d="M5 6L0 0H10z" />
+                    </svg>
+                  </span>
+                </button>
+              </th>
               <th className="px-4 py-3">상태</th>
               <th className="px-4 py-3 text-right">작업</th>
             </tr>
