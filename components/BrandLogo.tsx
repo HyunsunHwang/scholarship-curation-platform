@@ -8,13 +8,13 @@ export default function BrandLogo() {
   return (
     <Link href="/" className="flex h-8 shrink-0 items-center">
       <Image
-        src="/kunnect-wordmark.png"
+        src="/kunnect-wordmark.jpg"
         alt="쿠넥트"
         width={WORDMARK_W}
         height={WORDMARK_H}
         className="h-8 w-auto"
         priority
-        sizes="(max-width: 768px) 180px, 200px"
+        unoptimized
       />
     </Link>
   );
