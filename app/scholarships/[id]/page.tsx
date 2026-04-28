@@ -4,22 +4,13 @@ import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
 import ScholarshipTabs from "./ScholarshipTabs";
-import { formatApplyPeriodRange, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
-
-function formatAmount(won: number): string {
-  if (won === 0) return "전액";
-  const manWon = won / 10000;
-  if (manWon >= 10000) return `연 ${(manWon / 10000).toFixed(0)}억원`;
-  if (manWon >= 1) return `연 ${manWon.toLocaleString()}만원`;
-  return `연 ${won.toLocaleString()}원`;
-}
-
-function getDaysUntilDeadline(dateStr: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const deadline = new Date(dateStr);
-  return Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-}
+import {
+  daysUntilApplyDeadlineKorea,
+  formatApplyPeriodRange,
+  isAlwaysOpenRecruitment,
+} from "@/lib/scholarship-dates";
+import { cleanScholarshipName } from "@/lib/scholarship-name";
+import { formatSupportAmount } from "@/lib/support-amount";
 
 const institutionGradient: Record<string, string> = {
   국가기관: "from-indigo-400 to-blue-700",
@@ -44,12 +35,22 @@ export default async function ScholarshipDetailPage({
 
   const supabase = await createClient();
 
-  const [{ data: scholarship }, { data: { user } }] = await Promise.all([
+  const [{ data: scholarship }, { data: { user } }, { count: scrapCount }] = await Promise.all([
     supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
     supabase.auth.getUser(),
+    supabase
+      .from("bookmarks")
+      .select("id", { count: "exact", head: true })
+      .eq("scholarship_id", scholarshipId),
   ]);
 
   if (!scholarship) notFound();
+
+  const nextViewCount = (scholarship.view_count ?? 0) + 1;
+  await supabase
+    .from("scholarships")
+    .update({ view_count: nextViewCount })
+    .eq("id", scholarshipId);
 
   let initialBookmarked = false;
   if (user) {
@@ -63,8 +64,18 @@ export default async function ScholarshipDetailPage({
   }
 
   const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
-  const days = alwaysOpen ? null : getDaysUntilDeadline(scholarship.apply_end_date);
+  const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
   const gradient = institutionGradient[scholarship.institution_type] ?? "from-gray-400 to-gray-600";
+  const displayName = cleanScholarshipName(scholarship.name);
+  const supportAmount = formatSupportAmount(
+    scholarship.support_amount,
+    scholarship.support_amount_text,
+    { compact: true }
+  );
+  const fullSupportAmount = formatSupportAmount(
+    scholarship.support_amount,
+    scholarship.support_amount_text
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -85,19 +96,21 @@ export default async function ScholarshipDetailPage({
               목록으로 돌아가기
             </Link>
 
-            {scholarship.homepage_url && (
-              <a
-                href={scholarship.homepage_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-medium text-gray-600 shadow-sm transition hover:bg-gray-50"
-              >
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-sm">
+                <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
                 </svg>
-                공식 홈페이지
-              </a>
-            )}
+                조회 {nextViewCount.toLocaleString()}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-sm">
+                <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0Z" />
+                </svg>
+                스크랩 {(scrapCount ?? 0).toLocaleString()}
+              </span>
+            </div>
           </div>
 
           {/* ── 2열 메인 레이아웃 ── */}
@@ -110,7 +123,7 @@ export default async function ScholarshipDetailPage({
                 {scholarship.poster_image_url ? (
                   <img
                     src={scholarship.poster_image_url}
-                    alt={`${scholarship.name} 포스터`}
+                    alt={`${displayName} 포스터`}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -135,7 +148,7 @@ export default async function ScholarshipDetailPage({
 
               {/* 제목 */}
               <h1 className="text-2xl font-bold leading-snug text-gray-900 sm:text-3xl">
-                {scholarship.name}
+                {displayName}
               </h1>
 
               {/* 기관 뱃지 */}
@@ -170,10 +183,10 @@ export default async function ScholarshipDetailPage({
                 {/* 지원 금액 */}
                 <div className="flex items-center gap-4 px-4 py-3.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-lg">💰</div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs text-gray-400">지원 금액</p>
-                    <p className="mt-0.5 text-base font-extrabold text-indigo-600">
-                      {formatAmount(scholarship.support_amount)}
+                    <p className="mt-0.5 truncate text-base font-extrabold text-indigo-600" title={fullSupportAmount}>
+                      {supportAmount}
                     </p>
                   </div>
                 </div>

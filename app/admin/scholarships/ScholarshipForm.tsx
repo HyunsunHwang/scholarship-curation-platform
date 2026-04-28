@@ -78,7 +78,13 @@ export default function ScholarshipForm({
           {/* 숨겨진 필드로 합쳐서 전송 — JS로 처리 */}
           <CheckboxToHidden name="support_types" checkboxName="support_types_check" />
         </div>
-        <Field label="지원 금액 (원) *" name="support_amount" type="number" defaultValue={dv.support_amount?.toString() ?? ""} required />
+        <Field label="지원 금액 (원, 정렬용) *" name="support_amount" type="number" defaultValue={dv.support_amount?.toString() ?? ""} required />
+        <Field
+          label="지원 규모 표시 문구"
+          name="support_amount_text"
+          defaultValue={dv.support_amount_text ?? ""}
+          placeholder="예: 월 최대 20만원 × 24개월, 국가별 연간 최대 USD 40,000"
+        />
         <Field label="선발 인원" name="selection_count" type="number" defaultValue={dv.selection_count?.toString() ?? ""} />
       </Section>
 

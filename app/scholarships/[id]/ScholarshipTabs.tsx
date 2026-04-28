@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { formatApplyPeriodRange, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
+import {
+  daysUntilApplyDeadlineKorea,
+  formatApplyPeriodRange,
+  isAlwaysOpenRecruitment,
+} from "@/lib/scholarship-dates";
 
 export type ScholarshipDetail = {
   id: number;
@@ -151,10 +155,7 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
 function ScheduleSection({ s }: { s: ScholarshipDetail }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const deadline = new Date(s.apply_end_date);
-  const daysLeft = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const daysLeft = daysUntilApplyDeadlineKorea(s.apply_end_date);
   const isUrgent = !alwaysOpen && daysLeft >= 0 && daysLeft <= 7;
 
   const items = [

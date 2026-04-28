@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
-import { isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
+import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
+import { cleanScholarshipName } from "@/lib/scholarship-name";
+import { formatSupportAmount } from "@/lib/support-amount";
 
 export type CardScholarship = {
   id: number;
@@ -12,9 +14,13 @@ export type CardScholarship = {
   institution_type: string;
   support_types: string[];
   support_amount: number;
+  support_amount_text?: string | null;
   apply_end_date: string;
   poster_image_url?: string | null;
   created_at: string;
+  view_count?: number | null;
+  scrap_count?: number | null;
+  scope?: "campus" | "external";
 };
 
 const institutionGradient: Record<string, string> = {
@@ -29,24 +35,9 @@ const institutionGradient: Record<string, string> = {
   기타:         "from-stone-300 to-stone-500",
 };
 
-function getDaysUntilDeadline(dateStr: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const deadline = new Date(dateStr);
-  return Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-function formatAmount(won: number): string {
-  if (won === 0) return "전액";
-  const manWon = won / 10000;
-  if (manWon >= 10000) return `연 ${(manWon / 10000).toFixed(0)}억원`;
-  if (manWon >= 1) return `연 ${manWon.toLocaleString()}만원`;
-  return `연 ${won.toLocaleString()}원`;
-}
-
 function formatDeadline(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "상시모집";
-  const days = getDaysUntilDeadline(dateStr);
+  const days = daysUntilApplyDeadlineKorea(dateStr);
   if (days < 0) return "마감됨";
   if (days === 0) return "오늘 마감";
   if (days <= 7) return `D-${days} · 마감 임박`;
@@ -56,7 +47,7 @@ function formatDeadline(dateStr: string): string {
 
 function deadlineColor(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "text-brand";
-  const days = getDaysUntilDeadline(dateStr);
+  const days = daysUntilApplyDeadlineKorea(dateStr);
   if (days < 0) return "text-ink/40";
   if (days <= 7) return "text-brand";
   if (days <= 30) return "text-[#e07030]";
@@ -93,6 +84,16 @@ export default function ScholarshipCard({
 
   const color = deadlineColor(scholarship.apply_end_date);
   const deadlineLabel = formatDeadline(scholarship.apply_end_date);
+  const displayName = cleanScholarshipName(scholarship.name);
+  const supportAmount = formatSupportAmount(
+    scholarship.support_amount,
+    scholarship.support_amount_text,
+    { compact: true }
+  );
+  const fullSupportAmount = formatSupportAmount(
+    scholarship.support_amount,
+    scholarship.support_amount_text
+  );
 
   return (
     <div className="group flex flex-col">
@@ -104,7 +105,7 @@ export default function ScholarshipCard({
         {scholarship.poster_image_url ? (
           <img
             src={scholarship.poster_image_url}
-            alt={scholarship.name}
+            alt={displayName}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
@@ -157,11 +158,11 @@ export default function ScholarshipCard({
         className="mt-3 flex flex-col gap-0.5"
       >
         <p className="text-sm font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors">
-          {scholarship.name}
+          {displayName}
         </p>
         <p className={`mt-0.5 text-xs font-medium ${color}`}>{deadlineLabel}</p>
-        <p className="mt-1 text-sm font-bold text-ink">
-          {formatAmount(scholarship.support_amount)}
+        <p className="mt-1 truncate text-sm font-bold text-ink" title={fullSupportAmount}>
+          {supportAmount}
         </p>
       </Link>
     </div>

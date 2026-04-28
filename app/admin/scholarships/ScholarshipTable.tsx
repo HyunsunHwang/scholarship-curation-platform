@@ -13,6 +13,7 @@ type ScholarshipRow = {
   apply_start_date: string;
   apply_end_date: string;
   support_amount: number;
+  support_amount_text: string | null;
   is_verified: boolean;
   support_types: string[];
   poster_image_url: string | null;
@@ -236,8 +237,15 @@ export default function ScholarshipTable({
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                    {s.support_amount.toLocaleString()}원
+                  <td className="px-4 py-3 text-gray-700">
+                    <p className="max-w-[220px] line-clamp-2">
+                      {s.support_amount_text?.trim() || `${s.support_amount.toLocaleString()}원`}
+                    </p>
+                    {s.support_amount_text?.trim() && (
+                      <p className="mt-0.5 text-xs text-gray-400">
+                        정렬금액 {s.support_amount.toLocaleString()}원
+                      </p>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
                     {s.apply_start_date} ~<br />

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import type { Database } from "@/lib/database.types";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
+import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 
 export default async function MatchedPage() {
   const supabase = await createClient();
@@ -18,11 +19,14 @@ export default async function MatchedPage() {
   if (!user) redirect("/auth");
 
   // 온보딩 미완료 → 온보딩 (proxy.ts가 처리하지만 명시적으로도 보호)
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_onboarded, name")
-    .eq("id", user.id)
-    .single();
+  const [{ data: profile }, { data: universities }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("is_onboarded, name")
+      .eq("id", user.id)
+      .single(),
+    supabase.from("universities").select("name"),
+  ]);
 
   if (!profile?.is_onboarded) redirect("/onboarding");
 
@@ -38,8 +42,21 @@ export default async function MatchedPage() {
     .eq("user_id", user.id);
 
   const bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
+  const matchedIds = ((matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]).map((s) => s.id);
+  const { data: allScrapRows } = matchedIds.length > 0
+    ? await supabase
+        .from("bookmarks")
+        .select("scholarship_id")
+        .in("scholarship_id", matchedIds)
+    : { data: [] };
+  const scrapCountByScholarship = new Map<number, number>();
+  for (const row of allScrapRows ?? []) {
+    const id = row.scholarship_id as number;
+    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
+  }
 
   // RPC 반환 타입을 CardScholarship으로 변환
+  const universityNames = (universities ?? []).map((u) => u.name);
   const scholarships: CardScholarship[] = (
     (matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]
   )
@@ -51,9 +68,13 @@ export default async function MatchedPage() {
       institution_type: s.institution_type,
       support_types: s.support_types as string[],
       support_amount: s.support_amount,
+      support_amount_text: s.support_amount_text,
       apply_end_date: s.apply_end_date,
       poster_image_url: s.poster_image_url ?? null,
       created_at: s.created_at,
+      view_count: s.view_count,
+      scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
+      scope: isUniversitySpecificScholarship(s, universityNames) ? "campus" : "external",
     }));
 
   return (
@@ -136,6 +157,7 @@ export default async function MatchedPage() {
             scholarships={scholarships}
             bookmarkedIds={bookmarkedIds}
             heading="맞춤 장학금"
+            showScopeTabs
           />
         )}
       </main>

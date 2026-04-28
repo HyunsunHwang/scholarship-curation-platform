@@ -2,8 +2,18 @@
 
 import { useState, useMemo } from "react";
 import ScholarshipCard, { type CardScholarship } from "./ScholarshipCard";
+import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
+import { cleanScholarshipName } from "@/lib/scholarship-name";
 
-type SortOption = "deadline" | "amount";
+type SortOption = "deadline" | "latest" | "views" | "scraps";
+type ScopeFilter = "all" | NonNullable<CardScholarship["scope"]>;
+
+const SORT_OPTIONS: { key: SortOption; label: string }[] = [
+  { key: "deadline", label: "마감임박순" },
+  { key: "latest", label: "최신순" },
+  { key: "views", label: "조회수" },
+  { key: "scraps", label: "스크랩수" },
+];
 
 function matchesSearch(
   name: string,
@@ -12,46 +22,69 @@ function matchesSearch(
 ): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
+  const displayName = cleanScholarshipName(name).toLowerCase();
   return (
     name.toLowerCase().includes(q) ||
+    displayName.includes(q) ||
     organization.toLowerCase().includes(q)
   );
-}
-
-function getDays(dateStr: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.ceil((new Date(dateStr).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 export default function ScholarshipDashboard({
   scholarships,
   bookmarkedIds = [],
   heading = "전체 장학금",
+  showScopeTabs = false,
 }: {
   scholarships: CardScholarship[];
   bookmarkedIds?: number[];
   heading?: string;
+  showScopeTabs?: boolean;
 }) {
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("deadline");
+  const [scopeFilter, setScopeFilter] = useState<ScopeFilter>("all");
+
+  const scopeTabs = useMemo(
+    () => [
+      { key: "all" as const, label: "전체 장학금", count: scholarships.length },
+      {
+        key: "campus" as const,
+        label: "교내 장학금",
+        count: scholarships.filter((s) => s.scope === "campus").length,
+      },
+      {
+        key: "external" as const,
+        label: "교외 장학금",
+        count: scholarships.filter((s) => s.scope === "external").length,
+      },
+    ],
+    [scholarships]
+  );
 
   const filtered = useMemo(() => {
-    const list = scholarships.filter((s) =>
-      matchesSearch(s.name, s.organization, searchQuery)
-    );
+    const list = scholarships.filter((s) => {
+      const matchesScope = scopeFilter === "all" || s.scope === scopeFilter;
+      return matchesScope && matchesSearch(s.name, s.organization, searchQuery);
+    });
 
     return [...list].sort((a, b) => {
       if (sortBy === "deadline") {
-        return getDays(a.apply_end_date) - getDays(b.apply_end_date);
+        return (
+          daysUntilApplyDeadlineKorea(a.apply_end_date) -
+          daysUntilApplyDeadlineKorea(b.apply_end_date)
+        );
       }
-      // 금액순: 0(전액)을 최대값으로 취급
-      const aVal = a.support_amount === 0 ? Infinity : a.support_amount;
-      const bVal = b.support_amount === 0 ? Infinity : b.support_amount;
-      return bVal - aVal;
+      if (sortBy === "latest") {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      if (sortBy === "views") {
+        return (b.view_count ?? 0) - (a.view_count ?? 0);
+      }
+      return (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
     });
-  }, [scholarships, searchQuery, sortBy]);
+  }, [scholarships, scopeFilter, searchQuery, sortBy]);
 
   return (
     <section id="scholarships" className="bg-[#fafafa] py-16">
@@ -71,28 +104,41 @@ export default function ScholarshipDashboard({
 
           <div className="flex items-center gap-2">
             <span className="text-sm text-ink/60">정렬:</span>
-            <button
-              onClick={() => setSortBy("deadline")}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-                sortBy === "deadline"
-                  ? "bg-brand text-white"
-                  : "bg-white text-ink/70 hover:bg-[#fff0f0] border border-gray-200"
-              }`}
-            >
-              마감임박순
-            </button>
-            <button
-              onClick={() => setSortBy("amount")}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-                sortBy === "amount"
-                  ? "bg-brand text-white"
-                  : "bg-white text-ink/70 hover:bg-[#fff0f0] border border-gray-200"
-              }`}
-            >
-              금액순
-            </button>
+            {SORT_OPTIONS.map((option) => (
+              <button
+                key={option.key}
+                onClick={() => setSortBy(option.key)}
+                className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                  sortBy === option.key
+                    ? "bg-brand text-white"
+                    : "border border-gray-200 bg-white text-ink/70 hover:bg-[#fff0f0]"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
         </div>
+
+        {showScopeTabs && (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {scopeTabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setScopeFilter(tab.key)}
+                className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+                  scopeFilter === tab.key
+                    ? "border-brand bg-brand text-white"
+                    : "border-gray-200 bg-white text-ink/70 hover:bg-cream"
+                }`}
+              >
+                {tab.label}
+                <span className="ml-1.5 text-xs opacity-75">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* 검색 */}
         <div className="mt-6 relative max-w-xl">

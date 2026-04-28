@@ -8,7 +8,7 @@ export default async function AdminScholarshipsPage() {
   const { data: scholarships, error } = await supabase
     .from("scholarships")
     .select(
-      "id, name, organization, apply_start_date, apply_end_date, support_amount, is_verified, support_types, poster_image_url, list_on_home"
+      "id, name, organization, apply_start_date, apply_end_date, support_amount, support_amount_text, is_verified, support_types, poster_image_url, list_on_home"
     )
     .order("created_at", { ascending: false });
 

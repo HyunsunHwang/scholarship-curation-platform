@@ -163,6 +163,8 @@ export interface Database {
           institution_type: InstitutionType;
           support_types: SupportCategory[];
           support_amount: number;
+          support_amount_text: string | null;
+          view_count: number;
           apply_start_date: string;
           apply_end_date: string;
           announcement_date: string | null;
@@ -215,8 +217,8 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["scholarships"]["Row"],
-          "id" | "created_at" | "updated_at" | "poster_image_url"
-        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at" | "poster_image_url">>;
+          "id" | "created_at" | "updated_at" | "poster_image_url" | "view_count"
+        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at" | "poster_image_url" | "view_count">>;
         Update: Partial<Database["public"]["Tables"]["scholarships"]["Insert"]>;
         Relationships: [];
       };

@@ -11,7 +11,7 @@ export default function BrandLogo() {
       className="relative block h-8 w-36 shrink-0 overflow-hidden sm:w-40"
     >
       <Image
-        src="/brand-wordmark.jpg"
+        src="/brand-logo.png"
         alt="장학쌤"
         width={WORDMARK_W}
         height={WORDMARK_H}

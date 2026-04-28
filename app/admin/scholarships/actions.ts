@@ -213,6 +213,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     institution_type: g("institution_type") as ScholarshipInsert["institution_type"],
     support_types: parseTextArray(g("support_types")) as ScholarshipInsert["support_types"],
     support_amount: parseOptionalFloat(g("support_amount")) ?? 0,
+    support_amount_text: g("support_amount_text") || null,
     apply_start_date: g("apply_start_date") ?? "",
     apply_end_date: g("apply_end_date") ?? "",
     announcement_date: g("announcement_date") || null,

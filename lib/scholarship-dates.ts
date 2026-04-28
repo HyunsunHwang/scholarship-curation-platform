@@ -27,6 +27,27 @@ export function isAlwaysOpenRecruitment(applyEndDate: string): boolean {
   return !Number.isNaN(y) && y >= 2099;
 }
 
+const MS_PER_DAY = 86_400_000;
+
+/**
+ * 한국(Asia/Seoul) 달력 기준, 마감일까지 남은 **일** 수.
+ * - `applyEndDate`는 DB의 `date`(YYYY-MM-DD) 문자열.
+ * - `new Date("YYYY-MM-DD")`는 UTC 자정으로 해석되어 브라우저 TZ와 섞이면 D-가 하루 어긋날 수 있어,
+ *   `isScholarshipExpired`와 같이 **날짜 문자열만** 비교한다.
+ * - 반환: 마감 **당일** = 0(오늘 마감), **전날** = 1 (D-1), …
+ */
+export function daysUntilApplyDeadlineKorea(applyEndDate: string): number {
+  const endPart = applyEndDate.split("T")[0];
+  const [y1, m1, d1] = endPart.split("-").map((x) => parseInt(x, 10));
+  const [y2, m2, d2] = todayKoreaYYYYMMDD()
+    .split("-")
+    .map((x) => parseInt(x, 10));
+  if (!y1 || !m1 || !d1 || !y2 || !m2 || !d2) return NaN;
+  const endUtc = Date.UTC(y1, m1 - 1, d1);
+  const startUtc = Date.UTC(y2, m2 - 1, d2);
+  return Math.round((endUtc - startUtc) / MS_PER_DAY);
+}
+
 /** yyyy-mm-dd → yyyy/mm/dd */
 function formatSlash(dateStr: string): string {
   return dateStr.replace(/-/g, "/");

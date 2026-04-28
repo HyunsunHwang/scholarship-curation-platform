@@ -17,7 +17,7 @@ export default async function Home() {
     supabase
       .from("scholarships")
       .select(
-        "id, name, organization, institution_type, support_types, support_amount, apply_end_date, poster_image_url, created_at"
+        "id, name, organization, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
@@ -31,6 +31,22 @@ export default async function Home() {
   const homeScholarships = (scholarships ?? []).filter(
     (s) => !isUniversitySpecificScholarship(s, universityNames)
   );
+  const homeScholarshipIds = homeScholarships.map((s) => s.id);
+  const { data: scrapRows } = homeScholarshipIds.length > 0
+    ? await supabase
+        .from("bookmarks")
+        .select("scholarship_id")
+        .in("scholarship_id", homeScholarshipIds)
+    : { data: [] };
+  const scrapCountByScholarship = new Map<number, number>();
+  for (const row of scrapRows ?? []) {
+    const id = row.scholarship_id as number;
+    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
+  }
+  const homeScholarshipsWithStats = homeScholarships.map((s) => ({
+    ...s,
+    scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
+  }));
 
   let bookmarkedIds: number[] = [];
   if (user) {
@@ -49,7 +65,7 @@ export default async function Home() {
           isLoggedIn={!!user}
         />
         <ScholarshipDashboard
-          scholarships={homeScholarships}
+          scholarships={homeScholarshipsWithStats}
           bookmarkedIds={bookmarkedIds}
         />
       </main>

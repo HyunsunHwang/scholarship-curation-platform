@@ -32,7 +32,7 @@ export default async function MyPage() {
       ? await supabase
           .from("scholarships")
           .select(
-            "id, name, organization, institution_type, support_types, support_amount, apply_end_date, poster_image_url, created_at"
+            "id, name, organization, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
           )
           .in("id", bookmarkedIds)
       : { data: [] };
@@ -41,6 +41,17 @@ export default async function MyPage() {
   const scholarshipMap = new Map(
     (scholarshipRows ?? []).map((s) => [s.id, s])
   );
+  const { data: allScrapRows } = bookmarkedIds.length > 0
+    ? await supabase
+        .from("bookmarks")
+        .select("scholarship_id")
+        .in("scholarship_id", bookmarkedIds)
+    : { data: [] };
+  const scrapCountByScholarship = new Map<number, number>();
+  for (const row of allScrapRows ?? []) {
+    const id = row.scholarship_id as number;
+    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
+  }
   const bookmarkedScholarships: CardScholarship[] = bookmarkedIds.flatMap((id) => {
     const s = scholarshipMap.get(id);
     if (!s) return [];
@@ -52,9 +63,12 @@ export default async function MyPage() {
       institution_type: s.institution_type as string,
       support_types: s.support_types as string[],
       support_amount: s.support_amount,
+      support_amount_text: s.support_amount_text,
       apply_end_date: s.apply_end_date,
       poster_image_url: s.poster_image_url ?? null,
       created_at: s.created_at,
+      view_count: s.view_count,
+      scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
     }];
   });
 
