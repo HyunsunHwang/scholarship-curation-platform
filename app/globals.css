@@ -15,7 +15,8 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-noto-sans-kr), ui-sans-serif, system-ui, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -134,5 +135,10 @@
   }
   html {
     @apply font-sans;
+    /* Safari/WebKit: CJK는 grayscale 안티앨리어싱이 가늘게 보이는 경우가 있어 서브픽셀 우선 */
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    /* optimizeLegibility는 일부 WebKit+CJK 조합에서 윤곽이 어색해질 수 있음 */
+    text-rendering: auto;
   }
 }

@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+/** Geist는 한글 글리프가 없어 Safari에서 폴백·렌더링이 거칠어질 수 있음 → 한글 포함 Noto Sans KR을 본문 폰트로 사용 */
+const notoSansKr = Noto_Sans_KR({
+  // next/font 생성 타입에 korean이 누락되어 있음(실제 Google Fonts는 지원).
+  subsets: ["latin", "korean"] as ("latin")[],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-noto-sans-kr",
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 const geistMono = Geist_Mono({
@@ -30,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSansKr.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         {children}
