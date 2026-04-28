@@ -12,14 +12,14 @@ export default function BrandLogo({ logoSrc }: Props) {
   return (
     <Link
       href="/"
-      className="relative block h-40 w-[min(100vw-4rem,720px)] shrink-0 overflow-visible sm:w-[720px]"
+      className="relative block h-24 w-[min(100vw-3rem,432px)] shrink-0 overflow-visible sm:w-[432px]"
     >
       <Image
         src={src}
         alt="장학쌤"
         fill
         priority
-        sizes="(max-width: 640px) min(90vw, 720px), 720px"
+        sizes="(max-width: 640px) min(92vw, 432px), 432px"
         className="object-contain object-left"
       />
     </Link>
