@@ -37,12 +37,9 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 href={isLoggedIn ? "/matched" : "/auth"}
-                className="inline-flex h-12 items-center gap-2 rounded-xl bg-brand px-7 text-sm font-semibold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
+                className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-7 text-sm font-semibold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
               >
                 내 장학금 찾기
-                <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 1l1.5 4.5H14l-3.75 2.75 1.5 4.5L8 10l-3.75 2.75 1.5-4.5L2 5.5h4.5L8 1z" />
-                </svg>
               </Link>
               <Link
                 href="#scholarships"
