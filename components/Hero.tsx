@@ -80,16 +80,16 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
 
           {/* ── 우측: Storage `reading_glasses_red.png` ── */}
           <div className="relative hidden lg:flex lg:justify-center lg:items-center lg:pb-16">
-            <div className="flex w-full max-w-md flex-col items-center xl:max-w-lg">
+            <div className="flex w-full max-w-sm flex-col items-center xl:max-w-md">
               <div className="relative w-full">
                 <Image
                   src={heroIllustrationUrl}
                   alt="장학금 안내 일러스트"
-                  width={640}
-                  height={640}
-                  className="h-auto w-full object-contain drop-shadow-[0_16px_40px_rgba(192,0,0,0.06)]"
+                  width={560}
+                  height={560}
+                  className="h-auto w-full object-contain drop-shadow-[0_12px_32px_rgba(192,0,0,0.05)]"
                   priority
-                  sizes="(min-width: 1280px) 28rem, (min-width: 1024px) 24rem, 0"
+                  sizes="(min-width: 1280px) 24rem, (min-width: 1024px) 20rem, 0"
                 />
               </div>
               <p className="mt-3 max-w-sm text-center text-xs leading-relaxed text-ink/40">
