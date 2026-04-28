@@ -23,10 +23,22 @@ export default async function Navbar() {
   const isAdmin = profile?.role === "admin";
   const displayName = profile?.name ?? user?.email ?? "";
 
+  const { data: siteSettings } = await supabase
+    .from("site_settings")
+    .select("header_logo_url, updated_at")
+    .eq("id", 1)
+    .maybeSingle();
+
+  const headerLogoSrc =
+    siteSettings?.header_logo_url &&
+    `${siteSettings.header_logo_url}${
+      siteSettings.header_logo_url.includes("?") ? "&" : "?"
+    }v=${encodeURIComponent(siteSettings.updated_at)}`;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <BrandLogo />
+        <BrandLogo logoSrc={headerLogoSrc || undefined} />
 
         {/* 우측 액션 영역 */}
         <div className="flex items-center gap-2">

@@ -154,6 +154,25 @@ export interface Database {
         Relationships: [];
       };
 
+      /** 공개 사이트 설정 (헤더 로고 URL 등). 단일 행 id=1 */
+      site_settings: {
+        Row: {
+          id: number;
+          header_logo_url: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          header_logo_url?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          header_logo_url?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
       // ── 장학금 ───────────────────────────────────────────────────────────
       scholarships: {
         Row: {

@@ -1,23 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const WORDMARK_W = 1024;
-const WORDMARK_H = 576;
+type Props = {
+  /** 관리자 설정 시 Storage 공개 URL (+ 캐시 무효화 쿼리) */
+  logoSrc?: string | null;
+};
 
-export default function BrandLogo() {
+export default function BrandLogo({ logoSrc }: Props) {
+  const src = logoSrc?.trim() || "/brand-logo.png";
+
   return (
     <Link
       href="/"
       className="relative block h-8 w-36 shrink-0 overflow-hidden sm:w-40"
     >
       <Image
-        src="/brand-logo.png"
+        src={src}
         alt="장학쌤"
-        width={WORDMARK_W}
-        height={WORDMARK_H}
-        className="absolute left-1/2 top-1/2 h-32 w-auto max-w-none -translate-x-1/2 -translate-y-1/2"
+        fill
         priority
         sizes="(max-width: 640px) 144px, 160px"
+        className="object-contain object-left"
       />
     </Link>
   );
