@@ -100,7 +100,7 @@ export default function ScholarshipCard({
       {/* ── 이미지 영역 ── */}
       <Link
         href={`/scholarships/${scholarship.id}`}
-        className="relative block overflow-hidden rounded-2xl aspect-2/3"
+        className="relative block overflow-hidden rounded-xl aspect-2/3 sm:rounded-2xl"
       >
         {scholarship.poster_image_url ? (
           <img
@@ -119,8 +119,8 @@ export default function ScholarshipCard({
         )}
 
         {/* 기관명 오버레이 */}
-        <div className="absolute bottom-3 left-3 max-w-[70%]">
-          <span className="inline-block rounded-full bg-black/40 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm truncate max-w-full">
+        <div className="absolute bottom-2 left-2 max-w-[78%] sm:bottom-3 sm:left-3 sm:max-w-[70%]">
+          <span className="inline-block max-w-full truncate rounded-full bg-black/40 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm sm:px-2.5 sm:text-xs">
             {scholarship.organization}
           </span>
         </div>
@@ -131,12 +131,12 @@ export default function ScholarshipCard({
           onClick={handleBookmark}
           disabled={isPending}
           aria-label={bookmarked ? "북마크 해제" : "북마크"}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full transition-opacity disabled:opacity-50"
+          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full transition-opacity disabled:opacity-50 sm:right-3 sm:top-3 sm:h-8 sm:w-8"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            className={`h-6 w-6 drop-shadow-sm transition-colors ${
+            className={`h-5 w-5 drop-shadow-sm transition-colors sm:h-6 sm:w-6 ${
               bookmarked
                 ? "fill-brand stroke-brand"
                 : "fill-black/20 stroke-white"
@@ -155,13 +155,18 @@ export default function ScholarshipCard({
       {/* ── 텍스트 영역 ── */}
       <Link
         href={`/scholarships/${scholarship.id}`}
-        className="mt-3 flex flex-col gap-0.5"
+        className="mt-2 flex flex-col gap-0.5 sm:mt-3"
       >
-        <p className="text-sm font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors">
+        <p className="text-xs font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors sm:text-sm">
           {displayName}
         </p>
-        <p className={`mt-0.5 text-xs font-medium ${color}`}>{deadlineLabel}</p>
-        <p className="mt-1 truncate text-sm font-bold text-ink" title={fullSupportAmount}>
+        <p className={`mt-0.5 text-[11px] font-medium sm:text-xs ${color}`}>
+          {deadlineLabel}
+        </p>
+        <p
+          className="mt-1 truncate text-xs font-bold text-ink sm:text-sm"
+          title={fullSupportAmount}
+        >
           {supportAmount}
         </p>
       </Link>
