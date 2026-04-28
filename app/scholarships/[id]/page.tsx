@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
+import ScholarshipPoster from "./ScholarshipPoster";
 import ScholarshipTabs from "./ScholarshipTabs";
 import {
   daysUntilApplyDeadlineKorea,
@@ -119,15 +120,14 @@ export default async function ScholarshipDetailPage({
             {/* ── 왼쪽 sticky 패널 ── */}
             <div className="w-full md:w-56 shrink-0 md:sticky md:top-6">
               {/* 포스터 */}
-              <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm aspect-2/3">
+              <div className="aspect-2/3">
                 {scholarship.poster_image_url ? (
-                  <img
-                    src={scholarship.poster_image_url}
+                  <ScholarshipPoster
+                    posterUrl={scholarship.poster_image_url}
                     alt={`${displayName} 포스터`}
-                    className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className={`h-full w-full bg-linear-to-br ${gradient} flex items-center justify-center`}>
+                  <div className={`h-full w-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-linear-to-br ${gradient} flex items-center justify-center aspect-2/3`}>
                     <span className="text-5xl font-bold text-white/30">
                       {scholarship.organization.charAt(0)}
                     </span>
