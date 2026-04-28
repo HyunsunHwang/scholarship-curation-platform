@@ -1,5 +1,10 @@
 -- 사이트 공개 설정(헤더 로고 URL) + 브랜드 이미지 Storage
 -- Supabase SQL Editor에서 실행하거나 마이그레이션으로 적용하세요.
+--
+-- 업로드 시 "Bucket not found" 가 나오면 Storage 버킷이 없는 것입니다.
+-- 이미 site_settings 테이블만 적용했다면 sql/fix-storage-brand-assets-bucket.sql 만 추가 실행하세요.
+-- 또는 Dashboard → Storage → New bucket → 이름 brand-assets, Public bucket 켠 뒤,
+-- 아래 storage.objects 정책(본 파일 하단)은 반드시 SQL로 적용해야 업로드가 됩니다.
 
 -- 1) 테이블 (단일 행 id = 1)
 create table if not exists public.site_settings (

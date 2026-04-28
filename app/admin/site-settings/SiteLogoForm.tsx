@@ -5,6 +5,17 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+function uploadErrorMessage(raw: string): string {
+  if (/bucket not found/i.test(raw)) {
+    return [
+      'Storage 버킷 "brand-assets"가 프로젝트에 없습니다.',
+      "Supabase → SQL Editor에서 sql/fix-storage-brand-assets-bucket.sql 을 실행하거나,",
+      "Dashboard → Storage에서 이름이 정확히 brand-assets 인 공개 버킷을 만든 뒤 같은 SQL의 정책 부분을 적용하세요.",
+    ].join(" ");
+  }
+  return raw;
+}
+
 function extFromMime(mime: string): string {
   if (mime === "image/png") return "png";
   if (mime === "image/jpeg" || mime === "image/jpg") return "jpg";
@@ -51,7 +62,9 @@ export default function SiteLogoForm({ initialUrl, updatedAt }: Props) {
         .from("brand-assets")
         .upload(path, file, { cacheControl: "31536000", upsert: false });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        throw new Error(uploadErrorMessage(uploadError.message));
+      }
 
       const { data } = supabase.storage.from("brand-assets").getPublicUrl(path);
       const publicUrl = data.publicUrl;
@@ -66,13 +79,15 @@ export default function SiteLogoForm({ initialUrl, updatedAt }: Props) {
         { onConflict: "id" }
       );
 
-      if (upsertError) throw upsertError;
+      if (upsertError) throw new Error(upsertError.message);
 
       URL.revokeObjectURL(localUrl);
       setPreview(publicUrl);
       router.refresh();
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "저장에 실패했습니다.");
+      const raw =
+        e instanceof Error ? e.message : "저장에 실패했습니다.";
+      setError(uploadErrorMessage(raw));
       setPreview(initialUrl);
       URL.revokeObjectURL(localUrl);
     } finally {
