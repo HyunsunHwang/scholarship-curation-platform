@@ -90,7 +90,7 @@ export default function ScholarshipDashboard({
     <section id="scholarships" className="bg-[#fafafa] py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-ink">{heading}</h2>
             <p className="mt-1 text-sm text-ink/60">
@@ -102,21 +102,28 @@ export default function ScholarshipDashboard({
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-ink/60">정렬:</span>
-            {SORT_OPTIONS.map((option) => (
-              <button
-                key={option.key}
-                onClick={() => setSortBy(option.key)}
-                className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
-                  sortBy === option.key
-                    ? "bg-brand text-white"
-                    : "border border-gray-200 bg-white text-ink/70 hover:bg-[#fff0f0]"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+          <div className="flex w-full min-w-0 items-center gap-2 sm:max-w-[min(100%,28rem)] sm:flex-1 sm:justify-end lg:max-w-none">
+            <span className="shrink-0 text-sm text-ink/60">정렬:</span>
+            <div
+              role="toolbar"
+              aria-label="정렬 기준 선택"
+              className="flex min-h-[2.25rem] min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:thin]"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  onClick={() => setSortBy(option.key)}
+                  className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                    sortBy === option.key
+                      ? "bg-brand text-white"
+                      : "border border-gray-200 bg-white text-ink/70 hover:bg-[#fff0f0]"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
