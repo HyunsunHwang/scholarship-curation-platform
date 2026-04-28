@@ -18,7 +18,7 @@ export default async function Home() {
     supabase
       .from("scholarships")
       .select(
-        "id, name, organization, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
+        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
