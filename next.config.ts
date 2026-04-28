@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(process.cwd());
 
 const supabaseHostname = (() => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
