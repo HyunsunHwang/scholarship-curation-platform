@@ -48,30 +48,30 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
 
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-[2px]"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-6 sm:p-10 backdrop-blur-[2px]"
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
           onClick={() => setOpen(false)}
         >
           <div
-            className="relative max-h-[min(92vh,100%)] max-w-[min(96vw,56rem)]"
+            className="relative flex max-h-[min(72vh,640px)] w-full max-w-[min(88vw,40rem)] items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <p id={titleId} className="sr-only">
-              {alt} — 원본 크기
+              {alt} — 확대 보기
             </p>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="absolute -right-1 -top-10 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 sm:-right-2 sm:-top-12 sm:text-sm"
+              className="absolute -top-10 right-0 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 sm:-top-11 sm:text-sm"
             >
               닫기
             </button>
             <img
               src={posterUrl}
               alt=""
-              className="max-h-[min(92vh,100%)] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+              className="max-h-[min(72vh,640px)] w-full max-w-full rounded-lg object-contain shadow-2xl"
             />
           </div>
         </div>
