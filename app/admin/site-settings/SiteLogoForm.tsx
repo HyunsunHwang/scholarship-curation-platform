@@ -10,6 +10,12 @@ const SITE_LOGO_BUCKET = "scholarship-posters";
 const SITE_LOGO_PREFIX = "site-brand/header-logo";
 
 function uploadErrorMessage(raw: string): string {
+  if (/site_settings|schema cache/i.test(raw)) {
+    return [
+      "데이터베이스에 site_settings 테이블이 없습니다.",
+      "Supabase → SQL Editor에서 프로젝트 저장소의 sql/create-site-settings-table.sql 파일 내용을 붙여 넣어 실행한 뒤 다시 시도하세요.",
+    ].join(" ");
+  }
   if (/bucket not found/i.test(raw)) {
     return [
       "Storage 버킷을 찾을 수 없습니다.",
@@ -83,7 +89,9 @@ export default function SiteLogoForm({ initialUrl, updatedAt }: Props) {
         { onConflict: "id" }
       );
 
-      if (upsertError) throw new Error(upsertError.message);
+      if (upsertError) {
+        throw new Error(uploadErrorMessage(upsertError.message));
+      }
 
       URL.revokeObjectURL(localUrl);
       setPreview(publicUrl);
