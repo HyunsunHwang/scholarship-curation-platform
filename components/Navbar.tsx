@@ -37,11 +37,13 @@ export default async function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80 overflow-visible">
-      <div className="mx-auto flex h-16 min-h-16 max-h-16 max-w-7xl items-center justify-between overflow-visible pl-2 pr-4 sm:pl-3 sm:pr-6 lg:pl-4 lg:pr-8">
-        <BrandLogo logoSrc={headerLogoSrc || undefined} />
+      <div className="mx-auto flex h-16 min-h-16 max-h-16 max-w-7xl items-center justify-between gap-2 overflow-visible pl-1 pr-3 sm:gap-3 sm:pl-3 sm:pr-6 lg:pl-4 lg:pr-8">
+        <div className="min-w-0 flex-1">
+          <BrandLogo logoSrc={headerLogoSrc || undefined} />
+        </div>
 
-        {/* 우측 액션 영역 */}
-        <div className="flex items-center gap-2">
+        {/* 우측 액션 영역 — 모바일에서 로고와 너비 경쟁 시 줄바꿈 방지 */}
+        <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2">
           {user ? (
             <>
               {/* 관리자 패널 링크 */}
@@ -131,13 +133,13 @@ export default async function Navbar() {
             <>
               <Link
                 href="/auth"
-                className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-ink/70 transition-colors hover:bg-[#fff0f0] hover:text-ink"
+                className="inline-flex h-8 shrink-0 items-center rounded-lg px-2 text-xs font-medium text-ink/70 transition-colors hover:bg-[#fff0f0] hover:text-ink sm:h-7 sm:px-2.5 sm:text-sm"
               >
                 로그인
               </Link>
               <Link
                 href="/auth"
-                className="inline-flex h-7 items-center rounded-lg bg-brand px-2.5 text-sm font-medium text-white transition-colors hover:bg-brand/85"
+                className="inline-flex h-8 shrink-0 items-center rounded-lg bg-brand px-2 text-xs font-medium text-white transition-colors hover:bg-brand/85 sm:h-7 sm:px-2.5 sm:text-sm"
               >
                 회원가입
               </Link>
