@@ -19,14 +19,6 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
 
           {/* ── 좌측: 텍스트 ── */}
           <div className="pb-16 sm:pb-20 lg:pb-24">
-            {/* 뱃지 */}
-            <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-[#fea276]/60 bg-white/70 px-3.5 py-1.5 text-sm font-semibold text-brand shadow-sm backdrop-blur-sm">
-              <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 1l1.5 4.5H14l-3.75 2.75 1.5 4.5L8 10l-3.75 2.75 1.5-4.5L2 5.5h4.5L8 1z" />
-              </svg>
-              AI 맞춤 추천
-            </div>
-
             {/* 제목 */}
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl lg:text-5xl">
               나에게 딱 맞는
@@ -80,16 +72,16 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
 
           {/* ── 우측: Storage `reading_glasses_red.png` ── */}
           <div className="relative hidden lg:flex lg:justify-center lg:items-center lg:pb-16">
-            <div className="flex w-full max-w-sm flex-col items-center xl:max-w-md">
+            <div className="flex w-full max-w-xs flex-col items-center xl:max-w-sm">
               <div className="relative w-full">
                 <Image
                   src={heroIllustrationUrl}
                   alt="장학금 안내 일러스트"
-                  width={560}
-                  height={560}
-                  className="h-auto w-full object-contain drop-shadow-[0_12px_32px_rgba(192,0,0,0.05)]"
+                  width={480}
+                  height={480}
+                  className="h-auto w-full object-contain drop-shadow-[0_10px_28px_rgba(192,0,0,0.05)]"
                   priority
-                  sizes="(min-width: 1280px) 24rem, (min-width: 1024px) 20rem, 0"
+                  sizes="(min-width: 1280px) 20rem, (min-width: 1024px) 18rem, 0"
                 />
               </div>
               <p className="mt-3 max-w-sm text-center text-xs leading-relaxed text-ink/40">
