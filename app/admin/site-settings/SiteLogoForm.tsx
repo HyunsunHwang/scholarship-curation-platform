@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+/** 장학금 포스터와 동일 버킷 — 프로덕션에 이미 있어 별도 버킷 생성 SQL이 필요 없습니다. */
+const SITE_LOGO_BUCKET = "scholarship-posters";
+const SITE_LOGO_PREFIX = "site-brand/header-logo";
+
 function uploadErrorMessage(raw: string): string {
   if (/bucket not found/i.test(raw)) {
     return [
-      'Storage 버킷 "brand-assets"가 프로젝트에 없습니다.',
-      "Supabase → SQL Editor에서 sql/fix-storage-brand-assets-bucket.sql 을 실행하거나,",
-      "Dashboard → Storage에서 이름이 정확히 brand-assets 인 공개 버킷을 만든 뒤 같은 SQL의 정책 부분을 적용하세요.",
+      "Storage 버킷을 찾을 수 없습니다.",
+      "배포 환경의 NEXT_PUBLIC_SUPABASE_URL 이 장학금 포스터 업로드에 쓰는 프로젝트와 같은지 확인하세요.",
+      'Storage에 "scholarship-posters" 버킷이 있어야 합니다.',
     ].join(" ");
   }
   return raw;
@@ -56,17 +60,17 @@ export default function SiteLogoForm({ initialUrl, updatedAt }: Props) {
     try {
       const supabase = createClient();
       const ext = extFromMime(file.type);
-      const path = `header-logo/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const path = `${SITE_LOGO_PREFIX}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("brand-assets")
+        .from(SITE_LOGO_BUCKET)
         .upload(path, file, { cacheControl: "31536000", upsert: false });
 
       if (uploadError) {
         throw new Error(uploadErrorMessage(uploadError.message));
       }
 
-      const { data } = supabase.storage.from("brand-assets").getPublicUrl(path);
+      const { data } = supabase.storage.from(SITE_LOGO_BUCKET).getPublicUrl(path);
       const publicUrl = data.publicUrl;
       const now = new Date().toISOString();
 
