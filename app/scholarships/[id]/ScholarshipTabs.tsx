@@ -543,7 +543,7 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   return (
     <section>
       <h3 className="mb-4 text-sm font-bold text-ink">원본 공고문</h3>
-      <div className="space-y-4 rounded-2xl border border-gray-200 bg-cream/40 p-4">
+      <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
         {imageUrls.map((imageUrl, i) => (
           <div key={imageUrl} className="overflow-hidden rounded-xl border border-gray-200 bg-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -566,30 +566,33 @@ export default function ScholarshipTabs({ scholarship }: { scholarship: Scholars
 
   return (
     <div className="mt-6 space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
-        {hasQualifications(s) ? (
-          <section>
-            <h3 className="mb-4 text-sm font-bold text-ink">지원자격</h3>
-            <QualSection s={s} />
+      {/* 지원자격·일정·서류·신청 — 핵심 요약·원본 공고와 같은 톤의 반투명 박스 */}
+      <div className="space-y-6 rounded-2xl border border-gray-200/90 bg-gray-50 p-5 shadow-sm sm:p-6 md:p-7">
+        <div className="grid gap-6 md:grid-cols-2">
+          {hasQualifications(s) ? (
+            <section>
+              <h3 className="mb-4 text-sm font-bold text-ink">지원자격</h3>
+              <QualSection s={s} />
+            </section>
+          ) : null}
+          <section className={hasQualifications(s) ? "" : "md:col-span-2"}>
+            <h3 className="mb-4 text-sm font-bold text-ink">주요 일정</h3>
+            <ScheduleSection s={s} />
           </section>
-        ) : null}
-        <section className={hasQualifications(s) ? "" : "md:col-span-2"}>
-          <h3 className="mb-4 text-sm font-bold text-ink">주요 일정</h3>
-          <ScheduleSection s={s} />
-        </section>
-      </div>
+        </div>
 
-      <div className="border-t border-gray-200/80" />
+        <div className="border-t border-gray-200/70" />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <section>
-          <h3 className="mb-4 text-sm font-bold text-ink">제출 서류</h3>
-          <DocumentsSection s={s} />
-        </section>
-        <section>
-          <h3 className="mb-4 text-sm font-bold text-ink">신청 방법</h3>
-          <ApplySection s={s} />
-        </section>
+        <div className="grid gap-6 md:grid-cols-2">
+          <section>
+            <h3 className="mb-4 text-sm font-bold text-ink">제출 서류</h3>
+            <DocumentsSection s={s} />
+          </section>
+          <section>
+            <h3 className="mb-4 text-sm font-bold text-ink">신청 방법</h3>
+            <ApplySection s={s} />
+          </section>
+        </div>
       </div>
 
       <OriginalNoticeSection s={s} />
