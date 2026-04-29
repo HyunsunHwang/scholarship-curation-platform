@@ -33,6 +33,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql
 STABLE
+SET search_path = ''
 AS $$
   SELECT
     b.scholarship_id,
