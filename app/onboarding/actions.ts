@@ -149,6 +149,9 @@ export async function saveProfile(
 
   if (userError || !user) redirect("/auth");
 
+  const validationError = validateProfile(data);
+  if (validationError) return { error: validationError };
+
   const birth_date =
     data.birth_year && data.birth_month && data.birth_day
       ? `${data.birth_year}-${data.birth_month.padStart(2, "0")}-${data.birth_day.padStart(2, "0")}`
@@ -209,4 +212,51 @@ export async function saveProfile(
   if (error) return { error: error.message };
 
   redirect(redirectTo);
+}
+
+function validateProfile(data: OnboardingFormData): string | null {
+  if (!data.name.trim()) return "이름을 입력해주세요.";
+  if (!data.birth_year || !data.birth_month || !data.birth_day) {
+    return "생년월일을 선택해주세요.";
+  }
+  if (!data.gender) return "성별을 선택해주세요.";
+  if (!data.phone) return "연락처를 입력해주세요.";
+  if (!data.address) return "주소지를 입력해주세요.";
+  if (!data.nationality) return "국적을 선택해주세요.";
+  if (!data.school_location) return "학교 소재를 선택해주세요.";
+  if (!data.school_category) return "학교 유형을 선택해주세요.";
+
+  if (data.school_location === "국내 대학") {
+    if (!data.university_id) return "대학교를 선택해주세요.";
+    if (!data.college_id) return "단과대학을 선택해주세요.";
+    if (!data.department_id) return "학과를 선택해주세요.";
+  } else {
+    if (!data.school_name.trim()) return "소속 대학교를 입력해주세요.";
+    if (!data.department.trim()) return "소속 학과를 입력해주세요.";
+  }
+
+  if (!data.academic_year) return "학년을 선택해주세요.";
+  if (!data.academic_semester) return "학기를 선택해주세요.";
+  if (!data.enrollment_status) return "재학 상태를 선택해주세요.";
+  if (!data.income_level) return "소득분위를 선택해주세요.";
+
+  if (data.has_double_major) {
+    if (!data.double_major_college_id) return "복수전공 단과대학을 선택해주세요.";
+    if (!data.double_major_department_id) return "복수전공 학과를 선택해주세요.";
+  }
+
+  const gpa = data.gpa ? parseFloat(data.gpa) : null;
+  if (gpa !== null && (!Number.isFinite(gpa) || gpa < 0 || gpa > 4.5)) {
+    return "누적 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
+  }
+
+  const lastGpa = data.gpa_last_semester ? parseFloat(data.gpa_last_semester) : null;
+  if (
+    lastGpa !== null &&
+    (!Number.isFinite(lastGpa) || lastGpa < 0 || lastGpa > 4.5)
+  ) {
+    return "직전 학기 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
+  }
+
+  return null;
 }

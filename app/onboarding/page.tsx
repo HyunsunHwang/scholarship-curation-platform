@@ -705,6 +705,10 @@ function validateStep(step: number, form: OnboardingFormData): string {
     if (!form.academic_year) return "학년을 선택해주세요.";
     if (!form.academic_semester) return "학기를 선택해주세요.";
     if (!form.enrollment_status) return "재학 상태를 선택해주세요.";
+    if (form.has_double_major) {
+      if (!form.double_major_college_id) return "복수전공 단과대학을 선택해주세요.";
+      if (!form.double_major_department_id) return "복수전공 학과를 선택해주세요.";
+    }
     if (form.gpa && (parseFloat(form.gpa) < 0 || parseFloat(form.gpa) > 4.5))
       return "누적 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
     if (form.gpa_last_semester && (parseFloat(form.gpa_last_semester) < 0 || parseFloat(form.gpa_last_semester) > 4.5))
@@ -766,8 +770,17 @@ export default function OnboardingPage() {
   };
 
   const handleSubmit = async () => {
+    for (let i = 0; i < STEPS.length; i += 1) {
+      const err = validateStep(i, form);
+      if (err) {
+        setStep(i);
+        setErrorMsg(err);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+    }
     setLoading(true);
-    const result = await saveProfile(form, isEditing ? "/matched" : "/");
+    const result = await saveProfile(form, "/matched");
     if (result?.error) { setErrorMsg(result.error); setLoading(false); }
   };
 

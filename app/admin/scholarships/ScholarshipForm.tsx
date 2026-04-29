@@ -20,6 +20,16 @@ const SUPPORT_CATEGORIES = [
   "등록금", "생활비", "학업장려금", "연구비", "해외연수비", "기타",
 ];
 
+const SCHOOL_LOCATIONS = ["국내 대학", "해외 대학"];
+const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
+const ENROLLMENT_STATUSES = ["신입생", "재학", "휴학", "초과이수기", "수료", "졸업예정", "졸업"];
+const ACADEMIC_YEARS = ["1", "2", "3", "4", "5"];
+const PARENT_OCCUPATIONS = [
+  "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
+  "경찰/소방관", "택배기사", "환경미화원", "연극인",
+];
+const MILITARY_STATUSES = ["군필", "미필", "비대상", "면제"];
+
 export default function ScholarshipForm({
   defaultValues: dv = {},
   action,
@@ -128,6 +138,55 @@ export default function ScholarshipForm({
         <Field label="최대 나이" name="qual_age_max" type="number" defaultValue={dv.qual_age_max?.toString() ?? ""} />
         <Field label="최소 대상 학년" name="qual_min_academic_year" type="number" min="1" max="5" defaultValue={dv.qual_min_academic_year?.toString() ?? ""} placeholder="예: 4" />
         <Field label="최소 대상 학기" name="qual_min_academic_semester" type="number" min="1" max="2" defaultValue={dv.qual_min_academic_semester?.toString() ?? ""} placeholder="예: 2" />
+        <CheckboxGroup
+          label="학교 소재 제한"
+          name="qual_school_location"
+          options={SCHOOL_LOCATIONS}
+          defaultSelected={dv.qual_school_location ?? []}
+        />
+        <CheckboxGroup
+          label="학교 유형 제한"
+          name="qual_school_category"
+          options={SCHOOL_CATEGORIES}
+          defaultSelected={dv.qual_school_category ?? []}
+        />
+        <CheckboxGroup
+          label="재학 상태 제한"
+          name="qual_enrollment_status"
+          options={ENROLLMENT_STATUSES}
+          defaultSelected={dv.qual_enrollment_status ?? []}
+        />
+        <CheckboxGroup
+          label="대상 학년"
+          name="qual_academic_year"
+          options={ACADEMIC_YEARS}
+          defaultSelected={(dv.qual_academic_year ?? []).map(String)}
+          formatLabel={(value) => `${value}학년`}
+        />
+        <SelectField
+          label="성별 제한"
+          name="qual_gender"
+          defaultValue={dv.qual_gender ?? ""}
+          options={["남성", "여성"]}
+        />
+        <SelectField
+          label="국적 제한"
+          name="qual_nationality"
+          defaultValue={dv.qual_nationality ?? ""}
+          options={["내국인", "외국인"]}
+        />
+        <CheckboxGroup
+          label="부모 직업 제한"
+          name="qual_parent_occupation"
+          options={PARENT_OCCUPATIONS}
+          defaultSelected={dv.qual_parent_occupation ?? []}
+        />
+        <SelectField
+          label="병역사항 제한"
+          name="qual_military_status"
+          defaultValue={dv.qual_military_status ?? ""}
+          options={MILITARY_STATUSES}
+        />
         <Field label="지역 (쉼표 구분)" name="qual_region" defaultValue={(dv.qual_region ?? []).join(", ")} placeholder="예: 서울, 경기" />
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">기타 요건</label>
@@ -344,6 +403,71 @@ function Field({
         max={max}
         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  name,
+  defaultValue = "",
+  options,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string;
+  options: string[];
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">제한 없음</option>
+        {options.map((option) => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function CheckboxGroup({
+  label,
+  name,
+  options,
+  defaultSelected,
+  formatLabel,
+}: {
+  label: string;
+  name: string;
+  options: string[];
+  defaultSelected: string[];
+  formatLabel?: (value: string) => string;
+}) {
+  const checkboxName = `${name}_check`;
+
+  return (
+    <div className="md:col-span-2">
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <div className="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+        {options.map((option) => (
+          <label key={option} className="flex items-center gap-1.5 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              name={checkboxName}
+              value={option}
+              defaultChecked={defaultSelected.includes(option)}
+              className="rounded"
+            />
+            {formatLabel ? formatLabel(option) : option}
+          </label>
+        ))}
+      </div>
+      <CheckboxToHidden name={name} checkboxName={checkboxName} />
     </div>
   );
 }
