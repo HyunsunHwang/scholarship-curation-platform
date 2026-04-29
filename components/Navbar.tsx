@@ -16,23 +16,25 @@ export default async function Navbar({
 }: {
   currentUser?: User | null;
 } = {}) {
-  const supabase = await createClient();
+  const siteSettingsPromise = getCachedSiteSettings();
+  let supabase: Awaited<ReturnType<typeof createClient>> | null = null;
+  let user = currentUser ?? null;
 
-  const userPromise =
-    currentUser === undefined
-      ? supabase.auth.getUser()
-      : Promise.resolve({ data: { user: currentUser } });
-  const [
-    {
-      data: { user },
-    },
-    siteSettings,
-  ] = await Promise.all([userPromise, getCachedSiteSettings()]);
+  if (currentUser === undefined) {
+    supabase = await createClient();
+    const {
+      data: { user: resolvedUser },
+    } = await supabase.auth.getUser();
+    user = resolvedUser;
+  }
+
+  const siteSettings = await siteSettingsPromise;
 
   let profile: { role: string; name: string | null } | null = null;
   let urgentBookmarkCount = 0;
 
   if (user) {
+    supabase ??= await createClient();
     const [{ data: profileData }, { data: bookmarkRows }] = await Promise.all([
       supabase
         .from("profiles")

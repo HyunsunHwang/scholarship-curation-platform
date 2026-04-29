@@ -3,10 +3,9 @@ import Link from "next/link";
 
 type HeroProps = {
   heroIllustrationUrl: string;
-  isLoggedIn: boolean;
 };
 
-export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
+export default function Hero({ heroIllustrationUrl }: HeroProps) {
 
   return (
     <section className="relative overflow-hidden bg-white pt-16 pb-0">
@@ -36,7 +35,7 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
             {/* CTA 버튼 */}
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href={isLoggedIn ? "/matched" : "/auth"}
+                href="/matched"
                 className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-7 text-sm font-semibold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
               >
                 내 장학금 찾기
