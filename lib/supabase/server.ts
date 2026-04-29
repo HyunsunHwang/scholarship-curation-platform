@@ -13,11 +13,12 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, _headers) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             );
+            // CDN 캐시 헤더는 Server Component/Action 응답에서는 설정 불가 — middleware.setAll에서 처리
           } catch {
             // Server Component에서 호출 시 무시 (Middleware가 처리)
           }
