@@ -15,6 +15,10 @@ SET
   qual_school_location = ARRAY['국내 대학']::school_location_type[],
   qual_school_category = ARRAY['4년제']::school_category_type[],
   qual_academic_year = ARRAY[2::smallint, 3::smallint],
+  qual_special_info = ARRAY[
+    '학부 2학년 또는 3학년 재학(또는 휴학)생',
+    '1년간 커리큘럼 풀참여 가능자 (어학연수, 교환학생, 취업, 군복무 등 예정자 지원 불가)'
+  ]::text[],
   qual_enrollment_status = ARRAY['재학', '휴학']::enrollment_status_type[],
   qual_nationality = '내국인',
   can_overlap = true,

@@ -20,12 +20,15 @@ export type ScholarshipDetail = {
   qual_gpa_last_semester_min: number | null;
   qual_income_level_max: number | null;
   qual_income_level_min: number | null;
+  qual_household_size_max: number | null;
   qual_gender: string | null;
   qual_age_min: number | null;
   qual_age_max: number | null;
   qual_region: string[] | null;
   qual_major: string[] | null;
   qual_special_info: string[] | null;
+  qual_parent_occupation: string[] | null;
+  qual_military_status: string | null;
   qual_nationality: string | null;
   qual_university: string[] | null;
   qual_enrollment_status: string[] | null;
@@ -59,19 +62,24 @@ function hasQualifications(s: ScholarshipDetail): boolean {
   return !!(
     s.qual_gpa_min ||
     s.qual_gpa_last_semester_min ||
+    s.qual_income_level_min ||
     s.qual_income_level_max ||
+    s.qual_household_size_max ||
     s.qual_gender ||
     s.qual_age_min ||
     s.qual_age_max ||
     (s.qual_region && s.qual_region.length > 0) ||
     (s.qual_major && s.qual_major.length > 0) ||
     (s.qual_special_info && s.qual_special_info.length > 0) ||
+    (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) ||
+    s.qual_military_status ||
     (s.qual_university && s.qual_university.length > 0) ||
     (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) ||
     (s.qual_school_location && s.qual_school_location.length > 0) ||
     (s.qual_school_category && s.qual_school_category.length > 0) ||
     (s.qual_academic_year && s.qual_academic_year.length > 0) ||
     s.qual_min_academic_year ||
+    s.qual_min_academic_semester ||
     s.qual_nationality
   );
 }
@@ -85,7 +93,7 @@ function formatDate(dateStr: string | null): string {
 // ── 지원자격 섹션 ────────────────────────────────────────────────────
 function QualSection({ s }: { s: ScholarshipDetail }) {
   if (!hasQualifications(s)) {
-    return <p className="text-sm text-gray-400">자격 요건 정보가 없습니다.</p>;
+    return <p className="text-sm text-ink/45">자격 요건 정보가 없습니다.</p>;
   }
 
   const rows: { icon: string; label: string; value: string }[] = [];
@@ -114,12 +122,14 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_academic_year && s.qual_academic_year.length > 0) {
     rows.push({ icon: "📆", label: "학년", value: s.qual_academic_year.map((y) => `${y}학년`).join(", ") });
   }
-  if (s.qual_min_academic_year) {
+  if (s.qual_min_academic_year || s.qual_min_academic_semester) {
     const semester = s.qual_min_academic_semester ? ` ${s.qual_min_academic_semester}학기` : "";
     rows.push({
       icon: "📆",
       label: "최소 학년",
-      value: `${s.qual_min_academic_year}학년${semester} 이상`,
+      value: s.qual_min_academic_year
+        ? `${s.qual_min_academic_year}학년${semester} 이상`
+        : `${s.qual_min_academic_semester}학기 이상`,
     });
   }
   if (s.qual_major && s.qual_major.length > 0) {
@@ -131,12 +141,21 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_gpa_last_semester_min) {
     rows.push({ icon: "📊", label: "학점 (직전)", value: `${s.qual_gpa_last_semester_min} 이상` });
   }
-  if (s.qual_income_level_max) {
+  if (s.qual_income_level_min || s.qual_income_level_max) {
+    const value =
+      s.qual_income_level_min && s.qual_income_level_max
+        ? `${s.qual_income_level_min} ~ ${s.qual_income_level_max}분위`
+        : s.qual_income_level_min
+          ? `${s.qual_income_level_min}분위 이상`
+          : `${s.qual_income_level_max}분위 이하`;
     rows.push({
       icon: "💳",
       label: "소득 분위",
-      value: `${s.qual_income_level_min ?? 1} ~ ${s.qual_income_level_max}분위`,
+      value,
     });
+  }
+  if (s.qual_household_size_max) {
+    rows.push({ icon: "🏠", label: "가구원 수", value: `${s.qual_household_size_max}인 이하` });
   }
   if (s.qual_gender) {
     rows.push({ icon: "👥", label: "성별", value: s.qual_gender });
@@ -147,6 +166,12 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_special_info && s.qual_special_info.length > 0) {
     rows.push({ icon: "✨", label: "기타 요건", value: s.qual_special_info.join(", ") });
   }
+  if (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) {
+    rows.push({ icon: "💼", label: "부모 직업", value: s.qual_parent_occupation.join(", ") });
+  }
+  if (s.qual_military_status) {
+    rows.push({ icon: "🪖", label: "병역사항", value: s.qual_military_status });
+  }
 
   return (
     <div className="space-y-2.5">
@@ -154,8 +179,8 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
         <div key={row.label} className="flex items-start gap-3">
           <span className="mt-0.5 shrink-0 text-base leading-none">{row.icon}</span>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:gap-4">
-            <span className="w-24 shrink-0 text-xs font-medium text-gray-400">{row.label}</span>
-            <span className="text-sm text-gray-800">{row.value}</span>
+            <span className="w-24 shrink-0 text-xs font-medium text-ink/45">{row.label}</span>
+            <span className="text-sm text-ink">{row.value}</span>
           </div>
         </div>
       ))}
@@ -394,32 +419,32 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
   );
 
   if (deduped.length === 0) {
-    return <p className="text-sm text-gray-400">일정 정보가 없습니다.</p>;
+    return <p className="text-sm text-ink/45">일정 정보가 없습니다.</p>;
   }
 
   return (
     <div className="space-y-3">
       {deduped.map((row, idx) => (
         <div key={row.key} className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-center leading-none">
-            <span className="text-xs font-bold text-gray-600">{idx + 1}</span>
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-center leading-none">
+            <span className="text-xs font-bold text-brand">{idx + 1}</span>
           </div>
           <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-            <span className="text-xs font-medium text-gray-500">{row.label}</span>
+            <span className="text-xs font-medium text-ink/55">{row.label}</span>
             <span
               className={`shrink-0 text-right text-sm ${
                 row.kind === "milestone" && row.urgent
-                  ? "font-semibold text-red-600"
+                  ? "font-semibold text-brand"
                   : row.kind === "stage" && !row.value
-                    ? "font-medium text-gray-400"
-                    : "font-semibold text-gray-800"
+                    ? "font-medium text-ink/45"
+                    : "font-semibold text-ink"
               }`}
             >
               {row.kind === "milestone" ? (
                 <>
                   {row.value}
                   {row.urgent && (
-                    <span className="ml-1.5 inline-flex items-center rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-600">
+                    <span className="ml-1.5 inline-flex items-center rounded-full bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">
                       D-{daysLeft}
                     </span>
                   )}
@@ -440,17 +465,17 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
 // ── 제출 서류 섹션 ────────────────────────────────────────────────────
 function DocumentsSection({ s }: { s: ScholarshipDetail }) {
   const docs = s.required_documents ?? [];
-  if (docs.length === 0) return <p className="text-sm text-gray-400">서류 정보가 없습니다.</p>;
+  if (docs.length === 0) return <p className="text-sm text-ink/45">서류 정보가 없습니다.</p>;
 
   return (
     <div>
       <ol className="space-y-2">
         {docs.map((doc, i) => (
           <li key={i} className="flex items-start gap-3">
-            <span className="flex h-5 w-7 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] font-bold text-gray-500">
+            <span className="flex h-5 w-7 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand">
               {String(i + 1).padStart(2, "0")}
             </span>
-            <span className="text-sm text-gray-800">{doc}</span>
+            <span className="text-sm text-ink">{doc}</span>
           </li>
         ))}
       </ol>
@@ -459,7 +484,7 @@ function DocumentsSection({ s }: { s: ScholarshipDetail }) {
           href={s.homepage_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-ink/80 transition hover:bg-cream"
         >
           서류 양식 다운로드
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -481,21 +506,21 @@ function ApplySection({ s }: { s: ScholarshipDetail }) {
         <ol className="space-y-3">
           {steps.map((step, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/12 text-xs font-bold text-brand">
                 {i + 1}
               </span>
-              <span className="pt-0.5 text-sm text-gray-800">{step}</span>
+              <span className="pt-0.5 text-sm text-ink">{step}</span>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="text-sm text-gray-400">신청 방법 정보가 없습니다.</p>
+        <p className="text-sm text-ink/45">신청 방법 정보가 없습니다.</p>
       )}
       <a
         href={s.apply_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-indigo-100 transition hover:bg-indigo-700"
+        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/20 transition hover:bg-brand/85"
       >
         신청하러 가기
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -517,8 +542,8 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
 
   return (
     <section>
-      <h3 className="mb-4 text-sm font-bold text-gray-900">원본 공고문</h3>
-      <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+      <h3 className="mb-4 text-sm font-bold text-ink">원본 공고문</h3>
+      <div className="space-y-4 rounded-2xl border border-gray-200 bg-cream/40 p-4">
         {imageUrls.map((imageUrl, i) => (
           <div key={imageUrl} className="overflow-hidden rounded-xl border border-gray-200 bg-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -526,7 +551,7 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
           </div>
         ))}
         {text ? (
-          <div className="whitespace-pre-wrap rounded-xl bg-white px-4 py-3 text-sm leading-6 text-gray-700">
+          <div className="whitespace-pre-wrap rounded-xl bg-white px-4 py-3 text-sm leading-6 text-ink/80">
             {text}
           </div>
         ) : null}
@@ -544,25 +569,25 @@ export default function ScholarshipTabs({ scholarship }: { scholarship: Scholars
       <div className="grid gap-6 md:grid-cols-2">
         {hasQualifications(s) ? (
           <section>
-            <h3 className="mb-4 text-sm font-bold text-gray-900">지원자격</h3>
+            <h3 className="mb-4 text-sm font-bold text-ink">지원자격</h3>
             <QualSection s={s} />
           </section>
         ) : null}
         <section className={hasQualifications(s) ? "" : "md:col-span-2"}>
-          <h3 className="mb-4 text-sm font-bold text-gray-900">주요 일정</h3>
+          <h3 className="mb-4 text-sm font-bold text-ink">주요 일정</h3>
           <ScheduleSection s={s} />
         </section>
       </div>
 
-      <div className="border-t border-gray-100" />
+      <div className="border-t border-gray-200/80" />
 
       <div className="grid gap-6 md:grid-cols-2">
         <section>
-          <h3 className="mb-4 text-sm font-bold text-gray-900">제출 서류</h3>
+          <h3 className="mb-4 text-sm font-bold text-ink">제출 서류</h3>
           <DocumentsSection s={s} />
         </section>
         <section>
-          <h3 className="mb-4 text-sm font-bold text-gray-900">신청 방법</h3>
+          <h3 className="mb-4 text-sm font-bold text-ink">신청 방법</h3>
           <ApplySection s={s} />
         </section>
       </div>

@@ -36,7 +36,7 @@ export default function BookmarkApplyButtons({
         href={applyUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-md shadow-indigo-100 transition hover:bg-indigo-700 active:scale-95"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
       >
         지원하기
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -49,12 +49,12 @@ export default function BookmarkApplyButtons({
         type="button"
         onClick={handleBookmark}
         disabled={isPending}
-        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50 active:scale-95 disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-ink/70 transition hover:bg-cream active:scale-95 disabled:opacity-50"
       >
         <svg
           viewBox="0 0 24 24"
           className={`h-4 w-4 transition-colors ${
-            bookmarked ? "fill-indigo-500 stroke-indigo-500" : "fill-none stroke-gray-400"
+            bookmarked ? "fill-brand stroke-brand" : "fill-none stroke-ink/35"
           }`}
           strokeWidth={1.8}
         >
