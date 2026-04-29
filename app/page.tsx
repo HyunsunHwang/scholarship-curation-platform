@@ -6,20 +6,35 @@ import {
   createPublicSupabaseClient,
   getCachedHomeScholarships,
 } from "@/lib/public-data";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
   const homeScholarships = await getCachedHomeScholarships();
-  const supabase = createPublicSupabaseClient();
-  const heroIllustrationUrl = getHeroIllustrationPublicUrl(supabase);
+  const publicSupabase = createPublicSupabaseClient();
+  const heroIllustrationUrl = getHeroIllustrationPublicUrl(publicSupabase);
+
+  const authSupabase = await createClient();
+  const {
+    data: { user },
+  } = await authSupabase.auth.getUser();
+
+  let bookmarkedIds: number[] = [];
+  if (user) {
+    const { data: bookmarkRows } = await authSupabase
+      .from("bookmarks")
+      .select("scholarship_id")
+      .eq("user_id", user.id);
+    bookmarkedIds = (bookmarkRows ?? []).map((r) => r.scholarship_id);
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar currentUser={null} />
+      <Navbar currentUser={user} />
       <main className="flex-1">
         <Hero heroIllustrationUrl={heroIllustrationUrl} />
         <ScholarshipDashboard
           scholarships={homeScholarships}
-          bookmarkedIds={[]}
+          bookmarkedIds={bookmarkedIds}
         />
       </main>
       <footer className="border-t border-gray-200 bg-white py-8">
