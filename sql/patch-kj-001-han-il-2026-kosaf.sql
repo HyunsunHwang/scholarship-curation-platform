@@ -1,0 +1,47 @@
+-- KJ-001: 2026년 한·일 대학생 연수 (한국장학재단) 공고·CSV 기준 정합성 패치
+-- 기존 행명이 '한·일 대학생 연수' 등이어도 조직·프로그램으로 식별해 갱신합니다.
+
+UPDATE public.scholarships
+SET
+  name = '2026년 한·일 대학생 연수',
+  organization = '한국장학재단',
+  institution_type = '공공기관',
+  support_types = ARRAY['해외연수비']::support_category[],
+  support_amount = 8500000,
+  support_amount_text = '850만원 내외',
+  apply_start_date = '2026-04-01',
+  apply_end_date = '2026-04-30',
+  announcement_date = NULL,
+  selection_count = 42,
+  qual_school_location = ARRAY['국내 대학']::school_location_type[],
+  qual_school_category = ARRAY['4년제', '전문대']::school_category_type[],
+  qual_min_academic_year = 2,
+  qual_min_academic_semester = NULL,
+  qual_academic_year = NULL,
+  qual_enrollment_status = ARRAY['재학']::enrollment_status_type[],
+  qual_university = NULL,
+  qual_nationality = '내국인',
+  qual_gpa_min = NULL,
+  qual_gpa_last_semester_min = NULL,
+  can_overlap = false,
+  required_documents = ARRAY['신청서', '서약서', '동의서', '어학성적증명서', '재학증명서', '성적증명서'],
+  apply_method = '대학 대리접수',
+  apply_url = 'https://www.kosaf.go.kr',
+  homepage_url = 'https://www.kosaf.go.kr',
+  contact = NULL,
+  note = '참여 대학(삼육대·연성대·남서울대·한국영상대·구미대·동의대·부산외대·동신대) 소속 학생만 지원 가능합니다. JLPT N3 또는 JPT 430점 이상이어야 합니다. 4년제 대학 재학생은 4학기 이상을 수료한 경우에만 지원할 수 있습니다. 전문대 등 그 밖의 요건은 공고를 확인하세요. 접수는 대학 대리접수이며, 심사·면접 일정은 대학별로 다를 수 있습니다.',
+  selection_stages = 1,
+  selection_stage_1 = '서류/면접심사',
+  selection_stage_2 = NULL,
+  selection_stage_3 = NULL,
+  selection_stage_4 = NULL,
+  selection_stage_5 = NULL,
+  selection_note = '대학별 일정 상이',
+  selection_stage_1_schedule = NULL,
+  selection_stage_2_schedule = NULL,
+  selection_stage_3_schedule = NULL,
+  collected_at = COALESCE(collected_at, '2026-04-26T00:00:00+09:00'::timestamptz),
+  is_verified = true,
+  updated_at = now()
+WHERE organization = '한국장학재단'
+  AND name IN ('2026년 한·일 대학생 연수', '한·일 대학생 연수');

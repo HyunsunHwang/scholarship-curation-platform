@@ -43,7 +43,7 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
               </Link>
               <Link
                 href="#scholarships"
-                className="inline-flex h-12 items-center rounded-xl border border-gray-200 bg-white px-7 text-sm font-semibold text-ink shadow-sm transition hover:bg-[#fff0f0] active:scale-95"
+                className="inline-flex h-12 items-center rounded-xl border border-gray-200 bg-white px-7 text-sm font-semibold text-ink shadow-sm transition hover:bg-cream active:scale-95"
               >
                 전체 보기
               </Link>
@@ -77,7 +77,6 @@ export default function Hero({ heroIllustrationUrl, isLoggedIn }: HeroProps) {
                   width={480}
                   height={480}
                   className="h-auto w-full object-contain drop-shadow-[0_10px_28px_rgba(192,0,0,0.05)]"
-                  priority
                   sizes="(min-width: 1280px) 20rem, (min-width: 1024px) 18rem, 0"
                 />
               </div>

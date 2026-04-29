@@ -48,21 +48,21 @@ export default async function ScholarshipDetailPage({
   if (!scholarship) notFound();
 
   const nextViewCount = (scholarship.view_count ?? 0) + 1;
-  await supabase
-    .from("scholarships")
-    .update({ view_count: nextViewCount })
-    .eq("id", scholarshipId);
-
-  let initialBookmarked = false;
-  if (user) {
-    const { data: bm } = await supabase
-      .from("bookmarks")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("scholarship_id", scholarshipId)
-      .maybeSingle();
-    initialBookmarked = !!bm;
-  }
+  const [bookmarkResult] = await Promise.all([
+    user
+      ? supabase
+          .from("bookmarks")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("scholarship_id", scholarshipId)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase
+      .from("scholarships")
+      .update({ view_count: nextViewCount })
+      .eq("id", scholarshipId),
+  ]);
+  const initialBookmarked = !!bookmarkResult.data;
 
   const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
   const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
@@ -80,7 +80,7 @@ export default async function ScholarshipDetailPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar />
+      <Navbar currentUser={user} />
 
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-6">

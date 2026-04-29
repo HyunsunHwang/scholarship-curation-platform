@@ -1,0 +1,58 @@
+-- AR-REV-002 / 2026년 엔젤루트 일본 어학연수 장학금 데이터 보정.
+-- 원본 분류 "민간재단"은 현재 앱 institution_type 선택지에 없어 "재단법인"으로 매핑합니다.
+-- 원본 apply_url 은 "미정"이나, 버튼 링크 깨짐 방지를 위해 홈페이지 URL을 신청 URL로 유지합니다.
+
+UPDATE public.scholarships
+SET institution_type = '재단법인',
+    support_types = ARRAY['해외연수비'::public.support_category],
+    support_amount = 0,
+    support_amount_text = '어학연수 교육비 전액 또는 차등 지원',
+    apply_start_date = '2026-04-01',
+    apply_end_date = '2026-05-31',
+    announcement_date = NULL,
+    selection_count = NULL,
+    qual_school_location = ARRAY['국내 대학'::public.school_location_type],
+    qual_school_category = ARRAY[]::public.school_category_type[],
+    qual_academic_year = NULL,
+    qual_enrollment_status = ARRAY[
+      '재학'::public.enrollment_status_type,
+      '휴학'::public.enrollment_status_type,
+      '수료'::public.enrollment_status_type,
+      '졸업'::public.enrollment_status_type
+    ],
+    qual_major = ARRAY[]::text[],
+    qual_gpa_min = NULL,
+    qual_gpa_last_semester_min = NULL,
+    qual_income_level_min = NULL,
+    qual_income_level_max = NULL,
+    qual_household_size_max = NULL,
+    qual_age_min = NULL,
+    qual_age_max = NULL,
+    qual_region = ARRAY[]::text[],
+    qual_nationality = '내국인'::public.nationality_type,
+    qual_special_info = ARRAY[]::public.special_info_type[],
+    qual_parent_occupation = ARRAY[]::public.parent_occupation_type[],
+    qual_military_status = NULL,
+    required_documents = ARRAY['장학회 홈페이지 공고문 내 명시 서류(지원서 등)']::text[],
+    apply_method = '온라인접수',
+    apply_url = 'https://www.angelroute.org',
+    homepage_url = 'https://www.angelroute.org',
+    contact = '1661-0534',
+    note = '2026년 10월 학기 일본 어학연수 희망자 대상. 해외여행 및 일본 비자 발급 결격 사유자는 제외. 연령 조건은 공고상 청년으로 표기되어 있어 세부 나이 범위 확인 필요.',
+    selection_stages = 1,
+    selection_stage_1 = '종합심사',
+    selection_stage_2 = NULL,
+    selection_stage_3 = NULL,
+    selection_stage_4 = NULL,
+    selection_stage_5 = NULL,
+    selection_note = '선발기준: 학업 의지 및 성장 가능성, 어학연수 필요성, 장학사업 취지 부합 여부. 세부 지원 범위는 심사 결과에 따라 결정.',
+    selection_stage_1_schedule = NULL,
+    selection_stage_2_schedule = NULL,
+    selection_stage_3_schedule = NULL,
+    selection_stage_4_schedule = NULL,
+    selection_stage_5_schedule = NULL,
+    collected_at = '2026-04-28',
+    is_verified = true,
+    list_on_home = true
+WHERE name = '엔젤루트 일본 어학연수 장학금'
+  AND organization = '엔젤루트국제교류장학회';

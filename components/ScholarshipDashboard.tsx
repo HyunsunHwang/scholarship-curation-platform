@@ -30,6 +30,19 @@ function matchesSearch(
   );
 }
 
+/** 추천 장학금을 선택한 정렬 안에서도 항상 앞에 오도록 비교 */
+function compareRecommendedPinned(a: CardScholarship, b: CardScholarship): number {
+  const ar = a.is_recommended ? 1 : 0;
+  const br = b.is_recommended ? 1 : 0;
+  if (ar !== br) return br - ar;
+  const ao = a.recommended_sort_order;
+  const bo = b.recommended_sort_order;
+  if (ao == null && bo == null) return 0;
+  if (ao == null) return 1;
+  if (bo == null) return -1;
+  return ao - bo;
+}
+
 export default function ScholarshipDashboard({
   scholarships,
   bookmarkedIds = [],
@@ -70,6 +83,8 @@ export default function ScholarshipDashboard({
     });
 
     return [...list].sort((a, b) => {
+      const pin = compareRecommendedPinned(a, b);
+      if (pin !== 0) return pin;
       if (sortBy === "deadline") {
         return (
           daysUntilApplyDeadlineKorea(a.apply_end_date) -

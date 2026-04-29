@@ -7,6 +7,8 @@ import type { CardScholarship } from "@/components/ScholarshipCard";
 import type { Database } from "@/lib/database.types";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
+import { getCachedUniversityNames } from "@/lib/public-data";
+import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 
 export default async function MatchedPage() {
   const supabase = await createClient();
@@ -19,44 +21,35 @@ export default async function MatchedPage() {
   if (!user) redirect("/auth");
 
   // 온보딩 미완료 → 온보딩 (proxy.ts가 처리하지만 명시적으로도 보호)
-  const [{ data: profile }, { data: universities }] = await Promise.all([
+  const [{ data: profile }, universityNames] = await Promise.all([
     supabase
       .from("profiles")
       .select("is_onboarded, name")
       .eq("id", user.id)
       .single(),
-    supabase.from("universities").select("name"),
+    getCachedUniversityNames(),
   ]);
 
   if (!profile?.is_onboarded) redirect("/onboarding");
 
-  // 매칭 RPC 호출
-  const { data: matched, error } = await supabase.rpc("get_matched_scholarships", {
-    p_user_id: user.id,
-  });
-
-  // 북마크 목록 조회
-  const { data: bookmarks } = await supabase
-    .from("bookmarks")
-    .select("scholarship_id")
-    .eq("user_id", user.id);
+  const [{ data: matched, error }, { data: bookmarks }] = await Promise.all([
+    supabase.rpc("get_matched_scholarships", {
+      p_user_id: user.id,
+    }),
+    supabase
+      .from("bookmarks")
+      .select("scholarship_id")
+      .eq("user_id", user.id),
+  ]);
 
   const bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
   const matchedIds = ((matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]).map((s) => s.id);
-  const { data: allScrapRows } = matchedIds.length > 0
-    ? await supabase
-        .from("bookmarks")
-        .select("scholarship_id")
-        .in("scholarship_id", matchedIds)
-    : { data: [] };
-  const scrapCountByScholarship = new Map<number, number>();
-  for (const row of allScrapRows ?? []) {
-    const id = row.scholarship_id as number;
-    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
-  }
+  const scrapCountByScholarship = await getScholarshipScrapCounts(
+    supabase,
+    matchedIds
+  );
 
   // RPC 반환 타입을 CardScholarship으로 변환
-  const universityNames = (universities ?? []).map((u) => u.name);
   const scholarships: CardScholarship[] = (
     (matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]
   )
@@ -75,11 +68,13 @@ export default async function MatchedPage() {
       view_count: s.view_count,
       scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
       scope: isUniversitySpecificScholarship(s, universityNames) ? "campus" : "external",
+      is_recommended: s.is_recommended,
+      recommended_sort_order: s.recommended_sort_order,
     }));
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar />
+      <Navbar currentUser={user} />
 
       <main className="flex-1">
         {/* 상단 헤더 배너 */}
@@ -100,7 +95,7 @@ export default async function MatchedPage() {
               <div className="flex gap-3 shrink-0">
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-cream transition-colors"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
@@ -109,7 +104,7 @@ export default async function MatchedPage() {
                 </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink/60 hover:bg-[#fff0f0] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink/60 hover:bg-cream transition-colors"
                 >
                   전체 보기
                 </Link>
@@ -146,7 +141,7 @@ export default async function MatchedPage() {
               </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors"
+                  className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-ink hover:bg-cream transition-colors"
                 >
                 전체 장학금 보기
               </Link>

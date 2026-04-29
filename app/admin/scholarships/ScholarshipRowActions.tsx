@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { deleteScholarship, toggleVerified } from "./actions";
+import { deleteScholarship, toggleVerified, toggleRecommended } from "./actions";
 
 export function ToggleVerifiedButton({
   id,
@@ -23,6 +23,31 @@ export function ToggleVerifiedButton({
       }`}
     >
       {isPending ? "처리중..." : isVerified ? "검증됨" : "미검증"}
+    </button>
+  );
+}
+
+export function ToggleRecommendedButton({
+  id,
+  isRecommended,
+}: {
+  id: number;
+  isRecommended: boolean;
+}) {
+  const [isPending, startTransition] = useTransition();
+
+  return (
+    <button
+      type="button"
+      onClick={() => startTransition(() => void toggleRecommended(id, isRecommended))}
+      disabled={isPending}
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium transition-colors disabled:opacity-50 ${
+        isRecommended
+          ? "bg-indigo-100 text-indigo-800 hover:bg-indigo-200"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+      }`}
+    >
+      {isPending ? "처리중..." : isRecommended ? "추천 중" : "추천 안 함"}
     </button>
   );
 }

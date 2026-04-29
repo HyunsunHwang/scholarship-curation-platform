@@ -58,7 +58,7 @@ const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1));
 
 const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
-const ENROLLMENT_STATUSES = ["신입학", "재학", "휴학", "초과학기", "수료", "졸업유예", "졸업"];
+const ENROLLMENT_STATUSES = ["신입생", "재학", "휴학", "초과이수기", "수료", "졸업예정", "졸업"];
 const ACADEMIC_YEARS = [
   { value: "1", label: "1학년" }, { value: "2", label: "2학년" },
   { value: "3", label: "3학년" }, { value: "4", label: "4학년" },
@@ -72,7 +72,8 @@ const INCOME_LEVELS = [
 const SPECIAL_INFO_OPTIONS = [
   "다문화가정", "기초생활수급자", "차상위계층", "장애인", "새터민",
   "농어촌자녀", "보훈대상자", "조부모가정", "다자녀", "한부모가정",
-  "학생가장", "북한이탈주민", "자립준비청년",
+  "학생가장", "북한이탈주민", "자립준비청년", "독립유공자후손", "공상자",
+  "순직자유자녀",
 ];
 const PARENT_OCCUPATION_OPTIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
@@ -134,7 +135,7 @@ function RadioChip({ label, selected, onClick }: {
       className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
         selected
           ? "border-brand bg-brand/10 text-brand"
-          : "border-gray-200 bg-white text-ink/70 hover:border-brand/40 hover:bg-[#fff0f0]"
+          : "border-gray-200 bg-white text-ink/70 hover:border-brand/40 hover:bg-cream"
       }`}
     >
       {label}
@@ -252,7 +253,7 @@ function Step1({ form, update, openAddress }: {
           <button
             type="button"
             onClick={openAddress}
-            className="shrink-0 rounded-lg border border-brand/40 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-[#fff0f0]"
+            className="shrink-0 rounded-lg border border-brand/40 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-cream"
           >
             검색
           </button>
@@ -298,50 +299,85 @@ function Step2({ form, update, updateMultiple }: {
   // 국내 대학 선택 시 대학교 목록 로드
   useEffect(() => {
     if (form.school_location !== "국내 대학") return;
-    setLoadingU(true);
-    createClient()
-      .from("universities")
-      .select("id, name")
-      .order("name")
-      .then(({ data }) => { setUniversities(data ?? []); setLoadingU(false); });
+    let cancelled = false;
+    async function loadUniversities() {
+      setLoadingU(true);
+      const { data } = await createClient()
+        .from("universities")
+        .select("id, name")
+        .order("name");
+      if (cancelled) return;
+      setUniversities(data ?? []);
+      setLoadingU(false);
+    }
+    void loadUniversities();
+    return () => {
+      cancelled = true;
+    };
   }, [form.school_location]);
 
   // 대학교 선택 시 단과대 목록 로드
   useEffect(() => {
-    setColleges([]);
-    if (!form.university_id) return;
-    setLoadingC(true);
-    createClient()
-      .from("university_colleges")
-      .select("id, name")
-      .eq("university_id", parseInt(form.university_id))
-      .order("name")
-      .then(({ data }) => { setColleges(data ?? []); setLoadingC(false); });
+    let cancelled = false;
+    async function loadColleges() {
+      setColleges([]);
+      if (!form.university_id) return;
+      setLoadingC(true);
+      const { data } = await createClient()
+        .from("university_colleges")
+        .select("id, name")
+        .eq("university_id", parseInt(form.university_id))
+        .order("name");
+      if (cancelled) return;
+      setColleges(data ?? []);
+      setLoadingC(false);
+    }
+    void loadColleges();
+    return () => {
+      cancelled = true;
+    };
   }, [form.university_id]);
 
   // 단과대 선택 시 학과 목록 로드 (본전공)
   useEffect(() => {
-    setDepartments([]);
-    if (!form.college_id) return;
-    setLoadingD(true);
-    createClient()
-      .from("university_departments")
-      .select("id, name")
-      .eq("college_id", parseInt(form.college_id))
-      .order("name")
-      .then(({ data }) => { setDepartments(data ?? []); setLoadingD(false); });
+    let cancelled = false;
+    async function loadDepartments() {
+      setDepartments([]);
+      if (!form.college_id) return;
+      setLoadingD(true);
+      const { data } = await createClient()
+        .from("university_departments")
+        .select("id, name")
+        .eq("college_id", parseInt(form.college_id))
+        .order("name");
+      if (cancelled) return;
+      setDepartments(data ?? []);
+      setLoadingD(false);
+    }
+    void loadDepartments();
+    return () => {
+      cancelled = true;
+    };
   }, [form.college_id]);
 
   // 복수전공 단과대 선택 시 학과 목록 로드
   useEffect(() => {
-    setDoubleDepts([]);
-    if (!form.double_major_college_id) return;
-    createClient()
-      .from("university_departments")
-      .select("id, name")
-      .eq("college_id", parseInt(form.double_major_college_id))
-      .order("name")
-      .then(({ data }) => setDoubleDepts(data ?? []));
+    let cancelled = false;
+    async function loadDoubleMajorDepartments() {
+      setDoubleDepts([]);
+      if (!form.double_major_college_id) return;
+      const { data } = await createClient()
+        .from("university_departments")
+        .select("id, name")
+        .eq("college_id", parseInt(form.double_major_college_id))
+        .order("name");
+      if (cancelled) return;
+      setDoubleDepts(data ?? []);
+    }
+    void loadDoubleMajorDepartments();
+    return () => {
+      cancelled = true;
+    };
   }, [form.double_major_college_id]);
 
   const isKorean = form.school_location === "국내 대학";

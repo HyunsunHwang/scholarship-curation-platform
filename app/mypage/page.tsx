@@ -3,8 +3,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/Navbar";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
+import BookmarkedScholarshipCalendar from "@/components/BookmarkedScholarshipCalendar";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
+import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 
 export default async function MyPage() {
   const supabase = await createClient();
@@ -27,31 +29,23 @@ export default async function MyPage() {
   const bookmarkedIds = (bookmarkRows ?? []).map((b) => b.scholarship_id);
 
   // 북마크된 장학금 상세 정보를 별도 쿼리로 조회
-  const { data: scholarshipRows } =
+  const [scholarshipRowsResult, scrapCountByScholarship] = await Promise.all([
     bookmarkedIds.length > 0
-      ? await supabase
+      ? supabase
           .from("scholarships")
           .select(
             "id, name, organization, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
           )
           .in("id", bookmarkedIds)
-      : { data: [] };
+      : Promise.resolve({ data: [] }),
+    getScholarshipScrapCounts(supabase, bookmarkedIds),
+  ]);
+  const scholarshipRows = scholarshipRowsResult.data;
 
   // bookmarks 순서(최신 북마크순) 유지
   const scholarshipMap = new Map(
     (scholarshipRows ?? []).map((s) => [s.id, s])
   );
-  const { data: allScrapRows } = bookmarkedIds.length > 0
-    ? await supabase
-        .from("bookmarks")
-        .select("scholarship_id")
-        .in("scholarship_id", bookmarkedIds)
-    : { data: [] };
-  const scrapCountByScholarship = new Map<number, number>();
-  for (const row of allScrapRows ?? []) {
-    const id = row.scholarship_id as number;
-    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
-  }
   const bookmarkedScholarships: CardScholarship[] = bookmarkedIds.flatMap((id) => {
     const s = scholarshipMap.get(id);
     if (!s) return [];
@@ -77,7 +71,7 @@ export default async function MyPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar />
+      <Navbar currentUser={user} />
 
       <main className="flex-1">
         {/* 프로필 헤더 */}
@@ -99,7 +93,7 @@ export default async function MyPage() {
               </div>
               <Link
                 href="/onboarding"
-                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink hover:bg-[#fff0f0] transition-colors sm:self-center"
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-cream sm:self-center"
               >
                 <svg
                   className="h-4 w-4"
@@ -177,9 +171,11 @@ export default async function MyPage() {
                 </span>
               </div>
             </div>
+            <BookmarkedScholarshipCalendar scholarships={bookmarkedScholarships} />
             <ScholarshipDashboard
               scholarships={bookmarkedScholarships}
               bookmarkedIds={bookmarkedIds}
+              heading="내 북마크"
             />
           </div>
         )}

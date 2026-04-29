@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ToggleVerifiedButton, DeleteButton } from "./ScholarshipRowActions";
+import { ToggleVerifiedButton, ToggleRecommendedButton, DeleteButton } from "./ScholarshipRowActions";
 import { updatePosterImageUrl } from "./actions";
 
 type ScholarshipRow = {
@@ -18,6 +18,8 @@ type ScholarshipRow = {
   support_types: string[];
   poster_image_url: string | null;
   list_on_home: boolean;
+  is_recommended: boolean;
+  recommended_sort_order: number | null;
 };
 
 function PosterUrlCell({
@@ -33,7 +35,8 @@ function PosterUrlCell({
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
-    setValue(initialUrl ?? "");
+    const frame = requestAnimationFrame(() => setValue(initialUrl ?? ""));
+    return () => cancelAnimationFrame(frame);
   }, [initialUrl]);
 
   const save = () => {
@@ -59,7 +62,7 @@ function PosterUrlCell({
             setError("");
           }}
           placeholder="https://..."
-          className="min-w-0 flex-1 rounded border border-[#e8d9c8] px-2 py-1.5 text-xs text-ink placeholder:text-ink/40 outline-none focus:border-peach focus:ring-1 focus:ring-[#fea276]/20"
+          className="min-w-0 flex-1 rounded border border-[#e8d9c8] px-2 py-1.5 text-xs text-ink placeholder:text-ink/40 outline-none focus:border-peach focus:ring-1 focus:ring-peach/20"
           disabled={pending}
         />
         <button
@@ -98,6 +101,21 @@ function sortByDeadline(rows: ScholarshipRow[], dir: SortDir): ScholarshipRow[] 
   });
 }
 
+/** 목록 기본 순서: 추천·순서값 우선, 그다음 생성일(최신) */
+function sortDefaultAdminOrder(rows: ScholarshipRow[]): ScholarshipRow[] {
+  return [...rows].sort((a, b) => {
+    if (a.is_recommended !== b.is_recommended) return a.is_recommended ? -1 : 1;
+    const ao = a.recommended_sort_order;
+    const bo = b.recommended_sort_order;
+    if (ao != null || bo != null) {
+      if (ao == null) return 1;
+      if (bo == null) return -1;
+      if (ao !== bo) return ao - bo;
+    }
+    return b.id - a.id;
+  });
+}
+
 export default function ScholarshipTable({
   scholarships,
 }: {
@@ -107,16 +125,15 @@ export default function ScholarshipTable({
   const [deadlineSort, setDeadlineSort] = useState<SortDir>("none");
 
   const q = query.trim().toLowerCase();
-  const filtered = sortByDeadline(
-    q
-      ? scholarships.filter(
-          (s) =>
-            s.name.toLowerCase().includes(q) ||
-            s.organization.toLowerCase().includes(q)
-        )
-      : scholarships,
-    deadlineSort
-  );
+  const narrowed = q
+    ? scholarships.filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          s.organization.toLowerCase().includes(q)
+      )
+    : scholarships;
+  const forSort = deadlineSort === "none" ? sortDefaultAdminOrder(narrowed) : narrowed;
+  const filtered = sortByDeadline(forSort, deadlineSort);
 
   return (
     <>
@@ -200,6 +217,7 @@ export default function ScholarshipTable({
                   </span>
                 </button>
               </th>
+              <th className="px-4 py-3">추천</th>
               <th className="px-4 py-3">상태</th>
               <th className="px-4 py-3 text-right">작업</th>
             </tr>
@@ -217,6 +235,19 @@ export default function ScholarshipTable({
                           title="홈 전체 목록에는 표시되지 않고 맞춤 장학금에서만 노출"
                         >
                           맞춤만
+                        </span>
+                      )}
+                      {s.is_recommended && (
+                        <span
+                          className="shrink-0 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-800 ring-1 ring-indigo-200"
+                          title={
+                            s.recommended_sort_order != null
+                              ? `추천 순서 ${s.recommended_sort_order}`
+                              : "홈 전체 목록 상단 추천"
+                          }
+                        >
+                          추천
+                          {s.recommended_sort_order != null ? ` #${s.recommended_sort_order}` : ""}
                         </span>
                       )}
                     </div>
@@ -252,6 +283,9 @@ export default function ScholarshipTable({
                     {s.apply_end_date}
                   </td>
                   <td className="px-4 py-3">
+                    <ToggleRecommendedButton id={s.id} isRecommended={s.is_recommended} />
+                  </td>
+                  <td className="px-4 py-3">
                     <ToggleVerifiedButton id={s.id} isVerified={s.is_verified} />
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -269,7 +303,7 @@ export default function ScholarshipTable({
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                <td colSpan={8} className="px-4 py-12 text-center text-gray-400">
                   {q ? (
                     <>
                       <span className="font-medium">&ldquo;{query}&rdquo;</span>에 대한 검색 결과가 없습니다.

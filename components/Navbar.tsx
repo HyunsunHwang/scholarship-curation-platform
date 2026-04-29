@@ -1,34 +1,69 @@
 import Link from "next/link";
+import type { User } from "@supabase/supabase-js";
 import BrandLogo from "@/components/BrandLogo";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/auth/actions";
+import { getCachedSiteSettings } from "@/lib/public-data";
+import {
+  daysUntilApplyDeadlineKorea,
+  isAlwaysOpenRecruitment,
+} from "@/lib/scholarship-dates";
 
-export default async function Navbar() {
+const URGENT_DEADLINE_DAYS = 6;
+
+export default async function Navbar({
+  currentUser,
+}: {
+  currentUser?: User | null;
+} = {}) {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const userPromise =
+    currentUser === undefined
+      ? supabase.auth.getUser()
+      : Promise.resolve({ data: { user: currentUser } });
+  const [
+    {
+      data: { user },
+    },
+    siteSettings,
+  ] = await Promise.all([userPromise, getCachedSiteSettings()]);
 
   let profile: { role: string; name: string | null } | null = null;
+  let urgentBookmarkCount = 0;
+
   if (user) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("role, name")
-      .eq("id", user.id)
-      .single();
-    profile = data;
+    const [{ data: profileData }, { data: bookmarkRows }] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("role, name")
+        .eq("id", user.id)
+        .single(),
+      supabase
+        .from("bookmarks")
+        .select("scholarship_id")
+        .eq("user_id", user.id),
+    ]);
+
+    profile = profileData;
+
+    const bookmarkedIds = (bookmarkRows ?? []).map((row) => row.scholarship_id);
+
+    if (bookmarkedIds.length > 0) {
+      const { data: deadlineRows } = await supabase
+        .from("scholarships")
+        .select("apply_end_date")
+        .in("id", bookmarkedIds);
+
+      urgentBookmarkCount = (deadlineRows ?? []).filter((scholarship) => {
+        if (isAlwaysOpenRecruitment(scholarship.apply_end_date)) return false;
+        const daysLeft = daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
+        return daysLeft >= 0 && daysLeft <= URGENT_DEADLINE_DAYS;
+      }).length;
+    }
   }
 
   const isAdmin = profile?.role === "admin";
-  const displayName = profile?.name ?? user?.email ?? "";
-
-  const { data: siteSettings } = await supabase
-    .from("site_settings")
-    .select("header_logo_url, updated_at")
-    .eq("id", 1)
-    .maybeSingle();
-
   const headerLogoSrc =
     siteSettings?.header_logo_url &&
     `${siteSettings.header_logo_url}${
@@ -75,55 +110,40 @@ export default async function Navbar() {
                 </Link>
               )}
 
-              {/* 북마크(마이페이지) 버튼 */}
+              {/* 마이페이지 링크 */}
               <Link
                 href="/mypage"
-                aria-label="마이페이지"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-ink/60 transition-colors hover:bg-[#fff0f0] hover:text-brand"
+                className="inline-flex h-8 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-xs font-semibold text-ink/70 transition-colors hover:bg-cream hover:text-brand sm:h-7 sm:text-sm"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.8}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                  />
-                </svg>
-              </Link>
-
-              {/* 유저 아바타 + 이름 */}
-              <Link
-                href="/mypage"
-                className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-[#fff0f0]"
-              >
-                <div
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                    isAdmin ? "bg-brand" : "bg-peach"
-                  }`}
-                >
-                  {displayName.charAt(0).toUpperCase()}
-                </div>
-                <span className="hidden text-sm font-medium text-ink sm:block max-w-[120px] truncate">
-                  {displayName}
+                마이페이지
+                <span className="relative flex h-5 w-5 items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a3 3 0 0 1-5.714 0m5.714 0H9.143"
+                    />
+                  </svg>
+                  {urgentBookmarkCount > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white">
+                      {urgentBookmarkCount > 99 ? "99+" : urgentBookmarkCount}
+                    </span>
+                  )}
                 </span>
-                {isAdmin && (
-                  <span className="hidden sm:inline-flex items-center rounded-full bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
-                    ADMIN
-                  </span>
-                )}
               </Link>
 
               {/* 로그아웃 버튼 */}
               <form action={logout}>
                 <button
                   type="submit"
-                  className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-ink/60 transition-colors hover:bg-[#fff0f0] hover:text-ink"
+                  className="inline-flex h-7 items-center rounded-lg px-2.5 text-sm font-medium text-ink/60 transition-colors hover:bg-cream hover:text-ink"
                 >
                   로그아웃
                 </button>
@@ -133,7 +153,7 @@ export default async function Navbar() {
             <>
               <Link
                 href="/auth"
-                className="inline-flex h-8 shrink-0 items-center rounded-lg px-2 text-xs font-medium text-ink/70 transition-colors hover:bg-[#fff0f0] hover:text-ink sm:h-7 sm:px-2.5 sm:text-sm"
+                className="inline-flex h-8 shrink-0 items-center rounded-lg px-2 text-xs font-medium text-ink/70 transition-colors hover:bg-cream hover:text-ink sm:h-7 sm:px-2.5 sm:text-sm"
               >
                 로그인
               </Link>

@@ -126,7 +126,20 @@ export default function ScholarshipForm({
         <Field label="최대 가구원 수" name="qual_household_size_max" type="number" defaultValue={dv.qual_household_size_max?.toString() ?? ""} />
         <Field label="최소 나이" name="qual_age_min" type="number" defaultValue={dv.qual_age_min?.toString() ?? ""} />
         <Field label="최대 나이" name="qual_age_max" type="number" defaultValue={dv.qual_age_max?.toString() ?? ""} />
+        <Field label="최소 대상 학년" name="qual_min_academic_year" type="number" min="1" max="5" defaultValue={dv.qual_min_academic_year?.toString() ?? ""} placeholder="예: 4" />
+        <Field label="최소 대상 학기" name="qual_min_academic_semester" type="number" min="1" max="2" defaultValue={dv.qual_min_academic_semester?.toString() ?? ""} placeholder="예: 2" />
         <Field label="지역 (쉼표 구분)" name="qual_region" defaultValue={(dv.qual_region ?? []).join(", ")} placeholder="예: 서울, 경기" />
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">기타 요건</label>
+          <TagInput
+            name="qual_special_info"
+            defaultTags={dv.qual_special_info ?? []}
+            placeholder="요건 입력 후 추가 (예: 장애인 대상, 다문화 가정)"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            사용자 상세 페이지의 지원자격 「기타 요건」에 표시됩니다.
+          </p>
+        </div>
       </Section>
 
       {/* ── 신청 방법 ─────────────────────────────────────────── */}
@@ -165,6 +178,37 @@ export default function ScholarshipForm({
           />
         ))}
         <Field label="선발 비고" name="selection_note" defaultValue={dv.selection_note ?? ""} />
+      </Section>
+
+      {/* ── 원본 공고문 ───────────────────────────────────────── */}
+      <Section title="원본 공고문">
+        <div className="md:col-span-2">
+          <PosterImageInput
+            name="original_notice_image_urls"
+            label="원본 공고문 이미지"
+            defaultUrls={
+              dv.original_notice_image_urls && dv.original_notice_image_urls.length > 0
+                ? dv.original_notice_image_urls
+                : dv.original_notice_image_url
+                  ? [dv.original_notice_image_url]
+                  : []
+            }
+            multiple
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">원본 공고문 내용</label>
+          <textarea
+            name="original_notice_text"
+            defaultValue={dv.original_notice_text ?? ""}
+            rows={8}
+            placeholder="기관 공고문 원문을 붙여넣으세요. 줄바꿈은 상세 페이지에 그대로 표시됩니다."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            이미지는 여러 장 올릴 수 있습니다. 이미지와 글 중 하나만 입력해도 상세 페이지 하단의 원본 공고문 영역에 표시됩니다.
+          </p>
+        </div>
       </Section>
 
       {/* ── 기타 ──────────────────────────────────────────────── */}
@@ -212,6 +256,35 @@ export default function ScholarshipForm({
           </div>
           <p className="text-xs text-gray-500 pl-6">
             등록된 대학명이 장학금명·기관명에 포함되면 홈에서는 자동으로 숨깁니다. 끄면 그 외 장학금도 홈에서 숨기고 맞춤 장학금에서만 노출합니다.
+          </p>
+        </div>
+        <div className="md:col-span-2 flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <input type="hidden" name="is_recommended" value="false" />
+              <input
+                type="checkbox"
+                id="is_recommended"
+                name="is_recommended"
+                value="true"
+                defaultChecked={dv.is_recommended === true}
+                className="rounded"
+              />
+              <label htmlFor="is_recommended" className="text-sm text-gray-700">
+                홈 전체 목록에서 추천(상단 노출)
+              </label>
+            </div>
+            <Field
+              label="추천 노출 순서"
+              name="recommended_sort_order"
+              type="number"
+              min="0"
+              defaultValue={dv.recommended_sort_order != null ? String(dv.recommended_sort_order) : ""}
+              placeholder="작을수록 앞 (비우면 맨 뒤)"
+            />
+          </div>
+          <p className="text-xs text-gray-500 pl-6 md:pl-0">
+            추천으로 표시한 장학금은 홈 전체 목록에서 항상 앞에 나옵니다. 여러 개일 때만 순서 숫자로 앞뒤를 정합니다.
           </p>
         </div>
       </Section>
@@ -475,15 +548,29 @@ function TagInput({
   );
 }
 
-// ── 포스터 이미지 붙여넣기/드롭/파일 업로드 ──────────────────────
-function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
-  const [url, setUrl] = useState(defaultUrl);
-  const [preview, setPreview] = useState(defaultUrl || "");
+// ── 이미지 붙여넣기/드롭/파일 업로드 ────────────────────────────
+function PosterImageInput({
+  defaultUrl,
+  defaultUrls,
+  name = "poster_image_url",
+  label = "포스터 이미지",
+  multiple = false,
+}: {
+  defaultUrl?: string;
+  defaultUrls?: string[];
+  name?: string;
+  label?: string;
+  multiple?: boolean;
+}) {
+  const initialUrls = defaultUrls ?? (defaultUrl ? [defaultUrl] : []);
+  const [urls, setUrls] = useState<string[]>(initialUrls);
+  const [localPreviews, setLocalPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
+  const previews = uploading && localPreviews.length > 0 ? localPreviews : urls;
 
   const upload = useCallback(async (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -500,7 +587,7 @@ function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
 
     // 로컬 미리보기 먼저 표시
     const localUrl = URL.createObjectURL(file);
-    setPreview(localUrl);
+    setLocalPreviews(multiple ? (prev) => [...prev, localUrl] : [localUrl]);
 
     try {
       const supabase = createClient();
@@ -517,17 +604,15 @@ function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
         .from("scholarship-posters")
         .getPublicUrl(path);
 
-      setUrl(data.publicUrl);
-      setPreview(data.publicUrl);
+      setUrls((prev) => (multiple ? [...prev, data.publicUrl] : [data.publicUrl]));
       URL.revokeObjectURL(localUrl);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "업로드 실패");
-      setPreview("");
-      setUrl("");
     } finally {
+      setLocalPreviews((prev) => prev.filter((preview) => preview !== localUrl));
       setUploading(false);
     }
-  }, []);
+  }, [multiple]);
 
   // 붙여넣기 (Ctrl+V)
   useEffect(() => {
@@ -555,24 +640,24 @@ function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) upload(file);
+    Array.from(e.dataTransfer.files).forEach((file) => {
+      if (file) upload(file);
+    });
   };
 
-  const handleRemove = () => {
-    setUrl("");
-    setPreview("");
+  const handleRemove = (targetUrl?: string) => {
+    setUrls((prev) => (targetUrl ? prev.filter((url) => url !== targetUrl) : []));
     setError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">포스터 이미지</label>
-      <input type="hidden" name="poster_image_url" value={url} />
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <input type="hidden" name={name} value={multiple ? JSON.stringify(urls) : urls[0] ?? ""} />
 
       {/* 드롭/붙여넣기 영역 */}
-      {!preview ? (
+      {previews.length === 0 ? (
         <div
           ref={dropZoneRef}
           tabIndex={0}
@@ -605,41 +690,57 @@ function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
               <p className="text-xs text-gray-400">
                 또는 <kbd className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-300 font-mono text-xs">Ctrl + V</kbd> 로 클립보드에서 붙여넣기
               </p>
-              <p className="text-xs text-gray-400">JPG, PNG, WebP, GIF · 최대 10MB</p>
+              <p className="text-xs text-gray-400">
+                JPG, PNG, WebP, GIF · 최대 10MB{multiple ? " · 여러 장 가능" : ""}
+              </p>
             </>
           )}
         </div>
       ) : (
         /* 미리보기 */
-        <div className="relative rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+        <div className="space-y-3">
           {uploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
+            <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-600">
               <svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4l-3 3-3-3h4z" />
               </svg>
+              업로드 중...
             </div>
           )}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={preview}
-            alt="포스터 미리보기"
-            className="w-full max-h-96 object-contain"
-          />
-          <div className="absolute top-2 right-2 flex gap-2">
+          <div className={multiple ? "grid gap-3 sm:grid-cols-2" : ""}>
+            {previews.map((preview, i) => (
+              <div key={`${preview}-${i}`} className="relative rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={preview}
+                  alt={`${label} 미리보기 ${i + 1}`}
+                  className="w-full max-h-96 object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemove(preview)}
+                  className="absolute right-2 top-2 rounded-lg bg-red-500/90 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-red-600 transition-colors"
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-medium text-gray-700 shadow hover:bg-white transition-colors border border-gray-200"
             >
-              교체
+              {multiple ? "이미지 추가" : "교체"}
             </button>
             <button
               type="button"
-              onClick={handleRemove}
+              onClick={() => handleRemove()}
               className="rounded-lg bg-red-500/90 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-red-600 transition-colors"
             >
-              삭제
+              전체 삭제
             </button>
           </div>
         </div>
@@ -654,10 +755,10 @@ function PosterImageInput({ defaultUrl }: { defaultUrl: string }) {
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        multiple={multiple}
         className="hidden"
         onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) upload(file);
+          Array.from(e.target.files ?? []).forEach((file) => upload(file));
         }}
       />
     </div>

@@ -131,6 +131,31 @@ export async function toggleVerified(id: number, current: boolean) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// 추천(홈 상단 노출) 토글
+// ─────────────────────────────────────────────────────────────────
+export async function toggleRecommended(id: number, current: boolean) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const isAdmin = await supabase.rpc("is_admin");
+  if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
+
+  const { error } = await supabase
+    .from("scholarships")
+    .update({ is_recommended: !current })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/scholarships");
+  revalidatePath("/");
+  revalidatePath("/matched");
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────
 // 목록에서 포스터 이미지 URL만 빠르게 수정
 // ─────────────────────────────────────────────────────────────────
 export async function updatePosterImageUrl(
@@ -201,11 +226,23 @@ function parseTextArray(val: string | null): string[] {
     .filter(Boolean);
 }
 
+function parseJsonTextArray(val: string | null): string[] {
+  if (!val || val.trim() === "") return [];
+  try {
+    const parsed = JSON.parse(val);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+  } catch {
+    return [];
+  }
+}
+
 function buildPayload(formData: FormData): ScholarshipInsert {
   const g = (key: string) => formData.get(key) as string | null;
   // hidden+checkbox 패턴은 formData.get()이 hidden(false)을 먼저 반환하므로
   // getAll()로 "true"가 포함됐는지 확인해야 함
   const bool = (key: string) => formData.getAll(key).includes("true");
+  const originalNoticeImageUrls = parseJsonTextArray(g("original_notice_image_urls"));
 
   return {
     name: g("name") ?? "",
@@ -225,6 +262,8 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     qual_academic_year: g("qual_academic_year")
       ? parseTextArray(g("qual_academic_year")).map(Number).filter((n) => !isNaN(n))
       : null,
+    qual_min_academic_year: parseOptionalInt(g("qual_min_academic_year")),
+    qual_min_academic_semester: parseOptionalInt(g("qual_min_academic_semester")),
     qual_enrollment_status: parseTextArray(g("qual_enrollment_status")) as ScholarshipInsert["qual_enrollment_status"] || null,
     qual_major: parseTextArray(g("qual_major")) || null,
     qual_gpa_min: parseOptionalFloat(g("qual_gpa_min")),
@@ -247,6 +286,9 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     homepage_url: g("homepage_url") || null,
     contact: g("contact") || null,
     note: g("note") || null,
+    original_notice_image_url: originalNoticeImageUrls[0] ?? g("original_notice_image_url") ?? null,
+    original_notice_image_urls: originalNoticeImageUrls.length > 0 ? originalNoticeImageUrls : null,
+    original_notice_text: g("original_notice_text") || null,
     selection_stages: parseOptionalInt(g("selection_stages")) ?? 1,
     selection_stage_1: g("selection_stage_1") ?? "",
     selection_stage_2: g("selection_stage_2") || null,
@@ -262,5 +304,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     collected_at: new Date().toISOString(),
     is_verified: bool("is_verified"),
     list_on_home: bool("list_on_home"),
+    is_recommended: bool("is_recommended"),
+    recommended_sort_order: parseOptionalInt(g("recommended_sort_order")),
   };
 }

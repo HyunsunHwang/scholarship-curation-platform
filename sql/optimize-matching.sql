@@ -239,11 +239,25 @@ AS $$
       OR p.nationality = s.qual_nationality
     )
 
-    -- ── 특수 자격 (배열 교집합) ──────────────────────────────────────────
+    -- ── 특수 자격 ──────────────────────────────────────────────────────
+    -- 장학금의 qual_special_info는 상세 페이지 표시용 자유 텍스트를 포함한다.
+    -- 프로필 enum 값과 정확히 일치하는 항목만 매칭 제한 조건으로 사용한다.
     AND (
       s.qual_special_info IS NULL
       OR cardinality(s.qual_special_info) = 0
-      OR (p.special_info IS NOT NULL AND p.special_info && s.qual_special_info)
+      OR NOT EXISTS (
+        SELECT 1
+        FROM unnest(s.qual_special_info) AS req
+        WHERE req = ANY(enum_range(NULL::public.special_info_type)::text[])
+      )
+      OR (
+        p.special_info IS NOT NULL
+        AND EXISTS (
+          SELECT 1
+          FROM unnest(s.qual_special_info) AS req
+          WHERE req = ANY(p.special_info::text[])
+        )
+      )
     )
 
     -- ── 부모 직업 (배열 교집합) ──────────────────────────────────────────

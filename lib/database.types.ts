@@ -15,11 +15,12 @@ export type MilitaryStatusType = "군필" | "미필" | "비대상" | "면제";
 export type SchoolLocationType = "국내 대학" | "해외 대학";
 export type SchoolCategoryType = "4년제" | "전문대" | "대학원" | "사이버대" | "방통대";
 export type EnrollmentStatusType =
-  | "신입학" | "재학" | "휴학" | "초과학기" | "수료" | "졸업유예" | "졸업";
+  | "신입생" | "재학" | "휴학" | "초과이수기" | "수료" | "졸업예정" | "졸업";
 export type SpecialInfoType =
   | "다문화가정" | "기초생활수급자" | "차상위계층" | "장애인" | "새터민"
   | "농어촌자녀" | "보훈대상자" | "조부모가정" | "다자녀" | "한부모가정"
-  | "학생가장" | "북한이탈주민" | "자립준비청년";
+  | "학생가장" | "북한이탈주민" | "자립준비청년" | "독립유공자후손" | "공상자"
+  | "순직자유자녀";
 export type ParentOccupationType =
   | "직업군인" | "군무원" | "농축어업인" | "건설근로자" | "소상공인"
   | "경찰/소방관" | "택배기사" | "환경미화원" | "연극인";
@@ -192,6 +193,8 @@ export interface Database {
           qual_school_location: SchoolLocationType[] | null;
           qual_school_category: SchoolCategoryType[] | null;
           qual_academic_year: number[] | null;
+          qual_min_academic_year: number | null;
+          qual_min_academic_semester: number | null;
           qual_enrollment_status: EnrollmentStatusType[] | null;
           qual_major: string[] | null;             // 전공/학과명 배열
           qual_gpa_min: number | null;               // 누적 학점 최소
@@ -204,7 +207,8 @@ export interface Database {
           qual_age_max: number | null;
           qual_region: string[] | null;
           qual_nationality: NationalityType | null;
-          qual_special_info: SpecialInfoType[] | null;
+          /** 상세 지원자격 기타 요건 표시용 자유 텍스트 배열 */
+          qual_special_info: string[] | null;
           qual_parent_occupation: ParentOccupationType[] | null;
           qual_military_status: MilitaryStatusType | null;
           can_overlap: boolean;
@@ -227,10 +231,17 @@ export interface Database {
           selection_stage_4_schedule: string | null;
           selection_stage_5_schedule: string | null;
           poster_image_url: string | null; // 공지 포스터 이미지 URL
+          original_notice_image_url: string | null;
+          original_notice_image_urls: string[] | null;
+          original_notice_text: string | null;
           collected_at: string;
           is_verified: boolean;
           /** false면 홈 전체 목록 숨김, 맞춤 장학금(RPC)에서만 노출 */
           list_on_home: boolean;
+          /** 홈 전체 장학금 목록에서 상단(추천) 노출 */
+          is_recommended: boolean;
+          /** 추천 항목끼리 정렬: 작을수록 앞; null은 추천 그룹 내 맨 뒤 */
+          recommended_sort_order: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -249,6 +260,10 @@ export interface Database {
       get_matched_scholarships: {
         Args: { p_user_id: string };
         Returns: Database["public"]["Tables"]["scholarships"]["Row"][];
+      };
+      get_scholarship_scrap_counts: {
+        Args: { p_scholarship_ids: number[] };
+        Returns: { scholarship_id: number; scrap_count: number }[];
       };
       is_admin: {
         Args: Record<string, never>;

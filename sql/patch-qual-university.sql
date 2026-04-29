@@ -144,10 +144,23 @@ AS $$
     )
 
     -- ── 특수 자격 ────────────────────────────────────────────────────
+    -- 자유서술형 기타 요건은 표시용으로만 두고, enum과 일치하는 항목만 매칭 조건으로 사용
     AND (
       s.qual_special_info IS NULL
       OR array_length(s.qual_special_info, 1) = 0
-      OR (p.special_info && s.qual_special_info)
+      OR NOT EXISTS (
+        SELECT 1
+        FROM unnest(s.qual_special_info) AS req
+        WHERE req = ANY(enum_range(NULL::public.special_info_type)::text[])
+      )
+      OR (
+        p.special_info IS NOT NULL
+        AND EXISTS (
+          SELECT 1
+          FROM unnest(s.qual_special_info) AS req
+          WHERE req = ANY(p.special_info::text[])
+        )
+      )
     )
 
     -- ── 부모 직업 ────────────────────────────────────────────────────

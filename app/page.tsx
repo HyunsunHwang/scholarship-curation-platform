@@ -5,6 +5,8 @@ import { getHeroIllustrationPublicUrl } from "@/lib/hero-illustration-url";
 import { createClient } from "@/lib/supabase/server";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
+import { getCachedUniversityNames } from "@/lib/public-data";
+import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -12,57 +14,51 @@ export default async function Home() {
 
   const [
     { data: scholarships },
-    { data: universities },
+    universityNames,
     { data: { user } },
   ] = await Promise.all([
     supabase
       .from("scholarships")
       .select(
-        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count"
+        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
       .gte("apply_end_date", today)
+      .order("is_recommended", { ascending: false })
+      .order("recommended_sort_order", { ascending: true, nullsFirst: false })
       .order("apply_end_date", { ascending: true }),
-    supabase.from("universities").select("name"),
+    getCachedUniversityNames(),
     supabase.auth.getUser(),
   ]);
 
-  const universityNames = (universities ?? []).map((u) => u.name);
   const homeScholarships = (scholarships ?? []).filter(
     (s) => !isUniversitySpecificScholarship(s, universityNames)
   );
   const homeScholarshipIds = homeScholarships.map((s) => s.id);
-  const { data: scrapRows } = homeScholarshipIds.length > 0
-    ? await supabase
-        .from("bookmarks")
-        .select("scholarship_id")
-        .in("scholarship_id", homeScholarshipIds)
-    : { data: [] };
-  const scrapCountByScholarship = new Map<number, number>();
-  for (const row of scrapRows ?? []) {
-    const id = row.scholarship_id as number;
-    scrapCountByScholarship.set(id, (scrapCountByScholarship.get(id) ?? 0) + 1);
-  }
+  const [scrapCountByScholarship, bookmarksResult] = await Promise.all([
+    getScholarshipScrapCounts(supabase, homeScholarshipIds),
+    user
+      ? supabase
+          .from("bookmarks")
+          .select("scholarship_id")
+          .eq("user_id", user.id)
+      : Promise.resolve({ data: [] }),
+  ]);
   const homeScholarshipsWithStats = homeScholarships.map((s) => ({
     ...s,
     scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
   }));
 
-  let bookmarkedIds: number[] = [];
-  if (user) {
-    const { data: bookmarks } = await supabase
-      .from("bookmarks")
-      .select("scholarship_id")
-      .eq("user_id", user.id);
-    bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
-  }
+  const bookmarkedIds = (bookmarksResult.data ?? []).map(
+    (b) => b.scholarship_id as number
+  );
 
   const heroIllustrationUrl = getHeroIllustrationPublicUrl(supabase);
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      <Navbar currentUser={user} />
       <main className="flex-1">
         <Hero heroIllustrationUrl={heroIllustrationUrl} isLoggedIn={!!user} />
         <ScholarshipDashboard
