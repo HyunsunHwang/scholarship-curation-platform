@@ -155,6 +155,103 @@ export interface Database {
         Relationships: [];
       };
 
+      analytics_events: {
+        Row: {
+          id: number;
+          occurred_at: string;
+          event_name: string;
+          user_id: string | null;
+          session_id: string | null;
+          page_path: string | null;
+          scholarship_id: number | null;
+          search_query: string | null;
+          sort_key: string | null;
+          scope_filter: string | null;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          occurred_at?: string;
+          event_name: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          page_path?: string | null;
+          scholarship_id?: number | null;
+          search_query?: string | null;
+          sort_key?: string | null;
+          scope_filter?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_events"]["Insert"]>;
+        Relationships: [];
+      };
+
+      analytics_daily_kpi: {
+        Row: {
+          metric_date: string;
+          page_view_count: number;
+          unique_user_count: number;
+          search_count: number;
+          bookmark_toggle_count: number;
+          scholarship_open_count: number;
+          apply_click_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          metric_date: string;
+          page_view_count?: number;
+          unique_user_count?: number;
+          search_count?: number;
+          bookmark_toggle_count?: number;
+          scholarship_open_count?: number;
+          apply_click_count?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_daily_kpi"]["Insert"]>;
+        Relationships: [];
+      };
+
+      analytics_scholarship_daily_kpi: {
+        Row: {
+          metric_date: string;
+          scholarship_id: number;
+          detail_view_count: number;
+          bookmark_toggle_count: number;
+          apply_click_count: number;
+          unique_user_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          metric_date: string;
+          scholarship_id: number;
+          detail_view_count?: number;
+          bookmark_toggle_count?: number;
+          apply_click_count?: number;
+          unique_user_count?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_scholarship_daily_kpi"]["Insert"]>;
+        Relationships: [];
+      };
+
+      analytics_search_term_daily: {
+        Row: {
+          metric_date: string;
+          search_query: string;
+          search_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          metric_date: string;
+          search_query: string;
+          search_count?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_search_term_daily"]["Insert"]>;
+        Relationships: [];
+      };
+
       /** 공개 사이트 설정 (헤더 로고 URL 등). 단일 행 id=1 */
       site_settings: {
         Row: {
