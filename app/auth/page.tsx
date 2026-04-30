@@ -12,6 +12,8 @@ type Tab = "login" | "signup";
 function KakaoOAuthButton() {
   async function handleKakaoLogin() {
     const supabase = createClient();
+    // 기존 세션이 남아 있으면 최초 OAuth 흐름에서 다른 계정으로 인식될 수 있어 선제 정리합니다.
+    await supabase.auth.signOut();
     const redirectTo = `${window.location.origin}/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "kakao",
