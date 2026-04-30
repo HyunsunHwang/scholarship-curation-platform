@@ -3,9 +3,35 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { login, signup, type AuthState } from "./actions";
+import { createClient } from "@/lib/supabase/client";
 
 type Tab = "login" | "signup";
+
+function KakaoOAuthButton() {
+  async function handleKakaoLogin() {
+    const supabase = createClient();
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: { redirectTo },
+    });
+    if (error) {
+      alert(`카카오 로그인에 실패했습니다: ${error.message}`);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleKakaoLogin}
+      className="w-full rounded-lg bg-[#FEE500] px-4 py-2.5 text-sm font-semibold text-[#191919] transition hover:bg-[#f5dc00]"
+    >
+      카카오로 시작하기
+    </button>
+  );
+}
 
 function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
@@ -168,6 +194,8 @@ function SignupForm() {
 
 export default function AuthPage() {
   const [tab, setTab] = useState<Tab>("login");
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get("error");
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-12">
@@ -183,6 +211,11 @@ export default function AuthPage() {
 
       {/* 카드 */}
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        {oauthError ? (
+          <div className="mb-4 rounded-lg border border-brand/30 bg-brand/10 px-4 py-3 text-sm text-brand">
+            소셜 로그인 오류: {oauthError}
+          </div>
+        ) : null}
         {/* 탭 */}
         <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
           <button
@@ -211,6 +244,13 @@ export default function AuthPage() {
 
         {/* 폼 */}
         {tab === "login" ? <LoginForm /> : <SignupForm />}
+
+      <div className="my-5 flex items-center gap-3">
+        <div className="h-px flex-1 bg-gray-200" />
+        <span className="text-xs text-ink/40">또는</span>
+        <div className="h-px flex-1 bg-gray-200" />
+      </div>
+      <KakaoOAuthButton />
       </div>
 
       {/* 하단 링크 */}
