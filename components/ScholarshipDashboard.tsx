@@ -49,11 +49,13 @@ export default function ScholarshipDashboard({
   bookmarkedIds = [],
   heading = "전체 장학금",
   showScopeTabs = false,
+  totalScholarshipCount,
 }: {
   scholarships: CardScholarship[];
   bookmarkedIds?: number[];
   heading?: string;
   showScopeTabs?: boolean;
+  totalScholarshipCount?: number;
 }) {
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,6 +107,7 @@ export default function ScholarshipDashboard({
   }, [scholarships, scopeFilter, deferredSearchQuery, sortBy]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
+  const countLabel = totalScholarshipCount ?? filtered.length;
   const pagedScholarships = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filtered.slice(start, start + ITEMS_PER_PAGE);
@@ -120,7 +123,7 @@ export default function ScholarshipDashboard({
             <p className="mt-1 text-sm text-ink/60">
               총{" "}
               <span className="font-semibold text-brand">
-                {filtered.length}개
+                {countLabel}개
               </span>
               의 장학금
             </p>

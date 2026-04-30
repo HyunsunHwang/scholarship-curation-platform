@@ -69,6 +69,7 @@ export default async function Home({
         <ScholarshipDashboard
           scholarships={homeScholarshipsPage.scholarships}
           bookmarkedIds={bookmarkedIds}
+          totalScholarshipCount={homeScholarshipsPage.totalCount}
         />
         {homeScholarshipsPage.totalPages > 1 && (
           <div className="mx-auto flex w-full max-w-7xl items-center justify-center gap-2 px-4 pb-12 sm:px-6 lg:px-8">

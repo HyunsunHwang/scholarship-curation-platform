@@ -38,6 +38,13 @@ ordered as (
   where s.is_verified = true
     and s.list_on_home = true
     and s.apply_end_date >= (now() at time zone 'Asia/Seoul')::date
+    and coalesce(array_length(s.qual_university, 1), 0) = 0
+    and not exists (
+      select 1
+      from public.universities u
+      where char_length(trim(u.name)) >= 3
+        and position(lower(trim(u.name)) in lower(s.name || ' ' || s.organization)) > 0
+    )
 ),
 paged as (
   select o.*

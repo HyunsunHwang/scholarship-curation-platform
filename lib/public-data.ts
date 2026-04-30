@@ -175,15 +175,12 @@ export async function getHomeScholarshipsPage({
         }>;
       }
     | null;
-  const universityNames = await getCachedUniversityNames();
   const totalCount = payload?.total_count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / safePageSize));
-  const mappedScholarships = (payload?.rows ?? [])
-    .filter((row) => !isUniversitySpecificScholarship(row, universityNames))
-    .map((row) => ({
-      ...row,
-      scrap_count: row.scrap_count ?? 0,
-    }));
+  const mappedScholarships = (payload?.rows ?? []).map((row) => ({
+    ...row,
+    scrap_count: row.scrap_count ?? 0,
+  }));
 
   return {
     scholarships: mappedScholarships,
