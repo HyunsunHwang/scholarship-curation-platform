@@ -75,6 +75,7 @@ export default function Hero({ heroIllustrationUrl }: HeroProps) {
                   alt="장학금 안내 일러스트"
                   width={480}
                   height={480}
+                  priority
                   className="h-auto w-full object-contain drop-shadow-[0_10px_28px_rgba(192,0,0,0.05)]"
                   sizes="(min-width: 1280px) 20rem, (min-width: 1024px) 18rem, 0"
                 />

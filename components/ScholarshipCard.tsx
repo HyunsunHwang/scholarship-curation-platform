@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { memo, useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
@@ -58,7 +58,7 @@ function deadlineColor(dateStr: string): string {
   return "text-ink/50";
 }
 
-export default function ScholarshipCard({
+function ScholarshipCard({
   scholarship,
   initialBookmarked = false,
 }: {
@@ -189,3 +189,5 @@ export default function ScholarshipCard({
     </div>
   );
 }
+
+export default memo(ScholarshipCard);
