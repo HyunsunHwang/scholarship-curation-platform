@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { FormEvent, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ToggleVerifiedButton, ToggleRecommendedButton, DeleteButton } from "./ScholarshipRowActions";
@@ -118,64 +118,76 @@ function sortDefaultAdminOrder(rows: ScholarshipRow[]): ScholarshipRow[] {
 
 export default function ScholarshipTable({
   scholarships,
+  initialQuery,
 }: {
   scholarships: ScholarshipRow[];
+  initialQuery: string;
 }) {
-  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const [query, setQuery] = useState(initialQuery);
   const [deadlineSort, setDeadlineSort] = useState<SortDir>("none");
 
-  const q = query.trim().toLowerCase();
-  const narrowed = q
-    ? scholarships.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.organization.toLowerCase().includes(q)
-      )
-    : scholarships;
-  const forSort = deadlineSort === "none" ? sortDefaultAdminOrder(narrowed) : narrowed;
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
+
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextQuery = query.trim();
+    const params = new URLSearchParams();
+    if (nextQuery) params.set("q", nextQuery);
+    router.push(`/admin/scholarships${params.toString() ? `?${params}` : ""}`);
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    router.push("/admin/scholarships");
+  };
+
+  const forSort = deadlineSort === "none" ? sortDefaultAdminOrder(scholarships) : scholarships;
   const filtered = sortByDeadline(forSort, deadlineSort);
 
   return (
     <>
-      <div className="relative mb-4">
-        <svg
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+      <form onSubmit={handleSearch} className="mb-4 flex items-center gap-2">
+        <div className="relative flex-1">
+          <svg
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+            />
+          </svg>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="장학금 이름 또는 기관명으로 검색..."
+            className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
           />
-        </svg>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="장학금 이름 또는 기관명으로 검색..."
-          className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-        />
-        {query && (
+        </div>
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          검색
+        </button>
+        {initialQuery && (
           <button
             type="button"
-            onClick={() => setQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            onClick={clearSearch}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            초기화
           </button>
         )}
-      </div>
-
-      {q && (
-        <p className="mb-3 text-xs text-gray-500">
-          검색 결과: <span className="font-semibold text-gray-700">{filtered.length}</span>건
-        </p>
-      )}
+      </form>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
         <table className="w-full text-sm min-w-[1000px]">
@@ -304,9 +316,9 @@ export default function ScholarshipTable({
             ) : (
               <tr>
                 <td colSpan={8} className="px-4 py-12 text-center text-gray-400">
-                  {q ? (
+                  {initialQuery ? (
                     <>
-                      <span className="font-medium">&ldquo;{query}&rdquo;</span>에 대한 검색 결과가 없습니다.
+                      <span className="font-medium">&ldquo;{initialQuery}&rdquo;</span>에 대한 검색 결과가 없습니다.
                     </>
                   ) : (
                     <>

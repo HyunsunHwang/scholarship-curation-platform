@@ -7,23 +7,32 @@ const PAGE_SIZE = 20;
 export default async function AdminScholarshipsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ page?: string }>;
+  searchParams?: Promise<{ page?: string; q?: string }>;
 }) {
   const resolvedSearchParams = (await searchParams) ?? {};
+  const query = (resolvedSearchParams.q ?? "").trim();
   const pageFromQuery = Number.parseInt(resolvedSearchParams.page ?? "1", 10);
   const currentPage = Number.isFinite(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
   const from = (currentPage - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
   const supabase = await createClient();
 
-  const { data: scholarships, error, count } = await supabase
+  let scholarshipsQuery = supabase
     .from("scholarships")
     .select(
       "id, name, organization, apply_start_date, apply_end_date, support_amount, support_amount_text, is_verified, support_types, poster_image_url, list_on_home, is_recommended, recommended_sort_order",
       { count: "exact" }
     )
-    .order("created_at", { ascending: false })
-    .range(from, to);
+    .order("created_at", { ascending: false });
+
+  if (query) {
+    const escaped = query.replace(/[%_]/g, "\\$&");
+    scholarshipsQuery = scholarshipsQuery.or(
+      `name.ilike.%${escaped}%,organization.ilike.%${escaped}%`
+    );
+  }
+
+  const { data: scholarships, error, count } = await scholarshipsQuery.range(from, to);
 
   if (error) {
     return (
@@ -40,6 +49,7 @@ export default async function AdminScholarshipsPage({
   const totalCount = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const hasNextPage = currentPage < totalPages;
+  const queryString = query ? `&q=${encodeURIComponent(query)}` : "";
 
   return (
     <div>
@@ -47,7 +57,9 @@ export default async function AdminScholarshipsPage({
         <div>
           <h1 className="text-2xl font-bold text-gray-900">장학금 관리</h1>
           <p className="text-sm text-gray-500 mt-1">
-            총 {totalCount}개 중 {rows.length}개 표시
+            {query
+              ? `검색 결과 ${totalCount}개 중 ${rows.length}개 표시`
+              : `총 ${totalCount}개 중 ${rows.length}개 표시`}
           </p>
         </div>
         <Link
@@ -67,11 +79,11 @@ export default async function AdminScholarshipsPage({
         </Link>
       </div>
 
-      <ScholarshipTable scholarships={rows} />
+      <ScholarshipTable scholarships={rows} initialQuery={query} />
 
       <div className="mt-5 flex items-center justify-between text-sm">
         <Link
-          href={`/admin/scholarships?page=${Math.max(1, currentPage - 1)}`}
+          href={`/admin/scholarships?page=${Math.max(1, currentPage - 1)}${queryString}`}
           aria-disabled={currentPage <= 1}
           className={`rounded-lg border px-3 py-1.5 ${
             currentPage <= 1
@@ -83,7 +95,7 @@ export default async function AdminScholarshipsPage({
         </Link>
         <span className="text-gray-600">페이지 {currentPage}</span>
         <Link
-          href={`/admin/scholarships?page=${currentPage + 1}`}
+          href={`/admin/scholarships?page=${currentPage + 1}${queryString}`}
           aria-disabled={!hasNextPage}
           className={`rounded-lg border px-3 py-1.5 ${
             !hasNextPage
