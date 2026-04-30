@@ -1,5 +1,10 @@
 -- KFAS-001: 2026년 인재림 제6기 장학생 (공고·CSV 기준 정합성 패치)
 -- 기존 행이 '인재림 제6기 장학생' 등으로 들어간 경우에도 동일 조직·제6기로 식별해 갱신합니다.
+--
+-- 주요 일정(참고):
+--   · 서류심사: 7월 13일 — selection_stage_1_schedule
+--   · 1차 면접: 7월 16일 — selection_stage_2 (대면, 상세는 공고 및 selection_note)
+--   · 최종 발표: 7월 22일 — announcement_date, selection_stage_3_schedule
 
 UPDATE public.scholarships
 SET
@@ -34,7 +39,7 @@ SET
   selection_stage_3 = '최종발표',
   selection_stage_4 = NULL,
   selection_stage_5 = NULL,
-  selection_note = '면접심사 7월 16일 대면 참석 필수',
+  selection_note = '주요 일정 · 1차 면접 7월 16일(대면 참석 필수)',
   selection_stage_1_schedule = '2026-07-13',
   selection_stage_2_schedule = '2026-07-16',
   selection_stage_3_schedule = '2026-07-22',

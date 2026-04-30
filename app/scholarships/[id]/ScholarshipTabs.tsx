@@ -90,6 +90,16 @@ function formatDate(dateStr: string | null): string {
   return `${y}.${m}.${d}`;
 }
 
+/** 선발 단계 일정 칸: 순수 ISO 날짜·타임스탬프 앞부분이면 마일스톤과 같은 표기로 통일, 그 외는 원문 유지 */
+function formatScheduleCell(text: string | null): string {
+  if (!text?.trim()) return "";
+  const raw = text.trim();
+  const ymdHead = raw.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+  if (ymdHead && (raw === ymdHead || raw.startsWith(`${ymdHead}T`))) return formatDate(ymdHead);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return formatDate(raw);
+  return raw;
+}
+
 // ── 지원자격 섹션 ────────────────────────────────────────────────────
 function QualSection({ s }: { s: ScholarshipDetail }) {
   if (!hasQualifications(s)) {
@@ -267,6 +277,20 @@ function isResultAnnouncementStageTitle(title: string): boolean {
   );
 }
 
+/** DB 일정 칸이 비어 있을 때: 발표 성격 단계는 공식 `announcement_date`로 보완 */
+function resolveStageScheduleValue(
+  s: ScholarshipDetail,
+  title: string,
+  raw: string | null,
+): string | null {
+  const t = raw?.trim();
+  if (t) return t;
+  if (isResultAnnouncementStageTitle(title) && s.announcement_date?.trim()) {
+    return s.announcement_date.trim();
+  }
+  return null;
+}
+
 /** `announcement_date`와 선발 일정 문구가 같은 날을 가리키는지(파싱 실패·한글 표기 포함) */
 function scheduleRefersToAnnouncementDay(text: string | null, announcementYmd: string | null): boolean {
   if (!text?.trim() || !announcementYmd) return false;
@@ -395,12 +419,13 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
 
   const stages = collectSelectionStages(s);
   stages.forEach((st, i) => {
+    const resolved = resolveStageScheduleValue(s, st.title, st.schedule);
     rows.push({
       kind: "stage",
       key: `stage-${i}-${st.title}`,
       label: st.title,
-      value: st.schedule,
-      sortMs: parseLooseScheduleSortMs(st.schedule),
+      value: resolved,
+      sortMs: parseLooseScheduleSortMs(resolved),
       sourceIndex: i,
     });
   });
@@ -450,7 +475,7 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
                   )}
                 </>
               ) : row.value ? (
-                row.value
+                formatScheduleCell(row.value)
               ) : (
                 "일정별도"
               )}

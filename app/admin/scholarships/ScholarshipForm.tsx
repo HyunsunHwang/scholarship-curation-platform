@@ -228,13 +228,22 @@ export default function ScholarshipForm({
       <Section title="선발 단계">
         <Field label="선발 단계 수 *" name="selection_stages" type="number" min="1" max="5" defaultValue={dv.selection_stages?.toString() ?? "1"} required />
         {[1, 2, 3, 4, 5].map((n) => (
-          <Field
-            key={n}
-            label={`${n}차 선발`}
-            name={`selection_stage_${n}`}
-            defaultValue={(dv as Record<string, unknown>)[`selection_stage_${n}`] as string ?? ""}
-            required={n === 1}
-          />
+          <div key={n} className="md:col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Field
+              label={`${n}차 선발`}
+              name={`selection_stage_${n}`}
+              defaultValue={(dv as Record<string, unknown>)[`selection_stage_${n}`] as string ?? ""}
+              required={n === 1}
+            />
+            <Field
+              label={`${n}차 일정`}
+              name={`selection_stage_${n}_schedule`}
+              defaultValue={
+                ((dv as Record<string, unknown>)[`selection_stage_${n}_schedule`] as string | undefined) ?? ""
+              }
+              placeholder="예: 2026-07-16 (상세·주요 일정에 표시)"
+            />
+          </div>
         ))}
         <Field label="선발 비고" name="selection_note" defaultValue={dv.selection_note ?? ""} />
       </Section>

@@ -77,6 +77,7 @@ export async function updateScholarship(id: number, formData: FormData) {
   revalidatePath("/admin/scholarships");
   revalidatePath("/");
   revalidatePath("/matched");
+  revalidatePath(`/scholarships/${id}`);
   redirect("/admin/scholarships");
 }
 
