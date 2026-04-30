@@ -44,6 +44,16 @@ function compareRecommendedPinned(a: CardScholarship, b: CardScholarship): numbe
   return ao - bo;
 }
 
+function compareBookmarkedPinned(
+  a: CardScholarship,
+  b: CardScholarship,
+  bookmarkedSet: Set<number>
+): number {
+  const aBookmarked = bookmarkedSet.has(a.id) ? 1 : 0;
+  const bBookmarked = bookmarkedSet.has(b.id) ? 1 : 0;
+  return bBookmarked - aBookmarked;
+}
+
 export default function ScholarshipDashboard({
   scholarships,
   bookmarkedIds = [],
@@ -88,6 +98,8 @@ export default function ScholarshipDashboard({
     });
 
     return [...list].sort((a, b) => {
+      const bookmarkedPin = compareBookmarkedPinned(a, b, bookmarkedSet);
+      if (bookmarkedPin !== 0) return bookmarkedPin;
       const pin = compareRecommendedPinned(a, b);
       if (pin !== 0) return pin;
       if (sortBy === "deadline") {
@@ -104,7 +116,7 @@ export default function ScholarshipDashboard({
       }
       return (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
     });
-  }, [scholarships, scopeFilter, deferredSearchQuery, sortBy]);
+  }, [scholarships, scopeFilter, deferredSearchQuery, sortBy, bookmarkedSet]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const countLabel = totalScholarshipCount ?? filtered.length;

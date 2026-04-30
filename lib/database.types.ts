@@ -269,6 +269,10 @@ export interface Database {
         Args: { p_page: number; p_page_size: number };
         Returns: Json;
       };
+      get_urgent_bookmark_count: {
+        Args: { p_user_id: string; p_deadline_days?: number };
+        Returns: number;
+      };
       is_admin: {
         Args: Record<string, never>;
         Returns: boolean;

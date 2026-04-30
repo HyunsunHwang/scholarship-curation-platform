@@ -34,16 +34,29 @@ export default async function Navbar({
     currentUserRole || currentUserName
       ? { role: currentUserRole ?? "", name: currentUserName ?? null }
       : null;
-  const urgentBookmarkCount = urgentBookmarkCountProp ?? 0;
+  let urgentBookmarkCount = urgentBookmarkCountProp ?? 0;
 
-  if (user && !profile) {
+  if (user && (!profile || urgentBookmarkCountProp === undefined)) {
     supabase ??= await createClient();
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("role, name")
-      .eq("id", user.id)
-      .single();
-    profile = profileData;
+    const [profileResult, urgentCountResult] = await Promise.all([
+      profile
+        ? Promise.resolve({ data: profile })
+        : supabase
+            .from("profiles")
+            .select("role, name")
+            .eq("id", user.id)
+            .single(),
+      urgentBookmarkCountProp !== undefined
+        ? Promise.resolve({ data: urgentBookmarkCountProp, error: null })
+        : supabase.rpc("get_urgent_bookmark_count", {
+            p_user_id: user.id,
+            p_deadline_days: 6,
+          }),
+    ]);
+    profile = profileResult.data;
+    if (!urgentCountResult.error) {
+      urgentBookmarkCount = Number(urgentCountResult.data ?? 0);
+    }
   }
 
   const isAdmin = profile?.role === "admin";
