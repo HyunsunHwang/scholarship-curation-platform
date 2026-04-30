@@ -11,6 +11,7 @@ import {
   isAlwaysOpenRecruitment,
 } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
+import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { formatSupportAmount } from "@/lib/support-amount";
 
 /** 포스터 없을 때 플레이스홀더 — 랜딩 히어로와 동일한 브랜드 그라데이션 */
@@ -27,13 +28,10 @@ export default async function ScholarshipDetailPage({
 
   const supabase = await createClient();
 
-  const [{ data: scholarship }, { data: { user } }, { count: scrapCount }] = await Promise.all([
+  const [{ data: scholarship }, { data: { user } }, scrapCountByScholarship] = await Promise.all([
     supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
     supabase.auth.getUser(),
-    supabase
-      .from("bookmarks")
-      .select("id", { count: "exact", head: true })
-      .eq("scholarship_id", scholarshipId),
+    getScholarshipScrapCounts(supabase, [scholarshipId]),
   ]);
 
   if (!scholarship) notFound();
@@ -54,6 +52,7 @@ export default async function ScholarshipDetailPage({
       .eq("id", scholarshipId),
   ]);
   const initialBookmarked = !!bookmarkResult.data;
+  const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
 
   const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
   const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);

@@ -17,6 +17,37 @@ export function createPublicSupabaseClient() {
   );
 }
 
+type PublicSupabaseClient = ReturnType<typeof createPublicSupabaseClient>;
+
+type ScrapCountRow = {
+  scholarship_id: number;
+  scrap_count: number | string;
+};
+
+async function getPublicScrapCountMap(
+  supabase: PublicSupabaseClient,
+  scholarshipIds: number[]
+) {
+  const uniqueIds = Array.from(new Set(scholarshipIds));
+  const counts = new Map<number, number>();
+  if (uniqueIds.length === 0) return counts;
+
+  const { data, error } = await supabase.rpc("get_scholarship_scrap_counts", {
+    p_scholarship_ids: uniqueIds,
+  });
+
+  if (error) {
+    console.error("Failed to load public scholarship scrap counts", error);
+    return counts;
+  }
+
+  for (const row of (data ?? []) as ScrapCountRow[]) {
+    counts.set(row.scholarship_id, Number(row.scrap_count) || 0);
+  }
+
+  return counts;
+}
+
 export const getCachedUniversityNames = unstable_cache(
   async () => {
     const supabase = createPublicSupabaseClient();
@@ -80,14 +111,18 @@ export const getCachedHomeScholarships = unstable_cache(
       return [];
     }
 
-    return (scholarships ?? [])
-      .filter((scholarship) =>
-        !isUniversitySpecificScholarship(scholarship, universityNames)
-      )
-      .map((scholarship) => ({
-        ...scholarship,
-        scrap_count: 0,
-      }));
+    const publicScholarships = (scholarships ?? []).filter((scholarship) =>
+      !isUniversitySpecificScholarship(scholarship, universityNames)
+    );
+    const scrapCounts = await getPublicScrapCountMap(
+      supabase,
+      publicScholarships.map((scholarship) => scholarship.id)
+    );
+
+    return publicScholarships.map((scholarship) => ({
+      ...scholarship,
+      scrap_count: scrapCounts.get(scholarship.id) ?? 0,
+    }));
   },
   ["home-scholarships"],
   { revalidate: 5 * 60 }
