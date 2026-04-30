@@ -13,6 +13,7 @@ import {
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { formatSupportAmount } from "@/lib/support-amount";
+import ViewCountIncrementer from "./ViewCountIncrementer";
 
 /** 포스터 없을 때 플레이스홀더 — 랜딩 히어로와 동일한 브랜드 그라데이션 */
 const posterPlaceholderGradient = "from-brand to-[#c00000]";
@@ -36,8 +37,9 @@ export default async function ScholarshipDetailPage({
 
   if (!scholarship) notFound();
 
-  const nextViewCount = (scholarship.view_count ?? 0) + 1;
-  const [bookmarkResult] = await Promise.all([
+  const currentViewCount = scholarship.view_count ?? 0;
+  const displayViewCount = currentViewCount + 1;
+  const { data: bookmarkResult } = await (
     user
       ? supabase
           .from("bookmarks")
@@ -45,13 +47,9 @@ export default async function ScholarshipDetailPage({
           .eq("user_id", user.id)
           .eq("scholarship_id", scholarshipId)
           .maybeSingle()
-      : Promise.resolve({ data: null }),
-    supabase
-      .from("scholarships")
-      .update({ view_count: nextViewCount })
-      .eq("id", scholarshipId),
-  ]);
-  const initialBookmarked = !!bookmarkResult.data;
+      : Promise.resolve({ data: null })
+  );
+  const initialBookmarked = !!bookmarkResult;
   const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
 
   const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
@@ -96,7 +94,7 @@ export default async function ScholarshipDetailPage({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
                 </svg>
-                조회 {nextViewCount.toLocaleString()}
+                조회 {displayViewCount.toLocaleString()}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-ink/70 shadow-sm">
                 <svg className="h-3.5 w-3.5 text-ink/35" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -222,6 +220,7 @@ export default async function ScholarshipDetailPage({
           </div>
         </div>
       </main>
+      <ViewCountIncrementer scholarshipId={scholarshipId} />
 
       <footer className="mt-12 border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

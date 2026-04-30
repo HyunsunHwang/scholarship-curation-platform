@@ -127,3 +127,135 @@ export const getCachedHomeScholarships = unstable_cache(
   ["home-scholarships"],
   { revalidate: 5 * 60 }
 );
+
+export async function getHomeScholarshipsPage({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}) {
+  const supabase = createPublicSupabaseClient();
+  const safePage = Math.max(1, page);
+  const safePageSize = Math.max(1, Math.min(pageSize, 50));
+  const { data, error } = await supabase.rpc("get_public_home_scholarships_page", {
+    p_page: safePage,
+    p_page_size: safePageSize,
+  });
+
+  if (error) {
+    console.error("Failed to load paginated home scholarships", error);
+    return getHomeScholarshipsPageFallback({
+      supabase,
+      page: safePage,
+      pageSize: safePageSize,
+    });
+  }
+  const payload = data as
+    | {
+        page?: number;
+        page_size?: number;
+        total_count?: number;
+        rows?: Array<{
+          id: number;
+          name: string;
+          organization: string;
+          qual_university: string[] | null;
+          institution_type: string;
+          support_types: string[];
+          support_amount: number;
+          support_amount_text: string | null;
+          apply_end_date: string;
+          poster_image_url: string | null;
+          created_at: string;
+          view_count: number | null;
+          is_recommended: boolean;
+          recommended_sort_order: number | null;
+          scrap_count: number | null;
+        }>;
+      }
+    | null;
+  const universityNames = await getCachedUniversityNames();
+  const totalCount = payload?.total_count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / safePageSize));
+  const mappedScholarships = (payload?.rows ?? [])
+    .filter((row) => !isUniversitySpecificScholarship(row, universityNames))
+    .map((row) => ({
+      ...row,
+      scrap_count: row.scrap_count ?? 0,
+    }));
+
+  return {
+    scholarships: mappedScholarships,
+    page: payload?.page ?? safePage,
+    pageSize: safePageSize,
+    totalCount,
+    totalPages,
+  };
+}
+
+async function getHomeScholarshipsPageFallback({
+  supabase,
+  page,
+  pageSize,
+}: {
+  supabase: PublicSupabaseClient;
+  page: number;
+  pageSize: number;
+}) {
+  const today = todayKoreaYYYYMMDD();
+  const serverPageSize = pageSize * 3;
+  const maxRowsToScan = page * serverPageSize;
+
+  const [{ data: scholarships, error }, universityNames] = await Promise.all([
+    supabase
+      .from("scholarships")
+      .select(
+        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
+      )
+      .eq("is_verified", true)
+      .eq("list_on_home", true)
+      .gte("apply_end_date", today)
+      .order("is_recommended", { ascending: false })
+      .order("recommended_sort_order", { ascending: true, nullsFirst: false })
+      .order("apply_end_date", { ascending: true })
+      .limit(maxRowsToScan),
+    getCachedUniversityNames(),
+  ]);
+
+  if (error) {
+    console.error("Fallback home scholarships query failed", error);
+    return {
+      scholarships: [],
+      page,
+      pageSize,
+      totalCount: 0,
+      totalPages: 1,
+    };
+  }
+
+  const filteredPublicScholarships = (scholarships ?? []).filter((scholarship) =>
+    !isUniversitySpecificScholarship(scholarship, universityNames)
+  );
+  const totalCount = filteredPublicScholarships.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize;
+  const publicScholarships = filteredPublicScholarships.slice(from, to);
+  const scrapCounts = await getPublicScrapCountMap(
+    supabase,
+    publicScholarships.map((scholarship) => scholarship.id)
+  );
+  const mappedScholarships = publicScholarships.map((scholarship) => ({
+    ...scholarship,
+    scrap_count: scrapCounts.get(scholarship.id) ?? 0,
+  }));
+
+  return {
+    scholarships: mappedScholarships,
+    page,
+    pageSize,
+    totalCount,
+    totalPages,
+  };
+}

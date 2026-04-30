@@ -4,17 +4,17 @@ import BrandLogo from "@/components/BrandLogo";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/auth/actions";
 import { getCachedSiteSettings } from "@/lib/public-data";
-import {
-  daysUntilApplyDeadlineKorea,
-  isAlwaysOpenRecruitment,
-} from "@/lib/scholarship-dates";
-
-const URGENT_DEADLINE_DAYS = 6;
 
 export default async function Navbar({
   currentUser,
+  currentUserRole,
+  currentUserName,
+  urgentBookmarkCount: urgentBookmarkCountProp,
 }: {
   currentUser?: User | null;
+  currentUserRole?: string | null;
+  currentUserName?: string | null;
+  urgentBookmarkCount?: number;
 } = {}) {
   const siteSettingsPromise = getCachedSiteSettings();
   let supabase: Awaited<ReturnType<typeof createClient>> | null = null;
@@ -30,39 +30,20 @@ export default async function Navbar({
 
   const siteSettings = await siteSettingsPromise;
 
-  let profile: { role: string; name: string | null } | null = null;
-  let urgentBookmarkCount = 0;
+  let profile: { role: string; name: string | null } | null =
+    currentUserRole || currentUserName
+      ? { role: currentUserRole ?? "", name: currentUserName ?? null }
+      : null;
+  const urgentBookmarkCount = urgentBookmarkCountProp ?? 0;
 
-  if (user) {
+  if (user && !profile) {
     supabase ??= await createClient();
-    const [{ data: profileData }, { data: bookmarkRows }] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("role, name")
-        .eq("id", user.id)
-        .single(),
-      supabase
-        .from("bookmarks")
-        .select("scholarship_id")
-        .eq("user_id", user.id),
-    ]);
-
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("role, name")
+      .eq("id", user.id)
+      .single();
     profile = profileData;
-
-    const bookmarkedIds = (bookmarkRows ?? []).map((row) => row.scholarship_id);
-
-    if (bookmarkedIds.length > 0) {
-      const { data: deadlineRows } = await supabase
-        .from("scholarships")
-        .select("apply_end_date")
-        .in("id", bookmarkedIds);
-
-      urgentBookmarkCount = (deadlineRows ?? []).filter((scholarship) => {
-        if (isAlwaysOpenRecruitment(scholarship.apply_end_date)) return false;
-        const daysLeft = daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
-        return daysLeft >= 0 && daysLeft <= URGENT_DEADLINE_DAYS;
-      }).length;
-    }
   }
 
   const isAdmin = profile?.role === "admin";

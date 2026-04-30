@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import Image from "next/image";
+import { createPortal } from "react-dom";
 
 type Props = {
   posterUrl: string;
@@ -10,6 +12,7 @@ type Props = {
 export default function ScholarshipPoster({ posterUrl, alt }: Props) {
   const [open, setOpen] = useState(false);
   const titleId = useId();
+  const portalTarget = typeof document === "undefined" ? null : document.body;
 
   useEffect(() => {
     if (!open) return;
@@ -35,9 +38,11 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
         aria-expanded={open}
         aria-controls={titleId}
       >
-        <img
+        <Image
           src={posterUrl}
           alt={alt}
+          fill
+          sizes="(min-width: 768px) 14rem, 100vw"
           className="h-full w-full object-cover transition duration-200 group-hover:brightness-[0.97]"
         />
         <span className="pointer-events-none absolute inset-0 ring-0 transition group-hover:ring-2 group-hover:ring-inset group-hover:ring-white/40" />
@@ -46,36 +51,41 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
         </span>
       </button>
 
-      {open ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-6 sm:p-10 backdrop-blur-[2px]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="relative flex max-h-[min(72vh,640px)] w-full max-w-[min(88vw,40rem)] items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p id={titleId} className="sr-only">
-              {alt} — 확대 보기
-            </p>
-            <button
-              type="button"
+      {open && portalTarget
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 sm:p-10 backdrop-blur-[2px]"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
               onClick={() => setOpen(false)}
-              className="absolute -top-10 right-0 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 sm:-top-11 sm:text-sm"
             >
-              닫기
-            </button>
-            <img
-              src={posterUrl}
-              alt=""
-              className="max-h-[min(72vh,640px)] w-full max-w-full rounded-lg object-contain shadow-2xl"
-            />
-          </div>
-        </div>
-      ) : null}
+              <div
+                className="relative flex max-h-[min(72vh,640px)] w-full max-w-[min(88vw,40rem)] items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p id={titleId} className="sr-only">
+                  {alt} — 확대 보기
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="absolute -top-10 right-0 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 sm:-top-11 sm:text-sm"
+                >
+                  닫기
+                </button>
+                <Image
+                  src={posterUrl}
+                  alt=""
+                  width={1200}
+                  height={1800}
+                  className="max-h-[min(72vh,640px)] w-full max-w-full rounded-lg object-contain shadow-2xl"
+                />
+              </div>
+            </div>,
+            portalTarget
+          )
+        : null}
     </>
   );
 }

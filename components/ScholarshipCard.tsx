@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
@@ -106,12 +107,11 @@ export default function ScholarshipCard({
         className="relative block overflow-hidden rounded-xl aspect-2/3 sm:rounded-2xl"
       >
         {scholarship.poster_image_url ? (
-          <img
+          <Image
             src={scholarship.poster_image_url}
             alt={displayName}
-            loading="lazy"
-            decoding="async"
-            fetchPriority="low"
+            fill
+            sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, 50vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

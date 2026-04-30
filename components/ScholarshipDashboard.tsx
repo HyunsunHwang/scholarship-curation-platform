@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import ScholarshipCard, { type CardScholarship } from "./ScholarshipCard";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 
 type SortOption = "deadline" | "latest" | "views" | "scraps";
 type ScopeFilter = "all" | NonNullable<CardScholarship["scope"]>;
+const ITEMS_PER_PAGE = 24;
 
 const SORT_OPTIONS: { key: SortOption; label: string }[] = [
   { key: "deadline", label: "마감임박순" },
@@ -58,6 +59,8 @@ export default function ScholarshipDashboard({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("deadline");
   const [scopeFilter, setScopeFilter] = useState<ScopeFilter>("all");
+  const [page, setPage] = useState(1);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const scopeTabs = useMemo(
     () => [
@@ -79,7 +82,7 @@ export default function ScholarshipDashboard({
   const filtered = useMemo(() => {
     const list = scholarships.filter((s) => {
       const matchesScope = scopeFilter === "all" || s.scope === scopeFilter;
-      return matchesScope && matchesSearch(s.name, s.organization, searchQuery);
+      return matchesScope && matchesSearch(s.name, s.organization, deferredSearchQuery);
     });
 
     return [...list].sort((a, b) => {
@@ -99,7 +102,13 @@ export default function ScholarshipDashboard({
       }
       return (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
     });
-  }, [scholarships, scopeFilter, searchQuery, sortBy]);
+  }, [scholarships, scopeFilter, deferredSearchQuery, sortBy]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedScholarships = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [currentPage, filtered]);
 
   return (
     <section id="scholarships" className="bg-[#fafafa] py-16">
@@ -128,7 +137,10 @@ export default function ScholarshipDashboard({
                 <button
                   key={option.key}
                   type="button"
-                  onClick={() => setSortBy(option.key)}
+                  onClick={() => {
+                    setSortBy(option.key);
+                    setPage(1);
+                  }}
                   className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                     sortBy === option.key
                       ? "bg-brand text-white"
@@ -148,7 +160,10 @@ export default function ScholarshipDashboard({
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setScopeFilter(tab.key)}
+                onClick={() => {
+                  setScopeFilter(tab.key);
+                  setPage(1);
+                }}
                 className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                   scopeFilter === tab.key
                     ? "border-brand bg-brand text-white"
@@ -183,7 +198,10 @@ export default function ScholarshipDashboard({
           <input
             type="search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder="장학금 이름 또는 기관명 검색"
             className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-ink/40 shadow-sm outline-none transition-shadow focus:border-brand/60 focus:ring-2 focus:ring-brand/10"
             autoComplete="off"
@@ -192,7 +210,10 @@ export default function ScholarshipDashboard({
           {searchQuery.trim() !== "" && (
             <button
               type="button"
-              onClick={() => setSearchQuery("")}
+              onClick={() => {
+                setSearchQuery("");
+                setPage(1);
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-[#fff0f0] hover:text-ink"
               aria-label="검색어 지우기"
             >
@@ -255,13 +276,37 @@ export default function ScholarshipDashboard({
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((scholarship) => (
+            {pagedScholarships.map((scholarship) => (
               <ScholarshipCard
                 key={scholarship.id}
                 scholarship={scholarship}
                 initialBookmarked={bookmarkedSet.has(scholarship.id)}
               />
             ))}
+          </div>
+        )}
+
+        {filtered.length > ITEMS_PER_PAGE && (
+          <div className="mt-8 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-ink disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              이전
+            </button>
+            <span className="text-sm text-ink/60">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-ink disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              다음
+            </button>
           </div>
         )}
       </div>

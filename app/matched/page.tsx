@@ -9,6 +9,7 @@ import { isScholarshipExpired } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 import { getCachedUniversityNames } from "@/lib/public-data";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
+import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
 
 export default async function MatchedPage() {
   const supabase = await createClient();
@@ -32,17 +33,13 @@ export default async function MatchedPage() {
 
   if (!profile?.is_onboarded) redirect("/onboarding");
 
-  const [{ data: matched, error }, { data: bookmarks }] = await Promise.all([
+  const [{ data: matched, error }, bookmarkedIds] = await Promise.all([
     supabase.rpc("get_matched_scholarships", {
       p_user_id: user.id,
     }),
-    supabase
-      .from("bookmarks")
-      .select("scholarship_id")
-      .eq("user_id", user.id),
+    getBookmarkedScholarshipIds(supabase, user.id),
   ]);
 
-  const bookmarkedIds = (bookmarks ?? []).map((b) => b.scholarship_id as number);
   const matchedIds = ((matched ?? []) as Database["public"]["Tables"]["scholarships"]["Row"][]).map((s) => s.id);
   const scrapCountByScholarship = await getScholarshipScrapCounts(
     supabase,
@@ -74,7 +71,7 @@ export default async function MatchedPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar currentUser={user} />
+      <Navbar currentUser={user} currentUserName={profile?.name ?? null} />
 
       <main className="flex-1">
         {/* 상단 헤더 배너 */}

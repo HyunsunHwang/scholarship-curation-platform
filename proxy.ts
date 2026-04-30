@@ -11,6 +11,18 @@ function redirectWithSessionCookies(url: URL, from: NextResponse) {
 }
 
 export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const requiresSessionCheck =
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/matched") ||
+    pathname.startsWith("/mypage") ||
+    pathname.startsWith("/admin");
+
+  if (!requiresSessionCheck) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -37,17 +49,17 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // 세션 갱신 (만료된 Access Token을 Refresh Token으로 자동 갱신)
+  // 보호 라우트에서만 세션 갱신/유저 조회를 수행해 middleware 비용을 줄인다.
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   // 온보딩 미완료 유저를 /onboarding으로 리다이렉트
   if (user) {
-    const isOnboardingPage = request.nextUrl.pathname.startsWith("/onboarding");
-    const isApiRoute = request.nextUrl.pathname.startsWith("/api");
+    const requiresOnboardingCheck =
+      pathname.startsWith("/matched") || pathname.startsWith("/mypage");
 
-    if (!isOnboardingPage && !isApiRoute) {
+    if (requiresOnboardingCheck) {
       const { data: profile } = await supabase
         .from("profiles")
         .select("is_onboarded, role")

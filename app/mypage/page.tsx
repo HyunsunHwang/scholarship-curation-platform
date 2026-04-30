@@ -1,12 +1,26 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/Navbar";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
-import BookmarkedScholarshipCalendar from "@/components/BookmarkedScholarshipCalendar";
 import type { CardScholarship } from "@/components/ScholarshipCard";
-import { isScholarshipExpired } from "@/lib/scholarship-dates";
+import {
+  daysUntilApplyDeadlineKorea,
+  isAlwaysOpenRecruitment,
+  isScholarshipExpired,
+} from "@/lib/scholarship-dates";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
+import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
+
+const BookmarkedScholarshipCalendar = dynamic(
+  () => import("@/components/BookmarkedScholarshipCalendar"),
+  {
+    loading: () => (
+      <div className="mx-auto mt-8 h-64 w-full max-w-7xl animate-pulse rounded-3xl bg-gray-100" />
+    ),
+  }
+);
 
 export default async function MyPage() {
   const supabase = await createClient();
@@ -17,16 +31,10 @@ export default async function MyPage() {
 
   if (!user) redirect("/auth");
 
-  const [{ data: profile }, { data: bookmarkRows }] = await Promise.all([
+  const [{ data: profile }, bookmarkedIds] = await Promise.all([
     supabase.from("profiles").select("name, email").eq("id", user.id).single(),
-    supabase
-      .from("bookmarks")
-      .select("scholarship_id")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false }),
+    getBookmarkedScholarshipIds(supabase, user.id),
   ]);
-
-  const bookmarkedIds = (bookmarkRows ?? []).map((b) => b.scholarship_id);
 
   // 북마크된 장학금 상세 정보를 별도 쿼리로 조회
   const [scholarshipRowsResult, scrapCountByScholarship] = await Promise.all([
@@ -68,10 +76,19 @@ export default async function MyPage() {
 
   const displayName = profile?.name ?? user.email ?? "";
   const initial = displayName.charAt(0).toUpperCase();
+  const urgentBookmarkCount = bookmarkedScholarships.filter((scholarship) => {
+    if (isAlwaysOpenRecruitment(scholarship.apply_end_date)) return false;
+    const days = daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
+    return days >= 0 && days <= 6;
+  }).length;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar currentUser={user} />
+      <Navbar
+        currentUser={user}
+        currentUserName={profile?.name ?? null}
+        urgentBookmarkCount={urgentBookmarkCount}
+      />
 
       <main className="flex-1">
         {/* 프로필 헤더 */}

@@ -265,6 +265,10 @@ export interface Database {
         Args: { p_scholarship_ids: number[] };
         Returns: { scholarship_id: number; scrap_count: number }[];
       };
+      get_public_home_scholarships_page: {
+        Args: { p_page: number; p_page_size: number };
+        Returns: Json;
+      };
       is_admin: {
         Args: Record<string, never>;
         Returns: boolean;
