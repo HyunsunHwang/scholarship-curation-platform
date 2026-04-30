@@ -147,12 +147,18 @@ export default async function Navbar({
             </>
           ) : (
             <>
-              <Link
-                href="/auth"
-                className="inline-flex h-8 shrink-0 items-center rounded-lg px-2 text-xs font-medium text-ink/70 transition-colors hover:bg-cream hover:text-ink sm:h-7 sm:px-2.5 sm:text-sm"
-              >
-                로그인
-              </Link>
+              <div className="relative">
+                <Link
+                  href="/auth"
+                  className="inline-flex h-8 shrink-0 items-center rounded-lg px-2 text-xs font-medium text-ink/70 transition-colors hover:bg-cream hover:text-ink sm:h-7 sm:px-2.5 sm:text-sm"
+                >
+                  로그인
+                </Link>
+                <span className="pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 rounded-full bg-brand px-2.5 py-1 text-[10px] font-semibold leading-none text-white shadow-sm sm:text-xs">
+                  로그인하고 교내 장학금 보기
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-b-[6px] border-l-[5px] border-r-[5px] border-b-brand border-l-transparent border-r-transparent" />
+                </span>
+              </div>
               <Link
                 href="/auth"
                 className="inline-flex h-8 shrink-0 items-center rounded-lg bg-brand px-2 text-xs font-medium text-white transition-colors hover:bg-brand/85 sm:h-7 sm:px-2.5 sm:text-sm"
