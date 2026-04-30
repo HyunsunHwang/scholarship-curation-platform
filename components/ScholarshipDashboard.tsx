@@ -1,9 +1,10 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import ScholarshipCard, { type CardScholarship } from "./ScholarshipCard";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
+import { trackAnalyticsEventClient } from "@/lib/analytics/client";
 
 type SortOption = "deadline" | "latest" | "views" | "scraps";
 type ScopeFilter = "all" | NonNullable<CardScholarship["scope"]>;
@@ -73,6 +74,7 @@ export default function ScholarshipDashboard({
   const [scopeFilter, setScopeFilter] = useState<ScopeFilter>("all");
   const [page, setPage] = useState(1);
   const deferredSearchQuery = useDeferredValue(searchQuery);
+  const lastTrackedSearchRef = useRef("");
 
   const scopeTabs = useMemo(
     () => [
@@ -125,6 +127,20 @@ export default function ScholarshipDashboard({
     return filtered.slice(start, start + ITEMS_PER_PAGE);
   }, [currentPage, filtered]);
 
+  useEffect(() => {
+    const query = deferredSearchQuery.trim();
+    if (!query) return;
+    if (lastTrackedSearchRef.current === query) return;
+    lastTrackedSearchRef.current = query;
+    void trackAnalyticsEventClient({
+      eventName: "search_submitted",
+      searchQuery: query,
+      sortKey: sortBy,
+      scopeFilter,
+      metadata: { result_count: filtered.length },
+    });
+  }, [deferredSearchQuery, filtered.length, scopeFilter, sortBy]);
+
   return (
     <section id="scholarships" className="bg-[#fafafa] py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -155,6 +171,11 @@ export default function ScholarshipDashboard({
                   onClick={() => {
                     setSortBy(option.key);
                     setPage(1);
+                    void trackAnalyticsEventClient({
+                      eventName: "sort_changed",
+                      sortKey: option.key,
+                      scopeFilter,
+                    });
                   }}
                   className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                     sortBy === option.key
@@ -178,6 +199,11 @@ export default function ScholarshipDashboard({
                 onClick={() => {
                   setScopeFilter(tab.key);
                   setPage(1);
+                  void trackAnalyticsEventClient({
+                    eventName: "filter_changed",
+                    scopeFilter: tab.key,
+                    sortKey: sortBy,
+                  });
                 }}
                 className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                   scopeFilter === tab.key

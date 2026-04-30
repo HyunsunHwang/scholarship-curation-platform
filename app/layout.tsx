@@ -3,6 +3,7 @@ import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Suspense } from "react";
 import NavigationPendingOverlay from "@/components/NavigationPendingOverlay";
+import AnalyticsPageViewTracker from "@/components/AnalyticsPageViewTracker";
 import "./globals.css";
 
 /** Geist는 한글 글리프가 없어 Safari에서 폴백·렌더링이 거칠어질 수 있음 → 한글 포함 Noto Sans KR을 본문 폰트로 사용 */
@@ -40,6 +41,9 @@ export default function RootLayout({
       className={`${notoSansKr.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
+        <Suspense fallback={null}>
+          <AnalyticsPageViewTracker />
+        </Suspense>
         <Suspense fallback={null}>
           <NavigationPendingOverlay>{children}</NavigationPendingOverlay>
         </Suspense>

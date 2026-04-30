@@ -269,6 +269,22 @@ export interface Database {
         Args: { p_page: number; p_page_size: number };
         Returns: Json;
       };
+      track_analytics_event: {
+        Args: {
+          p_event_name: string;
+          p_page_path?: string | null;
+          p_scholarship_id?: number | null;
+          p_search_query?: string | null;
+          p_sort_key?: string | null;
+          p_scope_filter?: string | null;
+          p_metadata?: Json | null;
+        };
+        Returns: undefined;
+      };
+      refresh_analytics_daily: {
+        Args: { p_target_date?: string };
+        Returns: undefined;
+      };
       get_urgent_bookmark_count: {
         Args: { p_user_id: string; p_deadline_days?: number };
         Returns: number;

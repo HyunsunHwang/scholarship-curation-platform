@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
+import { trackAnalyticsEventClient } from "@/lib/analytics/client";
 
 export default function BookmarkApplyButtons({
   scholarshipId,
@@ -36,6 +37,12 @@ export default function BookmarkApplyButtons({
         href={applyUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => {
+          void trackAnalyticsEventClient({
+            eventName: "apply_clicked",
+            scholarshipId,
+          });
+        }}
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
       >
         지원하기

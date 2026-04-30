@@ -34,6 +34,11 @@ export async function toggleBookmark(
       console.error("[toggleBookmark] delete error:", deleteError.message);
       return { error: deleteError.message };
     }
+    await supabase.rpc("track_analytics_event", {
+      p_event_name: "bookmark_toggled",
+      p_scholarship_id: scholarshipId,
+      p_metadata: { bookmarked: false },
+    });
     revalidatePath("/");
     revalidatePath("/mypage");
     return { bookmarked: false };
@@ -45,6 +50,11 @@ export async function toggleBookmark(
       console.error("[toggleBookmark] insert error:", insertError.message);
       return { error: insertError.message };
     }
+    await supabase.rpc("track_analytics_event", {
+      p_event_name: "bookmark_toggled",
+      p_scholarship_id: scholarshipId,
+      p_metadata: { bookmarked: true },
+    });
     revalidatePath("/");
     revalidatePath("/mypage");
     return { bookmarked: true };
