@@ -62,12 +62,22 @@ Run `public.refresh_analytics_daily(p_target_date)` once per day (or hourly if n
 - `public.analytics_daily_kpi`: service-wide daily KPI
 - `public.analytics_scholarship_daily_kpi`: scholarship-level daily KPI
 - `public.analytics_search_term_daily`: top search terms per day
+- `public.analytics_retention_daily`: cohort retention daily mart (D1 / D3 / D7)
 
 Example:
 
 ```sql
 select public.refresh_analytics_daily((now() at time zone 'Asia/Seoul')::date - 1);
 ```
+
+`analytics_retention_daily` metric rule:
+
+- `cohort_date`: user's first active date (KST)
+- `cohort_size`: users active on `cohort_date`
+- `d1_return_users`: users active again on `cohort_date + 1`
+- `d3_return_users`: users active again on `cohort_date + 3`
+- `d7_return_users`: users active again on `cohort_date + 7`
+- `d1/d3/d7_retention_rate`: `return_users / cohort_size * 100`
 
 ## Operations Checklist
 

@@ -4,6 +4,11 @@ import type { Database } from "@/lib/database.types";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 
+type SiteSettingsLogoRow = Pick<
+  Database["public"]["Tables"]["site_settings"]["Row"],
+  "header_logo_url" | "updated_at"
+>;
+
 export function createPublicSupabaseClient() {
   return createSupabaseClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -86,6 +91,16 @@ export const getCachedSiteSettings = unstable_cache(
   ["site-settings"],
   { revalidate: 5 * 60 }
 );
+
+/** 관리자 사이트 설정의 헤더 로고 URL (캐시 무효화 쿼리 포함). Navbar·인증·온보딩에서 동일하게 사용합니다. */
+export function getHeaderLogoSrc(
+  siteSettings: SiteSettingsLogoRow | null
+): string | undefined {
+  if (!siteSettings?.header_logo_url) return undefined;
+  const base = siteSettings.header_logo_url;
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}v=${encodeURIComponent(siteSettings.updated_at)}`;
+}
 
 export const getCachedHomeScholarships = unstable_cache(
   async () => {

@@ -14,6 +14,7 @@ import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { formatSupportAmount } from "@/lib/support-amount";
 import ViewCountIncrementer from "./ViewCountIncrementer";
+import LiveEngagementBadges from "./LiveEngagementBadges";
 
 /** 포스터 없을 때 플레이스홀더 — 랜딩 히어로와 동일한 브랜드 그라데이션 */
 const posterPlaceholderGradient = "from-brand to-[#c00000]";
@@ -38,7 +39,6 @@ export default async function ScholarshipDetailPage({
   if (!scholarship) notFound();
 
   const currentViewCount = scholarship.view_count ?? 0;
-  const displayViewCount = currentViewCount + 1;
   const { data: bookmarkResult } = await (
     user
       ? supabase
@@ -89,19 +89,11 @@ export default async function ScholarshipDetailPage({
             </Link>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-ink/70 shadow-sm">
-                <svg className="h-3.5 w-3.5 text-ink/35" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12s-3.75 6.75-9.75 6.75S2.25 12 2.25 12Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
-                </svg>
-                조회 {displayViewCount.toLocaleString()}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-ink/70 shadow-sm">
-                <svg className="h-3.5 w-3.5 text-ink/35" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0Z" />
-                </svg>
-                스크랩 {(scrapCount ?? 0).toLocaleString()}
-              </span>
+              <LiveEngagementBadges
+                scholarshipId={scholarshipId}
+                initialViewCount={currentViewCount}
+                initialScrapCount={scrapCount}
+              />
             </div>
           </div>
 

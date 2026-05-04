@@ -3,7 +3,7 @@ import type { User } from "@supabase/supabase-js";
 import BrandLogo from "@/components/BrandLogo";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/auth/actions";
-import { getCachedSiteSettings } from "@/lib/public-data";
+import { getCachedSiteSettings, getHeaderLogoSrc } from "@/lib/public-data";
 
 export default async function Navbar({
   currentUser,
@@ -60,11 +60,7 @@ export default async function Navbar({
   }
 
   const isAdmin = profile?.role === "admin";
-  const headerLogoSrc =
-    siteSettings?.header_logo_url &&
-    `${siteSettings.header_logo_url}${
-      siteSettings.header_logo_url.includes("?") ? "&" : "?"
-    }v=${encodeURIComponent(siteSettings.updated_at)}`;
+  const headerLogoSrc = getHeaderLogoSrc(siteSettings);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80 overflow-visible">

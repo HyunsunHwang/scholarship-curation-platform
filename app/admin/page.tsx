@@ -22,18 +22,38 @@ function formatNumber(value: number) {
   return value.toLocaleString("ko-KR");
 }
 
+function formatPercent(value: number) {
+  return `${value.toFixed(2)}%`;
+}
+
+function toSafeNumber(value: number | string | null | undefined) {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+  const twentyOneDaysAgo = new Date(today);
+  twentyOneDaysAgo.setDate(twentyOneDaysAgo.getDate() - 21);
   const startDate = formatDateKst(sevenDaysAgo);
+  const retentionStartDate = formatDateKst(twentyOneDaysAgo);
   const todayDate = formatDateKst(today);
+  const d1Cutoff = formatDateKst(new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000));
+  const d3Cutoff = formatDateKst(new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000));
+  const d7Cutoff = formatDateKst(new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000));
 
   const [
     { data: dailyRows },
     { data: todaySearchRows },
     { data: scholarshipKpiRows },
+    { data: retentionRows },
   ] = await Promise.all([
     supabase
       .from("analytics_daily_kpi")
@@ -54,6 +74,13 @@ export default async function AdminDashboardPage() {
         "scholarship_id, detail_view_count, bookmark_toggle_count, apply_click_count, unique_user_count, metric_date"
       )
       .gte("metric_date", startDate),
+    supabase
+      .from("analytics_retention_daily")
+      .select(
+        "cohort_date, cohort_size, d1_return_users, d3_return_users, d7_return_users, d1_retention_rate, d3_retention_rate, d7_retention_rate"
+      )
+      .gte("cohort_date", retentionStartDate)
+      .order("cohort_date", { ascending: true }),
   ]);
 
   const totals = (dailyRows ?? []).reduce(
@@ -99,6 +126,10 @@ export default async function AdminDashboardPage() {
     (scholarshipNameRows ?? []).map((row) => [row.id, row.name])
   );
 
+  const latestD1Row = (retentionRows ?? []).filter((row) => row.cohort_date <= d1Cutoff).at(-1);
+  const latestD3Row = (retentionRows ?? []).filter((row) => row.cohort_date <= d3Cutoff).at(-1);
+  const latestD7Row = (retentionRows ?? []).filter((row) => row.cohort_date <= d7Cutoff).at(-1);
+
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
@@ -118,6 +149,48 @@ export default async function AdminDashboardPage() {
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium text-gray-500">최근 7일 지원 클릭</p>
           <p className="mt-2 text-2xl font-bold text-gray-900">{formatNumber(totals.applies)}</p>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-base font-semibold text-gray-900">리텐션 요약 (최근 성숙 코호트)</h2>
+          <p className="text-xs text-gray-500">기준: D1 / D3 / D7 코호트 리텐션</p>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-lg bg-gray-50 px-4 py-3">
+            <p className="text-xs font-medium text-gray-500">D1 리텐션</p>
+            <p className="mt-1 text-xl font-bold text-gray-900">
+              {latestD1Row ? formatPercent(toSafeNumber(latestD1Row.d1_retention_rate)) : "-"}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">
+              {latestD1Row
+                ? `${latestD1Row.cohort_date} 코호트 · ${formatNumber(latestD1Row.d1_return_users)}/${formatNumber(latestD1Row.cohort_size)}`
+                : "아직 계산 가능한 코호트가 없습니다."}
+            </p>
+          </div>
+          <div className="rounded-lg bg-gray-50 px-4 py-3">
+            <p className="text-xs font-medium text-gray-500">D3 리텐션</p>
+            <p className="mt-1 text-xl font-bold text-gray-900">
+              {latestD3Row ? formatPercent(toSafeNumber(latestD3Row.d3_retention_rate)) : "-"}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">
+              {latestD3Row
+                ? `${latestD3Row.cohort_date} 코호트 · ${formatNumber(latestD3Row.d3_return_users)}/${formatNumber(latestD3Row.cohort_size)}`
+                : "아직 계산 가능한 코호트가 없습니다."}
+            </p>
+          </div>
+          <div className="rounded-lg bg-gray-50 px-4 py-3">
+            <p className="text-xs font-medium text-gray-500">D7 리텐션</p>
+            <p className="mt-1 text-xl font-bold text-gray-900">
+              {latestD7Row ? formatPercent(toSafeNumber(latestD7Row.d7_retention_rate)) : "-"}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">
+              {latestD7Row
+                ? `${latestD7Row.cohort_date} 코호트 · ${formatNumber(latestD7Row.d7_return_users)}/${formatNumber(latestD7Row.cohort_size)}`
+                : "아직 계산 가능한 코호트가 없습니다."}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -184,6 +257,44 @@ export default async function AdminDashboardPage() {
                 </p>
               </div>
             ))
+          )}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 className="text-base font-semibold text-gray-900">리텐션 코호트 (최근 21일)</h2>
+        <div className="mt-4 overflow-x-auto">
+          {(retentionRows ?? []).length === 0 ? (
+            <p className="text-sm text-gray-500">리텐션 집계 데이터가 없습니다.</p>
+          ) : (
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 text-left text-xs text-gray-500">
+                  <th className="px-3 py-2 font-medium">코호트</th>
+                  <th className="px-3 py-2 font-medium">초기 유저</th>
+                  <th className="px-3 py-2 font-medium">D1</th>
+                  <th className="px-3 py-2 font-medium">D3</th>
+                  <th className="px-3 py-2 font-medium">D7</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...(retentionRows ?? [])].reverse().map((row) => (
+                  <tr key={row.cohort_date} className="border-b border-gray-100 text-gray-700">
+                    <td className="px-3 py-2">{row.cohort_date}</td>
+                    <td className="px-3 py-2">{formatNumber(row.cohort_size)}</td>
+                    <td className="px-3 py-2">
+                      {formatNumber(row.d1_return_users)} ({formatPercent(toSafeNumber(row.d1_retention_rate))})
+                    </td>
+                    <td className="px-3 py-2">
+                      {formatNumber(row.d3_return_users)} ({formatPercent(toSafeNumber(row.d3_retention_rate))})
+                    </td>
+                    <td className="px-3 py-2">
+                      {formatNumber(row.d7_return_users)} ({formatPercent(toSafeNumber(row.d7_retention_rate))})
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </section>

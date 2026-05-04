@@ -252,6 +252,33 @@ export interface Database {
         Relationships: [];
       };
 
+      analytics_retention_daily: {
+        Row: {
+          cohort_date: string;
+          cohort_size: number;
+          d1_return_users: number;
+          d3_return_users: number;
+          d7_return_users: number;
+          d1_retention_rate: number;
+          d3_retention_rate: number;
+          d7_retention_rate: number;
+          updated_at: string;
+        };
+        Insert: {
+          cohort_date: string;
+          cohort_size?: number;
+          d1_return_users?: number;
+          d3_return_users?: number;
+          d7_return_users?: number;
+          d1_retention_rate?: number;
+          d3_retention_rate?: number;
+          d7_retention_rate?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["analytics_retention_daily"]["Insert"]>;
+        Relationships: [];
+      };
+
       /** 공개 사이트 설정 (헤더 로고 URL 등). 단일 행 id=1 */
       site_settings: {
         Row: {

@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
 import { trackAnalyticsEventClient } from "@/lib/analytics/client";
 
+const BOOKMARK_EVENT = "scholarship:bookmark-toggled";
+
 export default function BookmarkApplyButtons({
   scholarshipId,
   applyUrl,
@@ -26,7 +28,13 @@ export default function BookmarkApplyButtons({
         if (result.error === "로그인이 필요합니다.") {
           alert("북마크하려면 로그인이 필요합니다.");
         }
+        return;
       }
+      window.dispatchEvent(
+        new CustomEvent(BOOKMARK_EVENT, {
+          detail: { scholarshipId, bookmarked: result.bookmarked },
+        })
+      );
     });
   }
 

@@ -39,6 +39,11 @@ export default function NavigationPendingOverlay({
       }
 
       const target = event.target as HTMLElement | null;
+      const interactiveElement = target?.closest?.(
+        "button, [role='button'], input, select, textarea, summary, [data-skip-nav-pending]"
+      );
+      if (interactiveElement && interactiveElement.tagName !== "A") return;
+
       const anchor = target?.closest?.("a");
       if (!anchor) return;
 
