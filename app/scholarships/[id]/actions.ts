@@ -27,6 +27,19 @@ export async function incrementScholarshipViewCount(scholarshipId: number) {
   if (lastViewedAt && now - lastViewedAt < VIEW_DEDUPE_WINDOW_MS) {
     return { incremented: false as const, viewCount: null as number | null };
   }
+
+  const supabase = await createClient();
+  const { data: nextViewCount, error } = await supabase.rpc(
+    "increment_scholarship_view_count",
+    {
+      p_scholarship_id: scholarshipId,
+    }
+  );
+  if (error || typeof nextViewCount !== "number") {
+    return { incremented: false as const, viewCount: null as number | null };
+  }
+
+  // 실제 DB 반영 성공 후에만 dedupe cookie를 기록해야 일시 실패에서 조회 누락이 생기지 않습니다.
   viewedMap[viewKey] = now;
   cookieStore.set(VIEW_COOKIE_KEY, JSON.stringify(viewedMap), {
     httpOnly: true,
@@ -35,18 +48,6 @@ export async function incrementScholarshipViewCount(scholarshipId: number) {
     maxAge: 60 * 60 * 24,
   });
 
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("scholarships")
-    .select("view_count")
-    .eq("id", scholarshipId)
-    .maybeSingle();
-  if (!data) return { incremented: false as const, viewCount: null as number | null };
-  const nextViewCount = (data.view_count ?? 0) + 1;
-  await supabase
-    .from("scholarships")
-    .update({ view_count: nextViewCount })
-    .eq("id", scholarshipId);
   return { incremented: true as const, viewCount: nextViewCount };
 }
 

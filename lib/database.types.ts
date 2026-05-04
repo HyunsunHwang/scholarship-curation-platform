@@ -389,6 +389,10 @@ export interface Database {
         Args: { p_scholarship_ids: number[] };
         Returns: { scholarship_id: number; scrap_count: number }[];
       };
+      increment_scholarship_view_count: {
+        Args: { p_scholarship_id: number };
+        Returns: number;
+      };
       get_public_home_scholarships_page: {
         Args: { p_page: number; p_page_size: number };
         Returns: Json;
