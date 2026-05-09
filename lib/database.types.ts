@@ -30,6 +30,8 @@ export type InstitutionType =
 export type SupportCategory =
   | "등록금" | "생활비" | "학업장려금" | "연구비" | "해외연수비" | "기타";
 export type UserRoleType = "user" | "admin";
+export type OrganizationKindType = "학과" | "학교" | "재단" | "기타";
+export type OrgRequestStatusType = "pending" | "approved" | "rejected";
 
 // ── Database 타입 ─────────────────────────────────────────────────────────
 
@@ -63,6 +65,10 @@ export interface Database {
           email: string;
           role: UserRoleType;
           is_onboarded: boolean;
+          is_org_manager: boolean;
+          org_affiliation_kind: OrganizationKindType | null;
+          org_affiliation_name: string | null;
+          org_approved_at: string | null;
           // 인적사항
           name: string | null;
           birth_date: string | null;
@@ -103,6 +109,10 @@ export interface Database {
           email: string;
           role?: UserRoleType;
           is_onboarded?: boolean;
+          is_org_manager?: boolean;
+          org_affiliation_kind?: OrganizationKindType | null;
+          org_affiliation_name?: string | null;
+          org_approved_at?: string | null;
           name?: string | null;
           birth_date?: string | null;
           gender?: GenderType | null;
@@ -152,6 +162,41 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["bookmarks"]["Insert"]>;
+        Relationships: [];
+      };
+
+      org_signup_requests: {
+        Row: {
+          id: number;
+          user_id: string | null;
+          email: string;
+          applicant_name: string;
+          organization_kind: OrganizationKindType;
+          organization_name: string;
+          status: OrgRequestStatusType;
+          request_note: string | null;
+          requested_at: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          review_note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          user_id?: string | null;
+          email: string;
+          applicant_name: string;
+          organization_kind: OrganizationKindType;
+          organization_name: string;
+          status?: OrgRequestStatusType;
+          request_note?: string | null;
+          requested_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          review_note?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["org_signup_requests"]["Insert"]>;
         Relationships: [];
       };
 

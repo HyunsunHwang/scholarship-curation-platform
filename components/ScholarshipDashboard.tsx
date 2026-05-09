@@ -100,10 +100,14 @@ export default function ScholarshipDashboard({
     });
 
     return [...list].sort((a, b) => {
-      const bookmarkedPin = compareBookmarkedPinned(a, b, bookmarkedSet);
-      if (bookmarkedPin !== 0) return bookmarkedPin;
-      const pin = compareRecommendedPinned(a, b);
-      if (pin !== 0) return pin;
+      // "마감임박순"일 때만 고정 우선순위를 적용하고,
+      // 사용자가 다른 정렬을 선택한 경우에는 선택한 정렬 기준을 우선합니다.
+      if (sortBy === "deadline") {
+        const bookmarkedPin = compareBookmarkedPinned(a, b, bookmarkedSet);
+        if (bookmarkedPin !== 0) return bookmarkedPin;
+        const pin = compareRecommendedPinned(a, b);
+        if (pin !== 0) return pin;
+      }
       if (sortBy === "deadline") {
         return (
           daysUntilApplyDeadlineKorea(a.apply_end_date) -

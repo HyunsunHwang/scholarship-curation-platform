@@ -1,11 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { getHeroIllustrationPublicUrl } from "@/lib/hero-illustration-url";
 import {
   createPublicSupabaseClient,
-  getHomeScholarshipsPage,
+  getCachedHomeScholarships,
 } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,21 +28,8 @@ const ScholarshipDashboard = dynamic(
   }
 );
 
-const HOME_PAGE_SIZE = 24;
-
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: Promise<{ page?: string }>;
-}) {
-  const resolvedSearchParams = (await searchParams) ?? {};
-  const pageFromQuery = Number.parseInt(resolvedSearchParams.page ?? "1", 10);
-  const currentPage =
-    Number.isFinite(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
-  const homeScholarshipsPage = await getHomeScholarshipsPage({
-    page: currentPage,
-    pageSize: HOME_PAGE_SIZE,
-  });
+export default async function Home() {
+  const homeScholarships = await getCachedHomeScholarships();
   const publicSupabase = createPublicSupabaseClient();
   const heroIllustrationUrl = getHeroIllustrationPublicUrl(publicSupabase);
 
@@ -67,49 +53,20 @@ export default async function Home({
       <main className="flex-1">
         <Hero heroIllustrationUrl={heroIllustrationUrl} />
         <ScholarshipDashboard
-          scholarships={homeScholarshipsPage.scholarships}
+          scholarships={homeScholarships}
           bookmarkedIds={bookmarkedIds}
-          totalScholarshipCount={homeScholarshipsPage.totalCount}
+          totalScholarshipCount={homeScholarships.length}
         />
-        {homeScholarshipsPage.totalPages > 1 && (
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-center gap-2 px-4 pb-12 sm:px-6 lg:px-8">
-            <Link
-              href={`/?page=${Math.max(1, homeScholarshipsPage.page - 1)}`}
-              aria-disabled={homeScholarshipsPage.page <= 1}
-              className={`rounded-lg border px-3 py-1.5 text-sm ${
-                homeScholarshipsPage.page <= 1
-                  ? "pointer-events-none border-gray-200 text-gray-300"
-                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              이전
-            </Link>
-            <span className="text-sm text-ink/60">
-              {homeScholarshipsPage.page} / {homeScholarshipsPage.totalPages}
-            </span>
-            <Link
-              href={`/?page=${homeScholarshipsPage.page + 1}`}
-              aria-disabled={homeScholarshipsPage.page >= homeScholarshipsPage.totalPages}
-              className={`rounded-lg border px-3 py-1.5 text-sm ${
-                homeScholarshipsPage.page >= homeScholarshipsPage.totalPages
-                  ? "pointer-events-none border-gray-200 text-gray-300"
-                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              다음
-            </Link>
-          </div>
-        )}
       </main>
       <footer className="border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center text-sm text-gray-600">
             문의 메일:{" "}
             <a
-              href="mailto:hyunsun4819@korea.ac.kr"
+              href="mailto:hyunsun4819@gmail.com"
               className="font-medium text-brand hover:underline"
             >
-              hyunsun4819@korea.ac.kr
+              hyunsun4819@gmail.com
             </a>
           </div>
         </div>

@@ -219,10 +219,10 @@ export default async function ScholarshipDetailPage({
           <div className="text-center text-sm text-gray-600">
             문의 메일:{" "}
             <a
-              href="mailto:hyunsun4819@korea.ac.kr"
+              href="mailto:hyunsun4819@gmail.com"
               className="font-medium text-brand hover:underline"
             >
-              hyunsun4819@korea.ac.kr
+              hyunsun4819@gmail.com
             </a>
           </div>
         </div>

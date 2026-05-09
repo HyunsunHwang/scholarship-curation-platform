@@ -1,18 +1,3 @@
-function compactText(text: string): string {
-  return text
-    .replace(/○/g, "")
-    .replace(/※.*$/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function shortenLongText(text: string): string {
-  if (text.length <= 22) return text;
-  const firstClause = text.split(/[/.]/)[0]?.trim();
-  if (firstClause && firstClause.length <= 22) return firstClause;
-  return `${text.slice(0, 21).trim()}…`;
-}
-
 export function formatSupportAmount(
   won: number,
   text?: string | null,
@@ -27,30 +12,6 @@ export function formatSupportAmount(
     return `연 ${won.toLocaleString()}원`;
   }
 
-  if (!options.compact) return raw;
-
-  const normalized = compactText(raw);
-
-  const hourly = normalized.match(/시간당\s*([\d,]+)원.*?([\d,]+)원/);
-  if (hourly) return `시간당 ${hourly[1]}~${hourly[2]}원`;
-
-  const usd = normalized.match(/(?:연간\s*)?(?:최대\s*)?USD\s*[\d,]+/i);
-  if (usd) return usd[0].replace(/^/, normalized.includes("연간") ? "연 " : "");
-
-  const monthly = normalized.match(/월\s*(?:최대\s*)?[\d,.]+만원(?:\s*[×xX]\s*\d+개월)?/);
-  if (monthly) return monthly[0];
-
-  const fullTuition = normalized.match(/(?:학비|수업료)(?:\s*및\s*생활비)?\s*전액/);
-  if (fullTuition) return fullTuition[0].replace(" 및 ", "·");
-
-  const tuitionPercent = normalized.match(/수업료\s*[\d/%()A-C\s/]+/);
-  if (tuitionPercent) return tuitionPercent[0].trim();
-
-  const maxAmount = normalized.match(/(?:연\s*)?(?:최대\s*)?[\d,.]+(?:~[\d,.]+)?만원(?:\s*내외|\s*이내)?/);
-  if (maxAmount) return maxAmount[0].trim();
-
-  const foreignAmount = normalized.match(/[\d,.]+\s*(?:유로|달러|원)(?:\s*~\s*[\d,.]+\s*(?:유로|달러|원))?/);
-  if (foreignAmount) return foreignAmount[0].trim();
-
-  return shortenLongText(normalized);
+  // support_amount_text가 있으면 compact 옵션 여부와 관계없이 원문 그대로 노출
+  return raw;
 }

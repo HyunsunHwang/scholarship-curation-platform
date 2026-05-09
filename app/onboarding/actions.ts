@@ -161,12 +161,14 @@ export async function saveProfile(
     !data.income_level || data.income_level === "unknown"
       ? null
       : parseInt(data.income_level);
+  const normalizedName = data.name.trim();
+  const normalizedPhone = data.phone.replace(/\D/g, "");
 
   const { error } = await supabase
     .from("profiles")
     .update({
       // 인적사항
-      name: data.name || null,
+      name: normalizedName || null,
       birth_date,
       gender: (data.gender || null) as GenderType | null,
       phone: data.phone || null,
@@ -210,6 +212,16 @@ export async function saveProfile(
     .eq("id", user.id);
 
   if (error) return { error: error.message };
+  
+  const { error: authError } = await supabase.auth.updateUser({
+    data: {
+      name: normalizedName,
+      full_name: normalizedName,
+      phone: normalizedPhone || null,
+    },
+  });
+
+  if (authError) return { error: authError.message };
 
   redirect(redirectTo);
 }

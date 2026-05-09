@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 const nav = [
   { href: "/admin", label: "대시보드" },
   { href: "/admin/scholarships", label: "장학금 관리" },
+  { href: "/admin/org-signup-requests", label: "기관 가입 요청" },
   { href: "/admin/site-settings", label: "사이트 설정" },
 ];
 

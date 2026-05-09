@@ -12,6 +12,11 @@ const cards = [
     title: "사이트 설정",
     description: "메인 헤더에 표시되는 로고 이미지를 변경합니다.",
   },
+  {
+    href: "/admin/org-signup-requests",
+    title: "기관 가입 요청",
+    description: "숨김 링크를 통해 들어온 기관 담당자 가입 요청을 승인/반려합니다.",
+  },
 ];
 
 function formatDateKst(date: Date) {
