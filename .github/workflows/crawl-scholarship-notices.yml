@@ -9,9 +9,6 @@ on:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: scholarship-curation-platform
 
     steps:
       - name: Checkout
@@ -20,9 +17,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
-          cache-dependency-path: scholarship-curation-platform/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -55,5 +52,5 @@ jobs:
         with:
           name: scholarship-notice-crawl
           path: |
-            scholarship-curation-platform/exports/notices
-            scholarship-curation-platform/.crawler/scholarship-notice-state.json
+            exports/notices
+            .crawler/scholarship-notice-state.json
