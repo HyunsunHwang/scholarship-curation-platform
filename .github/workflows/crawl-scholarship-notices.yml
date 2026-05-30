@@ -1,0 +1,59 @@
+name: Crawl Scholarship Notices
+
+on:
+  schedule:
+    # 08:00 KST every day
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scholarship-curation-platform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: scholarship-curation-platform/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run crawler
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "false"
+        run: npm run crawl:notices
+
+      - name: Clean crawl results
+        run: |
+          TODAY=$(date +%Y%m%d)
+          node scripts/clean-crawled-notices.mjs \
+            "exports/notices/scholarship-notices-new-${TODAY}.csv" \
+            "exports/notices/scholarship-notices-latest.cleaned.csv" \
+            "exports/notices/scholarship-notices-latest.rejected.csv"
+
+      - name: Send Slack summary
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPORT_JSON_PATH: exports/notices/scholarship-notices-latest.json
+          CLEANED_CSV_PATH: exports/notices/scholarship-notices-latest.cleaned.csv
+          SLACK_PREVIEW_COUNT: "5"
+        run: npm run notify:slack
+
+      - name: Upload crawl artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: scholarship-notice-crawl
+          path: |
+            scholarship-curation-platform/exports/notices
+            scholarship-curation-platform/.crawler/scholarship-notice-state.json
