@@ -55,11 +55,23 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 
 ## 5) 아침 자동 실행 (GitHub Actions)
 
-워크플로 파일: `.github/workflows/crawl-scholarship-notices.yml`
+워크플로 파일:
+
+- Daily 업데이트: `.github/workflows/crawl-scholarship-notices.yml`
+- Baseline 전체수집: `.github/workflows/crawl-scholarship-notices-baseline.yml`
+
+Daily 워크플로:
 
 - KST 오전 8시 자동 실행 (`UTC 23:00`)
-- 수동 실행도 지원 (`workflow_dispatch`)
-- 결과물은 workflow artifact(`scholarship-notice-crawl`)로 업로드
+- 이화/고려를 각각 크롤링 후 정제
+- Slack으로 **통합 1개 메시지** 전송
+- 결과물은 workflow artifact(`scholarship-notice-daily`)로 업로드
+
+Baseline 워크플로:
+
+- 수동 실행 + 주 1회 실행(월요일 아침 KST)
+- 긴 lookback으로 전체 후보를 재수집
+- 결과물은 workflow artifact(`scholarship-notice-baseline`)로 업로드
 
 ## 6) 운영 팁
 

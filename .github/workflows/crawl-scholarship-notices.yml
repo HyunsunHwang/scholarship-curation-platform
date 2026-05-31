@@ -1,4 +1,4 @@
-name: Crawl Scholarship Notices
+name: Daily Scholarship Notice Updates
 
 on:
   schedule:
@@ -7,12 +7,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  crawl:
+  daily-update:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Restore daily crawler state
+        id: crawler-state-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: .crawler
+          key: crawler-daily-state-${{ github.run_id }}
+          restore-keys: |
+            crawler-daily-state-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,7 +38,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "4"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha .crawler/ewha-state.json
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha .crawler/ewha-daily-state.json
 
       - name: Clean Ewha crawl results
         run: |
@@ -48,7 +57,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea .crawler/korea-state.json
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea .crawler/korea-daily-state.json
 
       - name: Clean Korea crawl results
         run: |
@@ -72,10 +81,17 @@ jobs:
           SLACK_PREVIEW_COUNT: "5"
         run: npm run notify:slack
 
+      - name: Save daily crawler state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .crawler
+          key: crawler-daily-state-${{ github.run_id }}
+
       - name: Upload crawl artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: scholarship-notice-crawl
+          name: scholarship-notice-daily
           path: |
             exports/notices
             .crawler

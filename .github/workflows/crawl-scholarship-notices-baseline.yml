@@ -1,0 +1,78 @@
+name: Baseline Scholarship Notice Crawl
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 07:30 KST every Monday
+    - cron: "30 22 * * 0"
+
+jobs:
+  baseline-crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Reset baseline state
+        run: |
+          mkdir -p .crawler
+          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json
+
+      - name: Run Ewha baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "365"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "4"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha-baseline .crawler/ewha-baseline-state.json
+
+      - name: Clean Ewha baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/ewha-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/ewha-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/ewha-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/ewha-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_ewha_baseline_csv"
+          fi
+
+      - name: Run Korea baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "365"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea-baseline .crawler/korea-baseline-state.json
+
+      - name: Clean Korea baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/korea-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/korea-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/korea-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/korea-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_korea_baseline_csv"
+          fi
+
+      - name: Upload baseline artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: scholarship-notice-baseline
+          path: |
+            exports/notices/ewha-baseline
+            exports/notices/korea-baseline
+            .crawler/ewha-baseline-state.json
+            .crawler/korea-baseline-state.json
