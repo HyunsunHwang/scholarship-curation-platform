@@ -25,6 +25,7 @@ export type CardScholarship = {
   /** 홈·목록에서 상단 고정 정렬용 (맞춤 페이지 등에서도 동일 규칙 적용 시) */
   is_recommended?: boolean;
   recommended_sort_order?: number | null;
+  is_advertisement?: boolean;
 };
 
 const institutionGradient: Record<string, string> = {
@@ -164,12 +165,16 @@ function ScholarshipCard({
         className="mt-2 flex flex-col gap-0.5 sm:mt-3"
       >
         <div className="flex min-w-0 items-start gap-1.5 sm:gap-2">
-          {scholarship.is_recommended ? (
+          {scholarship.is_advertisement || scholarship.is_recommended ? (
             <span
-              className="mt-[2px] inline-flex shrink-0 items-center rounded-sm border border-fuchsia-600 bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none text-fuchsia-600 sm:mt-0.5 sm:px-2 sm:text-[11px]"
-              aria-label="추천 장학금"
+              className={`mt-[2px] inline-flex shrink-0 items-center rounded-sm bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none sm:mt-0.5 sm:px-2 sm:text-[11px] ${
+                scholarship.is_advertisement
+                  ? "border border-amber-500 text-amber-600"
+                  : "border border-fuchsia-600 text-fuchsia-600"
+              }`}
+              aria-label={scholarship.is_advertisement ? "광고 공고" : "추천 장학금"}
             >
-              추천
+              {scholarship.is_advertisement ? "광고" : "추천"}
             </span>
           ) : null}
           <p className="min-w-0 flex-1 text-xs font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors sm:text-sm">

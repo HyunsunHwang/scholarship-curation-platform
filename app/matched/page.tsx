@@ -67,6 +67,7 @@ export default async function MatchedPage() {
       scope: isUniversitySpecificScholarship(s, universityNames) ? "campus" : "external",
       is_recommended: s.is_recommended,
       recommended_sort_order: s.recommended_sort_order,
+      is_advertisement: s.is_advertisement,
     }));
 
   return (

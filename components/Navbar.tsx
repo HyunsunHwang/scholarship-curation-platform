@@ -63,8 +63,8 @@ export default async function Navbar({
   const headerLogoSrc = getHeaderLogoSrc(siteSettings);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80 overflow-visible">
-      <div className="mx-auto flex h-16 min-h-16 max-h-16 max-w-7xl items-center justify-between gap-2 overflow-visible pl-1 pr-3 sm:gap-3 sm:pl-3 sm:pr-6 lg:pl-4 lg:pr-8">
+    <header className="sticky top-0 z-50 w-full overflow-x-clip border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+      <div className="mx-auto flex h-16 min-h-16 max-h-16 max-w-7xl items-center justify-between gap-2 overflow-x-clip pl-1 pr-3 sm:gap-3 sm:pl-3 sm:pr-6 lg:pl-4 lg:pr-8">
         <div className="min-w-0 flex-1">
           <BrandLogo logoSrc={headerLogoSrc || undefined} />
         </div>
@@ -124,7 +124,7 @@ export default async function Navbar({
                     />
                   </svg>
                   {urgentBookmarkCount > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white">
+                    <span className="absolute right-0 top-0 flex h-4 min-w-4 translate-x-1/3 -translate-y-1/3 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white">
                       {urgentBookmarkCount > 99 ? "99+" : urgentBookmarkCount}
                     </span>
                   )}

@@ -21,6 +21,7 @@ export async function createScholarship(formData: FormData) {
   if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
 
   const payload = buildPayload(formData);
+  const returnPath = getAdminReturnPath(formData, "/admin/scholarships");
 
   const { data: inserted, error } = await supabase
     .from("scholarships")
@@ -39,9 +40,10 @@ export async function createScholarship(formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/ads");
   revalidatePath("/");
   revalidatePath("/matched");
-  redirect("/admin/scholarships");
+  redirect(returnPath);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -57,6 +59,7 @@ export async function updateScholarship(id: number, formData: FormData) {
   if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
 
   const payload = buildPayload(formData);
+  const returnPath = getAdminReturnPath(formData, "/admin/scholarships");
 
   const { error } = await supabase
     .from("scholarships")
@@ -75,10 +78,12 @@ export async function updateScholarship(id: number, formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/ads");
   revalidatePath("/");
   revalidatePath("/matched");
   revalidatePath(`/scholarships/${id}`);
-  redirect("/admin/scholarships");
+  revalidatePath(returnPath.split("?")[0]);
+  redirect(returnPath);
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -238,6 +243,13 @@ function parseJsonTextArray(val: string | null): string[] {
   }
 }
 
+function getAdminReturnPath(formData: FormData, fallback: string): string {
+  const raw = (formData.get("admin_return_path") as string | null)?.trim();
+  if (!raw) return fallback;
+  if (!raw.startsWith("/admin")) return fallback;
+  return raw;
+}
+
 function buildPayload(formData: FormData): ScholarshipInsert {
   const g = (key: string) => formData.get(key) as string | null;
   // hidden+checkbox 패턴은 formData.get()이 hidden(false)을 먼저 반환하므로
@@ -305,6 +317,10 @@ function buildPayload(formData: FormData): ScholarshipInsert {
     collected_at: new Date().toISOString(),
     is_verified: bool("is_verified"),
     list_on_home: bool("list_on_home"),
+    is_advertisement: bool("is_advertisement"),
+    ad_job_role: g("ad_job_role") || null,
+    ad_required_skills: parseTextArray(g("ad_required_skills")) || null,
+    ad_location: g("ad_location") || null,
     is_recommended: bool("is_recommended"),
     recommended_sort_order: parseOptionalInt(g("recommended_sort_order")),
   };

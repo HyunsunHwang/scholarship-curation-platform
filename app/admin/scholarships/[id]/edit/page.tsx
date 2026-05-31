@@ -21,7 +21,7 @@ export default async function EditScholarshipPage({
   ]);
   const universityNames = (universities ?? []).map((u) => u.name);
 
-  if (!scholarship) notFound();
+  if (!scholarship || scholarship.is_advertisement === true) notFound();
 
   const boundAction = updateScholarship.bind(null, scholarshipId);
 
@@ -43,6 +43,7 @@ export default async function EditScholarshipPage({
         action={boundAction}
         submitLabel="변경사항 저장"
         universities={universityNames}
+        returnPath="/admin/scholarships"
       />
     </div>
   );

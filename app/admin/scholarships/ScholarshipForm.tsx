@@ -9,6 +9,8 @@ type Props = {
   action: (formData: FormData) => Promise<{ error?: string } | void>;
   submitLabel?: string;
   universities?: string[];
+  returnPath?: string;
+  mode?: "scholarship" | "ad";
 };
 
 const INSTITUTION_TYPES = [
@@ -35,8 +37,11 @@ export default function ScholarshipForm({
   action,
   submitLabel = "저장",
   universities = [],
+  returnPath = "/admin/scholarships",
+  mode = "scholarship",
 }: Props) {
   const [isPending, startTransition] = useTransition();
+  const isAdMode = mode === "ad";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,10 +56,21 @@ export default function ScholarshipForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <input type="hidden" name="admin_return_path" value={returnPath} />
       {/* ── 기본 정보 ─────────────────────────────────────────── */}
-      <Section title="기본 정보">
-        <Field label="장학금명 *" name="name" defaultValue={dv.name ?? ""} required />
-        <Field label="운영 기관 *" name="organization" defaultValue={dv.organization ?? ""} required />
+      <Section title={isAdMode ? "광고 기본 정보" : "기본 정보"}>
+        <Field
+          label={isAdMode ? "공고명 *" : "장학금명 *"}
+          name="name"
+          defaultValue={dv.name ?? ""}
+          required
+        />
+        <Field
+          label={isAdMode ? "회사/기관명 *" : "운영 기관 *"}
+          name="organization"
+          defaultValue={dv.organization ?? ""}
+          required
+        />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">기관 유형 *</label>
           <select
@@ -70,7 +86,9 @@ export default function ScholarshipForm({
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">지원 유형 * (복수 선택)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {isAdMode ? "보상 유형 * (복수 선택)" : "지원 유형 * (복수 선택)"}
+          </label>
           <div className="flex flex-wrap gap-2">
             {SUPPORT_CATEGORIES.map((cat) => (
               <label key={cat} className="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -88,12 +106,22 @@ export default function ScholarshipForm({
           {/* 숨겨진 필드로 합쳐서 전송 — JS로 처리 */}
           <CheckboxToHidden name="support_types" checkboxName="support_types_check" />
         </div>
-        <Field label="지원 금액 (원, 정렬용) *" name="support_amount" type="number" defaultValue={dv.support_amount?.toString() ?? ""} required />
         <Field
-          label="지원 규모 표시 문구"
+          label={isAdMode ? "급여 (원, 정렬용) *" : "지원 금액 (원, 정렬용) *"}
+          name="support_amount"
+          type="number"
+          defaultValue={dv.support_amount?.toString() ?? ""}
+          required
+        />
+        <Field
+          label={isAdMode ? "급여 표시 문구" : "지원 규모 표시 문구"}
           name="support_amount_text"
           defaultValue={dv.support_amount_text ?? ""}
-          placeholder="예: 월 최대 20만원 × 24개월, 국가별 연간 최대 USD 40,000"
+          placeholder={
+            isAdMode
+              ? "예: 월 240만원 (세전), 면접 후 협의"
+              : "예: 월 최대 20만원 × 24개월, 국가별 연간 최대 USD 40,000"
+          }
         />
         <Field label="선발 인원" name="selection_count" type="number" defaultValue={dv.selection_count?.toString() ?? ""} />
       </Section>
@@ -105,7 +133,36 @@ export default function ScholarshipForm({
         <Field label="발표일" name="announcement_date" type="date" defaultValue={dv.announcement_date ?? ""} />
       </Section>
 
-      {/* ── 자격 요건 ─────────────────────────────────────────── */}
+      {isAdMode ? (
+        <Section title="광고 상세 정보">
+          <Field
+            label="모집 직무 *"
+            name="ad_job_role"
+            defaultValue={dv.ad_job_role ?? ""}
+            placeholder="예: 인턴 · 마케팅 어시스턴트"
+            required
+          />
+          <Field
+            label="소재지 *"
+            name="ad_location"
+            defaultValue={dv.ad_location ?? ""}
+            placeholder="예: 서울 강남구 (하이브리드)"
+            required
+          />
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-gray-700">요구 역량</label>
+            <TagInput
+              name="ad_required_skills"
+              defaultTags={dv.ad_required_skills ?? []}
+              placeholder="역량 입력 후 Enter (예: Figma, 콘텐츠 작성)"
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              상세 페이지의 `요구 역량` 섹션에 표시됩니다.
+            </p>
+          </div>
+        </Section>
+      ) : (
+      /* ── 자격 요건 ─────────────────────────────────────────── */
       <Section title="자격 요건 (비워두면 제한 없음)">
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">대상 대학교</label>
@@ -200,28 +257,62 @@ export default function ScholarshipForm({
           </p>
         </div>
       </Section>
+      )}
 
       {/* ── 신청 방법 ─────────────────────────────────────────── */}
-      <Section title="신청 방법">
-        <Field label="신청 방법 *" name="apply_method" defaultValue={dv.apply_method ?? ""} required placeholder="예: 온라인 신청" />
-        <Field label="신청 URL *" name="apply_url" type="url" defaultValue={dv.apply_url ?? ""} required placeholder="https://" />
-        <Field label="홈페이지 URL" name="homepage_url" type="url" defaultValue={dv.homepage_url ?? ""} placeholder="https://" />
-        <Field label="문의처" name="contact" defaultValue={dv.contact ?? ""} placeholder="예: 02-1234-5678" />
-        <Field label="제출 서류 (쉼표 구분)" name="required_documents" defaultValue={(dv.required_documents ?? []).join(", ")} placeholder="예: 재학증명서, 성적증명서" />
-        <div className="flex items-center gap-2">
-          <input type="hidden" name="can_overlap" value="false" />
-          <input
-            type="checkbox"
-            id="can_overlap"
-            name="can_overlap"
-            value="true"
-            defaultChecked={dv.can_overlap ?? false}
-            className="rounded"
-          />
-          <label htmlFor="can_overlap" className="text-sm text-gray-700">
-            다른 장학금과 중복 수혜 가능
-          </label>
-        </div>
+      <Section title={isAdMode ? "지원 방법" : "신청 방법"}>
+        <Field
+          label={isAdMode ? "지원 방법 *" : "신청 방법 *"}
+          name="apply_method"
+          defaultValue={dv.apply_method ?? ""}
+          required
+          placeholder={isAdMode ? "예: 채용 홈페이지 지원서 제출" : "예: 온라인 신청"}
+        />
+        <Field
+          label={isAdMode ? "지원 URL *" : "신청 URL *"}
+          name="apply_url"
+          type="url"
+          defaultValue={dv.apply_url ?? ""}
+          required
+          placeholder="https://"
+        />
+        <Field
+          label={isAdMode ? "공고 상세 페이지 URL" : "홈페이지 URL"}
+          name="homepage_url"
+          type="url"
+          defaultValue={dv.homepage_url ?? ""}
+          placeholder="https://"
+        />
+        <Field
+          label={isAdMode ? "문의처 (선택)" : "문의처"}
+          name="contact"
+          defaultValue={dv.contact ?? ""}
+          placeholder="예: 02-1234-5678"
+        />
+        {!isAdMode && (
+          <>
+            <Field
+              label="제출 서류 (쉼표 구분)"
+              name="required_documents"
+              defaultValue={(dv.required_documents ?? []).join(", ")}
+              placeholder="예: 재학증명서, 성적증명서"
+            />
+            <div className="flex items-center gap-2">
+              <input type="hidden" name="can_overlap" value="false" />
+              <input
+                type="checkbox"
+                id="can_overlap"
+                name="can_overlap"
+                value="true"
+                defaultChecked={dv.can_overlap ?? false}
+                className="rounded"
+              />
+              <label htmlFor="can_overlap" className="text-sm text-gray-700">
+                다른 장학금과 중복 수혜 가능
+              </label>
+            </div>
+          </>
+        )}
       </Section>
 
       {/* ── 선발 단계 ─────────────────────────────────────────── */}
@@ -326,6 +417,29 @@ export default function ScholarshipForm({
             등록된 대학명이 장학금명·기관명에 포함되면 홈에서는 자동으로 숨깁니다. 끄면 그 외 장학금도 홈에서 숨기고 맞춤 장학금에서만 노출합니다.
           </p>
         </div>
+        {isAdMode ? (
+          <input type="hidden" name="is_advertisement" value="true" />
+        ) : (
+          <div className="md:col-span-2 flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <input type="hidden" name="is_advertisement" value="false" />
+              <input
+                type="checkbox"
+                id="is_advertisement"
+                name="is_advertisement"
+                value="true"
+                defaultChecked={dv.is_advertisement === true}
+                className="rounded"
+              />
+              <label htmlFor="is_advertisement" className="text-sm text-gray-700">
+                광고(채용 공고)로 표시
+              </label>
+            </div>
+            <p className="text-xs text-gray-500">
+              목록 카드의 추천 뱃지 위치에 `광고` 라벨이 표시되고, 상세 페이지는 채용 공고용 섹션 구성으로 표시됩니다.
+            </p>
+          </div>
+        )}
         <div className="md:col-span-2 flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
@@ -366,7 +480,7 @@ export default function ScholarshipForm({
           {isPending ? "저장 중..." : submitLabel}
         </button>
         <a
-          href="/admin/scholarships"
+          href={returnPath}
           className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
         >
           취소

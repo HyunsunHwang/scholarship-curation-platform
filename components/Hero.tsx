@@ -8,16 +8,16 @@ type HeroProps = {
 export default function Hero({ heroIllustrationUrl }: HeroProps) {
 
   return (
-    <section className="relative overflow-hidden bg-white pt-16 pb-0">
+    <section className="relative overflow-hidden bg-white pt-12 pb-0 lg:pt-14">
       {/* 배경 장식 원 */}
       <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand/8 blur-3xl" />
       <div className="pointer-events-none absolute top-1/2 -left-16 h-64 w-64 rounded-full bg-brand/5 blur-3xl" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-6">
 
           {/* ── 좌측: 텍스트 ── */}
-          <div className="pb-16 sm:pb-20 lg:pb-24">
+          <div className="pb-10 sm:pb-14 lg:pb-16">
             {/* 제목 */}
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl lg:text-5xl">
               나에게 딱 맞는
@@ -33,7 +33,7 @@ export default function Hero({ heroIllustrationUrl }: HeroProps) {
             </p>
 
             {/* CTA 버튼 */}
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/matched"
                 className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-7 text-sm font-semibold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
@@ -48,36 +48,20 @@ export default function Hero({ heroIllustrationUrl }: HeroProps) {
               </Link>
             </div>
 
-            {/* 소셜 프루프 */}
-            <div className="mt-8 flex items-center gap-3">
-              <div className="flex -space-x-2">
-                {["bg-brand", "bg-[#c00000]", "bg-[#ff6060]", "bg-[#ff9090]"].map((c, i) => (
-                  <div
-                    key={i}
-                    className={`h-8 w-8 rounded-full border-2 border-white ${c} flex items-center justify-center text-xs font-bold text-white`}
-                  >
-                    {["김", "이", "박", "최"][i]}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-ink/60">
-                <span className="font-semibold text-ink">1,000+</span> 명의 학생들이 찾았어요!
-              </p>
-            </div>
           </div>
 
           {/* ── 우측: Storage `reading_glasses_red.png` ── */}
-          <div className="relative hidden lg:flex lg:justify-center lg:items-center lg:pb-16">
-            <div className="flex w-full max-w-xs flex-col items-center xl:max-w-sm">
+          <div className="relative hidden lg:flex lg:items-center lg:justify-center lg:pb-8">
+            <div className="flex w-full max-w-[15.5rem] flex-col items-center xl:max-w-[17.5rem]">
               <div className="relative w-full">
                 <Image
                   src={heroIllustrationUrl}
                   alt="장학금 안내 일러스트"
-                  width={480}
-                  height={480}
+                  width={420}
+                  height={420}
                   priority
                   className="h-auto w-full object-contain drop-shadow-[0_10px_28px_rgba(192,0,0,0.05)]"
-                  sizes="(min-width: 1280px) 20rem, (min-width: 1024px) 18rem, 0"
+                  sizes="(min-width: 1280px) 17.5rem, (min-width: 1024px) 15.5rem, 0"
                 />
               </div>
               <p className="mt-3 max-w-sm text-center text-xs leading-relaxed text-ink/40">

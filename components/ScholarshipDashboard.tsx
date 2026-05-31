@@ -55,6 +55,43 @@ function compareBookmarkedPinned(
   return bBookmarked - aBookmarked;
 }
 
+/** 광고 노출 순서(recommended_sort_order)를 기준으로 원하는 카드 위치에 삽입 */
+function placeAdvertisementsByOrder(rows: CardScholarship[]): CardScholarship[] {
+  const orderedAds: CardScholarship[] = [];
+  const baseRows: CardScholarship[] = [];
+
+  for (const row of rows) {
+    const hasDisplayOrder =
+      row.is_advertisement === true &&
+      typeof row.recommended_sort_order === "number" &&
+      row.recommended_sort_order > 0;
+    if (hasDisplayOrder) {
+      orderedAds.push(row);
+    } else {
+      baseRows.push(row);
+    }
+  }
+
+  if (orderedAds.length === 0) return rows;
+
+  orderedAds.sort((a, b) => {
+    const ao = a.recommended_sort_order ?? Number.MAX_SAFE_INTEGER;
+    const bo = b.recommended_sort_order ?? Number.MAX_SAFE_INTEGER;
+    if (ao !== bo) return ao - bo;
+    return a.id - b.id;
+  });
+
+  const result = [...baseRows];
+  for (const ad of orderedAds) {
+    const desiredIndex = Math.max(
+      0,
+      Math.min((ad.recommended_sort_order ?? 1) - 1, result.length)
+    );
+    result.splice(desiredIndex, 0, ad);
+  }
+  return result;
+}
+
 export default function ScholarshipDashboard({
   scholarships,
   bookmarkedIds = [],
@@ -99,14 +136,15 @@ export default function ScholarshipDashboard({
       return matchesScope && matchesSearch(s.name, s.organization, deferredSearchQuery);
     });
 
-    return [...list].sort((a, b) => {
-      // "마감임박순"일 때만 고정 우선순위를 적용하고,
-      // 사용자가 다른 정렬을 선택한 경우에는 선택한 정렬 기준을 우선합니다.
+    const sorted = [...list].sort((a, b) => {
+      // 추천 장학금은 어떤 정렬 옵션에서도 항상 상단에 고정한다.
+      const recommendedPin = compareRecommendedPinned(a, b);
+      if (recommendedPin !== 0) return recommendedPin;
+
+      // 북마크 우선은 "마감임박순"에서만 보조 우선순위로 적용한다.
       if (sortBy === "deadline") {
         const bookmarkedPin = compareBookmarkedPinned(a, b, bookmarkedSet);
         if (bookmarkedPin !== 0) return bookmarkedPin;
-        const pin = compareRecommendedPinned(a, b);
-        if (pin !== 0) return pin;
       }
       if (sortBy === "deadline") {
         return (
@@ -122,6 +160,7 @@ export default function ScholarshipDashboard({
       }
       return (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
     });
+    return placeAdvertisementsByOrder(sorted);
   }, [scholarships, scopeFilter, deferredSearchQuery, sortBy, bookmarkedSet]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);

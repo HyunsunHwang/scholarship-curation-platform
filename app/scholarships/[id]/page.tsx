@@ -5,19 +5,22 @@ import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
 import ScholarshipPoster from "./ScholarshipPoster";
 import ScholarshipTabs from "./ScholarshipTabs";
-import {
-  daysUntilApplyDeadlineKorea,
-  formatApplyPeriodRange,
-  isAlwaysOpenRecruitment,
-} from "@/lib/scholarship-dates";
+import { daysUntilApplyDeadlineKorea, formatApplyPeriodRange, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { formatSupportAmount } from "@/lib/support-amount";
 import ViewCountIncrementer from "./ViewCountIncrementer";
 import LiveEngagementBadges from "./LiveEngagementBadges";
 
-/** 포스터 없을 때 플레이스홀더 — 랜딩 히어로와 동일한 브랜드 그라데이션 */
 const posterPlaceholderGradient = "from-brand to-[#c00000]";
+
+function getInstitutionTagClass(institutionType: string | null | undefined): string {
+  const value = institutionType?.toLowerCase() ?? "";
+  if (value.includes("공공") || value.includes("정부")) return "bg-sky-100 text-sky-800";
+  if (value.includes("학교") || value.includes("대학")) return "bg-violet-100 text-violet-700";
+  if (value.includes("민간") || value.includes("기업")) return "bg-amber-100 text-amber-800";
+  return "bg-gray-100 text-gray-700";
+}
 
 export default async function ScholarshipDetailPage({
   params,
@@ -55,6 +58,7 @@ export default async function ScholarshipDetailPage({
   const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
   const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
+  const isAdvertisement = scholarship.is_advertisement === true;
   const supportAmount = formatSupportAmount(
     scholarship.support_amount,
     scholarship.support_amount_text,
@@ -66,21 +70,15 @@ export default async function ScholarshipDetailPage({
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col overflow-x-clip bg-[#fff2df]">
       <Navbar currentUser={user} />
 
-      <main className="relative flex-1 overflow-hidden bg-white">
-        {/* 히어로와 동일한 배경 장식 */}
-        <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand/8 blur-3xl" />
-        <div className="pointer-events-none absolute top-1/3 -left-16 h-64 w-64 rounded-full bg-brand/5 blur-3xl" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-
-          {/* ── 상단 네비 바 ── */}
-          <div className="flex items-center justify-between mb-6">
+      <main className="relative flex-1 overflow-x-clip bg-[#fff2df]">
+        <div className="relative mx-auto w-full max-w-7xl overflow-x-hidden px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-ink/55 transition-colors hover:text-ink"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 transition-colors hover:text-ink"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -88,7 +86,7 @@ export default async function ScholarshipDetailPage({
               목록으로 돌아가기
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full min-w-0 items-center sm:w-auto sm:justify-end">
               <LiveEngagementBadges
                 scholarshipId={scholarshipId}
                 initialViewCount={currentViewCount}
@@ -97,20 +95,16 @@ export default async function ScholarshipDetailPage({
             </div>
           </div>
 
-          {/* ── 2열 메인 레이아웃 ── */}
-          <div className="flex gap-8 items-start flex-col md:flex-row">
-
-            {/* ── 왼쪽 sticky 패널 ── */}
-            <div className="w-full md:w-56 shrink-0 md:sticky md:top-6">
-              {/* 포스터 */}
-              <div className="aspect-2/3">
+          <div className="flex w-full flex-col items-start gap-6 overflow-x-hidden md:flex-row md:items-start md:gap-7">
+            <div className="w-full shrink-0 md:w-[280px]">
+              <div className="aspect-7/9">
                 {scholarship.poster_image_url ? (
                   <ScholarshipPoster
                     posterUrl={scholarship.poster_image_url}
                     alt={`${displayName} 포스터`}
                   />
                 ) : (
-                  <div className={`h-full w-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-linear-to-br ${posterPlaceholderGradient} flex items-center justify-center aspect-2/3`}>
+                  <div className={`flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border border-[#e9d8c5] bg-linear-to-br ${posterPlaceholderGradient} shadow-sm`}>
                     <span className="text-5xl font-bold text-white/30">
                       {scholarship.organization.charAt(0)}
                     </span>
@@ -118,7 +112,6 @@ export default async function ScholarshipDetailPage({
                 )}
               </div>
 
-              {/* 지원하기 / 스크랩 버튼 */}
               <BookmarkApplyButtons
                 scholarshipId={scholarship.id}
                 applyUrl={scholarship.apply_url}
@@ -126,87 +119,79 @@ export default async function ScholarshipDetailPage({
               />
             </div>
 
-            {/* ── 오른쪽 콘텐츠 ── */}
-            <div className="flex-1 min-w-0">
+            <div className="w-full min-w-0 flex-1 overflow-x-hidden">
+              <div className="mb-2.5 flex flex-wrap items-center gap-2">
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${getInstitutionTagClass(
+                    scholarship.institution_type
+                  )}`}
+                >
+                  {scholarship.institution_type}
+                </span>
+                {days !== null && days >= 0 && (
+                  <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold text-white">
+                    D-{days}
+                  </span>
+                )}
+              </div>
 
-              {/* 제목 */}
-              <h1 className="text-2xl font-extrabold leading-snug tracking-tight text-ink sm:text-3xl">
+              <h1 className="wrap-break-word text-[1.65rem] font-extrabold leading-snug tracking-tight text-ink sm:text-[2rem]">
                 {displayName}
               </h1>
 
-              {/* 기관 뱃지 */}
-              <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-ink">
-                  {scholarship.organization}
+              <p className="mt-1.5 text-sm text-ink/70">{scholarship.organization}</p>
+
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-ink/50">
+                <span className="inline-flex items-center gap-1">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z" />
+                    <circle cx="12" cy="12" r="2.25" />
+                  </svg>
+                  {currentViewCount.toLocaleString()}
                 </span>
-                <span className="rounded-full border border-gray-200 bg-white px-2.5 py-0.5 text-xs font-medium text-ink/60">
-                  {scholarship.institution_type}
+                <span className="inline-flex items-center gap-1">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.5 3.75-.75.75a4.5 4.5 0 0 0-6.364 0l-.75-.75a5.625 5.625 0 0 0-7.955 7.955l7.159 7.159a1.125 1.125 0 0 0 1.59 0l7.159-7.159A5.625 5.625 0 0 0 16.5 3.75Z" />
+                  </svg>
+                  {scrapCount.toLocaleString()}
                 </span>
               </div>
 
-              {/* ── 핵심 요약 카드 ── */}
-              <div className="mt-5 divide-y divide-gray-200/80 rounded-2xl border border-gray-200 bg-cream/60 backdrop-blur-sm">
-                <div className="px-4 py-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-ink/45">핵심 요약</p>
-                </div>
-
-                {/* 지원 금액 */}
-                <div className="flex items-center gap-4 px-4 py-3.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/12 text-lg">💰</div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-ink/50">지원 금액</p>
-                    <p className="mt-0.5 truncate text-base font-extrabold text-brand" title={fullSupportAmount}>
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#e5d4bf] bg-white">
+                <div className="divide-y divide-[#efe3d5] px-5">
+                  <div className="flex items-center justify-between gap-4 py-4">
+                    <p className="text-sm text-ink/60">{isAdvertisement ? "급여" : "지원 금액"}</p>
+                    <p className="text-right text-base font-extrabold text-brand" title={fullSupportAmount}>
                       {supportAmount}
                     </p>
                   </div>
-                </div>
-
-                {/* 접수 기간 */}
-                <div className="flex items-center gap-4 px-4 py-3.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-skyblue/50 text-lg">📅</div>
-                  <div>
-                    <p className="text-xs text-ink/50">접수 기간</p>
-                    <p className={`mt-0.5 text-sm font-semibold ${
-                      days !== null && days <= 7 ? "text-brand" : "text-ink"
-                    }`}>
+                  <div className="flex items-center justify-between gap-4 py-4">
+                    <p className="text-sm text-ink/60">접수 기간</p>
+                    <p className="text-right text-sm font-semibold text-ink">
                       {formatApplyPeriodRange(scholarship.apply_start_date, scholarship.apply_end_date)}
-                      {days !== null && days >= 0 && days <= 7 && (
-                        <span className="ml-2 inline-flex items-center rounded-full bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">
-                          D-{days}
-                        </span>
-                      )}
                     </p>
                   </div>
-                </div>
-
-                {/* 선발 인원 */}
-                <div className="flex items-center gap-4 px-4 py-3.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-peach/35 text-lg">👥</div>
-                  <div>
-                    <p className="text-xs text-ink/50">선발 인원</p>
-                    <p className="mt-0.5 text-sm font-semibold text-ink">
+                  <div className="flex items-center justify-between gap-4 py-4">
+                    <p className="text-sm text-ink/60">선발 인원</p>
+                    <p className="text-right text-sm font-bold text-ink">
                       {scholarship.selection_count
                         ? `${scholarship.selection_count.toLocaleString()}명`
                         : "제한 없음"}
                     </p>
                   </div>
                 </div>
-
-                {/* 문의처 */}
-                {scholarship.contact && (
-                  <div className="flex items-center gap-4 px-4 py-3.5">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/8 text-lg">📞</div>
-                    <div>
-                      <p className="text-xs text-ink/50">문의처</p>
-                      <p className="mt-0.5 text-sm font-semibold text-ink whitespace-pre-line">
-                        {scholarship.contact}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
 
-              {/* ── 탭 네비 + 콘텐츠 ── */}
+              {(isAdvertisement && scholarship.ad_job_role) || (!isAdvertisement && scholarship.contact) ? (
+                <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-[#fbeca8] px-4 py-3 text-sm text-ink">
+                  <span className="mt-0.5 shrink-0 text-[#f08e52]">✉️</span>
+                  <span className="wrap-break-word">
+                    <strong>{isAdvertisement ? "모집 직무" : "문의처"}</strong>{" "}
+                    {isAdvertisement ? scholarship.ad_job_role : scholarship.contact}
+                  </span>
+                </div>
+              ) : null}
+
               <ScholarshipTabs scholarship={scholarship} />
             </div>
           </div>
@@ -214,9 +199,9 @@ export default async function ScholarshipDetailPage({
       </main>
       <ViewCountIncrementer scholarshipId={scholarshipId} />
 
-      <footer className="mt-12 border-t border-gray-200 bg-white py-8">
+      <footer className="mt-12 border-t border-[#ead8c5] bg-[#fff2df] py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-ink/70">
             문의 메일:{" "}
             <a
               href="mailto:hyunsun4819@gmail.com"

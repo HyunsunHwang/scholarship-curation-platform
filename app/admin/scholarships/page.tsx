@@ -23,6 +23,7 @@ export default async function AdminScholarshipsPage({
       "id, name, organization, apply_start_date, apply_end_date, support_amount, support_amount_text, is_verified, support_types, poster_image_url, list_on_home, is_recommended, recommended_sort_order",
       { count: "exact" }
     )
+    .eq("is_advertisement", false)
     .order("created_at", { ascending: false });
 
   if (query) {
@@ -79,7 +80,7 @@ export default async function AdminScholarshipsPage({
         </Link>
       </div>
 
-      <ScholarshipTable scholarships={rows} initialQuery={query} />
+      <ScholarshipTable scholarships={rows} initialQuery={query} basePath="/admin/scholarships" createLabel="장학금 추가" />
 
       <div className="mt-5 flex items-center justify-between text-sm">
         <Link

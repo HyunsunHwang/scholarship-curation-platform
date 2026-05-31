@@ -407,6 +407,14 @@ export interface Database {
           is_verified: boolean;
           /** false면 홈 전체 목록 숨김, 맞춤 장학금(RPC)에서만 노출 */
           list_on_home: boolean;
+          /** 장학금이 아닌 광고/채용 공고 카드로 표시 */
+          is_advertisement: boolean;
+          /** 광고(채용) 공고용 모집 직무 */
+          ad_job_role: string | null;
+          /** 광고(채용) 공고용 요구 역량 */
+          ad_required_skills: string[] | null;
+          /** 광고(채용) 공고용 소재지 */
+          ad_location: string | null;
           /** 홈 전체 장학금 목록에서 상단(추천) 노출 */
           is_recommended: boolean;
           /** 추천 항목끼리 정렬: 작을수록 앞; null은 추천 그룹 내 맨 뒤 */

@@ -132,9 +132,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;
+    overflow-x: hidden;
     /* Safari/WebKit: CJK는 grayscale 안티앨리어싱이 가늘게 보이는 경우가 있어 서브픽셀 우선 */
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;

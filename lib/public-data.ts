@@ -110,7 +110,7 @@ export const getCachedHomeScholarships = unstable_cache(
       supabase
         .from("scholarships")
         .select(
-          "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
+          "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
         )
         .eq("is_verified", true)
         .eq("list_on_home", true)
@@ -186,6 +186,7 @@ export async function getHomeScholarshipsPage({
           view_count: number | null;
           is_recommended: boolean;
           recommended_sort_order: number | null;
+          is_advertisement: boolean;
           scrap_count: number | null;
         }>;
       }
@@ -223,7 +224,7 @@ async function getHomeScholarshipsPageFallback({
     supabase
       .from("scholarships")
       .select(
-        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
+        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)

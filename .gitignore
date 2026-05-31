@@ -24,7 +24,9 @@
 .DS_Store
 *.pem
 .crawler/
-exports/notices/
+exports/
+# 루트 데이터 export CSV (예: 장학금/학과 덤프)
+/*.csv
 
 # debug
 npm-debug.log*

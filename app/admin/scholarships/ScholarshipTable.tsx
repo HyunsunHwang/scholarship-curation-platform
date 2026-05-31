@@ -119,9 +119,13 @@ function sortDefaultAdminOrder(rows: ScholarshipRow[]): ScholarshipRow[] {
 export default function ScholarshipTable({
   scholarships,
   initialQuery,
+  basePath = "/admin/scholarships",
+  createLabel = "장학금 추가",
 }: {
   scholarships: ScholarshipRow[];
   initialQuery: string;
+  basePath?: string;
+  createLabel?: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
@@ -136,12 +140,12 @@ export default function ScholarshipTable({
     const nextQuery = query.trim();
     const params = new URLSearchParams();
     if (nextQuery) params.set("q", nextQuery);
-    router.push(`/admin/scholarships${params.toString() ? `?${params}` : ""}`);
+    router.push(`${basePath}${params.toString() ? `?${params}` : ""}`);
   };
 
   const clearSearch = () => {
     setQuery("");
-    router.push("/admin/scholarships");
+    router.push(basePath);
   };
 
   const forSort = deadlineSort === "none" ? sortDefaultAdminOrder(scholarships) : scholarships;
@@ -303,7 +307,7 @@ export default function ScholarshipTable({
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/admin/scholarships/${s.id}/edit`}
+                        href={`${basePath}/${s.id}/edit`}
                         className="px-3 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         수정
@@ -324,10 +328,10 @@ export default function ScholarshipTable({
                     <>
                       등록된 장학금이 없습니다.{" "}
                       <Link
-                        href="/admin/scholarships/new"
+                        href={`${basePath}/new`}
                         className="text-blue-600 hover:underline"
                       >
-                        첫 장학금을 추가해보세요.
+                        {createLabel}하기
                       </Link>
                     </>
                   )}

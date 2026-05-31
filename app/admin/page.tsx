@@ -8,6 +8,11 @@ const cards = [
     description: "등록된 장학금을 조회·추가·수정합니다.",
   },
   {
+    href: "/admin/ads",
+    title: "광고 관리",
+    description: "광고(인턴/채용) 공고를 조회·추가·수정합니다.",
+  },
+  {
     href: "/admin/site-settings",
     title: "사이트 설정",
     description: "메인 헤더에 표시되는 로고 이미지를 변경합니다.",

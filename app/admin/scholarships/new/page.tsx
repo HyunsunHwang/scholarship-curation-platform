@@ -26,6 +26,7 @@ export default async function NewScholarshipPage() {
         action={createScholarship}
         submitLabel="장학금 등록"
         universities={universityNames}
+        returnPath="/admin/scholarships"
       />
     </div>
   );

@@ -1,6 +1,10 @@
 "use client";
 
-import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
+import {
+  daysUntilApplyDeadlineKorea,
+  isAlwaysOpenRecruitment,
+  todayKoreaYYYYMMDD,
+} from "@/lib/scholarship-dates";
 
 export type ScholarshipDetail = {
   id: number;
@@ -56,6 +60,10 @@ export type ScholarshipDetail = {
   original_notice_image_urls: string[] | null;
   original_notice_text: string | null;
   note: string | null;
+  is_advertisement: boolean;
+  ad_job_role: string | null;
+  ad_required_skills: string[] | null;
+  ad_location: string | null;
 };
 
 function hasQualifications(s: ScholarshipDetail): boolean {
@@ -184,13 +192,16 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   }
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-0.5">
       {rows.map((row) => (
-        <div key={row.label} className="flex items-start gap-3">
-          <span className="mt-0.5 shrink-0 text-base leading-none">{row.icon}</span>
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:gap-4">
-            <span className="w-24 shrink-0 text-xs font-medium text-ink/45">{row.label}</span>
-            <span className="text-sm text-ink">{row.value}</span>
+        <div
+          key={row.label}
+          className="flex items-start gap-2 border-b border-[#f1e3d4] py-3 last:border-b-0"
+        >
+          <span className="mt-0.5 shrink-0 text-brand">✓</span>
+          <div className="min-w-0">
+            <p className="text-xs text-ink/55">{row.label}</p>
+            <p className="wrap-break-word text-sm leading-6 text-ink">{row.value}</p>
           </div>
         </div>
       ))}
@@ -365,6 +376,27 @@ function scheduleRowSortMs(r: SortableScheduleRow): number {
   return r.sortMs as number;
 }
 
+/**
+ * 접수 기간 내 오늘 위치(시간 경과율, 0~100%).
+ * - 상시모집이거나 시작·마감일을 해석할 수 없으면 진행률 바를 숨김(null).
+ * - 접수 시작 전이면 0%, 마감 후면 100%.
+ */
+function computeApplyProgressPercent(
+  applyStartDate: string | null,
+  applyEndDate: string,
+  alwaysOpen: boolean,
+): number | null {
+  if (alwaysOpen) return null;
+  const startMs = parseYYYYMMDDToUtcMs(applyStartDate);
+  const endMs = parseYYYYMMDDToUtcMs(applyEndDate);
+  if (startMs === null || endMs === null) return null;
+  const todayMs = parseYYYYMMDDToUtcMs(todayKoreaYYYYMMDD());
+  if (todayMs === null) return null;
+  if (endMs <= startMs) return todayMs >= endMs ? 100 : 0;
+  const ratio = ((todayMs - startMs) / (endMs - startMs)) * 100;
+  return Math.round(Math.max(0, Math.min(100, ratio)));
+}
+
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
 function ScheduleSection({ s }: { s: ScholarshipDetail }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
@@ -374,7 +406,12 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
 
   const rows: SortableScheduleRow[] = [];
 
-  if (s.apply_start_date) {
+  const stages = collectSelectionStages(s);
+  const hasStages = stages.length > 0;
+
+  // 전형 단계가 있으면 접수 시작/마감은 단계 일정과 중복되므로 제외하고,
+  // 전형 단계가 없을 때만 접수 시작/마감을 표시한다.
+  if (!hasStages && s.apply_start_date) {
     const sortMs = parseYYYYMMDDToUtcMs(s.apply_start_date);
     if (sortMs !== null) {
       rows.push({
@@ -389,17 +426,19 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
     }
   }
 
-  const endSortMs = parseYYYYMMDDToUtcMs(s.apply_end_date);
-  if (endSortMs !== null) {
-    rows.push({
-      kind: "milestone",
-      key: "end",
-      milestoneKind: "end",
-      label: "접수 마감",
-      value: alwaysOpen ? "상시모집" : formatDate(s.apply_end_date),
-      urgent: isUrgent,
-      sortMs: endSortMs,
-    });
+  if (!hasStages) {
+    const endSortMs = parseYYYYMMDDToUtcMs(s.apply_end_date);
+    if (endSortMs !== null) {
+      rows.push({
+        kind: "milestone",
+        key: "end",
+        milestoneKind: "end",
+        label: "접수 마감",
+        value: alwaysOpen ? "상시모집" : formatDate(s.apply_end_date),
+        urgent: isUrgent,
+        sortMs: endSortMs,
+      });
+    }
   }
 
   if (s.announcement_date) {
@@ -417,7 +456,6 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
     }
   }
 
-  const stages = collectSelectionStages(s);
   stages.forEach((st, i) => {
     const resolved = resolveStageScheduleValue(s, st.title, st.schedule);
     rows.push({
@@ -447,42 +485,60 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
     return <p className="text-sm text-ink/45">일정 정보가 없습니다.</p>;
   }
 
+  const periodText = `${formatDate(s.apply_start_date)} ~ ${alwaysOpen ? "상시모집" : formatDate(s.apply_end_date)}`;
+  const applyProgressPercent = computeApplyProgressPercent(
+    s.apply_start_date,
+    s.apply_end_date,
+    alwaysOpen,
+  );
+
   return (
-    <div className="space-y-3">
-      {deduped.map((row, idx) => (
-        <div key={row.key} className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-center leading-none">
-            <span className="text-xs font-bold text-brand">{idx + 1}</span>
-          </div>
-          <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-            <span className="text-xs font-medium text-ink/55">{row.label}</span>
-            <span
-              className={`shrink-0 text-right text-sm ${
-                row.kind === "milestone" && row.urgent
-                  ? "font-semibold text-brand"
-                  : row.kind === "stage" && !row.value
-                    ? "font-medium text-ink/45"
-                    : "font-semibold text-ink"
-              }`}
-            >
-              {row.kind === "milestone" ? (
-                <>
-                  {row.value}
-                  {row.urgent && (
-                    <span className="ml-1.5 inline-flex items-center rounded-full bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">
-                      D-{daysLeft}
-                    </span>
-                  )}
-                </>
-              ) : row.value ? (
-                formatScheduleCell(row.value)
-              ) : (
-                "일정별도"
-              )}
-            </span>
-          </div>
+    <div>
+      <p className="mb-2 text-xs font-bold text-brand">{periodText}</p>
+      {applyProgressPercent !== null && (
+        <div className="mb-4 h-1.5 rounded-full bg-[#fbeca8]">
+          <div
+            className="h-full rounded-full bg-brand"
+            style={{ width: `${applyProgressPercent}%` }}
+          />
         </div>
-      ))}
+      )}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {deduped.map((row, idx) => (
+          <div key={row.key} className="flex min-w-0 items-start gap-2.5">
+            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+              {idx + 1}
+            </div>
+            <div className="min-w-0">
+              <p className="wrap-break-word text-sm font-bold text-ink">{row.label}</p>
+              <p
+                className={`mt-0.5 wrap-break-word text-xs ${
+                  row.kind === "milestone" && row.urgent
+                    ? "font-semibold text-brand"
+                    : row.kind === "stage" && !row.value
+                      ? "text-ink/50"
+                      : "text-ink/70"
+                }`}
+              >
+                {row.kind === "milestone" ? (
+                  <>
+                    {row.value}
+                    {row.urgent && (
+                      <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
+                        D-{daysLeft}
+                      </span>
+                    )}
+                  </>
+                ) : row.value ? (
+                  formatScheduleCell(row.value)
+                ) : (
+                  "일정 별도 공지"
+                )}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -494,13 +550,13 @@ function DocumentsSection({ s }: { s: ScholarshipDetail }) {
 
   return (
     <div>
-      <ol className="space-y-2">
+      <ol className="space-y-2.5">
         {docs.map((doc, i) => (
           <li key={i} className="flex items-start gap-3">
-            <span className="flex h-5 w-7 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-bold text-brand">
-              {String(i + 1).padStart(2, "0")}
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+              {i + 1}
             </span>
-            <span className="text-sm text-ink">{doc}</span>
+            <span className="wrap-break-word text-sm leading-6 text-ink">{doc}</span>
           </li>
         ))}
       </ol>
@@ -509,7 +565,7 @@ function DocumentsSection({ s }: { s: ScholarshipDetail }) {
           href={s.homepage_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-ink/80 transition hover:bg-cream"
+        className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#f1d6ba] bg-[#fff2df] px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-[#ffe9cd] sm:w-auto"
         >
           서류 양식 다운로드
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -528,13 +584,13 @@ function ApplySection({ s }: { s: ScholarshipDetail }) {
   return (
     <div>
       {steps.length > 0 ? (
-        <ol className="space-y-3">
+        <ol className="space-y-2.5">
           {steps.map((step, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/12 text-xs font-bold text-brand">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
                 {i + 1}
               </span>
-              <span className="pt-0.5 text-sm text-ink">{step}</span>
+              <span className="wrap-break-word text-sm leading-6 text-ink">{step}</span>
             </li>
           ))}
         </ol>
@@ -545,7 +601,7 @@ function ApplySection({ s }: { s: ScholarshipDetail }) {
         href={s.apply_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/20 transition hover:bg-brand/85"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/20 transition hover:bg-[#e82a2a] sm:w-auto"
       >
         신청하러 가기
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -554,6 +610,27 @@ function ApplySection({ s }: { s: ScholarshipDetail }) {
       </a>
     </div>
   );
+}
+
+function AdSkillsSection({ s }: { s: ScholarshipDetail }) {
+  const skills = s.ad_required_skills ?? [];
+  if (skills.length === 0) return <p className="text-sm text-ink/45">요구 역량 정보가 없습니다.</p>;
+
+  return (
+    <ul className="space-y-2.5">
+      {skills.map((skill, i) => (
+        <li key={`${skill}-${i}`} className="flex items-start gap-3">
+          <span className="mt-0.5 shrink-0 text-base leading-none">✅</span>
+          <span className="wrap-break-word text-sm leading-6 text-ink">{skill}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function AdLocationSection({ s }: { s: ScholarshipDetail }) {
+  if (!s.ad_location?.trim()) return <p className="text-sm text-ink/45">소재지 정보가 없습니다.</p>;
+  return <p className="wrap-break-word text-sm leading-6 text-ink">{s.ad_location}</p>;
 }
 
 // ── 원본 공고문 섹션 ─────────────────────────────────────────────────
@@ -576,7 +653,7 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
           </div>
         ))}
         {text ? (
-          <div className="whitespace-pre-wrap rounded-xl bg-white px-4 py-3 text-sm leading-6 text-ink/80">
+          <div className="whitespace-pre-wrap break-all rounded-xl bg-white px-4 py-3 text-sm leading-6 text-ink/80">
             {text}
           </div>
         ) : null}
@@ -588,39 +665,61 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
 /** 장학금 상세 본문: 탭 없이 한 페이지에 섹션 순서대로 표시 */
 export default function ScholarshipTabs({ scholarship }: { scholarship: ScholarshipDetail }) {
   const s = scholarship;
+  const isAdvertisement = s.is_advertisement === true;
+
+  const sectionTitle = (label: string) => (
+    <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-ink">
+      <span className="h-4 w-1 rounded-sm bg-brand" />
+      {label}
+    </h3>
+  );
 
   return (
-    <div className="mt-6 space-y-6">
-      {/* 지원자격·일정·서류·신청 — 핵심 요약·원본 공고와 같은 톤의 반투명 박스 */}
-      <div className="space-y-6 rounded-2xl border border-gray-200/90 bg-gray-50 p-5 shadow-sm sm:p-6 md:p-7">
-        <div className="grid gap-6 md:grid-cols-2">
-          {hasQualifications(s) ? (
-            <section>
-              <h3 className="mb-4 text-sm font-bold text-ink">지원자격</h3>
-              <QualSection s={s} />
-            </section>
-          ) : null}
-          <section className={hasQualifications(s) ? "" : "md:col-span-2"}>
-            <h3 className="mb-4 text-sm font-bold text-ink">주요 일정</h3>
-            <ScheduleSection s={s} />
-          </section>
-        </div>
+    <div className="mt-4 w-full space-y-4 overflow-x-hidden sm:mt-5">
+      {isAdvertisement ? (
+        <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+          {sectionTitle("요구 역량")}
+          <AdSkillsSection s={s} />
+        </section>
+      ) : hasQualifications(s) ? (
+        <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+          {sectionTitle("지원 자격")}
+          <QualSection s={s} />
+        </section>
+      ) : null}
 
-        <div className="border-t border-gray-200/70" />
+      <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+        {sectionTitle("주요 일정")}
+        <ScheduleSection s={s} />
+      </section>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <section>
-            <h3 className="mb-4 text-sm font-bold text-ink">제출 서류</h3>
-            <DocumentsSection s={s} />
+      {isAdvertisement ? (
+        <>
+          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+            {sectionTitle("소재지")}
+            <AdLocationSection s={s} />
           </section>
-          <section>
-            <h3 className="mb-4 text-sm font-bold text-ink">신청 방법</h3>
+          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+            {sectionTitle("지원 방법")}
             <ApplySection s={s} />
           </section>
-        </div>
-      </div>
+        </>
+      ) : (
+        <>
+          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+            {sectionTitle("제출 서류")}
+            <DocumentsSection s={s} />
+          </section>
+          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
+            {sectionTitle("선발 방법")}
+            <ApplySection s={s} />
+          </section>
+        </>
+      )}
 
-      <OriginalNoticeSection s={s} />
+      <div className="w-full overflow-x-hidden">
+        <OriginalNoticeSection s={s} />
+      </div>
     </div>
   );
 }
