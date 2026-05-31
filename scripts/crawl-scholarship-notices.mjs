@@ -21,6 +21,7 @@ const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
+const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
 const RUN_AT = new Date().toISOString();
 
 function parseCsv(text) {
@@ -229,6 +230,24 @@ function trimItems(items, maxItems) {
   return items.slice(0, maxItems);
 }
 
+async function mapLimit(items, limit, mapper) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const current = nextIndex;
+      nextIndex += 1;
+      if (current >= items.length) return;
+      results[current] = await mapper(items[current], current);
+    }
+  }
+
+  const workerCount = Math.max(1, Math.min(limit, items.length));
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
+}
+
 function parseNoticeDate(rawText) {
   const text = cleanText(rawText);
   if (!text) return null;
@@ -327,7 +346,7 @@ async function run() {
   const allNew = [];
   const stats = [];
 
-  for (const source of sources) {
+  const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
     try {
       const listHtml = await fetchHtml(source.listUrl);
       const listItems = trimItems(extractFromList(source, listHtml), MAX_ITEMS_PER_SOURCE);
@@ -365,36 +384,56 @@ async function run() {
           if (!parsed && ALLOW_UNDATED) return true;
           return isWithinLookback(parsed, LOOKBACK_DAYS);
         });
-      const newlyDiscovered = matched.filter((item) => !seen[item.noticeUrl]);
-
-      for (const notice of newlyDiscovered) {
-        seen[notice.noticeUrl] = RUN_AT;
-      }
-
-      crawled.push(...detailItems);
-      allMatched.push(...matched);
-      allNew.push(...newlyDiscovered);
-      stats.push({
+      return {
         sourceId: source.sourceId,
         sourceName: source.sourceName,
-        crawledCount: detailItems.length,
-        matchedCount: matched.length,
-        newCount: newlyDiscovered.length,
-      });
-      console.log(
-        `source=${source.sourceId} crawled=${detailItems.length} matched=${matched.length} new=${newlyDiscovered.length}`,
-      );
+        detailItems,
+        matched,
+        error: "",
+      };
     } catch (error) {
-      stats.push({
+      return {
         sourceId: source.sourceId,
         sourceName: source.sourceName,
+        error: String(error?.message ?? error),
+        detailItems: [],
+        matched: [],
+      };
+    }
+  });
+
+  for (const result of processed) {
+    if (result.error) {
+      stats.push({
+        sourceId: result.sourceId,
+        sourceName: result.sourceName,
         crawledCount: 0,
         matchedCount: 0,
         newCount: 0,
-        error: String(error?.message ?? error),
+        error: result.error,
       });
-      console.log(`source=${source.sourceId} error=${String(error?.message ?? error)}`);
+      console.log(`source=${result.sourceId} error=${result.error}`);
+      continue;
     }
+
+    const newlyDiscovered = result.matched.filter((item) => !seen[item.noticeUrl]);
+    for (const notice of newlyDiscovered) {
+      seen[notice.noticeUrl] = RUN_AT;
+    }
+
+    crawled.push(...result.detailItems);
+    allMatched.push(...result.matched);
+    allNew.push(...newlyDiscovered);
+    stats.push({
+      sourceId: result.sourceId,
+      sourceName: result.sourceName,
+      crawledCount: result.detailItems.length,
+      matchedCount: result.matched.length,
+      newCount: newlyDiscovered.length,
+    });
+    console.log(
+      `source=${result.sourceId} crawled=${result.detailItems.length} matched=${result.matched.length} new=${newlyDiscovered.length}`,
+    );
   }
 
   const kstDate = formatKstDate();
@@ -414,6 +453,7 @@ async function run() {
       knownCount: Object.keys(seen).length,
       lookbackDays: LOOKBACK_DAYS,
       allowUndated: ALLOW_UNDATED,
+      sourceConcurrency: SOURCE_CONCURRENCY,
     },
     perSource: stats,
     newNotices: allNew,

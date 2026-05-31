@@ -24,26 +24,51 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run crawler
+      - name: Run Ewha crawler
         env:
           CRAWL_LOOKBACK_DAYS: "31"
-          CRAWL_ALLOW_UNDATED: "false"
-        run: npm run crawl:notices
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "4"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha .crawler/ewha-state.json
 
-      - name: Clean crawl results
+      - name: Clean Ewha crawl results
         run: |
           TODAY=$(date +%Y%m%d)
-          node scripts/clean-crawled-notices.mjs \
-            "exports/notices/scholarship-notices-new-${TODAY}.csv" \
-            "exports/notices/scholarship-notices-latest.cleaned.csv" \
-            "exports/notices/scholarship-notices-latest.rejected.csv"
+          if [ -f "exports/notices/ewha/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/ewha/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/ewha/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/ewha/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_ewha_csv"
+          fi
+
+      - name: Run Korea crawler
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea .crawler/korea-state.json
+
+      - name: Clean Korea crawl results
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/korea/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/korea/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/korea/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_korea_csv"
+          fi
 
       - name: Send Slack summary
         if: always()
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          REPORT_JSON_PATH: exports/notices/scholarship-notices-latest.json
-          CLEANED_CSV_PATH: exports/notices/scholarship-notices-latest.cleaned.csv
+          REPORT_JSON_PATHS: exports/notices/ewha/scholarship-notices-latest.json,exports/notices/korea/scholarship-notices-latest.json
+          CLEANED_CSV_PATHS: exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv
+          SOURCE_LABELS: 이화여대,고려대
           SLACK_PREVIEW_COUNT: "5"
         run: npm run notify:slack
 
@@ -53,4 +78,4 @@ jobs:
           name: scholarship-notice-crawl
           path: |
             exports/notices
-            .crawler/scholarship-notice-state.json
+            .crawler

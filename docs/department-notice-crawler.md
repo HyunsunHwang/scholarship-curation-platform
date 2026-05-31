@@ -51,6 +51,7 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 
 - `CRAWL_LOOKBACK_DAYS=31` (기본값)
 - `CRAWL_ALLOW_UNDATED=true` (날짜 없는 공지도 포함)
+- `CRAWL_SOURCE_CONCURRENCY=1` (소스 병렬 처리 수, 기본 1)
 
 ## 5) 아침 자동 실행 (GitHub Actions)
 

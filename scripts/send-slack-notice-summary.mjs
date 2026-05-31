@@ -6,6 +6,9 @@ const cleanedCsvPath =
   process.env.CLEANED_CSV_PATH ?? "exports/notices/scholarship-notices-latest.cleaned.csv";
 const reportJsonPath =
   process.env.REPORT_JSON_PATH ?? "exports/notices/scholarship-notices-latest.json";
+const cleanedCsvPathsEnv = process.env.CLEANED_CSV_PATHS ?? "";
+const reportJsonPathsEnv = process.env.REPORT_JSON_PATHS ?? "";
+const sourceLabelsEnv = process.env.SOURCE_LABELS ?? "";
 const maxPreviewCount = Number(process.env.SLACK_PREVIEW_COUNT ?? 5);
 
 function parseCsv(text) {
@@ -66,6 +69,13 @@ function safeReadJson(filePath, fallback = null) {
   }
 }
 
+function parsePathList(value) {
+  return String(value ?? "")
+    .split(",")
+    .map((part) => cleanText(part))
+    .filter(Boolean);
+}
+
 function readCleanedRows(filePath) {
   const resolved = path.resolve(filePath);
   if (!fs.existsSync(resolved)) return [];
@@ -89,7 +99,7 @@ function readCleanedRows(filePath) {
     .filter((row) => row.title && row.noticeUrl);
 }
 
-function buildMessage(report, cleanedRows) {
+function buildSingleMessage(report, cleanedRows) {
   const totals = report?.totals ?? {};
   const sourceCount = totals.sourceCount ?? "-";
   const matchedCount = totals.matchedCount ?? "-";
@@ -115,6 +125,48 @@ function buildMessage(report, cleanedRows) {
   return `${header}\\n\\n*상위 ${preview.length}건 미리보기*\\n${body}`;
 }
 
+function buildMultiMessage(datasets) {
+  const totalSourceCount = datasets.reduce((sum, item) => sum + (item.report?.totals?.sourceCount ?? 0), 0);
+  const totalMatchedCount = datasets.reduce((sum, item) => sum + (item.report?.totals?.matchedCount ?? 0), 0);
+  const totalNewCount = datasets.reduce((sum, item) => sum + (item.report?.totals?.newCount ?? 0), 0);
+  const totalCleanedCount = datasets.reduce((sum, item) => sum + item.cleanedRows.length, 0);
+
+  const lines = [
+    "*장학금 크롤링 결과 (통합)*",
+    `- 대상 그룹: ${datasets.length}개`,
+    `- 전체 소스: ${totalSourceCount}개`,
+    `- 전체 매칭: ${totalMatchedCount}건`,
+    `- 전체 신규(new): ${totalNewCount}건`,
+    `- 전체 정제(cleaned): ${totalCleanedCount}건`,
+  ];
+
+  for (const dataset of datasets) {
+    const label = dataset.label;
+    const totals = dataset.report?.totals ?? {};
+    const sourceCount = totals.sourceCount ?? "-";
+    const matchedCount = totals.matchedCount ?? "-";
+    const newCount = totals.newCount ?? "-";
+    const cleanedCount = dataset.cleanedRows.length;
+    const preview = dataset.cleanedRows.slice(0, maxPreviewCount);
+
+    lines.push("");
+    lines.push(`*${label}*`);
+    lines.push(`- 소스 ${sourceCount} | 매칭 ${matchedCount} | 신규 ${newCount} | 정제 ${cleanedCount}`);
+
+    if (preview.length === 0) {
+      lines.push("- 신규 장학금 없음");
+      continue;
+    }
+
+    preview.forEach((row, idx) => {
+      lines.push(`${idx + 1}. [${row.sourceName}] ${row.title}`);
+      lines.push(`${row.noticeUrl}`);
+    });
+  }
+
+  return lines.join("\\n");
+}
+
 async function sendSlack(text) {
   if (!webhookUrl) {
     console.log("skip=missing_webhook_url");
@@ -134,12 +186,30 @@ async function sendSlack(text) {
 }
 
 async function run() {
-  const report = safeReadJson(reportJsonPath, {});
-  const cleanedRows = readCleanedRows(cleanedCsvPath);
-  const text = buildMessage(report, cleanedRows);
+  const reportJsonPaths = parsePathList(reportJsonPathsEnv);
+  const cleanedCsvPaths = parsePathList(cleanedCsvPathsEnv);
+  const sourceLabels = parsePathList(sourceLabelsEnv);
+
+  let text;
+  if (reportJsonPaths.length > 0 && cleanedCsvPaths.length > 0) {
+    const size = Math.min(reportJsonPaths.length, cleanedCsvPaths.length);
+    const datasets = [];
+    for (let i = 0; i < size; i += 1) {
+      datasets.push({
+        label: sourceLabels[i] ?? `그룹 ${i + 1}`,
+        report: safeReadJson(reportJsonPaths[i], {}),
+        cleanedRows: readCleanedRows(cleanedCsvPaths[i]),
+      });
+    }
+    text = buildMultiMessage(datasets);
+  } else {
+    const report = safeReadJson(reportJsonPath, {});
+    const cleanedRows = readCleanedRows(cleanedCsvPath);
+    text = buildSingleMessage(report, cleanedRows);
+  }
+
   await sendSlack(text);
   console.log(`message_length=${text.length}`);
-  console.log(`cleaned_rows=${cleanedRows.length}`);
 }
 
 run().catch((error) => {
