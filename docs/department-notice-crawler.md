@@ -52,6 +52,7 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 - `CRAWL_LOOKBACK_DAYS=31` (기본값)
 - `CRAWL_ALLOW_UNDATED=true` (날짜 없는 공지도 포함)
 - `CRAWL_SOURCE_CONCURRENCY=1` (소스 병렬 처리 수, 기본 1)
+- `CRAWL_IGNORE_SEEN=true` (중복 상태 무시하고 matched를 모두 new로 처리)
 
 ## 5) 아침 자동 실행 (GitHub Actions)
 
@@ -66,6 +67,9 @@ Daily 워크플로:
 - 이화/고려를 각각 크롤링 후 정제
 - Slack으로 **통합 1개 메시지** 전송
 - 결과물은 workflow artifact(`scholarship-notice-daily`)로 업로드
+- 수동 실행 시 옵션:
+  - `fresh_start=true`: 기존 daily 상태 캐시를 무시하고 시작
+  - `ignore_seen=true`: 이번 실행에서 `new` 필터를 건너뛰고 테스트
 
 Baseline 워크플로:
 

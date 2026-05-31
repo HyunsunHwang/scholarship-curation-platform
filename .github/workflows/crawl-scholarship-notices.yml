@@ -8,6 +8,17 @@ on:
     # 08:00 KST every day
     - cron: "0 23 * * *"
   workflow_dispatch:
+    inputs:
+      fresh_start:
+        description: "Ignore previous crawler state cache"
+        required: false
+        default: false
+        type: boolean
+      ignore_seen:
+        description: "Treat all matched items as new (testing)"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   daily-update:
@@ -18,13 +29,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Restore daily crawler state
+        if: ${{ github.event.inputs.fresh_start != 'true' }}
         id: crawler-state-restore
         uses: actions/cache/restore@v4
         with:
           path: .crawler
-          key: crawler-daily-state-${{ github.run_id }}
+          key: crawler-daily-state-v2-${{ github.run_id }}
           restore-keys: |
-            crawler-daily-state-
+            crawler-daily-state-v2-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,6 +53,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "4"
+          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha .crawler/ewha-daily-state.json
 
       - name: Clean Ewha crawl results
@@ -60,6 +73,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
+          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea .crawler/korea-daily-state.json
 
       - name: Clean Korea crawl results
@@ -95,11 +109,11 @@ jobs:
         run: npm run notify:slack
 
       - name: Save daily crawler state
-        if: always()
+        if: ${{ always() && github.event.inputs.fresh_start != 'true' && github.event.inputs.ignore_seen != 'true' }}
         uses: actions/cache/save@v4
         with:
           path: .crawler
-          key: crawler-daily-state-${{ github.run_id }}
+          key: crawler-daily-state-v2-${{ github.run_id }}
 
       - name: Upload crawl artifacts
         uses: actions/upload-artifact@v4

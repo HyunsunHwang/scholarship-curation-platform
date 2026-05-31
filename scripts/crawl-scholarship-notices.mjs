@@ -22,6 +22,7 @@ const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
+const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
 const RUN_AT = new Date().toISOString();
 
 function parseCsv(text) {
@@ -462,9 +463,13 @@ async function run() {
       continue;
     }
 
-    const newlyDiscovered = result.matched.filter((item) => !seen[item.noticeUrl]);
-    for (const notice of newlyDiscovered) {
-      seen[notice.noticeUrl] = RUN_AT;
+    const newlyDiscovered = IGNORE_SEEN
+      ? result.matched
+      : result.matched.filter((item) => !seen[item.noticeUrl]);
+    if (!IGNORE_SEEN) {
+      for (const notice of newlyDiscovered) {
+        seen[notice.noticeUrl] = RUN_AT;
+      }
     }
 
     crawled.push(...result.detailItems);
@@ -500,6 +505,7 @@ async function run() {
       lookbackDays: LOOKBACK_DAYS,
       allowUndated: ALLOW_UNDATED,
       sourceConcurrency: SOURCE_CONCURRENCY,
+      ignoreSeen: IGNORE_SEEN,
     },
     perSource: stats,
     newNotices: allNew,
