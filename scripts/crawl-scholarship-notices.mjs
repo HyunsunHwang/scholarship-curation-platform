@@ -89,6 +89,55 @@ function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
+function extractDateLikeText(text) {
+  const cleaned = cleanText(text);
+  if (!cleaned) return "";
+
+  const patterns = [
+    /(\d{4}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{1,2})/,
+    /(\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일)/,
+    /(\d{2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{1,2})/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = cleaned.match(pattern);
+    if (match) return cleanText(match[1]);
+  }
+
+  return "";
+}
+
+function extractListDateText(itemRoot, dateSelector) {
+  const candidates = [];
+  const seen = new Set();
+
+  const pushCandidate = (value) => {
+    const text = cleanText(value);
+    if (!text || seen.has(text)) return;
+    seen.add(text);
+    candidates.push(text);
+  };
+
+  if (dateSelector) {
+    itemRoot.find(dateSelector).each((_, node) => {
+      pushCandidate(itemRoot.find(node).text());
+    });
+  }
+
+  itemRoot.find("time, td, span, div").each((index, node) => {
+    if (index > 40) return false;
+    pushCandidate(itemRoot.find(node).text());
+    return undefined;
+  });
+
+  for (const candidate of candidates) {
+    const dateLike = extractDateLikeText(candidate);
+    if (dateLike) return dateLike;
+  }
+
+  return "";
+}
+
 function readSourceConfig(csvPath) {
   const raw = fs.readFileSync(path.resolve(csvPath), "utf8").replace(/^\uFEFF/, "");
   const table = parseCsv(raw);
@@ -189,12 +238,7 @@ function extractFromList(source, html) {
     const title = cleanText(titleRaw);
     if (!title) return;
 
-    const dateRaw = itemRoot
-      ? source.dateSelector
-        ? itemRoot.find(source.dateSelector).first().text()
-        : ""
-      : "";
-    const dateText = cleanText(dateRaw);
+    const dateText = itemRoot ? extractListDateText(itemRoot, source.dateSelector) : "";
 
     seen.add(noticeUrl);
     results.push({
@@ -253,17 +297,19 @@ function parseNoticeDate(rawText) {
   if (!text) return null;
 
   const patterns = [
-    /(\d{4})[./-](\d{1,2})[./-](\d{1,2})/,
+    /(\d{4})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})/,
     /(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/,
+    /(\d{2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})/,
   ];
 
   for (const pattern of patterns) {
     const match = text.match(pattern);
     if (!match) continue;
 
-    const year = Number(match[1]);
+    let year = Number(match[1]);
     const month = Number(match[2]);
     const day = Number(match[3]);
+    if (year < 100) year += 2000;
     if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
       continue;
     }

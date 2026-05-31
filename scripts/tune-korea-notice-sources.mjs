@@ -109,8 +109,9 @@ const outputRows = body.map((row) => {
       next[index.title_selector] = "a[href]";
       tunedCount += 1;
     }
-    if (!cleanText(next[index.date_selector])) {
-      next[index.date_selector] = "td";
+    const existingDateSelector = cleanText(next[index.date_selector]);
+    if (!existingDateSelector || existingDateSelector === "td") {
+      next[index.date_selector] = "td:last-child, .date, .board-date, .wr_date";
       tunedCount += 1;
     }
     if (!cleanText(next[index.notice_url_pattern])) {
