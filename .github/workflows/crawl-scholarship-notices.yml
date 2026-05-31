@@ -71,6 +71,16 @@ jobs:
             echo "skip=missing_korea_csv"
           fi
 
+      - name: Build combined daily CSV
+        run: |
+          TODAY=$(date +%Y%m%d)
+          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
+          MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-${TODAY}.csv" \
+          npm run merge:notices
+          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
+          MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-latest.csv" \
+          npm run merge:notices
+
       - name: Send Slack summary
         if: always()
         env:

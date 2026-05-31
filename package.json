@@ -12,6 +12,7 @@
     "tune:korea-notices": "node scripts/tune-korea-notice-sources.mjs",
     "crawl:notices": "node scripts/crawl-scholarship-notices.mjs",
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
+    "merge:notices": "node scripts/merge-cleaned-notices.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs"
   },
