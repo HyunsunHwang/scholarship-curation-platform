@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Ewha crawler
         env:
-          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "4"
         run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha .crawler/ewha-daily-state.json
@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Korea crawler
         env:
-          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
         run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea .crawler/korea-daily-state.json
