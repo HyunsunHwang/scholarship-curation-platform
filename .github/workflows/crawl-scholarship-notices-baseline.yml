@@ -27,10 +27,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Apply unified source tuning
+        run: |
+          npm run tune:ewha-notices
+          npm run tune:korea-notices
+          npm run tune:yonsei-notices
+
       - name: Reset baseline state
         run: |
           mkdir -p .crawler
-          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json
+          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/yonsei-baseline-state.json
 
       - name: Run Ewha baseline crawl
         env:

@@ -48,6 +48,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Apply unified source tuning
+        run: |
+          npm run tune:ewha-notices
+          npm run tune:korea-notices
+          npm run tune:yonsei-notices
+
       - name: Run Ewha crawler
         env:
           CRAWL_LOOKBACK_DAYS: "1"
