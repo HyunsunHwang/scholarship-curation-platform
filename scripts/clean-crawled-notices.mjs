@@ -8,7 +8,8 @@ const cleanedPath =
 const rejectedPath =
   process.argv[4] ?? "exports/notices/scholarship-notices-new-20260527.rejected.csv";
 
-const DETAIL_URL_PATTERN = /mode=view|articleNo=|artclView\.do|uid=\d+|mod=document/i;
+const DETAIL_URL_PATTERN =
+  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document/i;
 const MENU_TITLE_PATTERN =
   /(^|\s)(장학(금)?\s*(안내|지원|제도|FAQ)?|장학게시판|장학안내|장학공지|장학지원)\s*$|Scholarship\s*\/?\s*Job|ScholarshipScholarship/i;
 
