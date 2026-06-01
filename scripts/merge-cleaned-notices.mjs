@@ -72,6 +72,7 @@ function deriveGroupName(filePath) {
   const normalized = filePath.replace(/\\/g, "/").toLowerCase();
   if (normalized.includes("/ewha/")) return "ewha";
   if (normalized.includes("/korea/")) return "korea";
+  if (normalized.includes("/skku/")) return "skku";
   if (normalized.includes("/yonsei/")) return "yonsei";
   return "unknown";
 }
