@@ -88,13 +88,33 @@ jobs:
             echo "skip=missing_korea_csv"
           fi
 
+      - name: Run Yonsei crawler
+        env:
+          CRAWL_LOOKBACK_DAYS: "1"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-yonsei.csv exports/notices/yonsei .crawler/yonsei-daily-state.json
+
+      - name: Clean Yonsei crawl results
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/yonsei/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/yonsei/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/yonsei/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/yonsei/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_yonsei_csv"
+          fi
+
       - name: Build combined daily CSV
         run: |
           TODAY=$(date +%Y%m%d)
-          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
+          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv,exports/notices/yonsei/scholarship-notices-latest.cleaned.csv" \
           MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-${TODAY}.csv" \
           npm run merge:notices
-          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
+          MERGE_INPUT_PATHS="exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv,exports/notices/yonsei/scholarship-notices-latest.cleaned.csv" \
           MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-latest.csv" \
           npm run merge:notices
 
@@ -102,9 +122,9 @@ jobs:
         if: always()
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          REPORT_JSON_PATHS: exports/notices/ewha/scholarship-notices-latest.json,exports/notices/korea/scholarship-notices-latest.json
-          CLEANED_CSV_PATHS: exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv
-          SOURCE_LABELS: 이화여대,고려대
+          REPORT_JSON_PATHS: exports/notices/ewha/scholarship-notices-latest.json,exports/notices/korea/scholarship-notices-latest.json,exports/notices/yonsei/scholarship-notices-latest.json
+          CLEANED_CSV_PATHS: exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv,exports/notices/yonsei/scholarship-notices-latest.cleaned.csv
+          SOURCE_LABELS: 이화여대,고려대,연세대
           SLACK_PREVIEW_COUNT: "5"
         run: npm run notify:slack
 

@@ -64,7 +64,7 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 Daily 워크플로:
 
 - KST 오전 8시 자동 실행 (`UTC 23:00`)
-- 이화/고려를 각각 크롤링 후 정제
+- 이화/고려/연세를 각각 크롤링 후 정제
 - Slack으로 **통합 1개 메시지** 전송
 - 결과물은 workflow artifact(`scholarship-notice-daily`)로 업로드
 - 수동 실행 시 옵션:

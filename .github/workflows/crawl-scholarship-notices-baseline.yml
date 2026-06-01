@@ -70,6 +70,25 @@ jobs:
             echo "skip=missing_korea_baseline_csv"
           fi
 
+      - name: Run Yonsei baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-yonsei.csv exports/notices/yonsei-baseline .crawler/yonsei-baseline-state.json
+
+      - name: Clean Yonsei baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/yonsei-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/yonsei-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/yonsei-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/yonsei-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_yonsei_baseline_csv"
+          fi
+
       - name: Upload baseline artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -77,5 +96,7 @@ jobs:
           path: |
             exports/notices/ewha-baseline
             exports/notices/korea-baseline
+            exports/notices/yonsei-baseline
             .crawler/ewha-baseline-state.json
             .crawler/korea-baseline-state.json
+            .crawler/yonsei-baseline-state.json

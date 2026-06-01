@@ -9,6 +9,7 @@
     "lint": "eslint",
     "import:ewha-notices": "node scripts/import-ewha-notice-sources.mjs",
     "import:korea-notices": "node scripts/import-korea-notice-sources.mjs",
+    "import:yonsei-notices": "node scripts/import-yonsei-notice-sources.mjs",
     "tune:korea-notices": "node scripts/tune-korea-notice-sources.mjs",
     "crawl:notices": "node scripts/crawl-scholarship-notices.mjs",
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
