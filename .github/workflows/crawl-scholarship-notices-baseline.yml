@@ -32,12 +32,13 @@ jobs:
           npm run tune:ewha-notices
           npm run tune:korea-notices
           npm run tune:skku-notices
+          npm run tune:uos-notices
           npm run tune:yonsei-notices
 
       - name: Reset baseline state
         run: |
           mkdir -p .crawler
-          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/yonsei-baseline-state.json
+          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/uos-baseline-state.json .crawler/yonsei-baseline-state.json
 
       - name: Run Ewha baseline crawl
         env:
@@ -115,6 +116,25 @@ jobs:
             echo "skip=missing_skku_baseline_csv"
           fi
 
+      - name: Run UOS baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-uos.csv exports/notices/uos-baseline .crawler/uos-baseline-state.json
+
+      - name: Clean UOS baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/uos-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/uos-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/uos-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/uos-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_uos_baseline_csv"
+          fi
+
       - name: Upload baseline artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -123,8 +143,10 @@ jobs:
             exports/notices/ewha-baseline
             exports/notices/korea-baseline
             exports/notices/skku-baseline
+            exports/notices/uos-baseline
             exports/notices/yonsei-baseline
             .crawler/ewha-baseline-state.json
             .crawler/korea-baseline-state.json
             .crawler/skku-baseline-state.json
+            .crawler/uos-baseline-state.json
             .crawler/yonsei-baseline-state.json
