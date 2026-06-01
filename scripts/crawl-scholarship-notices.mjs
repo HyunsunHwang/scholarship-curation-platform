@@ -23,6 +23,7 @@ const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
 const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
+const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
 const RUN_AT = new Date().toISOString();
 
 function parseCsv(text) {
@@ -191,6 +192,54 @@ function resolveUrl(value, listUrl, baseUrl) {
   }
 }
 
+function normalizeCharset(value) {
+  const normalized = cleanText(value).toLowerCase().replace(/^['"]|['"]$/g, "");
+  if (!normalized) return "";
+  if (normalized === "utf8") return "utf-8";
+  if (["cp949", "ms949", "ks_c_5601-1987"].includes(normalized)) return "euc-kr";
+  return normalized;
+}
+
+function detectCharsetFromHeaders(contentType) {
+  const raw = cleanText(contentType);
+  if (!raw) return "";
+  const match = raw.match(/charset\s*=\s*([^;]+)/i);
+  if (!match) return "";
+  return normalizeCharset(match[1]);
+}
+
+function detectCharsetFromHtmlProbe(htmlProbe) {
+  const probe = cleanText(htmlProbe);
+  if (!probe) return "";
+  const metaCharset = probe.match(/<meta[^>]*charset\s*=\s*["']?\s*([a-zA-Z0-9._-]+)/i);
+  if (metaCharset?.[1]) return normalizeCharset(metaCharset[1]);
+  const metaContent = probe.match(
+    /<meta[^>]*content\s*=\s*["'][^"']*charset\s*=\s*([a-zA-Z0-9._-]+)/i,
+  );
+  if (metaContent?.[1]) return normalizeCharset(metaContent[1]);
+  return "";
+}
+
+function decodeHtmlBuffer(buffer, headerCharset) {
+  const probe = new TextDecoder("latin1").decode(buffer.subarray(0, 4096));
+  const metaCharset = detectCharsetFromHtmlProbe(probe);
+
+  const candidates = [headerCharset, metaCharset, FALLBACK_CHARSET, "utf-8", "euc-kr"]
+    .map((value) => normalizeCharset(value))
+    .filter(Boolean);
+  const uniqueCandidates = [...new Set(candidates)];
+
+  for (const charset of uniqueCandidates) {
+    try {
+      return new TextDecoder(charset, { fatal: true }).decode(buffer);
+    } catch {
+      // Try the next candidate charset.
+    }
+  }
+
+  return new TextDecoder("utf-8").decode(buffer);
+}
+
 async function fetchHtml(url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -206,7 +255,9 @@ async function fetchHtml(url) {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    return await response.text();
+    const headerCharset = detectCharsetFromHeaders(response.headers.get("content-type") ?? "");
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    return decodeHtmlBuffer(bytes, headerCharset);
   } finally {
     clearTimeout(timeout);
   }
