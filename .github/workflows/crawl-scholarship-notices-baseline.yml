@@ -29,6 +29,7 @@ jobs:
 
       - name: Apply unified source tuning
         run: |
+          npm run tune:cau-notices
           npm run tune:ewha-notices
           npm run tune:korea-notices
           npm run tune:skku-notices
@@ -38,7 +39,26 @@ jobs:
       - name: Reset baseline state
         run: |
           mkdir -p .crawler
-          rm -f .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/uos-baseline-state.json .crawler/yonsei-baseline-state.json
+          rm -f .crawler/cau-baseline-state.json .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/uos-baseline-state.json .crawler/yonsei-baseline-state.json
+
+      - name: Run CAU baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-cau.csv exports/notices/cau-baseline .crawler/cau-baseline-state.json
+
+      - name: Clean CAU baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/cau-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/cau-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/cau-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/cau-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_cau_baseline_csv"
+          fi
 
       - name: Run Ewha baseline crawl
         env:
@@ -140,11 +160,13 @@ jobs:
         with:
           name: scholarship-notice-baseline
           path: |
+            exports/notices/cau-baseline
             exports/notices/ewha-baseline
             exports/notices/korea-baseline
             exports/notices/skku-baseline
             exports/notices/uos-baseline
             exports/notices/yonsei-baseline
+            .crawler/cau-baseline-state.json
             .crawler/ewha-baseline-state.json
             .crawler/korea-baseline-state.json
             .crawler/skku-baseline-state.json
