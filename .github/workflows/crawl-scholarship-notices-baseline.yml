@@ -31,6 +31,7 @@ jobs:
         run: |
           npm run tune:cau-notices
           npm run tune:ewha-notices
+          npm run tune:khu-notices
           npm run tune:korea-notices
           npm run tune:skku-notices
           npm run tune:uos-notices
@@ -39,7 +40,7 @@ jobs:
       - name: Reset baseline state
         run: |
           mkdir -p .crawler
-          rm -f .crawler/cau-baseline-state.json .crawler/ewha-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/uos-baseline-state.json .crawler/yonsei-baseline-state.json
+          rm -f .crawler/cau-baseline-state.json .crawler/ewha-baseline-state.json .crawler/khu-baseline-state.json .crawler/korea-baseline-state.json .crawler/skku-baseline-state.json .crawler/uos-baseline-state.json .crawler/yonsei-baseline-state.json
 
       - name: Run CAU baseline crawl
         env:
@@ -77,6 +78,25 @@ jobs:
               "exports/notices/ewha-baseline/scholarship-notices-latest.rejected.csv"
           else
             echo "skip=missing_ewha_baseline_csv"
+          fi
+
+      - name: Run KHU baseline crawl
+        env:
+          CRAWL_LOOKBACK_DAYS: "31"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "8"
+        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-khu.csv exports/notices/khu-baseline .crawler/khu-baseline-state.json
+
+      - name: Clean KHU baseline crawl
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/khu-baseline/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/khu-baseline/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/khu-baseline/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/khu-baseline/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_khu_baseline_csv"
           fi
 
       - name: Run Korea baseline crawl
@@ -162,12 +182,14 @@ jobs:
           path: |
             exports/notices/cau-baseline
             exports/notices/ewha-baseline
+            exports/notices/khu-baseline
             exports/notices/korea-baseline
             exports/notices/skku-baseline
             exports/notices/uos-baseline
             exports/notices/yonsei-baseline
             .crawler/cau-baseline-state.json
             .crawler/ewha-baseline-state.json
+            .crawler/khu-baseline-state.json
             .crawler/korea-baseline-state.json
             .crawler/skku-baseline-state.json
             .crawler/uos-baseline-state.json
