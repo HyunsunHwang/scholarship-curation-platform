@@ -8,6 +8,8 @@ import type { Database } from "@/lib/database.types";
 type ScholarshipInsert =
   Database["public"]["Tables"]["scholarships"]["Insert"];
 
+const SCHOLARSHIP_TYPES = ["on_campus", "off_campus"] as const;
+
 // ─────────────────────────────────────────────────────────────────
 // 장학금 생성
 // ─────────────────────────────────────────────────────────────────
@@ -243,6 +245,15 @@ function parseJsonTextArray(val: string | null): string[] {
   }
 }
 
+function parseScholarshipType(
+  val: string | null
+): ScholarshipInsert["scholarship_type"] {
+  if (val && SCHOLARSHIP_TYPES.includes(val as (typeof SCHOLARSHIP_TYPES)[number])) {
+    return val as ScholarshipInsert["scholarship_type"];
+  }
+  return "off_campus";
+}
+
 function getAdminReturnPath(formData: FormData, fallback: string): string {
   const raw = (formData.get("admin_return_path") as string | null)?.trim();
   if (!raw) return fallback;
@@ -260,6 +271,7 @@ function buildPayload(formData: FormData): ScholarshipInsert {
   return {
     name: g("name") ?? "",
     organization: g("organization") ?? "",
+    scholarship_type: parseScholarshipType(g("scholarship_type")),
     institution_type: g("institution_type") as ScholarshipInsert["institution_type"],
     support_types: parseTextArray(g("support_types")) as ScholarshipInsert["support_types"],
     support_amount: parseOptionalFloat(g("support_amount")) ?? 0,

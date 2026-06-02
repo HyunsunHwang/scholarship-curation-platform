@@ -29,6 +29,8 @@ export type InstitutionType =
   | "학교법인" | "언론/방송" | "종교단체" | "기타";
 export type SupportCategory =
   | "등록금" | "생활비" | "학업장려금" | "연구비" | "해외연수비" | "기타";
+/** 장학금 분류: 교내(on_campus) / 교외(off_campus) */
+export type ScholarshipType = "on_campus" | "off_campus";
 export type UserRoleType = "user" | "admin";
 export type OrganizationKindType = "학과" | "학교" | "재단" | "기타";
 export type OrgRequestStatusType = "pending" | "approved" | "rejected";
@@ -349,6 +351,7 @@ export interface Database {
           id: number;
           name: string;
           organization: string;
+          scholarship_type: ScholarshipType;
           institution_type: InstitutionType;
           support_types: SupportCategory[];
           support_amount: number;

@@ -82,6 +82,11 @@ function deriveGroupName(filePath) {
   return "unknown";
 }
 
+function deriveScholarshipType(group) {
+  if (group === "unknown") return "off_campus";
+  return "on_campus";
+}
+
 function readRows(filePath) {
   const resolved = path.resolve(filePath);
   if (!fs.existsSync(resolved)) return [];
@@ -98,9 +103,11 @@ function readRows(filePath) {
   }
 
   const group = deriveGroupName(filePath);
+  const scholarshipType = deriveScholarshipType(group);
   return body
     .map((row) => ({
       source_group: group,
+      scholarship_type: scholarshipType,
       source_id: cleanText(row[index.source_id]),
       source_name: cleanText(row[index.source_name]),
       title: cleanText(row[index.title]),
@@ -126,6 +133,7 @@ for (const inputPath of inputPaths) {
 
 const outputHeader = [
   "source_group",
+  "scholarship_type",
   "source_id",
   "source_name",
   "title",

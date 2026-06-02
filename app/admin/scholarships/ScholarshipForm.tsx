@@ -71,6 +71,25 @@ export default function ScholarshipForm({
           defaultValue={dv.organization ?? ""}
           required
         />
+        {isAdMode ? (
+          <input type="hidden" name="scholarship_type" value="off_campus" />
+        ) : (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">장학금 구분 *</label>
+            <select
+              name="scholarship_type"
+              defaultValue={dv.scholarship_type ?? "off_campus"}
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="off_campus">교외 장학금</option>
+              <option value="on_campus">교내 장학금</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-400">
+              교내는 특정 대학 학생 대상 공고, 교외는 전국/외부 기관 공고에 사용합니다.
+            </p>
+          </div>
+        )}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">기관 유형 *</label>
           <select

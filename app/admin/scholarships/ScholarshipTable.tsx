@@ -121,15 +121,30 @@ export default function ScholarshipTable({
   initialQuery,
   basePath = "/admin/scholarships",
   createLabel = "장학금 추가",
+  fixedParams = {},
 }: {
   scholarships: ScholarshipRow[];
   initialQuery: string;
   basePath?: string;
   createLabel?: string;
+  fixedParams?: Record<string, string>;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [deadlineSort, setDeadlineSort] = useState<SortDir>("none");
+
+  const buildListHref = (extra: Record<string, string>) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(fixedParams)) {
+      if (value) params.set(key, value);
+    }
+    for (const [key, value] of Object.entries(extra)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const queryString = params.toString();
+    return `${basePath}${queryString ? `?${queryString}` : ""}`;
+  };
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -138,14 +153,12 @@ export default function ScholarshipTable({
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextQuery = query.trim();
-    const params = new URLSearchParams();
-    if (nextQuery) params.set("q", nextQuery);
-    router.push(`${basePath}${params.toString() ? `?${params}` : ""}`);
+    router.push(buildListHref(nextQuery ? { q: nextQuery } : {}));
   };
 
   const clearSearch = () => {
     setQuery("");
-    router.push(basePath);
+    router.push(buildListHref({}));
   };
 
   const forSort = deadlineSort === "none" ? sortDefaultAdminOrder(scholarships) : scholarships;
@@ -307,7 +320,7 @@ export default function ScholarshipTable({
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`${basePath}/${s.id}/edit`}
+                        href={`${basePath}/${s.id}/edit${Object.keys(fixedParams).length > 0 ? `?${new URLSearchParams(fixedParams).toString()}` : ""}`}
                         className="px-3 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         수정
@@ -328,7 +341,7 @@ export default function ScholarshipTable({
                     <>
                       등록된 장학금이 없습니다.{" "}
                       <Link
-                        href={`${basePath}/new`}
+                        href={`${basePath}/new${Object.keys(fixedParams).length > 0 ? `?${new URLSearchParams(fixedParams).toString()}` : ""}`}
                         className="text-blue-600 hover:underline"
                       >
                         {createLabel}하기

@@ -6,10 +6,17 @@ import { updateScholarship } from "../../actions";
 
 export default async function EditScholarshipPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ type?: string }>;
 }) {
   const { id } = await params;
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const returnPath =
+    resolvedSearchParams.type === "on_campus" || resolvedSearchParams.type === "off_campus"
+      ? `/admin/scholarships?type=${resolvedSearchParams.type}`
+      : "/admin/scholarships";
   const scholarshipId = parseInt(id, 10);
 
   if (isNaN(scholarshipId)) notFound();
@@ -43,7 +50,7 @@ export default async function EditScholarshipPage({
         action={boundAction}
         submitLabel="변경사항 저장"
         universities={universityNames}
-        returnPath="/admin/scholarships"
+        returnPath={returnPath}
       />
     </div>
   );
