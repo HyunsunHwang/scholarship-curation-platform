@@ -576,6 +576,7 @@ async function run() {
     "date_text",
     "detail_date",
     "parsed_date",
+    "content",
   ];
   const csvLines = [
     csvHeader.join(","),
@@ -589,6 +590,7 @@ async function run() {
         row.dateText ?? "",
         row.detailDate ?? "",
         row.parsedDate ?? "",
+        row.content ?? "",
       ]
         .map((cell) => escapeCsvCell(cell))
         .join(","),

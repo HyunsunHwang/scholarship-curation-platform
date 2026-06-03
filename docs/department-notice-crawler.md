@@ -77,6 +77,46 @@ Baseline 워크플로:
 - 긴 lookback으로 전체 후보를 재수집
 - 결과물은 workflow artifact(`scholarship-notice-baseline`)로 업로드
 
+## 5-1) Supabase 자동 적재 (staging)
+
+통합 CSV가 만들어진 뒤, 신규 공지를 Supabase `crawled_notices` staging 테이블에 적재합니다.
+
+- 스크립트: `scripts/ingest-notices-to-supabase.mjs` (`npm run ingest:notices`)
+- 중복 방지: `notice_url` UNIQUE + `upsert(ignoreDuplicates)` → 이미 검수/승격된 행은 **절대 덮어쓰지 않음**
+- 적재된 행은 `status='new'` 상태로 들어가며, 어드민 검수 후 `scholarships`로 승격됩니다.
+
+필요한 GitHub Secret (Settings → Secrets and variables → Actions):
+
+- `SUPABASE_URL`: 프로젝트 URL (`https://<ref>.supabase.co`)
+- `SUPABASE_SERVICE_ROLE_KEY`: **Service Role Key**. RLS를 우회하므로 절대 코드/클라이언트에 노출 금지. CI Secret으로만 사용.
+
+로컬 테스트(DB 쓰기 없이 파싱만 확인):
+
+```bash
+INGEST_DRY_RUN=true node scripts/ingest-notices-to-supabase.mjs exports/notices/daily/scholarship-notices-daily-latest.csv
+```
+
+## 5-2) 어드민 검수 + AI 초안 생성
+
+어드민 메뉴 `수집 공지 검수`(`/admin/crawled-notices`)에서 `status='new'` 공지를 확인하고 장학금으로 승격합니다.
+
+- `검수 후 등록`: 원문 공지 제목/본문/URL을 기반으로 장학금 등록 폼을 미리 채움
+- `AI 초안 생성`: 수집된 본문을 LLM에 보내 지원금액, 신청기간, 자격요건, 제출서류 등을 `extracted_draft`에 저장하고 폼 기본값으로 반영
+- 최종 등록 시 `scholarships`에 insert하고 원본 `crawled_notices`는 `status='promoted'` + `scholarship_id`로 연결
+
+AI 초안 생성은 OpenAI 호환 `/chat/completions` API를 사용합니다. Vercel 환경변수 또는 로컬 `.env`에 설정하세요.
+
+- `LLM_API_KEY`: 필수. LLM Provider API Key
+- `LLM_API_BASE`: 선택. 기본값 `https://api.openai.com/v1`
+- `LLM_MODEL`: 선택. 기본값 `gpt-4o-mini`
+
+예시:
+
+```bash
+LLM_API_BASE=https://api.openai.com/v1
+LLM_MODEL=gpt-4o-mini
+```
+
 ## 6) 운영 팁
 
 - 사이트 부하를 피하려고 상세 페이지 요청 사이에 짧은 지연이 있습니다.

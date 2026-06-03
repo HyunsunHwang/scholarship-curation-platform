@@ -118,6 +118,7 @@ for (const cells of body) {
     dateText: cells[index.date_text] ?? "",
     detailDate: cells[index.detail_date] ?? "",
     parsedDate: cells[index.parsed_date] ?? "",
+    content: "content" in index ? cells[index.content] ?? "" : "",
   };
 
   const reason = classify(row);
@@ -146,6 +147,7 @@ const outputHeader = [
   "date_text",
   "detail_date",
   "parsed_date",
+  "content",
 ];
 
 const cleanedLines = [
@@ -160,6 +162,7 @@ const cleanedLines = [
       row.dateText,
       row.detailDate,
       row.parsedDate,
+      row.content,
     ]
       .map(toCsvCell)
       .join(","),
@@ -178,6 +181,7 @@ const rejectedLines = [
       row.dateText,
       row.detailDate,
       row.parsedDate,
+      row.content,
       row.reason,
     ]
       .map(toCsvCell)

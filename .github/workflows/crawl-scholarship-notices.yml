@@ -250,6 +250,14 @@ jobs:
           MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-latest.csv" \
           npm run merge:notices
 
+      - name: Ingest notices into Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          TODAY=$(date +%Y%m%d)
+          npm run ingest:notices -- "exports/notices/daily/scholarship-notices-daily-${TODAY}.csv"
+
       - name: Send Slack summary
         if: always()
         env:

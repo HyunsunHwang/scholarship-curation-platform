@@ -202,6 +202,58 @@ export interface Database {
         Relationships: [];
       };
 
+      crawled_notices: {
+        Row: {
+          id: number;
+          source_group: string;
+          source_id: string;
+          source_name: string;
+          title: string;
+          notice_url: string;
+          notice_posted_at: string | null;
+          raw_date_text: string | null;
+          body: string | null;
+          scholarship_type: ScholarshipType;
+          status: "new" | "promoted" | "rejected";
+          scholarship_id: number | null;
+          /** LLM이 추출한 scholarship 필드 초안 (검수 전) */
+          extracted_draft: Record<string, unknown> | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          review_note: string | null;
+          run_at: string | null;
+          first_seen_at: string;
+          last_seen_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          source_group?: string;
+          source_id?: string;
+          source_name?: string;
+          title: string;
+          notice_url: string;
+          notice_posted_at?: string | null;
+          raw_date_text?: string | null;
+          body?: string | null;
+          scholarship_type?: ScholarshipType;
+          status?: "new" | "promoted" | "rejected";
+          scholarship_id?: number | null;
+          extracted_draft?: Record<string, unknown> | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          review_note?: string | null;
+          run_at?: string | null;
+          first_seen_at?: string;
+          last_seen_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["crawled_notices"]["Insert"]>;
+        Relationships: [];
+      };
+
       analytics_events: {
         Row: {
           id: number;
