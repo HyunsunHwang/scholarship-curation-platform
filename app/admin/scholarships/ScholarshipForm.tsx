@@ -9,6 +9,7 @@ type Props = {
   action: (formData: FormData) => Promise<{ error?: string } | void>;
   submitLabel?: string;
   universities?: string[];
+  universityDepartments?: { university: string; department: string }[];
   returnPath?: string;
   mode?: "scholarship" | "ad";
 };
@@ -37,11 +38,16 @@ export default function ScholarshipForm({
   action,
   submitLabel = "저장",
   universities = [],
+  universityDepartments = [],
   returnPath = "/admin/scholarships",
   mode = "scholarship",
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const isAdMode = mode === "ad";
+  const [selectedScholarshipType, setSelectedScholarshipType] = useState<"on_campus" | "off_campus">(
+    dv.scholarship_type ?? "off_campus"
+  );
+  const [selectedUniversities, setSelectedUniversities] = useState<string[]>(dv.qual_university ?? []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,7 +84,11 @@ export default function ScholarshipForm({
             <label className="block text-sm font-medium text-gray-700 mb-1">장학금 구분 *</label>
             <select
               name="scholarship_type"
-              defaultValue={dv.scholarship_type ?? "off_campus"}
+              value={selectedScholarshipType}
+              onChange={(e) => {
+                const next = e.target.value === "on_campus" ? "on_campus" : "off_campus";
+                setSelectedScholarshipType(next);
+              }}
               required
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -189,6 +199,8 @@ export default function ScholarshipForm({
             name="qual_university"
             universities={universities}
             defaultSelected={dv.qual_university ?? []}
+            selected={selectedUniversities}
+            onChange={setSelectedUniversities}
           />
           <p className="mt-1 text-xs text-gray-400">
             특정 학교 학생만 신청 가능한 경우 선택. 비워두면 모든 학교 대상.
@@ -196,13 +208,24 @@ export default function ScholarshipForm({
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">대상 학과</label>
-          <TagInput
-            name="qual_major"
-            defaultTags={dv.qual_major ?? []}
-            placeholder="학과명 입력 후 Enter (예: 컴퓨터공학과)"
-          />
+          {selectedScholarshipType === "on_campus" ? (
+            <MajorTagSelect
+              name="qual_major"
+              defaultSelected={dv.qual_major ?? []}
+              selectedUniversities={selectedUniversities}
+              universityDepartments={universityDepartments}
+            />
+          ) : (
+            <TagInput
+              name="qual_major"
+              defaultTags={dv.qual_major ?? []}
+              placeholder="학과명 입력 후 Enter (예: 컴퓨터공학과)"
+            />
+          )}
           <p className="mt-1 text-xs text-gray-400">
-            특정 학과/단과대만 대상인 경우 추가. 부분 일치로 매칭됩니다.
+            {selectedScholarshipType === "on_campus"
+              ? "교내 장학금은 대상 대학에 속한 학과만 검색/선택해 정확도를 높입니다."
+              : "특정 학과/단과대만 대상인 경우 추가. 부분 일치로 매칭됩니다."}
           </p>
         </div>
         <Field label="최소 누적 학점" name="qual_gpa_min" type="number" step="0.01" defaultValue={dv.qual_gpa_min?.toString() ?? ""} placeholder="예: 3.0" />
@@ -651,18 +674,24 @@ function UniversityTagSelect({
   name,
   universities,
   defaultSelected,
+  selected,
+  onChange,
 }: {
   name: string;
   universities: string[];
   defaultSelected: string[];
+  selected?: string[];
+  onChange?: (value: string[]) => void;
 }) {
-  const [selected, setSelected] = useState<string[]>(defaultSelected);
+  const [innerSelected, setInnerSelected] = useState<string[]>(defaultSelected);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedValues = selected ?? innerSelected;
+  const updateSelected = onChange ?? setInnerSelected;
 
   const filtered = universities.filter(
-    (u) => u.toLowerCase().includes(search.toLowerCase()) && !selected.includes(u)
+    (u) => u.toLowerCase().includes(search.toLowerCase()) && !selectedValues.includes(u)
   );
 
   useEffect(() => {
@@ -676,25 +705,25 @@ function UniversityTagSelect({
   }, []);
 
   const add = (u: string) => {
-    setSelected((prev) => [...prev, u]);
+    updateSelected([...selectedValues, u]);
     setSearch("");
     setOpen(false);
   };
 
   const remove = (u: string) => {
-    setSelected((prev) => prev.filter((s) => s !== u));
+    updateSelected(selectedValues.filter((s) => s !== u));
   };
 
   return (
     <div ref={containerRef} className="relative">
-      <input type="hidden" name={name} value={selected.join(",")} />
+      <input type="hidden" name={name} value={selectedValues.join(",")} />
 
       {/* 선택된 태그 + 검색 입력 */}
       <div
         className="min-h-[42px] flex flex-wrap gap-1.5 items-center border border-gray-300 rounded-lg px-3 py-2 cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 bg-white"
         onClick={() => { setOpen(true); }}
       >
-        {selected.map((u) => (
+        {selectedValues.map((u) => (
           <span
             key={u}
             className="inline-flex items-center gap-1 rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"
@@ -714,7 +743,7 @@ function UniversityTagSelect({
           value={search}
           onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
-          placeholder={selected.length === 0 ? "대학교 검색..." : ""}
+          placeholder={selectedValues.length === 0 ? "대학교 검색..." : ""}
           className="flex-1 min-w-[120px] text-sm outline-none bg-transparent"
         />
       </div>
@@ -735,6 +764,144 @@ function UniversityTagSelect({
                 className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors"
               >
                 {u}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MajorTagSelect({
+  name,
+  defaultSelected,
+  selectedUniversities,
+  universityDepartments,
+}: {
+  name: string;
+  defaultSelected: string[];
+  selectedUniversities: string[];
+  universityDepartments: { university: string; department: string }[];
+}) {
+  const [selected, setSelected] = useState<string[]>(defaultSelected);
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const normalizedSelected = selectedUniversities.map((value) =>
+    value.replace(/\s+/g, "").toLowerCase()
+  );
+  const matchesSelectedUniversity = (entryUniversity: string) => {
+    const normalizedEntry = entryUniversity.replace(/\s+/g, "").toLowerCase();
+    return normalizedSelected.some(
+      (selectedUniversity) =>
+        selectedUniversity.includes(normalizedEntry) ||
+        normalizedEntry.includes(selectedUniversity)
+    );
+  };
+
+  const allowedDepartments = Array.from(
+    new Set(
+      universityDepartments
+        .filter((entry) => matchesSelectedUniversity(entry.university))
+        .map((entry) => entry.department)
+    )
+  );
+
+  const filtered = allowedDepartments.filter(
+    (department) =>
+      department.toLowerCase().includes(search.toLowerCase()) &&
+      !selected.includes(department)
+  );
+
+  const add = (major: string) => {
+    if (selected.includes(major)) return;
+    setSelected((prev) => [...prev, major]);
+    setSearch("");
+    setOpen(false);
+  };
+
+  const remove = (major: string) => {
+    setSelected((prev) => prev.filter((item) => item !== major));
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <input type="hidden" name={name} value={selected.join(",")} />
+
+      <div
+        className="min-h-[42px] flex flex-wrap gap-1.5 items-center border border-gray-300 rounded-lg px-3 py-2 cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 bg-white"
+        onClick={() => {
+          if (allowedDepartments.length > 0) setOpen(true);
+        }}
+      >
+        {selected.map((major) => (
+          <span
+            key={major}
+            className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+          >
+            {major}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                remove(major);
+              }}
+              className="hover:text-emerald-600"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          disabled={allowedDepartments.length === 0}
+          placeholder={
+            allowedDepartments.length === 0
+              ? "먼저 대상 대학교를 선택하세요"
+              : selected.length === 0
+              ? "학과 검색..."
+              : ""
+          }
+          className="flex-1 min-w-[120px] text-sm outline-none bg-transparent disabled:text-gray-400"
+        />
+      </div>
+
+      {open && allowedDepartments.length > 0 && (
+        <div className="absolute z-10 mt-1 w-full max-h-52 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-gray-400">
+              {search ? "검색 결과 없음" : "선택 가능한 학과가 없습니다"}
+            </p>
+          ) : (
+            filtered.map((department) => (
+              <button
+                key={department}
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  add(department);
+                }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+              >
+                {department}
               </button>
             ))
           )}
