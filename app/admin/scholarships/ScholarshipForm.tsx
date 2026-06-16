@@ -25,7 +25,7 @@ const SUPPORT_CATEGORIES = [
 
 const SCHOOL_LOCATIONS = ["국내 대학", "해외 대학"];
 const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
-const ENROLLMENT_STATUSES = ["신입생", "재학", "휴학", "초과이수기", "수료", "졸업예정", "졸업"];
+const ENROLLMENT_STATUS_OPTIONS = ["재학", "휴학", "수료/졸업유예"];
 const ACADEMIC_YEARS = ["1", "2", "3", "4", "5"];
 const PARENT_OCCUPATIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
@@ -48,6 +48,9 @@ export default function ScholarshipForm({
     dv.scholarship_type ?? "off_campus"
   );
   const [selectedUniversities, setSelectedUniversities] = useState<string[]>(dv.qual_university ?? []);
+  const defaultEnrollmentSelections = mapLegacyEnrollmentStatuses(
+    (dv.qual_enrollment_status ?? []).map(String)
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -252,8 +255,8 @@ export default function ScholarshipForm({
         <CheckboxGroup
           label="재학 상태 제한"
           name="qual_enrollment_status"
-          options={ENROLLMENT_STATUSES}
-          defaultSelected={dv.qual_enrollment_status ?? []}
+          options={ENROLLMENT_STATUS_OPTIONS}
+          defaultSelected={defaultEnrollmentSelections}
         />
         <CheckboxGroup
           label="대상 학년"
@@ -530,6 +533,25 @@ export default function ScholarshipForm({
       </div>
     </form>
   );
+}
+
+function mapLegacyEnrollmentStatuses(statuses: string[]): string[] {
+  const mapped = new Set<string>();
+  for (const status of statuses) {
+    if (status === "재학" || status === "신입생") {
+      mapped.add("재학");
+    } else if (status === "휴학") {
+      mapped.add("휴학");
+    } else if (
+      status === "수료" ||
+      status === "졸업예정" ||
+      status === "초과이수기" ||
+      status === "졸업"
+    ) {
+      mapped.add("수료/졸업유예");
+    }
+  }
+  return [...mapped];
 }
 
 // ── 재사용 가능한 입력 필드 컴포넌트 ───────────────────────────────

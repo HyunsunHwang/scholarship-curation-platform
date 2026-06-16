@@ -606,9 +606,6 @@ function Step2({ form, update, updateMultiple }: {
           <option value="">선택해주세요</option>
           {ENROLLMENT_STATUSES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </SelectInput>
-        <p className="text-xs text-gray-400">
-          1학년 재학생은 신입생 성격, 4학년 이상 재학생은 졸업예정 성격으로 자동 판단됩니다.
-        </p>
       </Field>
 
       {/* 학점 */}

@@ -71,6 +71,9 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
   const originalNoticeImageUrls = parseJsonTextArray(
     g("original_notice_image_urls")
   );
+  const mappedEnrollmentStatuses = mapEnrollmentStatusesForStorage(
+    parseTextArray(g("qual_enrollment_status"))
+  );
 
   return {
     name: g("name") ?? "",
@@ -93,7 +96,9 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
       : null,
     qual_min_academic_year: parseOptionalInt(g("qual_min_academic_year")),
     qual_min_academic_semester: parseOptionalInt(g("qual_min_academic_semester")),
-    qual_enrollment_status: parseTextArray(g("qual_enrollment_status")) as ScholarshipInsert["qual_enrollment_status"] || null,
+    qual_enrollment_status: mappedEnrollmentStatuses.length > 0
+      ? (mappedEnrollmentStatuses as ScholarshipInsert["qual_enrollment_status"])
+      : null,
     qual_major: parseTextArray(g("qual_major")) || null,
     qual_gpa_min: parseOptionalFloat(g("qual_gpa_min")),
     qual_gpa_last_semester_min: parseOptionalFloat(g("qual_gpa_last_semester_min")),
@@ -140,4 +145,27 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     is_recommended: bool("is_recommended"),
     recommended_sort_order: parseOptionalInt(g("recommended_sort_order")),
   };
+}
+
+function mapEnrollmentStatusesForStorage(values: string[]): string[] {
+  const mapped = new Set<string>();
+  for (const value of values) {
+    if (value === "재학" || value === "휴학") {
+      mapped.add(value);
+      continue;
+    }
+    if (value === "수료/졸업유예") {
+      mapped.add("수료");
+      mapped.add("졸업예정");
+      continue;
+    }
+    // Legacy compatibility if old labels are still posted.
+    if (value === "신입생") {
+      mapped.add("재학");
+    } else if (value === "초과이수기" || value === "수료" || value === "졸업예정" || value === "졸업") {
+      mapped.add("수료");
+      mapped.add("졸업예정");
+    }
+  }
+  return [...mapped];
 }
