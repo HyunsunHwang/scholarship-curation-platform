@@ -110,6 +110,7 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     qual_age_max: parseOptionalInt(g("qual_age_max")),
     qual_region: parseTextArray(g("qual_region")) || null,
     qual_nationality: (g("qual_nationality") || null) as ScholarshipInsert["qual_nationality"],
+    qual_admission_type: parseTextArray(g("qual_admission_type")) as ScholarshipInsert["qual_admission_type"] || null,
     qual_special_info: parseTextArray(g("qual_special_info")) as ScholarshipInsert["qual_special_info"] || null,
     qual_parent_occupation: parseTextArray(g("qual_parent_occupation")) as ScholarshipInsert["qual_parent_occupation"] || null,
     qual_military_status: (g("qual_military_status") || null) as ScholarshipInsert["qual_military_status"],

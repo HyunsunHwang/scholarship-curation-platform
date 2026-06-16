@@ -441,6 +441,7 @@ export interface Database {
           qual_age_max: number | null;
           qual_region: string[] | null;
           qual_nationality: NationalityType | null;
+          qual_admission_type: AdmissionType[] | null;
           /** 상세 지원자격 기타 요건 표시용 자유 텍스트 배열 */
           qual_special_info: string[] | null;
           qual_parent_occupation: ParentOccupationType[] | null;

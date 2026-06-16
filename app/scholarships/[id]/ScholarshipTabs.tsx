@@ -34,6 +34,7 @@ export type ScholarshipDetail = {
   qual_parent_occupation: string[] | null;
   qual_military_status: string | null;
   qual_nationality: string | null;
+  qual_admission_type: string[] | null;
   qual_university: string[] | null;
   qual_enrollment_status: string[] | null;
   qual_school_location: string[] | null;
@@ -89,6 +90,7 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     s.qual_min_academic_year ||
     s.qual_min_academic_semester ||
     s.qual_nationality
+    || (s.qual_admission_type && s.qual_admission_type.length > 0)
   );
 }
 
@@ -180,6 +182,9 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   }
   if (s.qual_nationality) {
     rows.push({ icon: "🌏", label: "국적", value: s.qual_nationality });
+  }
+  if (s.qual_admission_type && s.qual_admission_type.length > 0) {
+    rows.push({ icon: "🧾", label: "입학 구분", value: s.qual_admission_type.join(", ") });
   }
   if (s.qual_special_info && s.qual_special_info.length > 0) {
     rows.push({ icon: "✨", label: "기타 요건", value: s.qual_special_info.join(", ") });

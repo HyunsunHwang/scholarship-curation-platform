@@ -26,6 +26,7 @@ const SUPPORT_CATEGORIES = [
 const SCHOOL_LOCATIONS = ["국내 대학", "해외 대학"];
 const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
 const ENROLLMENT_STATUS_OPTIONS = ["재학", "휴학", "수료/졸업유예"];
+const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"];
 const ACADEMIC_YEARS = ["1", "2", "3", "4", "5"];
 const PARENT_OCCUPATIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
@@ -276,6 +277,12 @@ export default function ScholarshipForm({
           name="qual_nationality"
           defaultValue={dv.qual_nationality ?? ""}
           options={["내국인", "외국인"]}
+        />
+        <CheckboxGroup
+          label="입학 구분 제한"
+          name="qual_admission_type"
+          options={ADMISSION_TYPES}
+          defaultSelected={(dv.qual_admission_type ?? []).map(String)}
         />
         <CheckboxGroup
           label="부모 직업 제한"
