@@ -625,6 +625,17 @@ function Step2({ form, update, updateMultiple }: {
           />
         </Field>
       </div>
+      <Field label="직전학기 이수학점">
+        <TextInput
+          type="number"
+          value={form.last_semester_earned_credits}
+          onChange={(e) => update("last_semester_earned_credits", e.target.value)}
+          placeholder="예: 18"
+          min="0"
+          max="30"
+          step="0.5"
+        />
+      </Field>
       <p className="text-xs text-gray-400 -mt-2">4.5 만점 기준으로 입력해주세요.</p>
     </div>
   );
@@ -715,6 +726,7 @@ const INITIAL_FORM: OnboardingFormData = {
   has_double_major: false,
   double_major_college_id: "", double_major_department_id: "", double_major_department: "",
   academic_year: "", academic_semester: "", enrollment_status: "", gpa: "", gpa_last_semester: "",
+  last_semester_earned_credits: "",
   income_level: "", household_size: "",
   special_info: [], parent_occupation: [], military_status: "",
 };
@@ -752,6 +764,10 @@ function validateStep(step: number, form: OnboardingFormData): string {
       return "누적 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
     if (form.gpa_last_semester && (parseFloat(form.gpa_last_semester) < 0 || parseFloat(form.gpa_last_semester) > 4.5))
       return "직전 학기 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
+    const lastSemesterCredits = parseFloat(form.last_semester_earned_credits);
+    if (!form.last_semester_earned_credits) return "직전학기 이수학점을 입력해주세요.";
+    if (!Number.isFinite(lastSemesterCredits) || lastSemesterCredits < 0 || lastSemesterCredits > 30)
+      return "직전학기 이수학점은 0 ~ 30 사이로 입력해주세요.";
   }
   if (step === 2) {
     if (!form.income_level) return "소득분위를 선택해주세요.";

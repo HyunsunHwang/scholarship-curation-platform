@@ -99,6 +99,7 @@ export interface Database {
           enrollment_status: EnrollmentStatusType | null;
           gpa: number | null;              // 전체 누적 학점
           gpa_last_semester: number | null; // 직전 학기 학점
+          last_semester_earned_credits: number | null; // 직전 학기 이수학점
           // 재정/가계
           income_level: number | null;
           household_size: number | null;
@@ -143,6 +144,7 @@ export interface Database {
           enrollment_status?: EnrollmentStatusType | null;
           gpa?: number | null;
           gpa_last_semester?: number | null;
+          last_semester_earned_credits?: number | null;
           income_level?: number | null;
           household_size?: number | null;
           special_info?: SpecialInfoType[] | null;

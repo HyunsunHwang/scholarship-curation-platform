@@ -36,6 +36,7 @@ export type OnboardingFormData = {
   enrollment_status: string;
   gpa: string;               // 전체 누적 학점
   gpa_last_semester: string; // 직전 학기 학점
+  last_semester_earned_credits: string; // 직전 학기 이수학점
   // 학적사항 - 국내 대학 (계층형 선택)
   university_id: string;
   school_name: string;       // 대학교 표시명 (매칭용 텍스트)
@@ -128,6 +129,11 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     gpa_last_semester: profile.gpa_last_semester
       ? String(profile.gpa_last_semester)
       : "",
+    last_semester_earned_credits:
+      profile.last_semester_earned_credits !== null &&
+      profile.last_semester_earned_credits !== undefined
+        ? String(profile.last_semester_earned_credits)
+        : "",
     income_level:
       profile.income_level !== null && profile.income_level !== undefined
         ? String(profile.income_level)
@@ -211,6 +217,9 @@ export async function saveProfile(
       gpa_last_semester: data.gpa_last_semester
         ? parseFloat(data.gpa_last_semester)
         : null,
+      last_semester_earned_credits: data.last_semester_earned_credits
+        ? parseFloat(data.last_semester_earned_credits)
+        : null,
       // 재정/가계
       income_level,
       household_size: data.household_size ? parseInt(data.household_size) : null,
@@ -283,6 +292,16 @@ function validateProfile(data: OnboardingFormData): string | null {
     (!Number.isFinite(lastGpa) || lastGpa < 0 || lastGpa > 4.5)
   ) {
     return "직전 학기 학점은 0.0 ~ 4.5 사이로 입력해주세요.";
+  }
+
+  const lastSemesterCredits = data.last_semester_earned_credits
+    ? parseFloat(data.last_semester_earned_credits)
+    : null;
+  if (lastSemesterCredits === null) {
+    return "직전학기 이수학점을 입력해주세요.";
+  }
+  if (!Number.isFinite(lastSemesterCredits) || lastSemesterCredits < 0 || lastSemesterCredits > 30) {
+    return "직전학기 이수학점은 0 ~ 30 사이로 입력해주세요.";
   }
 
   return null;
