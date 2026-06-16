@@ -12,6 +12,7 @@ export type GenderType = "남성" | "여성";
 export type NationalityType = "내국인" | "외국인";
 export type MaritalStatusType = "미혼" | "기혼";
 export type ParentCohabitationType = "동거" | "별거";
+export type AdmissionType = "일반입학" | "편입학" | "재입학";
 export type MilitaryStatusType = "군필" | "미필" | "비대상" | "면제";
 export type SchoolLocationType = "국내 대학" | "해외 대학";
 export type SchoolCategoryType = "4년제" | "전문대" | "대학원" | "사이버대" | "방통대";
@@ -85,6 +86,7 @@ export interface Database {
           // 학적사항
           school_location: SchoolLocationType | null;
           school_category: SchoolCategoryType | null;
+          admission_type: AdmissionType | null;
           school_name: string | null;
           department: string | null;
           university_id: number | null;
@@ -130,6 +132,7 @@ export interface Database {
           parent_address?: string | null;
           school_location?: SchoolLocationType | null;
           school_category?: SchoolCategoryType | null;
+          admission_type?: AdmissionType | null;
           school_name?: string | null;
           department?: string | null;
           university_id?: number | null;

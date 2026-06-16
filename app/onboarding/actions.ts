@@ -13,10 +13,13 @@ import type {
   SpecialInfoType,
   ParentOccupationType,
   ParentCohabitationType,
+  AdmissionType,
 } from "@/lib/database.types";
 
 const FORM_ENROLLMENT_STATUSES = ["재학", "휴학", "수료/졸업유예"] as const;
+const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"] as const;
 type FormEnrollmentStatus = (typeof FORM_ENROLLMENT_STATUSES)[number];
+type FormAdmissionType = (typeof ADMISSION_TYPES)[number];
 
 function toFormEnrollmentStatus(status: EnrollmentStatusType | null): FormEnrollmentStatus | "" {
   if (!status) return "";
@@ -48,6 +51,7 @@ export type OnboardingFormData = {
   // 학적사항 - 공통
   school_location: string;
   school_category: string;
+  admission_type: string;
   academic_year: string;
   academic_semester: string;
   enrollment_status: string;
@@ -124,6 +128,7 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     parent_address: profile.parent_address ?? "",
     school_location: profile.school_location ?? "",
     school_category: profile.school_category ?? "",
+    admission_type: profile.admission_type ?? "",
     school_name: profile.school_name ?? "",
     department: profile.department ?? "",
     university_id: profile.university_id ? String(profile.university_id) : "",
@@ -212,6 +217,7 @@ export async function saveProfile(
       // 학적사항
       school_location: (data.school_location || null) as SchoolLocationType | null,
       school_category: (data.school_category || null) as SchoolCategoryType | null,
+      admission_type: (data.admission_type || null) as AdmissionType | null,
       school_name: data.school_name || null,
       department: data.department || null,
       university_id: data.university_id ? parseInt(data.university_id) : null,
@@ -278,6 +284,9 @@ function validateProfile(data: OnboardingFormData): string | null {
   }
   if (!data.school_location) return "학교 소재를 선택해주세요.";
   if (!data.school_category) return "학교 유형을 선택해주세요.";
+  if (data.admission_type && !ADMISSION_TYPES.includes(data.admission_type as FormAdmissionType)) {
+    return "입학 구분 값이 올바르지 않습니다.";
+  }
 
   if (data.school_location === "국내 대학") {
     if (!data.university_id) return "대학교를 선택해주세요.";

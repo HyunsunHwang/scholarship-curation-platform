@@ -63,10 +63,17 @@ const ENROLLMENT_STATUSES = [
   { value: "휴학", label: "휴학" },
   { value: "수료/졸업유예", label: "수료/졸업유예" },
 ];
-const ACADEMIC_YEARS = [
-  { value: "1", label: "1학년" }, { value: "2", label: "2학년" },
-  { value: "3", label: "3학년" }, { value: "4", label: "4학년" },
-  { value: "5", label: "초과학기 이상" },
+const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"];
+const ACADEMIC_TERMS = [
+  { value: "1-1", label: "1학년 1학기", year: "1", semester: "1" },
+  { value: "1-2", label: "1학년 2학기", year: "1", semester: "2" },
+  { value: "2-1", label: "2학년 1학기", year: "2", semester: "1" },
+  { value: "2-2", label: "2학년 2학기", year: "2", semester: "2" },
+  { value: "3-1", label: "3학년 1학기", year: "3", semester: "1" },
+  { value: "3-2", label: "3학년 2학기", year: "3", semester: "2" },
+  { value: "4-1", label: "4학년 1학기", year: "4", semester: "1" },
+  { value: "4-2", label: "4학년 2학기", year: "4", semester: "2" },
+  { value: "4-2+", label: "4학년 2학기 초과", year: "5", semester: "1" },
 ];
 const INCOME_LEVELS = [
   { value: "0", label: "0구간 (기초/차상위)" },
@@ -421,6 +428,9 @@ function Step2({ form, update, updateMultiple }: {
   }, [form.double_major_college_id]);
 
   const isKorean = form.school_location === "국내 대학";
+  const academicTermValue = ACADEMIC_TERMS.find(
+    (term) => term.year === form.academic_year && term.semester === form.academic_semester
+  )?.value ?? "";
 
   return (
     <div className="flex flex-col gap-5">
@@ -447,6 +457,19 @@ function Step2({ form, update, updateMultiple }: {
           <option value="">선택해주세요</option>
           {SCHOOL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </SelectInput>
+      </Field>
+
+      <Field label="입학 구분" optional>
+        <div className="flex flex-wrap gap-2">
+          {ADMISSION_TYPES.map((type) => (
+            <RadioChip
+              key={type}
+              label={type}
+              selected={form.admission_type === type}
+              onClick={() => update("admission_type", form.admission_type === type ? "" : type)}
+            />
+          ))}
+        </div>
       </Field>
 
       {isKorean ? (
@@ -587,17 +610,19 @@ function Step2({ form, update, updateMultiple }: {
 
       {/* 학년 / 학기 */}
       <Field label="학년 / 학기">
-        <div className="flex gap-2">
-          <SelectInput value={form.academic_year} onChange={(e) => update("academic_year", e.target.value)}>
-            <option value="">학년</option>
-            {ACADEMIC_YEARS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
-          </SelectInput>
-          <SelectInput value={form.academic_semester} onChange={(e) => update("academic_semester", e.target.value)}>
-            <option value="">학기</option>
-            <option value="1">1학기</option>
-            <option value="2">2학기</option>
-          </SelectInput>
-        </div>
+        <SelectInput
+          value={academicTermValue}
+          onChange={(e) => {
+            const selected = ACADEMIC_TERMS.find((term) => term.value === e.target.value);
+            updateMultiple({
+              academic_year: selected?.year ?? "",
+              academic_semester: selected?.semester ?? "",
+            });
+          }}
+        >
+          <option value="">선택해주세요</option>
+          {ACADEMIC_TERMS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
+        </SelectInput>
       </Field>
 
       {/* 재학 상태 */}
@@ -725,6 +750,7 @@ const INITIAL_FORM: OnboardingFormData = {
   gender: "", phone: "", address: "", nationality: "", marital_status: "",
   parent_cohabitation: "", parent_address: "",
   school_location: "", school_category: "",
+  admission_type: "",
   school_name: "", department: "",
   university_id: "", college_id: "", department_id: "",
   has_double_major: false,
