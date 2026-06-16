@@ -15,6 +15,23 @@ import type {
   ParentCohabitationType,
 } from "@/lib/database.types";
 
+const FORM_ENROLLMENT_STATUSES = ["재학", "휴학", "수료/졸업유예"] as const;
+type FormEnrollmentStatus = (typeof FORM_ENROLLMENT_STATUSES)[number];
+
+function toFormEnrollmentStatus(status: EnrollmentStatusType | null): FormEnrollmentStatus | "" {
+  if (!status) return "";
+  if (status === "휴학") return "휴학";
+  if (status === "재학" || status === "신입생") return "재학";
+  return "수료/졸업유예";
+}
+
+function toProfileEnrollmentStatus(status: string): EnrollmentStatusType | null {
+  if (!status) return null;
+  if (status === "재학" || status === "휴학") return status;
+  if (status === "수료/졸업유예") return "수료";
+  return null;
+}
+
 export type OnboardingFormData = {
   // 인적사항
   name: string;
@@ -124,7 +141,7 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     academic_semester: profile.academic_semester
       ? String(profile.academic_semester)
       : "",
-    enrollment_status: profile.enrollment_status ?? "",
+    enrollment_status: toFormEnrollmentStatus(profile.enrollment_status),
     gpa: profile.gpa ? String(profile.gpa) : "",
     gpa_last_semester: profile.gpa_last_semester
       ? String(profile.gpa_last_semester)
@@ -212,7 +229,7 @@ export async function saveProfile(
       academic_semester: data.academic_semester
         ? parseInt(data.academic_semester)
         : null,
-      enrollment_status: (data.enrollment_status || null) as EnrollmentStatusType | null,
+      enrollment_status: toProfileEnrollmentStatus(data.enrollment_status),
       gpa: data.gpa ? parseFloat(data.gpa) : null,
       gpa_last_semester: data.gpa_last_semester
         ? parseFloat(data.gpa_last_semester)
@@ -274,6 +291,9 @@ function validateProfile(data: OnboardingFormData): string | null {
   if (!data.academic_year) return "학년을 선택해주세요.";
   if (!data.academic_semester) return "학기를 선택해주세요.";
   if (!data.enrollment_status) return "재학 상태를 선택해주세요.";
+  if (!FORM_ENROLLMENT_STATUSES.includes(data.enrollment_status as FormEnrollmentStatus)) {
+    return "재학 상태 값이 올바르지 않습니다.";
+  }
   if (!data.income_level) return "소득분위를 선택해주세요.";
 
   if (data.has_double_major) {

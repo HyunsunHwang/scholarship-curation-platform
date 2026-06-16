@@ -58,7 +58,11 @@ const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1));
 
 const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
-const ENROLLMENT_STATUSES = ["신입생", "재학", "휴학", "초과이수기", "수료", "졸업예정", "졸업"];
+const ENROLLMENT_STATUSES = [
+  { value: "재학", label: "재학" },
+  { value: "휴학", label: "휴학" },
+  { value: "수료/졸업유예", label: "수료/졸업유예" },
+];
 const ACADEMIC_YEARS = [
   { value: "1", label: "1학년" }, { value: "2", label: "2학년" },
   { value: "3", label: "3학년" }, { value: "4", label: "4학년" },
@@ -600,8 +604,11 @@ function Step2({ form, update, updateMultiple }: {
       <Field label="재학 상태">
         <SelectInput value={form.enrollment_status} onChange={(e) => update("enrollment_status", e.target.value)}>
           <option value="">선택해주세요</option>
-          {ENROLLMENT_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          {ENROLLMENT_STATUSES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </SelectInput>
+        <p className="text-xs text-gray-400">
+          1학년 재학생은 신입생 성격, 4학년 이상 재학생은 졸업예정 성격으로 자동 판단됩니다.
+        </p>
       </Field>
 
       {/* 학점 */}
