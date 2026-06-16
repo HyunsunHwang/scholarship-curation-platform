@@ -201,10 +201,11 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
 }
 
 // ── Step 1: 인적사항 ──────────────────────────────────────────────────────
-function Step1({ form, update, openAddress }: {
+function Step1({ form, update, openAddress, openParentAddress }: {
   form: OnboardingFormData;
   update: <K extends keyof OnboardingFormData>(field: K, value: OnboardingFormData[K]) => void;
   openAddress: () => void;
+  openParentAddress: () => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -276,6 +277,41 @@ function Step1({ form, update, openAddress }: {
           ))}
         </div>
       </Field>
+
+      <Field label="부모님과 동거 여부">
+        <div className="flex gap-2">
+          {["동거", "별거"].map((status) => (
+            <RadioChip
+              key={status}
+              label={status}
+              selected={form.parent_cohabitation === status}
+              onClick={() => {
+                update("parent_cohabitation", status);
+                if (status === "동거") update("parent_address", "");
+              }}
+            />
+          ))}
+        </div>
+      </Field>
+
+      {form.parent_cohabitation === "별거" && (
+        <Field label="부모님 주소">
+          <div className="flex gap-2">
+            <TextInput
+              value={form.parent_address}
+              readOnly
+              placeholder="검색 버튼을 눌러 부모님 주소를 선택해주세요"
+            />
+            <button
+              type="button"
+              onClick={openParentAddress}
+              className="shrink-0 rounded-lg border border-brand/40 px-4 py-2.5 text-sm font-medium text-brand transition hover:bg-cream"
+            >
+              검색
+            </button>
+          </div>
+        </Field>
+      )}
     </div>
   );
 }
@@ -672,6 +708,7 @@ function Step4({ form, toggleArray, update }: {
 const INITIAL_FORM: OnboardingFormData = {
   name: "", birth_year: "", birth_month: "", birth_day: "",
   gender: "", phone: "", address: "", nationality: "", marital_status: "",
+  parent_cohabitation: "", parent_address: "",
   school_location: "", school_category: "",
   school_name: "", department: "",
   university_id: "", college_id: "", department_id: "",
@@ -690,6 +727,8 @@ function validateStep(step: number, form: OnboardingFormData): string {
     if (!form.phone) return "연락처를 입력해주세요.";
     if (!form.address) return "주소지를 입력해주세요.";
     if (!form.nationality) return "국적을 선택해주세요.";
+    if (!form.parent_cohabitation) return "부모님과 동거 여부를 선택해주세요.";
+    if (form.parent_cohabitation === "별거" && !form.parent_address.trim()) return "부모님 주소를 입력해주세요.";
   }
   if (step === 1) {
     if (!form.school_location) return "학교 소재를 선택해주세요.";
@@ -730,7 +769,7 @@ export default function OnboardingPageClient({
   const [form, setForm] = useState<OnboardingFormData>(INITIAL_FORM);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [addressModalTarget, setAddressModalTarget] = useState<"address" | "parent_address" | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
 
@@ -829,10 +868,10 @@ export default function OnboardingPageClient({
   return (
     <>
       <Script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" strategy="lazyOnload" />
-      {showAddressModal && (
+      {addressModalTarget && (
         <AddressModal
-          onSelect={(addr) => update("address", addr)}
-          onClose={() => setShowAddressModal(false)}
+          onSelect={(addr) => update(addressModalTarget, addr)}
+          onClose={() => setAddressModalTarget(null)}
         />
       )}
 
@@ -857,7 +896,12 @@ export default function OnboardingPageClient({
             <h2 className="mb-6 text-lg font-bold text-ink">{STEPS[step]}</h2>
 
             {step === 0 && (
-              <Step1 form={form} update={update} openAddress={() => setShowAddressModal(true)} />
+              <Step1
+                form={form}
+                update={update}
+                openAddress={() => setAddressModalTarget("address")}
+                openParentAddress={() => setAddressModalTarget("parent_address")}
+              />
             )}
             {step === 1 && (
               <Step2 form={form} update={update} updateMultiple={updateMultiple} />

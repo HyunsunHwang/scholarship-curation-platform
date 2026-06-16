@@ -12,6 +12,7 @@ import type {
   MilitaryStatusType,
   SpecialInfoType,
   ParentOccupationType,
+  ParentCohabitationType,
 } from "@/lib/database.types";
 
 export type OnboardingFormData = {
@@ -25,6 +26,8 @@ export type OnboardingFormData = {
   address: string;
   nationality: string;
   marital_status: string;
+  parent_cohabitation: string;
+  parent_address: string;
   // 학적사항 - 공통
   school_location: string;
   school_category: string;
@@ -99,6 +102,8 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     address: profile.address ?? "",
     nationality: profile.nationality ?? "",
     marital_status: profile.marital_status ?? "",
+    parent_cohabitation: profile.parent_cohabitation ?? "",
+    parent_address: profile.parent_address ?? "",
     school_location: profile.school_location ?? "",
     school_category: profile.school_category ?? "",
     school_name: profile.school_name ?? "",
@@ -163,6 +168,9 @@ export async function saveProfile(
       : parseInt(data.income_level);
   const normalizedName = data.name.trim();
   const normalizedPhone = data.phone.replace(/\D/g, "");
+  const normalizedParentAddress = data.parent_address.trim();
+  const parentAddress =
+    data.parent_cohabitation === "별거" ? normalizedParentAddress || null : null;
 
   const { error } = await supabase
     .from("profiles")
@@ -175,6 +183,9 @@ export async function saveProfile(
       address: data.address || null,
       nationality: (data.nationality || null) as NationalityType | null,
       marital_status: (data.marital_status || null) as MaritalStatusType | null,
+      parent_cohabitation:
+        (data.parent_cohabitation || null) as ParentCohabitationType | null,
+      parent_address: parentAddress,
       // 학적사항
       school_location: (data.school_location || null) as SchoolLocationType | null,
       school_category: (data.school_category || null) as SchoolCategoryType | null,
@@ -235,6 +246,10 @@ function validateProfile(data: OnboardingFormData): string | null {
   if (!data.phone) return "연락처를 입력해주세요.";
   if (!data.address) return "주소지를 입력해주세요.";
   if (!data.nationality) return "국적을 선택해주세요.";
+  if (!data.parent_cohabitation) return "부모님과 동거 여부를 선택해주세요.";
+  if (data.parent_cohabitation === "별거" && !data.parent_address.trim()) {
+    return "부모님 주소를 입력해주세요.";
+  }
   if (!data.school_location) return "학교 소재를 선택해주세요.";
   if (!data.school_category) return "학교 유형을 선택해주세요.";
 
