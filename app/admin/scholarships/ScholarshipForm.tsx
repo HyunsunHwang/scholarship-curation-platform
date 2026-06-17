@@ -27,6 +27,7 @@ const SCHOOL_LOCATIONS = ["국내 대학", "해외 대학"];
 const SCHOOL_CATEGORIES = ["4년제", "전문대", "대학원", "사이버대", "방통대"];
 const ENROLLMENT_STATUS_OPTIONS = ["재학", "휴학", "수료/졸업유예"];
 const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"];
+const PARENT_COHABITATION_OPTIONS = ["동거", "별거"];
 const ACADEMIC_YEARS = ["1", "2", "3", "4", "5"];
 const PARENT_OCCUPATIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
@@ -234,6 +235,16 @@ export default function ScholarshipForm({
         </div>
         <Field label="최소 누적 학점" name="qual_gpa_min" type="number" step="0.01" defaultValue={dv.qual_gpa_min?.toString() ?? ""} placeholder="예: 3.0" />
         <Field label="최소 직전 학기 학점" name="qual_gpa_last_semester_min" type="number" step="0.01" defaultValue={dv.qual_gpa_last_semester_min?.toString() ?? ""} placeholder="예: 3.5" />
+        <Field
+          label="최소 직전학기 이수학점"
+          name="qual_last_semester_earned_credits_min"
+          type="number"
+          step="0.5"
+          min="0"
+          max="30"
+          defaultValue={dv.qual_last_semester_earned_credits_min?.toString() ?? ""}
+          placeholder="예: 12"
+        />
         <Field label="소득 분위 최소" name="qual_income_level_min" type="number" defaultValue={dv.qual_income_level_min?.toString() ?? ""} />
         <Field label="소득 분위 최대" name="qual_income_level_max" type="number" defaultValue={dv.qual_income_level_max?.toString() ?? ""} />
         <Field label="최대 가구원 수" name="qual_household_size_max" type="number" defaultValue={dv.qual_household_size_max?.toString() ?? ""} />
@@ -278,6 +289,12 @@ export default function ScholarshipForm({
           defaultValue={dv.qual_nationality ?? ""}
           options={["내국인", "외국인"]}
         />
+        <SelectField
+          label="부모 동거 여부 제한"
+          name="qual_parent_cohabitation"
+          defaultValue={dv.qual_parent_cohabitation ?? ""}
+          options={PARENT_COHABITATION_OPTIONS}
+        />
         <CheckboxGroup
           label="입학 구분 제한"
           name="qual_admission_type"
@@ -297,6 +314,12 @@ export default function ScholarshipForm({
           options={MILITARY_STATUSES}
         />
         <Field label="지역 (쉼표 구분)" name="qual_region" defaultValue={(dv.qual_region ?? []).join(", ")} placeholder="예: 서울, 경기" />
+        <Field
+          label="부모 거주 지역 (쉼표 구분)"
+          name="qual_parent_region"
+          defaultValue={(dv.qual_parent_region ?? []).join(", ")}
+          placeholder="예: 서울, 경기"
+        />
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">기타 요건</label>
           <TagInput

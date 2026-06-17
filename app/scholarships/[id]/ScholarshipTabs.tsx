@@ -22,6 +22,7 @@ export type ScholarshipDetail = {
   can_overlap: boolean | null;
   qual_gpa_min: number | null;
   qual_gpa_last_semester_min: number | null;
+  qual_last_semester_earned_credits_min: number | null;
   qual_income_level_max: number | null;
   qual_income_level_min: number | null;
   qual_household_size_max: number | null;
@@ -35,6 +36,8 @@ export type ScholarshipDetail = {
   qual_military_status: string | null;
   qual_nationality: string | null;
   qual_admission_type: string[] | null;
+  qual_parent_cohabitation: string | null;
+  qual_parent_region: string[] | null;
   qual_university: string[] | null;
   qual_enrollment_status: string[] | null;
   qual_school_location: string[] | null;
@@ -71,6 +74,7 @@ function hasQualifications(s: ScholarshipDetail): boolean {
   return !!(
     s.qual_gpa_min ||
     s.qual_gpa_last_semester_min ||
+    s.qual_last_semester_earned_credits_min ||
     s.qual_income_level_min ||
     s.qual_income_level_max ||
     s.qual_household_size_max ||
@@ -91,6 +95,8 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     s.qual_min_academic_semester ||
     s.qual_nationality
     || (s.qual_admission_type && s.qual_admission_type.length > 0)
+    || s.qual_parent_cohabitation
+    || (s.qual_parent_region && s.qual_parent_region.length > 0)
   );
 }
 
@@ -161,6 +167,9 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_gpa_last_semester_min) {
     rows.push({ icon: "📊", label: "학점 (직전)", value: `${s.qual_gpa_last_semester_min} 이상` });
   }
+  if (s.qual_last_semester_earned_credits_min) {
+    rows.push({ icon: "📘", label: "직전학기 이수학점", value: `${s.qual_last_semester_earned_credits_min}학점 이상` });
+  }
   if (s.qual_income_level_min || s.qual_income_level_max) {
     const value =
       s.qual_income_level_min && s.qual_income_level_max
@@ -185,6 +194,12 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   }
   if (s.qual_admission_type && s.qual_admission_type.length > 0) {
     rows.push({ icon: "🧾", label: "입학 구분", value: s.qual_admission_type.join(", ") });
+  }
+  if (s.qual_parent_cohabitation) {
+    rows.push({ icon: "🏠", label: "부모 동거 여부", value: s.qual_parent_cohabitation });
+  }
+  if (s.qual_parent_region && s.qual_parent_region.length > 0) {
+    rows.push({ icon: "🗺️", label: "부모 거주 지역", value: s.qual_parent_region.join(", ") });
   }
   if (s.qual_special_info && s.qual_special_info.length > 0) {
     rows.push({ icon: "✨", label: "기타 요건", value: s.qual_special_info.join(", ") });

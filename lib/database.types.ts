@@ -433,6 +433,7 @@ export interface Database {
           qual_major: string[] | null;             // 전공/학과명 배열
           qual_gpa_min: number | null;               // 누적 학점 최소
           qual_gpa_last_semester_min: number | null; // 직전 학기 학점 최소
+          qual_last_semester_earned_credits_min: number | null; // 직전 학기 이수학점 최소
           qual_income_level_min: number | null;
           qual_income_level_max: number | null;
           qual_household_size_max: number | null;
@@ -442,6 +443,8 @@ export interface Database {
           qual_region: string[] | null;
           qual_nationality: NationalityType | null;
           qual_admission_type: AdmissionType[] | null;
+          qual_parent_cohabitation: ParentCohabitationType | null;
+          qual_parent_region: string[] | null;
           /** 상세 지원자격 기타 요건 표시용 자유 텍스트 배열 */
           qual_special_info: string[] | null;
           qual_parent_occupation: ParentOccupationType[] | null;
