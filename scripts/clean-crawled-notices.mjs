@@ -8,10 +8,10 @@ const cleanedPath =
 const rejectedPath =
   process.argv[4] ?? "exports/notices/scholarship-notices-new-20260527.rejected.csv";
 
-const DETAIL_URL_PATTERN =
-  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document/i;
 const MENU_TITLE_PATTERN =
   /(^|\s)(장학(금)?\s*(안내|지원|제도|FAQ)?|장학게시판|장학안내|장학공지|장학지원)\s*$|Scholarship\s*\/?\s*Job|ScholarshipScholarship/i;
+const DETAIL_HINT_PATTERN =
+  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document|\/\d{4,}(?:[/?#]|$)/i;
 
 function parseCsv(text) {
   const rows = [];
@@ -71,6 +71,29 @@ function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
+function isLikelyListOrMenuUrl(value) {
+  try {
+    const u = new URL(value);
+    const pathName = u.pathname.toLowerCase();
+    const search = u.search.toLowerCase();
+    const hasDetailHint = DETAIL_HINT_PATTERN.test(`${pathName}${search}`);
+    if (hasDetailHint) return false;
+
+    const listPathPattern =
+      /\/(notice|notices|board|boards|list|lists|community|news|scholarship|scholarships)(?:\/|\.do|\.php|\.asp|\.jsp)?$/i;
+    if (!listPathPattern.test(pathName)) return false;
+
+    const queryString = u.searchParams.toString();
+    if (!queryString) return true;
+
+    const listOnlyKeys = ["page", "offset", "limit", "category", "keyfield", "key", "kind", "menuid", "type"];
+    const keys = [...u.searchParams.keys()].map((key) => key.toLowerCase());
+    return keys.every((key) => listOnlyKeys.includes(key));
+  } catch {
+    return false;
+  }
+}
+
 function classify(row) {
   const title = cleanText(row.title);
   const noticeUrl = cleanText(row.noticeUrl);
@@ -81,7 +104,7 @@ function classify(row) {
   if (/^http:\/\//i.test(noticeUrl)) return "insecure_http_url";
   if (title.replace(/\s+/g, "").length <= 6) return "too_short_title";
   if (MENU_TITLE_PATTERN.test(title)) return "menu_like_title";
-  if (!DETAIL_URL_PATTERN.test(noticeUrl)) return "not_detail_notice_url";
+  if (isLikelyListOrMenuUrl(noticeUrl)) return "not_detail_notice_url";
   return null;
 }
 

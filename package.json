@@ -28,7 +28,9 @@
     "crawl:notices": "node scripts/crawl-scholarship-notices.mjs",
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
     "merge:notices": "node scripts/merge-cleaned-notices.mjs",
+    "evaluate:notices": "node scripts/evaluate-crawl-quality.mjs",
     "ingest:notices": "node scripts/ingest-notices-to-supabase.mjs",
+    "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs"
   },

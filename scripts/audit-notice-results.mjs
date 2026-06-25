@@ -3,6 +3,8 @@ import path from "node:path";
 
 const inputPath =
   process.argv[2] ?? "exports/notices/scholarship-notices-new-20260527.csv";
+const cleanedPath = process.argv[3] ?? "";
+const rejectedPath = process.argv[4] ?? "";
 
 function parseCsv(text) {
   const rows = [];
@@ -105,6 +107,12 @@ const sample = (list, limit = 8) =>
 const report = {
   input: path.resolve(inputPath),
   totalRows: rows.length,
+  cleanedRows: cleanedPath && fs.existsSync(path.resolve(cleanedPath))
+    ? Math.max(0, parseCsv(fs.readFileSync(path.resolve(cleanedPath), "utf8").replace(/^\uFEFF/, "")).length - 1)
+    : null,
+  rejectedRows: rejectedPath && fs.existsSync(path.resolve(rejectedPath))
+    ? Math.max(0, parseCsv(fs.readFileSync(path.resolve(rejectedPath), "utf8").replace(/^\uFEFF/, "")).length - 1)
+    : null,
   counts: Object.fromEntries(Object.entries(buckets).map(([key, list]) => [key, list.length])),
   samples: {
     menuLikeTitle: sample(buckets.menuLikeTitle),

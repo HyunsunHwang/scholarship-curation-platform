@@ -6,6 +6,21 @@ import { createClient } from "@/lib/supabase/server";
 import { buildScholarshipPayload } from "@/lib/scholarship-payload";
 import { extractScholarshipDraft } from "@/lib/notice-extraction";
 
+function normalizeRejectTag(reviewNote?: string) {
+  const note = (reviewNote ?? "").trim();
+  if (!note) return { taggedNote: null };
+  const hasTag = /^\[[a-z0-9_]+\]/i.test(note);
+  if (hasTag) return { taggedNote: note };
+
+  let tag = "other";
+  if (/중복|duplicate/i.test(note)) tag = "duplicate";
+  else if (/장학\s*아님|not\s*scholarship/i.test(note)) tag = "not_scholarship";
+  else if (/기간\s*종료|마감|expired|closed/i.test(note)) tag = "expired";
+  else if (/조건\s*불명확|정보\s*부족|insufficient/i.test(note)) tag = "insufficient_info";
+
+  return { taggedNote: `[${tag}] ${note}` };
+}
+
 async function ensureAdmin() {
   const supabase = await createClient();
   const {
@@ -114,7 +129,7 @@ export async function rejectNotice(
       status: "rejected",
       reviewed_at: new Date().toISOString(),
       reviewed_by: user?.id ?? null,
-      review_note: reviewNote?.trim() || null,
+      review_note: normalizeRejectTag(reviewNote).taggedNote,
     })
     .eq("id", noticeId);
   if (error) return { error: error.message };

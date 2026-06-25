@@ -26,6 +26,8 @@ const supabaseUrl =
   process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 const dryRun = String(process.env.INGEST_DRY_RUN ?? "").toLowerCase() === "true";
+const ingestSummaryPath =
+  process.env.INGEST_SUMMARY_PATH ?? "exports/notices/quality/ingest-summary-latest.json";
 
 const BATCH_SIZE = 200;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -166,10 +168,32 @@ async function main() {
   const records = readRows(inputPath);
   console.log(`csv=${path.resolve(inputPath)}`);
   console.log(`parsed_rows=${records.length}`);
+  const sourceGroupCounts = records.reduce((acc, row) => {
+    acc[row.source_group] = (acc[row.source_group] ?? 0) + 1;
+    return acc;
+  }, {});
 
   if (dryRun) {
     console.log("dry_run=true (no DB writes)");
     console.log(JSON.stringify(records.slice(0, 3), null, 2));
+    const resolvedSummaryPath = path.resolve(ingestSummaryPath);
+    fs.mkdirSync(path.dirname(resolvedSummaryPath), { recursive: true });
+    fs.writeFileSync(
+      resolvedSummaryPath,
+      JSON.stringify(
+        {
+          generatedAt: new Date().toISOString(),
+          csv: path.resolve(inputPath),
+          parsedRows: records.length,
+          dryRun: true,
+          sourceGroupCounts,
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+    console.log(`ingest_summary=${resolvedSummaryPath}`);
     return;
   }
 
@@ -206,8 +230,27 @@ async function main() {
     insertedOrSeen += typeof count === "number" ? count : batch.length;
   }
 
+  const resolvedSummaryPath = path.resolve(ingestSummaryPath);
+  fs.mkdirSync(path.dirname(resolvedSummaryPath), { recursive: true });
+  fs.writeFileSync(
+    resolvedSummaryPath,
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        csv: path.resolve(inputPath),
+        parsedRows: records.length,
+        insertedOrSeen,
+        batches: Math.ceil(records.length / BATCH_SIZE),
+        sourceGroupCounts,
+      },
+      null,
+      2,
+    ),
+    "utf8",
+  );
   console.log(`batches=${Math.ceil(records.length / BATCH_SIZE)}`);
   console.log(`ingest_done=true`);
+  console.log(`ingest_summary=${resolvedSummaryPath}`);
 }
 
 main().catch((error) => {

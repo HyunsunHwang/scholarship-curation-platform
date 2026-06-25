@@ -52,7 +52,22 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 - `CRAWL_LOOKBACK_DAYS=31` (기본값)
 - `CRAWL_ALLOW_UNDATED=true` (날짜 없는 공지도 포함)
 - `CRAWL_SOURCE_CONCURRENCY=1` (소스 병렬 처리 수, 기본 1)
+- `CRAWL_SOURCE_ID_PREFIX=ewha_` (`source_id` 접두사로 대상 소스 제한)
 - `CRAWL_IGNORE_SEEN=true` (중복 상태 무시하고 matched를 모두 new로 처리)
+
+운영 표준:
+
+- 그룹별 실행 시 반드시 `CRAWL_SOURCE_ID_PREFIX`를 함께 지정해 소스 혼입을 방지합니다.
+- 예시:
+  - 중앙대: `cau_`
+  - 이화여대: `ewha_`
+  - 한양대: `hanyang_`
+  - 홍익대: `hongik_`
+  - 경희대: `khu_`
+  - 고려대: `korea_`
+  - 성균관대: `skku_`
+  - 서울시립대: `uos_`
+  - 연세대: `yonsei_`
 
 ## 5) 아침 자동 실행 (GitHub Actions)
 
@@ -122,3 +137,33 @@ LLM_MODEL=gpt-4o-mini
 - 사이트 부하를 피하려고 상세 페이지 요청 사이에 짧은 지연이 있습니다.
 - robots.txt / 사이트 이용약관을 확인하고 허용 범위 내에서만 사용하세요.
 - 일부 사이트가 JS 렌더링 기반이면 Playwright 기반 수집기로 확장해야 합니다.
+
+## 7) 품질 평가/회귀 감지
+
+매일 배치 후 품질 평가 스크립트로 주요 지표를 계산합니다.
+
+- 스크립트: `scripts/evaluate-crawl-quality.mjs` (`npm run evaluate:notices`)
+- 출력:
+  - `exports/notices/quality/quality-snapshot-YYYYMMDD.json`
+  - `exports/notices/quality/quality-snapshot-latest.json`
+- 핵심 지표:
+  - `source_success_rate`
+  - `precision_cleaned`
+  - `false_positive_rate`
+  - `daily_rows` 및 최근 중앙값 대비 급락 여부
+
+환경변수(선택):
+
+- `QUALITY_LOOKBACK_DAYS=7`
+- `QUALITY_DAILY_DROP_RATIO=0.5`
+- `QUALITY_SUCCESS_DROP_ABS=0.2`
+- `QUALITY_CORE_GROUPS=cau,ewha,korea`
+
+## 8) 검수 피드백 루프
+
+검수 결과(`promoted/rejected`, `review_note`)를 정기 집계해 정제 규칙/소스 튜닝에 반영합니다.
+
+- 스크립트: `scripts/summarize-crawled-feedback.mjs` (`npm run feedback:notices`)
+- 출력: `exports/notices/quality/review-feedback-latest.json`
+- 거절 사유는 `review_note`의 `[tag]` 접두사 기준으로 집계됩니다.
+  - 예: `[duplicate]`, `[not_scholarship]`, `[expired]`, `[insufficient_info]`

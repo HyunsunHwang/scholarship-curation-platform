@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { load as loadHtml } from "cheerio";
+import { extractNoticeUrlFromLinkNode } from "../lib/crawler-adapters/index.mjs";
 
 const DEFAULT_KEYWORDS = [
   "장학",
@@ -24,6 +25,7 @@ const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 15
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
 const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
 const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
+const SOURCE_ID_PREFIX = cleanText(process.env.CRAWL_SOURCE_ID_PREFIX ?? "").toLowerCase();
 const RUN_AT = new Date().toISOString();
 
 function parseCsv(text) {
@@ -176,22 +178,6 @@ function readSourceConfig(csvPath) {
     .filter((source) => source.sourceId && source.sourceName && source.listUrl && source.enabled);
 }
 
-function resolveUrl(value, listUrl, baseUrl) {
-  const input = cleanText(value);
-  if (!input) return "";
-  if (/^javascript:/i.test(input)) return "";
-  try {
-    return new URL(input, listUrl).toString();
-  } catch {
-    try {
-      if (baseUrl) return new URL(input, baseUrl).toString();
-      return "";
-    } catch {
-      return "";
-    }
-  }
-}
-
 function normalizeCharset(value) {
   const normalized = cleanText(value).toLowerCase().replace(/^['"]|['"]$/g, "");
   if (!normalized) return "";
@@ -278,8 +264,7 @@ function extractFromList(source, html) {
     const fallbackLinkNode = !itemRoot ? $("a[href]").eq(index) : null;
     const activeLinkNode = linkNode && linkNode.length ? linkNode : fallbackLinkNode;
 
-    const href = activeLinkNode?.attr("href") ?? "";
-    const noticeUrl = resolveUrl(href, source.listUrl, source.baseUrl);
+    const noticeUrl = extractNoticeUrlFromLinkNode(source, activeLinkNode);
     if (!noticeUrl || seen.has(noticeUrl)) return;
 
     const titleRaw = itemRoot
@@ -436,7 +421,25 @@ function formatKstDate(date = new Date()) {
 }
 
 async function run() {
-  const sources = readSourceConfig(INPUT_CSV_PATH);
+  const configuredSources = readSourceConfig(INPUT_CSV_PATH);
+  const configuredPrefixes = [...new Set(configuredSources.map((source) => source.sourceId.split("_")[0]))];
+  if (!SOURCE_ID_PREFIX && configuredPrefixes.length > 1) {
+    console.warn(
+      `warning=mixed_source_prefixes count=${configuredPrefixes.length} prefixes=${configuredPrefixes.join("|")}`,
+    );
+  }
+  const sources = SOURCE_ID_PREFIX
+    ? configuredSources.filter((source) =>
+        source.sourceId.toLowerCase().startsWith(SOURCE_ID_PREFIX),
+      )
+    : configuredSources;
+  if (sources.length === 0) {
+    throw new Error(
+      SOURCE_ID_PREFIX
+        ? `No enabled sources matched source prefix: ${SOURCE_ID_PREFIX}`
+        : "No enabled sources found.",
+    );
+  }
   const state = loadState(STATE_FILE_PATH);
   const seen = { ...state.seen };
   const crawled = [];
@@ -616,6 +619,7 @@ async function run() {
   console.log(`crawled=${crawled.length}`);
   console.log(`matched=${allMatched.length}`);
   console.log(`new=${allNew.length}`);
+  console.log(`source_prefix=${SOURCE_ID_PREFIX || "all"}`);
   console.log(`json=${jsonPath}`);
   console.log(`csv=${csvPath}`);
   console.log(`state=${resolvedStatePath}`);
