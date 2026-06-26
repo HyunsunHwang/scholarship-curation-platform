@@ -29,6 +29,7 @@
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
     "merge:notices": "node scripts/merge-cleaned-notices.mjs",
     "evaluate:notices": "node scripts/evaluate-crawl-quality.mjs",
+    "evaluate:source-health": "node scripts/evaluate-source-health.mjs",
     "ingest:notices": "node scripts/ingest-notices-to-supabase.mjs",
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",

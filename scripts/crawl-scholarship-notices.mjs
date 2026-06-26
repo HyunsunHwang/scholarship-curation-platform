@@ -18,6 +18,11 @@ const OUTPUT_DIR = process.argv[3] ?? "exports/notices";
 const STATE_FILE_PATH =
   process.argv[4] ?? ".crawler/scholarship-notice-state.json";
 const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 15_000);
+const REQUEST_RETRY_COUNT = Math.max(0, Number(process.env.CRAWL_RETRY_COUNT ?? 2));
+const REQUEST_RETRY_BACKOFF_MS = Math.max(
+  200,
+  Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000),
+);
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
@@ -227,26 +232,37 @@ function decodeHtmlBuffer(buffer, headerCharset) {
 }
 
 async function fetchHtml(url) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (compatible; ScholarshipNoticeBot/1.0; +https://example.org/bot)",
-        accept: "text/html,application/xhtml+xml",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+  let lastError = null;
+  for (let attempt = 0; attempt <= REQUEST_RETRY_COUNT; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          "user-agent":
+            "Mozilla/5.0 (compatible; ScholarshipNoticeBot/1.0; +https://example.org/bot)",
+          accept: "text/html,application/xhtml+xml",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const headerCharset = detectCharsetFromHeaders(response.headers.get("content-type") ?? "");
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      return decodeHtmlBuffer(bytes, headerCharset);
+    } catch (error) {
+      lastError = error;
+      if (attempt < REQUEST_RETRY_COUNT) {
+        const waitMs = REQUEST_RETRY_BACKOFF_MS * (attempt + 1);
+        await new Promise((resolve) => setTimeout(resolve, waitMs));
+        continue;
+      }
+    } finally {
+      clearTimeout(timeout);
     }
-    const headerCharset = detectCharsetFromHeaders(response.headers.get("content-type") ?? "");
-    const bytes = new Uint8Array(await response.arrayBuffer());
-    return decodeHtmlBuffer(bytes, headerCharset);
-  } finally {
-    clearTimeout(timeout);
   }
+  throw lastError ?? new Error("fetch failed");
 }
 
 function extractFromList(source, html) {

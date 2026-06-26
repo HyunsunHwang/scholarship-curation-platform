@@ -54,6 +54,9 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 - `CRAWL_SOURCE_CONCURRENCY=1` (소스 병렬 처리 수, 기본 1)
 - `CRAWL_SOURCE_ID_PREFIX=ewha_` (`source_id` 접두사로 대상 소스 제한)
 - `CRAWL_IGNORE_SEEN=true` (중복 상태 무시하고 matched를 모두 new로 처리)
+- `CRAWL_TIMEOUT_MS=30000` (요청 타임아웃, 기본 15000)
+- `CRAWL_RETRY_COUNT=2` (요청 재시도 횟수, 기본 2)
+- `CRAWL_RETRY_BACKOFF_MS=1200` (재시도 대기 시작값, 기본 1000)
 
 운영 표준:
 
@@ -159,6 +162,19 @@ LLM_MODEL=gpt-4o-mini
 - `QUALITY_SUCCESS_DROP_ABS=0.2`
 - `QUALITY_CORE_GROUPS=cau,ewha,korea`
 
+## 7-1) 소스 건강도(연속 실패) 평가
+
+연속 실패 소스를 자동으로 추적해 우선 점검 대상을 뽑습니다.
+
+- 스크립트: `scripts/evaluate-source-health.mjs` (`npm run evaluate:source-health`)
+- 출력: `exports/notices/quality/source-health-latest.json`
+- 기본 규칙: 최근 7일 기준 동일 소스가 3일 이상 연속 실패 시 candidate로 분류
+
+환경변수(선택):
+
+- `HEALTH_LOOKBACK_DAYS=7`
+- `HEALTH_CONSECUTIVE_ERROR_THRESHOLD=3`
+
 ## 8) 검수 피드백 루프
 
 검수 결과(`promoted/rejected`, `review_note`)를 정기 집계해 정제 규칙/소스 튜닝에 반영합니다.
@@ -167,3 +183,23 @@ LLM_MODEL=gpt-4o-mini
 - 출력: `exports/notices/quality/review-feedback-latest.json`
 - 거절 사유는 `review_note`의 `[tag]` 접두사 기준으로 집계됩니다.
   - 예: `[duplicate]`, `[not_scholarship]`, `[expired]`, `[insufficient_info]`
+
+실행 전 준비:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+위 두 값은 아래 순서로 읽습니다.
+
+1. 현재 셸 환경변수
+2. `.env.local` (권장)
+3. `.env.production`
+4. `.env`
+
+PowerShell 예시:
+
+```powershell
+$env:SUPABASE_URL="https://<project-ref>.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY="<service-role-key>"
+npm run feedback:notices
+```
