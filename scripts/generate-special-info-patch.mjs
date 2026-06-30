@@ -216,23 +216,6 @@ AS $function$
       OR p.academic_year = ANY(s.qual_academic_year)
     )
     AND (
-      s.qual_min_academic_year IS NULL
-      OR p.enrollment_status IN ('졸업예정'::public.enrollment_status_type, '졸업'::public.enrollment_status_type)
-      OR (
-        p.academic_year IS NOT NULL
-        AND (
-          p.academic_year > s.qual_min_academic_year
-          OR (
-            p.academic_year = s.qual_min_academic_year
-            AND (
-              s.qual_min_academic_semester IS NULL
-              OR (p.academic_semester IS NOT NULL AND p.academic_semester >= s.qual_min_academic_semester)
-            )
-          )
-        )
-      )
-    )
-    AND (
       s.qual_major IS NULL
       OR cardinality(s.qual_major) = 0
       OR EXISTS (
