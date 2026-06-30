@@ -11,7 +11,6 @@ SET
   name = '2026년 인재림 제6기 장학생',
   institution_type = '재단법인',
   support_types = ARRAY['학업장려금']::support_category[],
-  support_amount = 8000000,
   support_amount_text = '800만원 (+활동비)',
   apply_start_date = '2026-04-20',
   apply_end_date = '2026-05-11',

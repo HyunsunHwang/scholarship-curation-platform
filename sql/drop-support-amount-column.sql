@@ -1,11 +1,13 @@
-create or replace function public.get_public_home_scholarships_page(
-  p_page integer,
-  p_page_size integer
-)
-returns jsonb
-language sql
-stable
-as $$
+-- 지원금액 구조 단순화: support_amount_text만 유지
+
+ALTER TABLE public.scholarships
+  DROP COLUMN IF EXISTS support_amount;
+
+CREATE OR REPLACE FUNCTION public.get_public_home_scholarships_page(p_page integer, p_page_size integer)
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE
+AS $function$
 with params as (
   select
     greatest(coalesce(p_page, 1), 1) as page,
@@ -26,6 +28,7 @@ ordered as (
     s.view_count,
     s.is_recommended,
     s.recommended_sort_order,
+    s.is_advertisement,
     row_number() over (
       order by
         s.is_recommended desc,
@@ -76,6 +79,7 @@ rows_json as (
         'view_count', p.view_count,
         'is_recommended', p.is_recommended,
         'recommended_sort_order', p.recommended_sort_order,
+        'is_advertisement', p.is_advertisement,
         'scrap_count', coalesce(sc.scrap_count, 0)
       )
       order by p.rn
@@ -93,4 +97,4 @@ select jsonb_build_object(
 )
 from params
 cross join rows_json;
-$$;
+$function$;
