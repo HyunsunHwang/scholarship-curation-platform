@@ -7,7 +7,6 @@ SET
   organization = '한국장학재단',
   institution_type = '공공기관',
   support_types = ARRAY['해외연수비']::support_category[],
-  support_amount = 8500000,
   support_amount_text = '850만원 내외',
   apply_start_date = '2026-04-01',
   apply_end_date = '2026-04-30',

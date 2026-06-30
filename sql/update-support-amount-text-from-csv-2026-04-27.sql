@@ -1,11 +1,11 @@
 -- CSV 장학금_DB(5) 지원규모 표시 문구 반영
--- 기존 support_amount(숫자)는 정렬용으로 유지하고, support_amount_text를 화면 표시용으로 사용합니다.
+-- support_amount_text를 화면 표시용으로 사용합니다.
 
 ALTER TABLE public.scholarships
   ADD COLUMN IF NOT EXISTS support_amount_text text;
 
 COMMENT ON COLUMN public.scholarships.support_amount_text
-  IS '사용자에게 표시할 지원규모 원문/상세 문구. support_amount 숫자는 정렬·필터용으로 유지.';
+  IS '사용자에게 표시할 지원규모 원문/상세 문구.';
 
 WITH csv_support_amounts(name, organization, support_amount_text) AS (
   VALUES
