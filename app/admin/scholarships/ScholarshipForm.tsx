@@ -3,6 +3,7 @@
 import { useTransition, useState, useRef, useEffect, useCallback } from "react";
 import type { Scholarship } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
+import { SPECIAL_INFO_OPTIONS } from "@/lib/special-info";
 
 type Props = {
   defaultValues?: Partial<Scholarship>;
@@ -141,13 +142,6 @@ export default function ScholarshipForm({
           <CheckboxToHidden name="support_types" checkboxName="support_types_check" />
         </div>
         <Field
-          label={isAdMode ? "급여 (원, 정렬용) *" : "지원 금액 (원, 정렬용) *"}
-          name="support_amount"
-          type="number"
-          defaultValue={dv.support_amount?.toString() ?? ""}
-          required
-        />
-        <Field
           label={isAdMode ? "급여 표시 문구" : "지원 규모 표시 문구"}
           name="support_amount_text"
           defaultValue={dv.support_amount_text ?? ""}
@@ -250,8 +244,6 @@ export default function ScholarshipForm({
         <Field label="최대 가구원 수" name="qual_household_size_max" type="number" defaultValue={dv.qual_household_size_max?.toString() ?? ""} />
         <Field label="최소 나이" name="qual_age_min" type="number" defaultValue={dv.qual_age_min?.toString() ?? ""} />
         <Field label="최대 나이" name="qual_age_max" type="number" defaultValue={dv.qual_age_max?.toString() ?? ""} />
-        <Field label="최소 대상 학년" name="qual_min_academic_year" type="number" min="1" max="5" defaultValue={dv.qual_min_academic_year?.toString() ?? ""} placeholder="예: 4" />
-        <Field label="최소 대상 학기" name="qual_min_academic_semester" type="number" min="1" max="2" defaultValue={dv.qual_min_academic_semester?.toString() ?? ""} placeholder="예: 2" />
         <CheckboxGroup
           label="학교 소재 제한"
           name="qual_school_location"
@@ -321,14 +313,25 @@ export default function ScholarshipForm({
           placeholder="예: 서울, 경기"
         />
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">기타 요건</label>
-          <TagInput
+          <CheckboxGroup
+            label="특수 정보 조건"
             name="qual_special_info"
-            defaultTags={dv.qual_special_info ?? []}
-            placeholder="요건 입력 후 추가 (예: 장애인 대상, 다문화 가정)"
+            options={SPECIAL_INFO_OPTIONS}
+            defaultSelected={dv.qual_special_info ?? []}
           />
           <p className="mt-1 text-xs text-gray-400">
-            사용자 상세 페이지의 지원자격 「기타 요건」에 표시됩니다.
+            온보딩 특수정보와 매칭되는 조건만 선택합니다.
+          </p>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">기타 요건 (표시용)</label>
+          <TagInput
+            name="qual_extra_requirements"
+            defaultTags={dv.qual_extra_requirements ?? []}
+            placeholder="요건 입력 후 추가 (예: 8개월 활동 가능자)"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            상세 페이지에만 표시되며 매칭 필터에는 사용하지 않습니다.
           </p>
         </div>
       </Section>

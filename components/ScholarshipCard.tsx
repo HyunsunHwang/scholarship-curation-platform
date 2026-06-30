@@ -14,7 +14,6 @@ export type CardScholarship = {
   organization: string;
   institution_type: string;
   support_types: string[];
-  support_amount: number;
   support_amount_text?: string | null;
   apply_end_date: string;
   poster_image_url?: string | null;
@@ -90,15 +89,7 @@ function ScholarshipCard({
   const color = deadlineColor(scholarship.apply_end_date);
   const deadlineLabel = formatDeadline(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
-  const supportAmount = formatSupportAmount(
-    scholarship.support_amount,
-    scholarship.support_amount_text,
-    { compact: true }
-  );
-  const fullSupportAmount = formatSupportAmount(
-    scholarship.support_amount,
-    scholarship.support_amount_text
-  );
+  const supportAmount = formatSupportAmount(scholarship.support_amount_text);
 
   return (
     <div className="group flex flex-col">
@@ -186,7 +177,7 @@ function ScholarshipCard({
         </p>
         <p
           className="mt-1 truncate text-xs font-bold text-ink sm:text-sm"
-          title={fullSupportAmount}
+          title={supportAmount}
         >
           {supportAmount}
         </p>
