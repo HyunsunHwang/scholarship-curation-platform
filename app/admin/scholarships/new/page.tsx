@@ -2,7 +2,6 @@ import Link from "next/link";
 import ScholarshipForm from "../ScholarshipForm";
 import { createScholarship } from "../actions";
 import { createClient } from "@/lib/supabase/server";
-import { loadCrawlerDepartments } from "@/lib/crawler-departments";
 
 export default async function NewScholarshipPage({
   searchParams,
@@ -18,10 +17,10 @@ export default async function NewScholarshipPage({
     preferredType === "off_campus" ? "/admin/scholarships?type=off_campus" : "/admin/scholarships?type=on_campus";
 
   const supabase = await createClient();
-  const [{ data: universities }, crawlerDepartments] = await Promise.all([
-    supabase.from("universities").select("id, name").order("name"),
-    loadCrawlerDepartments(),
-  ]);
+  const { data: universities } = await supabase
+    .from("universities")
+    .select("name")
+    .order("name");
   const universityNames = (universities ?? []).map((u) => u.name);
 
   return (
@@ -40,10 +39,6 @@ export default async function NewScholarshipPage({
         action={createScholarship}
         submitLabel="장학금 등록"
         universities={universityNames}
-        universityDepartments={crawlerDepartments.map((entry) => ({
-          university: entry.university,
-          department: entry.department,
-        }))}
         returnPath={returnPath}
       />
     </div>

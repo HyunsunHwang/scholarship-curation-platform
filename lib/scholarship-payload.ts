@@ -1,5 +1,4 @@
 import type { Database } from "@/lib/database.types";
-import { splitSpecialInfoValues } from "@/lib/special-info";
 
 export type ScholarshipInsert =
   Database["public"]["Tables"]["scholarships"]["Insert"];
@@ -75,13 +74,6 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
   const mappedEnrollmentStatuses = mapEnrollmentStatusesForStorage(
     parseTextArray(g("qual_enrollment_status"))
   );
-  const parsedSpecialInfo = splitSpecialInfoValues(
-    parseTextArray(g("qual_special_info"))
-  );
-  const extraRequirements = [
-    ...parsedSpecialInfo.extra,
-    ...parseTextArray(g("qual_extra_requirements")),
-  ];
 
   return {
     name: g("name") ?? "",
@@ -89,6 +81,7 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     scholarship_type: parseScholarshipType(g("scholarship_type")),
     institution_type: g("institution_type") as ScholarshipInsert["institution_type"],
     support_types: parseTextArray(g("support_types")) as ScholarshipInsert["support_types"],
+    support_amount: parseOptionalFloat(g("support_amount")) ?? 0,
     support_amount_text: g("support_amount_text") || null,
     apply_start_date: g("apply_start_date") ?? "",
     apply_end_date: g("apply_end_date") ?? "",
@@ -101,6 +94,8 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     qual_academic_year: g("qual_academic_year")
       ? parseTextArray(g("qual_academic_year")).map(Number).filter((n) => !isNaN(n))
       : null,
+    qual_min_academic_year: parseOptionalInt(g("qual_min_academic_year")),
+    qual_min_academic_semester: parseOptionalInt(g("qual_min_academic_semester")),
     qual_enrollment_status: mappedEnrollmentStatuses.length > 0
       ? (mappedEnrollmentStatuses as ScholarshipInsert["qual_enrollment_status"])
       : null,
@@ -119,12 +114,7 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     qual_admission_type: parseTextArray(g("qual_admission_type")) as ScholarshipInsert["qual_admission_type"] || null,
     qual_parent_cohabitation: (g("qual_parent_cohabitation") || null) as ScholarshipInsert["qual_parent_cohabitation"],
     qual_parent_region: parseTextArray(g("qual_parent_region")) || null,
-    qual_special_info: parsedSpecialInfo.matched.length > 0
-      ? (parsedSpecialInfo.matched as ScholarshipInsert["qual_special_info"])
-      : null,
-    qual_extra_requirements: extraRequirements.length > 0
-      ? Array.from(new Set(extraRequirements))
-      : null,
+    qual_special_info: parseTextArray(g("qual_special_info")) as ScholarshipInsert["qual_special_info"] || null,
     qual_parent_occupation: parseTextArray(g("qual_parent_occupation")) as ScholarshipInsert["qual_parent_occupation"] || null,
     qual_military_status: (g("qual_military_status") || null) as ScholarshipInsert["qual_military_status"],
     can_overlap: bool("can_overlap"),

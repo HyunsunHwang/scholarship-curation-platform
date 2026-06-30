@@ -42,7 +42,7 @@ export default async function MyPage() {
       ? supabase
           .from("scholarships")
           .select(
-            "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
+            "id, name, organization, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
           )
           .in("id", bookmarkedIds)
       : Promise.resolve({ data: [] }),
@@ -64,6 +64,7 @@ export default async function MyPage() {
       organization: s.organization,
       institution_type: s.institution_type as string,
       support_types: s.support_types as string[],
+      support_amount: s.support_amount,
       support_amount_text: s.support_amount_text,
       apply_end_date: s.apply_end_date,
       poster_image_url: s.poster_image_url ?? null,

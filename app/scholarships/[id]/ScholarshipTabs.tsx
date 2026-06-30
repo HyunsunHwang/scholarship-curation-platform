@@ -14,6 +14,7 @@ export type ScholarshipDetail = {
   apply_url: string;
   homepage_url: string | null;
   support_types: string[];
+  support_amount: number;
   apply_start_date: string | null;
   apply_end_date: string;
   selection_count: number | null;
@@ -31,7 +32,6 @@ export type ScholarshipDetail = {
   qual_region: string[] | null;
   qual_major: string[] | null;
   qual_special_info: string[] | null;
-  qual_extra_requirements: string[] | null;
   qual_parent_occupation: string[] | null;
   qual_military_status: string | null;
   qual_nationality: string | null;
@@ -43,6 +43,8 @@ export type ScholarshipDetail = {
   qual_school_location: string[] | null;
   qual_school_category: string[] | null;
   qual_academic_year: number[] | null;
+  qual_min_academic_year: number | null;
+  qual_min_academic_semester: number | null;
   apply_method: string | null;
   required_documents: string[] | null;
   contact: string | null;
@@ -82,7 +84,6 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     (s.qual_region && s.qual_region.length > 0) ||
     (s.qual_major && s.qual_major.length > 0) ||
     (s.qual_special_info && s.qual_special_info.length > 0) ||
-    (s.qual_extra_requirements && s.qual_extra_requirements.length > 0) ||
     (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) ||
     s.qual_military_status ||
     (s.qual_university && s.qual_university.length > 0) ||
@@ -90,6 +91,8 @@ function hasQualifications(s: ScholarshipDetail): boolean {
     (s.qual_school_location && s.qual_school_location.length > 0) ||
     (s.qual_school_category && s.qual_school_category.length > 0) ||
     (s.qual_academic_year && s.qual_academic_year.length > 0) ||
+    s.qual_min_academic_year ||
+    s.qual_min_academic_semester ||
     s.qual_nationality
     || (s.qual_admission_type && s.qual_admission_type.length > 0)
     || s.qual_parent_cohabitation
@@ -145,6 +148,16 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
   if (s.qual_academic_year && s.qual_academic_year.length > 0) {
     rows.push({ icon: "📆", label: "학년", value: s.qual_academic_year.map((y) => `${y}학년`).join(", ") });
   }
+  if (s.qual_min_academic_year || s.qual_min_academic_semester) {
+    const semester = s.qual_min_academic_semester ? ` ${s.qual_min_academic_semester}학기` : "";
+    rows.push({
+      icon: "📆",
+      label: "최소 학년",
+      value: s.qual_min_academic_year
+        ? `${s.qual_min_academic_year}학년${semester} 이상`
+        : `${s.qual_min_academic_semester}학기 이상`,
+    });
+  }
   if (s.qual_major && s.qual_major.length > 0) {
     rows.push({ icon: "📚", label: "전공", value: s.qual_major.join(", ") });
   }
@@ -189,10 +202,7 @@ function QualSection({ s }: { s: ScholarshipDetail }) {
     rows.push({ icon: "🗺️", label: "부모 거주 지역", value: s.qual_parent_region.join(", ") });
   }
   if (s.qual_special_info && s.qual_special_info.length > 0) {
-    rows.push({ icon: "✨", label: "특수 정보", value: s.qual_special_info.join(", ") });
-  }
-  if (s.qual_extra_requirements && s.qual_extra_requirements.length > 0) {
-    rows.push({ icon: "📝", label: "기타 요건", value: s.qual_extra_requirements.join(", ") });
+    rows.push({ icon: "✨", label: "기타 요건", value: s.qual_special_info.join(", ") });
   }
   if (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) {
     rows.push({ icon: "💼", label: "부모 직업", value: s.qual_parent_occupation.join(", ") });

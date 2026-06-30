@@ -104,6 +104,13 @@ export default function AdForm({
           required
         />
         <Field
+          label="급여 정렬값(원) *"
+          name="support_amount"
+          type="number"
+          defaultValue={dv.support_amount != null ? String(dv.support_amount) : "0"}
+          required
+        />
+        <Field
           label="선발 인원"
           name="selection_count"
           type="number"

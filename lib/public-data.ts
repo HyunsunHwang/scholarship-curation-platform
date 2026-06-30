@@ -110,7 +110,7 @@ export const getCachedHomeScholarships = unstable_cache(
       supabase
         .from("scholarships")
         .select(
-          "id, name, organization, qual_university, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
+          "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
         )
         .eq("is_verified", true)
         .eq("list_on_home", true)
@@ -123,13 +123,7 @@ export const getCachedHomeScholarships = unstable_cache(
 
     if (error) {
       console.error("Failed to load cached home scholarships", error);
-      const fallbackPage = await getHomeScholarshipsPage({
-        page: 1,
-        pageSize: 50,
-      });
-      return fallbackPage.scholarships.filter(
-        (scholarship) => !isUniversitySpecificScholarship(scholarship, universityNames)
-      );
+      return [];
     }
 
     const publicScholarships = (scholarships ?? []).filter((scholarship) =>
@@ -145,7 +139,7 @@ export const getCachedHomeScholarships = unstable_cache(
       scrap_count: scrapCounts.get(scholarship.id) ?? 0,
     }));
   },
-  ["home-scholarships-v2"],
+  ["home-scholarships"],
   { revalidate: 5 * 60 }
 );
 
@@ -184,6 +178,7 @@ export async function getHomeScholarshipsPage({
           qual_university: string[] | null;
           institution_type: string;
           support_types: string[];
+          support_amount: number;
           support_amount_text: string | null;
           apply_end_date: string;
           poster_image_url: string | null;
@@ -229,7 +224,7 @@ async function getHomeScholarshipsPageFallback({
     supabase
       .from("scholarships")
       .select(
-        "id, name, organization, qual_university, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
+        "id, name, organization, qual_university, institution_type, support_types, support_amount, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)

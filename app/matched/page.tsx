@@ -57,6 +57,7 @@ export default async function MatchedPage() {
       organization: s.organization,
       institution_type: s.institution_type,
       support_types: s.support_types as string[],
+      support_amount: s.support_amount,
       support_amount_text: s.support_amount_text,
       apply_end_date: s.apply_end_date,
       poster_image_url: s.poster_image_url ?? null,

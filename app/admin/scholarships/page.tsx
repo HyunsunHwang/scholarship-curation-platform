@@ -37,7 +37,7 @@ export default async function AdminScholarshipsPage({
   let scholarshipsQuery = supabase
     .from("scholarships")
     .select(
-      "id, name, organization, scholarship_type, apply_start_date, apply_end_date, support_amount_text, is_verified, support_types, poster_image_url, list_on_home, is_recommended, recommended_sort_order",
+      "id, name, organization, scholarship_type, apply_start_date, apply_end_date, support_amount, support_amount_text, is_verified, support_types, poster_image_url, list_on_home, is_recommended, recommended_sort_order",
       { count: "exact" }
     )
     .eq("is_advertisement", false)

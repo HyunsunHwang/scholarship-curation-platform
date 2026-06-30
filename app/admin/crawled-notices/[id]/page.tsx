@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { loadCrawlerDepartments } from "@/lib/crawler-departments";
 import type { Scholarship } from "@/lib/database.types";
 import type { NoticeDraft } from "@/lib/notice-extraction";
-import { splitSpecialInfoValues } from "@/lib/special-info";
 import ScholarshipForm from "../../scholarships/ScholarshipForm";
 import GenerateDraftButton from "../GenerateDraftButton";
 import { promoteNotice } from "../actions";
@@ -28,12 +27,12 @@ function buildDefaultValues(params: {
   const draft = isNoticeDraft(notice.extracted_draft)
     ? notice.extracted_draft
     : {};
-  const parsedSpecialInfo = splitSpecialInfoValues(draft.qual_special_info ?? []);
 
   return {
     name: notice.title,
     organization: notice.source_name,
     scholarship_type: notice.scholarship_type,
+    support_amount: draft.support_amount ?? 0,
     support_amount_text: draft.support_amount_text ?? null,
     support_types: (draft.support_types ?? []) as Scholarship["support_types"],
     apply_start_date:
@@ -50,11 +49,7 @@ function buildDefaultValues(params: {
     qual_income_level_min: draft.qual_income_level_min ?? null,
     qual_income_level_max: draft.qual_income_level_max ?? null,
     qual_special_info:
-      parsedSpecialInfo.matched.length > 0 ? parsedSpecialInfo.matched : null,
-    qual_extra_requirements: [
-      ...parsedSpecialInfo.extra,
-      ...(draft.qual_extra_requirements ?? []),
-    ],
+      (draft.qual_special_info as Scholarship["qual_special_info"]) ?? null,
     required_documents: draft.required_documents ?? [],
     apply_method: draft.apply_method ?? "",
     contact: draft.contact ?? null,
