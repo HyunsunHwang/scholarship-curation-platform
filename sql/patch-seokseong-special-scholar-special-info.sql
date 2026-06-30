@@ -8,6 +8,7 @@ UPDATE public.scholarships
 SET qual_special_info = ARRAY[
       '순직자유자녀'::public.special_info_type,
       '북한이탈주민'::public.special_info_type,
+      '새터민'::public.special_info_type,
       '다문화가정'::public.special_info_type
     ]
 WHERE name = '특별장학생'

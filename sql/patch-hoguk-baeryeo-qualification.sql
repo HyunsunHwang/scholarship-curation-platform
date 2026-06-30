@@ -10,7 +10,7 @@ UPDATE public.scholarships
 SET qual_special_info = ARRAY[
       '다자녀'::public.special_info_type,
       '공상자'::public.special_info_type,
-      '장애인(가정)'::public.special_info_type,
+      '장애인'::public.special_info_type,
       '한부모가정'::public.special_info_type
     ],
     qual_gpa_min = 3.0,
