@@ -32,7 +32,6 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** extracted_draft에 저장되는 안전한 형태(부분 scholarship). */
 export type NoticeDraft = {
-  support_amount?: number | null;
   support_amount_text?: string | null;
   support_types?: string[];
   apply_start_date?: string | null;
@@ -46,6 +45,7 @@ export type NoticeDraft = {
   qual_income_level_min?: number | null;
   qual_income_level_max?: number | null;
   qual_special_info?: string[] | null;
+  qual_extra_requirements?: string[] | null;
   required_documents?: string[];
   apply_method?: string | null;
   contact?: string | null;
@@ -57,7 +57,7 @@ const SYSTEM_PROMPT = `당신은 한국 대학 장학 공지에서 정형 데이
 규칙:
 - 본문에 명확히 드러나지 않는 값은 절대 추측하지 말고 null(또는 빈 배열)로 두세요.
 - 날짜는 반드시 "YYYY-MM-DD" 형식. 연도가 없으면 null.
-- support_amount는 원 단위 숫자(예: 1,000,000). 금액이 불명확하면 null, 원문 표현은 support_amount_text에.
+- 지원금액은 support_amount_text에 원문 표현으로 저장합니다.
 - support_types는 다음 중에서만: ${SUPPORT_CATEGORIES.join(", ")}.
 - qual_enrollment_status는 다음 중에서만: ${ENROLLMENT_STATUSES.join(", ")}.
 - qual_income_level_min/max는 소득분위 0~10 정수.
@@ -74,7 +74,7 @@ function buildUserPrompt(input: {
     `[본문]`,
     input.body.slice(0, 12000),
     "",
-    `다음 키를 가진 JSON으로 출력: support_amount, support_amount_text, support_types, apply_start_date, apply_end_date, announcement_date, selection_count, qual_gpa_min, qual_academic_year, qual_enrollment_status, qual_major, qual_income_level_min, qual_income_level_max, qual_special_info, required_documents, apply_method, contact, note`,
+    `다음 키를 가진 JSON으로 출력: support_amount_text, support_types, apply_start_date, apply_end_date, announcement_date, selection_count, qual_gpa_min, qual_academic_year, qual_enrollment_status, qual_major, qual_income_level_min, qual_income_level_max, qual_special_info, qual_extra_requirements, required_documents, apply_method, contact, note`,
   ].join("\n");
 }
 
@@ -132,7 +132,6 @@ export function normalizeDraft(raw: unknown): NoticeDraft {
     unknown
   >;
   return {
-    support_amount: toNumberOrNull(o.support_amount),
     support_amount_text: toStringOrNull(o.support_amount_text),
     support_types: toStringArray(o.support_types, SUPPORT_CATEGORIES),
     apply_start_date: toDateOrNull(o.apply_start_date),
@@ -149,6 +148,7 @@ export function normalizeDraft(raw: unknown): NoticeDraft {
     qual_income_level_min: clampLevel(o.qual_income_level_min),
     qual_income_level_max: clampLevel(o.qual_income_level_max),
     qual_special_info: toStringArray(o.qual_special_info),
+    qual_extra_requirements: toStringArray(o.qual_extra_requirements),
     required_documents: toStringArray(o.required_documents),
     apply_method: toStringOrNull(o.apply_method),
     contact: toStringOrNull(o.contact),

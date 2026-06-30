@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ScholarshipForm from "../../ScholarshipForm";
 import { updateScholarship } from "../../actions";
+import { loadCrawlerDepartments } from "@/lib/crawler-departments";
 
 export default async function EditScholarshipPage({
   params,
@@ -22,9 +23,10 @@ export default async function EditScholarshipPage({
   if (isNaN(scholarshipId)) notFound();
 
   const supabase = await createClient();
-  const [{ data: scholarship }, { data: universities }] = await Promise.all([
+  const [{ data: scholarship }, { data: universities }, crawlerDepartments] = await Promise.all([
     supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
-    supabase.from("universities").select("name").order("name"),
+    supabase.from("universities").select("id, name").order("name"),
+    loadCrawlerDepartments(),
   ]);
   const universityNames = (universities ?? []).map((u) => u.name);
 
@@ -50,6 +52,10 @@ export default async function EditScholarshipPage({
         action={boundAction}
         submitLabel="변경사항 저장"
         universities={universityNames}
+        universityDepartments={crawlerDepartments.map((entry) => ({
+          university: entry.university,
+          department: entry.department,
+        }))}
         returnPath={returnPath}
       />
     </div>

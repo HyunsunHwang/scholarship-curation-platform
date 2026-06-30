@@ -19,9 +19,9 @@ export type SchoolCategoryType = "4년제" | "전문대" | "대학원" | "사이
 export type EnrollmentStatusType =
   | "신입생" | "재학" | "휴학" | "초과이수기" | "수료" | "졸업예정" | "졸업";
 export type SpecialInfoType =
-  | "다문화가정" | "기초생활수급자" | "차상위계층" | "장애인" | "새터민"
+  | "다문화가정" | "기초생활수급자" | "차상위계층" | "장애인(본인)" | "장애인(가정)"
   | "농어촌자녀" | "보훈대상자" | "조부모가정" | "다자녀" | "한부모가정"
-  | "학생가장" | "북한이탈주민" | "자립준비청년" | "독립유공자후손" | "공상자"
+  | "학생가장" | "북한이탈주민" | "자립준비청년" | "독립유공자후손" | "공상자" | "산재근로자 가정"
   | "순직자유자녀";
 export type ParentOccupationType =
   | "직업군인" | "군무원" | "농축어업인" | "건설근로자" | "소상공인"
@@ -416,7 +416,6 @@ export interface Database {
           scholarship_type: ScholarshipType;
           institution_type: InstitutionType;
           support_types: SupportCategory[];
-          support_amount: number;
           support_amount_text: string | null;
           view_count: number;
           apply_start_date: string;
@@ -427,8 +426,6 @@ export interface Database {
           qual_school_location: SchoolLocationType[] | null;
           qual_school_category: SchoolCategoryType[] | null;
           qual_academic_year: number[] | null;
-          qual_min_academic_year: number | null;
-          qual_min_academic_semester: number | null;
           qual_enrollment_status: EnrollmentStatusType[] | null;
           qual_major: string[] | null;             // 전공/학과명 배열
           qual_gpa_min: number | null;               // 누적 학점 최소
@@ -447,6 +444,8 @@ export interface Database {
           qual_parent_region: string[] | null;
           /** 상세 지원자격 기타 요건 표시용 자유 텍스트 배열 */
           qual_special_info: string[] | null;
+          /** 상세 지원자격에 표시되는 자유 텍스트(매칭 미사용) */
+          qual_extra_requirements: string[] | null;
           qual_parent_occupation: ParentOccupationType[] | null;
           qual_military_status: MilitaryStatusType | null;
           can_overlap: boolean;

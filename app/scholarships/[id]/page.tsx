@@ -59,15 +59,8 @@ export default async function ScholarshipDetailPage({
   const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const isAdvertisement = scholarship.is_advertisement === true;
-  const supportAmount = formatSupportAmount(
-    scholarship.support_amount,
-    scholarship.support_amount_text,
-    { compact: true }
-  );
-  const fullSupportAmount = formatSupportAmount(
-    scholarship.support_amount,
-    scholarship.support_amount_text
-  );
+  const supportAmount = formatSupportAmount(scholarship.support_amount_text);
+  const fullSupportAmount = supportAmount;
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-clip bg-[#fff2df]">
