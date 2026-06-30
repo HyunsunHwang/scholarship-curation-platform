@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { load as loadHtml } from "cheerio";
+import { Agent as UndiciAgent } from "undici";
 import { extractNoticeUrlFromLinkNode } from "../lib/crawler-adapters/index.mjs";
 
 const DEFAULT_KEYWORDS = [
@@ -31,6 +32,26 @@ const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURREN
 const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
 const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
 const SOURCE_ID_PREFIX = cleanText(process.env.CRAWL_SOURCE_ID_PREFIX ?? "").toLowerCase();
+const SOURCE_ID_ALLOWLIST = new Set(
+  String(process.env.CRAWL_SOURCE_ID_ALLOWLIST ?? "")
+    .split(/[,\s|]+/)
+    .map((item) => cleanText(item).toLowerCase())
+    .filter(Boolean),
+);
+const INSECURE_TLS_HOSTS = new Set(
+  String(process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS ?? "")
+    .split(/[,\s|]+/)
+    .map((item) => cleanText(item).toLowerCase())
+    .filter(Boolean),
+);
+const INSECURE_TLS_DISPATCHER =
+  INSECURE_TLS_HOSTS.size > 0
+    ? new UndiciAgent({
+        connect: {
+          rejectUnauthorized: false,
+        },
+      })
+    : null;
 const RUN_AT = new Date().toISOString();
 
 function parseCsv(text) {
@@ -232,6 +253,16 @@ function decodeHtmlBuffer(buffer, headerCharset) {
 }
 
 async function fetchHtml(url) {
+  let parsedUrl = null;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    parsedUrl = null;
+  }
+  const shouldAllowInsecureTls =
+    parsedUrl &&
+    INSECURE_TLS_HOSTS.has(parsedUrl.hostname.toLowerCase());
+
   let lastError = null;
   for (let attempt = 0; attempt <= REQUEST_RETRY_COUNT; attempt += 1) {
     const controller = new AbortController();
@@ -239,6 +270,7 @@ async function fetchHtml(url) {
     try {
       const response = await fetch(url, {
         signal: controller.signal,
+        dispatcher: shouldAllowInsecureTls ? INSECURE_TLS_DISPATCHER : undefined,
         headers: {
           "user-agent":
             "Mozilla/5.0 (compatible; ScholarshipNoticeBot/1.0; +https://example.org/bot)",
@@ -444,11 +476,16 @@ async function run() {
       `warning=mixed_source_prefixes count=${configuredPrefixes.length} prefixes=${configuredPrefixes.join("|")}`,
     );
   }
-  const sources = SOURCE_ID_PREFIX
-    ? configuredSources.filter((source) =>
-        source.sourceId.toLowerCase().startsWith(SOURCE_ID_PREFIX),
-      )
-    : configuredSources;
+  const sources = configuredSources.filter((source) => {
+    const sourceId = source.sourceId.toLowerCase();
+    if (SOURCE_ID_PREFIX && !sourceId.startsWith(SOURCE_ID_PREFIX)) {
+      return false;
+    }
+    if (SOURCE_ID_ALLOWLIST.size > 0 && !SOURCE_ID_ALLOWLIST.has(sourceId)) {
+      return false;
+    }
+    return true;
+  });
   if (sources.length === 0) {
     throw new Error(
       SOURCE_ID_PREFIX
@@ -636,6 +673,12 @@ async function run() {
   console.log(`matched=${allMatched.length}`);
   console.log(`new=${allNew.length}`);
   console.log(`source_prefix=${SOURCE_ID_PREFIX || "all"}`);
+  console.log(
+    `source_allowlist_count=${SOURCE_ID_ALLOWLIST.size > 0 ? SOURCE_ID_ALLOWLIST.size : "all"}`,
+  );
+  console.log(
+    `insecure_tls_hosts=${INSECURE_TLS_HOSTS.size > 0 ? [...INSECURE_TLS_HOSTS].join("|") : "none"}`,
+  );
   console.log(`json=${jsonPath}`);
   console.log(`csv=${csvPath}`);
   console.log(`state=${resolvedStatePath}`);
