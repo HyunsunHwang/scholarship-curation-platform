@@ -2,7 +2,6 @@ name: Daily Scholarship Notice Updates
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  CAU_RETRY_SOURCE_IDS: "cau_002,cau_010,cau_013,cau_014,cau_015,cau_016,cau_069,cau_072,cau_082,cau_083,cau_084"
 
 on:
   schedule:
@@ -98,20 +97,6 @@ jobs:
           CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-cau.csv exports/notices/cau .crawler/cau-daily-state.json
 
-      - name: Retry unstable CAU sources
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_ID_PREFIX: "cau_"
-          CRAWL_SOURCE_ID_ALLOWLIST: ${{ env.CAU_RETRY_SOURCE_IDS }}
-          CRAWL_SOURCE_CONCURRENCY: "1"
-          CRAWL_TIMEOUT_MS: "45000"
-          CRAWL_RETRY_COUNT: "3"
-          CRAWL_RETRY_BACKOFF_MS: "1800"
-          CRAWL_ALLOW_INSECURE_TLS_HOSTS: "econ.cau.ac.kr"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-cau.csv exports/notices/cau-retry .crawler/cau-daily-state.json
-
       - name: Clean CAU crawl results
         run: |
           TODAY=$(date +%Y%m%d)
@@ -123,24 +108,6 @@ jobs:
           else
             echo "skip=missing_cau_csv"
           fi
-
-      - name: Clean CAU retry results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/cau-retry/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/cau-retry/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/cau-retry/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/cau-retry/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_cau_retry_csv"
-          fi
-
-      - name: Merge CAU base+retry cleaned results
-        run: |
-          MERGE_INPUT_PATHS="exports/notices/cau/scholarship-notices-latest.cleaned.csv,exports/notices/cau-retry/scholarship-notices-latest.cleaned.csv" \
-          MERGE_OUTPUT_PATH="exports/notices/cau/scholarship-notices-latest.cleaned.csv" \
-          npm run merge:notices
 
       - name: Run Korea crawler
         env:
