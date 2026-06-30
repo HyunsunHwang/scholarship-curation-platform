@@ -2,26 +2,47 @@
 -- 매핑 메모:
 -- - institution_type: 대학교·KOSAF 혼합 → 주관 단대 기준 `대학교`
 -- - support_types: 학비감면→등록금; 기초수급 학업보조→학업장려금
--- - support_amount: 등록금 전액 개인별 → 0, 문구는 support_amount_text
+-- - support_amount_text: 등록금 전액 개인별 → 0, 문구는 support_amount_text
 -- - selection_count: 학과별 T.O → NULL
 -- - 마감 16:00는 qual_special_info·note
 -- - can_overlap: 미제공 → 국가 등록금성 보수적 false
 
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount, support_amount_text,
-  apply_start_date, apply_end_date, announcement_date, selection_count,
-  qual_university, qual_school_location, qual_school_category, qual_enrollment_status, qual_major,
-  qual_gpa_min, qual_special_info, can_overlap,
-  required_documents, apply_method, apply_url, homepage_url, contact, note,
-  selection_stages, selection_stage_1,
-  collected_at, is_verified, list_on_home, is_recommended
+  name,
+  organization,
+  institution_type,
+  support_types,
+  support_amount_text,
+  apply_start_date,
+  apply_end_date,
+  announcement_date,
+  selection_count,
+  qual_university,
+  qual_school_location,
+  qual_school_category,
+  qual_enrollment_status,
+  qual_major,
+  qual_gpa_min,
+  qual_special_info,
+  can_overlap,
+  required_documents,
+  apply_method,
+  apply_url,
+  homepage_url,
+  contact,
+  note,
+  selection_stages,
+  selection_stage_1,
+  collected_at,
+  is_verified,
+  list_on_home,
+  is_recommended
 )
 SELECT
   '2026 국가우수장학금(이공계) 재학중우수자 (2년 지원)',
   '한양대학교 공과대학 / 한국장학재단',
   '대학교',
   ARRAY['등록금', '학업장려금']::support_category[],
-  0,
   '졸업 시까지(최대 4개 학기) 등록금 전액 지원. 기초생활수급자는 학기당 생활비 250만 원 추가(공고·KOSAF 기준).',
   DATE '2026-05-11',
   DATE '2026-05-11',

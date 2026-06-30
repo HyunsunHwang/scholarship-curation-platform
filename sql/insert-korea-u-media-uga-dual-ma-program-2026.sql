@@ -8,7 +8,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -50,7 +49,6 @@ SELECT
   '고려대학교 미디어대학 / University of Georgia (UGA)',
   '대학교',
   ARRAY['등록금', '해외연수비']::support_category[],
-  0,
   'UGA 수학 기간 중 조지아 주 거주자 기준 등록금 적용 및 본교 등록금 전액 지원',
   DATE '2026-04-27',
   DATE '2026-05-10',
@@ -79,7 +77,8 @@ SELECT
   '미디어대학행정팀 (02-3290-1403 / jjbk@korea.ac.kr)',
   $note$
 공고문 기준 제출 방법·서식은 미디어대학 공지를 확인해 주세요. 공고에 선발 인원이 0명으로 표기된 경우는 학부에 확인이 필요할 수 있습니다.
-지원 유의사항 (원문 안내 반영): 이메일 제목 및 파일명은 UGA지원서 제출_이름, 학번 형식으로 제출합니다.
+지원 유의사항 (원문 안내 반영): 이메일 제목 및 파일명은 UGA지원서 제출_이름,
+  학번 형식으로 제출합니다.
 $note$,
   3,
   '1차 서류 심사',

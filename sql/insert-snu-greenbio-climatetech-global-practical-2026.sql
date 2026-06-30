@@ -11,7 +11,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -45,7 +44,6 @@ SELECT
   '서울대학교 그린바이오 혁신융합대학사업단',
   '대학교',
   ARRAY['학업장려금', '해외연수비', '기타']::support_category[],
-  0,
   '최우수 5개 팀 대상 2027 MWC 스페인 바르셀로나 현장 프로그램(및 교육·시제품 제작 등) 참여 비용 형태 지원 포함 — 규모·항목별 상세 접수 페이지 및 사업단 공문 확인',
   DATE '2026-04-22',
   DATE '2026-05-06',
@@ -72,7 +70,10 @@ SELECT
   'https://nextstep.io.kr/greenbio',
   '02-880-4990',
   $n$
-일정 참고 (공고 변경 가능): 약 6~8월 온라인 교육, 9~11월 멘토링 및 시제품 고도화, 11월 CO-SHOW 등 경진, 2027년 3월 바르셀로나 Mobile World Congress(MWC)·국제 프로그램 경로.
+일정 참고 (공고 변경 가능): 약 6~8월 온라인 교육,
+  9~11월 멘토링 및 시제품 고도화,
+  11월 CO-SHOW 등 경진,
+  2027년 3월 바르셀로나 Mobile World Congress(MWC)·국제 프로그램 경로.
 MWC 공식: https://www.mwcbarcelona.com/
 $n$,
   3,

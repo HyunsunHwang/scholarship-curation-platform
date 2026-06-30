@@ -12,7 +12,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -46,7 +45,6 @@ SELECT
   '(재)보건장학회',
   '민간재단',
   ARRAY['학업장려금', '기타']::support_category[],
-  5000000,
   '1인당 500만 원 · 타 기관 등록금/생활비 장학과 중복 수혜 가능',
   NULL,
   DATE '2026-05-11',
@@ -77,7 +75,8 @@ SELECT
     '총장 추천서'
   ],
   $n$
-방문 또는 이메일 접수(소속 대학). 예시: 21동 213호 방문 또는 skhan0708@snu.ac.kr — 학교·학과마다 다르므로 소속 대학 장학 담당 부서 공지를 우선 확인하고, 재단 공지(www.kr-hff.or.kr 재단소식)와 병행하세요.
+방문 또는 이메일 접수(소속 대학). 예시: 21동 213호 방문 또는 skhan0708@snu.ac.kr — 학교·학과마다 다르므로 소속 대학 장학 담당 부서 공지를 우선 확인하고,
+  재단 공지(www.kr-hff.or.kr 재단소식)와 병행하세요.
 $n$,
   'https://www.kr-hff.or.kr/',
   'https://www.kr-hff.or.kr/',
