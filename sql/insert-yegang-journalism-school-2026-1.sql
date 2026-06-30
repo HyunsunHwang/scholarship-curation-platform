@@ -6,7 +6,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -41,7 +40,6 @@ SELECT
   '예강희망키움재단',
   '민간재단',
   ARRAY['학업장려금', '기타', '해외연수비']::support_category[],
-  0,
   '실무형 저널리즘 멘토링 교육 전액 지원 및 우수자 해외 연수',
   DATE '2026-04-20',
   DATE '2026-05-07',
@@ -72,7 +70,8 @@ SELECT
   NULL,
   '02-3789-7863 / journalism@thebutter.org',
   $note$
-파일명: '예강 저널리즘스쿨 1기 지원서_ooo(실명 기재)', 우수기사 중앙일보 공익섹션 게재 기회 제공
+파일명: '예강 저널리즘스쿨 1기 지원서_ooo(실명 기재)',
+  우수기사 중앙일보 공익섹션 게재 기회 제공
 $note$,
   1,
   '서류 검토 후 선발(세부 공고 확인)',

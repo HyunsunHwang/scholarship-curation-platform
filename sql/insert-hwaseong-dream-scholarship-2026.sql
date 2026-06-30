@@ -1,7 +1,7 @@
 -- 2026 화성시 꿈드림 장학생 모집
 -- 매핑 메모:
 -- - institution_type 원문 "지자체 / 출자·출연기관" -> 단일 enum `지방자치단체`
--- - support_amount 범위형(100만~250만) -> 최대값 2500000 저장, 상세는 support_amount_text에 보존
+-- - support_amount_text 범위형(100만~250만) -> 최대값 2500000 저장, 상세는 support_amount_text에 보존
 -- - apply_start_date/apply_end_date 시간 정보는 qual_special_info에 보존 (DB는 DATE)
 -- - qual_income "학자금 지원 5구간 이하"는 DB 정수 소득필드와 스케일 차이로 qual_special_info에 보존
 
@@ -10,7 +10,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -40,7 +39,6 @@ SELECT
   '화성시 / 화성시인재육성재단',
   '지방자치단체',
   ARRAY['학업장려금']::support_category[],
-  2500000,
   '생활비 성격 장학금: 기본 100만 원 ~ 최대 250만 원(유형별 상이)',
   DATE '2026-05-06',
   DATE '2026-05-22',

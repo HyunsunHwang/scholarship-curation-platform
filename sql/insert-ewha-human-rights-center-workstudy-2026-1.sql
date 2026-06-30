@@ -1,7 +1,7 @@
 -- 2026-1학기 인권센터 대동제 근로장학생 모집 — 이화여자대학교 인권센터
 -- 매핑 메모:
 -- - support_types 원문 근로장학금 -> ENUM `기타`
--- - 지원금액은 시급형으로 고정 금액 미정 -> support_amount 0 + support_amount_text에 원문 반영
+-- - 지원금액은 시급형으로 고정 금액 미정 -> support_amount_text 0 + support_amount_text에 원문 반영
 -- - apply_end_date 시간 정보(17:00) 및 조기마감 가능성은 note/qual_special_info에 보존
 -- - 학점등록은 enum 부재 -> qual_enrollment_status는 재학, 원문은 qual_special_info에 보존
 
@@ -10,7 +10,6 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
-  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -40,7 +39,6 @@ SELECT
   '이화여자대학교 인권센터',
   '대학교',
   ARRAY['기타']::support_category[],
-  0,
   '2026년 최저임금을 시간 단위로 계산하여 지급 (사전 비대면 OT 시간 포함)',
   DATE '2026-05-10',
   DATE '2026-05-10',

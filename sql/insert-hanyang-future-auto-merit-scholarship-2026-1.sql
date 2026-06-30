@@ -2,25 +2,45 @@
 -- 매핑 메모:
 -- - organization: 원문 쉼표 → `RC 소프트웨어 행정팀 / 미래자동차공학과` 로 정리
 -- - support_types: 학비감면 → 등록금
--- - support_amount: 석차·% 차등 → 0 + support_amount_text
+-- - support_amount_text: 석차·% 차등 → 0 + support_amount_text
 -- - 마감 17:00는 qual_special_info·note
 -- - 학점 요건은 GPA 최소 없음 → qual_gpa_* 생략, 학점·학년은 qual_special_info
 
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount, support_amount_text,
-  apply_start_date, apply_end_date, announcement_date, selection_count,
-  qual_university, qual_school_location, qual_school_category, qual_enrollment_status, qual_major,
-  qual_special_info, can_overlap,
-  required_documents, apply_method, apply_url, homepage_url, contact, note,
-  selection_stages, selection_stage_1,
-  collected_at, is_verified, list_on_home, is_recommended
+  name,
+  organization,
+  institution_type,
+  support_types,
+  support_amount_text,
+  apply_start_date,
+  apply_end_date,
+  announcement_date,
+  selection_count,
+  qual_university,
+  qual_school_location,
+  qual_school_category,
+  qual_enrollment_status,
+  qual_major,
+  qual_special_info,
+  can_overlap,
+  required_documents,
+  apply_method,
+  apply_url,
+  homepage_url,
+  contact,
+  note,
+  selection_stages,
+  selection_stage_1,
+  collected_at,
+  is_verified,
+  list_on_home,
+  is_recommended
 )
 SELECT
   '2026-1학기 미래자동차공학과 성적우수장학금',
   '한양대학교 공과대학 RC 소프트웨어 행정팀 / 미래자동차공학과',
   '대학교',
   ARRAY['등록금']::support_category[],
-  0,
   '석차별 차등 지급: 등록금 100%, 50%, 100만 원(1~15등·공고 기준).',
   DATE '2026-05-17',
   DATE '2026-05-17',
