@@ -2,17 +2,55 @@ import fs from "node:fs";
 import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl =
-  process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+function cleanText(value) {
+  return String(value ?? "").trim();
+}
+
+function readEnvFile(filePath) {
+  if (!fs.existsSync(filePath)) return {};
+  const lines = fs.readFileSync(filePath, "utf8").split(/\r?\n/);
+  const env = {};
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const equalIndex = line.indexOf("=");
+    if (equalIndex <= 0) continue;
+    const key = line.slice(0, equalIndex).trim();
+    let value = line.slice(equalIndex + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    env[key] = value;
+  }
+  return env;
+}
+
+function loadSupabaseCredentials() {
+  const root = path.resolve(".");
+  const envFiles = [".env.local", ".env.production", ".env"];
+  const mergedEnv = {};
+  for (const envFile of envFiles) {
+    Object.assign(mergedEnv, readEnvFile(path.join(root, envFile)));
+  }
+  const supabaseUrl =
+    process.env.SUPABASE_URL ??
+    process.env.NEXT_PUBLIC_SUPABASE_URL ??
+    mergedEnv.SUPABASE_URL ??
+    mergedEnv.NEXT_PUBLIC_SUPABASE_URL ??
+    "";
+  const serviceRoleKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? mergedEnv.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  return { supabaseUrl: cleanText(supabaseUrl), serviceRoleKey: cleanText(serviceRoleKey) };
+}
+
+const { supabaseUrl, serviceRoleKey } = loadSupabaseCredentials();
 const OUTPUT_PATH =
   process.env.FEEDBACK_OUTPUT_PATH ?? "exports/notices/quality/review-feedback-latest.json";
 const LOOKBACK_DAYS = Number(process.env.FEEDBACK_LOOKBACK_DAYS ?? 14);
 const PAGE_SIZE = 1000;
-
-function cleanText(value) {
-  return String(value ?? "").trim();
-}
 
 function parseRejectTag(reviewNote) {
   const note = cleanText(reviewNote);
@@ -98,6 +136,9 @@ function aggregate(rows) {
 async function run() {
   if (!supabaseUrl || !serviceRoleKey) {
     console.log("skip=missing_supabase_credentials");
+    console.log(
+      "hint=set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or add them to .env.local)",
+    );
     return;
   }
 
