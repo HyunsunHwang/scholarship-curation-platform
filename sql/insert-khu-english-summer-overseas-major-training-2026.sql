@@ -3,7 +3,7 @@
 -- 매핑 메모:
 -- • institution_type 입력값 '대학교'는 enum 제약상 '학교법인'으로 매핑
 -- • support_types 입력값 '{해외연수, 학업보조비, 학점인정}'은 enum 제약상 {'해외연수비', '학업장려금', '기타'}로 매핑
--- • support_amount_text 범위값(300만~330만)은 숫자 컬럼 제약상 최소값 3000000 저장 + 범위는 support_amount_text/note에 보존
+-- • support_amount 범위값(300만~330만)은 숫자 컬럼 제약상 최소값 3000000 저장 + 범위는 support_amount_text/note에 보존
 -- • apply_end_date '24:00'은 date 컬럼 제약상 2026-05-18로 저장하고 시각 정보는 note에 보존
 -- • qual_grade 컬럼은 현재 스키마에 없어 qual_gpa_last_semester_min + qual_special_info로 이관
 -- • apply_start_date 미제공으로, 운영 입력 기준에서 보정 필요
@@ -13,6 +13,7 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -41,6 +42,7 @@ SELECT
   '경희대학교 영어영문학과',
   '학교법인',
   ARRAY['해외연수비', '학업장려금', '기타']::support_category[],
+  3000000,
   '1인당 최소 300만 ~ 최대 330만 원 지원 (파견비 지원, 전공 3학점 인정)',
   DATE '2026-05-18',
   DATE '2026-05-18',

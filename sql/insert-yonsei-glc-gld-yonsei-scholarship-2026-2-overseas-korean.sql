@@ -8,6 +8,7 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -45,6 +46,7 @@ SELECT
   '연세대학교 글로벌인재학부(GLC)',
   '학교',
   ARRAY['등록금']::support_category[],
+  0,
   '2026-2학기 등록금 선감면(고지서 감면 발행). 타 장학금 합산액이 등록금을 초과할 수 없음.',
   DATE '2026-05-18',
   DATE '2026-06-19',
@@ -81,8 +83,7 @@ SELECT
   'glc@yonsei.ac.kr',
   $n$
 국가장학금 소득분위 산출 후 심사 원칙(공고·안내 문서 우선 적용).
-모든 서류는 한글 또는 영문(또는 번역 증명된 번역본) 준수,
-  PDF 형식으로 하나의 파일 병합 제출 등 공고 기준 확인.
+모든 서류는 한글 또는 영문(또는 번역 증명된 번역본) 준수, PDF 형식으로 하나의 파일 병합 제출 등 공고 기준 확인.
 $n$,
   3,
   '온라인 신청 접수',

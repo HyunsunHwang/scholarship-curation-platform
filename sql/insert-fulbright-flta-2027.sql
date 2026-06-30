@@ -12,6 +12,7 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -45,6 +46,7 @@ SELECT
   '한미교육위원단 (Fulbright Korea)',
   '재단법인',
   ARRAY['생활비', '등록금', '해외연수비', '기타']::support_category[],
+  0,
   '생활비, Non-Degree 학비(학기당 2개 강좌), 미국무성 의료보험, 왕복 국제항공권, 수하물 비용 지원',
   DATE '2026-08-03',
   DATE '2026-08-28',
@@ -81,7 +83,8 @@ SELECT
   $sn$
 원서 접수는 2026-08-28 17:00 마감(공고 확인). 우편은 원서 제출 기간 내 소인 유효. 온라인 지원서는 5월부터 작성 가능 안내가 있을 수 있으나 제출 마감·필수 병행 절차는 공식 페이지를 우선 확인하세요.
 파견: 2027년 가을학기부터 미국 대학교 약 9개월 간 한국어 강의 보조 및 비학위(Non-degree) 과정 수강.
-$sn$,
+$sn$
+  ,
   3,
   '서류 심사 및 추천서 검토',
   '면접',

@@ -1,9 +1,0 @@
-source_id,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,enabled
-cau_001,중앙대 경영학부,https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php,https://biz.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_002,중앙대 경제학부,https://econ.cau.ac.kr/news/notice/,https://econ.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_003,중앙대 광고홍보학과,https://iadpr.cau.ac.kr/fm/fm_1.php,https://iadpr.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_004,중앙대 국제물류학과,https://log.cau.ac.kr/dm/dm_1.php,https://log.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_005,중앙대 글로벌금융전공,https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php,https://biz.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_006,중앙대 산업보안학과,https://security.cau.ac.kr/board.htm?bbsid=notice,https://security.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_007,중앙대 응용통계학과,https://stat.cau.ac.kr/notice/undergraduate,https://stat.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true
-cau_008,중앙대 지식경영학부,https://global.cau.ac.kr/kr/notice/notice.php,https://global.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,true

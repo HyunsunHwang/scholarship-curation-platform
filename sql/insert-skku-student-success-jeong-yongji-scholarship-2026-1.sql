@@ -1,45 +1,25 @@
 -- 2026-1학기 학생성공 및 정용지 창의장학생 선발 — 성균관대학교
 -- 매핑 메모:
 -- - support_types: 학비감면·학업보조비 -> 등록금 + 학업장려금
--- - support_amount_text: 등록금 전액은 개인별 상이 -> 상한 참고로 250만(생활비 대체)을 저장, 상세는 support_amount_text
+-- - support_amount: 등록금 전액은 개인별 상이 -> 상한 참고로 250만(생활비 대체)을 저장, 상세는 support_amount_text
 -- - apply_start_date 미제공 -> apply_end_date와 동일일
 -- - 마감 11:59는 qual_special_info·note에 보존
 
 INSERT INTO public.scholarships (
-  name,
-  organization,
-  institution_type,
-  support_types,
-  support_amount_text,
-  apply_start_date,
-  apply_end_date,
-  announcement_date,
-  selection_count,
-  qual_university,
-  qual_school_location,
-  qual_school_category,
-  qual_enrollment_status,
-  qual_gpa_last_semester_min,
-  qual_special_info,
-  can_overlap,
-  required_documents,
-  apply_method,
-  apply_url,
-  homepage_url,
-  contact,
-  note,
-  selection_stages,
-  selection_stage_1,
-  collected_at,
-  is_verified,
-  list_on_home,
-  is_recommended
+  name, organization, institution_type, support_types, support_amount, support_amount_text,
+  apply_start_date, apply_end_date, announcement_date, selection_count,
+  qual_university, qual_school_location, qual_school_category, qual_enrollment_status,
+  qual_gpa_last_semester_min, qual_special_info, can_overlap,
+  required_documents, apply_method, apply_url, homepage_url, contact, note,
+  selection_stages, selection_stage_1,
+  collected_at, is_verified, list_on_home, is_recommended
 )
 SELECT
   '2026-1학기 학생성공 및 정용지 창의장학생 선발',
   '성균관대학교',
   '대학교',
   ARRAY['등록금', '학업장려금']::support_category[],
+  2500000,
   '등록금 전액 또는 학업지원금 250만 원',
   DATE '2026-05-15',
   DATE '2026-05-15',

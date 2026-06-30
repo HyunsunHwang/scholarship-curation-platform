@@ -5,42 +5,24 @@
 -- 접수: 기대플러스 https://hope.kfhi.or.kr/
 
 INSERT INTO public.scholarships (
-  name,
-  organization,
-  institution_type,
-  support_types,
-  support_amount_text,
-  apply_start_date,
-  apply_end_date,
-  announcement_date,
-  selection_count,
+  name, organization, institution_type, support_types, support_amount, support_amount_text,
+  apply_start_date, apply_end_date, announcement_date, selection_count,
   qual_university,
-  qual_school_location,
-  qual_school_category,
-  qual_enrollment_status,
-  qual_major,
+  qual_school_location, qual_school_category, qual_enrollment_status, qual_major,
   qual_special_info,
   can_overlap,
-  required_documents,
-  apply_method,
-  apply_url,
-  homepage_url,
-  contact,
-  note,
-  selection_stages,
-  selection_stage_1,
-  selection_stage_2,
+  required_documents, apply_method,
+  apply_url, homepage_url, contact, note,
+  selection_stages, selection_stage_1, selection_stage_2,
   selection_note,
-  collected_at,
-  is_verified,
-  list_on_home,
-  is_recommended
+  collected_at, is_verified, list_on_home, is_recommended
 )
 SELECT
   '2026 한국공항공사 지역공부방 ''Learnway school'' 멘토 모집',
   '한국공항공사 / 희망친구 기아대책',
   '공공기관',
   ARRAY['학업장려금', '기타']::support_category[],
+  1200000,
   '장학금 120만 원',
   '2026-05-06',
   '2026-05-15',
@@ -48,8 +30,7 @@ SELECT
   40,
   NULL,
   ARRAY['국내 대학']::school_location_type[],
-  NULL,
-  -- 원문 「4년제/전문대 등 명시적 제한 없음」→ 학교 유형 필터 미부여
+  NULL, -- 원문 「4년제/전문대 등 명시적 제한 없음」→ 학교 유형 필터 미부여
   ARRAY['재학', '휴학']::enrollment_status_type[],
   NULL,
   ARRAY[

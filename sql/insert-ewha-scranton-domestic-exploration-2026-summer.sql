@@ -1,7 +1,7 @@
 -- 2026 여름 스크랜튼대학 국내탐방 지원 프로그램
 -- 매핑 메모:
 -- - support_types 원문 대외활동/학업보조비 -> ENUM `기타` + `학업장려금`
--- - support_amount_text 범위형(30~40만 원) -> 최대값 400000 저장, 상세는 support_amount_text에 보존
+-- - support_amount 범위형(30~40만 원) -> 최대값 400000 저장, 상세는 support_amount_text에 보존
 -- - apply_end_date 시간 정보(23:59)는 qual_special_info/note에 보존
 -- - apply_start_date 미제공 -> apply_end_date와 동일일 설정
 
@@ -10,6 +10,7 @@ INSERT INTO public.scholarships (
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -41,6 +42,7 @@ SELECT
   '이화여자대학교 스크랜튼대학',
   '대학교',
   ARRAY['기타', '학업장려금']::support_category[],
+  400000,
   '1인당 약 30~40만 원 내외 탐방비 지원',
   DATE '2026-05-28',
   DATE '2026-05-28',

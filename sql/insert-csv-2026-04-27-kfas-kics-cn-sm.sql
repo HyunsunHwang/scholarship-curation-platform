@@ -8,7 +8,7 @@ SELECT setval(
 
 -- 1. KFAS-001 — 2026년 인재림 제6기 장학생
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount_text,
+  name, organization, institution_type, support_types, support_amount,
   apply_start_date, apply_end_date, announcement_date, selection_count,
   qual_school_location, qual_school_category, qual_academic_year, qual_enrollment_status,
   qual_nationality, can_overlap, required_documents, apply_method, apply_url, homepage_url,
@@ -22,7 +22,7 @@ SELECT
   '한국고등교육재단 (KFAS)',
   '재단법인',
   ARRAY['학업장려금']::support_category[],
-  '800만원 (+활동비)',
+  8000000,
   '2026-04-20', '2026-05-11', '2026-07-22', 20,
   ARRAY['국내 대학']::school_location_type[],
   ARRAY['4년제']::school_category_type[],
@@ -51,7 +51,7 @@ WHERE NOT EXISTS (
 
 -- 2. KICS-001 — 2026 KICS 한국통신학회 장학금
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount_text,
+  name, organization, institution_type, support_types, support_amount,
   apply_start_date, apply_end_date, selection_count,
   qual_school_location, qual_school_category, qual_enrollment_status,
   qual_major, qual_nationality, can_overlap, required_documents, apply_method, apply_url, homepage_url,
@@ -63,7 +63,7 @@ SELECT
   '한국통신학회 (KICS)',
   '기타',
   ARRAY['학업장려금']::support_category[],
-  '100만원',
+  1000000,
   '2026-04-16', '2026-05-14', 20,
   ARRAY['국내 대학']::school_location_type[],
   ARRAY['4년제', '대학원']::school_category_type[],
@@ -86,7 +86,7 @@ WHERE NOT EXISTS (
 
 -- 3. CN-001 — 2026년 재능키움 장학사업
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount_text,
+  name, organization, institution_type, support_types, support_amount,
   apply_start_date, apply_end_date, selection_count,
   qual_school_location, qual_school_category, qual_academic_year, qual_enrollment_status,
   qual_region, qual_nationality, can_overlap, required_documents, apply_method, apply_url, homepage_url,
@@ -98,7 +98,7 @@ SELECT
   '(재)충남평생교육진흥원',
   '지방자치단체',
   ARRAY['생활비']::support_category[],
-  '200만원',
+  2000000,
   '2026-04-23', '2026-05-07', 75,
   ARRAY['국내 대학']::school_location_type[],
   ARRAY['4년제', '전문대']::school_category_type[],
@@ -129,7 +129,7 @@ WHERE NOT EXISTS (
 
 -- 4. SM-001 — 2026년 서울독립유공자후손장학금
 INSERT INTO public.scholarships (
-  name, organization, institution_type, support_types, support_amount_text,
+  name, organization, institution_type, support_types, support_amount,
   apply_start_date, apply_end_date, selection_count,
   qual_school_location, qual_school_category, qual_academic_year, qual_enrollment_status,
   qual_region, qual_nationality, can_overlap, required_documents, apply_method, apply_url, homepage_url,
@@ -141,7 +141,7 @@ SELECT
   '(재)서울미래인재재단',
   '지방자치단체',
   ARRAY['학업장려금']::support_category[],
-  '300만원',
+  3000000,
   '2026-04-23', '2026-05-06', 120,
   ARRAY['국내 대학']::school_location_type[],
   ARRAY['4년제', '전문대']::school_category_type[],

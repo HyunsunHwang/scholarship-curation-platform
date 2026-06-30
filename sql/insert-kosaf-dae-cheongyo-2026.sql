@@ -1,45 +1,28 @@
 -- 2026년 대학생 청소년교육지원 장학금(통칭 대청교) — 한국장학재단
 -- support_category ENUM에 근로·멘토링 레이블 없음 → `기타` + support_amount_text·note 에 유형 명시
--- support_amount_text NOT NULL 제약으로 시급제는 정액 미정의 표현을 0 처리(상세는 support_amount_text)
+-- support_amount NOT NULL 제약으로 시급제는 정액 미정의 표현을 0 처리(상세는 support_amount_text)
 -- apply_end_date NOT NULL 제약으로 공고 종료 「대학별 상이」 안내 및 2026-12-31 플레이스홀더(실제 마감은 소속 학교·KOSAF 공고 확인)
 -- qual_gpa_min: 원문은 백분위 70(C0); 프로필은 4.5 만점 → NULL 처리 후 note
 
 INSERT INTO public.scholarships (
-  name,
-  organization,
-  institution_type,
-  support_types,
-  support_amount_text,
-  apply_start_date,
-  apply_end_date,
-  announcement_date,
-  selection_count,
+  name, organization, institution_type, support_types, support_amount, support_amount_text,
+  apply_start_date, apply_end_date, announcement_date, selection_count,
   qual_university,
-  qual_school_location,
-  qual_school_category,
-  qual_enrollment_status,
-  qual_nationality,
-  qual_gpa_min,
+  qual_school_location, qual_school_category, qual_enrollment_status,
+  qual_nationality, qual_gpa_min,
   qual_special_info,
   can_overlap,
-  required_documents,
-  apply_method,
-  apply_url,
-  homepage_url,
-  contact,
-  note,
-  selection_stages,
-  selection_stage_1,
-  collected_at,
-  is_verified,
-  list_on_home,
-  is_recommended
+  required_documents, apply_method,
+  apply_url, homepage_url, contact, note,
+  selection_stages, selection_stage_1,
+  collected_at, is_verified, list_on_home, is_recommended
 )
 SELECT
   '2026년 대학생 청소년교육지원 장학금',
   '한국장학재단',
   '공공기관',
   ARRAY['기타']::support_category[],
+  0,
   '청소년 멘토링 활동 근로(시급) 유형 · 시간당 12,790원 (학기당 최대 640시간)',
   '2026-02-19',
   '2026-12-31',

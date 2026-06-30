@@ -1,11 +1,12 @@
 -- 연세대학교 경영대학 — 국제우수학생 장학금 (YSB IAES) 2026-1학기
 -- 중복 방지: organization + name
--- support_amount_text: 스키마 NOT NULL — 변동 금액은 0 + support_amount_text 로 안내
+-- support_amount: 스키마 NOT NULL — 변동 금액은 0 + support_amount_text 로 안내
 INSERT INTO public.scholarships (
   name,
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -39,6 +40,7 @@ SELECT
   '연세대학교 경영대학',
   '학교',
   ARRAY['생활비']::support_category[],
+  0,
   '해당 학기 대학배정 진리장학금 수준 지급 (자유장학금 수혜자는 차액 지급)',
   NULL,
   DATE '2026-05-15',

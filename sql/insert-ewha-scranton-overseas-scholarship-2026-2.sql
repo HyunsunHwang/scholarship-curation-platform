@@ -1,13 +1,14 @@
 -- 2026-2학기 해외연수 장학금 (스크랜튼학부)
 -- 매핑 메모:
 -- - support_types 원문 학업보조비/해외연수 -> ENUM `학업장려금` + `해외연수비`
--- - support_amount_text 미제공 -> 0 처리, 상세는 support_amount_text에 보존
+-- - support_amount 미제공 -> 0 처리, 상세는 support_amount_text에 보존
 
 INSERT INTO public.scholarships (
   name,
   organization,
   institution_type,
   support_types,
+  support_amount,
   support_amount_text,
   apply_start_date,
   apply_end_date,
@@ -38,6 +39,7 @@ SELECT
   '이화여자대학교 스크랜튼학부',
   '대학교',
   ARRAY['학업장려금', '해외연수비']::support_category[],
+  0,
   '등록금 범위 초과 지급 가능(공고 기준, 개인별 지급액 상이)',
   DATE '2026-04-10',
   DATE '2026-06-22',

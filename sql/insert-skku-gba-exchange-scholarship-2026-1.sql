@@ -1,48 +1,26 @@
 -- 글로벌경영학과 교환학생 장학금 (2026-1 수정버전) — 성균관대학교 글로벌경영학과
 -- 매핑 메모:
 -- - support_types: 해외연수·학업보조비 → 해외연수비 + 학업장려금
--- - support_amount_text: 가변 → 0 + support_amount_text
+-- - support_amount: 가변 → 0 + support_amount_text
 -- - 신청 기간 1학기(1~2월)/2학기(7~8월) 이원화 → DB는 2학기 상한 대표 2026-08-31, 상세는 qual_special_info·note
 -- - qual_special_info 원문 「재직 중 1회」는 동일 안내 관례상 「재적 중 1회」로 저장
 -- - 장학: 직전 평균 2.0·12학점 / 교환 선발: 누적(전체) 평점 3.0 이상 → qual_gpa_last_semester_min 2.0, qual_gpa_min 3.0
 
 INSERT INTO public.scholarships (
-  name,
-  organization,
-  institution_type,
-  support_types,
-  support_amount_text,
-  apply_start_date,
-  apply_end_date,
-  announcement_date,
-  selection_count,
-  qual_university,
-  qual_school_location,
-  qual_school_category,
-  qual_enrollment_status,
-  qual_major,
-  qual_gpa_min,
-  qual_gpa_last_semester_min,
-  qual_special_info,
-  can_overlap,
-  required_documents,
-  apply_method,
-  apply_url,
-  homepage_url,
-  contact,
-  note,
-  selection_stages,
-  selection_stage_1,
-  collected_at,
-  is_verified,
-  list_on_home,
-  is_recommended
+  name, organization, institution_type, support_types, support_amount, support_amount_text,
+  apply_start_date, apply_end_date, announcement_date, selection_count,
+  qual_university, qual_school_location, qual_school_category, qual_enrollment_status, qual_major,
+  qual_gpa_min, qual_gpa_last_semester_min, qual_special_info, can_overlap,
+  required_documents, apply_method, apply_url, homepage_url, contact, note,
+  selection_stages, selection_stage_1,
+  collected_at, is_verified, list_on_home, is_recommended
 )
 SELECT
   '글로벌경영학과 교환학생 장학금 (2026-1 수정버전)',
   '성균관대학교 글로벌경영학과',
   '대학교',
   ARRAY['해외연수비', '학업장려금']::support_category[],
+  0,
   '기본 지원(체재비+항공료) + 소득분위별 차등 지원. 파견 지역 및 소득분위에 따라 최종 산정.',
   DATE '2026-08-31',
   DATE '2026-08-31',

@@ -1,47 +1,26 @@
 -- 2025-2학기 경영대학 성적우수장학금 — 성균관대학교 경영대학
 -- 매핑 메모:
 -- - support_types: 학비감면 → 등록금
--- - 금액: 등록금 한도 내 감면 → support_amount_text 0 + support_amount_text
+-- - 금액: 등록금 한도 내 감면 → support_amount 0 + support_amount_text
 -- - 공고명 [중요] 신청 제로 → apply_method·note에 자동 선발(무신청) 우선 반영(GLS 문구는 참고용 병기)
 -- - enrollment enum에 「복학예정」없으면 재학만 저장, 복학예정·무료복학·초과등록은 qual_special_info
 -- - 일정 미제공 → 2025-2학기 직전·등록 연계 대표 구간(보수적·참고용)
 
 INSERT INTO public.scholarships (
-  name,
-  organization,
-  institution_type,
-  support_types,
-  support_amount_text,
-  apply_start_date,
-  apply_end_date,
-  announcement_date,
-  selection_count,
-  qual_university,
-  qual_school_location,
-  qual_school_category,
-  qual_enrollment_status,
-  qual_major,
-  qual_gpa_last_semester_min,
-  qual_special_info,
-  can_overlap,
-  required_documents,
-  apply_method,
-  apply_url,
-  homepage_url,
-  contact,
-  note,
-  selection_stages,
-  selection_stage_1,
-  collected_at,
-  is_verified,
-  list_on_home,
-  is_recommended
+  name, organization, institution_type, support_types, support_amount, support_amount_text,
+  apply_start_date, apply_end_date, announcement_date, selection_count,
+  qual_university, qual_school_location, qual_school_category, qual_enrollment_status, qual_major,
+  qual_gpa_last_semester_min, qual_special_info, can_overlap,
+  required_documents, apply_method, apply_url, homepage_url, contact, note,
+  selection_stages, selection_stage_1,
+  collected_at, is_verified, list_on_home, is_recommended
 )
 SELECT
   '2025-2학기 경영대학 성적우수장학금',
   '성균관대학교 경영대학',
   '대학교',
   ARRAY['등록금']::support_category[],
+  0,
   '등록금 범위 내 감면(고지 원칙). 등록금성 장학 합산 시 등록금 한도 내.',
   DATE '2025-07-01',
   DATE '2025-09-30',
