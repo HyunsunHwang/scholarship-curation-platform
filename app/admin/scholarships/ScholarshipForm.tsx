@@ -11,9 +11,13 @@ type Props = {
   submitLabel?: string;
   universities?: string[];
   universityDepartments?: { university: string; department: string }[];
+  /** 교내 장학금의 기존 org_unit 타겟 (수정 폼 프리필용) */
+  defaultTargetOrgUnitIds?: number[];
   returnPath?: string;
   mode?: "scholarship" | "ad";
 };
+
+const FIELD_CODES = ["인문", "사회", "교육", "공학", "자연", "의약", "예체능"];
 
 const INSTITUTION_TYPES = [
   "국가기관", "지방자치단체", "공공기관", "기업", "재단법인",
@@ -42,6 +46,7 @@ export default function ScholarshipForm({
   submitLabel = "저장",
   universities = [],
   universityDepartments = [],
+  defaultTargetOrgUnitIds = [],
   returnPath = "/admin/scholarships",
   mode = "scholarship",
 }: Props) {
@@ -205,8 +210,49 @@ export default function ScholarshipForm({
             특정 학교 학생만 신청 가능한 경우 선택. 비워두면 모든 학교 대상.
           </p>
         </div>
+        {selectedScholarshipType === "on_campus" && (
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              대상 조직 (단과대·학부·학과, ID 매칭)
+            </label>
+            <OrgUnitTargetSelect
+              name="target_org_unit_ids"
+              defaultSelectedIds={defaultTargetOrgUnitIds}
+              selectedUniversities={selectedUniversities}
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              선택한 조직과 그 하위 소속 학생 전체가 매칭됩니다. 단과대를 선택하면 소속 학과 전체가 대상이 됩니다.
+              비워두면 아래 대상 학과(텍스트) 조건으로 매칭합니다.
+            </p>
+          </div>
+        )}
+        {selectedScholarshipType === "off_campus" && (
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">대상 계열</label>
+            <div className="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+              {FIELD_CODES.map((code) => (
+                <label key={code} className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="qual_field_codes_check"
+                    value={code}
+                    defaultChecked={(dv.qual_field_codes ?? []).includes(code)}
+                    className="rounded"
+                  />
+                  {code}
+                </label>
+              ))}
+            </div>
+            <CheckboxToHidden name="qual_field_codes" checkboxName="qual_field_codes_check" />
+            <p className="mt-1 text-xs text-gray-400">
+              이공계 장학금 등 계열 제한이 있는 경우 선택. 학생 학과의 계열 분류(ID 매칭)로 필터링됩니다. 비워두면 제한 없음.
+            </p>
+          </div>
+        )}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">대상 학과</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            대상 학과 {selectedScholarshipType === "on_campus" ? "(텍스트, 이행기 폴백)" : ""}
+          </label>
           {selectedScholarshipType === "on_campus" ? (
             <MajorTagSelect
               name="qual_major"
@@ -223,7 +269,7 @@ export default function ScholarshipForm({
           )}
           <p className="mt-1 text-xs text-gray-400">
             {selectedScholarshipType === "on_campus"
-              ? "교내 장학금은 대상 대학에 속한 학과만 검색/선택해 정확도를 높입니다."
+              ? "위 대상 조직(ID 매칭)을 사용할 수 없을 때만 사용하는 텍스트 매칭 조건입니다. 대상 조직을 선택했다면 비워두세요."
               : "특정 학과/단과대만 대상인 경우 추가. 부분 일치로 매칭됩니다."}
           </p>
         </div>
@@ -957,6 +1003,179 @@ function MajorTagSelect({
                 className="w-full px-3 py-2 text-left text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               >
                 {department}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── org_unit 타겟 선택기 (교내 장학금, ID 매칭) ──────────────────
+type OrgUnitLite = {
+  id: number;
+  parent_id: number | null;
+  unit_type: string;
+  name: string;
+  path_ids: number[];
+};
+
+const UNIT_TYPE_LABELS: Record<string, string> = {
+  university: "대학",
+  college: "단과대",
+  division: "학부",
+  department: "학과",
+};
+
+function OrgUnitTargetSelect({
+  name,
+  defaultSelectedIds,
+  selectedUniversities,
+}: {
+  name: string;
+  defaultSelectedIds: number[];
+  selectedUniversities: string[];
+}) {
+  const [units, setUnits] = useState<OrgUnitLite[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>(defaultSelectedIds);
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadUnits() {
+      const supabase = createClient();
+      const all: OrgUnitLite[] = [];
+      const pageSize = 1000;
+      for (let from = 0; ; from += pageSize) {
+        const { data } = await supabase
+          .from("org_units")
+          .select("id, parent_id, unit_type, name, path_ids")
+          .order("id")
+          .range(from, from + pageSize - 1);
+        if (!data) break;
+        all.push(...data);
+        if (data.length < pageSize) break;
+      }
+      if (!cancelled) setUnits(all);
+    }
+    void loadUnits();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const byId = new Map(units.map((u) => [u.id, u]));
+  const breadcrumb = (unit: OrgUnitLite) =>
+    unit.path_ids.map((id) => byId.get(id)?.name ?? "?").join(" > ");
+
+  // 대상 대학교가 선택돼 있으면 해당 대학 서브트리로 후보 제한
+  const normalizedUniversities = selectedUniversities.map((v) => v.replace(/\s+/g, "").toLowerCase());
+  const matchesUniversity = (unit: OrgUnitLite) => {
+    if (normalizedUniversities.length === 0) return true;
+    const rootName = (byId.get(unit.path_ids[0])?.name ?? "").replace(/\s+/g, "").toLowerCase();
+    return normalizedUniversities.some(
+      (sel) => sel.includes(rootName) || rootName.includes(sel)
+    );
+  };
+
+  const q = search.replace(/\s+/g, "").toLowerCase();
+  const filtered = units
+    .filter(
+      (u) =>
+        !selectedIds.includes(u.id) &&
+        matchesUniversity(u) &&
+        (q === "" || u.name.replace(/\s+/g, "").toLowerCase().includes(q))
+    )
+    .slice(0, 50);
+
+  const add = (id: number) => {
+    setSelectedIds((prev) => [...prev, id]);
+    setSearch("");
+    setOpen(false);
+  };
+  const remove = (id: number) => setSelectedIds((prev) => prev.filter((v) => v !== id));
+
+  return (
+    <div ref={containerRef} className="relative">
+      <input type="hidden" name={name} value={selectedIds.join(",")} />
+
+      <div
+        className="min-h-[42px] flex flex-wrap gap-1.5 items-center border border-gray-300 rounded-lg px-3 py-2 cursor-text focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 bg-white"
+        onClick={() => setOpen(true)}
+      >
+        {selectedIds.map((id) => {
+          const unit = byId.get(id);
+          return (
+            <span
+              key={id}
+              title={unit ? breadcrumb(unit) : String(id)}
+              className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800"
+            >
+              {unit ? (
+                <>
+                  {unit.name}
+                  <span className="text-indigo-400">({UNIT_TYPE_LABELS[unit.unit_type] ?? unit.unit_type})</span>
+                </>
+              ) : (
+                `#${id}`
+              )}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); remove(id); }}
+                className="hover:text-indigo-600"
+              >
+                ×
+              </button>
+            </span>
+          );
+        })}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          placeholder={
+            units.length === 0
+              ? "조직 목록 불러오는 중..."
+              : selectedIds.length === 0
+              ? "단과대/학부/학과 검색..."
+              : ""
+          }
+          className="flex-1 min-w-[140px] text-sm outline-none bg-transparent"
+        />
+      </div>
+
+      {open && units.length > 0 && (
+        <div className="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-gray-400">
+              {search ? "검색 결과 없음" : "검색어를 입력하세요"}
+            </p>
+          ) : (
+            filtered.map((unit) => (
+              <button
+                key={unit.id}
+                type="button"
+                onMouseDown={(e) => { e.preventDefault(); add(unit.id); }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+              >
+                <span className="font-medium">{unit.name}</span>
+                <span className="ml-1.5 text-xs text-gray-400">
+                  {UNIT_TYPE_LABELS[unit.unit_type] ?? unit.unit_type} · {breadcrumb(unit)}
+                </span>
               </button>
             ))
           )}

@@ -6,17 +6,16 @@ import { generateNoticeDraft } from "./actions";
 
 type Props = {
   noticeId: number;
-  hasBody: boolean;
 };
 
-export default function GenerateDraftButton({ noticeId, hasBody }: Props) {
+export default function GenerateDraftButton({ noticeId }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   return (
     <button
       type="button"
-      disabled={isPending || !hasBody}
+      disabled={isPending}
       onClick={() => {
         startTransition(async () => {
           const result = await generateNoticeDraft(noticeId);

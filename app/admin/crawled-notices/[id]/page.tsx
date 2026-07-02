@@ -124,7 +124,7 @@ export default async function ReviewCrawledNoticePage({
           {notice.title}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <GenerateDraftButton noticeId={notice.id} hasBody={!!notice.body} />
+          <GenerateDraftButton noticeId={notice.id} />
           {notice.extracted_draft && (
             <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700">
               AI 초안 적용됨

@@ -327,110 +327,132 @@ function Step1({ form, update, openAddress, openParentAddress }: {
   );
 }
 
-// ── Step 2: 학적사항 (계층형 선택) ───────────────────────────────────────
-type PickItem = { id: number; name: string };
+// ── Step 2: 학적사항 (org_unit 트리 계층형 선택) ─────────────────────────
+type OrgUnitItem = { id: number; name: string; unit_type: string };
+
+// unit_type 기준 라벨. 대학마다 트리 깊이가 다르므로(대학-단과대-학과 vs.
+// 대학-단과대-학부-학과) 레벨 인덱스가 아니라 실제 노드 타입으로 라벨을 정한다.
+const UNIT_TYPE_LABEL: Record<string, { field: string; placeholder: string; undecided: string }> = {
+  university: { field: "소속 대학교", placeholder: "대학교 선택", undecided: "대학교가 정해지지 않았어요" },
+  college: { field: "소속 단과대학", placeholder: "단과대학 선택", undecided: "단과대학이 정해지지 않았어요" },
+  division: { field: "소속 학부", placeholder: "학부 선택", undecided: "학부가 정해지지 않았어요" },
+  department: { field: "소속 학과", placeholder: "학과 선택", undecided: "학과가 정해지지 않았어요 (자유전공·1학년 등)" },
+};
+const FALLBACK_LABEL = { field: "소속 학과", placeholder: "선택", undecided: "아직 정해지지 않았어요" };
+
+/** 레벨 옵션(같은 부모의 형제 노드)에서 unit_type을 뽑아 라벨을 결정한다. */
+function labelForLevel(options: OrgUnitItem[], selectedId: string | undefined) {
+  const type = (selectedId && options.find((o) => String(o.id) === selectedId)?.unit_type) || options[0]?.unit_type;
+  return (type && UNIT_TYPE_LABEL[type]) || FALLBACK_LABEL;
+}
+
+/**
+ * org_unit 트리 캐스케이드용 레벨 옵션 로더.
+ * levels[0] = startParentId(null이면 대학 루트)의 자식들,
+ * levels[i] = path[i-1]로 선택한 노드의 자식들.
+ * 마지막 선택 노드에 자식이 있으면 다음 레벨 셀렉트가 자동으로 나타난다 (가변 깊이).
+ */
+function useOrgUnitLevels(enabled: boolean, startParentId: string | null, path: string[]) {
+  const [levels, setLevels] = useState<OrgUnitItem[][]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const pathKey = path.join(",");
+  useEffect(() => {
+    if (!enabled) {
+      setLevels([]);
+      return;
+    }
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      const supabase = createClient();
+      const parents: (string | null)[] = [startParentId, ...path];
+      const results = await Promise.all(
+        parents.map((parent) => {
+          const query = supabase.from("org_units").select("id, name, unit_type");
+          return (parent === null ? query.is("parent_id", null) : query.eq("parent_id", parseInt(parent)))
+            .order("name")
+            .then(({ data }) => data ?? []);
+        })
+      );
+      if (cancelled) return;
+      setLevels(results);
+      setLoading(false);
+    }
+    void load();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, startParentId, pathKey]);
+
+  return { levels, loading };
+}
 
 function Step2({ form, update, updateMultiple }: {
   form: OnboardingFormData;
   update: <K extends keyof OnboardingFormData>(field: K, value: OnboardingFormData[K]) => void;
   updateMultiple: (updates: Partial<OnboardingFormData>) => void;
 }) {
-  const [universities, setUniversities] = useState<PickItem[]>([]);
-  const [colleges, setColleges] = useState<PickItem[]>([]);
-  const [departments, setDepartments] = useState<PickItem[]>([]);
-  const [doubleDepts, setDoubleDepts] = useState<PickItem[]>([]);
-  const [loadingU, setLoadingU] = useState(false);
-  const [loadingC, setLoadingC] = useState(false);
-  const [loadingD, setLoadingD] = useState(false);
+  const isKoreanSchool = form.school_location === "국내 대학";
+  const universityId = form.org_unit_path[0] ?? null;
 
-  // 국내 대학 선택 시 대학교 목록 로드
-  useEffect(() => {
-    if (form.school_location !== "국내 대학") return;
-    let cancelled = false;
-    async function loadUniversities() {
-      setLoadingU(true);
-      const { data } = await createClient()
-        .from("universities")
-        .select("id, name")
-        .order("name");
-      if (cancelled) return;
-      setUniversities(data ?? []);
-      setLoadingU(false);
-    }
-    void loadUniversities();
-    return () => {
-      cancelled = true;
-    };
-  }, [form.school_location]);
+  // 본전공: 대학 루트부터
+  const main = useOrgUnitLevels(isKoreanSchool, null, form.org_unit_path);
+  // 복수전공: 선택한 대학의 단과대부터
+  const dm = useOrgUnitLevels(
+    isKoreanSchool && form.has_double_major && !!universityId,
+    universityId,
+    form.double_major_org_unit_path
+  );
 
-  // 대학교 선택 시 단과대 목록 로드
-  useEffect(() => {
-    let cancelled = false;
-    async function loadColleges() {
-      setColleges([]);
-      if (!form.university_id) return;
-      setLoadingC(true);
-      const { data } = await createClient()
-        .from("university_colleges")
-        .select("id, name")
-        .eq("university_id", parseInt(form.university_id))
-        .order("name");
-      if (cancelled) return;
-      setColleges(data ?? []);
-      setLoadingC(false);
-    }
-    void loadColleges();
-    return () => {
-      cancelled = true;
-    };
-  }, [form.university_id]);
+  const selectMainLevel = (level: number, value: string) => {
+    const nextPath = value
+      ? [...form.org_unit_path.slice(0, level), value]
+      : form.org_unit_path.slice(0, level);
+    updateMultiple({
+      org_unit_path: nextPath,
+      // 학과가 실제 선택되면 미정 해제, 대학이 바뀌면 복수전공 초기화
+      major_undecided: nextPath.length >= 3 ? false : form.major_undecided,
+      ...(level === 0 && {
+        double_major_org_unit_path: [],
+        has_double_major: false,
+        major_undecided: false,
+      }),
+    });
+  };
 
-  // 단과대 선택 시 학과 목록 로드 (본전공)
-  useEffect(() => {
-    let cancelled = false;
-    async function loadDepartments() {
-      setDepartments([]);
-      if (!form.college_id) return;
-      setLoadingD(true);
-      const { data } = await createClient()
-        .from("university_departments")
-        .select("id, name")
-        .eq("college_id", parseInt(form.college_id))
-        .order("name");
-      if (cancelled) return;
-      setDepartments(data ?? []);
-      setLoadingD(false);
-    }
-    void loadDepartments();
-    return () => {
-      cancelled = true;
-    };
-  }, [form.college_id]);
+  const selectDmLevel = (level: number, value: string) => {
+    update(
+      "double_major_org_unit_path",
+      value
+        ? [...form.double_major_org_unit_path.slice(0, level), value]
+        : form.double_major_org_unit_path.slice(0, level)
+    );
+  };
 
-  // 복수전공 단과대 선택 시 학과 목록 로드
-  useEffect(() => {
-    let cancelled = false;
-    async function loadDoubleMajorDepartments() {
-      setDoubleDepts([]);
-      if (!form.double_major_college_id) return;
-      const { data } = await createClient()
-        .from("university_departments")
-        .select("id, name")
-        .eq("college_id", parseInt(form.double_major_college_id))
-        .order("name");
-      if (cancelled) return;
-      setDoubleDepts(data ?? []);
-    }
-    void loadDoubleMajorDepartments();
-    return () => {
-      cancelled = true;
-    };
-  }, [form.double_major_college_id]);
-
-  const isKorean = form.school_location === "국내 대학";
+  const isKorean = isKoreanSchool;
   const academicTermValue = ACADEMIC_TERMS.find(
     (term) => term.year === form.academic_year && term.semester === form.academic_semester
   )?.value ?? "";
+
+  // 표시할 본전공 레벨 수: 선택된 깊이 + 1 (다음 레벨에 옵션이 있을 때만)
+  const mainVisibleLevels = main.levels
+    .map((options, i) => ({ options, i }))
+    .filter(({ options, i }) => i <= form.org_unit_path.length && (i < form.org_unit_path.length || options.length > 0));
+  const dmVisibleLevels = dm.levels
+    .map((options, i) => ({ options, i }))
+    .filter(({ options, i }) => i <= form.double_major_org_unit_path.length && (i < form.double_major_org_unit_path.length || options.length > 0));
+
+  // 현재 경로 다음에 더 내려갈 레벨(옵션)이 있는지 = 아직 리프(department)에 도달하지 못했는지.
+  // 트리 로딩이 끝난 뒤에만 신뢰할 수 있으므로 loading 중에는 판단을 미룬다.
+  const hasDeeperMainLevel = mainVisibleLevels.length > form.org_unit_path.length;
+  useEffect(() => {
+    if (!isKoreanSchool || main.loading) return;
+    const isLeaf = form.org_unit_path.length >= 2 && !hasDeeperMainLevel;
+    if (isLeaf !== form.org_unit_is_leaf) update("org_unit_is_leaf", isLeaf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isKoreanSchool, main.loading, form.org_unit_path.length, hasDeeperMainLevel]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -441,10 +463,10 @@ function Step2({ form, update, updateMultiple }: {
             <RadioChip key={l} label={l} selected={form.school_location === l}
               onClick={() => updateMultiple({
                 school_location: l,
-                university_id: "", school_name: "",
-                college_id: "", department_id: "", department: "",
+                school_name: "", department: "",
+                org_unit_path: [], major_undecided: false, org_unit_is_leaf: false,
                 has_double_major: false,
-                double_major_college_id: "", double_major_department_id: "", double_major_department: "",
+                double_major_org_unit_path: [], double_major_department: "",
               })}
             />
           ))}
@@ -474,59 +496,38 @@ function Step2({ form, update, updateMultiple }: {
 
       {isKorean ? (
         <>
-          {/* ① 대학교 */}
-          <Field label="소속 대학교">
-            <SelectInput
-              value={form.university_id}
-              disabled={loadingU}
-              onChange={(e) => {
-                const id = e.target.value;
-                const name = universities.find((u) => String(u.id) === id)?.name ?? "";
-                updateMultiple({
-                  university_id: id, school_name: name,
-                  college_id: "", department_id: "", department: "",
-                  double_major_college_id: "", double_major_department_id: "", double_major_department: "",
-                });
-              }}
-            >
-              <option value="">{loadingU ? "불러오는 중..." : "대학교 선택"}</option>
-              {universities.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-            </SelectInput>
-          </Field>
+          {/* 소속 선택: 대학 → 단과대 → (학부) → 학과, 트리 깊이에 따라 가변 */}
+          {mainVisibleLevels.map(({ options, i }) => {
+            const label = labelForLevel(options, form.org_unit_path[i]);
+            return (
+              <Field key={i} label={label.field}>
+                <SelectInput
+                  value={form.org_unit_path[i] ?? ""}
+                  disabled={main.loading && options.length === 0}
+                  onChange={(e) => selectMainLevel(i, e.target.value)}
+                >
+                  <option value="">
+                    {main.loading && options.length === 0 ? "불러오는 중..." : label.placeholder}
+                  </option>
+                  {options.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                </SelectInput>
+              </Field>
+            );
+          })}
 
-          {/* ② 단과대학 */}
-          <Field label="소속 단과대학">
-            <SelectInput
-              value={form.college_id}
-              disabled={!form.university_id || loadingC}
-              onChange={(e) => {
-                updateMultiple({ college_id: e.target.value, department_id: "", department: "" });
-              }}
-            >
-              <option value="">
-                {!form.university_id ? "먼저 대학교를 선택해주세요" : loadingC ? "불러오는 중..." : "단과대학 선택"}
-              </option>
-              {colleges.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </SelectInput>
-          </Field>
-
-          {/* ③ 학과 (본전공) */}
-          <Field label="소속 학과 (본전공)">
-            <SelectInput
-              value={form.department_id}
-              disabled={!form.college_id || loadingD}
-              onChange={(e) => {
-                const id = e.target.value;
-                const name = departments.find((d) => String(d.id) === id)?.name ?? "";
-                updateMultiple({ department_id: id, department: name });
-              }}
-            >
-              <option value="">
-                {!form.college_id ? "먼저 단과대학을 선택해주세요" : loadingD ? "불러오는 중..." : "학과 선택"}
-              </option>
-              {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-            </SelectInput>
-          </Field>
+          {/* "미정" 체크박스: 단과대 이상 선택했고, 아직 더 내려갈 하위 단계가 남아있을 때만 노출.
+              라벨은 다음 단계의 실제 unit_type(학부/학과 등)에 맞춰 동적으로 표시한다. */}
+          {form.org_unit_path.length >= 2 && hasDeeperMainLevel && (
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={form.major_undecided}
+                onChange={(e) => update("major_undecided", e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-brand focus:ring-brand/30"
+              />
+              아직 {labelForLevel(main.levels[form.org_unit_path.length] ?? [], undefined).undecided}
+            </label>
+          )}
 
           {/* 복수전공 토글 */}
           <Field label="복수(이중/부)전공" optional>
@@ -537,11 +538,7 @@ function Step2({ form, update, updateMultiple }: {
                   const next = !form.has_double_major;
                   updateMultiple({
                     has_double_major: next,
-                    ...(!next && {
-                      double_major_college_id: "",
-                      double_major_department_id: "",
-                      double_major_department: "",
-                    }),
+                    ...(!next && { double_major_org_unit_path: [] }),
                   });
                 }}
               />
@@ -555,36 +552,26 @@ function Step2({ form, update, updateMultiple }: {
           {form.has_double_major && (
             <div className="flex flex-col gap-4 rounded-xl border border-brand/20 bg-brand/5 p-4">
               <p className="text-xs font-semibold text-brand">제2전공 정보</p>
-
-              <Field label="단과대학">
-                <SelectInput
-                  value={form.double_major_college_id}
-                  disabled={!form.university_id}
-                  onChange={(e) => updateMultiple({
-                    double_major_college_id: e.target.value,
-                    double_major_department_id: "",
-                    double_major_department: "",
-                  })}
-                >
-                  <option value="">단과대학 선택</option>
-                  {colleges.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </SelectInput>
-              </Field>
-
-              <Field label="학과">
-                <SelectInput
-                  value={form.double_major_department_id}
-                  disabled={!form.double_major_college_id}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    const name = doubleDepts.find((d) => String(d.id) === id)?.name ?? "";
-                    updateMultiple({ double_major_department_id: id, double_major_department: name });
-                  }}
-                >
-                  <option value="">학과 선택</option>
-                  {doubleDepts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-                </SelectInput>
-              </Field>
+              {!universityId && (
+                <p className="text-xs text-gray-500">먼저 소속 대학교를 선택해주세요.</p>
+              )}
+              {dmVisibleLevels.map(({ options, i }) => {
+                const label = labelForLevel(options, form.double_major_org_unit_path[i]);
+                return (
+                  <Field key={i} label={label.field.replace("소속 ", "")}>
+                    <SelectInput
+                      value={form.double_major_org_unit_path[i] ?? ""}
+                      disabled={dm.loading && options.length === 0}
+                      onChange={(e) => selectDmLevel(i, e.target.value)}
+                    >
+                      <option value="">
+                        {dm.loading && options.length === 0 ? "불러오는 중..." : label.placeholder}
+                      </option>
+                      {options.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </SelectInput>
+                  </Field>
+                );
+              })}
             </div>
           )}
         </>
@@ -752,9 +739,9 @@ const INITIAL_FORM: OnboardingFormData = {
   school_location: "", school_category: "",
   admission_type: "",
   school_name: "", department: "",
-  university_id: "", college_id: "", department_id: "",
+  org_unit_path: [], major_undecided: false, org_unit_is_leaf: false,
   has_double_major: false,
-  double_major_college_id: "", double_major_department_id: "", double_major_department: "",
+  double_major_org_unit_path: [], double_major_department: "",
   academic_year: "", academic_semester: "", enrollment_status: "", gpa: "", gpa_last_semester: "",
   last_semester_earned_credits: "",
   income_level: "", household_size: "",
@@ -776,9 +763,11 @@ function validateStep(step: number, form: OnboardingFormData): string {
     if (!form.school_location) return "학교 소재를 선택해주세요.";
     if (!form.school_category) return "학교 유형을 선택해주세요.";
     if (form.school_location === "국내 대학") {
-      if (!form.university_id) return "대학교를 선택해주세요.";
-      if (!form.college_id) return "단과대학을 선택해주세요.";
-      if (!form.department_id) return "학과를 선택해주세요.";
+      if (form.org_unit_path.length < 1) return "대학교를 선택해주세요.";
+      if (form.org_unit_path.length < 2) return "단과대학을 선택해주세요.";
+      // 트리 깊이가 학교마다 달라 org_unit_is_leaf(리프 도달 여부)로 판단한다.
+      if (!form.org_unit_is_leaf && !form.major_undecided)
+        return "학과를 선택하거나 '아직 정해지지 않았어요'를 체크해주세요.";
     } else {
       if (!form.school_name.trim()) return "소속 대학교를 입력해주세요.";
       if (!form.department.trim()) return "소속 학과를 입력해주세요.";
@@ -786,9 +775,9 @@ function validateStep(step: number, form: OnboardingFormData): string {
     if (!form.academic_year) return "학년을 선택해주세요.";
     if (!form.academic_semester) return "학기를 선택해주세요.";
     if (!form.enrollment_status) return "재학 상태를 선택해주세요.";
-    if (form.has_double_major) {
-      if (!form.double_major_college_id) return "복수전공 단과대학을 선택해주세요.";
-      if (!form.double_major_department_id) return "복수전공 학과를 선택해주세요.";
+    if (form.school_location === "국내 대학" && form.has_double_major) {
+      if (form.double_major_org_unit_path.length < 1) return "복수전공 단과대학을 선택해주세요.";
+      if (form.double_major_org_unit_path.length < 2) return "복수전공 학과를 선택해주세요.";
     }
     if (form.gpa && (parseFloat(form.gpa) < 0 || parseFloat(form.gpa) > 4.5))
       return "누적 학점은 0.0 ~ 4.5 사이로 입력해주세요.";

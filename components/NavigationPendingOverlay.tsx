@@ -25,6 +25,13 @@ export default function NavigationPendingOverlay({
     return () => cancelAnimationFrame(frame);
   }, [routeKey]);
 
+  // 라우트 전환이 실패/중단된 경우 오버레이가 고착되는 것을 방지한다.
+  useEffect(() => {
+    if (!pending) return;
+    const timer = window.setTimeout(() => setPending(false), 2500);
+    return () => window.clearTimeout(timer);
+  }, [pending]);
+
   useEffect(() => {
     function handleCaptureClick(event: MouseEvent) {
       if (event.defaultPrevented) return;

@@ -61,6 +61,34 @@ function cleanText(value) {
   return String(value ?? "").trim();
 }
 
+function deriveUniversitySlug(sourceId, fallback = "") {
+  const normalizedSourceId = cleanText(sourceId).toLowerCase();
+  if (normalizedSourceId.includes("_")) return normalizedSourceId.split("_")[0];
+  return cleanText(fallback).toLowerCase();
+}
+
+function deriveDepartmentName(sourceName, sourceLevel = "department", fallback = "") {
+  if (cleanText(sourceLevel).toLowerCase() !== "department") {
+    return cleanText(fallback);
+  }
+  const normalizedFallback = cleanText(fallback);
+  if (normalizedFallback) return normalizedFallback;
+
+  const normalizedSourceName = cleanText(sourceName);
+  if (!normalizedSourceName) return "";
+  const pieces = normalizedSourceName.split(/\s+/);
+  if (pieces.length <= 1) return normalizedSourceName;
+  return pieces.slice(1).join(" ").trim();
+}
+
+function toSourcePriority(sourceLevel) {
+  const normalized = cleanText(sourceLevel).toLowerCase();
+  if (normalized === "university") return 3;
+  if (normalized === "college") return 2;
+  if (normalized === "department") return 1;
+  return 0;
+}
+
 function parseInputPaths(value) {
   return String(value ?? "")
     .split(",")
@@ -109,6 +137,17 @@ function readRows(filePath) {
       source_group: group,
       scholarship_type: scholarshipType,
       source_id: cleanText(row[index.source_id]),
+      university_slug: deriveUniversitySlug(row[index.source_id], row[index.university_slug]),
+      university_id: cleanText(row[index.university_id]),
+      college_id: cleanText(row[index.college_id]),
+      department_id: cleanText(row[index.department_id]),
+      college_name: cleanText(row[index.college_name]),
+      source_level: cleanText(row[index.source_level]) || "department",
+      department_name: deriveDepartmentName(
+        row[index.source_name],
+        cleanText(row[index.source_level]) || "department",
+        row[index.department_name],
+      ),
       source_name: cleanText(row[index.source_name]),
       title: cleanText(row[index.title]),
       notice_url: cleanText(row[index.notice_url]),
@@ -121,6 +160,7 @@ function readRows(filePath) {
     }))
     .map((row) => ({
       ...row,
+      source_priority: toSourcePriority(row.source_level),
       notice_posted_at: row.parsed_date || row.detail_date || row.date_text || "",
     }))
     .filter((row) => row.title && row.notice_url);
@@ -136,6 +176,14 @@ const outputHeader = [
   "source_group",
   "scholarship_type",
   "source_id",
+  "university_slug",
+  "university_id",
+  "college_id",
+  "department_id",
+  "college_name",
+  "department_name",
+  "source_level",
+  "source_priority",
   "source_name",
   "title",
   "notice_url",

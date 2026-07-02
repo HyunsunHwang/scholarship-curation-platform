@@ -2,7 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { load as loadHtml } from "cheerio";
 import { Agent as UndiciAgent } from "undici";
-import { extractNoticeUrlFromLinkNode } from "../lib/crawler-adapters/index.mjs";
+import {
+  extractNoticeUrlFromLinkNode,
+  getListAdapter,
+} from "../lib/crawler-adapters/index.mjs";
 
 const DEFAULT_KEYWORDS = [
   "장학",
@@ -34,6 +37,18 @@ const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
 const SOURCE_ID_PREFIX = cleanText(process.env.CRAWL_SOURCE_ID_PREFIX ?? "").toLowerCase();
 const SOURCE_ID_ALLOWLIST = new Set(
   String(process.env.CRAWL_SOURCE_ID_ALLOWLIST ?? "")
+    .split(/[,\s|]+/)
+    .map((item) => cleanText(item).toLowerCase())
+    .filter(Boolean),
+);
+const SOURCE_LEVEL_ALLOWLIST = new Set(
+  String(process.env.CRAWL_SOURCE_LEVEL ?? "")
+    .split(/[,\s|]+/)
+    .map((item) => cleanText(item).toLowerCase())
+    .filter(Boolean),
+);
+const COLLEGE_NAME_ALLOWLIST = new Set(
+  String(process.env.CRAWL_COLLEGE_NAME ?? "")
     .split(/[,\s|]+/)
     .map((item) => cleanText(item).toLowerCase())
     .filter(Boolean),
@@ -119,6 +134,26 @@ function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
+function deriveUniversitySlug(sourceId, fallback = "") {
+  const normalizedSourceId = cleanText(sourceId).toLowerCase();
+  if (normalizedSourceId.includes("_")) return normalizedSourceId.split("_")[0];
+  return cleanText(fallback).toLowerCase();
+}
+
+function deriveDepartmentName(sourceName, sourceLevel = "department", fallback = "") {
+  if (cleanText(sourceLevel).toLowerCase() !== "department") {
+    return cleanText(fallback);
+  }
+  const normalizedFallback = cleanText(fallback);
+  if (normalizedFallback) return normalizedFallback;
+
+  const normalizedSourceName = cleanText(sourceName);
+  if (!normalizedSourceName) return "";
+  const pieces = normalizedSourceName.split(/\s+/);
+  if (pieces.length <= 1) return normalizedSourceName;
+  return pieces.slice(1).join(" ").trim();
+}
+
 function extractDateLikeText(text) {
   const cleaned = cleanText(text);
   if (!cleaned) return "";
@@ -186,9 +221,19 @@ function readSourceConfig(csvPath) {
 
   return body
     .filter((row) => row.some((cell) => cleanText(cell)))
-    .map((row) => ({
+    .map((row) => {
+      const sourceLevel = cleanText(row[index.source_level]) || "department";
+      const sourceName = cleanText(row[index.source_name]);
+      return {
       sourceId: cleanText(row[index.source_id]),
-      sourceName: cleanText(row[index.source_name]),
+      universitySlug: deriveUniversitySlug(row[index.source_id], row[index.university_slug]),
+      universityId: cleanText(row[index.university_id]),
+      collegeId: cleanText(row[index.college_id]),
+      departmentId: cleanText(row[index.department_id]),
+      collegeName: cleanText(row[index.college_name]),
+      departmentName: deriveDepartmentName(sourceName, sourceLevel, row[index.department_name]),
+      sourceLevel,
+      sourceName,
       listUrl: cleanText(row[index.list_url]),
       baseUrl: cleanText(row[index.base_url]),
       listItemSelector: cleanText(row[index.list_item_selector]),
@@ -199,8 +244,10 @@ function readSourceConfig(csvPath) {
       detailDateSelector: cleanText(row[index.detail_date_selector]),
       noticeUrlPattern: cleanText(row[index.notice_url_pattern]),
       keywords: parseList(row[index.keywords]),
+      adapter: cleanText(row[index.adapter]),
       enabled: toBoolean(row[index.enabled], true),
-    }))
+    };
+    })
     .filter((source) => source.sourceId && source.sourceName && source.listUrl && source.enabled);
 }
 
@@ -328,6 +375,13 @@ function extractFromList(source, html) {
     seen.add(noticeUrl);
     results.push({
       sourceId: source.sourceId,
+      universitySlug: source.universitySlug,
+      universityId: source.universityId,
+      collegeId: source.collegeId,
+      departmentId: source.departmentId,
+      collegeName: source.collegeName,
+      departmentName: source.departmentName,
+      sourceLevel: source.sourceLevel,
       sourceName: source.sourceName,
       listUrl: source.listUrl,
       noticeUrl,
@@ -478,10 +532,18 @@ async function run() {
   }
   const sources = configuredSources.filter((source) => {
     const sourceId = source.sourceId.toLowerCase();
+    const sourceLevel = cleanText(source.sourceLevel).toLowerCase();
+    const collegeName = cleanText(source.collegeName).toLowerCase();
     if (SOURCE_ID_PREFIX && !sourceId.startsWith(SOURCE_ID_PREFIX)) {
       return false;
     }
     if (SOURCE_ID_ALLOWLIST.size > 0 && !SOURCE_ID_ALLOWLIST.has(sourceId)) {
+      return false;
+    }
+    if (SOURCE_LEVEL_ALLOWLIST.size > 0 && !SOURCE_LEVEL_ALLOWLIST.has(sourceLevel)) {
+      return false;
+    }
+    if (COLLEGE_NAME_ALLOWLIST.size > 0 && !COLLEGE_NAME_ALLOWLIST.has(collegeName)) {
       return false;
     }
     return true;
@@ -490,7 +552,7 @@ async function run() {
     throw new Error(
       SOURCE_ID_PREFIX
         ? `No enabled sources matched source prefix: ${SOURCE_ID_PREFIX}`
-        : "No enabled sources found.",
+        : "No enabled sources found (check source level/college filters).",
     );
   }
   const state = loadState(STATE_FILE_PATH);
@@ -502,18 +564,46 @@ async function run() {
 
   const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
     try {
-      const listHtml = await fetchHtml(source.listUrl);
-      const listItems = trimItems(extractFromList(source, listHtml), MAX_ITEMS_PER_SOURCE);
-      const detailItems = [];
-      if (DETAIL_FETCH_ENABLED) {
-        for (const item of listItems) {
-          // Small pacing to reduce load on university websites.
-          await new Promise((resolve) => setTimeout(resolve, 250));
-          detailItems.push(await enrichDetail(source, item));
-        }
+      const listAdapter = getListAdapter(source.adapter);
+      let listItems;
+      let detailItems = [];
+      if (listAdapter) {
+        // 어댑터 소스: 목록 API가 제목/날짜/본문 요약을 모두 제공하므로
+        // 기본 HTML 파싱과 개별 상세 요청을 건너뜁니다.
+        listItems = trimItems(
+          await listAdapter(source, {
+            lookbackDays: LOOKBACK_DAYS,
+            allowUndated: ALLOW_UNDATED,
+            maxItems: MAX_ITEMS_PER_SOURCE,
+          }),
+          MAX_ITEMS_PER_SOURCE,
+        );
+        detailItems = listItems;
       } else {
-        detailItems.push(...listItems);
+        const listHtml = await fetchHtml(source.listUrl);
+        listItems = trimItems(extractFromList(source, listHtml), MAX_ITEMS_PER_SOURCE);
+        if (DETAIL_FETCH_ENABLED) {
+          for (const item of listItems) {
+            // Small pacing to reduce load on university websites.
+            await new Promise((resolve) => setTimeout(resolve, 250));
+            detailItems.push(await enrichDetail(source, item));
+          }
+        } else {
+          detailItems.push(...listItems);
+        }
       }
+      detailItems = detailItems.map((item) => ({
+        ...item,
+        sourceId: item.sourceId ?? source.sourceId,
+        sourceName: item.sourceName ?? source.sourceName,
+        universitySlug: item.universitySlug ?? source.universitySlug,
+        universityId: item.universityId ?? source.universityId,
+        collegeId: item.collegeId ?? source.collegeId,
+        departmentId: item.departmentId ?? source.departmentId,
+        collegeName: item.collegeName ?? source.collegeName,
+        departmentName: item.departmentName ?? source.departmentName,
+        sourceLevel: item.sourceLevel ?? source.sourceLevel,
+      }));
 
       const keywords = source.keywords.length > 0 ? source.keywords : DEFAULT_KEYWORDS;
       const matched = detailItems
@@ -540,6 +630,12 @@ async function run() {
         });
       return {
         sourceId: source.sourceId,
+        universitySlug: source.universitySlug,
+        universityId: source.universityId,
+        collegeId: source.collegeId,
+        departmentId: source.departmentId,
+        sourceLevel: source.sourceLevel,
+        collegeName: source.collegeName,
         sourceName: source.sourceName,
         detailItems,
         matched,
@@ -548,6 +644,12 @@ async function run() {
     } catch (error) {
       return {
         sourceId: source.sourceId,
+        universitySlug: source.universitySlug,
+        universityId: source.universityId,
+        collegeId: source.collegeId,
+        departmentId: source.departmentId,
+        sourceLevel: source.sourceLevel,
+        collegeName: source.collegeName,
         sourceName: source.sourceName,
         error: String(error?.message ?? error),
         detailItems: [],
@@ -560,6 +662,12 @@ async function run() {
     if (result.error) {
       stats.push({
         sourceId: result.sourceId,
+        universitySlug: result.universitySlug,
+        universityId: result.universityId,
+        collegeId: result.collegeId,
+        departmentId: result.departmentId,
+        sourceLevel: result.sourceLevel,
+        collegeName: result.collegeName,
         sourceName: result.sourceName,
         crawledCount: 0,
         matchedCount: 0,
@@ -584,6 +692,12 @@ async function run() {
     allNew.push(...newlyDiscovered);
     stats.push({
       sourceId: result.sourceId,
+      universitySlug: result.universitySlug,
+      universityId: result.universityId,
+      collegeId: result.collegeId,
+      departmentId: result.departmentId,
+      sourceLevel: result.sourceLevel,
+      collegeName: result.collegeName,
       sourceName: result.sourceName,
       crawledCount: result.detailItems.length,
       matchedCount: result.matched.length,
@@ -613,6 +727,10 @@ async function run() {
       allowUndated: ALLOW_UNDATED,
       sourceConcurrency: SOURCE_CONCURRENCY,
       ignoreSeen: IGNORE_SEEN,
+      sourceLevelFilterCount:
+        SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
+      collegeFilterCount:
+        COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
     },
     perSource: stats,
     newNotices: allNew,
@@ -626,6 +744,13 @@ async function run() {
   const csvHeader = [
     "run_at",
     "source_id",
+    "university_slug",
+    "university_id",
+    "college_id",
+    "department_id",
+    "college_name",
+    "department_name",
+    "source_level",
     "source_name",
     "title",
     "notice_url",
@@ -640,6 +765,13 @@ async function run() {
       [
         RUN_AT,
         row.sourceId,
+        row.universitySlug ?? "",
+        row.universityId ?? "",
+        row.collegeId ?? "",
+        row.departmentId ?? "",
+        row.collegeName ?? "",
+        row.departmentName ?? "",
+        row.sourceLevel ?? "",
         row.sourceName,
         row.title,
         row.noticeUrl,
@@ -675,6 +807,12 @@ async function run() {
   console.log(`source_prefix=${SOURCE_ID_PREFIX || "all"}`);
   console.log(
     `source_allowlist_count=${SOURCE_ID_ALLOWLIST.size > 0 ? SOURCE_ID_ALLOWLIST.size : "all"}`,
+  );
+  console.log(
+    `source_level_filter=${SOURCE_LEVEL_ALLOWLIST.size > 0 ? [...SOURCE_LEVEL_ALLOWLIST].join("|") : "all"}`,
+  );
+  console.log(
+    `college_name_filter=${COLLEGE_NAME_ALLOWLIST.size > 0 ? [...COLLEGE_NAME_ALLOWLIST].join("|") : "all"}`,
   );
   console.log(
     `insecure_tls_hosts=${INSECURE_TLS_HOSTS.size > 0 ? [...INSECURE_TLS_HOSTS].join("|") : "none"}`,

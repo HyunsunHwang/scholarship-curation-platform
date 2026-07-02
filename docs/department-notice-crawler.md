@@ -8,6 +8,12 @@
 
 - 필수 컬럼: `source_id`, `source_name`, `list_url`
 - 선택 컬럼:
+  - `university_slug`: 대학 식별자(예: `korea`, `cau`). 비어 있으면 `source_id` 접두사로 추론
+  - `university_id`: 온보딩 공통 마스터(`universities.id`) FK (legacy)
+  - `college_id`: 온보딩 공통 마스터(`university_colleges.id`) FK (legacy)
+  - `department_id`: 온보딩 공통 마스터(`university_departments.id`) FK (legacy)
+  - `org_unit_id`: org_unit 트리(`org_units.id`) FK. `scripts/map-notice-sources-to-org-units.mjs`로
+    일괄 매핑/갱신 (`--apply` 없이 실행하면 dry-run 리포트만 출력)
   - `base_url`: 상대 링크를 절대 링크로 변환할 때 기준 URL
   - `list_item_selector`: 공지 한 건을 감싸는 셀렉터 (예: `.board-list tbody tr`)
   - `link_selector`: 목록 아이템 내부의 상세 링크 셀렉터
@@ -17,7 +23,46 @@
   - `detail_date_selector`: 상세 날짜 셀렉터
   - `notice_url_pattern`: 상세 URL 필터 정규식
   - `keywords`: `|` 구분 키워드 목록
+  - `college_name`: 소속 단과대
+  - `department_name`: 학과/전공명. 비어 있으면 `source_name`에서 추론
+  - `source_level`: 공지 계층. `university`(대학 본부) / `college`(단과대) / `department`(학과, 기본값)
+  - `adapter`: 정적 HTML이 아닌 전용 수집기를 쓰는 소스 지정 (아래 `1-1` 참고)
   - `enabled`: `true/false`
+
+## 1-1) 소스 계층(source_level)과 어댑터 소스
+
+장학 공지는 한 대학 안에서도 세 계층에 흩어져 올라옵니다.
+
+- `university`(대학 본부): 학생지원팀/장학팀 통합 공지. 교내·교외 장학 대부분이 모이는 원천에 가장 가까운 계층
+- `college`(단과대): 단과대 행정실 공지
+- `department`(학과): 학과·전공 게시판(기본값). 학과 한정 장학이 여기에만 있는 경우가 있음
+
+`source_level`은 소스가 어느 계층인지 표시하는 메타데이터입니다. 같은 장학금이
+본부→단과대→학과로 재게시되며 중복 수집될 수 있으므로, 검수 시 계층 우선순위
+(`university` > `college` > `department`)로 대표 1건을 승격하는 기준으로 활용합니다.
+
+중복 검수 기준(운영 규칙):
+
+1. 1차: `notice_url` 동일 시 상위 레벨(`source_level`) 소스를 우선 승격
+2. 2차: `normalized_title + notice_posted_at` 동일 시 상위 레벨 소스를 우선 검토
+3. 자동 삭제는 하지 않고, 우선순위 추천만 제공한 뒤 사람이 최종 판단
+
+일부 본부/포털 게시판은 목록을 정적 HTML이 아니라 **JSON API**로 제공하여
+기본 cheerio 파서로는 수집되지 않습니다. 이런 소스는 `adapter` 컬럼에 전용
+수집기 이름을 지정합니다.
+
+- `cau_portal`: 중앙대 통합 CMS(`www.cau.ac.kr` `FR_CON`) 게시판.
+  - `list_url`의 숨은 폼(`#sendForm`) 값을 그대로 `/ajax/FR_SVC/BBSViewList2.do`에
+    POST하여 목록 JSON을 페이지 단위로 수집합니다.
+  - 목록 JSON이 제목/게시일/부서/카테고리/식별자를 제공하므로 개별 상세 요청을
+    생략합니다. 상세 링크는 `BoardView.do?...&BBS_SEQ=`로 구성합니다.
+  - `list_url`의 탭(예: `CONTENTS_NO=5&P_TAB_NO=5` = 장학)이 카테고리를 이미
+    한정하므로 사이트 구조를 하드코딩하지 않습니다.
+  - 예시 소스: `cau_univ_001` (중앙대 학생지원팀 통합 장학 공지)
+
+> 운영 주의: `www.cau.ac.kr` 본부 포털은 `...Bot` 형태의 User-Agent를 연결 종료로
+> 차단합니다. `cau_portal` 어댑터는 이 때문에 일반 브라우저 User-Agent를 사용합니다.
+> 새 어댑터 소스를 추가할 때도 대상 사이트의 robots.txt/이용약관을 확인하세요.
 
 ## 2) 로컬 실행
 
@@ -37,6 +82,7 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 - `exports/notices/scholarship-notices-YYYYMMDD.json`: 실행 리포트 + 신규 공지 목록
 - `exports/notices/scholarship-notices-latest.json`: 최신 실행 리포트
 - `exports/notices/scholarship-notices-new-YYYYMMDD.csv`: 신규 장학 공지 CSV
+  - 포함 컬럼: `university_slug`, `university_id`, `college_id`, `department_id`, `college_name`, `department_name`, `source_level`
 - `.crawler/scholarship-notice-state.json`: 중복 방지 상태 파일
 
 ## 4) 최근 1개월 제한
@@ -53,6 +99,8 @@ node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notic
 - `CRAWL_ALLOW_UNDATED=true` (날짜 없는 공지도 포함)
 - `CRAWL_SOURCE_CONCURRENCY=1` (소스 병렬 처리 수, 기본 1)
 - `CRAWL_SOURCE_ID_PREFIX=ewha_` (`source_id` 접두사로 대상 소스 제한)
+- `CRAWL_SOURCE_LEVEL=university|college|department` (`source_level`로 대상 소스 제한, 복수값 `,` 지원)
+- `CRAWL_COLLEGE_NAME=경영대학` (`college_name`으로 대상 소스 제한, 복수값 `,` 지원)
 - `CRAWL_IGNORE_SEEN=true` (중복 상태 무시하고 matched를 모두 new로 처리)
 - `CRAWL_TIMEOUT_MS=30000` (요청 타임아웃, 기본 15000)
 - `CRAWL_RETRY_COUNT=2` (요청 재시도 횟수, 기본 2)
@@ -102,6 +150,8 @@ Baseline 워크플로:
 - 스크립트: `scripts/ingest-notices-to-supabase.mjs` (`npm run ingest:notices`)
 - 중복 방지: `notice_url` UNIQUE + `upsert(ignoreDuplicates)` → 이미 검수/승격된 행은 **절대 덮어쓰지 않음**
 - 적재된 행은 `status='new'` 상태로 들어가며, 어드민 검수 후 `scholarships`로 승격됩니다.
+- 적재 요약(`ingest-summary-latest.json`)에 `sourceLevelCounts`, `duplicateCandidates`가 포함되어
+  우선순위 검수(`university > college > department`) 대상을 빠르게 확인할 수 있습니다.
 
 필요한 GitHub Secret (Settings → Secrets and variables → Actions):
 
@@ -122,13 +172,21 @@ INGEST_DRY_RUN=true node scripts/ingest-notices-to-supabase.mjs exports/notices/
 - `AI 초안 생성`: 수집된 본문을 LLM에 보내 지원금액, 신청기간, 자격요건, 제출서류 등을 `extracted_draft`에 저장하고 폼 기본값으로 반영
 - 최종 등록 시 `scholarships`에 insert하고 원본 `crawled_notices`는 `status='promoted'` + `scholarship_id`로 연결
 
-AI 초안 생성은 OpenAI 호환 `/chat/completions` API를 사용합니다. Vercel 환경변수 또는 로컬 `.env`에 설정하세요.
+AI 초안 생성은 OpenAI 호환(`/chat/completions`)과 Anthropic Messages API를 지원합니다.  
+Vercel 환경변수 또는 로컬 `.env`에 설정하세요.
 
 - `LLM_API_KEY`: 필수. LLM Provider API Key
-- `LLM_API_BASE`: 선택. 기본값 `https://api.openai.com/v1`
-- `LLM_MODEL`: 선택. 기본값 `gpt-4o-mini`
+- `LLM_PROVIDER`: 선택. `openai` 또는 `anthropic` (미지정 시 자동 감지)
+- `LLM_API_BASE`: 선택. OpenAI 기본 `https://api.openai.com/v1`, Anthropic 기본 `https://api.anthropic.com/v1`
+- `LLM_MODEL`: 선택. 예) OpenAI `gpt-4o-mini`, Anthropic `claude-sonnet-5`
 
 예시:
+
+```bash
+LLM_PROVIDER=anthropic
+LLM_API_BASE=https://api.anthropic.com/v1
+LLM_MODEL=claude-sonnet-5
+```
 
 ```bash
 LLM_API_BASE=https://api.openai.com/v1

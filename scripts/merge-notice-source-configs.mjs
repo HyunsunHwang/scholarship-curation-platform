@@ -20,6 +20,13 @@ const SOURCES = [
 
 const HEADER = [
   "source_id",
+  "university_slug",
+  "university_id",
+  "college_id",
+  "department_id",
+  "college_name",
+  "department_name",
+  "source_level",
   "source_name",
   "list_url",
   "base_url",
@@ -31,6 +38,7 @@ const HEADER = [
   "detail_date_selector",
   "notice_url_pattern",
   "keywords",
+  "adapter",
   "enabled",
 ];
 
@@ -90,6 +98,26 @@ function normalize(value) {
   return String(value ?? "").trim();
 }
 
+function deriveUniversitySlug(sourceId, fallback = "") {
+  const normalizedId = normalize(sourceId).toLowerCase();
+  if (normalizedId.includes("_")) return normalizedId.split("_")[0];
+  return normalize(fallback).toLowerCase();
+}
+
+function deriveDepartmentName(sourceName, sourceLevel = "department", fallback = "") {
+  if (normalize(sourceLevel).toLowerCase() !== "department") {
+    return normalize(fallback);
+  }
+  const normalizedFallback = normalize(fallback);
+  if (normalizedFallback) return normalizedFallback;
+
+  const normalizedSourceName = normalize(sourceName);
+  if (!normalizedSourceName) return "";
+  const pieces = normalizedSourceName.split(/\s+/);
+  if (pieces.length <= 1) return normalizedSourceName;
+  return pieces.slice(1).join(" ").trim();
+}
+
 function readRows(filePath, includePrefixes) {
   const raw = readFileSync(filePath, "utf8").replace(/^\uFEFF/, "");
   const table = parseCsv(raw);
@@ -106,6 +134,13 @@ function readRows(filePath, includePrefixes) {
       for (const column of HEADER) {
         row[column] = cells[index[column]] ?? "";
       }
+      row.university_slug = deriveUniversitySlug(row.source_id, row.university_slug);
+      row.source_level = normalize(row.source_level) || "department";
+      row.department_name = deriveDepartmentName(
+        row.source_name,
+        row.source_level,
+        row.department_name,
+      );
       return row;
     })
     .filter((row) => includePrefixes.some((prefix) => normalize(row.source_id).startsWith(prefix)));

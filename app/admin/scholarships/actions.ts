@@ -6,7 +6,35 @@ import { createClient } from "@/lib/supabase/server";
 import {
   buildScholarshipPayload as buildPayload,
   getAdminReturnPath,
+  parseTargetOrgUnitIds,
 } from "@/lib/scholarship-payload";
+
+/**
+ * 교내 장학금 org_unit 타겟 동기화 (전체 교체).
+ * 교외 장학금이거나 타겟이 비어 있으면 기존 행만 제거한다.
+ */
+async function syncTargetOrgUnits(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  scholarshipId: number,
+  orgUnitIds: number[]
+): Promise<{ error?: string }> {
+  const { error: deleteError } = await supabase
+    .from("scholarship_target_units")
+    .delete()
+    .eq("scholarship_id", scholarshipId);
+  if (deleteError) return { error: deleteError.message };
+
+  if (orgUnitIds.length === 0) return {};
+
+  const { error: insertError } = await supabase
+    .from("scholarship_target_units")
+    .insert(orgUnitIds.map((orgUnitId) => ({
+      scholarship_id: scholarshipId,
+      org_unit_id: orgUnitId,
+    })));
+  if (insertError) return { error: insertError.message };
+  return {};
+}
 
 // ─────────────────────────────────────────────────────────────────
 // 장학금 생성
@@ -29,6 +57,12 @@ export async function createScholarship(formData: FormData) {
     .select("id")
     .single();
   if (error) return { error: error.message };
+
+  if (inserted?.id) {
+    const targetIds = payload.scholarship_type === "on_campus" ? parseTargetOrgUnitIds(formData) : [];
+    const syncResult = await syncTargetOrgUnits(supabase, inserted.id, targetIds);
+    if (syncResult.error) return { error: `대상 조직 저장 실패: ${syncResult.error}` };
+  }
 
   // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)
   const posterUrl = (formData.get("poster_image_url") as string) || null;
@@ -67,6 +101,12 @@ export async function updateScholarship(id: number, formData: FormData) {
     .eq("id", id);
 
   if (error) return { error: error.message };
+
+  {
+    const targetIds = payload.scholarship_type === "on_campus" ? parseTargetOrgUnitIds(formData) : [];
+    const syncResult = await syncTargetOrgUnits(supabase, id, targetIds);
+    if (syncResult.error) return { error: `대상 조직 저장 실패: ${syncResult.error}` };
+  }
 
   // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)
   const posterUrl = (formData.get("poster_image_url") as string) || null;

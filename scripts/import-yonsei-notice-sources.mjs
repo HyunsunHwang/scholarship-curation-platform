@@ -102,6 +102,13 @@ for (const source of body) {
   const origin = new URL(listUrl).origin;
   rows.push({
     source_id: `yonsei_${String(rows.length + 1).padStart(3, "0")}`,
+    university_slug: "yonsei",
+    university_id: "",
+    college_id: "",
+    department_id: "",
+    college_name: college,
+    department_name: department,
+    source_level: "department",
     source_name: `연세대 ${department}`,
     list_url: listUrl,
     base_url: origin,
@@ -113,12 +120,20 @@ for (const source of body) {
     detail_date_selector: "",
     notice_url_pattern: "",
     keywords: "",
+    adapter: "",
     enabled: "true",
   });
 }
 
 const outputHeader = [
   "source_id",
+  "university_slug",
+  "university_id",
+  "college_id",
+  "department_id",
+  "college_name",
+  "department_name",
+  "source_level",
   "source_name",
   "list_url",
   "base_url",
@@ -130,6 +145,7 @@ const outputHeader = [
   "detail_date_selector",
   "notice_url_pattern",
   "keywords",
+  "adapter",
   "enabled",
 ];
 

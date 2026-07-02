@@ -117,6 +117,10 @@ for (let i = 0; i < body.length; i += 1) {
   const origin = new URL(listUrl).origin;
   rows.push({
     source_id: `ewha_${String(rows.length + 1).padStart(3, "0")}`,
+    university_slug: "ewha",
+    college_name: college,
+    department_name: department,
+    source_level: "department",
     source_name: `이화여대 ${department}`,
     list_url: listUrl,
     base_url: origin,
@@ -128,12 +132,17 @@ for (let i = 0; i < body.length; i += 1) {
     detail_date_selector: "",
     notice_url_pattern: "",
     keywords: "",
+    adapter: "",
     enabled: "true",
   });
 }
 
 const outputHeader = [
   "source_id",
+  "university_slug",
+  "college_name",
+  "department_name",
+  "source_level",
   "source_name",
   "list_url",
   "base_url",
@@ -145,6 +154,7 @@ const outputHeader = [
   "detail_date_selector",
   "notice_url_pattern",
   "keywords",
+  "adapter",
   "enabled",
 ];
 

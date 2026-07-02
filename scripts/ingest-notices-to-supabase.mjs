@@ -82,6 +82,15 @@ function cleanText(value) {
   return String(value ?? "").trim();
 }
 
+function normalizeTitle(value) {
+  return cleanText(value).toLowerCase().replace(/\s+/g, " ");
+}
+
+function parsePriority(value) {
+  const parsed = Number(cleanText(value));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function toDateOrNull(value) {
   const t = cleanText(value);
   if (!t) return null;
@@ -127,6 +136,8 @@ function readRows(filePath) {
 
   const seenUrls = new Set();
   const records = [];
+  const sourceLevelCounts = {};
+  const duplicateKeyMap = new Map();
   for (const cells of body) {
     if (cells.length === 0 || cells.every((cell) => cleanText(cell) === "")) {
       continue;
@@ -143,6 +154,27 @@ function readRows(filePath) {
     const scholarshipType = ALLOWED_SCHOLARSHIP_TYPES.has(scholarshipTypeRaw)
       ? scholarshipTypeRaw
       : "on_campus";
+    const sourceLevel = cleanText(cells[index.source_level]) || "department";
+    sourceLevelCounts[sourceLevel] = (sourceLevelCounts[sourceLevel] ?? 0) + 1;
+    const noticePostedAt = toDateOrNull(cells[index.notice_posted_at]);
+    const sourcePriority = parsePriority(cells[index.source_priority]);
+    const normalizedTitle = normalizeTitle(title);
+    if (normalizedTitle && noticePostedAt) {
+      const duplicateKey = `${normalizedTitle}|${noticePostedAt}`;
+      const bucket = duplicateKeyMap.get(duplicateKey) ?? [];
+      bucket.push({
+        source_id: cleanText(cells[index.source_id]),
+        source_level: sourceLevel,
+        source_priority: sourcePriority,
+        university_id: cleanText(cells[index.university_id]),
+        college_id: cleanText(cells[index.college_id]),
+        department_id: cleanText(cells[index.department_id]),
+        source_name: cleanText(cells[index.source_name]),
+        notice_url: noticeUrl,
+        title,
+      });
+      duplicateKeyMap.set(duplicateKey, bucket);
+    }
 
     records.push({
       source_group: cleanText(cells[index.source_group]) || "unknown",
@@ -150,7 +182,7 @@ function readRows(filePath) {
       source_name: cleanText(cells[index.source_name]),
       title,
       notice_url: noticeUrl,
-      notice_posted_at: toDateOrNull(cells[index.notice_posted_at]),
+      notice_posted_at: noticePostedAt,
       raw_date_text:
         cleanText(cells[index.date_text]) ||
         cleanText(cells[index.detail_date]) ||
@@ -161,11 +193,28 @@ function readRows(filePath) {
     });
   }
 
-  return records;
+  const duplicateCandidates = [...duplicateKeyMap.entries()]
+    .filter(([, items]) => items.length > 1)
+    .map(([dedupeKey, items]) => {
+      const sorted = [...items].sort((a, b) => b.source_priority - a.source_priority);
+      return {
+        dedupeKey,
+        candidates: sorted,
+        recommendedNoticeUrl: sorted[0]?.notice_url ?? "",
+        recommendedSourceLevel: sorted[0]?.source_level ?? "",
+      };
+    })
+    .slice(0, 50);
+
+  return {
+    records,
+    sourceLevelCounts,
+    duplicateCandidates,
+  };
 }
 
 async function main() {
-  const records = readRows(inputPath);
+  const { records, sourceLevelCounts, duplicateCandidates } = readRows(inputPath);
   console.log(`csv=${path.resolve(inputPath)}`);
   console.log(`parsed_rows=${records.length}`);
   const sourceGroupCounts = records.reduce((acc, row) => {
@@ -176,6 +225,7 @@ async function main() {
   if (dryRun) {
     console.log("dry_run=true (no DB writes)");
     console.log(JSON.stringify(records.slice(0, 3), null, 2));
+    console.log(`duplicate_candidates=${duplicateCandidates.length}`);
     const resolvedSummaryPath = path.resolve(ingestSummaryPath);
     fs.mkdirSync(path.dirname(resolvedSummaryPath), { recursive: true });
     fs.writeFileSync(
@@ -187,6 +237,8 @@ async function main() {
           parsedRows: records.length,
           dryRun: true,
           sourceGroupCounts,
+          sourceLevelCounts,
+          duplicateCandidates,
         },
         null,
         2,
@@ -242,6 +294,8 @@ async function main() {
         insertedOrSeen,
         batches: Math.ceil(records.length / BATCH_SIZE),
         sourceGroupCounts,
+        sourceLevelCounts,
+        duplicateCandidates,
       },
       null,
       2,

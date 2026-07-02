@@ -1,3 +1,3 @@
-source_id,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,enabled
-ewha_010,이화여대 휴먼기계바이오공학과,https://mbe.ewha.ac.kr/mbeadmin/community/notice.do,https://mbe.ewha.ac.kr,,,,,,,,장학|장학금,true
-ewha_015,이화여대 사회과교육과,https://dsse.ewha.ac.kr/sse/notice/notice.do,https://dsse.ewha.ac.kr,,,,,,,,장학|장학금,true
+source_id,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,enabled,org_unit_id
+ewha_010,이화여대 휴먼기계바이오공학과,https://mbe.ewha.ac.kr/mbeadmin/community/notice.do,https://mbe.ewha.ac.kr,,,,,,,,장학|장학금,true,655
+ewha_015,이화여대 사회과교육과,https://dsse.ewha.ac.kr/sse/notice/notice.do,https://dsse.ewha.ac.kr,,,,,,,,장학|장학금,true,667

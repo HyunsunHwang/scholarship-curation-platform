@@ -54,6 +54,19 @@ export function parseScholarshipType(
   return "off_campus";
 }
 
+/** 폼의 target_org_unit_ids(쉼표 구분) → 교내 장학금 타겟 org_unit id 배열 */
+export function parseTargetOrgUnitIds(formData: FormData): number[] {
+  const raw = (formData.get("target_org_unit_ids") as string | null) ?? "";
+  return [
+    ...new Set(
+      raw
+        .split(",")
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((n) => Number.isFinite(n) && n > 0)
+    ),
+  ];
+}
+
 export function getAdminReturnPath(
   formData: FormData,
   fallback: string
@@ -105,6 +118,10 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
       ? (mappedEnrollmentStatuses as ScholarshipInsert["qual_enrollment_status"])
       : null,
     qual_major: parseTextArray(g("qual_major")) || null,
+    qual_field_codes: (() => {
+      const codes = parseTextArray(g("qual_field_codes"));
+      return codes.length > 0 ? codes : null;
+    })(),
     qual_gpa_min: parseOptionalFloat(g("qual_gpa_min")),
     qual_gpa_last_semester_min: parseOptionalFloat(g("qual_gpa_last_semester_min")),
     qual_last_semester_earned_credits_min: parseOptionalFloat(g("qual_last_semester_earned_credits_min")),

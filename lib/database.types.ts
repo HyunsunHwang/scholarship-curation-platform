@@ -36,6 +36,8 @@ export type ScholarshipType = "on_campus" | "off_campus";
 export type UserRoleType = "user" | "admin";
 export type OrganizationKindType = "학과" | "학교" | "재단" | "기타";
 export type OrgRequestStatusType = "pending" | "approved" | "rejected";
+/** org_units 노드 유형 (표시/필터용, 부모-자식 전이 강제 없음) */
+export type OrgUnitType = "university" | "college" | "division" | "department";
 
 // ── Database 타입 ─────────────────────────────────────────────────────────
 
@@ -59,6 +61,49 @@ export interface Database {
         Row: { id: number; college_id: number; name: string; created_at: string };
         Insert: { college_id: number; name: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["university_departments"]["Insert"]>;
+        Relationships: [];
+      };
+
+      // ── org_unit 트리 (대학-단과대-(학부)-학과 통합, 기존 3개 테이블 대체 예정) ──
+      org_units: {
+        Row: {
+          id: number;
+          parent_id: number | null;
+          unit_type: OrgUnitType;
+          name: string;
+          /** 루트(대학)부터 자기 자신까지의 조상 id 배열 (트리거 자동 유지) */
+          path_ids: number[];
+          /** 교외 장학금 계열 매칭 코드 (예: 공학) — 학과 노드에 부여 */
+          field_code: string | null;
+          legacy_table: string | null;
+          legacy_id: number | null;
+          created_at: string;
+        };
+        Insert: {
+          parent_id?: number | null;
+          unit_type: OrgUnitType;
+          name: string;
+          field_code?: string | null;
+          legacy_table?: string | null;
+          legacy_id?: number | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["org_units"]["Insert"]>;
+        Relationships: [];
+      };
+
+      org_unit_aliases: {
+        Row: { id: number; org_unit_id: number; alias: string; created_at: string };
+        Insert: { org_unit_id: number; alias: string; created_at?: string };
+        Update: Partial<Database["public"]["Tables"]["org_unit_aliases"]["Insert"]>;
+        Relationships: [];
+      };
+
+      /** 교내 장학금의 org_unit 타겟 (노드 + 하위 전체 매칭) */
+      scholarship_target_units: {
+        Row: { scholarship_id: number; org_unit_id: number; created_at: string };
+        Insert: { scholarship_id: number; org_unit_id: number; created_at?: string };
+        Update: Partial<Database["public"]["Tables"]["scholarship_target_units"]["Insert"]>;
         Relationships: [];
       };
 
@@ -96,6 +141,9 @@ export interface Database {
           double_major_college_id: number | null;
           double_major_department_id: number | null;
           double_major_department: string | null;
+          /** 소속 org_unit (가장 구체적으로 확정된 노드). 학과 미정이면 단과대 노드 가능 */
+          org_unit_id: number | null;
+          double_major_org_unit_id: number | null;
           academic_year: number | null;
           academic_semester: number | null;
           enrollment_status: EnrollmentStatusType | null;
@@ -142,6 +190,8 @@ export interface Database {
           double_major_college_id?: number | null;
           double_major_department_id?: number | null;
           double_major_department?: string | null;
+          org_unit_id?: number | null;
+          double_major_org_unit_id?: number | null;
           academic_year?: number | null;
           academic_semester?: number | null;
           enrollment_status?: EnrollmentStatusType | null;
@@ -427,7 +477,9 @@ export interface Database {
           qual_school_category: SchoolCategoryType[] | null;
           qual_academic_year: number[] | null;
           qual_enrollment_status: EnrollmentStatusType[] | null;
-          qual_major: string[] | null;             // 전공/학과명 배열
+          qual_major: string[] | null;             // 전공/학과명 배열 (텍스트 매칭, 이행기 폴백)
+          /** 교외 장학금 계열 타겟 (org_units.field_code와 매칭). NULL/빈 배열 = 제한 없음 */
+          qual_field_codes: string[] | null;
           qual_gpa_min: number | null;               // 누적 학점 최소
           qual_gpa_last_semester_min: number | null; // 직전 학기 학점 최소
           qual_last_semester_earned_credits_min: number | null; // 직전 학기 이수학점 최소
@@ -492,8 +544,8 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["scholarships"]["Row"],
-          "id" | "created_at" | "updated_at" | "poster_image_url" | "view_count"
-        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at" | "poster_image_url" | "view_count">>;
+          "id" | "created_at" | "updated_at" | "poster_image_url" | "view_count" | "qual_field_codes"
+        > & Partial<Pick<Database["public"]["Tables"]["scholarships"]["Row"], "created_at" | "updated_at" | "poster_image_url" | "view_count" | "qual_field_codes">>;
         Update: Partial<Database["public"]["Tables"]["scholarships"]["Insert"]>;
         Relationships: [];
       };
@@ -568,3 +620,6 @@ export type Scholarship = Database["public"]["Tables"]["scholarships"]["Row"];
 export type University = Database["public"]["Tables"]["universities"]["Row"];
 export type UniversityCollege = Database["public"]["Tables"]["university_colleges"]["Row"];
 export type UniversityDepartment = Database["public"]["Tables"]["university_departments"]["Row"];
+export type OrgUnit = Database["public"]["Tables"]["org_units"]["Row"];
+export type OrgUnitAlias = Database["public"]["Tables"]["org_unit_aliases"]["Row"];
+export type ScholarshipTargetUnit = Database["public"]["Tables"]["scholarship_target_units"]["Row"];

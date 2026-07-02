@@ -105,6 +105,8 @@ export async function loadCrawlerDepartments(): Promise<CrawlerDepartmentEntry[]
   const index = Object.fromEntries(header.map((name, idx) => [name, idx]));
   const sourceIdIdx = index.source_id as number | undefined;
   const sourceNameIdx = index.source_name as number | undefined;
+  const departmentNameIdx = index.department_name as number | undefined;
+  const sourceLevelIdx = index.source_level as number | undefined;
   const enabledIdx = index.enabled as number | undefined;
   if (sourceIdIdx == null || sourceNameIdx == null) return [];
 
@@ -118,9 +120,15 @@ export async function loadCrawlerDepartments(): Promise<CrawlerDepartmentEntry[]
     const sourceId = cleanText(row[sourceIdIdx]);
     const sourceName = cleanText(row[sourceNameIdx]);
     if (!sourceId || !sourceName) continue;
+    const sourceLevel = cleanText(
+      sourceLevelIdx == null ? "department" : row[sourceLevelIdx],
+    ).toLowerCase();
+    if (sourceLevel && sourceLevel !== "department") continue;
 
     const group = sourceId.split("_")[0];
-    const department = extractDepartment(sourceName, group);
+    const department = cleanText(
+      departmentNameIdx == null ? "" : row[departmentNameIdx],
+    ) || extractDepartment(sourceName, group);
     if (!department) continue;
 
     const university = (GROUP_ALIASES[group] ?? [group])[0];

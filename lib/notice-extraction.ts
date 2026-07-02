@@ -1,12 +1,15 @@
+import { load as loadHtml } from "cheerio";
+
 // ─────────────────────────────────────────────────────────────────
-// 공지 본문 → scholarship 필드 초안 추출 (프로바이더 비종속, OpenAI 호환)
+// 공지 본문 → scholarship 필드 초안 추출 (프로바이더 비종속)
 //
 // 환경변수:
 //   LLM_API_KEY    (필수) Bearer 토큰
 //   LLM_API_BASE   (선택) 기본 https://api.openai.com/v1
 //   LLM_MODEL      (선택) 기본 gpt-4o-mini
+//   LLM_PROVIDER   (선택) openai | anthropic (미지정 시 자동 감지)
 //
-// OpenAI / OpenRouter / Together 등 /chat/completions 호환 엔드포인트면 동작.
+// OpenAI(OpenRouter/Together 포함)와 Anthropic Messages API를 지원.
 // ─────────────────────────────────────────────────────────────────
 
 const SUPPORT_CATEGORIES = [
@@ -51,6 +54,30 @@ export type NoticeDraft = {
   contact?: string | null;
   note?: string | null;
 };
+
+const BODY_KEYWORDS = [
+  "장학",
+  "신청",
+  "지원",
+  "마감",
+  "선발",
+  "제출",
+  "자격",
+  "대상",
+  "기간",
+  "서류",
+];
+
+const MENU_HINTS = [
+  "사이트맵",
+  "로그인",
+  "검색",
+  "메뉴",
+  "학과소개",
+  "공지사항",
+  "전체공지",
+  "rss",
+];
 
 const SYSTEM_PROMPT = `당신은 한국 대학 장학 공지에서 정형 데이터를 추출하는 도우미입니다.
 주어진 공지 제목과 본문만 근거로, 아래 JSON 스키마에 맞춰 값을 추출하세요.
@@ -156,40 +183,217 @@ export function normalizeDraft(raw: unknown): NoticeDraft {
   };
 }
 
-export async function extractScholarshipDraft(input: {
-  title: string;
-  body: string;
-  sourceName: string;
-}): Promise<{ draft?: NoticeDraft; error?: string }> {
-  const apiKey = process.env.LLM_API_KEY;
-  if (!apiKey) {
-    return { error: "LLM_API_KEY 환경변수가 설정되지 않았습니다." };
+function parseJsonObjectFromText(text: string): { parsed?: unknown; error?: string } {
+  try {
+    return { parsed: JSON.parse(text) };
+  } catch {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return { error: "LLM이 JSON을 반환하지 않았습니다." };
+    try {
+      return { parsed: JSON.parse(match[0]) };
+    } catch {
+      return { error: "LLM JSON 파싱 실패." };
+    }
   }
-  if (!input.body || input.body.trim().length < 10) {
-    return { error: "추출할 본문이 없습니다. (크롤러 본문이 비어 있음)" };
-  }
+}
 
-  const base = (process.env.LLM_API_BASE ?? "https://api.openai.com/v1").replace(
-    /\/$/,
-    ""
+function cleanText(value: string): string {
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function normalizeCharset(value: string): string {
+  const normalized = cleanText(value).toLowerCase().replace(/^['"]|['"]$/g, "");
+  if (!normalized) return "";
+  if (normalized === "utf8") return "utf-8";
+  if (["cp949", "ms949", "ks_c_5601-1987"].includes(normalized)) return "euc-kr";
+  return normalized;
+}
+
+function detectCharsetFromHeaders(contentType: string): string {
+  const raw = cleanText(contentType);
+  if (!raw) return "";
+  const match = raw.match(/charset\s*=\s*([^;]+)/i);
+  if (!match) return "";
+  return normalizeCharset(match[1]);
+}
+
+function detectCharsetFromHtmlProbe(htmlProbe: string): string {
+  const probe = cleanText(htmlProbe);
+  if (!probe) return "";
+  const metaCharset = probe.match(
+    /<meta[^>]*charset\s*=\s*["']?\s*([a-zA-Z0-9._-]+)/i
   );
-  const model = process.env.LLM_MODEL ?? "gpt-4o-mini";
+  if (metaCharset?.[1]) return normalizeCharset(metaCharset[1]);
+  const metaContent = probe.match(
+    /<meta[^>]*content\s*=\s*["'][^"']*charset\s*=\s*([a-zA-Z0-9._-]+)/i
+  );
+  if (metaContent?.[1]) return normalizeCharset(metaContent[1]);
+  return "";
+}
 
+function decodeHtmlBuffer(buffer: Uint8Array, headerCharset: string): string {
+  const probe = new TextDecoder("latin1").decode(buffer.subarray(0, 4096));
+  const metaCharset = detectCharsetFromHtmlProbe(probe);
+  const candidates = [headerCharset, metaCharset, "utf-8", "euc-kr"]
+    .map((value) => normalizeCharset(value))
+    .filter(Boolean);
+  const uniqueCandidates = [...new Set(candidates)];
+
+  for (const charset of uniqueCandidates) {
+    try {
+      return new TextDecoder(charset, { fatal: true }).decode(buffer);
+    } catch {
+      // Try next charset candidate.
+    }
+  }
+  return new TextDecoder("utf-8").decode(buffer);
+}
+
+function scoreTextContent(text: string, linkText: string, preferredBoost = 0): number {
+  const textLen = text.length;
+  if (textLen < 80) return -1;
+  const linkLen = linkText.length;
+  const linkDensity = Math.min(1, linkLen / Math.max(1, textLen));
+  const keywordHits = BODY_KEYWORDS.reduce(
+    (count, keyword) => count + (text.includes(keyword) ? 1 : 0),
+    0
+  );
+  const menuHits = MENU_HINTS.reduce(
+    (count, keyword) => count + (text.includes(keyword) ? 1 : 0),
+    0
+  );
+  const sentenceLike = (text.match(/[.!?\n]|다\.|요\.|니다\./g) ?? []).length;
+  return (
+    textLen * (1 - linkDensity) +
+    keywordHits * 220 +
+    sentenceLike * 8 +
+    preferredBoost -
+    menuHits * 90
+  );
+}
+
+function collectCandidateTexts(
+  $: ReturnType<typeof loadHtml>,
+  selector: string,
+  preferredBoost = 0
+): { text: string; score: number }[] {
+  const out: { text: string; score: number }[] = [];
+  $(selector).each((index, node) => {
+    if (index > 60) return false;
+    const root = $(node);
+    const text = cleanText(root.text());
+    if (text.length < 80) return undefined;
+    const linkText = cleanText(root.find("a").text());
+    const score = scoreTextContent(text, linkText, preferredBoost);
+    if (score > 0) out.push({ text, score });
+    return undefined;
+  });
+  return out;
+}
+
+function pickBestCandidateText($: ReturnType<typeof loadHtml>): string {
+  const selectors = [
+    "article",
+    "main",
+    "#content",
+    "#contents",
+    "#bbs_content",
+    ".content",
+    ".contents",
+    ".conts",
+    ".board-view",
+    ".board-view-content",
+    ".board-content",
+    ".board_view",
+    ".board_view_con",
+    ".view-content",
+    ".view_cont",
+    ".view-con",
+    ".article-content",
+    ".article_view",
+    ".entry-content",
+    ".post-content",
+    ".fr-view",
+    ".xe_content",
+    ".bo_v_con",
+    ".tbl_view",
+  ];
+
+  const candidates: { text: string; score: number }[] = [];
+  for (const selector of selectors) {
+    candidates.push(...collectCandidateTexts($, selector, 240));
+  }
+  candidates.push(...collectCandidateTexts($, "section, div, td", 0));
+
+  const ogDescription = cleanText(
+    $('meta[property="og:description"]').attr("content") ?? ""
+  );
+  if (ogDescription.length >= 60) {
+    candidates.push({
+      text: ogDescription,
+      score: scoreTextContent(ogDescription, "", 180),
+    });
+  }
+
+  const bodyText = cleanText($("body").text());
+  if (bodyText.length >= 120) {
+    candidates.push({
+      text: bodyText,
+      score: scoreTextContent(bodyText, cleanText($("body a").text()), -120),
+    });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  return (candidates[0]?.text ?? "").slice(0, 12000);
+}
+
+async function fetchNoticeBodyFromUrl(url: string): Promise<string> {
+  if (!url) return "";
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        accept: "text/html,application/xhtml+xml",
+      },
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!response.ok) return "";
+
+    const headerCharset = detectCharsetFromHeaders(
+      response.headers.get("content-type") ?? ""
+    );
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const html = decodeHtmlBuffer(bytes, headerCharset);
+    const $ = loadHtml(html);
+    $("script, style, nav, footer, header, aside, noscript").remove();
+    return pickBestCandidateText($);
+  } catch {
+    return "";
+  }
+}
+
+async function callOpenAiCompatible(params: {
+  apiKey: string;
+  base: string;
+  model: string;
+  userPrompt: string;
+}): Promise<{ content?: string; error?: string }> {
   let response: Response;
   try {
-    response = await fetch(`${base}/chat/completions`, {
+    response = await fetch(`${params.base}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${params.apiKey}`,
       },
       body: JSON.stringify({
-        model,
+        model: params.model,
         temperature: 0,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: buildUserPrompt(input) },
+          { role: "user", content: params.userPrompt },
         ],
       }),
       signal: AbortSignal.timeout(60_000),
@@ -216,20 +420,107 @@ export async function extractScholarshipDraft(input: {
   if (typeof content !== "string") {
     return { error: "LLM 응답에 content가 없습니다." };
   }
+  return { content };
+}
 
-  let parsed: unknown;
+async function callAnthropic(params: {
+  apiKey: string;
+  base: string;
+  model: string;
+  userPrompt: string;
+}): Promise<{ content?: string; error?: string }> {
+  let response: Response;
   try {
-    parsed = JSON.parse(content);
-  } catch {
-    // 코드펜스 등으로 감싸진 경우 첫 JSON 블록만 추출 시도
-    const match = content.match(/\{[\s\S]*\}/);
-    if (!match) return { error: "LLM이 JSON을 반환하지 않았습니다." };
-    try {
-      parsed = JSON.parse(match[0]);
-    } catch {
-      return { error: "LLM JSON 파싱 실패." };
-    }
+    response = await fetch(`${params.base}/messages`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": params.apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: params.model,
+        max_tokens: 1500,
+        temperature: 0,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: params.userPrompt }],
+      }),
+      signal: AbortSignal.timeout(60_000),
+    });
+  } catch (e) {
+    return { error: `LLM 요청 실패: ${e instanceof Error ? e.message : e}` };
   }
 
-  return { draft: normalizeDraft(parsed) };
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    return { error: `LLM 오류 ${response.status}: ${text.slice(0, 300)}` };
+  }
+
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch {
+    return { error: "LLM 응답을 JSON으로 파싱하지 못했습니다." };
+  }
+
+  const textBlock = (
+    payload as { content?: { type?: string; text?: string }[] }
+  )?.content?.find((block) => block?.type === "text")?.text;
+  if (typeof textBlock !== "string") {
+    return { error: "Anthropic 응답에 text content가 없습니다." };
+  }
+  return { content: textBlock };
+}
+
+export async function extractScholarshipDraft(input: {
+  title: string;
+  body: string;
+  sourceName: string;
+  noticeUrl?: string;
+}): Promise<{ draft?: NoticeDraft; error?: string; resolvedBody?: string }> {
+  const apiKey = process.env.LLM_API_KEY;
+  if (!apiKey) {
+    return { error: "LLM_API_KEY 환경변수가 설정되지 않았습니다." };
+  }
+  let normalizedBody = input.body?.trim() ?? "";
+  if (normalizedBody.length < 120 && input.noticeUrl) {
+    const fetchedBody = await fetchNoticeBodyFromUrl(input.noticeUrl);
+    if (fetchedBody.length > normalizedBody.length) {
+      normalizedBody = fetchedBody;
+    }
+  }
+  const promptBody =
+    normalizedBody.length >= 10
+      ? normalizedBody
+      : `[본문 미수집]\n공지 제목만으로 추출 가능한 항목만 채우세요.\n${input.title}`;
+
+  const providerFromEnv = (process.env.LLM_PROVIDER ?? "").trim().toLowerCase();
+  const base = (
+    process.env.LLM_API_BASE ??
+    (providerFromEnv === "anthropic" || apiKey.startsWith("sk-ant-")
+      ? "https://api.anthropic.com/v1"
+      : "https://api.openai.com/v1")
+  ).replace(/\/$/, "");
+  const model = process.env.LLM_MODEL ?? "gpt-4o-mini";
+  const userPrompt = buildUserPrompt({
+    title: input.title,
+    sourceName: input.sourceName,
+    body: promptBody,
+  });
+  const provider =
+    providerFromEnv === "anthropic" || base.includes("anthropic.com") || apiKey.startsWith("sk-ant-")
+      ? "anthropic"
+      : "openai";
+
+  const { content, error: callError } =
+    provider === "anthropic"
+      ? await callAnthropic({ apiKey, base, model, userPrompt })
+      : await callOpenAiCompatible({ apiKey, base, model, userPrompt });
+  if (callError) return { error: callError };
+  if (!content) return { error: "LLM 응답 본문이 비어 있습니다." };
+
+  const { parsed, error: parseError } = parseJsonObjectFromText(content);
+  if (parseError || parsed === undefined) return { error: parseError };
+
+  return { draft: normalizeDraft(parsed), resolvedBody: normalizedBody };
 }

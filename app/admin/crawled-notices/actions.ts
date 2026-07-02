@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { buildScholarshipPayload } from "@/lib/scholarship-payload";
-import { extractScholarshipDraft } from "@/lib/notice-extraction";
+import {
+  extractScholarshipDraft,
+  type NoticeDraft,
+} from "@/lib/notice-extraction";
 
 function normalizeRejectTag(reviewNote?: string) {
   const note = (reviewNote ?? "").trim();
@@ -33,6 +36,37 @@ async function ensureAdmin() {
     return { supabase, user, error: "관리자 권한이 필요합니다." };
 
   return { supabase, user, error: null };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object";
+}
+
+function isMeaningfulValue(value: unknown): boolean {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+  return true;
+}
+
+function mergeDraftKeepingExisting(
+  existing: unknown,
+  generated: NoticeDraft
+): NoticeDraft {
+  if (!isRecord(existing)) return generated;
+  const merged: Record<string, unknown> = { ...generated };
+  for (const [key, existingValue] of Object.entries(existing)) {
+    const generatedValue = merged[key];
+    if (isMeaningfulValue(existingValue)) {
+      merged[key] = existingValue;
+      continue;
+    }
+    if (Array.isArray(generatedValue) && generatedValue.length > 0) continue;
+    if (typeof generatedValue === "string" && generatedValue.trim()) continue;
+    if (generatedValue !== null && generatedValue !== undefined) continue;
+    merged[key] = existingValue;
+  }
+  return merged as NoticeDraft;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -88,24 +122,38 @@ export async function generateNoticeDraft(
 
   const { data: notice, error } = await supabase
     .from("crawled_notices")
-    .select("id, title, source_name, body")
+    .select("id, title, source_name, source_group, notice_url, body, extracted_draft")
     .eq("id", noticeId)
     .single();
   if (error) return { error: error.message };
   if (!notice) return { error: "공지 데이터를 찾을 수 없습니다." };
 
-  const { draft, error: extractError } = await extractScholarshipDraft({
+  const { draft, error: extractError, resolvedBody } = await extractScholarshipDraft({
     title: notice.title,
     sourceName: notice.source_name,
     body: notice.body ?? "",
+    noticeUrl: notice.notice_url ?? undefined,
   });
   if (extractError || !draft) {
     return { error: extractError ?? "LLM 초안 생성에 실패했습니다." };
   }
 
+  // 교외(더드림)처럼 이미 구조화 초안이 있는 소스는 기존 값 손실을 막기 위해
+  // 빈 칸만 LLM 결과로 보완합니다.
+  const nextDraft =
+    notice.source_group === "thedream"
+      ? mergeDraftKeepingExisting(notice.extracted_draft, draft)
+      : draft;
+
   const { error: updateError } = await supabase
     .from("crawled_notices")
-    .update({ extracted_draft: draft })
+    .update({
+      extracted_draft: nextDraft,
+      body:
+        !notice.body && resolvedBody && resolvedBody.trim().length >= 120
+          ? resolvedBody
+          : notice.body,
+    })
     .eq("id", noticeId);
   if (updateError) return { error: updateError.message };
 
