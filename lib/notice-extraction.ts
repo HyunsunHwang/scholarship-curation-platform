@@ -373,39 +373,80 @@ async function fetchNoticeBodyFromUrl(url: string): Promise<string> {
   }
 }
 
+/**
+ * 일부 최신 모델(Claude Opus 4.7+, OpenAI 추론 모델 등)은 temperature/top_p/top_k
+ * 파라미터를 폐기(deprecated)하여 기본값이 아닌 값을 보내면 400 에러를 반환한다.
+ * temperature 관련 400 에러가 감지되면 해당 파라미터 없이 한 번 더 시도한다.
+ */
+async function fetchLlmWithTemperatureFallback(
+  url: string,
+  headers: Record<string, string>,
+  buildBody: (includeTemperature: boolean) => unknown
+): Promise<{ response?: Response; error?: string }> {
+  const attempt = async (
+    includeTemperature: boolean
+  ): Promise<{ response?: Response; error?: string }> => {
+    try {
+      return {
+        response: await fetch(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(buildBody(includeTemperature)),
+          signal: AbortSignal.timeout(60_000),
+        }),
+      };
+    } catch (e) {
+      return { error: `LLM 요청 실패: ${e instanceof Error ? e.message : e}` };
+    }
+  };
+
+  const first = await attempt(true);
+  if (first.error || !first.response) return first;
+  if (first.response.ok) return first;
+
+  const text = await first.response.text().catch(() => "");
+  const isTemperatureDeprecation =
+    first.response.status === 400 &&
+    /temperature|top_p|top_k/i.test(text) &&
+    /deprecat|not support|unsupported/i.test(text);
+  if (!isTemperatureDeprecation) {
+    return { error: `LLM 오류 ${first.response.status}: ${text.slice(0, 300)}` };
+  }
+
+  const retry = await attempt(false);
+  if (retry.error || !retry.response) return retry;
+  if (!retry.response.ok) {
+    const retryText = await retry.response.text().catch(() => "");
+    return {
+      error: `LLM 오류 ${retry.response.status}: ${retryText.slice(0, 300)}`,
+    };
+  }
+  return retry;
+}
+
 async function callOpenAiCompatible(params: {
   apiKey: string;
   base: string;
   model: string;
   userPrompt: string;
 }): Promise<{ content?: string; error?: string }> {
-  let response: Response;
-  try {
-    response = await fetch(`${params.base}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${params.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: params.model,
-        temperature: 0,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: params.userPrompt },
-        ],
-      }),
-      signal: AbortSignal.timeout(60_000),
-    });
-  } catch (e) {
-    return { error: `LLM 요청 실패: ${e instanceof Error ? e.message : e}` };
-  }
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => "");
-    return { error: `LLM 오류 ${response.status}: ${text.slice(0, 300)}` };
-  }
+  const { response, error: fetchError } = await fetchLlmWithTemperatureFallback(
+    `${params.base}/chat/completions`,
+    {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${params.apiKey}`,
+    },
+    (includeTemperature) => ({
+      model: params.model,
+      ...(includeTemperature ? { temperature: 0 } : {}),
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: params.userPrompt },
+      ],
+    })
+  );
+  if (fetchError || !response) return { error: fetchError };
 
   let payload: unknown;
   try {
@@ -429,32 +470,22 @@ async function callAnthropic(params: {
   model: string;
   userPrompt: string;
 }): Promise<{ content?: string; error?: string }> {
-  let response: Response;
-  try {
-    response = await fetch(`${params.base}/messages`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": params.apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: params.model,
-        max_tokens: 1500,
-        temperature: 0,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: params.userPrompt }],
-      }),
-      signal: AbortSignal.timeout(60_000),
-    });
-  } catch (e) {
-    return { error: `LLM 요청 실패: ${e instanceof Error ? e.message : e}` };
-  }
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => "");
-    return { error: `LLM 오류 ${response.status}: ${text.slice(0, 300)}` };
-  }
+  const { response, error: fetchError } = await fetchLlmWithTemperatureFallback(
+    `${params.base}/messages`,
+    {
+      "content-type": "application/json",
+      "x-api-key": params.apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    (includeTemperature) => ({
+      model: params.model,
+      max_tokens: 1500,
+      ...(includeTemperature ? { temperature: 0 } : {}),
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: params.userPrompt }],
+    })
+  );
+  if (fetchError || !response) return { error: fetchError };
 
   let payload: unknown;
   try {
