@@ -1,20 +1,16 @@
 source_id,source_name,college_name,source_level,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,org_unit_id
-cau_univ_001,중앙대 학생지원팀 통합 장학 공지,대학본부,university,https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100&CONTENTS_NO=5&P_TAB_NO=5,https://www.cau.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,cau_portal,true,8
+cau_univ_001,중앙대 학생지원팀 통합 장학 공지,대학본부,university,https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100&CONTENTS_NO=5&P_TAB_NO=5,https://www.cau.ac.kr,tbody tr,a[href],a[href],"td:last-child, .date, .board-date, .wr_date",,,(mode=view|articleNo=|boardNo=|nttNo=|idx=|no=\d+),장학|장학금|학자금|등록금|scholarship|tuition|fellowship,cau_portal,true,8
 cau_001,중앙대 경영학부,경영경제대학,department,https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php,https://biz.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,719
 cau_002,중앙대 경제학부,경영경제대학,department,https://econ.cau.ac.kr/news/notice/,https://econ.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,720
 cau_003,중앙대 광고홍보학과,경영경제대학,department,https://iadpr.cau.ac.kr/fm/fm_1.php,https://iadpr.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,721
 cau_004,중앙대 국제물류학과,경영경제대학,department,https://log.cau.ac.kr/dm/dm_1.php,https://log.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,722
-cau_005,중앙대 글로벌금융전공,경영경제대학,department,https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php,https://biz.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,723
 cau_006,중앙대 산업보안학과,경영경제대학,department,https://security.cau.ac.kr/board.htm?bbsid=notice,https://security.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,724
 cau_007,중앙대 응용통계학과,경영경제대학,department,https://stat.cau.ac.kr/notice/undergraduate,https://stat.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,725
 cau_008,중앙대 지식경영학부,경영경제대학,department,https://global.cau.ac.kr/kr/notice/notice.php,https://global.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,726
 cau_009,중앙대 건설환경플랜트공학전공,공과대학,department,https://civil.cau.ac.kr/?version=135&spkey=5b3a3e4874f80210e3b655253439c7e702c29894&module=true&PageAccess=main/board&brcode=notice01,https://civil.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,731
 cau_010,중앙대 건축학부,공과대학,department,http://archicau.com/wordpress/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/,http://archicau.com,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,732
 cau_011,중앙대 기계공학부,공과대학,department,https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1,https://me.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,733
-cau_012,중앙대 도시시스템공학전공,공과대학,department,https://civil.cau.ac.kr/?version=135&spkey=5b3a3e4874f80210e3b655253439c7e702c29894&module=true&PageAccess=main/board&brcode=notice01,https://civil.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,734
 cau_013,중앙대 에너지시스템공학부,공과대학,department,http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4,http://cauese.co.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,736
-cau_014,중앙대 발전전기전공,공과대학,department,http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4,http://cauese.co.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,735
-cau_015,중앙대 원자력전공,공과대학,department,http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4,http://cauese.co.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,737
 cau_016,중앙대 첨단소재공학과,공과대학,department,http://ame.cau.ac.kr/bbs/board.php?tbl=bbs49,http://ame.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,738
 cau_017,중앙대 화학공학과,공과대학,department,https://chemeng.cau.ac.kr/2018/sub05/sub05_01.php,https://chemeng.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,739
 cau_018,중앙대 교육학과,사범대학,department,https://education.cau.ac.kr/bbs/board.php?bo_table=s0301,https://education.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,715
@@ -28,7 +24,6 @@ cau_025,중앙대 문헌정보학과,사회과학대학,department,https://lis.c
 cau_026,중앙대 사회복지학부,사회과학대학,department,https://socialwelfare.cau.ac.kr/06_comm/comm_01a.php,https://socialwelfare.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,710
 cau_027,중앙대 사회학과,사회과학대학,department,https://sociology.cau.ac.kr/dm/dm-1.php,https://sociology.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,711
 cau_028,중앙대 심리학과,사회과학대학,department,https://psyche.cau.ac.kr/notice/sub01.asp,https://psyche.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,712
-cau_029,중앙대 언론정보전공,사회과학대학,department,https://cmc.cau.ac.kr/05_notice/notice_01a.php,https://cmc.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,713
 cau_030,중앙대 정치국제학과,사회과학대학,department,https://politics.cau.ac.kr/07_comm/comm_08a.php,https://politics.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,714
 cau_031,중앙대 동물생명공학전공,생명공학대학,department,https://cobiotech.cau.ac.kr/animal/dm/dm-1.php,https://cobiotech.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,749
 cau_032,중앙대 시스템생명공학과,생명공학대학,department,https://cobiotech.cau.ac.kr/system/dm/dm-1.php,https://cobiotech.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,750
@@ -37,33 +32,11 @@ cau_034,중앙대 식품공학전공,생명공학대학,department,https://cobio
 cau_035,중앙대 식품영양학전공,생명공학대학,department,https://cobiotech.cau.ac.kr/foodnutri/dm/dm-1.php,https://cobiotech.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,753
 cau_036,중앙대 AI학과,소프트웨어대학,department,https://ai.cau.ac.kr/sub07/sub0701.php?category=1&view=list,https://ai.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,743
 cau_037,중앙대 소프트웨어학부,소프트웨어대학,department,https://cse.cau.ac.kr/sub05/sub0501.php,https://cse.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,744
-cau_038,중앙대 약학전공,약학대학,department,https://pharm.cau.ac.kr/fm/fm-2-1.php,https://pharm.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,745
-cau_039,중앙대 제약학전공,약학대학,department,https://pharm.cau.ac.kr/fm/fm-2-1.php,https://pharm.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,746
+cau_038,중앙대 약학대학,약학대학,college,https://pharm.cau.ac.kr/fm/fm-2-1.php,https://pharm.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,134
 cau_040,중앙대 예술공학부,예술공학대학,department,https://artech.cau.ac.kr/news,https://artech.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,754
 cau_041,중앙대 TV방송연예전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp?type=%EC%9E%A5%ED%95%99,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,755
-cau_042,중앙대 게임콘텐츠·애니메이션전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,756
-cau_043,중앙대 공간연출전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,757
-cau_044,중앙대 공예전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,758
-cau_045,중앙대 관현악전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,759
-cau_046,중앙대 무용전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,760
-cau_047,중앙대 문예창작전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,761
-cau_048,중앙대 사진전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,762
-cau_049,중앙대 산업디자인전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,763
-cau_050,중앙대 서양화전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,764
-cau_051,중앙대 성악전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,765
-cau_052,중앙대 시각디자인전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,766
-cau_053,중앙대 실내환경디자인전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,767
-cau_054,중앙대 실용음악전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,768
-cau_055,중앙대 연극전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,769
-cau_056,중앙대 연희예술전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,770
-cau_057,중앙대 영화전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,771
-cau_058,중앙대 음악예술전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,772
-cau_059,중앙대 작곡전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,773
-cau_060,중앙대 조소전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,774
-cau_061,중앙대 패션전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,775
-cau_062,중앙대 피아노전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,776
-cau_063,중앙대 한국화전공,예술대학,department,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,777
-cau_064,중앙대 의학부,의과대학,department,https://med.cau.ac.kr/site/program/board/basicboard/list.do?menuid=001002001001&boardtypeid=3,https://med.cau.ac.kr,tbody tr,a[href],a[href],"td:last-child, .date, .board-date, .wr_date",,,(mode=view|articleNo=|boardNo=|nttNo=|idx=|no=\d+),장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,747
+cau_042,중앙대 예술대학,예술대학,college,https://arts.cau.ac.kr/user-datas/ko/notice_list.asp,https://arts.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,139
+cau_064,중앙대 의학부,의과대학,department,https://med.cau.ac.kr/site/program/board/basicboard/list.do?menuid=001002001001&boardtypeid=3,https://med.cau.ac.kr,li.not,a[href],a[href],"td:last-child, .date, .board-date, .wr_date",,,boardid=\d+,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,747
 cau_065,중앙대 국어국문학과,인문대학,department,https://koll.cau.ac.kr/board/u-notice/,https://koll.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,697
 cau_066,중앙대 독일어문학전공,인문대학,department,https://germania.cau.ac.kr/cm/cm_1.php,https://germania.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,698
 cau_067,중앙대 러시아어문학전공,인문대학,department,https://caurussia.cau.ac.kr/dm/dm_1.php,https://caurussia.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,699
@@ -76,11 +49,10 @@ cau_073,중앙대 프랑스어문학전공,인문대학,department,https://caufr
 cau_074,중앙대 물리학과,자연과학대학,department,https://physics.cau.ac.kr/FM/fm_6.php,https://physics.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,727
 cau_075,중앙대 생명과학과,자연과학대학,department,https://bio.cau.ac.kr/sub4.php?sca=%ED%95%99%EB%B6%80,https://bio.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,728
 cau_076,중앙대 수학과,자연과학대학,department,https://math.cau.ac.kr/notice/notice.php,https://math.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,729
-cau_077,중앙대 화학과,자연과학대학,department,https://chem.cau.ac.kr/eng/board.php?selected=notice,https://chem.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,730
+cau_077,중앙대 자연과학대학,자연과학대학,college,https://nature.cau.ac.kr/DM/DM_1.php,https://nature.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,130
 cau_078,중앙대 간호학과,간호대학,department,https://nursing.cau.ac.kr/bbs/board.php?tbl=bbs71,https://nursing.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,748
 cau_079,중앙대 융합공학부,창의ICT공과대학,department,https://ie.cau.ac.kr/sch_5/notice.php,https://ie.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,740
 cau_080,중앙대 지능형반도체공학부,창의ICT공과대학,department,https://isemi.cau.ac.kr/fm/fm_1.php,https://isemi.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,742
 cau_081,중앙대 전자전기공학부,창의ICT공과대학,department,https://e3home.cau.ac.kr/em/em_1.php,https://e3home.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,741
-cau_082,중앙대 골프전공,체육대학,department,http://sport.cau.ac.kr/u2_notice,http://sport.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,778
-cau_083,중앙대 생활·레저스포츠전공,체육대학,department,http://sport.cau.ac.kr/u2_notice,http://sport.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,779
-cau_084,중앙대 스포츠산업전공,체육대학,department,http://sport.cau.ac.kr/u2_notice,http://sport.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,780
+cau_082,중앙대 체육대학,체육대학,college,http://sport.cau.ac.kr/u2_notice,http://sport.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,140
+cau_083,중앙대 실감미디어학과,가상융합대학,department,https://vc.cau.ac.kr/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/,https://vc.cau.ac.kr,,a[href],,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,1132
