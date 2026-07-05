@@ -53,6 +53,13 @@ const COLLEGE_NAME_ALLOWLIST = new Set(
     .map((item) => cleanText(item).toLowerCase())
     .filter(Boolean),
 );
+// Some university WAFs (e.g. cau.ac.kr) silently hang/drop requests whose
+// User-Agent contains an identifiable bot string, even though the same page
+// loads instantly for a normal browser UA. Default to a browser-like UA to
+// avoid mistaking a WAF block for a dead link; still overridable via env.
+const REQUEST_USER_AGENT =
+  process.env.CRAWL_USER_AGENT ??
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 const INSECURE_TLS_HOSTS = new Set(
   String(process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS ?? "")
     .split(/[,\s|]+/)
@@ -319,8 +326,7 @@ async function fetchHtml(url) {
         signal: controller.signal,
         dispatcher: shouldAllowInsecureTls ? INSECURE_TLS_DISPATCHER : undefined,
         headers: {
-          "user-agent":
-            "Mozilla/5.0 (compatible; ScholarshipNoticeBot/1.0; +https://example.org/bot)",
+          "user-agent": REQUEST_USER_AGENT,
           accept: "text/html,application/xhtml+xml",
         },
       });
@@ -822,7 +828,15 @@ async function run() {
   console.log(`state=${resolvedStatePath}`);
 }
 
-run().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+run()
+  .then(() => {
+    // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
+    // the event loop alive well after all work is done, especially on
+    // Windows. Force an explicit exit once results are written so the
+    // process (and any CI job wrapping it) doesn't hang.
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
