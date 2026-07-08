@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import {
   daysUntilApplyDeadlineKorea,
   isAlwaysOpenRecruitment,
   todayKoreaYYYYMMDD,
 } from "@/lib/scholarship-dates";
+import type { AutoCheckState, QualMatchItem } from "@/lib/scholarship-qualification-match";
 
 export type ScholarshipDetail = {
   id: number;
@@ -68,33 +70,31 @@ export type ScholarshipDetail = {
   ad_location: string | null;
 };
 
-function hasQualifications(s: ScholarshipDetail): boolean {
+/** "지원 전 직접 확인" 대상: get_matched_scholarships가 필터링하지 않는(=자동 확인 불가) 자유 텍스트·참고 정보 */
+function hasManualCheckItems(s: ScholarshipDetail): boolean {
   return !!(
-    s.qual_gpa_min ||
-    s.qual_gpa_last_semester_min ||
     s.qual_last_semester_earned_credits_min ||
-    s.qual_income_level_min ||
-    s.qual_income_level_max ||
-    s.qual_household_size_max ||
-    s.qual_gender ||
-    s.qual_age_min ||
-    s.qual_age_max ||
-    (s.qual_region && s.qual_region.length > 0) ||
-    (s.qual_major && s.qual_major.length > 0) ||
-    (s.qual_special_info && s.qual_special_info.length > 0) ||
-    (s.qual_extra_requirements && s.qual_extra_requirements.length > 0) ||
-    (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) ||
-    s.qual_military_status ||
-    (s.qual_university && s.qual_university.length > 0) ||
-    (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) ||
-    (s.qual_school_location && s.qual_school_location.length > 0) ||
-    (s.qual_school_category && s.qual_school_category.length > 0) ||
-    (s.qual_academic_year && s.qual_academic_year.length > 0) ||
-    s.qual_nationality
-    || (s.qual_admission_type && s.qual_admission_type.length > 0)
-    || s.qual_parent_cohabitation
-    || (s.qual_parent_region && s.qual_parent_region.length > 0)
+    s.qual_parent_cohabitation ||
+    (s.qual_parent_region && s.qual_parent_region.length > 0) ||
+    (s.qual_extra_requirements && s.qual_extra_requirements.length > 0)
   );
+}
+
+function buildManualCheckItems(s: ScholarshipDetail): string[] {
+  const items: string[] = [];
+  if (s.qual_last_semester_earned_credits_min) {
+    items.push(`직전학기 이수학점 ${s.qual_last_semester_earned_credits_min}학점 이상`);
+  }
+  if (s.qual_parent_cohabitation) {
+    items.push(`부모 동거 여부: ${s.qual_parent_cohabitation}`);
+  }
+  if (s.qual_parent_region && s.qual_parent_region.length > 0) {
+    items.push(`부모 거주 지역: ${s.qual_parent_region.join(", ")}`);
+  }
+  if (s.qual_extra_requirements) {
+    items.push(...s.qual_extra_requirements);
+  }
+  return items;
 }
 
 function formatDate(dateStr: string | null): string {
@@ -113,108 +113,84 @@ function formatScheduleCell(text: string | null): string {
   return raw;
 }
 
-// ── 지원자격 섹션 ────────────────────────────────────────────────────
-function QualSection({ s }: { s: ScholarshipDetail }) {
-  if (!hasQualifications(s)) {
-    return <p className="text-sm text-ink/45">자격 요건 정보가 없습니다.</p>;
+// ── 내 프로필 자동 확인 섹션 ─────────────────────────────────────────
+/** 라벨 없이도 자연스럽게 읽히도록 일부 항목만 살짝 다듬고, 나머지는 값 그대로 노출 */
+function describeQualMatchValue(item: QualMatchItem): string {
+  if (item.key === "nationality") {
+    return item.value === "내국인" ? "대한민국 국적" : item.value;
   }
+  return item.value;
+}
 
-  const rows: { icon: string; label: string; value: string }[] = [];
+function AutoCheckChip({ item }: { item: QualMatchItem }) {
+  const text = describeQualMatchValue(item);
+  if (item.satisfied) {
+    return (
+      <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+        <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+        <span className="wrap-break-word">{text}</span>
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-medium text-ink/40">
+      <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span className="wrap-break-word">{text}</span>
+    </span>
+  );
+}
 
-  if (s.qual_age_min || s.qual_age_max) {
-    const parts = [];
-    if (s.qual_age_min) parts.push(`만 ${s.qual_age_min}세 이상`);
-    if (s.qual_age_max) parts.push(`만 ${s.qual_age_max}세 이하`);
-    rows.push({ icon: "👤", label: "연령", value: parts.join(" ~ ") });
-  }
-  if (s.qual_region && s.qual_region.length > 0) {
-    rows.push({ icon: "📍", label: "지역", value: s.qual_region.join(", ") });
-  }
-  if (s.qual_university && s.qual_university.length > 0) {
-    rows.push({ icon: "🏛️", label: "대상 대학교", value: s.qual_university.join(", ") });
-  }
-  if (s.qual_school_category && s.qual_school_category.length > 0) {
-    rows.push({ icon: "🏫", label: "대학 유형", value: s.qual_school_category.join(", ") });
-  }
-  if (s.qual_school_location && s.qual_school_location.length > 0) {
-    rows.push({ icon: "📍", label: "학교 소재지", value: s.qual_school_location.join(", ") });
-  }
-  if (s.qual_enrollment_status && s.qual_enrollment_status.length > 0) {
-    rows.push({ icon: "🎓", label: "재학 상태", value: s.qual_enrollment_status.join(", ") });
-  }
-  if (s.qual_academic_year && s.qual_academic_year.length > 0) {
-    rows.push({ icon: "📆", label: "학년", value: s.qual_academic_year.map((y) => `${y}학년`).join(", ") });
-  }
-  if (s.qual_major && s.qual_major.length > 0) {
-    rows.push({ icon: "📚", label: "전공", value: s.qual_major.join(", ") });
-  }
-  if (s.qual_gpa_min) {
-    rows.push({ icon: "📊", label: "학점 (누적)", value: `${s.qual_gpa_min} 이상` });
-  }
-  if (s.qual_gpa_last_semester_min) {
-    rows.push({ icon: "📊", label: "학점 (직전)", value: `${s.qual_gpa_last_semester_min} 이상` });
-  }
-  if (s.qual_last_semester_earned_credits_min) {
-    rows.push({ icon: "📘", label: "직전학기 이수학점", value: `${s.qual_last_semester_earned_credits_min}학점 이상` });
-  }
-  if (s.qual_income_level_min || s.qual_income_level_max) {
-    const value =
-      s.qual_income_level_min && s.qual_income_level_max
-        ? `${s.qual_income_level_min} ~ ${s.qual_income_level_max}분위`
-        : s.qual_income_level_min
-          ? `${s.qual_income_level_min}분위 이상`
-          : `${s.qual_income_level_max}분위 이하`;
-    rows.push({
-      icon: "💳",
-      label: "소득 분위",
-      value,
-    });
-  }
-  if (s.qual_household_size_max) {
-    rows.push({ icon: "🏠", label: "가구원 수", value: `${s.qual_household_size_max}인 이하` });
-  }
-  if (s.qual_gender) {
-    rows.push({ icon: "👥", label: "성별", value: s.qual_gender });
-  }
-  if (s.qual_nationality) {
-    rows.push({ icon: "🌏", label: "국적", value: s.qual_nationality });
-  }
-  if (s.qual_admission_type && s.qual_admission_type.length > 0) {
-    rows.push({ icon: "🧾", label: "입학 구분", value: s.qual_admission_type.join(", ") });
-  }
-  if (s.qual_parent_cohabitation) {
-    rows.push({ icon: "🏠", label: "부모 동거 여부", value: s.qual_parent_cohabitation });
-  }
-  if (s.qual_parent_region && s.qual_parent_region.length > 0) {
-    rows.push({ icon: "🗺️", label: "부모 거주 지역", value: s.qual_parent_region.join(", ") });
-  }
-  if (s.qual_special_info && s.qual_special_info.length > 0) {
-    rows.push({ icon: "✨", label: "특수 정보", value: s.qual_special_info.join(", ") });
-  }
-  if (s.qual_extra_requirements && s.qual_extra_requirements.length > 0) {
-    rows.push({ icon: "📝", label: "기타 요건", value: s.qual_extra_requirements.join(", ") });
-  }
-  if (s.qual_parent_occupation && s.qual_parent_occupation.length > 0) {
-    rows.push({ icon: "💼", label: "부모 직업", value: s.qual_parent_occupation.join(", ") });
-  }
-  if (s.qual_military_status) {
-    rows.push({ icon: "🪖", label: "병역사항", value: s.qual_military_status });
+type AutoCheckSectionState = Extract<AutoCheckState, { kind: "guest" } | { kind: "ready" }>;
+
+function AutoCheckSection({ autoCheck }: { autoCheck: AutoCheckSectionState }) {
+  if (autoCheck.kind === "guest") {
+    return (
+      <Link
+        href={autoCheck.ctaHref}
+        className="group flex items-center gap-1.5 text-sm font-medium text-ink/60 transition hover:text-brand"
+      >
+        로그인하고 내 프로필로 자동 확인하기
+        <svg
+          className="h-3.5 w-3.5 shrink-0 transition group-hover:translate-x-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </Link>
+    );
   }
 
   return (
-    <div className="space-y-0.5">
-      {rows.map((row) => (
-        <div
-          key={row.label}
-          className="flex items-start gap-2 border-b border-[#f1e3d4] py-3 last:border-b-0"
-        >
-          <span className="mt-0.5 shrink-0 text-brand">✓</span>
-          <div className="min-w-0">
-            <p className="text-xs text-ink/55">{row.label}</p>
-            <p className="wrap-break-word text-sm leading-6 text-ink">{row.value}</p>
-          </div>
-        </div>
+    <div className="flex flex-wrap gap-2">
+      {autoCheck.items.map((item) => (
+        <AutoCheckChip key={item.key} item={item} />
       ))}
+    </div>
+  );
+}
+
+// ── 지원 전 직접 확인 섹션 ────────────────────────────────────────────
+function ManualCheckSection({ items }: { items: string[] }) {
+  return (
+    <div>
+      <p className="mb-4 text-sm text-ink/50">
+        프로필만으로 판단할 수 없는 조건이에요. 아래 내용을 지원 전 꼭 직접 확인해주세요.
+      </p>
+      <ul className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-start gap-2.5">
+            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink/30" />
+            <span className="wrap-break-word text-sm leading-6 text-ink/80">{item}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -653,83 +629,155 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   if (imageUrls.length === 0 && !text) return null;
 
   return (
-    <section>
-      <h3 className="mb-4 text-sm font-bold text-ink">원본 공고문</h3>
-      <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
-        {imageUrls.map((imageUrl, i) => (
-          <div key={imageUrl} className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imageUrl} alt={`${s.name} 원본 공고문 ${i + 1}`} className="w-full object-contain" />
-          </div>
-        ))}
-        {text ? (
-          <div className="whitespace-pre-wrap break-all rounded-xl bg-white px-4 py-3 text-sm leading-6 text-ink/80">
-            {text}
-          </div>
-        ) : null}
-      </div>
-    </section>
+    <div className="space-y-4 rounded-xl bg-gray-50 p-4">
+      {imageUrls.map((imageUrl, i) => (
+        <div key={imageUrl} className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={imageUrl} alt={`${s.name} 원본 공고문 ${i + 1}`} className="w-full object-contain" />
+        </div>
+      ))}
+      {text ? (
+        <div className="whitespace-pre-wrap break-all rounded-lg bg-white px-4 py-3 text-sm leading-6 text-ink/80">
+          {text}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+type SectionIconName =
+  | "profile"
+  | "search"
+  | "calendar"
+  | "document"
+  | "checklist"
+  | "newspaper"
+  | "briefcase"
+  | "mapPin";
+
+const SECTION_ICON_PATHS: Record<SectionIconName, string> = {
+  profile:
+    "M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z",
+  search: "M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z",
+  calendar:
+    "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5",
+  document:
+    "M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-9m9-3.75h-9m3.75-9H6.75A2.25 2.25 0 004.5 6.75v10.5A2.25 2.25 0 006.75 19.5h9a2.25 2.25 0 002.25-2.25v-4.5",
+  checklist:
+    "M9 12.75l1.5 1.5 3-3.75M3 12a9 9 0 1018 0 9 9 0 00-18 0z",
+  newspaper:
+    "M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z",
+  briefcase:
+    "M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42a2.203 2.203 0 01-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0",
+  mapPin:
+    "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z",
+};
+
+function SectionIcon({ name }: { name: SectionIconName }) {
+  return (
+    <svg
+      className="h-4 w-4 shrink-0 text-ink/40"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d={SECTION_ICON_PATHS[name]} />
+    </svg>
   );
 }
 
 /** 장학금 상세 본문: 탭 없이 한 페이지에 섹션 순서대로 표시 */
-export default function ScholarshipTabs({ scholarship }: { scholarship: ScholarshipDetail }) {
+export default function ScholarshipTabs({
+  scholarship,
+  autoCheck,
+}: {
+  scholarship: ScholarshipDetail;
+  autoCheck: AutoCheckState;
+}) {
   const s = scholarship;
   const isAdvertisement = s.is_advertisement === true;
+  const manualCheckItems = !isAdvertisement && hasManualCheckItems(s) ? buildManualCheckItems(s) : [];
 
-  const sectionTitle = (label: string) => (
-    <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-ink">
-      <span className="h-4 w-1 rounded-sm bg-brand" />
-      {label}
-    </h3>
+  const sectionTitle = (label: string, icon: SectionIconName, right?: React.ReactNode) => (
+    <div className="mb-4 flex items-center justify-between gap-2">
+      <h3 className="flex items-center gap-2 text-[15px] font-bold text-ink">
+        <SectionIcon name={icon} />
+        {label}
+      </h3>
+      {right}
+    </div>
   );
 
   return (
-    <div className="mt-4 w-full space-y-4 overflow-x-hidden sm:mt-5">
+    <div className="mt-8 w-full divide-y divide-gray-100 overflow-x-hidden">
       {isAdvertisement ? (
-        <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-          {sectionTitle("요구 역량")}
+        <section className="py-7 first:pt-0">
+          {sectionTitle("요구 역량", "briefcase")}
           <AdSkillsSection s={s} />
         </section>
-      ) : hasQualifications(s) ? (
-        <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-          {sectionTitle("지원 자격")}
-          <QualSection s={s} />
-        </section>
-      ) : null}
+      ) : (
+        <>
+          {autoCheck.kind !== "none" && (
+            <section className="py-7 first:pt-0">
+              {sectionTitle(
+                "내 프로필로 확인된 자격",
+                "profile",
+                autoCheck.kind === "ready" && autoCheck.items.length > 0 ? (
+                  <span className="shrink-0 text-xs font-semibold text-ink/40">
+                    {autoCheck.items.filter((item) => item.satisfied).length}/{autoCheck.items.length}개 충족
+                  </span>
+                ) : undefined
+              )}
+              <AutoCheckSection autoCheck={autoCheck} />
+            </section>
+          )}
+          {manualCheckItems.length > 0 && (
+            <section className="py-7 first:pt-0">
+              {sectionTitle("지원 전 직접 확인하세요", "search")}
+              <ManualCheckSection items={manualCheckItems} />
+            </section>
+          )}
+        </>
+      )}
 
-      <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-        {sectionTitle("주요 일정")}
+      <section className="py-7 first:pt-0">
+        {sectionTitle("주요 일정", "calendar")}
         <ScheduleSection s={s} />
       </section>
 
       {isAdvertisement ? (
         <>
-          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-            {sectionTitle("소재지")}
+          <section className="py-7">
+            {sectionTitle("소재지", "mapPin")}
             <AdLocationSection s={s} />
           </section>
-          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-            {sectionTitle("지원 방법")}
+          <section className="py-7">
+            {sectionTitle("지원 방법", "checklist")}
             <ApplySection s={s} />
           </section>
         </>
       ) : (
         <>
-          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-            {sectionTitle("제출 서류")}
+          <section className="py-7">
+            {sectionTitle("제출 서류", "document")}
             <DocumentsSection s={s} />
           </section>
-          <section className="rounded-2xl border border-[#e5d4bf] bg-white px-5 py-5">
-            {sectionTitle("선발 방법")}
+          <section className="py-7">
+            {sectionTitle("선발 방법", "checklist")}
             <ApplySection s={s} />
           </section>
         </>
       )}
 
-      <div className="w-full overflow-x-hidden">
-        <OriginalNoticeSection s={s} />
-      </div>
+      {(s.original_notice_image_urls?.length ||
+        s.original_notice_image_url ||
+        s.original_notice_text?.trim()) && (
+        <section className="w-full overflow-x-hidden py-7">
+          {sectionTitle("원본 공고문", "newspaper")}
+          <OriginalNoticeSection s={s} />
+        </section>
+      )}
     </div>
   );
 }
