@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   daysUntilApplyDeadlineKorea,
   isAlwaysOpenRecruitment,
-  todayKoreaYYYYMMDD,
 } from "@/lib/scholarship-dates";
 import type { AutoCheckState, QualMatchItem } from "@/lib/scholarship-qualification-match";
 
@@ -180,9 +179,6 @@ function AutoCheckSection({ autoCheck }: { autoCheck: AutoCheckSectionState }) {
 function ManualCheckSection({ items }: { items: string[] }) {
   return (
     <div>
-      <p className="mb-4 text-sm text-ink/50">
-        프로필만으로 판단할 수 없는 조건이에요. 아래 내용을 지원 전 꼭 직접 확인해주세요.
-      </p>
       <ul className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-2.5">
@@ -362,27 +358,6 @@ function scheduleRowSortMs(r: SortableScheduleRow): number {
   return r.sortMs as number;
 }
 
-/**
- * 접수 기간 내 오늘 위치(시간 경과율, 0~100%).
- * - 상시모집이거나 시작·마감일을 해석할 수 없으면 진행률 바를 숨김(null).
- * - 접수 시작 전이면 0%, 마감 후면 100%.
- */
-function computeApplyProgressPercent(
-  applyStartDate: string | null,
-  applyEndDate: string,
-  alwaysOpen: boolean,
-): number | null {
-  if (alwaysOpen) return null;
-  const startMs = parseYYYYMMDDToUtcMs(applyStartDate);
-  const endMs = parseYYYYMMDDToUtcMs(applyEndDate);
-  if (startMs === null || endMs === null) return null;
-  const todayMs = parseYYYYMMDDToUtcMs(todayKoreaYYYYMMDD());
-  if (todayMs === null) return null;
-  if (endMs <= startMs) return todayMs >= endMs ? 100 : 0;
-  const ratio = ((todayMs - startMs) / (endMs - startMs)) * 100;
-  return Math.round(Math.max(0, Math.min(100, ratio)));
-}
-
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
 function ScheduleSection({ s }: { s: ScholarshipDetail }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
@@ -471,60 +446,43 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
     return <p className="text-sm text-ink/45">일정 정보가 없습니다.</p>;
   }
 
-  const periodText = `${formatDate(s.apply_start_date)} ~ ${alwaysOpen ? "상시모집" : formatDate(s.apply_end_date)}`;
-  const applyProgressPercent = computeApplyProgressPercent(
-    s.apply_start_date,
-    s.apply_end_date,
-    alwaysOpen,
-  );
-
   return (
     <div>
-      <p className="mb-2 text-xs font-bold text-brand">{periodText}</p>
-      {applyProgressPercent !== null && (
-        <div className="mb-4 h-1.5 rounded-full bg-[#fbeca8]">
-          <div
-            className="h-full rounded-full bg-brand"
-            style={{ width: `${applyProgressPercent}%` }}
-          />
-        </div>
-      )}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {deduped.map((row, idx) => (
-          <div key={row.key} className="flex min-w-0 items-start gap-2.5">
-            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
-              {idx + 1}
-            </div>
-            <div className="min-w-0">
-              <p className="wrap-break-word text-sm font-bold text-ink">{row.label}</p>
-              <p
-                className={`mt-0.5 wrap-break-word text-xs ${
-                  row.kind === "milestone" && row.urgent
-                    ? "font-semibold text-brand"
-                    : row.kind === "stage" && !row.value
-                      ? "text-ink/50"
-                      : "text-ink/70"
-                }`}
-              >
-                {row.kind === "milestone" ? (
-                  <>
-                    {row.value}
-                    {row.urgent && (
-                      <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
-                        D-{daysLeft}
-                      </span>
-                    )}
-                  </>
-                ) : row.value ? (
-                  formatScheduleCell(row.value)
-                ) : (
-                  "일정 별도 공지"
-                )}
-              </p>
-            </div>
+      {deduped.map((row, idx) => (
+        <div key={row.key} className="relative flex min-w-0 gap-4 pb-6 last:pb-0">
+          {idx !== deduped.length - 1 && (
+            <span className="absolute left-[5px] top-3 bottom-0 w-px bg-gray-200" />
+          )}
+          <span className="relative z-10 mt-1.5 h-[11px] w-[11px] shrink-0 rounded-full border-2 border-brand bg-white" />
+          <div className="min-w-0 flex-1">
+            <p
+              className={`wrap-break-word text-xs font-semibold ${
+                row.kind === "milestone" && row.urgent
+                  ? "text-brand"
+                  : row.kind === "stage" && !row.value
+                    ? "text-ink/40"
+                    : "text-ink/50"
+              }`}
+            >
+              {row.kind === "milestone" ? (
+                <>
+                  {row.value}
+                  {row.urgent && (
+                    <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      D-{daysLeft}
+                    </span>
+                  )}
+                </>
+              ) : row.value ? (
+                formatScheduleCell(row.value)
+              ) : (
+                "일정 별도 공지"
+              )}
+            </p>
+            <p className="mt-0.5 wrap-break-word text-sm font-bold text-ink">{row.label}</p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
