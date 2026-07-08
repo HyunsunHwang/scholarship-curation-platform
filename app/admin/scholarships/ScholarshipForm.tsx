@@ -1,9 +1,17 @@
 "use client";
 
 import { useTransition, useState, useRef, useEffect, useCallback } from "react";
-import type { Scholarship } from "@/lib/database.types";
+import type { Scholarship, SelectionStagePhase } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { SPECIAL_INFO_OPTIONS } from "@/lib/special-info";
+
+/** 선발 단계 폼 프리필용 (scholarship_selection_stages 조회 결과) */
+export type SelectionStageDefault = {
+  title: string;
+  phase: SelectionStagePhase;
+  schedule_text: string | null;
+  note: string | null;
+};
 
 type Props = {
   defaultValues?: Partial<Scholarship>;
@@ -13,9 +21,40 @@ type Props = {
   universityDepartments?: { university: string; department: string }[];
   /** 교내 장학금의 기존 org_unit 타겟 (수정 폼 프리필용) */
   defaultTargetOrgUnitIds?: number[];
+  /** 기존 선발 단계 (수정 폼 프리필용). 비우면 빈 단계 1개로 시작 */
+  defaultStages?: SelectionStageDefault[];
   returnPath?: string;
   mode?: "scholarship" | "ad";
 };
+
+type StageRow = {
+  id: string;
+  title: string;
+  phase: SelectionStagePhase;
+  scheduleText: string;
+  note: string;
+};
+
+let stageRowSeq = 0;
+function makeStageRowId(): string {
+  stageRowSeq += 1;
+  return `stage-${Date.now()}-${stageRowSeq}`;
+}
+
+function emptyStageRow(): StageRow {
+  return { id: makeStageRowId(), title: "", phase: "selection", scheduleText: "", note: "" };
+}
+
+function stageRowsFromDefaults(defaultStages?: SelectionStageDefault[]): StageRow[] {
+  if (!defaultStages || defaultStages.length === 0) return [emptyStageRow()];
+  return defaultStages.map((s) => ({
+    id: makeStageRowId(),
+    title: s.title,
+    phase: s.phase,
+    scheduleText: s.schedule_text ?? "",
+    note: s.note ?? "",
+  }));
+}
 
 const FIELD_CODES = ["인문", "사회", "교육", "공학", "자연", "의약", "예체능"];
 
@@ -47,6 +86,7 @@ export default function ScholarshipForm({
   universities = [],
   universityDepartments = [],
   defaultTargetOrgUnitIds = [],
+  defaultStages,
   returnPath = "/admin/scholarships",
   mode = "scholarship",
 }: Props) {
@@ -59,6 +99,14 @@ export default function ScholarshipForm({
   const defaultEnrollmentSelections = mapLegacyEnrollmentStatuses(
     (dv.qual_enrollment_status ?? []).map(String)
   );
+  const [stageRows, setStageRows] = useState<StageRow[]>(() => stageRowsFromDefaults(defaultStages));
+
+  const updateStageRow = (id: string, patch: Partial<Omit<StageRow, "id">>) => {
+    setStageRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  };
+  const addStageRow = () => setStageRows((prev) => [...prev, emptyStageRow()]);
+  const removeStageRow = (id: string) =>
+    setStageRows((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.id !== id)));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -441,25 +489,95 @@ export default function ScholarshipForm({
 
       {/* ── 선발 단계 ─────────────────────────────────────────── */}
       <Section title="선발 단계">
-        <Field label="선발 단계 수 *" name="selection_stages" type="number" min="1" max="5" defaultValue={dv.selection_stages?.toString() ?? "1"} required />
-        {[1, 2, 3, 4, 5].map((n) => (
-          <div key={n} className="md:col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Field
-              label={`${n}차 선발`}
-              name={`selection_stage_${n}`}
-              defaultValue={(dv as Record<string, unknown>)[`selection_stage_${n}`] as string ?? ""}
-              required={n === 1}
-            />
-            <Field
-              label={`${n}차 일정`}
-              name={`selection_stage_${n}_schedule`}
-              defaultValue={
-                ((dv as Record<string, unknown>)[`selection_stage_${n}_schedule`] as string | undefined) ?? ""
-              }
-              placeholder="예: 2026-07-16 (상세·주요 일정에 표시)"
-            />
+        <div className="md:col-span-2">
+          <input
+            type="hidden"
+            name="selection_stages_json"
+            value={JSON.stringify(
+              stageRows
+                .filter((row) => row.title.trim())
+                .map((row) => ({
+                  title: row.title.trim(),
+                  phase: row.phase,
+                  schedule_text: row.scheduleText.trim() || null,
+                  note: row.note.trim() || null,
+                }))
+            )}
+          />
+          <p className="mb-3 text-xs text-gray-500">
+            지원자가 통과해야 하는 선발 관문과, 합격 후 이어지는 절차(오리엔테이션·파견·수혜 등)를 구분해 순서대로 입력하세요. 개수 제한 없음.
+          </p>
+          <div className="space-y-3">
+            {stageRows.map((row, index) => (
+              <div key={row.id} className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
+                  <div className="md:col-span-4">
+                    <label className="mb-1 block text-xs font-medium text-gray-600">{index + 1}차 단계명</label>
+                    <input
+                      type="text"
+                      value={row.title}
+                      onChange={(e) => updateStageRow(row.id, { title: e.target.value })}
+                      placeholder="예: 서류 심사, 면접, 출국 전 오리엔테이션"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="md:col-span-3">
+                    <label className="mb-1 block text-xs font-medium text-gray-600">구분</label>
+                    <select
+                      value={row.phase}
+                      onChange={(e) =>
+                        updateStageRow(row.id, {
+                          phase: e.target.value === "post_acceptance" ? "post_acceptance" : "selection",
+                        })
+                      }
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="selection">선발 관문</option>
+                      <option value="post_acceptance">합격 이후 절차</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-3">
+                    <label className="mb-1 block text-xs font-medium text-gray-600">일정 표시 문구</label>
+                    <input
+                      type="text"
+                      value={row.scheduleText}
+                      onChange={(e) => updateStageRow(row.id, { scheduleText: e.target.value })}
+                      placeholder="예: 2026-07-16, 2026년 10월, 추후 공지"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="md:col-span-2 md:flex md:items-end">
+                    <button
+                      type="button"
+                      onClick={() => removeStageRow(row.id)}
+                      disabled={stageRows.length <= 1}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">보조 설명 (선택)</label>
+                  <input
+                    type="text"
+                    value={row.note}
+                    onChange={(e) => updateStageRow(row.id, { note: e.target.value })}
+                    placeholder="예: 참석 필수, 온라인·우편 병행 접수"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+          <button
+            type="button"
+            onClick={addStageRow}
+            className="mt-3 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            + 단계 추가
+          </button>
+        </div>
         <Field label="선발 비고" name="selection_note" defaultValue={dv.selection_note ?? ""} />
       </Section>
 

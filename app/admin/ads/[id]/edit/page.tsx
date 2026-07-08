@@ -15,11 +15,14 @@ export default async function EditAdPage({
   if (isNaN(scholarshipId)) notFound();
 
   const supabase = await createClient();
-  const { data: scholarship } = await supabase
-    .from("scholarships")
-    .select("*")
-    .eq("id", scholarshipId)
-    .single();
+  const [{ data: scholarship }, { data: stages }] = await Promise.all([
+    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+    supabase
+      .from("scholarship_selection_stages")
+      .select("title, phase, schedule_text, note")
+      .eq("scholarship_id", scholarshipId)
+      .order("stage_order"),
+  ]);
 
   if (!scholarship || scholarship.is_advertisement !== true) notFound();
 
@@ -43,6 +46,7 @@ export default async function EditAdPage({
         action={boundAction}
         submitLabel="변경사항 저장"
         returnPath="/admin/ads"
+        defaultStages={stages ?? []}
       />
     </div>
   );

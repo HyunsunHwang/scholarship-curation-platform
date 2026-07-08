@@ -1,8 +1,10 @@
-import type { Database } from "@/lib/database.types";
+import type { Database, SelectionStagePhase } from "@/lib/database.types";
 import { splitSpecialInfoValues } from "@/lib/special-info";
 
 export type ScholarshipInsert =
   Database["public"]["Tables"]["scholarships"]["Insert"];
+export type SelectionStageInsert =
+  Database["public"]["Tables"]["scholarship_selection_stages"]["Insert"];
 
 export const SCHOLARSHIP_TYPES = ["on_campus", "off_campus"] as const;
 
@@ -154,18 +156,7 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     original_notice_image_url: originalNoticeImageUrls[0] ?? g("original_notice_image_url") ?? null,
     original_notice_image_urls: originalNoticeImageUrls.length > 0 ? originalNoticeImageUrls : null,
     original_notice_text: g("original_notice_text") || null,
-    selection_stages: parseOptionalInt(g("selection_stages")) ?? 1,
-    selection_stage_1: g("selection_stage_1") ?? "",
-    selection_stage_2: g("selection_stage_2") || null,
-    selection_stage_3: g("selection_stage_3") || null,
-    selection_stage_4: g("selection_stage_4") || null,
-    selection_stage_5: g("selection_stage_5") || null,
     selection_note: g("selection_note") || null,
-    selection_stage_1_schedule: g("selection_stage_1_schedule") || null,
-    selection_stage_2_schedule: g("selection_stage_2_schedule") || null,
-    selection_stage_3_schedule: g("selection_stage_3_schedule") || null,
-    selection_stage_4_schedule: g("selection_stage_4_schedule") || null,
-    selection_stage_5_schedule: g("selection_stage_5_schedule") || null,
     collected_at: new Date().toISOString(),
     is_verified: bool("is_verified"),
     list_on_home: bool("list_on_home"),
@@ -176,6 +167,71 @@ export function buildScholarshipPayload(formData: FormData): ScholarshipInsert {
     is_recommended: bool("is_recommended"),
     recommended_sort_order: parseOptionalInt(g("recommended_sort_order")),
   };
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 선발 단계 (scholarship_selection_stages) — 폼의 JSON 배열 hidden 필드 파싱
+// ─────────────────────────────────────────────────────────────────
+export type SelectionStageFormRow = {
+  title: string;
+  phase: SelectionStagePhase;
+  schedule_text: string | null;
+  note: string | null;
+};
+
+const ISO_DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** 자유 텍스트 일정 중 순수 ISO 날짜(YYYY-MM-DD)만 정렬용 구조화 날짜로 승격 */
+function deriveScheduleDate(scheduleText: string | null): string | null {
+  if (!scheduleText) return null;
+  const raw = scheduleText.trim();
+  if (ISO_DATE_ONLY.test(raw)) return raw;
+  const isoHead = raw.match(/^(\d{4}-\d{2}-\d{2})T/)?.[1];
+  return isoHead ?? null;
+}
+
+/** ScholarshipForm이 `selection_stages_json` hidden 필드로 보내는 배열을 신뢰 가능한 형태로 정규화 */
+export function parseSelectionStagesInput(val: string | null): SelectionStageFormRow[] {
+  if (!val || val.trim() === "") return [];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(val);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  return parsed.flatMap((item): SelectionStageFormRow[] => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Record<string, unknown>;
+    const title = typeof record.title === "string" ? record.title.trim() : "";
+    if (!title) return [];
+    const phase: SelectionStagePhase = record.phase === "post_acceptance" ? "post_acceptance" : "selection";
+    const scheduleText =
+      typeof record.schedule_text === "string" && record.schedule_text.trim() !== ""
+        ? record.schedule_text.trim()
+        : null;
+    const note =
+      typeof record.note === "string" && record.note.trim() !== "" ? record.note.trim() : null;
+    return [{ title, phase, schedule_text: scheduleText, note }];
+  });
+}
+
+/** 폼 데이터 → `scholarship_selection_stages` insert 페이로드 (scholarship_id는 저장 후 채움) */
+export function buildSelectionStagesPayload(
+  formData: FormData,
+  scholarshipId: number
+): SelectionStageInsert[] {
+  const rows = parseSelectionStagesInput(formData.get("selection_stages_json") as string | null);
+  return rows.map((row, index) => ({
+    scholarship_id: scholarshipId,
+    stage_order: index + 1,
+    title: row.title,
+    phase: row.phase,
+    schedule_text: row.schedule_text,
+    schedule_date: deriveScheduleDate(row.schedule_text),
+    note: row.note,
+  }));
 }
 
 function mapEnrollmentStatusesForStorage(values: string[]): string[] {

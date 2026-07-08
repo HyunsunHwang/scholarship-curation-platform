@@ -38,6 +38,8 @@ export type OrganizationKindType = "학과" | "학교" | "재단" | "기타";
 export type OrgRequestStatusType = "pending" | "approved" | "rejected";
 /** org_units 노드 유형 (표시/필터용, 부모-자식 전이 강제 없음) */
 export type OrgUnitType = "university" | "college" | "division" | "department";
+/** 선발 단계 구분: selection = 지원자가 통과해야 하는 선발 관문, post_acceptance = 합격 후 이어지는 절차(오리엔테이션·파견·수혜 등) */
+export type SelectionStagePhase = "selection" | "post_acceptance";
 
 // ── Database 타입 ─────────────────────────────────────────────────────────
 
@@ -104,6 +106,39 @@ export interface Database {
         Row: { scholarship_id: number; org_unit_id: number; created_at: string };
         Insert: { scholarship_id: number; org_unit_id: number; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["scholarship_target_units"]["Insert"]>;
+        Relationships: [];
+      };
+
+      /** 장학금 선발 단계(서류·면접 등)와 합격 이후 절차(오리엔테이션·파견 등)를 순서대로 저장 */
+      scholarship_selection_stages: {
+        Row: {
+          id: number;
+          scholarship_id: number;
+          stage_order: number;
+          title: string;
+          phase: SelectionStagePhase;
+          /** 정확한 날짜를 파싱할 수 있을 때만 채워지는 정렬용 구조화 날짜 */
+          schedule_date: string | null;
+          /** 화면에 표시할 일정 원문 (월 단위·기간·"추후 공지" 등 자유 표기 허용) */
+          schedule_text: string | null;
+          /** 단계별 보조 설명 한 줄 (예: "참석 필수") */
+          note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          scholarship_id: number;
+          stage_order: number;
+          title: string;
+          phase?: SelectionStagePhase;
+          schedule_date?: string | null;
+          schedule_text?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["scholarship_selection_stages"]["Insert"]>;
         Relationships: [];
       };
 
@@ -507,18 +542,7 @@ export interface Database {
           homepage_url: string | null;
           contact: string | null;
           note: string | null;
-          selection_stages: number;
-          selection_stage_1: string;
-          selection_stage_2: string | null;
-          selection_stage_3: string | null;
-          selection_stage_4: string | null;
-          selection_stage_5: string | null;
           selection_note: string | null;
-          selection_stage_1_schedule: string | null;
-          selection_stage_2_schedule: string | null;
-          selection_stage_3_schedule: string | null;
-          selection_stage_4_schedule: string | null;
-          selection_stage_5_schedule: string | null;
           poster_image_url: string | null; // 공지 포스터 이미지 URL
           original_notice_image_url: string | null;
           original_notice_image_urls: string[] | null;
@@ -623,3 +647,4 @@ export type UniversityDepartment = Database["public"]["Tables"]["university_depa
 export type OrgUnit = Database["public"]["Tables"]["org_units"]["Row"];
 export type OrgUnitAlias = Database["public"]["Tables"]["org_unit_aliases"]["Row"];
 export type ScholarshipTargetUnit = Database["public"]["Tables"]["scholarship_target_units"]["Row"];
+export type ScholarshipSelectionStage = Database["public"]["Tables"]["scholarship_selection_stages"]["Row"];

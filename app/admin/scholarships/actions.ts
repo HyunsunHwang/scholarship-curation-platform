@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
   buildScholarshipPayload as buildPayload,
+  buildSelectionStagesPayload,
   getAdminReturnPath,
   parseTargetOrgUnitIds,
 } from "@/lib/scholarship-payload";
@@ -36,6 +37,31 @@ async function syncTargetOrgUnits(
   return {};
 }
 
+/**
+ * 선발 단계(scholarship_selection_stages) 동기화 (전체 교체).
+ * ScholarshipForm의 `selection_stages_json` hidden 필드를 순서대로 다시 채운다.
+ */
+async function syncSelectionStages(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  scholarshipId: number,
+  formData: FormData
+): Promise<{ error?: string }> {
+  const { error: deleteError } = await supabase
+    .from("scholarship_selection_stages")
+    .delete()
+    .eq("scholarship_id", scholarshipId);
+  if (deleteError) return { error: deleteError.message };
+
+  const stages = buildSelectionStagesPayload(formData, scholarshipId);
+  if (stages.length === 0) return {};
+
+  const { error: insertError } = await supabase
+    .from("scholarship_selection_stages")
+    .insert(stages);
+  if (insertError) return { error: insertError.message };
+  return {};
+}
+
 // ─────────────────────────────────────────────────────────────────
 // 장학금 생성
 // ─────────────────────────────────────────────────────────────────
@@ -62,6 +88,9 @@ export async function createScholarship(formData: FormData) {
     const targetIds = payload.scholarship_type === "on_campus" ? parseTargetOrgUnitIds(formData) : [];
     const syncResult = await syncTargetOrgUnits(supabase, inserted.id, targetIds);
     if (syncResult.error) return { error: `대상 조직 저장 실패: ${syncResult.error}` };
+
+    const stagesResult = await syncSelectionStages(supabase, inserted.id, formData);
+    if (stagesResult.error) return { error: `선발 단계 저장 실패: ${stagesResult.error}` };
   }
 
   // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)
@@ -106,6 +135,9 @@ export async function updateScholarship(id: number, formData: FormData) {
     const targetIds = payload.scholarship_type === "on_campus" ? parseTargetOrgUnitIds(formData) : [];
     const syncResult = await syncTargetOrgUnits(supabase, id, targetIds);
     if (syncResult.error) return { error: `대상 조직 저장 실패: ${syncResult.error}` };
+
+    const stagesResult = await syncSelectionStages(supabase, id, formData);
+    if (stagesResult.error) return { error: `선발 단계 저장 실패: ${stagesResult.error}` };
   }
 
   // poster_image_url은 컬럼이 없을 수 있으므로 별도 처리 (실패해도 진행)

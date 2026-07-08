@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buildScholarshipPayload } from "@/lib/scholarship-payload";
+import { buildScholarshipPayload, buildSelectionStagesPayload } from "@/lib/scholarship-payload";
 import {
   extractScholarshipDraft,
   type NoticeDraft,
@@ -91,6 +91,16 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
       .from("scholarships")
       .update({ poster_image_url: posterUrl })
       .eq("id", inserted.id);
+  }
+
+  if (inserted?.id) {
+    const stages = buildSelectionStagesPayload(formData, inserted.id);
+    if (stages.length > 0) {
+      const { error: stagesError } = await supabase
+        .from("scholarship_selection_stages")
+        .insert(stages);
+      if (stagesError) return { error: `선발 단계 저장 실패: ${stagesError.message}` };
+    }
   }
 
   const { error: markError } = await supabase

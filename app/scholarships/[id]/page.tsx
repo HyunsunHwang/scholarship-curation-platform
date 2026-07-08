@@ -86,11 +86,17 @@ export default async function ScholarshipDetailPage({
 
   const supabase = await createClient();
 
-  const [{ data: scholarship }, { data: { user } }, scrapCountByScholarship] = await Promise.all([
-    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
-    supabase.auth.getUser(),
-    getScholarshipScrapCounts(supabase, [scholarshipId]),
-  ]);
+  const [{ data: scholarship }, { data: { user } }, scrapCountByScholarship, { data: selectionStages }] =
+    await Promise.all([
+      supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+      supabase.auth.getUser(),
+      getScholarshipScrapCounts(supabase, [scholarshipId]),
+      supabase
+        .from("scholarship_selection_stages")
+        .select("stage_order, title, phase, schedule_date, schedule_text, note")
+        .eq("scholarship_id", scholarshipId)
+        .order("stage_order"),
+    ]);
 
   if (!scholarship) notFound();
 
@@ -207,7 +213,11 @@ export default async function ScholarshipDetailPage({
                 </div>
               )}
 
-              <ScholarshipTabs scholarship={scholarship} autoCheck={autoCheck} />
+              <ScholarshipTabs
+                scholarship={scholarship}
+                selectionStages={selectionStages ?? []}
+                autoCheck={autoCheck}
+              />
 
               {!isAdvertisement && scholarship.contact && (
                 <div className="mt-8 border-t border-gray-100 pt-6">

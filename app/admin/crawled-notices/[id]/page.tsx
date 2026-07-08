@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { loadCrawlerDepartments } from "@/lib/crawler-departments";
 import type { Scholarship } from "@/lib/database.types";
-import type { NoticeDraft } from "@/lib/notice-extraction";
+import type { NoticeDraft, NoticeDraftStage } from "@/lib/notice-extraction";
 import { splitSpecialInfoValues } from "@/lib/special-info";
-import ScholarshipForm from "../../scholarships/ScholarshipForm";
+import ScholarshipForm, { type SelectionStageDefault } from "../../scholarships/ScholarshipForm";
 import GenerateDraftButton from "../GenerateDraftButton";
 import { promoteNotice } from "../actions";
 
@@ -91,6 +91,15 @@ export default async function ReviewCrawledNoticePage({
   const universityNames = (universities ?? []).map((u) => u.name);
   const boundAction = promoteNotice.bind(null, noticeId);
   const defaultValues = buildDefaultValues({ notice });
+  const draft = isNoticeDraft(notice.extracted_draft) ? notice.extracted_draft : {};
+  const defaultStages: SelectionStageDefault[] = (draft.stages ?? []).map(
+    (stage: NoticeDraftStage) => ({
+      title: stage.title,
+      phase: stage.phase,
+      schedule_text: stage.schedule_text,
+      note: stage.note,
+    })
+  );
 
   return (
     <div>
@@ -152,6 +161,7 @@ export default async function ReviewCrawledNoticePage({
           university: entry.university,
           department: entry.department,
         }))}
+        defaultStages={defaultStages}
         returnPath="/admin/crawled-notices"
       />
     </div>

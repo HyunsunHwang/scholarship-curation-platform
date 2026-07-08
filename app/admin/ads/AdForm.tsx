@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { Scholarship } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
+import type { SelectionStageDefault } from "../scholarships/ScholarshipForm";
 
 type Props = {
   defaultValues?: Partial<Scholarship>;
   action: (formData: FormData) => Promise<{ error?: string } | void>;
   submitLabel?: string;
   returnPath?: string;
+  /** 기존 주요 일정 (수정 폼 프리필용). 비우면 빈 일정 1개로 시작 */
+  defaultStages?: SelectionStageDefault[];
 };
 
 const INSTITUTION_TYPES = [
@@ -26,10 +29,11 @@ export default function AdForm({
   action,
   submitLabel = "저장",
   returnPath = "/admin/ads",
+  defaultStages,
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(() =>
-    extractInitialScheduleRows(dv)
+    extractInitialScheduleRows(defaultStages)
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,20 +60,20 @@ export default function AdForm({
       <input type="hidden" name="required_documents" value={(dv.required_documents ?? []).join(", ")} />
       <input type="hidden" name="can_overlap" value="false" />
       <input type="hidden" name="contact" value={dv.contact ?? ""} />
-      <input type="hidden" name="selection_stages" value={String(Math.max(1, scheduleRows.filter((r) => r.title.trim() && r.startDate).length))} />
-      {Array.from({ length: 5 }, (_, index) => {
-        const row = scheduleRows[index];
-        const hasValue = row && row.title.trim() && row.startDate;
-        const stageName = hasValue ? row.title.trim() : "";
-        const stageSchedule = hasValue ? formatScheduleDateRange(row.startDate, row.endDate) : "";
-        const n = index + 1;
-        return (
-          <div key={n}>
-            <input type="hidden" name={`selection_stage_${n}`} value={stageName} />
-            <input type="hidden" name={`selection_stage_${n}_schedule`} value={stageSchedule} />
-          </div>
-        );
-      })}
+      <input
+        type="hidden"
+        name="selection_stages_json"
+        value={JSON.stringify(
+          scheduleRows
+            .filter((row) => row.title.trim() && row.startDate)
+            .map((row) => ({
+              title: row.title.trim(),
+              phase: "selection",
+              schedule_text: formatScheduleDateRange(row.startDate, row.endDate) || null,
+              note: null,
+            }))
+        )}
+      />
 
       <Section title="핵심 요약 정보">
         <Field label="공고명 *" name="name" defaultValue={dv.name ?? ""} required />
@@ -367,20 +371,18 @@ function formatScheduleDateRange(startDate: string, endDate: string): string {
   return `${startDate} ~ ${endDate}`;
 }
 
-function extractInitialScheduleRows(dv: Partial<Scholarship>): ScheduleRow[] {
-  const rows: ScheduleRow[] = [];
-  for (let n = 1; n <= 5; n++) {
-    const title = (dv as Record<string, unknown>)[`selection_stage_${n}`] as string | null | undefined;
-    const schedule = (dv as Record<string, unknown>)[`selection_stage_${n}_schedule`] as string | null | undefined;
-    if (!title?.trim()) continue;
-    const parsed = parseScheduleRange(schedule ?? "");
-    rows.push({
-      id: `init-${n}`,
-      title: title.trim(),
-      startDate: parsed.startDate,
-      endDate: parsed.endDate,
+function extractInitialScheduleRows(defaultStages?: SelectionStageDefault[]): ScheduleRow[] {
+  const rows: ScheduleRow[] = (defaultStages ?? [])
+    .filter((stage) => stage.title.trim())
+    .map((stage, index) => {
+      const parsed = parseScheduleRange(stage.schedule_text ?? "");
+      return {
+        id: `init-${index}`,
+        title: stage.title.trim(),
+        startDate: parsed.startDate,
+        endDate: parsed.endDate,
+      };
     });
-  }
   if (rows.length === 0) {
     rows.push({ id: "init-1", title: "", startDate: "", endDate: "" });
   }

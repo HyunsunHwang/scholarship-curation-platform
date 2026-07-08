@@ -47,17 +47,6 @@ export type ScholarshipDetail = {
   apply_method: string | null;
   required_documents: string[] | null;
   contact: string | null;
-  selection_stages: number;
-  selection_stage_1: string | null;
-  selection_stage_2: string | null;
-  selection_stage_3: string | null;
-  selection_stage_4: string | null;
-  selection_stage_5: string | null;
-  selection_stage_1_schedule: string | null;
-  selection_stage_2_schedule: string | null;
-  selection_stage_3_schedule: string | null;
-  selection_stage_4_schedule: string | null;
-  selection_stage_5_schedule: string | null;
   selection_note: string | null;
   original_notice_image_url: string | null;
   original_notice_image_urls: string[] | null;
@@ -67,6 +56,16 @@ export type ScholarshipDetail = {
   ad_job_role: string | null;
   ad_required_skills: string[] | null;
   ad_location: string | null;
+};
+
+/** scholarship_selection_stages 조회 결과 (선발 단계 + 합격 이후 절차) */
+export type SelectionStageDetail = {
+  stage_order: number;
+  title: string;
+  phase: "selection" | "post_acceptance";
+  schedule_date: string | null;
+  schedule_text: string | null;
+  note: string | null;
 };
 
 /** "지원 전 직접 확인" 대상: get_matched_scholarships가 필터링하지 않는(=자동 확인 불가) 자유 텍스트·참고 정보 */
@@ -102,13 +101,21 @@ function formatDate(dateStr: string | null): string {
   return `${y}.${m}.${d}`;
 }
 
-/** 선발 단계 일정 칸: 순수 ISO 날짜·타임스탬프 앞부분이면 마일스톤과 같은 표기로 통일, 그 외는 원문 유지 */
-function formatScheduleCell(text: string | null): string {
+/** 선발 단계 일정 칸: 순수 ISO 날짜만 한국어로 정리하고, 월·기간·추후 공지 등 자유 표기는 원문 유지 */
+function formatScheduleDateDisplay(text: string | null): string {
   if (!text?.trim()) return "";
   const raw = text.trim();
-  const ymdHead = raw.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
-  if (ymdHead && (raw === ymdHead || raw.startsWith(`${ymdHead}T`))) return formatDate(ymdHead);
-  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return formatDate(raw);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const [y, m, d] = raw.split("-").map((v) => parseInt(v, 10));
+    return `${y}년 ${m}월 ${d}일`;
+  }
+  const ymdHead = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (ymdHead && (raw === ymdHead[0] || raw.startsWith(`${ymdHead[0]}T`))) {
+    const y = parseInt(ymdHead[1], 10);
+    const m = parseInt(ymdHead[2], 10);
+    const d = parseInt(ymdHead[3], 10);
+    return `${y}년 ${m}월 ${d}일`;
+  }
   return raw;
 }
 
@@ -198,19 +205,24 @@ function isDocumentScreeningStageTitle(title: string): boolean {
   return /^(\d+차|제\d+차)서류심사$/.test(c);
 }
 
-function collectSelectionStages(s: ScholarshipDetail): { title: string; schedule: string | null }[] {
-  const raw: { title: string; schedule: string | null }[] = [];
-  for (let n = 1; n <= 5; n++) {
-    const title = s[`selection_stage_${n}` as keyof ScholarshipDetail] as string | null;
-    if (!title?.trim()) continue;
-    if (isDocumentScreeningStageTitle(title)) continue;
-    const schedule = s[`selection_stage_${n}_schedule` as keyof ScholarshipDetail] as string | null;
-    raw.push({
-      title: title.trim(),
-      schedule: schedule?.trim() ? schedule.trim() : null,
-    });
-  }
-  return raw;
+type CollectedStage = {
+  title: string;
+  schedule: string | null;
+  phase: "selection" | "post_acceptance";
+  note: string | null;
+};
+
+/** DB의 stage_order 순서를 유지하며 순수 서류심사 단계만 걸러낸다 */
+function collectSelectionStages(stages: SelectionStageDetail[]): CollectedStage[] {
+  return [...stages]
+    .sort((a, b) => a.stage_order - b.stage_order)
+    .filter((st) => st.title.trim() && !isDocumentScreeningStageTitle(st.title))
+    .map((st) => ({
+      title: st.title.trim(),
+      schedule: st.schedule_text?.trim() ? st.schedule_text.trim() : null,
+      phase: st.phase,
+      note: st.note?.trim() ? st.note.trim() : null,
+    }));
 }
 
 function parseYYYYMMDDToUtcMs(dateStr: string | null | undefined): number | null {
@@ -225,13 +237,18 @@ function parseYYYYMMDDToUtcMs(dateStr: string | null | undefined): number | null
   return Date.UTC(y, mo - 1, d);
 }
 
-/** 단계 일정 문구에서 정렬용 날짜만 추출 (실패 시 null → 맨 뒤) */
+/**
+ * 단계 일정 문구에서 정렬용 날짜만 추출 (실패 시 null → 맨 뒤).
+ * 문구 맨 앞의 "YYYY-MM-DD" 또는 "YYYY.MM.DD"만 앵커 매칭한다.
+ * (과거엔 공백/물결/하이픈으로 먼저 split했는데, 하이픈이 ISO 날짜 구분자와
+ * 겹쳐 "2026-08-28" 같은 순수 날짜 문구까지 "2026"만 남아 파싱에 실패했다.)
+ */
 function parseLooseScheduleSortMs(text: string | null | undefined): number | null {
   if (!text?.trim()) return null;
-  const head = text.trim().split(/[\s~–—\-]+/)[0];
-  const iso = parseYYYYMMDDToUtcMs(head);
-  if (iso !== null) return iso;
-  const dot = head.match(/^(\d{4})\.(\d{2})\.(\d{2})/);
+  const trimmed = text.trim();
+  const iso = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return Date.UTC(parseInt(iso[1], 10), parseInt(iso[2], 10) - 1, parseInt(iso[3], 10));
+  const dot = trimmed.match(/^(\d{4})\.(\d{2})\.(\d{2})/);
   if (!dot) return null;
   return Date.UTC(parseInt(dot[1], 10), parseInt(dot[2], 10) - 1, parseInt(dot[3], 10));
 }
@@ -253,6 +270,8 @@ type SortableScheduleRow =
       value: string | null;
       sortMs: number | null;
       sourceIndex: number;
+      phase: "selection" | "post_acceptance";
+      note: string | null;
     };
 
 /** 선발 단계명이 공식 `announcement_date`와 겹치는 ‘발표’ 성격이면 타임라인에서 생략 */
@@ -358,8 +377,111 @@ function scheduleRowSortMs(r: SortableScheduleRow): number {
   return r.sortMs as number;
 }
 
+/** 합격 이후(수혜·파견·오리엔테이션 등) 절차인지: 관리자가 지정한 phase 컬럼을 그대로 신뢰 */
+function partitionScheduleRows(rows: SortableScheduleRow[]): {
+  selection: SortableScheduleRow[];
+  postAcceptance: SortableScheduleRow[];
+} {
+  const selection: SortableScheduleRow[] = [];
+  const postAcceptance: SortableScheduleRow[] = [];
+  for (const row of rows) {
+    if (row.kind === "stage" && row.phase === "post_acceptance") {
+      postAcceptance.push(row);
+    } else {
+      selection.push(row);
+    }
+  }
+  return { selection, postAcceptance };
+}
+
+function getScheduleRowDateText(row: SortableScheduleRow, alwaysOpen: boolean): string | null {
+  if (row.kind === "milestone") {
+    if (row.milestoneKind === "end" && alwaysOpen) return "상시모집";
+    return formatScheduleDateDisplay(row.value);
+  }
+  if (!row.value) return null;
+  return formatScheduleDateDisplay(row.value);
+}
+
+type TimelinePhase = "selection" | "postAcceptance";
+
+function ScheduleTimelineItem({
+  row,
+  phase,
+  daysLeft,
+  alwaysOpen,
+}: {
+  row: SortableScheduleRow;
+  phase: TimelinePhase;
+  daysLeft: number;
+  alwaysOpen: boolean;
+}) {
+  const isSelection = phase === "selection";
+  const dateText = getScheduleRowDateText(row, alwaysOpen);
+  const isUrgent = row.kind === "milestone" && row.urgent;
+  const note = row.kind === "stage" ? row.note : null;
+
+  return (
+    <div className="relative flex min-w-0 gap-4 pb-6 last:pb-0">
+      <span
+        className={`relative z-10 mt-1.5 shrink-0 rounded-full ${
+          isSelection ? "h-[11px] w-[11px] bg-ink" : "h-[11px] w-[11px] border-2 border-ink/20 bg-white"
+        }`}
+      />
+      <div className="min-w-0 flex-1">
+        {dateText ? (
+          <p
+            className={`wrap-break-word text-xs leading-relaxed ${
+              isUrgent
+                ? "font-semibold text-brand"
+                : isSelection
+                  ? "font-medium text-ink/50"
+                  : "font-medium text-ink/35"
+            }`}
+          >
+            {dateText}
+            {isUrgent && (
+              <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
+                D-{daysLeft}
+              </span>
+            )}
+          </p>
+        ) : (
+          <p className={`text-xs font-medium ${isSelection ? "text-ink/40" : "text-ink/30"}`}>
+            일정 별도 공지
+          </p>
+        )}
+        <p
+          className={`mt-0.5 wrap-break-word leading-snug ${
+            isSelection ? "text-sm font-bold text-ink" : "text-sm font-medium text-ink/45"
+          }`}
+        >
+          {row.label}
+        </p>
+        {note && (
+          <p
+            className={`mt-0.5 wrap-break-word text-xs leading-relaxed ${
+              isSelection ? "text-ink/45" : "text-ink/35"
+            }`}
+          >
+            {note}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ScheduleAfterAcceptanceDivider() {
+  return (
+    <div className="relative flex items-center gap-3 pb-4 pt-1">
+      <span className="relative z-10 h-[7px] w-[7px] shrink-0 rounded-full bg-ink/20" />
+      <span className="text-xs font-medium text-ink/35">합격 이후</span>
+    </div>
+  );
+}
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
-function ScheduleSection({ s }: { s: ScholarshipDetail }) {
+function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selectionStages: SelectionStageDetail[] }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
 
   const daysLeft = daysUntilApplyDeadlineKorea(s.apply_end_date);
@@ -367,7 +489,7 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
 
   const rows: SortableScheduleRow[] = [];
 
-  const stages = collectSelectionStages(s);
+  const stages = collectSelectionStages(selectionStages);
   const hasStages = stages.length > 0;
 
   // 전형 단계가 있으면 접수 시작/마감은 단계 일정과 중복되므로 제외하고,
@@ -426,6 +548,8 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
       value: resolved,
       sortMs: parseLooseScheduleSortMs(resolved),
       sourceIndex: i,
+      phase: st.phase,
+      note: st.note,
     });
   });
 
@@ -446,43 +570,33 @@ function ScheduleSection({ s }: { s: ScholarshipDetail }) {
     return <p className="text-sm text-ink/45">일정 정보가 없습니다.</p>;
   }
 
+  const { selection, postAcceptance } = partitionScheduleRows(deduped);
+  const hasPostAcceptance = postAcceptance.length > 0;
+
   return (
-    <div>
-      {deduped.map((row, idx) => (
-        <div key={row.key} className="relative flex min-w-0 gap-4 pb-6 last:pb-0">
-          {idx !== deduped.length - 1 && (
-            <span className="absolute left-[5px] top-3 bottom-0 w-px bg-gray-200" />
-          )}
-          <span className="relative z-10 mt-1.5 h-[11px] w-[11px] shrink-0 rounded-full border-2 border-brand bg-white" />
-          <div className="min-w-0 flex-1">
-            <p
-              className={`wrap-break-word text-xs font-semibold ${
-                row.kind === "milestone" && row.urgent
-                  ? "text-brand"
-                  : row.kind === "stage" && !row.value
-                    ? "text-ink/40"
-                    : "text-ink/50"
-              }`}
-            >
-              {row.kind === "milestone" ? (
-                <>
-                  {row.value}
-                  {row.urgent && (
-                    <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
-                      D-{daysLeft}
-                    </span>
-                  )}
-                </>
-              ) : row.value ? (
-                formatScheduleCell(row.value)
-              ) : (
-                "일정 별도 공지"
-              )}
-            </p>
-            <p className="mt-0.5 wrap-break-word text-sm font-bold text-ink">{row.label}</p>
-          </div>
-        </div>
-      ))}
+    <div className="relative">
+      <span className="absolute left-[5px] top-2 bottom-2 w-px bg-gray-200" />
+      <div>
+        {selection.map((row) => (
+          <ScheduleTimelineItem
+            key={row.key}
+            row={row}
+            phase="selection"
+            daysLeft={daysLeft}
+            alwaysOpen={alwaysOpen}
+          />
+        ))}
+        {hasPostAcceptance && <ScheduleAfterAcceptanceDivider />}
+        {postAcceptance.map((row) => (
+          <ScheduleTimelineItem
+            key={row.key}
+            row={row}
+            phase="postAcceptance"
+            daysLeft={daysLeft}
+            alwaysOpen={alwaysOpen}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -648,9 +762,11 @@ function SectionIcon({ name }: { name: SectionIconName }) {
 /** 장학금 상세 본문: 탭 없이 한 페이지에 섹션 순서대로 표시 */
 export default function ScholarshipTabs({
   scholarship,
+  selectionStages,
   autoCheck,
 }: {
   scholarship: ScholarshipDetail;
+  selectionStages: SelectionStageDetail[];
   autoCheck: AutoCheckState;
 }) {
   const s = scholarship;
@@ -701,7 +817,7 @@ export default function ScholarshipTabs({
 
       <section className="py-7 first:pt-0">
         {sectionTitle("주요 일정", "calendar")}
-        <ScheduleSection s={s} />
+        <ScheduleSection s={s} selectionStages={selectionStages} />
       </section>
 
       {isAdvertisement ? (

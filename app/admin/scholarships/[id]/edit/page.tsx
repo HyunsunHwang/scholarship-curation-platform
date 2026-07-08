@@ -23,12 +23,18 @@ export default async function EditScholarshipPage({
   if (isNaN(scholarshipId)) notFound();
 
   const supabase = await createClient();
-  const [{ data: scholarship }, { data: universities }, { data: targetUnits }, crawlerDepartments] = await Promise.all([
-    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
-    supabase.from("universities").select("id, name").order("name"),
-    supabase.from("scholarship_target_units").select("org_unit_id").eq("scholarship_id", scholarshipId),
-    loadCrawlerDepartments(),
-  ]);
+  const [{ data: scholarship }, { data: universities }, { data: targetUnits }, { data: stages }, crawlerDepartments] =
+    await Promise.all([
+      supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+      supabase.from("universities").select("id, name").order("name"),
+      supabase.from("scholarship_target_units").select("org_unit_id").eq("scholarship_id", scholarshipId),
+      supabase
+        .from("scholarship_selection_stages")
+        .select("title, phase, schedule_text, note")
+        .eq("scholarship_id", scholarshipId)
+        .order("stage_order"),
+      loadCrawlerDepartments(),
+    ]);
   const universityNames = (universities ?? []).map((u) => u.name);
 
   if (!scholarship || scholarship.is_advertisement === true) notFound();
@@ -58,6 +64,7 @@ export default async function EditScholarshipPage({
           department: entry.department,
         }))}
         defaultTargetOrgUnitIds={(targetUnits ?? []).map((t) => t.org_unit_id)}
+        defaultStages={stages ?? []}
         returnPath={returnPath}
       />
     </div>

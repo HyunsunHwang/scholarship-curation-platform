@@ -33,6 +33,16 @@ const ENROLLMENT_STATUSES = [
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+const SELECTION_PHASES = ["selection", "post_acceptance"] as const;
+
+/** 선발 단계 초안 항목 (scholarship_selection_stages 저장 전 단계) */
+export type NoticeDraftStage = {
+  title: string;
+  phase: (typeof SELECTION_PHASES)[number];
+  schedule_text: string | null;
+  note: string | null;
+};
+
 /** extracted_draft에 저장되는 안전한 형태(부분 scholarship). */
 export type NoticeDraft = {
   support_amount_text?: string | null;
@@ -53,6 +63,8 @@ export type NoticeDraft = {
   apply_method?: string | null;
   contact?: string | null;
   note?: string | null;
+  /** 선발 단계 + 합격 이후 절차 (순서대로). 본문에 명시되지 않으면 빈 배열 */
+  stages?: NoticeDraftStage[];
 };
 
 const BODY_KEYWORDS = [
@@ -88,6 +100,15 @@ const SYSTEM_PROMPT = `당신은 한국 대학 장학 공지에서 정형 데이
 - support_types는 다음 중에서만: ${SUPPORT_CATEGORIES.join(", ")}.
 - qual_enrollment_status는 다음 중에서만: ${ENROLLMENT_STATUSES.join(", ")}.
 - qual_income_level_min/max는 소득분위 0~10 정수.
+- stages는 공고에 나온 전형 절차를 순서대로 배열로 추출하세요. 각 항목은
+  { "title": string, "phase": "selection" | "post_acceptance", "schedule_text": string|null, "note": string|null }.
+  - phase: 지원자가 통과해야 하는 관문(서류심사, 면접, 최종발표 등)은 "selection",
+    합격 후 이어지는 절차(오리엔테이션, 파견, 연수, 수혜 시작 등)는 "post_acceptance".
+  - schedule_text: 공고 원문에 쓰인 표현을 그대로 자연스러운 텍스트로 적으세요
+    (예: "2026년 8월 28일까지", "2026. 8. 3. ~ 8. 28.", "2026년 10월 중", "추후 공지").
+    굳이 "YYYY-MM-DD" 숫자 형식으로 바꿔 쓸 필요 없습니다. 날짜/시기를 전혀 알 수 없으면 null.
+  - note: "참석 필수"처럼 짧은 보조 설명이 있으면 적고, 없으면 null.
+  - 전형 절차가 본문에 없으면 빈 배열로 두세요.
 - 반드시 JSON 객체 하나만 출력. 설명 텍스트 금지.`;
 
 function buildUserPrompt(input: {
@@ -101,7 +122,7 @@ function buildUserPrompt(input: {
     `[본문]`,
     input.body.slice(0, 12000),
     "",
-    `다음 키를 가진 JSON으로 출력: support_amount_text, support_types, apply_start_date, apply_end_date, announcement_date, selection_count, qual_gpa_min, qual_academic_year, qual_enrollment_status, qual_major, qual_income_level_min, qual_income_level_max, qual_special_info, qual_extra_requirements, required_documents, apply_method, contact, note`,
+    `다음 키를 가진 JSON으로 출력: support_amount_text, support_types, apply_start_date, apply_end_date, announcement_date, selection_count, qual_gpa_min, qual_academic_year, qual_enrollment_status, qual_major, qual_income_level_min, qual_income_level_max, qual_special_info, qual_extra_requirements, required_documents, apply_method, contact, note, stages`,
   ].join("\n");
 }
 
@@ -152,6 +173,30 @@ function clampLevel(v: unknown): number | null {
   return i;
 }
 
+function isSelectionPhase(v: unknown): v is (typeof SELECTION_PHASES)[number] {
+  return typeof v === "string" && (SELECTION_PHASES as readonly string[]).includes(v);
+}
+
+/** LLM이 반환한 stages 배열을 신뢰 가능한 형태로 정규화 (형식이 어긋난 항목은 제외) */
+function toStageArray(v: unknown): NoticeDraftStage[] {
+  if (!Array.isArray(v)) return [];
+  return v.flatMap((item): NoticeDraftStage[] => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Record<string, unknown>;
+    const title = toStringOrNull(record.title);
+    if (!title) return [];
+    const phase = isSelectionPhase(record.phase) ? record.phase : "selection";
+    return [
+      {
+        title,
+        phase,
+        schedule_text: toStringOrNull(record.schedule_text),
+        note: toStringOrNull(record.note),
+      },
+    ];
+  });
+}
+
 /** LLM 원시 JSON → 타입 안전한 NoticeDraft로 정규화 (신뢰 불가 입력 방어). */
 export function normalizeDraft(raw: unknown): NoticeDraft {
   const o = (raw && typeof raw === "object" ? raw : {}) as Record<
@@ -180,6 +225,7 @@ export function normalizeDraft(raw: unknown): NoticeDraft {
     apply_method: toStringOrNull(o.apply_method),
     contact: toStringOrNull(o.contact),
     note: toStringOrNull(o.note),
+    stages: toStageArray(o.stages),
   };
 }
 
