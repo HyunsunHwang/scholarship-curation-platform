@@ -54,7 +54,7 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
       {open && portalTarget
         ? createPortal(
             <div
-              className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-6 sm:p-10 backdrop-blur-[2px]"
+              className="fixed inset-0 z-200 flex items-center justify-center bg-black/85 p-6 sm:p-10 backdrop-blur-[2px]"
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
