@@ -66,24 +66,82 @@ const COLLEGE_NAME_ALLOWLIST = new Set(
 const REQUEST_USER_AGENT =
   process.env.CRAWL_USER_AGENT ??
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
+// Linux CI often prefers broken IPv6 for .ac.kr hosts; force IPv4 by default.
+const FORCE_IPV4 = process.env.CRAWL_FORCE_IPV4 !== "false";
 const INSECURE_TLS_HOSTS = new Set(
   String(process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS ?? "")
     .split(/[,\s|]+/)
     .map((item) => cleanText(item).toLowerCase())
     .filter(Boolean),
 );
+const DEFAULT_NOTICE_URL_PATTERN =
+  /(mode=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
 const INSECURE_TLS_DISPATCHER =
   INSECURE_TLS_HOSTS.size > 0
     ? new UndiciAgent({
         connect: {
           rejectUnauthorized: false,
+          ...(FORCE_IPV4 ? { family: 4 } : {}),
         },
       })
     : null;
+const DEFAULT_DISPATCHER = FORCE_IPV4
+  ? new UndiciAgent({
+      connect: {
+        family: 4,
+      },
+    })
+  : null;
 const RUN_AT = new Date().toISOString();
 
 function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function formatFetchError(error) {
+  const msg = String(error?.message ?? error);
+  const cause = error?.cause;
+  if (!cause) return msg;
+  const code = cause.code ?? cause.errno ?? "";
+  const detail = cleanText(cause.message ?? String(cause));
+  if (code && detail) return `${msg} (${code}: ${detail})`;
+  if (code) return `${msg} (${code})`;
+  if (detail) return `${msg} (${detail})`;
+  return msg;
+}
+
+function normalizeUrlKey(value) {
+  try {
+    const u = new URL(value);
+    u.hash = "";
+    let pathname = u.pathname.replace(/\/+$/, "") || "/";
+    if (/\/index\.(html?|php|jsp|asp|aspx|do)$/i.test(pathname)) {
+      pathname = pathname.replace(/\/index\.(html?|php|jsp|asp|aspx|do)$/i, "") || "/";
+    }
+    u.pathname = pathname;
+    return u.href;
+  } catch {
+    return cleanText(value).replace(/\/+$/, "");
+  }
+}
+
+function isLikelyNonDetailNoticeUrl(noticeUrl, listUrl, baseUrl) {
+  try {
+    const notice = new URL(noticeUrl);
+    const noticeKey = normalizeUrlKey(noticeUrl);
+    if (listUrl && noticeKey === normalizeUrlKey(listUrl)) return true;
+    if (baseUrl && noticeKey === normalizeUrlKey(baseUrl)) return true;
+
+    const pathName = notice.pathname.toLowerCase();
+    if (pathName === "/" || pathName === "") return true;
+    if (/\/(index|main|home|sitemap)(\.(html?|php|jsp|asp|aspx|do))?$/i.test(pathName)) {
+      return true;
+    }
+    if (/\/(sitemap|login|member|intro|about)(\/|$)/i.test(pathName)) return true;
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 function extractDateLikeText(text) {
@@ -193,6 +251,9 @@ async function fetchHtml(url) {
   const shouldAllowInsecureTls =
     parsedUrl &&
     INSECURE_TLS_HOSTS.has(parsedUrl.hostname.toLowerCase());
+  const dispatcher = shouldAllowInsecureTls
+    ? INSECURE_TLS_DISPATCHER
+    : DEFAULT_DISPATCHER;
 
   let lastError = null;
   for (let attempt = 0; attempt <= REQUEST_RETRY_COUNT; attempt += 1) {
@@ -201,10 +262,11 @@ async function fetchHtml(url) {
     try {
       const response = await fetch(url, {
         signal: controller.signal,
-        dispatcher: shouldAllowInsecureTls ? INSECURE_TLS_DISPATCHER : undefined,
+        dispatcher: dispatcher ?? undefined,
         headers: {
           "user-agent": REQUEST_USER_AGENT,
-          accept: "text/html,application/xhtml+xml",
+          accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
         },
       });
       if (!response.ok) {
@@ -252,6 +314,7 @@ function extractFromList(source, html) {
       : activeLinkNode?.text() ?? "";
     const title = cleanText(titleRaw);
     if (!title) return;
+    if (isLikelyNonDetailNoticeUrl(noticeUrl, source.listUrl, source.baseUrl)) return;
 
     const dateText = itemRoot ? extractListDateText(itemRoot, source.dateSelector) : "";
 
@@ -282,6 +345,12 @@ function extractFromList(source, html) {
   if (source.noticeUrlPattern) {
     const pattern = new RegExp(source.noticeUrlPattern);
     return results.filter((item) => pattern.test(item.noticeUrl));
+  }
+  // When a list-item selector exists but no URL pattern was configured,
+  // prefer detail-like URLs over menu/home links from the same board.
+  if (source.listItemSelector) {
+    const patterned = results.filter((item) => DEFAULT_NOTICE_URL_PATTERN.test(item.noticeUrl));
+    if (patterned.length > 0) return patterned;
   }
   return results;
 }
@@ -374,7 +443,7 @@ async function enrichDetail(source, item) {
   } catch (error) {
     return {
       ...item,
-      detailFetchError: String(error?.message ?? error),
+      detailFetchError: formatFetchError(error),
     };
   }
 }
@@ -505,12 +574,11 @@ async function run() {
             parsedDate: parsedDate ? parsedDate.toISOString().slice(0, 10) : "",
           };
         })
-        .filter((item) =>
-          containsScholarshipKeyword(
-            [item.title, item.dateText, item.detailDate, item.content].filter(Boolean).join(" "),
-            keywords,
-          ),
-        )
+        .filter((item) => {
+          // Require the keyword in the title so nav/footer chrome in detail
+          // bodies (e.g. a sitewide "장학" menu) cannot create false positives.
+          return containsScholarshipKeyword(item.title ?? "", keywords);
+        })
         .filter((item) => {
           const parsed = item.parsedDate ? new Date(`${item.parsedDate}T00:00:00.000Z`) : null;
           if (!parsed && ALLOW_UNDATED) return true;
@@ -539,7 +607,7 @@ async function run() {
         sourceLevel: source.sourceLevel,
         collegeName: source.collegeName,
         sourceName: source.sourceName,
-        error: String(error?.message ?? error),
+        error: formatFetchError(error),
         detailItems: [],
         matched: [],
       };

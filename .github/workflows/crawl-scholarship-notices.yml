@@ -56,10 +56,11 @@ jobs:
         env:
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "3"
+          CRAWL_SOURCE_CONCURRENCY: "1"
           CRAWL_TIMEOUT_MS: "30000"
-          CRAWL_RETRY_COUNT: "2"
-          CRAWL_RETRY_BACKOFF_MS: "1200"
+          CRAWL_RETRY_COUNT: "3"
+          CRAWL_RETRY_BACKOFF_MS: "1500"
+          CRAWL_FORCE_IPV4: "true"
           CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: node scripts/crawl-scholarship-notices.mjs db:ewha exports/notices/ewha .crawler/ewha-daily-state.json
 
