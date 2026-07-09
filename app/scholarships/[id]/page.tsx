@@ -188,7 +188,7 @@ export default async function ScholarshipDetailPage({
                 <div>
                   <p className="text-xs text-ink/50">{isAdvertisement ? "급여" : "지원 금액"}</p>
                   <p
-                    className="mt-1.5 wrap-break-word text-lg font-extrabold text-brand"
+                    className="mt-1.5 wrap-break-word text-sm font-bold text-brand"
                     title={fullSupportAmount}
                   >
                     {supportAmount}
@@ -196,7 +196,7 @@ export default async function ScholarshipDetailPage({
                 </div>
                 <div>
                   <p className="text-xs text-ink/50">{isAdvertisement ? "마감" : "접수 마감"}</p>
-                  <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-lg font-extrabold text-ink">
+                  <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-bold text-ink">
                     {alwaysOpen ? "상시모집" : formatKoreanDate(scholarship.apply_end_date)}
                     {days !== null && days >= 0 && (
                       <span className="inline-flex items-center rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white">
