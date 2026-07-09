@@ -2,6 +2,9 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/require-admin";
 import { createClient } from "@/lib/supabase/server";
 
+/** AI 초안 생성은 LLM 2회 호출이라 Vercel 기본 타임아웃보다 길 수 있음 */
+export const maxDuration = 60;
+
 const nav = [
   { href: "/admin", label: "대시보드" },
   { href: "/admin/scholarships", label: "장학금 관리" },

@@ -11,6 +11,9 @@ import GenerateDraftButton from "../GenerateDraftButton";
 import FormatNoticeBodyButton from "../FormatNoticeBodyButton";
 import { promoteNotice } from "../actions";
 
+/** Server Action(AI 초안)이 이 페이지에서 호출되므로 세그먼트 타임아웃을 늘린다. */
+export const maxDuration = 60;
+
 function isNoticeDraft(value: unknown): value is NoticeDraft {
   return value !== null && typeof value === "object";
 }

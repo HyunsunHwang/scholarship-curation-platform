@@ -577,6 +577,13 @@ function parseJsonObjectFromText(text: string): { parsed?: unknown; error?: stri
     candidate = candidate.replace(/^```(?:json)?\s*/i, "").replace(/```$/, "").trim();
   }
 
+  // 앞뒤 설명문이 붙은 경우 첫 { ~ 마지막 } 구간만 사용
+  const firstBrace = candidate.indexOf("{");
+  const lastBrace = candidate.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    candidate = candidate.slice(firstBrace, lastBrace + 1);
+  }
+
   const tryParse = (value: string): unknown | undefined => {
     try {
       return JSON.parse(value);
@@ -585,21 +592,27 @@ function parseJsonObjectFromText(text: string): { parsed?: unknown; error?: stri
     }
   };
 
+  const sanitize = (value: string) =>
+    value
+      .replace(/,\s*([}\]])/g, "$1")
+      .replace(/[\u201c\u201d]/g, '"')
+      .replace(/[\u2018\u2019]/g, "'");
+
   const direct = tryParse(candidate);
   if (direct !== undefined) return { parsed: direct };
 
-  const match = candidate.match(/\{[\s\S]*/);
+  const sanitized = sanitize(candidate);
+  const sanitizedParsed = tryParse(sanitized);
+  if (sanitizedParsed !== undefined) return { parsed: sanitizedParsed };
+
+  const match = sanitized.match(/\{[\s\S]*/);
   if (!match) return { error: "LLM이 JSON을 반환하지 않았습니다." };
 
-  let jsonText = match[0]
-    .replace(/,\s*([}\]])/g, "$1")
-    .replace(/[\u201c\u201d]/g, '"');
-
-  const parsed = tryParse(jsonText);
+  const parsed = tryParse(match[0]);
   if (parsed !== undefined) return { parsed };
 
   // 잘린 JSON: 열린 괄호를 닫아 복구 시도
-  const repaired = repairTruncatedJson(jsonText);
+  const repaired = repairTruncatedJson(match[0]);
   const repairedParsed = repaired ? tryParse(repaired) : undefined;
   if (repairedParsed !== undefined) return { parsed: repairedParsed };
 
@@ -750,7 +763,8 @@ async function fetchLlmWithTemperatureFallback(
           method: "POST",
           headers,
           body: JSON.stringify(buildBody(includeTemperature)),
-          signal: AbortSignal.timeout(60_000),
+          // Vercel 함수 한도(최대 60s) 안에서 끝나도록 여유를 둔다.
+          signal: AbortSignal.timeout(55_000),
         }),
       };
     } catch (e) {
@@ -852,6 +866,23 @@ async function callOpenAiCompatible(params: {
   return { content };
 }
 
+function extractAnthropicTextContent(payload: unknown): string | null {
+  const blocks = (payload as { content?: unknown })?.content;
+  if (!Array.isArray(blocks)) return null;
+
+  const texts: string[] = [];
+  for (const block of blocks) {
+    if (!block || typeof block !== "object") continue;
+    const record = block as { type?: string; text?: string };
+    // thinking 블록은 무시하고 text만 모은다.
+    if (record.type === "text" && typeof record.text === "string") {
+      texts.push(record.text);
+    }
+  }
+  if (texts.length === 0) return null;
+  return texts.join("\n").trim();
+}
+
 async function callAnthropic(params: {
   apiKey: string;
   base: string;
@@ -869,7 +900,8 @@ async function callAnthropic(params: {
     },
     (includeTemperature) => ({
       model: params.model,
-      max_tokens: params.maxTokens ?? 1500,
+      // thinking 모델은 output budget을 사고 과정에 많이 쓰므로 여유를 둔다.
+      max_tokens: params.maxTokens ?? 4096,
       ...(includeTemperature ? { temperature: 0 } : {}),
       system: params.systemPrompt,
       messages: [{ role: "user", content: params.userPrompt }],
@@ -884,11 +916,14 @@ async function callAnthropic(params: {
     return { error: "LLM 응답을 JSON으로 파싱하지 못했습니다." };
   }
 
-  const textBlock = (
-    payload as { content?: { type?: string; text?: string }[] }
-  )?.content?.find((block) => block?.type === "text")?.text;
-  if (typeof textBlock !== "string") {
-    return { error: "Anthropic 응답에 text content가 없습니다." };
+  const textBlock = extractAnthropicTextContent(payload);
+  if (typeof textBlock !== "string" || !textBlock) {
+    const stopReason = (payload as { stop_reason?: string })?.stop_reason;
+    return {
+      error: stopReason
+        ? `Anthropic 응답에 text content가 없습니다. (stop_reason=${stopReason})`
+        : "Anthropic 응답에 text content가 없습니다.",
+    };
   }
   return { content: textBlock };
 }
@@ -960,13 +995,16 @@ export async function extractScholarshipDraft(input: {
     body: promptBody,
   });
 
-  const { content, error: callError } = await callLlm({
-    systemPrompt: SYSTEM_PROMPT,
-    userPrompt,
-    jsonObject: true,
-    // Claude thinking 모델은 output budget을 thinking에 많이 쓰므로 여유를 둔다.
-    maxTokens: 2500,
-  });
+  const runExtract = async (prompt: string) =>
+    callLlm({
+      systemPrompt: SYSTEM_PROMPT,
+      userPrompt: prompt,
+      jsonObject: true,
+      // Claude thinking 모델은 output budget을 thinking에 많이 쓰므로 여유를 둔다.
+      maxTokens: 8192,
+    });
+
+  let { content, error: callError } = await runExtract(userPrompt);
   if (callError) return { error: callError, resolvedBody: normalizedBody, imageUrls };
   if (!content) {
     return {
@@ -976,7 +1014,29 @@ export async function extractScholarshipDraft(input: {
     };
   }
 
-  const { parsed, error: parseError } = parseJsonObjectFromText(content);
+  let { parsed, error: parseError } = parseJsonObjectFromText(content);
+
+  // 프로덕션에서 응답이 잘리거나 설명문이 섞이면 한 번 더 짧게 재시도
+  if (parseError || parsed === undefined) {
+    const retryPrompt = [
+      userPrompt,
+      "",
+      "이전 응답이 유효한 JSON이 아니었습니다.",
+      "설명·마크다운·코드펜스 없이 JSON 객체 하나만 다시 출력하세요.",
+    ].join("\n");
+    const retry = await runExtract(retryPrompt);
+    if (!retry.error && retry.content) {
+      const retried = parseJsonObjectFromText(retry.content);
+      if (retried.parsed !== undefined) {
+        parsed = retried.parsed;
+        parseError = undefined;
+      } else {
+        content = retry.content;
+        parseError = retried.error ?? parseError;
+      }
+    }
+  }
+
   if (parseError || parsed === undefined) {
     return { error: parseError, resolvedBody: normalizedBody, imageUrls };
   }
