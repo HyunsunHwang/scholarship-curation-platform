@@ -136,7 +136,7 @@ export default async function ScholarshipDetailPage({
       <Navbar currentUser={user} />
 
       <main className="relative flex-1 bg-white">
-        <div className="relative mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-5 pb-28 sm:px-6 sm:py-8 sm:pb-32 md:pb-8 lg:px-8">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/"
