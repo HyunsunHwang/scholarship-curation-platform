@@ -134,25 +134,41 @@ function describeQualMatchValue(item: QualMatchItem): string {
   return item.value;
 }
 
-function AutoCheckChip({ item }: { item: QualMatchItem }) {
+function AutoCheckItem({ item }: { item: QualMatchItem }) {
   const text = describeQualMatchValue(item);
   if (item.satisfied) {
     return (
-      <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-        <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <li className="flex items-start gap-2.5">
+        <svg
+          className="mt-0.5 h-4 w-4 shrink-0 text-ink/55"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>
-        <span className="wrap-break-word">{text}</span>
-      </span>
+        <span className="wrap-break-word text-sm leading-6 text-ink/80">{text}</span>
+      </li>
     );
   }
   return (
-    <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-gray-200 bg-gray-100 px-3 py-1.5 text-xs font-medium text-ink/40">
-      <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <li className="flex items-start gap-2.5">
+      <svg
+        className="mt-0.5 h-4 w-4 shrink-0 text-ink/25"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+        aria-hidden
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
-      <span className="wrap-break-word">{text}</span>
-    </span>
+      <span className="wrap-break-word text-sm leading-6 text-ink/35 line-through decoration-ink/20">
+        {text}
+      </span>
+    </li>
   );
 }
 
@@ -180,11 +196,11 @@ function AutoCheckSection({ autoCheck }: { autoCheck: AutoCheckSectionState }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
       {autoCheck.items.map((item) => (
-        <AutoCheckChip key={item.key} item={item} />
+        <AutoCheckItem key={item.key} item={item} />
       ))}
-    </div>
+    </ul>
   );
 }
 
