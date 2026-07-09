@@ -265,28 +265,32 @@ export default async function ScholarshipDetailPage({
                 )}
               </div>
 
-              {/* 데스크톱 사이드 포스터 — 모바일은 히어로로 대체, 하단 고정 바는 유지 */}
+              {/* 데스크톱 사이드: 에어비앤비식 신청 박스 — 모바일은 히어로 + 하단 고정 바 */}
               <div className="h-0 w-full overflow-visible md:h-auto md:sticky md:top-20 md:order-2 md:self-start">
-                <div className="mb-0 hidden aspect-7/9 md:block">
-                  {scholarship.poster_image_url ? (
-                    <ScholarshipPoster
-                      posterUrl={scholarship.poster_image_url}
-                      alt={posterAlt}
-                    />
-                  ) : (
-                    <div className={`flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br ${posterPlaceholderGradient} shadow-sm`}>
-                      <span className="text-5xl font-bold text-white/30">
-                        {organizationInitial}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <div className="md:rounded-2xl md:bg-white md:p-5 md:shadow-[0_6px_16px_rgba(0,0,0,0.12)]">
+                  <div className="mb-0 hidden aspect-7/9 md:block">
+                    {scholarship.poster_image_url ? (
+                      <ScholarshipPoster
+                        posterUrl={scholarship.poster_image_url}
+                        alt={posterAlt}
+                      />
+                    ) : (
+                      <div
+                        className={`flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-linear-to-br ${posterPlaceholderGradient}`}
+                      >
+                        <span className="text-5xl font-bold text-white/30">
+                          {organizationInitial}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                <BookmarkApplyButtons
-                  scholarshipId={scholarship.id}
-                  applyUrl={scholarship.apply_url}
-                  initialBookmarked={initialBookmarked}
-                />
+                  <BookmarkApplyButtons
+                    scholarshipId={scholarship.id}
+                    applyUrl={scholarship.apply_url}
+                    initialBookmarked={initialBookmarked}
+                  />
+                </div>
               </div>
             </div>
           </div>

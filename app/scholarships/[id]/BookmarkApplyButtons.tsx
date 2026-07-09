@@ -50,7 +50,7 @@ export default function BookmarkApplyButtons({
 
   return (
     <>
-      <div className="mt-4 hidden flex-col gap-2 md:flex">
+      <div className="mt-4 hidden flex-col gap-2.5 md:flex">
         <a
           href={applyUrl}
           target="_blank"
@@ -61,7 +61,7 @@ export default function BookmarkApplyButtons({
               scholarshipId,
             });
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3.5 text-sm font-bold text-white shadow-md shadow-brand/25 transition hover:bg-brand/85 active:scale-95"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition hover:bg-brand/85 active:scale-[0.98]"
         >
           지원하기
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -73,7 +73,7 @@ export default function BookmarkApplyButtons({
           type="button"
           onClick={handleBookmark}
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-ink/70 transition hover:bg-cream active:scale-95 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-1.5 rounded-full border border-gray-200 bg-white py-3 text-sm font-medium text-ink/70 shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition hover:bg-cream active:scale-[0.98] disabled:opacity-50"
         >
           <svg
             viewBox="0 0 24 24"

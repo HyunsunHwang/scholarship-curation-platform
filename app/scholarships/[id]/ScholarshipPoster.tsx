@@ -33,7 +33,7 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group relative block h-full w-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm outline-none aspect-2/3 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        className="group relative block h-full w-full overflow-hidden rounded-xl outline-none aspect-2/3 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={titleId}
