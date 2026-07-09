@@ -12,6 +12,9 @@ on:
 jobs:
   baseline-crawl:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
     steps:
       - name: Checkout
@@ -27,18 +30,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply unified source tuning
-        run: |
-          npm run tune:cau-notices
-          npm run tune:ewha-notices
-          npm run tune:hongik-notices
-          npm run tune:hanyang-notices
-          npm run tune:khu-notices
-          npm run tune:korea-notices
-          npm run tune:skku-notices
-          npm run tune:uos-notices
-          npm run tune:yonsei-notices
-
       - name: Reset baseline state
         run: |
           mkdir -p .crawler
@@ -49,7 +40,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-cau.csv exports/notices/cau-baseline .crawler/cau-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:cau exports/notices/cau-baseline .crawler/cau-baseline-state.json
 
       - name: Clean CAU baseline crawl
         run: |
@@ -68,7 +59,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "4"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices/ewha-baseline .crawler/ewha-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:ewha exports/notices/ewha-baseline .crawler/ewha-baseline-state.json
 
       - name: Clean Ewha baseline crawl
         run: |
@@ -87,7 +78,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-khu.csv exports/notices/khu-baseline .crawler/khu-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:khu exports/notices/khu-baseline .crawler/khu-baseline-state.json
 
       - name: Clean KHU baseline crawl
         run: |
@@ -106,7 +97,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-hanyang.csv exports/notices/hanyang-baseline .crawler/hanyang-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:hanyang exports/notices/hanyang-baseline .crawler/hanyang-baseline-state.json
 
       - name: Clean Hanyang baseline crawl
         run: |
@@ -125,7 +116,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-hongik.csv exports/notices/hongik-baseline .crawler/hongik-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:hongik exports/notices/hongik-baseline .crawler/hongik-baseline-state.json
 
       - name: Clean Hongik baseline crawl
         run: |
@@ -144,7 +135,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-korea.csv exports/notices/korea-baseline .crawler/korea-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:korea exports/notices/korea-baseline .crawler/korea-baseline-state.json
 
       - name: Clean Korea baseline crawl
         run: |
@@ -163,7 +154,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-yonsei.csv exports/notices/yonsei-baseline .crawler/yonsei-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:yonsei exports/notices/yonsei-baseline .crawler/yonsei-baseline-state.json
 
       - name: Clean Yonsei baseline crawl
         run: |
@@ -182,7 +173,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-skku.csv exports/notices/skku-baseline .crawler/skku-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:skku exports/notices/skku-baseline .crawler/skku-baseline-state.json
 
       - name: Clean SKKU baseline crawl
         run: |
@@ -201,7 +192,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "31"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: "8"
-        run: node scripts/crawl-scholarship-notices.mjs data/notice-sources-uos.csv exports/notices/uos-baseline .crawler/uos-baseline-state.json
+        run: node scripts/crawl-scholarship-notices.mjs db:uos exports/notices/uos-baseline .crawler/uos-baseline-state.json
 
       - name: Clean UOS baseline crawl
         run: |

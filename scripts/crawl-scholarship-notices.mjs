@@ -6,6 +6,7 @@ import {
   extractNoticeUrlFromLinkNode,
   getListAdapter,
 } from "../lib/crawler-adapters/index.mjs";
+import { loadSources } from "../lib/notice-sources-loader.mjs";
 
 const DEFAULT_KEYWORDS = [
   "장학",
@@ -17,7 +18,8 @@ const DEFAULT_KEYWORDS = [
   "financial aid",
 ];
 
-const INPUT_CSV_PATH = process.argv[2] ?? "data/notice-sources.csv";
+// Input: "db:ewha" (preferred) or legacy CSV path like data/notice-sources-cau.csv
+const INPUT_ARG = process.argv[2] ?? "db";
 const OUTPUT_DIR = process.argv[3] ?? "exports/notices";
 const STATE_FILE_PATH =
   process.argv[4] ?? ".crawler/scholarship-notice-state.json";
@@ -76,89 +78,8 @@ const INSECURE_TLS_DISPATCHER =
     : null;
 const RUN_AT = new Date().toISOString();
 
-function parseCsv(text) {
-  const rows = [];
-  let row = [];
-  let field = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i += 1) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (inQuotes) {
-      if (ch === '"' && next === '"') {
-        field += '"';
-        i += 1;
-      } else if (ch === '"') {
-        inQuotes = false;
-      } else {
-        field += ch;
-      }
-      continue;
-    }
-
-    if (ch === '"') {
-      inQuotes = true;
-    } else if (ch === ",") {
-      row.push(field);
-      field = "";
-    } else if (ch === "\n") {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = "";
-    } else if (ch !== "\r") {
-      field += ch;
-    }
-  }
-
-  if (field.length > 0 || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-
-  return rows;
-}
-
-function parseList(value) {
-  if (!value) return [];
-  return String(value)
-    .split("|")
-    .map((piece) => piece.trim())
-    .filter(Boolean);
-}
-
-function toBoolean(value, defaultValue = true) {
-  if (!value) return defaultValue;
-  const lowered = String(value).trim().toLowerCase();
-  if (["true", "1", "yes", "y"].includes(lowered)) return true;
-  if (["false", "0", "no", "n"].includes(lowered)) return false;
-  return defaultValue;
-}
-
 function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
-}
-
-function deriveUniversitySlug(sourceId, fallback = "") {
-  const normalizedSourceId = cleanText(sourceId).toLowerCase();
-  if (normalizedSourceId.includes("_")) return normalizedSourceId.split("_")[0];
-  return cleanText(fallback).toLowerCase();
-}
-
-function deriveDepartmentName(sourceName, sourceLevel = "department", fallback = "") {
-  if (cleanText(sourceLevel).toLowerCase() !== "department") {
-    return cleanText(fallback);
-  }
-  const normalizedFallback = cleanText(fallback);
-  if (normalizedFallback) return normalizedFallback;
-
-  const normalizedSourceName = cleanText(sourceName);
-  if (!normalizedSourceName) return "";
-  const pieces = normalizedSourceName.split(/\s+/);
-  if (pieces.length <= 1) return normalizedSourceName;
-  return pieces.slice(1).join(" ").trim();
 }
 
 function extractDateLikeText(text) {
@@ -208,54 +129,6 @@ function extractListDateText(itemRoot, dateSelector) {
   }
 
   return "";
-}
-
-function readSourceConfig(csvPath) {
-  const raw = fs.readFileSync(path.resolve(csvPath), "utf8").replace(/^\uFEFF/, "");
-  const table = parseCsv(raw);
-  if (table.length === 0) {
-    throw new Error("Source CSV is empty.");
-  }
-
-  const [header, ...body] = table;
-  const index = Object.fromEntries(header.map((name, i) => [name, i]));
-  const required = ["source_id", "source_name", "list_url"];
-  for (const column of required) {
-    if (!(column in index)) {
-      throw new Error(`Missing required CSV column: ${column}`);
-    }
-  }
-
-  return body
-    .filter((row) => row.some((cell) => cleanText(cell)))
-    .map((row) => {
-      const sourceLevel = cleanText(row[index.source_level]) || "department";
-      const sourceName = cleanText(row[index.source_name]);
-      return {
-      sourceId: cleanText(row[index.source_id]),
-      universitySlug: deriveUniversitySlug(row[index.source_id], row[index.university_slug]),
-      universityId: cleanText(row[index.university_id]),
-      collegeId: cleanText(row[index.college_id]),
-      departmentId: cleanText(row[index.department_id]),
-      collegeName: cleanText(row[index.college_name]),
-      departmentName: deriveDepartmentName(sourceName, sourceLevel, row[index.department_name]),
-      sourceLevel,
-      sourceName,
-      listUrl: cleanText(row[index.list_url]),
-      baseUrl: cleanText(row[index.base_url]),
-      listItemSelector: cleanText(row[index.list_item_selector]),
-      linkSelector: cleanText(row[index.link_selector]),
-      titleSelector: cleanText(row[index.title_selector]),
-      dateSelector: cleanText(row[index.date_selector]),
-      detailContentSelector: cleanText(row[index.detail_content_selector]),
-      detailDateSelector: cleanText(row[index.detail_date_selector]),
-      noticeUrlPattern: cleanText(row[index.notice_url_pattern]),
-      keywords: parseList(row[index.keywords]),
-      adapter: cleanText(row[index.adapter]),
-      enabled: toBoolean(row[index.enabled], true),
-    };
-    })
-    .filter((source) => source.sourceId && source.sourceName && source.listUrl && source.enabled);
 }
 
 function normalizeCharset(value) {
@@ -529,7 +402,9 @@ function formatKstDate(date = new Date()) {
 }
 
 async function run() {
-  const configuredSources = readSourceConfig(INPUT_CSV_PATH);
+  const loaded = await loadSources(INPUT_ARG);
+  const configuredSources = loaded.sources;
+  console.log(`source_input=${loaded.inputLabel} mode=${loaded.mode} loaded=${configuredSources.length}`);
   const configuredPrefixes = [...new Set(configuredSources.map((source) => source.sourceId.split("_")[0]))];
   if (!SOURCE_ID_PREFIX && configuredPrefixes.length > 1) {
     console.warn(
@@ -722,7 +597,8 @@ async function run() {
 
   const report = {
     runAt: RUN_AT,
-    input: path.resolve(INPUT_CSV_PATH),
+    input: loaded.inputLabel,
+    sourceMode: loaded.mode,
     totals: {
       sourceCount: sources.length,
       crawledCount: crawled.length,

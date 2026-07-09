@@ -2,9 +2,33 @@
 
 학과 공지 페이지에서 장학 관련 공지(키워드 기반)만 자동 수집하는 스크립트입니다.
 
+## 0) 데이터 모델 (권장)
+
+장기 구조는 조직 트리와 게시판 소스를 분리합니다.
+
+- `org_units`: 대학 → 단과대 → 학과 트리 (이름·계층만)
+- `notice_sources`: 공지 게시판 1행 = `list_url` + 크롤 설정 + `org_unit_id`
+- `data/notice-sources*.csv`: 당분간 동기화 입력/백업. 소스 오브 트루스는 DB로 이전 중
+
+동기화:
+
+```bash
+# CSV → DB (기본 dry-run)
+npm run sync:notice-sources
+npm run sync:notice-sources -- --apply
+npm run sync:notice-sources -- --apply --prune   # CSV에 없는 소스는 enabled=false
+
+# DB → CSV export
+npm run export:notice-sources
+npm run export:notice-sources -- --split
+```
+
+일일/베이스라인 크롤 CI는 `db:{university_slug}` 로 `notice_sources`를 읽습니다.
+CSV 경로는 로컬 디버그·백업용으로 계속 지원합니다.
+
 ## 1) 입력 파일 준비
 
-`data/notice-sources.csv`에 공지 목록 페이지 정보를 넣습니다.
+`data/notice-sources.csv`에 공지 목록 페이지 정보를 넣습니다. (레거시/백업)
 
 - 필수 컬럼: `source_id`, `source_name`, `list_url`
 - 선택 컬럼:
@@ -68,14 +92,21 @@
 
 ```bash
 npm install
-npm run crawl:notices
+# DB에서 전체 enabled 소스 로드 (기본)
+npm run crawl:notices -- db exports/notices .crawler/scholarship-notice-state.json
+
+# 대학별
+npm run crawl:notices -- db:ewha exports/notices/ewha .crawler/ewha-daily-state.json
 ```
 
-인자 지정 실행:
+CSV 폴백(레거시):
 
 ```bash
-node scripts/crawl-scholarship-notices.mjs data/notice-sources.csv exports/notices .crawler/scholarship-notice-state.json
+node scripts/crawl-scholarship-notices.mjs data/notice-sources-cau.csv exports/notices/cau .crawler/cau-daily-state.json
 ```
+
+DB 모드에는 `SUPABASE_URL`(또는 `NEXT_PUBLIC_SUPABASE_URL`)과
+`SUPABASE_SERVICE_ROLE_KEY`(또는 anon key)가 필요합니다.
 
 ## 3) 출력
 
