@@ -9,9 +9,13 @@ const rejectedPath =
   process.argv[4] ?? "exports/notices/scholarship-notices-new-20260527.rejected.csv";
 
 const MENU_TITLE_PATTERN =
-  /(^|\s)(장학(금)?\s*(안내|지원|제도|FAQ)?|장학게시판|장학안내|장학공지|장학지원)\s*$|Scholarship\s*\/?\s*Job|ScholarshipScholarship/i;
+  /^(장학|장학금|scholarship)(\s*[\/|·\-]?\s*(장학|장학금|scholarship))+$|^(장학|장학금|scholarship)$|(^|\s)(장학(금)?\s*(안내|지원|제도|FAQ)?|장학게시판|장학안내|장학공지|장학지원)\s*$|Scholarship\s*\/?\s*Job|ScholarshipScholarship/i;
+const GENERIC_NAV_TITLE_PATTERN =
+  /^(home|main|메인|홈|사이트맵|sitemap|login|로그인|학과소개|about|contact|교수진|연혁|동창회|학부|학부소개|교과과정|학사정보|이화여자대학교|한양대학교|중앙대학교|고려대학교|연세대학교|성균관대학교|경희대학교|홍익대학교|서울시립대(학교)?|ewha womans university|hanyang university)$/i;
+const TITLE_KEYWORD_PATTERN =
+  /장학|장학금|학자금|등록금|scholarship|tuition|fellowship|financial\s*aid/i;
 const DETAIL_HINT_PATTERN =
-  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document|\/\d{4,}(?:[/?#]|$)/i;
+  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document|notice-view\?id=|\/\d{4,}(?:[/?#]|$)/i;
 
 function parseCsv(text) {
   const rows = [];
@@ -79,8 +83,15 @@ function isLikelyListOrMenuUrl(value) {
     const hasDetailHint = DETAIL_HINT_PATTERN.test(`${pathName}${search}`);
     if (hasDetailHint) return false;
 
+    if (pathName === "/" || pathName === "") return true;
+    if (/\/(index|main|home|sitemap)(\.(html?|php|jsp|asp|aspx|do))?$/i.test(pathName)) {
+      return true;
+    }
+    if (/\/(sitemap|login|member)(\/|$)/i.test(pathName)) return true;
+    if (/indexsub\.action$/i.test(pathName)) return true;
+
     const listPathPattern =
-      /\/(notice|notices|board|boards|list|lists|community|news|scholarship|scholarships)(?:\/|\.do|\.php|\.asp|\.jsp)?$/i;
+      /\/(notice|notices|board|boards|list|lists|community|news|scholarship|scholarships)(?:\/|\.do|\.php|\.asp|\.jsp|\.html?)?$/i;
     if (!listPathPattern.test(pathName)) return false;
 
     const queryString = u.searchParams.toString();
@@ -103,7 +114,9 @@ function classify(row) {
   if (!/^https?:\/\//i.test(noticeUrl)) return "invalid_url";
   if (/^http:\/\//i.test(noticeUrl)) return "insecure_http_url";
   if (title.replace(/\s+/g, "").length <= 6) return "too_short_title";
+  if (GENERIC_NAV_TITLE_PATTERN.test(title)) return "generic_nav_title";
   if (MENU_TITLE_PATTERN.test(title)) return "menu_like_title";
+  if (!TITLE_KEYWORD_PATTERN.test(title)) return "title_missing_keyword";
   if (isLikelyListOrMenuUrl(noticeUrl)) return "not_detail_notice_url";
   return null;
 }
