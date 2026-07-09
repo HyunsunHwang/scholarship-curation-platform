@@ -1,11 +1,17 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   daysUntilApplyDeadlineKorea,
   isAlwaysOpenRecruitment,
 } from "@/lib/scholarship-dates";
 import type { AutoCheckState, QualMatchItem } from "@/lib/scholarship-qualification-match";
+import {
+  NOTICE_LIST_RE,
+  listItemText,
+  parseOriginalNoticeText,
+} from "@/lib/original-notice-format";
 
 export type ScholarshipDetail = {
   id: number;
@@ -691,7 +697,135 @@ function AdLocationSection({ s }: { s: ScholarshipDetail }) {
   return <p className="wrap-break-word text-sm leading-6 text-ink">{s.ad_location}</p>;
 }
 
-// ── 원본 공고문 섹션 ─────────────────────────────────────────────────
+// ── 원문 공고문 섹션 ─────────────────────────────────────────────────
+function NoticeSectionBody({ body }: { body: string }) {
+  if (!body) return null;
+
+  const lines = body.split("\n");
+  const nodes: ReactNode[] = [];
+  let key = 0;
+
+  for (let idx = 0; idx < lines.length; ) {
+    const trimmed = lines[idx].trim();
+    if (!trimmed) {
+      idx += 1;
+      continue;
+    }
+
+    const listMatch = trimmed.match(NOTICE_LIST_RE);
+    if (listMatch) {
+      const items: string[] = [];
+      while (idx < lines.length) {
+        const t = lines[idx].trim();
+        if (!t) break;
+        const m = t.match(NOTICE_LIST_RE);
+        if (!m) break;
+        items.push(listItemText(m));
+        idx += 1;
+      }
+      nodes.push(
+        <ul key={key++} className="mt-2 space-y-1.5">
+          {items.map((item, j) => (
+            <li key={j} className="flex items-start gap-2.5">
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink/30" />
+              <span className="wrap-break-word text-sm leading-6 text-ink/75">{item}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    if (/^※/.test(trimmed)) {
+      nodes.push(
+        <p key={key++} className="mt-2 wrap-break-word text-xs leading-relaxed text-ink/50">
+          {trimmed}
+        </p>
+      );
+      idx += 1;
+      continue;
+    }
+
+    const paraLines: string[] = [trimmed];
+    idx += 1;
+    while (idx < lines.length) {
+      const t = lines[idx].trim();
+      if (!t || NOTICE_LIST_RE.test(t) || /^※/.test(t)) break;
+      paraLines.push(t);
+      idx += 1;
+    }
+    nodes.push(
+      <p key={key++} className="mt-1.5 wrap-break-word whitespace-pre-wrap text-sm leading-6 text-ink/75">
+        {paraLines.join("\n")}
+      </p>
+    );
+  }
+
+  return <div className="mt-1">{nodes}</div>;
+}
+
+function OriginalNoticeText({ text }: { text: string }) {
+  const blocks = parseOriginalNoticeText(text);
+
+  if (blocks.length === 0) {
+    return (
+      <p className="wrap-break-word whitespace-pre-wrap text-sm leading-7 text-ink/75">{text}</p>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {blocks.map((block, i) => {
+        if (block.kind === "title") {
+          return (
+            <p
+              key={i}
+              className="wrap-break-word text-[15px] font-bold leading-snug tracking-tight text-ink"
+            >
+              {block.text}
+            </p>
+          );
+        }
+        if (block.kind === "note") {
+          return (
+            <p
+              key={i}
+              className="wrap-break-word border-l-2 border-brand/40 pl-3 text-sm font-medium leading-6 text-ink/70"
+            >
+              {block.text}
+            </p>
+          );
+        }
+        if (block.kind === "section") {
+          return (
+            <div key={i} className="border-t border-gray-100 pt-5 first:border-t-0 first:pt-0">
+              <p className="text-sm font-bold text-ink">{block.label}</p>
+              <NoticeSectionBody body={block.body} />
+            </div>
+          );
+        }
+        if (block.kind === "list") {
+          return (
+            <ul key={i} className="space-y-1.5">
+              {block.items.map((item, j) => (
+                <li key={j} className="flex items-start gap-2.5">
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink/30" />
+                  <span className="wrap-break-word text-sm leading-6 text-ink/75">{item}</span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        return (
+          <p key={i} className="wrap-break-word whitespace-pre-wrap text-sm leading-7 text-ink/75">
+            {block.text}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   const imageUrls = Array.from(
     new Set([...(s.original_notice_image_urls ?? []), s.original_notice_image_url].filter(Boolean) as string[])
@@ -701,18 +835,18 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   if (imageUrls.length === 0 && !text) return null;
 
   return (
-    <div className="space-y-4 rounded-xl bg-gray-50 p-4">
+    <div className="space-y-6">
       {imageUrls.map((imageUrl, i) => (
-        <div key={imageUrl} className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div key={imageUrl} className="overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt={`${s.name} 원본 공고문 ${i + 1}`} className="w-full object-contain" />
+          <img
+            src={imageUrl}
+            alt={`${s.name} 원문 공고문 ${i + 1}`}
+            className="w-full object-contain"
+          />
         </div>
       ))}
-      {text ? (
-        <div className="whitespace-pre-wrap break-all rounded-lg bg-white px-4 py-3 text-sm leading-6 text-ink/80">
-          {text}
-        </div>
-      ) : null}
+      {text ? <OriginalNoticeText text={text} /> : null}
     </div>
   );
 }
@@ -773,7 +907,7 @@ export default function ScholarshipTabs({
   const isAdvertisement = s.is_advertisement === true;
   const manualCheckItems = !isAdvertisement && hasManualCheckItems(s) ? buildManualCheckItems(s) : [];
 
-  const sectionTitle = (label: string, icon: SectionIconName, right?: React.ReactNode) => (
+  const sectionTitle = (label: string, icon: SectionIconName, right?: ReactNode) => (
     <div className="mb-4 flex items-center justify-between gap-2">
       <h3 className="flex items-center gap-2 text-[15px] font-bold text-ink">
         <SectionIcon name={icon} />
@@ -848,7 +982,7 @@ export default function ScholarshipTabs({
         s.original_notice_image_url ||
         s.original_notice_text?.trim()) && (
         <section className="w-full overflow-x-hidden py-7">
-          {sectionTitle("원본 공고문", "newspaper")}
+          {sectionTitle("원문 공고문", "newspaper")}
           <OriginalNoticeSection s={s} />
         </section>
       )}

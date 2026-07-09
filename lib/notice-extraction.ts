@@ -1,7 +1,12 @@
 import { load as loadHtml } from "cheerio";
+import {
+  ORIGINAL_NOTICE_FORMAT_SYSTEM_PROMPT,
+  stripFormattedNoticeOutput,
+} from "@/lib/original-notice-format";
 
 // ─────────────────────────────────────────────────────────────────
 // 공지 본문 → scholarship 필드 초안 추출 (프로바이더 비종속)
+// + 원문 공고문 형식만 정리 (formatOriginalNoticeText)
 //
 // 환경변수:
 //   LLM_API_KEY    (필수) Bearer 토큰
@@ -470,11 +475,41 @@ async function fetchLlmWithTemperatureFallback(
   return retry;
 }
 
+function resolveLlmConfig(): {
+  apiKey: string;
+  base: string;
+  model: string;
+  provider: "openai" | "anthropic";
+} | { error: string } {
+  const apiKey = process.env.LLM_API_KEY;
+  if (!apiKey) {
+    return { error: "LLM_API_KEY 환경변수가 설정되지 않았습니다." };
+  }
+  const providerFromEnv = (process.env.LLM_PROVIDER ?? "").trim().toLowerCase();
+  const base = (
+    process.env.LLM_API_BASE ??
+    (providerFromEnv === "anthropic" || apiKey.startsWith("sk-ant-")
+      ? "https://api.anthropic.com/v1"
+      : "https://api.openai.com/v1")
+  ).replace(/\/$/, "");
+  const model = process.env.LLM_MODEL ?? "gpt-4o-mini";
+  const provider =
+    providerFromEnv === "anthropic" ||
+    base.includes("anthropic.com") ||
+    apiKey.startsWith("sk-ant-")
+      ? "anthropic"
+      : "openai";
+  return { apiKey, base, model, provider };
+}
+
 async function callOpenAiCompatible(params: {
   apiKey: string;
   base: string;
   model: string;
+  systemPrompt: string;
   userPrompt: string;
+  /** JSON 객체 응답을 강제할지 (필드 추출용). 원문 포맷은 plain text. */
+  jsonObject?: boolean;
 }): Promise<{ content?: string; error?: string }> {
   const { response, error: fetchError } = await fetchLlmWithTemperatureFallback(
     `${params.base}/chat/completions`,
@@ -485,9 +520,9 @@ async function callOpenAiCompatible(params: {
     (includeTemperature) => ({
       model: params.model,
       ...(includeTemperature ? { temperature: 0 } : {}),
-      response_format: { type: "json_object" },
+      ...(params.jsonObject ? { response_format: { type: "json_object" } } : {}),
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: params.systemPrompt },
         { role: "user", content: params.userPrompt },
       ],
     })
@@ -514,7 +549,9 @@ async function callAnthropic(params: {
   apiKey: string;
   base: string;
   model: string;
+  systemPrompt: string;
   userPrompt: string;
+  maxTokens?: number;
 }): Promise<{ content?: string; error?: string }> {
   const { response, error: fetchError } = await fetchLlmWithTemperatureFallback(
     `${params.base}/messages`,
@@ -525,9 +562,9 @@ async function callAnthropic(params: {
     },
     (includeTemperature) => ({
       model: params.model,
-      max_tokens: 1500,
+      max_tokens: params.maxTokens ?? 1500,
       ...(includeTemperature ? { temperature: 0 } : {}),
-      system: SYSTEM_PROMPT,
+      system: params.systemPrompt,
       messages: [{ role: "user", content: params.userPrompt }],
     })
   );
@@ -549,16 +586,41 @@ async function callAnthropic(params: {
   return { content: textBlock };
 }
 
+async function callLlm(params: {
+  systemPrompt: string;
+  userPrompt: string;
+  jsonObject?: boolean;
+  maxTokens?: number;
+}): Promise<{ content?: string; error?: string }> {
+  const config = resolveLlmConfig();
+  if ("error" in config) return { error: config.error };
+
+  if (config.provider === "anthropic") {
+    return callAnthropic({
+      apiKey: config.apiKey,
+      base: config.base,
+      model: config.model,
+      systemPrompt: params.systemPrompt,
+      userPrompt: params.userPrompt,
+      maxTokens: params.maxTokens,
+    });
+  }
+  return callOpenAiCompatible({
+    apiKey: config.apiKey,
+    base: config.base,
+    model: config.model,
+    systemPrompt: params.systemPrompt,
+    userPrompt: params.userPrompt,
+    jsonObject: params.jsonObject,
+  });
+}
+
 export async function extractScholarshipDraft(input: {
   title: string;
   body: string;
   sourceName: string;
   noticeUrl?: string;
 }): Promise<{ draft?: NoticeDraft; error?: string; resolvedBody?: string }> {
-  const apiKey = process.env.LLM_API_KEY;
-  if (!apiKey) {
-    return { error: "LLM_API_KEY 환경변수가 설정되지 않았습니다." };
-  }
   let normalizedBody = input.body?.trim() ?? "";
   if (normalizedBody.length < 120 && input.noticeUrl) {
     const fetchedBody = await fetchNoticeBodyFromUrl(input.noticeUrl);
@@ -571,28 +633,18 @@ export async function extractScholarshipDraft(input: {
       ? normalizedBody
       : `[본문 미수집]\n공지 제목만으로 추출 가능한 항목만 채우세요.\n${input.title}`;
 
-  const providerFromEnv = (process.env.LLM_PROVIDER ?? "").trim().toLowerCase();
-  const base = (
-    process.env.LLM_API_BASE ??
-    (providerFromEnv === "anthropic" || apiKey.startsWith("sk-ant-")
-      ? "https://api.anthropic.com/v1"
-      : "https://api.openai.com/v1")
-  ).replace(/\/$/, "");
-  const model = process.env.LLM_MODEL ?? "gpt-4o-mini";
   const userPrompt = buildUserPrompt({
     title: input.title,
     sourceName: input.sourceName,
     body: promptBody,
   });
-  const provider =
-    providerFromEnv === "anthropic" || base.includes("anthropic.com") || apiKey.startsWith("sk-ant-")
-      ? "anthropic"
-      : "openai";
 
-  const { content, error: callError } =
-    provider === "anthropic"
-      ? await callAnthropic({ apiKey, base, model, userPrompt })
-      : await callOpenAiCompatible({ apiKey, base, model, userPrompt });
+  const { content, error: callError } = await callLlm({
+    systemPrompt: SYSTEM_PROMPT,
+    userPrompt,
+    jsonObject: true,
+    maxTokens: 1500,
+  });
   if (callError) return { error: callError };
   if (!content) return { error: "LLM 응답 본문이 비어 있습니다." };
 
@@ -600,4 +652,52 @@ export async function extractScholarshipDraft(input: {
   if (parseError || parsed === undefined) return { error: parseError };
 
   return { draft: normalizeDraft(parsed), resolvedBody: normalizedBody };
+}
+
+/**
+ * 원문 공고문: 문장·숫자는 유지하고 줄바꿈·섹션·목록 마커만 규칙에 맞게 정리.
+ * 실패 시 원문을 그대로 반환하고 error를 함께 준다 (호출측이 막히지 않게).
+ */
+export async function formatOriginalNoticeText(input: {
+  title?: string;
+  body: string;
+}): Promise<{ text: string; error?: string }> {
+  const original = input.body?.trim() ?? "";
+  if (!original) {
+    return { text: "", error: "정리할 원문 본문이 비어 있습니다." };
+  }
+  // 이미 매우 짧으면 LLM 비용 없이 그대로
+  if (original.length < 40) {
+    return { text: original };
+  }
+
+  const userPrompt = [
+    input.title?.trim() ? `[공고 제목] ${input.title.trim()}` : null,
+    `[원문]`,
+    original.slice(0, 14000),
+    "",
+    "위 원문의 형식만 규칙에 맞게 정리해 출력하세요. 문구·숫자는 변경 금지.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const { content, error: callError } = await callLlm({
+    systemPrompt: ORIGINAL_NOTICE_FORMAT_SYSTEM_PROMPT,
+    userPrompt,
+    jsonObject: false,
+    maxTokens: 4000,
+  });
+  if (callError) return { text: original, error: callError };
+  if (!content?.trim()) {
+    return { text: original, error: "LLM 응답 본문이 비어 있습니다." };
+  }
+
+  const formatted = stripFormattedNoticeOutput(content);
+  if (!formatted || formatted.length < Math.min(20, original.length * 0.3)) {
+    return {
+      text: original,
+      error: "LLM 포맷 결과가 비정상적으로 짧아 원문을 유지합니다.",
+    };
+  }
+  return { text: formatted };
 }

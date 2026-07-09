@@ -2,13 +2,13 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { generateNoticeDraft } from "./actions";
+import { formatNoticeBody } from "./actions";
 
 type Props = {
   noticeId: number;
 };
 
-export default function GenerateDraftButton({ noticeId }: Props) {
+export default function FormatNoticeBodyButton({ noticeId }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -18,17 +18,17 @@ export default function GenerateDraftButton({ noticeId }: Props) {
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          const result = await generateNoticeDraft(noticeId);
+          const result = await formatNoticeBody(noticeId);
           if (result?.error) {
-            alert(`AI 초안 생성 실패: ${result.error}`);
+            alert(`원문 형식 정리 실패: ${result.error}`);
             return;
           }
           router.refresh();
         });
       }}
-      className="rounded-md bg-violet-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {isPending ? "AI 초안·원문 정리 중..." : "AI 초안 생성"}
+      {isPending ? "원문 정리 중..." : "원문 형식 정리"}
     </button>
   );
 }

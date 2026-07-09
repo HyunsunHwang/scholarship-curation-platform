@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { buildScholarshipPayload, buildSelectionStagesPayload } from "@/lib/scholarship-payload";
 import {
   extractScholarshipDraft,
+  formatOriginalNoticeText,
   type NoticeDraft,
 } from "@/lib/notice-extraction";
 
@@ -155,15 +156,64 @@ export async function generateNoticeDraft(
       ? mergeDraftKeepingExisting(notice.extracted_draft, draft)
       : draft;
 
+  // 본문: URL에서 보강한 원문(또는 기존 body)을 형식 규칙에 맞게 정리
+  const bodyForFormat =
+    resolvedBody && resolvedBody.trim().length >= 120
+      ? resolvedBody.trim()
+      : (notice.body ?? "").trim();
+  let nextBody = bodyForFormat || notice.body;
+  if (bodyForFormat) {
+    const { text: formatted } = await formatOriginalNoticeText({
+      title: notice.title,
+      body: bodyForFormat,
+    });
+    if (formatted.trim()) nextBody = formatted.trim();
+  }
+
   const { error: updateError } = await supabase
     .from("crawled_notices")
     .update({
       extracted_draft: nextDraft,
-      body:
-        !notice.body && resolvedBody && resolvedBody.trim().length >= 120
-          ? resolvedBody
-          : notice.body,
+      body: nextBody,
     })
+    .eq("id", noticeId);
+  if (updateError) return { error: updateError.message };
+
+  revalidatePath(`/admin/crawled-notices/${noticeId}`);
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 수집 공지 본문만 원문 형식 규칙에 맞게 정리 (필드 초안은 건드리지 않음)
+// ─────────────────────────────────────────────────────────────────
+export async function formatNoticeBody(
+  noticeId: number
+): Promise<{ error?: string; success?: true }> {
+  const { supabase, error: authError } = await ensureAdmin();
+  if (authError) return { error: authError };
+
+  const { data: notice, error } = await supabase
+    .from("crawled_notices")
+    .select("id, title, body")
+    .eq("id", noticeId)
+    .single();
+  if (error) return { error: error.message };
+  if (!notice) return { error: "공지 데이터를 찾을 수 없습니다." };
+
+  const body = notice.body?.trim() ?? "";
+  if (!body) return { error: "정리할 본문이 없습니다." };
+
+  const { text: formatted, error: formatError } = await formatOriginalNoticeText({
+    title: notice.title,
+    body,
+  });
+  if (formatError && !formatted.trim()) {
+    return { error: formatError };
+  }
+
+  const { error: updateError } = await supabase
+    .from("crawled_notices")
+    .update({ body: formatted.trim() || body })
     .eq("id", noticeId);
   if (updateError) return { error: updateError.message };
 

@@ -44,7 +44,8 @@
     "ingest:notices": "node scripts/ingest-notices-to-supabase.mjs",
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
-    "notify:slack": "node scripts/send-slack-notice-summary.mjs"
+    "notify:slack": "node scripts/send-slack-notice-summary.mjs",
+    "reformat:notices": "npx --yes tsx scripts/reformat-open-notice-texts.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

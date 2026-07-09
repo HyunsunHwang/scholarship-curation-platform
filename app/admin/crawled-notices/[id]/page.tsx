@@ -7,6 +7,7 @@ import type { NoticeDraft, NoticeDraftStage } from "@/lib/notice-extraction";
 import { splitSpecialInfoValues } from "@/lib/special-info";
 import ScholarshipForm, { type SelectionStageDefault } from "../../scholarships/ScholarshipForm";
 import GenerateDraftButton from "../GenerateDraftButton";
+import FormatNoticeBodyButton from "../FormatNoticeBodyButton";
 import { promoteNotice } from "../actions";
 
 function isNoticeDraft(value: unknown): value is NoticeDraft {
@@ -134,12 +135,16 @@ export default async function ReviewCrawledNoticePage({
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <GenerateDraftButton noticeId={notice.id} />
+          <FormatNoticeBodyButton noticeId={notice.id} />
           {notice.extracted_draft && (
             <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700">
               AI 초안 적용됨
             </span>
           )}
         </div>
+        <p className="mt-2 text-xs text-gray-500">
+          AI 초안 생성 시 본문도 원문 형식 규칙에 맞게 함께 정리됩니다. 원문만 다시 정리하려면 「원문 형식 정리」를 사용하세요.
+        </p>
         {notice.body && (
           <details className="mt-3">
             <summary className="cursor-pointer text-sm text-gray-500">
