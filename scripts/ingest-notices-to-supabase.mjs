@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import { parseImageUrlsCsvCell } from "../lib/notice-body-extraction.mjs";
 
 // ─────────────────────────────────────────────────────────────────
 // 통합 크롤링 CSV → Supabase `crawled_notices` staging 테이블 적재
@@ -188,6 +189,13 @@ function readRows(filePath) {
         cleanText(cells[index.detail_date]) ||
         null,
       body: cleanText(cells[index.content]) || null,
+      image_urls:
+        "image_urls" in index
+          ? (() => {
+              const urls = parseImageUrlsCsvCell(cells[index.image_urls]);
+              return urls.length > 0 ? urls : null;
+            })()
+          : null,
       scholarship_type: scholarshipType,
       run_at: toTimestampOrNull(cells[index.run_at]),
     });

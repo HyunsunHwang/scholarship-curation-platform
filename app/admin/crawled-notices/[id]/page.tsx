@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { loadCrawlerDepartments } from "@/lib/crawler-departments";
 import type { Scholarship } from "@/lib/database.types";
 import type { NoticeDraft, NoticeDraftStage } from "@/lib/notice-extraction";
+import { redistributeFreeformQualifiers } from "@/lib/notice-extraction";
 import { splitSpecialInfoValues } from "@/lib/special-info";
 import ScholarshipForm, { type SelectionStageDefault } from "../../scholarships/ScholarshipForm";
 import GenerateDraftButton from "../GenerateDraftButton";
@@ -22,14 +23,19 @@ function buildDefaultValues(params: {
     notice_posted_at: string | null;
     notice_url: string;
     body: string | null;
+    image_urls: string[] | null;
     extracted_draft: unknown;
   };
 }): Partial<Scholarship> {
   const { notice } = params;
-  const draft = isNoticeDraft(notice.extracted_draft)
+  const rawDraft = isNoticeDraft(notice.extracted_draft)
     ? notice.extracted_draft
     : {};
+  const draft = redistributeFreeformQualifiers(rawDraft);
   const parsedSpecialInfo = splitSpecialInfoValues(draft.qual_special_info ?? []);
+  const imageUrls = (notice.image_urls ?? []).filter(
+    (url): url is string => typeof url === "string" && url.trim().length > 0
+  );
 
   return {
     name: notice.title,
@@ -42,14 +48,44 @@ function buildDefaultValues(params: {
     apply_end_date: draft.apply_end_date ?? "",
     announcement_date: draft.announcement_date ?? null,
     selection_count: draft.selection_count ?? null,
+    qual_university: draft.qual_university ?? null,
+    qual_school_location:
+      (draft.qual_school_location as Scholarship["qual_school_location"]) ??
+      null,
+    qual_school_category:
+      (draft.qual_school_category as Scholarship["qual_school_category"]) ??
+      null,
     qual_academic_year: draft.qual_academic_year ?? null,
     qual_enrollment_status:
       (draft.qual_enrollment_status as Scholarship["qual_enrollment_status"]) ??
       null,
     qual_major: draft.qual_major ?? null,
+    qual_field_codes: draft.qual_field_codes ?? null,
     qual_gpa_min: draft.qual_gpa_min ?? null,
+    qual_gpa_last_semester_min: draft.qual_gpa_last_semester_min ?? null,
+    qual_last_semester_earned_credits_min:
+      draft.qual_last_semester_earned_credits_min ?? null,
     qual_income_level_min: draft.qual_income_level_min ?? null,
     qual_income_level_max: draft.qual_income_level_max ?? null,
+    qual_household_size_max: draft.qual_household_size_max ?? null,
+    qual_gender: (draft.qual_gender as Scholarship["qual_gender"]) ?? null,
+    qual_age_min: draft.qual_age_min ?? null,
+    qual_age_max: draft.qual_age_max ?? null,
+    qual_region: draft.qual_region ?? null,
+    qual_nationality:
+      (draft.qual_nationality as Scholarship["qual_nationality"]) ?? null,
+    qual_admission_type:
+      (draft.qual_admission_type as Scholarship["qual_admission_type"]) ?? null,
+    qual_parent_cohabitation:
+      (draft.qual_parent_cohabitation as Scholarship["qual_parent_cohabitation"]) ??
+      null,
+    qual_parent_region: draft.qual_parent_region ?? null,
+    qual_parent_occupation:
+      (draft.qual_parent_occupation as Scholarship["qual_parent_occupation"]) ??
+      null,
+    qual_military_status:
+      (draft.qual_military_status as Scholarship["qual_military_status"]) ??
+      null,
     qual_special_info:
       parsedSpecialInfo.matched.length > 0 ? parsedSpecialInfo.matched : null,
     qual_extra_requirements: [
@@ -61,6 +97,8 @@ function buildDefaultValues(params: {
     contact: draft.contact ?? null,
     note: draft.note ?? null,
     original_notice_text: notice.body ?? null,
+    original_notice_image_urls: imageUrls.length > 0 ? imageUrls : null,
+    original_notice_image_url: imageUrls[0] ?? null,
     homepage_url: notice.notice_url,
     apply_url: notice.notice_url,
   };
@@ -158,6 +196,9 @@ export default async function ReviewCrawledNoticePage({
       </div>
 
       <ScholarshipForm
+        // AI 초안/본문 갱신 후 router.refresh()만으로는 클라이언트 defaultValue·useState가
+        // 유지되므로, DB 갱신 시각이 바뀌면 폼을 다시 마운트한다.
+        key={`notice-${notice.id}-${notice.updated_at ?? notice.created_at}`}
         defaultValues={defaultValues}
         action={boundAction}
         submitLabel="장학금으로 등록"

@@ -88,7 +88,7 @@ const SPECIAL_INFO_OPTIONS = [
 ];
 const PARENT_OCCUPATION_OPTIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
-  "경찰/소방관", "택배기사", "환경미화원", "연극인",
+  "경찰/소방관", "택배기사", "환경미화원", "연극인", "외국인 근로자",
 ];
 const MILITARY_STATUS_OPTIONS = ["군필", "미필", "비대상", "면제"];
 const STEPS = ["인적사항", "학적사항", "재정/가계", "기타/특수"];

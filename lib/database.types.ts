@@ -25,7 +25,7 @@ export type SpecialInfoType =
   | "순직자유자녀";
 export type ParentOccupationType =
   | "직업군인" | "군무원" | "농축어업인" | "건설근로자" | "소상공인"
-  | "경찰/소방관" | "택배기사" | "환경미화원" | "연극인";
+  | "경찰/소방관" | "택배기사" | "환경미화원" | "연극인" | "외국인 근로자";
 export type InstitutionType =
   | "국가기관" | "지방자치단체" | "공공기관" | "기업" | "재단법인"
   | "학교법인" | "언론/방송" | "종교단체" | "기타";
@@ -308,6 +308,8 @@ export interface Database {
           notice_posted_at: string | null;
           raw_date_text: string | null;
           body: string | null;
+          /** 상세 페이지에서 추출한 본문 이미지 절대 URL */
+          image_urls: string[] | null;
           scholarship_type: ScholarshipType;
           status: "new" | "promoted" | "rejected";
           scholarship_id: number | null;
@@ -332,6 +334,7 @@ export interface Database {
           notice_posted_at?: string | null;
           raw_date_text?: string | null;
           body?: string | null;
+          image_urls?: string[] | null;
           scholarship_type?: ScholarshipType;
           status?: "new" | "promoted" | "rejected";
           scholarship_id?: number | null;

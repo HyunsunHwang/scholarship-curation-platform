@@ -133,17 +133,29 @@ export async function generateNoticeDraft(
 
   const { data: notice, error } = await supabase
     .from("crawled_notices")
-    .select("id, title, source_name, source_group, notice_url, body, extracted_draft")
+    .select("id, title, source_name, source_group, notice_url, body, image_urls, extracted_draft")
     .eq("id", noticeId)
     .single();
   if (error) return { error: error.message };
   if (!notice) return { error: "공지 데이터를 찾을 수 없습니다." };
 
-  const { draft, error: extractError, resolvedBody } = await extractScholarshipDraft({
+  const existingImageUrls = Array.isArray(notice.image_urls)
+    ? notice.image_urls.filter(
+        (url): url is string => typeof url === "string" && url.trim().length > 0
+      )
+    : [];
+  const {
+    draft,
+    error: extractError,
+    resolvedBody,
+    imageUrls: fetchedImageUrls,
+  } = await extractScholarshipDraft({
     title: notice.title,
     sourceName: notice.source_name,
     body: notice.body ?? "",
     noticeUrl: notice.notice_url ?? undefined,
+    sourceGroup: notice.source_group ?? undefined,
+    forceFetchImages: existingImageUrls.length === 0,
   });
   if (extractError || !draft) {
     return { error: extractError ?? "LLM 초안 생성에 실패했습니다." };
@@ -170,11 +182,19 @@ export async function generateNoticeDraft(
     if (formatted.trim()) nextBody = formatted.trim();
   }
 
+  const nextImageUrls =
+    existingImageUrls.length > 0
+      ? existingImageUrls
+      : (fetchedImageUrls ?? []).filter(
+          (url): url is string => typeof url === "string" && url.trim().length > 0
+        );
+
   const { error: updateError } = await supabase
     .from("crawled_notices")
     .update({
       extracted_draft: nextDraft,
       body: nextBody,
+      ...(nextImageUrls.length > 0 ? { image_urls: nextImageUrls } : {}),
     })
     .eq("id", noticeId);
   if (updateError) return { error: updateError.message };

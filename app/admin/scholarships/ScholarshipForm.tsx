@@ -75,7 +75,7 @@ const PARENT_COHABITATION_OPTIONS = ["동거", "별거"];
 const ACADEMIC_YEARS = ["1", "2", "3", "4", "5"];
 const PARENT_OCCUPATIONS = [
   "직업군인", "군무원", "농축어업인", "건설근로자", "소상공인",
-  "경찰/소방관", "택배기사", "환경미화원", "연극인",
+  "경찰/소방관", "택배기사", "환경미화원", "연극인", "외국인 근로자",
 ];
 const MILITARY_STATUSES = ["군필", "미필", "비대상", "면제"];
 

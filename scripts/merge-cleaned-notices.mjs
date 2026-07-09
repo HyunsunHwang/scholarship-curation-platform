@@ -155,6 +155,7 @@ function readRows(filePath) {
       detail_date: cleanText(row[index.detail_date]),
       parsed_date: cleanText(row[index.parsed_date]),
       content: "content" in index ? cleanText(row[index.content]) : "",
+      image_urls: "image_urls" in index ? cleanText(row[index.image_urls]) : "",
       notice_posted_at: "",
       run_at: cleanText(row[index.run_at] || runAt),
     }))
@@ -192,6 +193,7 @@ const outputHeader = [
   "detail_date",
   "parsed_date",
   "content",
+  "image_urls",
   "run_at",
 ];
 
