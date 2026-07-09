@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toggleBookmark } from "@/app/mypage/actions";
 import { trackAnalyticsEventClient } from "@/lib/analytics/client";
 
@@ -17,6 +17,16 @@ export default function BookmarkApplyButtons({
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    const onBookmarkToggled = (event: Event) => {
+      const detail = (event as CustomEvent<{ scholarshipId: number; bookmarked: boolean }>).detail;
+      if (!detail || detail.scholarshipId !== scholarshipId) return;
+      setBookmarked(detail.bookmarked);
+    };
+    window.addEventListener(BOOKMARK_EVENT, onBookmarkToggled as EventListener);
+    return () => window.removeEventListener(BOOKMARK_EVENT, onBookmarkToggled as EventListener);
+  }, [scholarshipId]);
 
   function handleBookmark() {
     const next = !bookmarked;
