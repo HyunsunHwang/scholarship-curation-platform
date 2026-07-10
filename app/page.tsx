@@ -1,37 +1,26 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
 import dynamic from "next/dynamic";
-import { getHeroIllustrationPublicUrl } from "@/lib/hero-illustration-url";
-import {
-  createPublicSupabaseClient,
-  getCachedHomeScholarships,
-} from "@/lib/public-data";
+import SpotifyTopNav from "@/components/home/SpotifyTopNav";
+import type { CardScholarship } from "@/components/ScholarshipCard";
+import { getCachedHomeScholarships } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
+import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
+import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
+import { isScholarshipExpired } from "@/lib/scholarship-dates";
 
-const ScholarshipDashboard = dynamic(
-  () => import("@/components/ScholarshipDashboard"),
+const SpotifyHomeShell = dynamic(
+  () => import("@/components/home/SpotifyHomeShell"),
   {
     loading: () => (
-      <section className="bg-[#fafafa] py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div
-                key={index}
-                className="aspect-2/3 animate-pulse rounded-2xl bg-gray-200"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <div className="flex min-h-0 flex-1 gap-2 bg-beige p-2 sm:p-2.5">
+        <div className="hidden h-full w-[280px] animate-pulse rounded-2xl bg-white xl:block" />
+        <div className="flex-1 animate-pulse rounded-2xl bg-white" />
+      </div>
     ),
   }
 );
 
 export default async function Home() {
   const homeScholarships = await getCachedHomeScholarships();
-  const publicSupabase = createPublicSupabaseClient();
-  const heroIllustrationUrl = getHeroIllustrationPublicUrl(publicSupabase);
 
   const authSupabase = await createClient();
   const {
@@ -39,37 +28,73 @@ export default async function Home() {
   } = await authSupabase.auth.getUser();
 
   let bookmarkedIds: number[] = [];
+  let bookmarkedScholarships: CardScholarship[] = [];
+
   if (user) {
-    const { data: bookmarkRows } = await authSupabase
-      .from("bookmarks")
-      .select("scholarship_id")
-      .eq("user_id", user.id);
-    bookmarkedIds = (bookmarkRows ?? []).map((r) => r.scholarship_id);
+    bookmarkedIds = await getBookmarkedScholarshipIds(authSupabase, user.id);
+
+    if (bookmarkedIds.length > 0) {
+      const homeById = new Map(homeScholarships.map((s) => [s.id, s]));
+      const missingIds = bookmarkedIds.filter((id) => !homeById.has(id));
+
+      let extraRows: CardScholarship[] = [];
+      if (missingIds.length > 0) {
+        const [{ data: rows }, scrapCounts] = await Promise.all([
+          authSupabase
+            .from("scholarships")
+            .select(
+              "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
+            )
+            .in("id", missingIds),
+          getScholarshipScrapCounts(authSupabase, missingIds),
+        ]);
+        extraRows = (rows ?? []).map((s) => ({
+          id: s.id,
+          name: s.name,
+          organization: s.organization,
+          institution_type: s.institution_type as string,
+          support_types: s.support_types as string[],
+          support_amount_text: s.support_amount_text,
+          apply_end_date: s.apply_end_date,
+          poster_image_url: s.poster_image_url ?? null,
+          created_at: s.created_at,
+          view_count: s.view_count,
+          scrap_count: scrapCounts.get(s.id) ?? 0,
+          is_recommended: s.is_recommended,
+          recommended_sort_order: s.recommended_sort_order,
+          is_advertisement: s.is_advertisement,
+        }));
+      }
+
+      const extraById = new Map(extraRows.map((s) => [s.id, s]));
+      bookmarkedScholarships = bookmarkedIds.flatMap((id) => {
+        const s = homeById.get(id) ?? extraById.get(id);
+        if (!s) return [];
+        if (isScholarshipExpired(s.apply_end_date)) return [];
+        return [s];
+      });
+    }
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar currentUser={user} />
-      <main className="flex-1">
-        <Hero heroIllustrationUrl={heroIllustrationUrl} />
-        <ScholarshipDashboard
+    <div className="flex h-dvh flex-col overflow-hidden bg-beige">
+      <SpotifyTopNav currentUser={user} />
+      <main className="flex min-h-0 flex-1 flex-col">
+        <SpotifyHomeShell
+          isLoggedIn={Boolean(user)}
           scholarships={homeScholarships}
+          bookmarkedScholarships={bookmarkedScholarships}
           bookmarkedIds={bookmarkedIds}
-          totalScholarshipCount={homeScholarships.length}
         />
       </main>
-      <footer className="border-t border-gray-200 bg-white py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-gray-600">
-            문의 메일:{" "}
-            <a
-              href="mailto:hyunsun4819@gmail.com"
-              className="font-medium text-brand hover:underline"
-            >
-              hyunsun4819@gmail.com
-            </a>
-          </div>
-        </div>
+      <footer className="shrink-0 border-t border-gray-200/80 bg-white px-4 py-2.5 text-center text-xs text-ink/50">
+        문의:{" "}
+        <a
+          href="mailto:hyunsun4819@gmail.com"
+          className="font-medium text-brand hover:underline"
+        >
+          hyunsun4819@gmail.com
+        </a>
       </footer>
     </div>
   );
