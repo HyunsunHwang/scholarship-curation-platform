@@ -321,8 +321,29 @@ export default function ScholarshipForm({
               : "특정 학과/단과대만 대상인 경우 추가. 부분 일치로 매칭됩니다."}
           </p>
         </div>
-        <Field label="최소 누적 학점" name="qual_gpa_min" type="number" step="0.01" defaultValue={dv.qual_gpa_min?.toString() ?? ""} placeholder="예: 3.0" />
-        <Field label="최소 직전 학기 학점" name="qual_gpa_last_semester_min" type="number" step="0.01" defaultValue={dv.qual_gpa_last_semester_min?.toString() ?? ""} placeholder="예: 3.5" />
+        <Field
+          label="최소 누적 학점 (4.5 만점)"
+          name="qual_gpa_min"
+          type="number"
+          step="0.01"
+          min="0"
+          max="4.5"
+          defaultValue={dv.qual_gpa_min?.toString() ?? ""}
+          placeholder="예: 3.0"
+        />
+        <Field
+          label="최소 직전 학기 학점 (4.5 만점)"
+          name="qual_gpa_last_semester_min"
+          type="number"
+          step="0.01"
+          min="0"
+          max="4.5"
+          defaultValue={dv.qual_gpa_last_semester_min?.toString() ?? ""}
+          placeholder="예: 3.5"
+        />
+        <p className="text-xs text-gray-400 -mt-1 md:col-span-2">
+          학점은 4.5 만점 기준으로 입력하세요. AI 초안도 4.3·4.0·100점 원문을 4.5로 환산합니다.
+        </p>
         <Field
           label="최소 직전학기 이수학점"
           name="qual_last_semester_earned_credits_min"

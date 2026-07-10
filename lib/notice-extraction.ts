@@ -183,6 +183,10 @@ const SYSTEM_PROMPT = `당신은 한국 대학 장학 공지에서 정형 데이
 - qual_special_info는 가능하면 다음 표준값만: ${SPECIAL_INFO_VALUES.join(", ")}.
   표준값에 안 맞으면 원문 표현을 그대로 두고, 호출측이 기타 요건으로 옮깁니다.
 - qual_income_level_min/max는 소득분위 0~10 정수.
+- qual_gpa_min / qual_gpa_last_semester_min은 반드시 4.5 만점 기준 숫자로 출력하세요.
+  원문이 4.3·4.0·100점 만점이면 4.5로 환산하세요.
+  예: 3.0/4.3 → 3.14, 3.0/4.0 → 3.38, 80/100 → 3.6, 3.0(4.5만점) → 3.0.
+  만점이 명시되지 않고 값이 0~4.5면 그대로, 4.5 초과~100이하면 100점 만점으로 환산.
 - qual_university는 본문에 특정 대학만 대상이라고 명시된 경우에만 대학명 배열.
 - stages는 공고에 나온 전형 절차를 순서대로 배열로 추출하세요. 각 항목은
   { "title": string, "phase": "selection" | "post_acceptance", "schedule_text": string|null, "note": string|null }.
@@ -226,6 +230,64 @@ function toNumberOrNull(v: unknown): number | null {
     return Number.isFinite(n) ? n : null;
   }
   return null;
+}
+
+const GPA_SCALE_45 = 4.5;
+
+/** 학점 값을 4.5 만점 기준으로 정규화 (4.3·4.0·100점 환산 포함). */
+export function toGpaOn45Scale(v: unknown): number | null {
+  let value: number | null = null;
+  let scale: number | null = null;
+
+  if (typeof v === "number" && Number.isFinite(v)) {
+    value = v;
+  } else if (typeof v === "string") {
+    const text = v.replace(/,/g, "").trim();
+    if (!text) return null;
+
+    const slash = text.match(
+      /(-?\d+(?:\.\d+)?)\s*\/\s*(4\.5|4\.3|4\.0|4|100)(?:\s*점)?/i
+    );
+    if (slash) {
+      value = Number(slash[1]);
+      scale = Number(slash[2] === "4" ? "4.0" : slash[2]);
+    } else {
+      const withScale = text.match(
+        /(-?\d+(?:\.\d+)?)\s*(?:\(|\s)*(?:만점\s*)?(4\.5|4\.3|4\.0|4|100)\s*(?:만점|점)?/i
+      );
+      if (withScale) {
+        value = Number(withScale[1]);
+        scale = Number(withScale[2] === "4" ? "4.0" : withScale[2]);
+      } else {
+        value = toNumberOrNull(text);
+        if (/100\s*점\s*만점|만점\s*100|百分|퍼센트/.test(text)) scale = 100;
+        else if (/4\.3\s*만점|만점\s*4\.3/.test(text)) scale = 4.3;
+        else if (/4\.0\s*만점|만점\s*4\.0|4점\s*만점/.test(text)) scale = 4.0;
+        else if (/4\.5\s*만점|만점\s*4\.5/.test(text)) scale = GPA_SCALE_45;
+      }
+    }
+  } else {
+    return null;
+  }
+
+  if (value === null || !Number.isFinite(value) || value < 0) return null;
+
+  if (scale == null) {
+    // 만점 미명시: 0~4.5는 4.5 만점으로 보고, 10~100은 100점 만점으로 환산.
+    // 4.5 초과~10 미만(예: 5.0)은 애매하므로 버림.
+    if (value <= GPA_SCALE_45) scale = GPA_SCALE_45;
+    else if (value >= 10 && value <= 100) scale = 100;
+    else return null;
+  }
+
+  if (scale <= 0) return null;
+  const converted =
+    scale === GPA_SCALE_45 ? value : (value * GPA_SCALE_45) / scale;
+  if (!Number.isFinite(converted)) return null;
+
+  const rounded = Math.round(converted * 100) / 100;
+  if (rounded < 0 || rounded > GPA_SCALE_45) return null;
+  return rounded;
 }
 
 function splitLooseList(value: string): string[] {
@@ -520,8 +582,8 @@ export function normalizeDraft(raw: unknown): NoticeDraft {
     ),
     qual_major: toStringArray(o.qual_major),
     qual_field_codes: toFieldCodeArray(o.qual_field_codes),
-    qual_gpa_min: toNumberOrNull(o.qual_gpa_min),
-    qual_gpa_last_semester_min: toNumberOrNull(o.qual_gpa_last_semester_min),
+    qual_gpa_min: toGpaOn45Scale(o.qual_gpa_min),
+    qual_gpa_last_semester_min: toGpaOn45Scale(o.qual_gpa_last_semester_min),
     qual_last_semester_earned_credits_min: toNumberOrNull(
       o.qual_last_semester_earned_credits_min
     ),
