@@ -12,6 +12,7 @@ import {
   listItemText,
   parseOriginalNoticeText,
 } from "@/lib/original-notice-format";
+import type { ContestDocumentFile } from "@/lib/database.types";
 
 export type ScholarshipDetail = {
   id: number;
@@ -52,6 +53,8 @@ export type ScholarshipDetail = {
   qual_academic_year: number[] | null;
   apply_method: string | null;
   required_documents: string[] | null;
+  /** Downloadable application/guide files (contests) */
+  document_files?: ContestDocumentFile[] | null;
   contact: string | null;
   selection_note: string | null;
   original_notice_image_url: string | null;
@@ -625,22 +628,47 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
 
 // ── 제출 서류 섹션 ────────────────────────────────────────────────────
 function DocumentsSection({ s }: { s: ScholarshipDetail }) {
+  const files = (s.document_files ?? []).filter((f) => f?.url);
   const docs = s.required_documents ?? [];
-  if (docs.length === 0) return <p className="text-sm text-ink/45">서류 정보가 없습니다.</p>;
+
+  if (files.length === 0 && docs.length === 0) {
+    return <p className="text-sm text-ink/45">서류 정보가 없습니다.</p>;
+  }
 
   return (
     <div>
-      <ol className="space-y-2.5">
-        {docs.map((doc, i) => (
-          <li key={i} className="flex items-start gap-3">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
-              {i + 1}
-            </span>
-            <span className="wrap-break-word text-sm leading-6 text-ink">{doc}</span>
-          </li>
-        ))}
-      </ol>
-      {s.homepage_url && (
+      {files.length > 0 ? (
+        <ul className="space-y-2.5">
+          {files.map((file: ContestDocumentFile, i) => (
+            <li key={`${file.url}-${i}`} className="flex items-start gap-3">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                {i + 1}
+              </span>
+              <a
+                href={file.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download={file.name || undefined}
+                className="wrap-break-word text-sm font-medium leading-6 text-brand hover:underline"
+              >
+                {file.name || `서류 ${i + 1}`}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ol className="space-y-2.5">
+          {docs.map((doc, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                {i + 1}
+              </span>
+              <span className="wrap-break-word text-sm leading-6 text-ink">{doc}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      {files.length === 0 && s.homepage_url && (
         <a
           href={s.homepage_url}
           target="_blank"
@@ -909,19 +937,24 @@ function SectionIcon({ name }: { name: SectionIconName }) {
   );
 }
 
-/** 장학금 상세 본문: 탭 없이 한 페이지에 섹션 순서대로 표시 */
 export default function ScholarshipTabs({
   scholarship,
   selectionStages,
   autoCheck,
+  hideQualificationSections = false,
 }: {
   scholarship: ScholarshipDetail;
   selectionStages: SelectionStageDetail[];
   autoCheck: AutoCheckState;
+  /** 공모전 등: 프로필 자격·직접 확인 섹션 숨김 */
+  hideQualificationSections?: boolean;
 }) {
   const s = scholarship;
   const isAdvertisement = s.is_advertisement === true;
-  const manualCheckItems = !isAdvertisement && hasManualCheckItems(s) ? buildManualCheckItems(s) : [];
+  const manualCheckItems =
+    !hideQualificationSections && !isAdvertisement && hasManualCheckItems(s)
+      ? buildManualCheckItems(s)
+      : [];
 
   const sectionTitle = (label: string, icon: SectionIconName, right?: ReactNode) => (
     <div className="mb-4 flex items-center justify-between gap-2">
@@ -941,28 +974,30 @@ export default function ScholarshipTabs({
           <AdSkillsSection s={s} />
         </section>
       ) : (
-        <>
-          {autoCheck.kind !== "none" && (
-            <section className="py-7 first:pt-0">
-              {sectionTitle(
-                "내 프로필로 확인된 자격",
-                "profile",
-                autoCheck.kind === "ready" && autoCheck.items.length > 0 ? (
-                  <span className="shrink-0 text-xs font-semibold text-ink/40">
-                    {autoCheck.items.filter((item) => item.satisfied).length}/{autoCheck.items.length}개 충족
-                  </span>
-                ) : undefined
-              )}
-              <AutoCheckSection autoCheck={autoCheck} />
-            </section>
-          )}
-          {manualCheckItems.length > 0 && (
-            <section className="py-7 first:pt-0">
-              {sectionTitle("지원 전 직접 확인하세요", "search")}
-              <ManualCheckSection items={manualCheckItems} />
-            </section>
-          )}
-        </>
+        !hideQualificationSections && (
+          <>
+            {autoCheck.kind !== "none" && (
+              <section className="py-7 first:pt-0">
+                {sectionTitle(
+                  "내 프로필로 확인된 자격",
+                  "profile",
+                  autoCheck.kind === "ready" && autoCheck.items.length > 0 ? (
+                    <span className="shrink-0 text-xs font-semibold text-ink/40">
+                      {autoCheck.items.filter((item) => item.satisfied).length}/{autoCheck.items.length}개 충족
+                    </span>
+                  ) : undefined
+                )}
+                <AutoCheckSection autoCheck={autoCheck} />
+              </section>
+            )}
+            {manualCheckItems.length > 0 && (
+              <section className="py-7 first:pt-0">
+                {sectionTitle("지원 전 직접 확인하세요", "search")}
+                <ManualCheckSection items={manualCheckItems} />
+              </section>
+            )}
+          </>
+        )
       )}
 
       <section className="py-7 first:pt-0">
@@ -988,7 +1023,7 @@ export default function ScholarshipTabs({
             <DocumentsSection s={s} />
           </section>
           <section className="py-7">
-            {sectionTitle("선발 방법", "checklist")}
+            {sectionTitle(hideQualificationSections ? "지원 방법" : "선발 방법", "checklist")}
             <ApplySection s={s} />
           </section>
         </>

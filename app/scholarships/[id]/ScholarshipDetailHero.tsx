@@ -17,6 +17,10 @@ type Props = {
   title: string;
   organizationInitial: string;
   initialBookmarked: boolean;
+  /** false면 스크랩 버튼 숨김 (공모전 등) */
+  showBookmark?: boolean;
+  /** 외부 CDN 포스터 등 */
+  unoptimizedPoster?: boolean;
 };
 
 export default function ScholarshipDetailHero({
@@ -26,6 +30,8 @@ export default function ScholarshipDetailHero({
   title,
   organizationInitial,
   initialBookmarked,
+  showBookmark = true,
+  unoptimizedPoster = false,
 }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -136,6 +142,7 @@ export default function ScholarshipDetailHero({
                 priority
                 sizes="100vw"
                 className="object-cover object-top"
+                unoptimized={unoptimizedPoster}
               />
             </button>
           ) : (
@@ -175,6 +182,7 @@ export default function ScholarshipDetailHero({
                 </svg>
               </button>
 
+              {showBookmark ? (
               <button
                 type="button"
                 onClick={handleBookmark}
@@ -196,6 +204,7 @@ export default function ScholarshipDetailHero({
                   />
                 </svg>
               </button>
+              ) : null}
             </div>
           </div>
 
@@ -236,6 +245,7 @@ export default function ScholarshipDetailHero({
                   width={1200}
                   height={1800}
                   className="max-h-[min(72vh,640px)] w-full max-w-full rounded-lg object-contain shadow-2xl"
+                  unoptimized={unoptimizedPoster}
                 />
               </div>
             </div>,

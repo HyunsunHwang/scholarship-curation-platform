@@ -17,17 +17,29 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  images: supabaseHostname
-    ? {
-        remotePatterns: [
-          {
-            protocol: "https",
-            hostname: supabaseHostname,
-            pathname: "/storage/v1/object/public/**",
-          },
-        ],
-      }
-    : undefined,
+  images: {
+    remotePatterns: [
+      ...(supabaseHostname
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: supabaseHostname,
+              pathname: "/storage/v1/object/public/**",
+            },
+          ]
+        : []),
+      {
+        protocol: "https",
+        hostname: "api.linkareer.com",
+        pathname: "/attachments/**",
+      },
+      {
+        protocol: "https",
+        hostname: "media-cdn.linkareer.com",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -17,6 +17,7 @@ export const LIBRARY_CATEGORY_FILTERS = CONTENT_CATEGORIES.filter(
 /** 현재 데이터가 있는 카테고리 (그 외는 빈 상태) */
 export const CATEGORIES_WITH_DATA: ReadonlySet<ContentCategoryKey> = new Set([
   "all",
+  "contest",
   "scholarship",
 ]);
 

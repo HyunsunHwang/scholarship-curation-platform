@@ -38,6 +38,15 @@ export type OrganizationKindType = "학과" | "학교" | "재단" | "기타";
 export type OrgRequestStatusType = "pending" | "approved" | "rejected";
 /** org_units 노드 유형 (표시/필터용, 부모-자식 전이 강제 없음) */
 export type OrgUnitType = "university" | "college" | "division" | "department";
+
+/** contests.document_files / crawled_contests.document_files JSON shape */
+export type ContestDocumentFile = {
+  name: string;
+  url: string;
+  source_url?: string | null;
+  mime_type?: string | null;
+  size?: number | null;
+};
 /** 선발 단계 구분: selection = 지원자가 통과해야 하는 선발 관문, post_acceptance = 합격 후 이어지는 절차(오리엔테이션·파견·수혜 등) */
 export type SelectionStagePhase = "selection" | "post_acceptance";
 
@@ -579,6 +588,146 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["scholarships"]["Insert"]>;
         Relationships: [];
       };
+
+      // ── 공모전 (장학금과 분리, qual_* 없음 / interest_categories 사용) ──
+      contests: {
+        Row: {
+          id: number;
+          name: string;
+          organization: string;
+          organization_type: string | null;
+          support_amount_text: string | null;
+          selection_count: number | null;
+          apply_start_date: string | null;
+          apply_end_date: string | null;
+          announcement_date: string | null;
+          targets: string[] | null;
+          benefits: string[] | null;
+          apply_types: string[] | null;
+          /** lib/interestCategories.ts 고정 ID */
+          interest_categories: string[] | null;
+          required_documents: string[];
+          /** Downloaded docs: [{name, url, source_url, mime_type, size}] */
+          document_files: ContestDocumentFile[];
+          apply_method: string;
+          apply_url: string;
+          homepage_url: string | null;
+          contact: string | null;
+          note: string | null;
+          selection_note: string | null;
+          poster_image_url: string | null;
+          original_notice_image_url: string | null;
+          original_notice_image_urls: string[] | null;
+          original_notice_text: string | null;
+          source: string | null;
+          external_id: string | null;
+          source_url: string | null;
+          view_count: number;
+          is_verified: boolean;
+          list_on_home: boolean;
+          is_recommended: boolean;
+          recommended_sort_order: number | null;
+          collected_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["contests"]["Row"],
+          "id" | "created_at" | "updated_at" | "view_count" | "document_files"
+        > &
+          Partial<
+            Pick<
+              Database["public"]["Tables"]["contests"]["Row"],
+              "id" | "created_at" | "updated_at" | "view_count" | "document_files"
+            >
+          >;
+        Update: Partial<Database["public"]["Tables"]["contests"]["Insert"]>;
+        Relationships: [];
+      };
+
+      contest_selection_stages: {
+        Row: {
+          id: number;
+          contest_id: number;
+          stage_order: number;
+          title: string;
+          phase: SelectionStagePhase;
+          schedule_date: string | null;
+          schedule_text: string | null;
+          note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          contest_id: number;
+          stage_order: number;
+          title: string;
+          phase?: SelectionStagePhase;
+          schedule_date?: string | null;
+          schedule_text?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["contest_selection_stages"]["Insert"]>;
+        Relationships: [];
+      };
+
+      crawled_contests: {
+        Row: {
+          id: number;
+          source_group: string;
+          source_id: string;
+          source_name: string;
+          title: string;
+          notice_url: string;
+          notice_posted_at: string | null;
+          raw_date_text: string | null;
+          body: string | null;
+          image_urls: string[] | null;
+          poster_image_url: string | null;
+          document_files: ContestDocumentFile[];
+          status: "new" | "promoted" | "rejected";
+          contest_id: number | null;
+          extracted_draft: Record<string, unknown> | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          review_note: string | null;
+          run_at: string | null;
+          first_seen_at: string;
+          last_seen_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          source_group?: string;
+          source_id: string;
+          source_name?: string;
+          title: string;
+          notice_url: string;
+          notice_posted_at?: string | null;
+          raw_date_text?: string | null;
+          body?: string | null;
+          image_urls?: string[] | null;
+          poster_image_url?: string | null;
+          document_files?: ContestDocumentFile[];
+          status?: "new" | "promoted" | "rejected";
+          contest_id?: number | null;
+          extracted_draft?: Record<string, unknown> | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          review_note?: string | null;
+          run_at?: string | null;
+          first_seen_at?: string;
+          last_seen_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["crawled_contests"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -654,3 +803,7 @@ export type OrgUnit = Database["public"]["Tables"]["org_units"]["Row"];
 export type OrgUnitAlias = Database["public"]["Tables"]["org_unit_aliases"]["Row"];
 export type ScholarshipTargetUnit = Database["public"]["Tables"]["scholarship_target_units"]["Row"];
 export type ScholarshipSelectionStage = Database["public"]["Tables"]["scholarship_selection_stages"]["Row"];
+export type Contest = Database["public"]["Tables"]["contests"]["Row"];
+export type ContestUpdate = Database["public"]["Tables"]["contests"]["Update"];
+export type ContestSelectionStage = Database["public"]["Tables"]["contest_selection_stages"]["Row"];
+export type CrawledContest = Database["public"]["Tables"]["crawled_contests"]["Row"];

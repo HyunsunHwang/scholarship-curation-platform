@@ -46,10 +46,13 @@
     "generate:special-info-patch": "node scripts/generate-special-info-patch.mjs",
     "report:dead-links": "node scripts/report-dead-link-candidates.mjs",
     "ingest:notices": "node scripts/ingest-notices-to-supabase.mjs",
+    "ingest:linkareer-contests": "node scripts/ingest-linkareer-contests.mjs",
+    "crawl:linkareer-contests": "node scripts/crawl-linkareer-contests.mjs",
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs",
-    "reformat:notices": "npx --yes tsx scripts/reformat-open-notice-texts.ts"
+    "reformat:notices": "npx --yes tsx scripts/reformat-open-notice-texts.ts",
+    "reformat:contests": "npx --yes tsx scripts/reformat-contest-notice-texts.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

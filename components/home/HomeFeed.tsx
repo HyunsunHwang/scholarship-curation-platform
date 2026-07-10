@@ -35,7 +35,8 @@ function filterByCategory(
   category: ContentCategoryKey
 ): CardScholarship[] {
   if (!categoryHasData(category)) return [];
-  return list;
+  if (category === "all") return list;
+  return list.filter((item) => (item.content_kind ?? "scholarship") === category);
 }
 
 function ShelfCard({
@@ -185,9 +186,12 @@ export default function HomeFeed({
               <HorizontalShelf label="인기 상승 공고">
                 {trending.map((scholarship) => (
                   <ShelfCard
-                    key={`trend-${scholarship.id}`}
+                    key={`trend-${scholarship.content_kind ?? "scholarship"}-${scholarship.id}`}
                     scholarship={scholarship}
-                    bookmarked={bookmarkedSet.has(scholarship.id)}
+                    bookmarked={
+                      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
+                      bookmarkedSet.has(scholarship.id)
+                    }
                   />
                 ))}
               </HorizontalShelf>
@@ -218,9 +222,12 @@ export default function HomeFeed({
               <HorizontalShelf label="전체 공고">
                 {allSorted.map((scholarship) => (
                   <ShelfCard
-                    key={scholarship.id}
+                    key={`${scholarship.content_kind ?? "scholarship"}-${scholarship.id}`}
                     scholarship={scholarship}
-                    bookmarked={bookmarkedSet.has(scholarship.id)}
+                    bookmarked={
+                      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
+                      bookmarkedSet.has(scholarship.id)
+                    }
                   />
                 ))}
               </HorizontalShelf>

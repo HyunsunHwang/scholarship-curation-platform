@@ -25,6 +25,8 @@ export type CardScholarship = {
   is_recommended?: boolean;
   recommended_sort_order?: number | null;
   is_advertisement?: boolean;
+  /** 홈 카테고리 필터용. 기본 scholarship */
+  content_kind?: "scholarship" | "contest" | "education" | "activity";
 };
 
 const institutionGradient: Record<string, string> = {
@@ -90,12 +92,34 @@ function ScholarshipCard({
   const deadlineLabel = formatDeadline(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const supportAmount = formatSupportAmount(scholarship.support_amount_text);
+  const href =
+    scholarship.content_kind === "contest"
+      ? `/contests/${scholarship.id}`
+      : `/scholarships/${scholarship.id}`;
+  const hideBookmark = scholarship.content_kind === "contest";
+  const kind = scholarship.content_kind ?? "scholarship";
+  const kindLabel =
+    kind === "contest"
+      ? "공모전"
+      : kind === "education"
+        ? "교육"
+        : kind === "activity"
+          ? "대외활동"
+          : "장학금";
+  const kindBadgeClass =
+    kind === "contest"
+      ? "border-sky-600 text-sky-700"
+      : kind === "education"
+        ? "border-emerald-600 text-emerald-700"
+        : kind === "activity"
+          ? "border-violet-600 text-violet-700"
+          : "border-brand text-brand";
 
   return (
     <div className="group flex flex-col">
       {/* ── 이미지 영역 ── */}
       <Link
-        href={`/scholarships/${scholarship.id}`}
+        href={href}
         className="relative block overflow-hidden rounded-xl aspect-2/3 sm:rounded-2xl"
       >
         {scholarship.poster_image_url ? (
@@ -105,6 +129,7 @@ function ScholarshipCard({
             fill
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, 50vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            unoptimized={scholarship.content_kind === "contest"}
           />
         ) : (
           <div
@@ -116,6 +141,14 @@ function ScholarshipCard({
           </div>
         )}
 
+        {/* 종류 배지 (포스터 좌상단) */}
+        <span
+          className={`absolute left-2 top-2 z-10 inline-flex items-center rounded-sm border bg-white/95 px-1.5 py-[3px] text-[10px] font-semibold leading-none shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
+          aria-label={kindLabel}
+        >
+          {kindLabel}
+        </span>
+
         {/* 기관명 오버레이 */}
         <div className="absolute bottom-2 left-2 max-w-[78%] sm:bottom-3 sm:left-3 sm:max-w-[70%]">
           <span className="inline-block max-w-full truncate rounded-full bg-black/40 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm sm:px-2.5 sm:text-xs">
@@ -124,12 +157,13 @@ function ScholarshipCard({
         </div>
 
         {/* 북마크 버튼 */}
+        {!hideBookmark && (
         <button
           type="button"
           onClick={handleBookmark}
           disabled={isPending}
           aria-label={bookmarked ? "북마크 해제" : "북마크"}
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full transition-opacity disabled:opacity-50 sm:right-3 sm:top-3 sm:h-8 sm:w-8"
+          className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full transition-opacity disabled:opacity-50 sm:right-3 sm:top-3 sm:h-8 sm:w-8"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -148,15 +182,17 @@ function ScholarshipCard({
             />
           </svg>
         </button>
+        )}
       </Link>
 
       {/* ── 텍스트 영역 ── */}
       <Link
-        href={`/scholarships/${scholarship.id}`}
+        href={href}
         className="mt-2 flex flex-col gap-0.5 sm:mt-3"
       >
         <div className="flex min-w-0 items-start gap-1.5 sm:gap-2">
-          {scholarship.is_advertisement || scholarship.is_recommended ? (
+          {kind === "scholarship" &&
+            (scholarship.is_advertisement || scholarship.is_recommended) && (
             <span
               className={`mt-[2px] inline-flex shrink-0 items-center rounded-sm bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none sm:mt-0.5 sm:px-2 sm:text-[11px] ${
                 scholarship.is_advertisement
@@ -167,7 +203,7 @@ function ScholarshipCard({
             >
               {scholarship.is_advertisement ? "광고" : "추천"}
             </span>
-          ) : null}
+          )}
           <p className="min-w-0 flex-1 text-xs font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors sm:text-sm">
             {displayName}
           </p>

@@ -10,10 +10,12 @@ export default function BookmarkApplyButtons({
   scholarshipId,
   applyUrl,
   initialBookmarked,
+  showBookmark = true,
 }: {
   scholarshipId: number;
   applyUrl: string;
   initialBookmarked: boolean;
+  showBookmark?: boolean;
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [isPending, startTransition] = useTransition();
@@ -69,6 +71,7 @@ export default function BookmarkApplyButtons({
           </svg>
         </a>
 
+        {showBookmark ? (
         <button
           type="button"
           onClick={handleBookmark}
@@ -90,6 +93,7 @@ export default function BookmarkApplyButtons({
           </svg>
           {bookmarked ? "스크랩됨" : "스크랩하기"}
         </button>
+        ) : null}
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 px-3 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-6px_20px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
@@ -109,6 +113,7 @@ export default function BookmarkApplyButtons({
             지원하기
           </a>
 
+          {showBookmark ? (
           <button
             type="button"
             onClick={handleBookmark}
@@ -130,6 +135,7 @@ export default function BookmarkApplyButtons({
               />
             </svg>
           </button>
+          ) : null}
         </div>
       </div>
     </>

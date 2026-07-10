@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
 import type { CardScholarship } from "@/components/ScholarshipCard";
-import { getCachedHomeScholarships } from "@/lib/public-data";
+import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
@@ -20,7 +20,18 @@ const SpotifyHomeShell = dynamic(
 );
 
 export default async function Home() {
-  const homeScholarships = await getCachedHomeScholarships();
+  const [homeScholarships, homeContests] = await Promise.all([
+    getCachedHomeScholarships(),
+    getCachedHomeContests(),
+  ]);
+
+  const homeFeedItems: CardScholarship[] = [
+    ...homeContests,
+    ...homeScholarships.map((s) => ({
+      ...s,
+      content_kind: "scholarship" as const,
+    })),
+  ];
 
   const authSupabase = await createClient();
   const {
@@ -63,6 +74,7 @@ export default async function Home() {
           is_recommended: s.is_recommended,
           recommended_sort_order: s.recommended_sort_order,
           is_advertisement: s.is_advertisement,
+          content_kind: "scholarship" as const,
         }));
       }
 
@@ -71,7 +83,7 @@ export default async function Home() {
         const s = homeById.get(id) ?? extraById.get(id);
         if (!s) return [];
         if (isScholarshipExpired(s.apply_end_date)) return [];
-        return [s];
+        return [{ ...s, content_kind: "scholarship" as const }];
       });
     }
   }
@@ -82,7 +94,7 @@ export default async function Home() {
       <main className="flex min-h-0 flex-1 flex-col">
         <SpotifyHomeShell
           isLoggedIn={Boolean(user)}
-          scholarships={homeScholarships}
+          scholarships={homeFeedItems}
           bookmarkedScholarships={bookmarkedScholarships}
           bookmarkedIds={bookmarkedIds}
         />

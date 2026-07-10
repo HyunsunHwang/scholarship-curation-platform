@@ -149,6 +149,49 @@ export const getCachedHomeScholarships = unstable_cache(
   { revalidate: 5 * 60 }
 );
 
+export const getCachedHomeContests = unstable_cache(
+  async () => {
+    const supabase = createPublicSupabaseClient();
+    const today = todayKoreaYYYYMMDD();
+    const { data, error } = await supabase
+      .from("contests")
+      .select(
+        "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
+      )
+      .eq("is_verified", true)
+      .eq("list_on_home", true)
+      .gte("apply_end_date", today)
+      .order("is_recommended", { ascending: false })
+      .order("recommended_sort_order", { ascending: true, nullsFirst: false })
+      .order("apply_end_date", { ascending: true });
+
+    if (error) {
+      console.error("Failed to load cached home contests", error);
+      return [];
+    }
+
+    return (data ?? []).map((contest) => ({
+      id: contest.id,
+      name: contest.name,
+      organization: contest.organization,
+      institution_type: contest.organization_type || "기타",
+      support_types: [] as string[],
+      support_amount_text: contest.support_amount_text,
+      apply_end_date: contest.apply_end_date ?? today,
+      poster_image_url: contest.poster_image_url,
+      created_at: contest.created_at,
+      view_count: contest.view_count,
+      scrap_count: 0,
+      is_recommended: contest.is_recommended,
+      recommended_sort_order: contest.recommended_sort_order,
+      is_advertisement: false,
+      content_kind: "contest" as const,
+    }));
+  },
+  ["home-contests-v1"],
+  { revalidate: 60 }
+);
+
 export async function getHomeScholarshipsPage({
   page,
   pageSize,

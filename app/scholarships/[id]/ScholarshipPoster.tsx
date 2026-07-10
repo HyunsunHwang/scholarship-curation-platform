@@ -7,9 +7,10 @@ import { createPortal } from "react-dom";
 type Props = {
   posterUrl: string;
   alt: string;
+  unoptimized?: boolean;
 };
 
-export default function ScholarshipPoster({ posterUrl, alt }: Props) {
+export default function ScholarshipPoster({ posterUrl, alt, unoptimized = false }: Props) {
   const [open, setOpen] = useState(false);
   const titleId = useId();
   const portalTarget = typeof document === "undefined" ? null : document.body;
@@ -44,6 +45,7 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
           fill
           sizes="(min-width: 768px) 14rem, 100vw"
           className="h-full w-full object-cover transition duration-200 group-hover:brightness-[0.97]"
+          unoptimized={unoptimized}
         />
         <span className="pointer-events-none absolute inset-0 ring-0 transition group-hover:ring-2 group-hover:ring-inset group-hover:ring-white/40" />
         <span className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2 py-1 text-[10px] font-medium text-white shadow-sm opacity-0 transition group-hover:opacity-100">
@@ -80,6 +82,7 @@ export default function ScholarshipPoster({ posterUrl, alt }: Props) {
                   width={1200}
                   height={1800}
                   className="max-h-[min(72vh,640px)] w-full max-w-full rounded-lg object-contain shadow-2xl"
+                  unoptimized={unoptimized}
                 />
               </div>
             </div>,

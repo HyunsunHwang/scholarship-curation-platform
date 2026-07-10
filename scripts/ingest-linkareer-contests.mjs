@@ -1,0 +1,489 @@
+/**
+ * Ingest Linkareer contest crawl JSON into public.contests,
+ * downloading posters / body images / application docs into Supabase Storage.
+ *
+ * Usage:
+ *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --limit 5
+ *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --only-with-docs --limit 10
+ *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --ids 334396,329016
+ *   node scripts/ingest-linkareer-contests.mjs --in ... --skip-upload   # DB only, keep remote CDN URLs
+ *
+ * Requires .env.local: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+ */
+
+import fs from "fs";
+import path from "path";
+import { createClient } from "@supabase/supabase-js";
+
+const BUCKET = "contest-files";
+const DOC_TYPE = "지원서 및 안내자료";
+const POSTER_TYPE = "포스터";
+const THUMB_TYPE = "썸네일";
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+const CATEGORY_TO_INTEREST = {
+  "기획/아이디어": "planning",
+  "광고/마케팅": "marketing",
+  "디자인/순수미술/공예": "design",
+  "사진/영상/UCC": "content",
+  "문학/시나리오": "content",
+  "과학/공학": "engineering",
+  "학술": "humanities",
+  "예체능/패션": "design",
+  "캐릭터/만화/게임": "design",
+  "전시/페스티벌": "content",
+  "건축/건설/인테리어": "engineering",
+  "창업": "startup",
+  "네이밍/슬로건": "marketing",
+};
+
+const INTEREST_LABEL_TO_ID = {
+  "디자인/사진/예술/영상": "design",
+  "콘텐츠": "content",
+  "과학/공학/기술/IT": "engineering",
+  "사회공헌/교류": "public",
+  "문화/역사": "humanities",
+  "정치/사회/법률": "humanities",
+  "환경/에너지": "engineering",
+  "행사/페스티벌": "content",
+  "언론/미디어": "content",
+  "교육": "education",
+  "창업/자기계발": "startup",
+  "경영/컨설팅/마케팅": "marketing",
+  "여행/호텔/항공": "business",
+  "경제/금융": "business",
+  "의료/보건": "engineering",
+  "체육/헬스": "content",
+  "요리/식품": "content",
+  "유통/물류": "business",
+  "뷰티/미용/화장품": "marketing",
+};
+
+function loadEnvLocal() {
+  const envPath = ".env.local";
+  if (!fs.existsSync(envPath)) return;
+  for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    if (!m || process.env[m[1]]) continue;
+    let v = m[2].trim();
+    if (
+      (v.startsWith('"') && v.endsWith('"')) ||
+      (v.startsWith("'") && v.endsWith("'"))
+    ) {
+      v = v.slice(1, -1);
+    }
+    process.env[m[1]] = v;
+  }
+}
+
+loadEnvLocal();
+
+const args = process.argv.slice(2);
+function argValue(flag, fallback = null) {
+  const i = args.indexOf(flag);
+  if (i === -1) return fallback;
+  return args[i + 1] ?? fallback;
+}
+function hasFlag(flag) {
+  return args.includes(flag);
+}
+
+const IN_PATH = argValue("--in", "exports/linkareer/contests-2026-07-10.json");
+const LIMIT = Number(argValue("--limit", "0")) || 0;
+const ONLY_WITH_DOCS = hasFlag("--only-with-docs");
+const SKIP_UPLOAD = hasFlag("--skip-upload");
+const DRY_RUN = hasFlag("--dry-run");
+const IDS = new Set(
+  (argValue("--ids", "") || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+);
+
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!url || !key) {
+  console.error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+  process.exit(1);
+}
+
+const supabase = createClient(url, key, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
+
+function toDate(iso) {
+  if (!iso) return null;
+  return String(iso).slice(0, 10);
+}
+
+/** Display name (may include Hangul). */
+function displayFileName(name) {
+  return String(name || "file")
+    .replace(/[\\/:*?"<>|]+/g, "_")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
+}
+
+/**
+ * Supabase Storage object keys must be ASCII-safe.
+ * Keep extension; slug the rest.
+ */
+function storageFileName(name, fallback = "file") {
+  const raw = String(name || fallback);
+  const extMatch = raw.match(/(\.[a-zA-Z0-9]{1,8})$/);
+  const ext = extMatch ? extMatch[1].toLowerCase() : "";
+  const stem = ext ? raw.slice(0, -ext.length) : raw;
+  const slug = stem
+    .normalize("NFKD")
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
+  const base = slug.length >= 2 ? slug : fallback;
+  return ext ? `${base}${ext}` : base;
+}
+
+function extFromNameOrType(name, contentType) {
+  const fromName = path.extname(String(name || "")).toLowerCase();
+  if (fromName && fromName.length <= 8) return fromName;
+  const ct = String(contentType || "").toLowerCase();
+  if (ct.includes("jpeg") || ct.includes("jpg")) return ".jpg";
+  if (ct.includes("png")) return ".png";
+  if (ct.includes("webp")) return ".webp";
+  if (ct.includes("gif")) return ".gif";
+  if (ct.includes("pdf")) return ".pdf";
+  if (ct.includes("word") || ct.includes("docx")) return ".docx";
+  if (ct.includes("sheet") || ct.includes("xlsx")) return ".xlsx";
+  if (ct.includes("msword")) return ".doc";
+  return "";
+}
+
+function extractBodyImages(html) {
+  if (!html) return [];
+  const out = [];
+  const seen = new Set();
+  for (const m of String(html).matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
+    const src = m[1]?.trim();
+    if (!src || seen.has(src)) continue;
+    if (src.startsWith("data:")) continue;
+    seen.add(src);
+    out.push(src);
+  }
+  return out;
+}
+
+function mapInterestCategories(item) {
+  const out = [];
+  const push = (id) => {
+    if (!id || out.includes(id) || out.length >= 5) return;
+    out.push(id);
+  };
+  for (const c of item.categories || []) push(CATEGORY_TO_INTEREST[c]);
+  for (const i of item.interests || []) push(INTEREST_LABEL_TO_ID[i]);
+
+  const blob = `${item.title || ""} ${(item.categories || []).join(" ")}`.toLowerCase();
+  if (/ai|인공지능|머신러닝|데이터/.test(blob)) push("data_ai");
+  if (/개발|프로그래밍|코딩|소프트웨어|앱|웹/.test(blob)) push("dev");
+  if (/마케팅|광고|브랜딩/.test(blob)) push("marketing");
+  if (/기획|아이디어|전략/.test(blob)) push("planning");
+  if (/창업|스타트업/.test(blob)) push("startup");
+
+  return out;
+}
+
+/** Keep raw body for LLM formatting; only normalize whitespace. */
+function lightFormatNotice(title, body) {
+  const raw = String(body || "").replace(/\r\n/g, "\n").trim();
+  if (!raw) return null;
+  const cleaned = raw.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  if (title?.trim() && !cleaned.startsWith("<") && !cleaned.startsWith("≪")) {
+    return `<${title.trim()}>\n\n${cleaned}`;
+  }
+  return cleaned;
+}
+
+function pickPoster(item) {
+  const files = item.files || [];
+  const poster = files.find((f) => f.type === POSTER_TYPE);
+  if (poster?.url) return { url: poster.url, name: poster.filename || "poster.jpg" };
+  if (item.thumbnail_url) {
+    return { url: item.thumbnail_url, name: "thumbnail.jpg" };
+  }
+  const thumb = files.find((f) => f.type === THUMB_TYPE);
+  if (thumb?.url) return { url: thumb.url, name: thumb.filename || "thumb.jpg" };
+  return null;
+}
+
+function pickDocs(item) {
+  return (item.files || []).filter((f) => f.type === DOC_TYPE && f.url);
+}
+
+async function downloadBinary(fileUrl) {
+  const res = await fetch(fileUrl, {
+    headers: {
+      "User-Agent": UA,
+      Accept: "*/*",
+      Referer: "https://linkareer.com/",
+    },
+  });
+  if (!res.ok) throw new Error(`download HTTP ${res.status} ${fileUrl}`);
+  const contentType = res.headers.get("content-type") || "application/octet-stream";
+  const buf = Buffer.from(await res.arrayBuffer());
+  return { buf, contentType };
+}
+
+async function uploadBuffer(storagePath, buf, contentType) {
+  const { error } = await supabase.storage.from(BUCKET).upload(storagePath, buf, {
+    contentType,
+    upsert: true,
+  });
+  if (error) throw new Error(`upload ${storagePath}: ${error.message}`);
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
+  return data.publicUrl;
+}
+
+async function mirrorFile(externalId, folder, sourceUrl, preferredName, index = 0) {
+  const displayName = displayFileName(preferredName || "file");
+  if (SKIP_UPLOAD) {
+    return {
+      name: displayName,
+      url: sourceUrl,
+      source_url: sourceUrl,
+      mime_type: null,
+      size: null,
+    };
+  }
+  const { buf, contentType } = await downloadBinary(sourceUrl);
+  const ext = extFromNameOrType(preferredName, contentType);
+  let keyName = storageFileName(preferredName || `${folder}-${index + 1}`, `${folder}-${index + 1}`);
+  if (ext && !keyName.toLowerCase().endsWith(ext.toLowerCase())) keyName += ext;
+  // Ensure uniqueness when Hangul-only names collapse to the same slug
+  const uniqueKey = `${index + 1}-${keyName}`;
+  const storagePath = `linkareer/${externalId}/${folder}/${uniqueKey}`;
+  const publicUrl = await uploadBuffer(storagePath, buf, contentType);
+  return {
+    name: displayName.endsWith(ext) || !ext ? displayName : `${displayName}${ext}`,
+    url: publicUrl,
+    source_url: sourceUrl,
+    mime_type: contentType,
+    size: buf.length,
+  };
+}
+
+function buildApplyMethod(item) {
+  const types = (item.apply_types || []).filter(Boolean);
+  if (types.length) return types.join(", ");
+  if (item.apply_url) return "홈페이지 온라인 접수";
+  return "홈페이지";
+}
+
+async function upsertContest(row) {
+  const { data: existing, error: findErr } = await supabase
+    .from("contests")
+    .select("id")
+    .eq("source", row.source)
+    .eq("external_id", row.external_id)
+    .maybeSingle();
+  if (findErr) throw new Error(`lookup: ${findErr.message}`);
+
+  if (existing?.id) {
+    const { data, error } = await supabase
+      .from("contests")
+      .update(row)
+      .eq("id", existing.id)
+      .select("id, name, document_files")
+      .single();
+    if (error) throw new Error(`update: ${error.message}`);
+    return { id: data.id, action: "updated", docs: data.document_files?.length ?? 0 };
+  }
+
+  const { data, error } = await supabase
+    .from("contests")
+    .insert(row)
+    .select("id, name, document_files")
+    .single();
+  if (error) throw new Error(`insert: ${error.message}`);
+  return { id: data.id, action: "inserted", docs: data.document_files?.length ?? 0 };
+}
+
+async function ingestOne(item, index, total) {
+  const externalId = String(item.id);
+  process.stdout.write(`[${index + 1}/${total}] ${externalId} ${item.title?.slice(0, 40) || ""} ... `);
+
+  const posterMeta = pickPoster(item);
+  const bodyImgs = extractBodyImages(item.body_html);
+  const docs = pickDocs(item);
+
+  let posterUrl = posterMeta?.url ?? null;
+  let noticeUrls = [...bodyImgs];
+  let documentFiles = [];
+
+  if (!DRY_RUN) {
+    if (posterMeta?.url) {
+      try {
+        const mirrored = await mirrorFile(
+          externalId,
+          "poster",
+          posterMeta.url,
+          posterMeta.name || "poster.jpg",
+          0
+        );
+        posterUrl = mirrored.url;
+      } catch (err) {
+        console.warn(`\n  poster warn: ${err.message}`);
+      }
+    }
+
+    const mirroredNotices = [];
+    for (let i = 0; i < bodyImgs.length; i += 1) {
+      try {
+        const mirrored = await mirrorFile(
+          externalId,
+          "notice",
+          bodyImgs[i],
+          `notice-${i + 1}.jpg`,
+          i
+        );
+        mirroredNotices.push(mirrored.url);
+      } catch (err) {
+        console.warn(`\n  notice img warn: ${err.message}`);
+        mirroredNotices.push(bodyImgs[i]);
+      }
+    }
+    noticeUrls = mirroredNotices;
+
+    for (let di = 0; di < docs.length; di += 1) {
+      const doc = docs[di];
+      try {
+        const mirrored = await mirrorFile(
+          externalId,
+          "docs",
+          doc.url,
+          doc.filename || "document",
+          di
+        );
+        documentFiles.push(mirrored);
+      } catch (err) {
+        console.warn(`\n  doc warn ${doc.filename}: ${err.message}`);
+        documentFiles.push({
+          name: doc.filename || "document",
+          url: doc.url,
+          source_url: doc.url,
+          mime_type: null,
+          size: null,
+        });
+      }
+    }
+  } else {
+    documentFiles = docs.map((d) => ({
+      name: d.filename || "document",
+      url: d.url,
+      source_url: d.url,
+      mime_type: null,
+      size: null,
+    }));
+  }
+
+  const interest = mapInterestCategories(item);
+  const noticeText = lightFormatNotice(item.title, item.body_text);
+  const requiredDocs = documentFiles.map((d) => d.name).filter(Boolean);
+
+  const row = {
+    name: item.title || `공모전 ${externalId}`,
+    organization: item.organization_name || "미상",
+    organization_type: item.organization_type || null,
+    support_amount_text:
+      item.reward_manwon != null && item.reward_manwon !== ""
+        ? `${item.reward_manwon}만원`
+        : null,
+    selection_count: item.recruit_scale ? Number(item.recruit_scale) || null : null,
+    apply_start_date: toDate(item.recruit_start_at),
+    apply_end_date: toDate(item.recruit_close_at),
+    announcement_date: null,
+    targets: item.targets?.length ? item.targets : null,
+    benefits: item.benefits?.length ? item.benefits : null,
+    apply_types: item.apply_types?.length ? item.apply_types : null,
+    interest_categories: interest.length ? interest : null,
+    required_documents: requiredDocs,
+    document_files: documentFiles,
+    apply_method: buildApplyMethod(item),
+    apply_url: item.apply_url || item.homepage_url || item.url || "",
+    homepage_url: item.homepage_url || item.url || null,
+    contact: null,
+    note: item.additional_benefit || null,
+    selection_note: null,
+    poster_image_url: posterUrl,
+    original_notice_image_url: noticeUrls[0] || posterUrl || null,
+    original_notice_image_urls: noticeUrls.length
+      ? noticeUrls
+      : posterUrl
+        ? [posterUrl]
+        : null,
+    original_notice_text: noticeText,
+    source: "linkareer",
+    external_id: externalId,
+    source_url: item.url || `https://linkareer.com/activity/${externalId}`,
+    is_verified: true,
+    list_on_home: true,
+    is_recommended: false,
+    recommended_sort_order: null,
+    collected_at: new Date().toISOString().slice(0, 10),
+  };
+
+  if (!row.apply_url) {
+    console.log("SKIP (no apply_url)");
+    return { skipped: true };
+  }
+
+  if (DRY_RUN) {
+    console.log(
+      `dry-run interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
+    );
+    return { dry: true };
+  }
+
+  const result = await upsertContest(row);
+  console.log(`${result.action} id=${result.id} docs=${result.docs}`);
+  return result;
+}
+
+async function main() {
+  if (!fs.existsSync(IN_PATH)) {
+    console.error(`Input not found: ${IN_PATH}`);
+    process.exit(1);
+  }
+  const payload = JSON.parse(fs.readFileSync(IN_PATH, "utf8"));
+  let items = payload.items || [];
+  if (IDS.size) items = items.filter((x) => IDS.has(String(x.id)));
+  if (ONLY_WITH_DOCS) {
+    items = items.filter((x) =>
+      (x.files || []).some((f) => f.type === DOC_TYPE)
+    );
+  }
+  if (LIMIT > 0) items = items.slice(0, LIMIT);
+
+  console.log(
+    `[ingest-linkareer] in=${IN_PATH} count=${items.length} skipUpload=${SKIP_UPLOAD} dryRun=${DRY_RUN}`
+  );
+
+  let ok = 0;
+  let fail = 0;
+  for (let i = 0; i < items.length; i += 1) {
+    try {
+      await ingestOne(items[i], i, items.length);
+      ok += 1;
+    } catch (err) {
+      fail += 1;
+      console.log("FAIL", err instanceof Error ? err.message : String(err));
+    }
+  }
+  console.log(`[ingest-linkareer] done ok=${ok} fail=${fail}`);
+}
+
+main().catch((err) => {
+  console.error("[ingest-linkareer] fatal:", err);
+  process.exit(1);
+});
