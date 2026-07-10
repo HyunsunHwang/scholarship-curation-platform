@@ -75,7 +75,7 @@ const INSECURE_TLS_HOSTS = new Set(
     .filter(Boolean),
 );
 const DEFAULT_NOTICE_URL_PATTERN =
-  /(mode=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
+  /(mode=view|sMode=VIEW_FORM|iBrdContNo=|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
 const INSECURE_TLS_DISPATCHER =
   INSECURE_TLS_HOSTS.size > 0
     ? new UndiciAgent({
@@ -131,6 +131,12 @@ function isLikelyNonDetailNoticeUrl(noticeUrl, listUrl, baseUrl) {
     const noticeKey = normalizeUrlKey(noticeUrl);
     if (listUrl && noticeKey === normalizeUrlKey(listUrl)) return true;
     if (baseUrl && noticeKey === normalizeUrlKey(baseUrl)) return true;
+
+    // Some CMS boards keep detail pages on "/" with query params
+    // (e.g. sMode=VIEW_FORM&iBrdContNo=...). Treat those as detail URLs.
+    if (DEFAULT_NOTICE_URL_PATTERN.test(`${notice.pathname}${notice.search}`)) {
+      return false;
+    }
 
     const pathName = notice.pathname.toLowerCase();
     if (pathName === "/" || pathName === "") return true;

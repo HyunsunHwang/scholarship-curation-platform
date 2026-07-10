@@ -15,7 +15,7 @@ const GENERIC_NAV_TITLE_PATTERN =
 const TITLE_KEYWORD_PATTERN =
   /장학|장학금|학자금|등록금|scholarship|tuition|fellowship|financial\s*aid/i;
 const DETAIL_HINT_PATTERN =
-  /mode=view|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document|notice-view\?id=|\/\d{4,}(?:[/?#]|$)/i;
+  /mode=view|sMode=VIEW_FORM|iBrdContNo=|act=view|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|b_idx=\d+|seq=\d+|artclView\.do|uid=\d+|mod=document|notice-view\?id=|\/\d{4,}(?:[/?#]|$)/i;
 
 function parseCsv(text) {
   const rows = [];
@@ -112,7 +112,16 @@ function classify(row) {
   if (!title) return "empty_title";
   if (!noticeUrl) return "empty_url";
   if (!/^https?:\/\//i.test(noticeUrl)) return "invalid_url";
-  if (/^http:\/\//i.test(noticeUrl)) return "insecure_http_url";
+  // Allow http only for known http-only university hosts with broken TLS.
+  if (/^http:\/\//i.test(noticeUrl)) {
+    try {
+      const host = new URL(noticeUrl).hostname.toLowerCase();
+      const httpOnlyHosts = new Set(["hyurban.hanyang.ac.kr"]);
+      if (!httpOnlyHosts.has(host)) return "insecure_http_url";
+    } catch {
+      return "insecure_http_url";
+    }
+  }
   if (title.replace(/\s+/g, "").length <= 6) return "too_short_title";
   if (GENERIC_NAV_TITLE_PATTERN.test(title)) return "generic_nav_title";
   if (MENU_TITLE_PATTERN.test(title)) return "menu_like_title";
