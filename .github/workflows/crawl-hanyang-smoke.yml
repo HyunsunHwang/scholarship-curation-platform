@@ -1,0 +1,58 @@
+name: Hanyang Crawl Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hanyang-smoke:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Hanyang crawler
+        env:
+          CRAWL_LOOKBACK_DAYS: "1"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: "1"
+          CRAWL_TIMEOUT_MS: "30000"
+          CRAWL_RETRY_COUNT: "3"
+          CRAWL_RETRY_BACKOFF_MS: "1500"
+          CRAWL_FORCE_IPV4: "true"
+        run: node scripts/crawl-scholarship-notices.mjs db:hanyang exports/notices/hanyang .crawler/hanyang-smoke-state.json
+
+      - name: Clean Hanyang crawl results
+        run: |
+          TODAY=$(date +%Y%m%d)
+          if [ -f "exports/notices/hanyang/scholarship-notices-new-${TODAY}.csv" ]; then
+            node scripts/clean-crawled-notices.mjs \
+              "exports/notices/hanyang/scholarship-notices-new-${TODAY}.csv" \
+              "exports/notices/hanyang/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/hanyang/scholarship-notices-latest.rejected.csv"
+          else
+            echo "skip=missing_hanyang_csv"
+          fi
+
+      - name: Upload Hanyang smoke artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hanyang-crawl-smoke
+          path: |
+            exports/notices/hanyang/
+            .crawler/hanyang-smoke-state.json
+          if-no-files-found: warn
