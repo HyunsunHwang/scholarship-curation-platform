@@ -5,6 +5,11 @@ import Script from "next/script";
 import BrandLogo from "@/components/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 import { loadProfile, saveProfile, type OnboardingFormData } from "./actions";
+import {
+  INTEREST_CATEGORIES,
+  INTEREST_CATEGORY_MAX,
+  type InterestCategoryId,
+} from "@/lib/interestCategories";
 
 // ── Kakao Postcode 타입 ──────────────────────────────────────────────────
 declare global {
@@ -91,7 +96,7 @@ const PARENT_OCCUPATION_OPTIONS = [
   "경찰/소방관", "택배기사", "환경미화원", "연극인", "외국인 근로자",
 ];
 const MILITARY_STATUS_OPTIONS = ["군필", "미필", "비대상", "면제"];
-const STEPS = ["인적사항", "학적사항", "재정/가계", "기타/특수"];
+const STEPS = ["인적사항", "학적사항", "재정/가계", "기타/특수", "관심분야"];
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────
 function formatPhone(value: string) {
@@ -731,6 +736,58 @@ function Step4({ form, toggleArray, update }: {
   );
 }
 
+// ── Step 5: 관심분야 (건너뛰기 가능, 최대 5개) ────────────────────────────
+function Step5({ form, toggleInterest }: {
+  form: OnboardingFormData;
+  toggleInterest: (id: InterestCategoryId) => void;
+}) {
+  const selectedCount = form.interest_categories.length;
+  return (
+    <div className="flex flex-col gap-5">
+      <div>
+        <p className="text-sm text-ink/70">
+          관심 있는 분야를 골라주세요. 공모전·대외활동·교육·장학금 추천에 활용됩니다.
+        </p>
+        <p className="mt-1 text-xs text-gray-400">
+          최대 {INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요. 건너뛰어도 인기·마감임박 추천은 받을 수 있습니다.
+        </p>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-700">관심 분야</span>
+        <span className={`text-xs font-medium ${
+          selectedCount >= INTEREST_CATEGORY_MAX ? "text-brand" : "text-ink/40"
+        }`}>
+          {selectedCount} / {INTEREST_CATEGORY_MAX}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {INTEREST_CATEGORIES.map(({ id, label }) => {
+          const selected = form.interest_categories.includes(id);
+          const atLimit = !selected && selectedCount >= INTEREST_CATEGORY_MAX;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => toggleInterest(id)}
+              disabled={atLimit}
+              aria-pressed={selected}
+              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all ${
+                selected
+                  ? "border-brand bg-brand text-white"
+                  : atLimit
+                    ? "cursor-not-allowed border-gray-100 bg-gray-50 text-ink/30"
+                    : "border-gray-200 bg-white text-ink/70 hover:border-brand/50 hover:text-brand"
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ── 초기값 & 검증 ─────────────────────────────────────────────────────────
 const INITIAL_FORM: OnboardingFormData = {
   name: "", birth_year: "", birth_month: "", birth_day: "",
@@ -746,6 +803,7 @@ const INITIAL_FORM: OnboardingFormData = {
   last_semester_earned_credits: "",
   income_level: "", household_size: "",
   special_info: [], parent_occupation: [], military_status: "",
+  interest_categories: [],
 };
 
 function validateStep(step: number, form: OnboardingFormData): string {
@@ -791,6 +849,7 @@ function validateStep(step: number, form: OnboardingFormData): string {
   if (step === 2) {
     if (!form.income_level) return "소득분위를 선택해주세요.";
   }
+  // step 3 (기타/특수), step 4 (관심분야): 모두 선택 사항 — 검증 없음
   return "";
 }
 
@@ -833,6 +892,22 @@ export default function OnboardingPageClient({
     });
   };
 
+  const toggleInterest = (id: InterestCategoryId) => {
+    setForm((prev) => {
+      const selected = prev.interest_categories;
+      if (selected.includes(id)) {
+        return { ...prev, interest_categories: selected.filter((v) => v !== id) };
+      }
+      if (selected.length >= INTEREST_CATEGORY_MAX) return prev;
+      return { ...prev, interest_categories: [...selected, id] };
+    });
+    setErrorMsg((prevErr) => {
+      // clear max-limit message when toggling; chips already disable at limit
+      if (prevErr.startsWith("관심 분야는 최대")) return "";
+      return prevErr;
+    });
+  };
+
   const handleNext = () => {
     const err = validateStep(step, form);
     if (err) { setErrorMsg(err); return; }
@@ -847,8 +922,8 @@ export default function OnboardingPageClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmit = async () => {
-    for (let i = 0; i < STEPS.length; i += 1) {
+  const handleSubmit = async (options?: { skipInterests?: boolean }) => {
+    for (let i = 0; i < STEPS.length - 1; i += 1) {
       const err = validateStep(i, form);
       if (err) {
         setStep(i);
@@ -858,7 +933,10 @@ export default function OnboardingPageClient({
       }
     }
     setLoading(true);
-    const result = await saveProfile(form, "/matched");
+    const payload = options?.skipInterests
+      ? { ...form, interest_categories: [] as InterestCategoryId[] }
+      : form;
+    const result = await saveProfile(payload, "/matched");
     if (result?.error) { setErrorMsg(result.error); setLoading(false); }
   };
 
@@ -921,7 +999,7 @@ export default function OnboardingPageClient({
             {isEditing ? (
               <p className="text-sm text-ink/60">수정할 정보를 변경한 뒤 저장해주세요.</p>
             ) : (
-              <p className="text-sm text-ink/60">프로필을 완성하면 맞춤 장학금을 추천해드립니다.</p>
+              <p className="text-sm text-ink/60">프로필을 완성하면 맞춤 기회와 장학금을 추천해드립니다.</p>
             )}
           </div>
 
@@ -943,6 +1021,7 @@ export default function OnboardingPageClient({
             )}
             {step === 2 && <Step3 form={form} update={update} />}
             {step === 3 && <Step4 form={form} toggleArray={toggleArray} update={update} />}
+            {step === 4 && <Step5 form={form} toggleInterest={toggleInterest} />}
 
             {errorMsg && (
               <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -950,22 +1029,34 @@ export default function OnboardingPageClient({
               </div>
             )}
 
-            <div className="mt-8 flex gap-3">
-              {step > 0 && (
-                <button type="button" onClick={handleBack}
-                  className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-ink/70 transition hover:bg-gray-50">
-                  이전
-                </button>
-              )}
-              {step < STEPS.length - 1 ? (
-                <button type="button" onClick={handleNext}
-                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90">
-                  다음
-                </button>
-              ) : (
-                <button type="button" onClick={handleSubmit} disabled={loading}
-                  className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-60">
-                  {loading ? "저장 중..." : isEditing ? "프로필 저장하기" : "프로필 완성하기"}
+            <div className="mt-8 flex flex-col gap-3">
+              <div className="flex gap-3">
+                {step > 0 && (
+                  <button type="button" onClick={handleBack}
+                    className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-ink/70 transition hover:bg-gray-50">
+                    이전
+                  </button>
+                )}
+                {step < STEPS.length - 1 ? (
+                  <button type="button" onClick={handleNext}
+                    className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90">
+                    다음
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => void handleSubmit()} disabled={loading}
+                    className="flex-1 rounded-lg bg-brand py-2.5 text-sm font-semibold text-white transition hover:bg-brand/90 disabled:cursor-not-allowed disabled:opacity-60">
+                    {loading ? "저장 중..." : isEditing ? "프로필 저장하기" : "프로필 완성하기"}
+                  </button>
+                )}
+              </div>
+              {step === STEPS.length - 1 && !isEditing && (
+                <button
+                  type="button"
+                  onClick={() => void handleSubmit({ skipInterests: true })}
+                  disabled={loading}
+                  className="w-full py-2 text-sm font-medium text-ink/50 transition hover:text-ink/70 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  건너뛰기
                 </button>
               )}
             </div>

@@ -192,6 +192,8 @@ export interface Database {
           special_info: SpecialInfoType[] | null;
           parent_occupation: ParentOccupationType[] | null;
           military_status: MilitaryStatusType | null;
+          /** 관심 분야 태그 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
+          interest_categories: string[] | null;
           created_at: string;
           updated_at: string;
         };
@@ -238,6 +240,7 @@ export interface Database {
           special_info?: SpecialInfoType[] | null;
           parent_occupation?: ParentOccupationType[] | null;
           military_status?: MilitaryStatusType | null;
+          interest_categories?: string[] | null;
           created_at?: string;
           updated_at?: string;
         };

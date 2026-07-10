@@ -16,6 +16,12 @@ import type {
   AdmissionType,
   OrgUnit,
 } from "@/lib/database.types";
+import {
+  INTEREST_CATEGORY_MAX,
+  isInterestCategoryId,
+  normalizeInterestCategories,
+  type InterestCategoryId,
+} from "@/lib/interestCategories";
 
 const FORM_ENROLLMENT_STATUSES = ["재학", "휴학", "수료/졸업유예"] as const;
 const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"] as const;
@@ -83,6 +89,8 @@ export type OnboardingFormData = {
   special_info: string[];
   parent_occupation: string[];
   military_status: string;
+  /** 관심 분야 태그 ID (건너뛰기 시 빈 배열). 최대 INTEREST_CATEGORY_MAX개 */
+  interest_categories: InterestCategoryId[];
 };
 
 export async function loadProfile(): Promise<OnboardingFormData | null> {
@@ -197,6 +205,7 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     special_info: (profile.special_info as string[]) ?? [],
     parent_occupation: (profile.parent_occupation as string[]) ?? [],
     military_status: profile.military_status ?? "",
+    interest_categories: normalizeInterestCategories(profile.interest_categories),
   };
 }
 
@@ -371,6 +380,10 @@ export async function saveProfile(
       special_info: (data.special_info.length > 0 ? data.special_info : null) as SpecialInfoType[] | null,
       parent_occupation: (data.parent_occupation.length > 0 ? data.parent_occupation : null) as ParentOccupationType[] | null,
       military_status: (data.military_status || null) as MilitaryStatusType | null,
+      interest_categories: (() => {
+        const normalized = normalizeInterestCategories(data.interest_categories);
+        return normalized.length > 0 ? normalized : null;
+      })(),
       is_onboarded: true,
     })
     .eq("id", user.id);
@@ -453,6 +466,14 @@ function validateProfile(data: OnboardingFormData): string | null {
   }
   if (!Number.isFinite(lastSemesterCredits) || lastSemesterCredits < 0 || lastSemesterCredits > 30) {
     return "직전학기 이수학점은 0 ~ 30 사이로 입력해주세요.";
+  }
+
+  // 관심 분야: 선택 사항. 비어 있어도 OK. 알 수 없는 id / 최대 개수만 검증.
+  if (data.interest_categories.length > INTEREST_CATEGORY_MAX) {
+    return `관심 분야는 최대 ${INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요.`;
+  }
+  if (data.interest_categories.some((id) => !isInterestCategoryId(id))) {
+    return "관심 분야 값이 올바르지 않습니다.";
   }
 
   return null;
