@@ -144,7 +144,13 @@ jobs:
         env:
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
+          CRAWL_SOURCE_CONCURRENCY: "1"
+          CRAWL_TIMEOUT_MS: "30000"
+          CRAWL_RETRY_COUNT: "3"
+          CRAWL_RETRY_BACKOFF_MS: "1500"
+          CRAWL_FORCE_IPV4: "true"
+          # hyurban cert is issued for greenranger.or.kr (hostname mismatch).
+          CRAWL_ALLOW_INSECURE_TLS_HOSTS: "hyurban.hanyang.ac.kr"
           CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: node scripts/crawl-scholarship-notices.mjs db:hanyang exports/notices/hanyang .crawler/hanyang-daily-state.json
 
