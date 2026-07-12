@@ -11,7 +11,17 @@ import { getCachedUniversityNames } from "@/lib/public-data";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
 
-export default async function MatchedPage() {
+export default async function MatchedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ scope?: string }>;
+}) {
+  const { scope: scopeParam } = await searchParams;
+  const initialScope =
+    scopeParam === "campus" || scopeParam === "external" || scopeParam === "all"
+      ? scopeParam
+      : "all";
+
   const supabase = await createClient();
 
   const {
@@ -148,8 +158,15 @@ export default async function MatchedPage() {
           <ScholarshipDashboard
             scholarships={scholarships}
             bookmarkedIds={bookmarkedIds}
-            heading="맞춤 장학금"
+            heading={
+              initialScope === "campus"
+                ? "교내 장학금"
+                : initialScope === "external"
+                  ? "교외 장학금"
+                  : "맞춤 장학금"
+            }
             showScopeTabs
+            initialScope={initialScope}
           />
         )}
       </main>

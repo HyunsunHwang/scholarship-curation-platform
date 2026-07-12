@@ -98,17 +98,20 @@ export default function ScholarshipDashboard({
   heading = "전체 장학금",
   showScopeTabs = false,
   totalScholarshipCount,
+  initialScope = "all",
 }: {
   scholarships: CardScholarship[];
   bookmarkedIds?: number[];
   heading?: string;
   showScopeTabs?: boolean;
   totalScholarshipCount?: number;
+  /** /matched?scope=campus|external 등 URL 초기 탭 */
+  initialScope?: ScopeFilter;
 }) {
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("deadline");
-  const [scopeFilter, setScopeFilter] = useState<ScopeFilter>("all");
+  const [scopeFilter, setScopeFilter] = useState<ScopeFilter>(initialScope);
   const [page, setPage] = useState(1);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const lastTrackedSearchRef = useRef("");
