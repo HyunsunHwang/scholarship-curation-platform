@@ -11,17 +11,14 @@ import type {
   ScholarshipDetail,
   SelectionStageDetail,
 } from "@/app/scholarships/[id]/ScholarshipTabs";
-import {
-  daysUntilApplyDeadlineKorea,
-  isAlwaysOpenRecruitment,
-} from "@/lib/scholarship-dates";
-import { formatSupportAmount } from "@/lib/support-amount";
+import { contentKindLabel } from "@/lib/content-categories";
+import { resolveContestBenefits } from "@/lib/benefit-categories";
+import BenefitHighlights from "@/components/BenefitHighlights";
 import {
   interestCategoryLabel,
   isInterestCategoryId,
   type InterestCategoryId,
 } from "@/lib/interestCategories";
-import { contentKindLabel } from "@/lib/content-categories";
 import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
 import { CONTEST_DETAIL_SELECT } from "@/lib/detail-select";
@@ -42,13 +39,6 @@ const ScholarshipTabs = dynamic(
 const posterPlaceholderGradient = "from-sky-400 to-sky-700";
 
 type OpportunityKind = "contest" | "education" | "activity";
-
-function formatKoreanDate(dateStr: string): string {
-  const part = dateStr.split("T")[0];
-  const [y, m, d] = part.split("-").map((v) => parseInt(v, 10));
-  if (!y || !m || !d) return part;
-  return `${y}년 ${m}월 ${d}일`;
-}
 
 type ContactChannel = { icon: "mail" | "phone" | "info"; text: string; href: string | null };
 
@@ -196,17 +186,18 @@ export default async function OpportunityDetailPage({
 
   const kind = (contest.content_kind ?? "contest") as OpportunityKind;
   const kindLabel = contentKindLabel(kind);
-  const applyEnd = contest.apply_end_date || "2099-12-31";
-  const alwaysOpen = isAlwaysOpenRecruitment(applyEnd);
-  const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(applyEnd);
   const displayName = contest.name;
-  const supportAmount = formatSupportAmount(contest.support_amount_text);
   const posterAlt = `${displayName} 포스터`;
   const organizationInitial = contest.organization?.charAt(0) || kindLabel.charAt(0);
   const currentViewCount = contest.view_count ?? 0;
-  const amountLabel =
-    kind === "contest" ? "시상 규모" : kind === "education" ? "비용/지원" : "혜택 규모";
-  const showAmount = Boolean(contest.support_amount_text);
+  const benefitHighlights = resolveContestBenefits({
+    benefits: contest.benefits,
+    supportAmountText: contest.support_amount_text,
+    additionalNote: contest.note,
+    contentKind: kind,
+    name: contest.name,
+    noticeText: contest.original_notice_text,
+  });
 
   const interestLabels = (contest.interest_categories ?? [])
     .filter(isInterestCategoryId)
@@ -298,35 +289,7 @@ export default async function OpportunityDetailPage({
                   </span>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-gray-100 pt-6">
-                  {showAmount ? (
-                    <div>
-                      <p className="text-xs text-ink/50">{amountLabel}</p>
-                      <p
-                        className="mt-1.5 wrap-break-word text-sm font-bold text-brand"
-                        title={supportAmount}
-                      >
-                        {supportAmount}
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-xs text-ink/50">유형</p>
-                      <p className="mt-1.5 text-sm font-bold text-ink">{kindLabel}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-xs text-ink/50">접수 마감</p>
-                    <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-bold text-ink">
-                      {alwaysOpen ? "상시모집" : formatKoreanDate(applyEnd)}
-                      {days !== null && days >= 0 && (
-                        <span className="inline-flex items-center rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white">
-                          D-{days}
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
+                <BenefitHighlights benefits={benefitHighlights} />
 
                 <ScholarshipTabs
                   scholarship={detail}

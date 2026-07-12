@@ -104,7 +104,8 @@ export function getHeaderLogoSrc(
 
 /** 홈 피드 초기 로드 상한 — 전체 카탈로그를 한 번에 실지 않음 */
 const HOME_SCHOLARSHIP_LIMIT = 72;
-const HOME_CONTEST_LIMIT = 36;
+/** 공모전·교육·대외활동 홈 미리보기 (종류별 선반용) */
+const HOME_CONTEST_LIMIT = 120;
 
 export const getCachedHomeScholarships = unstable_cache(
   async () => {
@@ -198,7 +199,7 @@ export const getCachedHomeContests = unstable_cache(
         | "activity",
     }));
   },
-  ["home-contests-v3"],
+  ["home-contests-v4"],
   { revalidate: 60 }
 );
 
