@@ -11,13 +11,9 @@ const SpotifyHomeShell = dynamic(
   () => import("@/components/home/SpotifyHomeShell"),
   {
     loading: () => (
-      <div className="mx-auto w-full max-w-[1760px] animate-pulse px-4 pb-10 pt-6 sm:px-6 lg:px-10">
-        <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden">
-          <div className="h-28 rounded-xl bg-gray-200" />
-          <div className="h-28 rounded-xl bg-gray-200" />
-        </div>
+      <div className="w-full animate-pulse px-4 pb-10 pt-6 sm:px-6 lg:px-10">
         <div className="flex gap-5">
-          <div className="hidden h-72 w-[280px] shrink-0 rounded-2xl bg-gray-200 lg:block" />
+          <div className="hidden h-72 w-[240px] shrink-0 rounded-2xl bg-gray-200 lg:block" />
           <div className="min-w-0 flex-1">
             <div className="mb-6 h-7 w-40 rounded bg-gray-200" />
             <div className="flex gap-4 overflow-hidden">

@@ -276,7 +276,7 @@ export default function LibrarySidebar({
           />
           <ServiceCard
             title="교내 기회"
-            description="로그인하면 우리 학교 전용 장학금을 볼 수 있어요."
+            description="로그인하면 우리 학교 전용 이벤트를 볼 수 있어요."
             ctaLabel="로그인하고 보기"
             href="/auth"
           />

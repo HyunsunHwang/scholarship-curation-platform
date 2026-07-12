@@ -54,17 +54,8 @@ export default function SpotifyHomeShell({
 
   return (
     <div className="w-full pb-10 pt-4 sm:pt-5">
-      {/* 모바일: 상단 라이브러리 */}
-      <div className="mb-5 px-4 sm:px-6 lg:hidden">
-        <LibrarySidebar
-          isLoggedIn={isLoggedIn}
-          bookmarkedScholarships={bookmarkedScholarships}
-          variant="rail"
-        />
-      </div>
-
       <div className="flex items-start gap-3 xl:gap-4 lg:pl-2 xl:pl-3">
-        {/* 데스크톱: 왼쪽 라이브러리 (접기/펼치기) */}
+        {/* 데스크톱만: 왼쪽 라이브러리 (접기/펼치기) — 모바일에서는 숨김 */}
         <div
           className={`sticky top-18 hidden shrink-0 self-start transition-[width] duration-200 lg:block ${
             leftOpen

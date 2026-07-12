@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
 import {
@@ -216,7 +217,12 @@ function UserActions({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -251,6 +257,46 @@ function UserActions({
     setMenuOpen(false);
     setComingSoon(label);
   }
+
+  useEffect(() => {
+    if (!comingSoon) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setComingSoon(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [comingSoon]);
+
+  const comingSoonModal =
+    portalReady && comingSoon
+      ? createPortal(
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="coming-soon-title"
+            onClick={() => setComingSoon(null)}
+          >
+            <div
+              className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="coming-soon-title" className="text-lg font-bold text-ink">
+                {comingSoon} 서비스
+              </h2>
+              <p className="mt-2 text-sm text-ink/60">서비스 준비중입니다.</p>
+              <button
+                type="button"
+                onClick={() => setComingSoon(null)}
+                className="mt-5 w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand/85"
+              >
+                확인
+              </button>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <div className="relative flex shrink-0 items-center gap-1 sm:gap-2">
@@ -385,35 +431,7 @@ function UserActions({
         ) : null}
       </div>
 
-      {comingSoon ? (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="coming-soon-title"
-          onClick={() => setComingSoon(null)}
-        >
-          <div
-            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2
-              id="coming-soon-title"
-              className="text-lg font-bold text-ink"
-            >
-              {comingSoon} 서비스
-            </h2>
-            <p className="mt-2 text-sm text-ink/60">서비스 준비중입니다.</p>
-            <button
-              type="button"
-              onClick={() => setComingSoon(null)}
-              className="mt-5 w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand/85"
-            >
-              확인
-            </button>
-          </div>
-        </div>
-      ) : null}
+      {comingSoonModal}
     </div>
   );
 }
