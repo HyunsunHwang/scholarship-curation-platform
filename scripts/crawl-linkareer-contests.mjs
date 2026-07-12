@@ -5,10 +5,13 @@
  *   node scripts/crawl-linkareer-contests.mjs --kind contest
  *   node scripts/crawl-linkareer-contests.mjs --kind education --limit 30
  *   node scripts/crawl-linkareer-contests.mjs --kind activity --out exports/linkareer/activity.json
+ *   node scripts/crawl-linkareer-contests.mjs --kind contest --skip-existing --max-pages 5
  *
  * Notes:
  * - Public list/detail only (no login).
  * - Be polite: default delay between detail requests.
+ * - --skip-existing: skip IDs already in public.contests or crawled_contests
+ *   (requires SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY).
  */
 
 import fs from "fs";
@@ -56,11 +59,87 @@ const ACTIVITY_TYPE_ID = cfg.activityTypeId;
 const LIMIT = Number(argValue("--limit", "0")) || 0;
 const DELAY_MS = Number(argValue("--delay", "250")) || 250;
 const MAX_PAGES = Number(argValue("--max-pages", "80")) || 80;
+const SKIP_EXISTING = args.includes("--skip-existing");
 const OUT =
   argValue(
     "--out",
     `exports/linkareer/${KIND}-${new Date().toISOString().slice(0, 10)}.json`
   ) || `exports/linkareer/${KIND}-${new Date().toISOString().slice(0, 10)}.json`;
+
+function loadEnvLocal() {
+  for (const name of [".env.local", ".env"]) {
+    if (!fs.existsSync(name)) continue;
+    for (const line of fs.readFileSync(name, "utf8").split(/\r?\n/)) {
+      const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+      if (!m || process.env[m[1]]) continue;
+      let v = m[2].trim();
+      if (
+        (v.startsWith('"') && v.endsWith('"')) ||
+        (v.startsWith("'") && v.endsWith("'"))
+      ) {
+        v = v.slice(1, -1);
+      }
+      process.env[m[1]] = v;
+    }
+  }
+}
+
+async function loadExistingExternalIds() {
+  if (!SKIP_EXISTING) return new Set();
+  loadEnvLocal();
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  if (!url || !key) {
+    console.warn(
+      "[crawl-linkareer] --skip-existing requested but Supabase env missing; fetching all details"
+    );
+    return new Set();
+  }
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const known = new Set();
+  const pageSize = 1000;
+
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("contests")
+      .select("external_id")
+      .eq("source", "linkareer")
+      .eq("content_kind", KIND)
+      .not("external_id", "is", null)
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(`existing ids lookup failed: ${error.message}`);
+    if (!data?.length) break;
+    for (const row of data) {
+      if (row.external_id) known.add(String(row.external_id));
+    }
+    if (data.length < pageSize) break;
+  }
+
+  const publishedCount = known.size;
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("crawled_contests")
+      .select("source_id")
+      .eq("source_group", "linkareer")
+      .eq("content_kind", KIND)
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(`queue ids lookup failed: ${error.message}`);
+    if (!data?.length) break;
+    for (const row of data) {
+      if (row.source_id) known.add(String(row.source_id));
+    }
+    if (data.length < pageSize) break;
+  }
+
+  console.log(
+    `[crawl-linkareer] known existing ids=${known.size} (published=${publishedCount}, +queue=${known.size - publishedCount})`
+  );
+  return known;
+}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -268,13 +347,20 @@ async function collectListIds() {
 
 async function main() {
   console.log(
-    `[crawl-linkareer] kind=${KIND} limit=${LIMIT || "all"} delay=${DELAY_MS}ms out=${OUT}`
+    `[crawl-linkareer] kind=${KIND} limit=${LIMIT || "all"} maxPages=${MAX_PAGES} skipExisting=${SKIP_EXISTING} delay=${DELAY_MS}ms out=${OUT}`
   );
-  const listItems = await collectListIds();
-  console.log(`[crawl-linkareer] list ids=${listItems.length}`);
+  const knownIds = await loadExistingExternalIds();
+  const listItemsAll = await collectListIds();
+  const listItems = SKIP_EXISTING
+    ? listItemsAll.filter((item) => !knownIds.has(String(item.id)))
+    : listItemsAll;
+  console.log(
+    `[crawl-linkareer] list ids=${listItemsAll.length} to_fetch=${listItems.length}`
+  );
 
   const results = [];
   const errors = [];
+  const skippedExisting = listItemsAll.length - listItems.length;
 
   for (let i = 0; i < listItems.length; i += 1) {
     const meta = listItems[i];
@@ -309,6 +395,7 @@ async function main() {
     list_url: LIST_URL,
     crawled_at: new Date().toISOString(),
     count: results.length,
+    skipped_existing: skippedExisting,
     error_count: errors.length,
     items: results,
     errors,
@@ -326,6 +413,7 @@ async function main() {
         kind: KIND,
         crawled_at: payload.crawled_at,
         count: payload.count,
+        skipped_existing: skippedExisting,
         error_count: payload.error_count,
         sample_titles: results.slice(0, 10).map((x) => x.title),
         out: OUT,
@@ -337,7 +425,7 @@ async function main() {
   );
 
   console.log(
-    `[crawl-linkareer] done kind=${KIND} count=${results.length} errors=${errors.length}`
+    `[crawl-linkareer] done kind=${KIND} count=${results.length} skipped_existing=${skippedExisting} errors=${errors.length}`
   );
   console.log(`[crawl-linkareer] wrote ${OUT}`);
 }

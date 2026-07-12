@@ -1,11 +1,11 @@
 /**
- * Ingest Linkareer contest crawl JSON into public.contests,
- * downloading posters / body images / application docs into Supabase Storage.
+ * Ingest Linkareer crawl JSON into contests OR the admin review queue.
+ * Downloads posters / body images / application docs into Supabase Storage.
  *
  * Usage:
  *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --limit 5
- *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --only-with-docs --limit 10
- *   node scripts/ingest-linkareer-contests.mjs --in exports/linkareer/contests-2026-07-10.json --ids 334396,329016
+ *   node scripts/ingest-linkareer-contests.mjs --in ... --to-queue   # crawled_contests (review queue)
+ *   node scripts/ingest-linkareer-contests.mjs --in ... --ids 334396,329016
  *   node scripts/ingest-linkareer-contests.mjs --in ... --skip-upload   # DB only, keep remote CDN URLs
  *
  * Requires .env.local: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -132,6 +132,8 @@ const LIMIT = Number(argValue("--limit", "0")) || 0;
 const ONLY_WITH_DOCS = hasFlag("--only-with-docs");
 const SKIP_UPLOAD = hasFlag("--skip-upload");
 const DRY_RUN = hasFlag("--dry-run");
+/** Stage into crawled_contests for admin review instead of publishing to contests. */
+const TO_QUEUE = hasFlag("--to-queue");
 const IDS = new Set(
   (argValue("--ids", "") || "")
     .split(",")
@@ -357,6 +359,73 @@ async function upsertContest(row) {
   return { id: data.id, action: "inserted", docs: data.document_files?.length ?? 0 };
 }
 
+/**
+ * Upsert into crawled_contests (review queue).
+ * Refreshes media/draft when status is still `new`; only bumps last_seen_at after review.
+ */
+async function upsertCrawledContest(queueRow) {
+  const { data: existing, error: findErr } = await supabase
+    .from("crawled_contests")
+    .select("id, status")
+    .eq("source_group", queueRow.source_group)
+    .eq("source_id", queueRow.source_id)
+    .maybeSingle();
+  if (findErr) throw new Error(`queue lookup: ${findErr.message}`);
+
+  const now = new Date().toISOString();
+
+  if (existing?.id) {
+    if (existing.status === "new") {
+      const { data, error } = await supabase
+        .from("crawled_contests")
+        .update({
+          ...queueRow,
+          last_seen_at: now,
+          status: "new",
+        })
+        .eq("id", existing.id)
+        .select("id, document_files")
+        .single();
+      if (error) throw new Error(`queue update: ${error.message}`);
+      return {
+        id: data.id,
+        action: "queue-updated",
+        docs: data.document_files?.length ?? 0,
+      };
+    }
+
+    const { data, error } = await supabase
+      .from("crawled_contests")
+      .update({ last_seen_at: now, run_at: queueRow.run_at })
+      .eq("id", existing.id)
+      .select("id, document_files")
+      .single();
+    if (error) throw new Error(`queue touch: ${error.message}`);
+    return {
+      id: data.id,
+      action: `queue-seen(${existing.status})`,
+      docs: data.document_files?.length ?? 0,
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("crawled_contests")
+    .insert({
+      ...queueRow,
+      status: "new",
+      first_seen_at: now,
+      last_seen_at: now,
+    })
+    .select("id, document_files")
+    .single();
+  if (error) throw new Error(`queue insert: ${error.message}`);
+  return {
+    id: data.id,
+    action: "queue-inserted",
+    docs: data.document_files?.length ?? 0,
+  };
+}
+
 async function ingestOne(item, index, total, contentKind) {
   const externalId = String(item.id);
   process.stdout.write(`[${index + 1}/${total}] ${externalId} ${item.title?.slice(0, 40) || ""} ... `);
@@ -442,10 +511,14 @@ async function ingestOne(item, index, total, contentKind) {
   const defaultLabel = KIND_DEFAULT_NAME[contentKind] || "공고";
 
   const applyEnd = toDate(item.recruit_close_at) || "2099-12-31";
+  const name = item.title || `${defaultLabel} ${externalId}`;
+  const organization = item.organization_name || "미상";
+  const sourceUrl = item.url || `https://linkareer.com/activity/${externalId}`;
+  const applyUrl = item.apply_url || item.homepage_url || item.url || "";
 
-  const row = {
-    name: item.title || `${defaultLabel} ${externalId}`,
-    organization: item.organization_name || "미상",
+  const extractedDraft = {
+    name,
+    organization,
     organization_type: item.organization_type || null,
     content_kind: contentKind,
     support_amount_text:
@@ -461,9 +534,34 @@ async function ingestOne(item, index, total, contentKind) {
     apply_types: item.apply_types?.length ? item.apply_types : null,
     interest_categories: interest.length ? interest : null,
     required_documents: requiredDocs,
+    apply_method: buildApplyMethod(item),
+    apply_url: applyUrl,
+    homepage_url: item.homepage_url || item.url || null,
+    contact: null,
+    note: item.additional_benefit || null,
+    selection_note: null,
+    poster_image_url: posterUrl,
+    original_notice_text: noticeText,
+  };
+
+  const row = {
+    name,
+    organization,
+    organization_type: item.organization_type || null,
+    content_kind: contentKind,
+    support_amount_text: extractedDraft.support_amount_text,
+    selection_count: extractedDraft.selection_count,
+    apply_start_date: extractedDraft.apply_start_date,
+    apply_end_date: applyEnd,
+    announcement_date: null,
+    targets: item.targets?.length ? item.targets : null,
+    benefits: item.benefits?.length ? item.benefits : null,
+    apply_types: item.apply_types?.length ? item.apply_types : null,
+    interest_categories: interest.length ? interest : null,
+    required_documents: requiredDocs,
     document_files: documentFiles,
     apply_method: buildApplyMethod(item),
-    apply_url: item.apply_url || item.homepage_url || item.url || "",
+    apply_url: applyUrl,
     homepage_url: item.homepage_url || item.url || null,
     contact: null,
     note: item.additional_benefit || null,
@@ -478,7 +576,7 @@ async function ingestOne(item, index, total, contentKind) {
     original_notice_text: noticeText,
     source: "linkareer",
     external_id: externalId,
-    source_url: item.url || `https://linkareer.com/activity/${externalId}`,
+    source_url: sourceUrl,
     is_verified: true,
     list_on_home: true,
     is_recommended: false,
@@ -493,9 +591,39 @@ async function ingestOne(item, index, total, contentKind) {
 
   if (DRY_RUN) {
     console.log(
-      `dry-run kind=${contentKind} interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
+      `dry-run ${TO_QUEUE ? "queue" : "publish"} kind=${contentKind} interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
     );
     return { dry: true };
+  }
+
+  if (TO_QUEUE) {
+    const queueRow = {
+      source_group: "linkareer",
+      source_id: externalId,
+      source_name: organization,
+      content_kind: contentKind,
+      title: name,
+      notice_url: sourceUrl,
+      notice_posted_at: toDate(item.recruit_start_at),
+      raw_date_text: item.recruit_close_at
+        ? `마감 ${toDate(item.recruit_close_at)}`
+        : null,
+      body: noticeText,
+      image_urls: noticeUrls.length
+        ? noticeUrls
+        : posterUrl
+          ? [posterUrl]
+          : null,
+      poster_image_url: posterUrl,
+      document_files: documentFiles,
+      extracted_draft: extractedDraft,
+      run_at: new Date().toISOString(),
+    };
+    const result = await upsertCrawledContest(queueRow);
+    console.log(
+      `${result.action} id=${result.id} kind=${contentKind} docs=${result.docs}`
+    );
+    return result;
   }
 
   const result = await upsertContest(row);
@@ -526,7 +654,7 @@ async function main() {
   if (LIMIT > 0) items = items.slice(0, LIMIT);
 
   console.log(
-    `[ingest-linkareer] kind=${contentKind} in=${IN_PATH} count=${items.length} skipUpload=${SKIP_UPLOAD} dryRun=${DRY_RUN}`
+    `[ingest-linkareer] kind=${contentKind} target=${TO_QUEUE ? "crawled_contests" : "contests"} in=${IN_PATH} count=${items.length} skipUpload=${SKIP_UPLOAD} dryRun=${DRY_RUN}`
   );
 
   let ok = 0;

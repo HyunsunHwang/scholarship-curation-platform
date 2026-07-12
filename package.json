@@ -50,6 +50,7 @@
     "crawl:linkareer-contests": "node scripts/crawl-linkareer-contests.mjs --kind contest",
     "crawl:linkareer-education": "node scripts/crawl-linkareer-contests.mjs --kind education",
     "crawl:linkareer-activity": "node scripts/crawl-linkareer-contests.mjs --kind activity",
+    "crawl:linkareer:daily": "node scripts/run-linkareer-daily.mjs",
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs",

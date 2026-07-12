@@ -1,0 +1,60 @@
+name: Daily Linkareer Updates
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  schedule:
+    # 08:00 KST every day
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+    inputs:
+      max_pages:
+        description: "List pages to scan per kind (newest first)"
+        required: false
+        default: "5"
+        type: string
+      kinds:
+        description: "Comma-separated kinds: contest,education,activity"
+        required: false
+        default: "contest,education,activity"
+        type: string
+
+jobs:
+  linkareer-daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Crawl new Linkareer posts into review queue
+        run: |
+          node scripts/run-linkareer-daily.mjs \
+            --kinds "${{ github.event.inputs.kinds || 'contest,education,activity' }}" \
+            --max-pages "${{ github.event.inputs.max_pages || '5' }}"
+
+      - name: Upload daily artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkareer-daily-${{ github.run_id }}
+          path: |
+            exports/linkareer/daily-*.json
+          if-no-files-found: ignore
+          retention-days: 14
