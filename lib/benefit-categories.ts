@@ -419,10 +419,12 @@ export function resolveContestBenefits(opts: {
     const amount = opts.supportAmountText!.trim();
     const label = /^총상금\b/.test(amount) ? amount : `총상금 ${amount}`;
     const rest = out.filter((b) => b.id !== "prize");
-    return [{ id: "prize", label, accent: "gold" }, ...rest].slice(
-      0,
-      MAX_HIGHLIGHTS
-    );
+    const prizeFirst: BenefitHighlight = {
+      id: "prize",
+      label,
+      accent: "gold",
+    };
+    return [prizeFirst, ...rest].slice(0, MAX_HIGHLIGHTS);
   }
 
   return out;
