@@ -12,6 +12,7 @@ import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { resolveScholarshipBenefits } from "@/lib/benefit-categories";
 import BenefitHighlights from "@/components/BenefitHighlights";
 import ViewCountIncrementer from "./ViewCountIncrementer";
+import RecentViewTracker from "@/components/RecentViewTracker";
 import LiveEngagementBadges from "./LiveEngagementBadges";
 import {
   getScholarshipQualMatch,
@@ -309,6 +310,14 @@ export default async function ScholarshipDetailPage({
         </div>
       </main>
       <ViewCountIncrementer scholarshipId={scholarshipId} />
+      <RecentViewTracker
+        id={scholarshipId}
+        name={displayName}
+        organization={scholarship.organization ?? ""}
+        posterImageUrl={scholarship.poster_image_url}
+        applyEndDate={scholarship.apply_end_date}
+        contentKind="scholarship"
+      />
 
       <footer className="mt-12 hidden border-t border-gray-100 bg-white py-8 md:block">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

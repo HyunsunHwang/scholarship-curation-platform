@@ -15,6 +15,7 @@ import type {
 import { contentKindLabel } from "@/lib/content-categories";
 import { resolveContestBenefits } from "@/lib/benefit-categories";
 import BenefitHighlights from "@/components/BenefitHighlights";
+import RecentViewTracker from "@/components/RecentViewTracker";
 import {
   interestCategoryLabel,
   isInterestCategoryId,
@@ -357,6 +358,15 @@ export default async function OpportunityDetailPage({
           </div>
         </div>
       </main>
+
+      <RecentViewTracker
+        id={contestId}
+        name={displayName}
+        organization={contest.organization ?? ""}
+        posterImageUrl={contest.poster_image_url}
+        applyEndDate={contest.apply_end_date || "2099-12-31"}
+        contentKind={kind}
+      />
 
       <footer className="mt-12 hidden border-t border-gray-100 bg-white py-8 md:block">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
