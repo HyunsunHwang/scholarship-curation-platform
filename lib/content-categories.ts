@@ -1,6 +1,6 @@
-/** 홈 피드·라이브러리에서 쓰는 콘텐츠 종류 */
+/** 홈 피드에서 쓰는 콘텐츠 종류 */
 export const CONTENT_CATEGORIES = [
-  { key: "all", label: "모두" },
+  { key: "all", label: "홈" },
   { key: "contest", label: "공모전" },
   { key: "education", label: "교육" },
   { key: "activity", label: "대외활동" },
@@ -9,7 +9,7 @@ export const CONTENT_CATEGORIES = [
 
 export type ContentCategoryKey = (typeof CONTENT_CATEGORIES)[number]["key"];
 
-/** 사이드바 필터용 — '모두' 제외 */
+/** 종류별 선반용 — '홈' 제외 */
 export const LIBRARY_CATEGORY_FILTERS = CONTENT_CATEGORIES.filter(
   (c) => c.key !== "all"
 );

@@ -9,25 +9,32 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type { ContentCategoryKey } from "@/lib/content-categories";
 
 type HomeSearchContextValue = {
   query: string;
   deferredQuery: string;
   setQuery: (query: string) => void;
+  category: ContentCategoryKey;
+  setCategory: (category: ContentCategoryKey) => void;
 };
 
 const HomeSearchContext = createContext<HomeSearchContextValue | null>(null);
 
 export function HomeSearchProvider({ children }: { children: ReactNode }) {
   const [query, setQueryState] = useState("");
+  const [category, setCategoryState] = useState<ContentCategoryKey>("all");
   const deferredQuery = useDeferredValue(query);
   const setQuery = useCallback((next: string) => {
     setQueryState(next);
   }, []);
+  const setCategory = useCallback((next: ContentCategoryKey) => {
+    setCategoryState(next);
+  }, []);
 
   const value = useMemo(
-    () => ({ query, deferredQuery, setQuery }),
-    [query, deferredQuery, setQuery]
+    () => ({ query, deferredQuery, setQuery, category, setCategory }),
+    [query, deferredQuery, setQuery, category, setCategory]
   );
 
   return (

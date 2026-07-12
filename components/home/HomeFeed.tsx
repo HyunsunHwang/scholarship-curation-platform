@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
   CONTENT_CATEGORIES,
   LIBRARY_CATEGORY_FILTERS,
   categoryHasData,
-  type ContentCategoryKey,
 } from "@/lib/content-categories";
 import { browseHref, type BrowseKind } from "@/lib/browse-data";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
@@ -39,7 +38,7 @@ function matchesSearch(
 
 function filterByCategory(
   list: CardScholarship[],
-  category: ContentCategoryKey
+  category: (typeof CONTENT_CATEGORIES)[number]["key"]
 ): CardScholarship[] {
   if (!categoryHasData(category)) return [];
   if (category === "all") return list;
@@ -85,10 +84,7 @@ function SectionTitleWithArrow({
             id={id}
             className="text-xl font-bold tracking-tight text-ink sm:text-2xl"
           >
-            <Link
-              href={href}
-              className="transition-colors hover:text-brand"
-            >
+            <Link href={href} className="transition-colors hover:text-brand">
               {title}
             </Link>
           </h2>
@@ -105,7 +101,11 @@ function SectionTitleWithArrow({
               strokeWidth={2.25}
               aria-hidden
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+              />
             </svg>
           </Link>
         </div>
@@ -139,8 +139,12 @@ export default function HomeFeed({
   scholarships: CardScholarship[];
   bookmarkedIds?: number[];
 }) {
-  const [category, setCategory] = useState<ContentCategoryKey>("all");
-  const { query: searchQuery, deferredQuery: deferredSearch } = useHomeSearch();
+  const {
+    query: searchQuery,
+    deferredQuery: deferredSearch,
+    category,
+    setCategory,
+  } = useHomeSearch();
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
 
   const filtered = useMemo(() => {
@@ -198,145 +202,83 @@ export default function HomeFeed({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-white lg:rounded-2xl">
-      <div className="sticky top-0 z-10 border-b border-gray-100 bg-white/95 px-4 py-3 backdrop-blur sm:px-5">
-        <div
-          role="tablist"
-          aria-label="공고 종류"
-          className="flex gap-2 overflow-x-auto [scrollbar-width:none]"
-        >
-          {CONTENT_CATEGORIES.map((tab) => {
-            const active = category === tab.key;
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setCategory(tab.key)}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                  active
-                    ? "bg-ink text-white"
-                    : "bg-beige text-ink/70 hover:bg-cream"
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+    <div className="w-full">
+      {emptyCategory ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
+          <p className="text-lg font-semibold text-ink">
+            {categoryLabel} 공고는 준비 중이에요
+          </p>
+          <p className="text-sm text-ink/50">
+            곧 다양한 {categoryLabel} 정보를 만나보실 수 있어요.
+          </p>
+          <button
+            type="button"
+            onClick={() => setCategory("scholarship")}
+            className="mt-3 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85"
+          >
+            장학금 보기
+          </button>
         </div>
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5 sm:py-6">
-        {emptyCategory ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
-            <p className="text-lg font-semibold text-ink">
-              {categoryLabel} 공고는 준비 중이에요
-            </p>
-            <p className="text-sm text-ink/50">
-              곧 다양한 {categoryLabel} 정보를 만나보실 수 있어요.
-            </p>
-            <button
-              type="button"
-              onClick={() => setCategory("scholarship")}
-              className="mt-3 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85"
-            >
-              장학금 보기
-            </button>
-          </div>
-        ) : filtered.length === 0 && !showKindShelves ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
-            <p className="text-lg font-semibold text-ink">
-              {searchQuery.trim()
-                ? "검색 결과가 없습니다"
-                : "등록된 공고가 없습니다"}
-            </p>
-            <p className="text-sm text-ink/50">
-              {searchQuery.trim()
-                ? "다른 검색어로 시도해 보세요."
-                : "관리자 패널에서 장학금을 추가해보세요."}
-            </p>
-          </div>
-        ) : (
-          <>
-            {trending.length > 0 && (
-              <section aria-labelledby="trending-heading">
-                <SectionTitleWithArrow
-                  id="trending-heading"
-                  title="인기 상승 공고"
-                  href={browseHref({
-                    kind: browseKind,
-                    section: "trending",
-                    sort: "scraps",
-                  })}
-                />
-                <HorizontalShelf
-                  label="인기 상승 공고"
-                  items={trending}
-                  getKey={(s) => `trend-${itemKey(s)}`}
-                  renderItem={(scholarship) => (
-                    <ShelfCard
-                      scholarship={scholarship}
-                      bookmarked={isBookmarked(scholarship)}
-                    />
-                  )}
-                />
-              </section>
-            )}
-
-            {showKindShelves ? (
-              kindShelves.map((shelf, index) => (
-                <section
-                  key={shelf.key}
-                  aria-labelledby={`kind-${shelf.key}-heading`}
-                  className={
-                    trending.length > 0 || index > 0
-                      ? "mt-8 sm:mt-10"
-                      : undefined
-                  }
-                >
-                  <SectionTitleWithArrow
-                    id={`kind-${shelf.key}-heading`}
-                    title={shelf.label}
-                    href={browseHref({ kind: shelf.key, sort: "deadline" })}
-                    subtitle={`${shelf.items.length}개 미리보기`}
+      ) : filtered.length === 0 && !showKindShelves ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
+          <p className="text-lg font-semibold text-ink">
+            {searchQuery.trim()
+              ? "검색 결과가 없습니다"
+              : "등록된 공고가 없습니다"}
+          </p>
+          <p className="text-sm text-ink/50">
+            {searchQuery.trim()
+              ? "다른 검색어로 시도해 보세요."
+              : "관리자 패널에서 장학금을 추가해보세요."}
+          </p>
+        </div>
+      ) : (
+        <>
+          {trending.length > 0 && (
+            <section aria-labelledby="trending-heading">
+              <SectionTitleWithArrow
+                id="trending-heading"
+                title="인기 상승 공고"
+                href={browseHref({
+                  kind: browseKind,
+                  section: "trending",
+                  sort: "scraps",
+                })}
+              />
+              <HorizontalShelf
+                label="인기 상승 공고"
+                items={trending}
+                getKey={(s) => `trend-${itemKey(s)}`}
+                renderItem={(scholarship) => (
+                  <ShelfCard
+                    scholarship={scholarship}
+                    bookmarked={isBookmarked(scholarship)}
                   />
-                  <HorizontalShelf
-                    label={shelf.label}
-                    items={shelf.items}
-                    getKey={(s) => itemKey(s)}
-                    renderItem={(scholarship) => (
-                      <ShelfCard
-                        scholarship={scholarship}
-                        bookmarked={isBookmarked(scholarship)}
-                      />
-                    )}
-                  />
-                </section>
-              ))
-            ) : (
+                )}
+              />
+            </section>
+          )}
+
+          {showKindShelves ? (
+            kindShelves.map((shelf, index) => (
               <section
-                id="all-announcements"
-                aria-labelledby="all-heading"
-                className={`scroll-mt-4 ${trending.length > 0 ? "mt-8 sm:mt-10" : ""}`}
+                key={shelf.key}
+                aria-labelledby={`kind-${shelf.key}-heading`}
+                className={
+                  trending.length > 0 || index > 0
+                    ? "mt-8 sm:mt-10"
+                    : undefined
+                }
               >
                 <SectionTitleWithArrow
-                  id="all-heading"
-                  title={isSearching ? "검색 결과" : `${categoryLabel || "전체"} 공고`}
-                  href={browseHref({ kind: browseKind, sort: "deadline" })}
-                  subtitle={
-                    isSearching
-                      ? undefined
-                      : `총 ${totalShown}개${
-                          trending.length > 0
-                            ? ` (인기 ${trending.length} · 나머지 ${allSorted.length})`
-                            : ""
-                        }`
-                  }
+                  id={`kind-${shelf.key}-heading`}
+                  title={shelf.label}
+                  href={browseHref({ kind: shelf.key, sort: "deadline" })}
+                  subtitle={`${shelf.items.length}개 미리보기`}
                 />
                 <HorizontalShelf
-                  label={isSearching ? "검색 결과" : "전체 공고"}
-                  items={isSearching ? filtered : allSorted}
+                  label={shelf.label}
+                  items={shelf.items}
                   getKey={(s) => itemKey(s)}
                   renderItem={(scholarship) => (
                     <ShelfCard
@@ -346,10 +288,46 @@ export default function HomeFeed({
                   )}
                 />
               </section>
-            )}
-          </>
-        )}
-      </div>
+            ))
+          ) : (
+            <section
+              id="all-announcements"
+              aria-labelledby="all-heading"
+              className={`scroll-mt-4 ${trending.length > 0 ? "mt-8 sm:mt-10" : ""}`}
+            >
+              <SectionTitleWithArrow
+                id="all-heading"
+                title={
+                  isSearching
+                    ? "검색 결과"
+                    : `${categoryLabel === "홈" ? "전체" : categoryLabel} 공고`
+                }
+                href={browseHref({ kind: browseKind, sort: "deadline" })}
+                subtitle={
+                  isSearching
+                    ? undefined
+                    : `총 ${totalShown}개${
+                        trending.length > 0
+                          ? ` (인기 ${trending.length} · 나머지 ${allSorted.length})`
+                          : ""
+                      }`
+                }
+              />
+              <HorizontalShelf
+                label={isSearching ? "검색 결과" : "전체 공고"}
+                items={isSearching ? filtered : allSorted}
+                getKey={(s) => itemKey(s)}
+                renderItem={(scholarship) => (
+                  <ShelfCard
+                    scholarship={scholarship}
+                    bookmarked={isBookmarked(scholarship)}
+                  />
+                )}
+              />
+            </section>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -5,17 +5,23 @@ import type { CardScholarship } from "@/components/ScholarshipCard";
 import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
-import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
-import { isScholarshipExpired } from "@/lib/scholarship-dates";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 const SpotifyHomeShell = dynamic(
   () => import("@/components/home/SpotifyHomeShell"),
   {
     loading: () => (
-      <div className="flex min-h-0 flex-1 gap-2 bg-beige p-2 sm:p-2.5">
-        <div className="hidden h-full w-[280px] animate-pulse rounded-2xl bg-white xl:block" />
-        <div className="flex-1 animate-pulse rounded-2xl bg-white" />
+      <div className="mx-auto w-full max-w-[1760px] animate-pulse px-4 pb-10 pt-6 sm:px-6 lg:px-10">
+        <div className="mb-6 h-7 w-40 rounded bg-gray-200" />
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="w-40 shrink-0 space-y-2 sm:w-44">
+              <div className="aspect-2/3 rounded-xl bg-gray-200" />
+              <div className="h-4 w-full rounded bg-gray-200" />
+              <div className="h-3 w-2/3 rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
       </div>
     ),
   }
@@ -43,59 +49,15 @@ export default async function Home() {
   const navContextPromise = resolveNavUserContext(user);
 
   let bookmarkedIds: number[] = [];
-  let bookmarkedScholarships: CardScholarship[] = [];
 
   if (user) {
     bookmarkedIds = await getBookmarkedScholarshipIds(authSupabase, user.id);
-
-    if (bookmarkedIds.length > 0) {
-      const homeById = new Map(homeScholarships.map((s) => [s.id, s]));
-      const missingIds = bookmarkedIds.filter((id) => !homeById.has(id));
-
-      let extraRows: CardScholarship[] = [];
-      if (missingIds.length > 0) {
-        const [{ data: rows }, scrapCounts] = await Promise.all([
-          authSupabase
-            .from("scholarships")
-            .select(
-              "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
-            )
-            .in("id", missingIds),
-          getScholarshipScrapCounts(authSupabase, missingIds),
-        ]);
-        extraRows = (rows ?? []).map((s) => ({
-          id: s.id,
-          name: s.name,
-          organization: s.organization,
-          institution_type: s.institution_type as string,
-          support_types: s.support_types as string[],
-          support_amount_text: s.support_amount_text,
-          apply_end_date: s.apply_end_date,
-          poster_image_url: s.poster_image_url ?? null,
-          created_at: s.created_at,
-          view_count: s.view_count,
-          scrap_count: scrapCounts.get(s.id) ?? 0,
-          is_recommended: s.is_recommended,
-          recommended_sort_order: s.recommended_sort_order,
-          is_advertisement: s.is_advertisement,
-          content_kind: "scholarship" as const,
-        }));
-      }
-
-      const extraById = new Map(extraRows.map((s) => [s.id, s]));
-      bookmarkedScholarships = bookmarkedIds.flatMap((id) => {
-        const s = homeById.get(id) ?? extraById.get(id);
-        if (!s) return [];
-        if (isScholarshipExpired(s.apply_end_date)) return [];
-        return [{ ...s, content_kind: "scholarship" as const }];
-      });
-    }
   }
 
   const navContext = await navContextPromise;
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-beige">
+    <div className="flex min-h-dvh flex-col bg-white">
       <HomeSearchRoot>
         <SpotifyTopNav
           currentUser={user}
@@ -103,11 +65,9 @@ export default async function Home() {
           currentUserName={navContext.name}
           urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
-        <main className="flex min-h-0 flex-1 flex-col">
+        <main className="flex-1">
           <SpotifyHomeShell
-            isLoggedIn={Boolean(user)}
             scholarships={homeFeedItems}
-            bookmarkedScholarships={bookmarkedScholarships}
             bookmarkedIds={bookmarkedIds}
           />
         </main>
