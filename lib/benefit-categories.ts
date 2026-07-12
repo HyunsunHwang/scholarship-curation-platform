@@ -54,6 +54,8 @@ export type BenefitCategoryId = (typeof BENEFIT_CATEGORIES)[number]["id"];
 export type BenefitHighlight = {
   id: BenefitCategoryId;
   label: string;
+  /** 총상금 등 — 아이콘을 노란색 트로피로 */
+  accent?: "gold";
 };
 
 const BY_ID = Object.fromEntries(
@@ -410,6 +412,17 @@ export function resolveContestBenefits(opts: {
 
   if (out.length === 0 && sawGenericOther) {
     pushUnique(out, "other");
+  }
+
+  // 시상 금액이 있으면 "총상금 N" + 금색 트로피로 맨 앞 고정
+  if (hasMeaningfulPrizeAmount(opts.supportAmountText)) {
+    const amount = opts.supportAmountText!.trim();
+    const label = /^총상금\b/.test(amount) ? amount : `총상금 ${amount}`;
+    const rest = out.filter((b) => b.id !== "prize");
+    return [{ id: "prize", label, accent: "gold" }, ...rest].slice(
+      0,
+      MAX_HIGHLIGHTS
+    );
   }
 
   return out;

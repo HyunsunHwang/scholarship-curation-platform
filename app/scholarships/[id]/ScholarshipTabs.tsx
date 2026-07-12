@@ -1024,16 +1024,26 @@ export default function ScholarshipTabs({
       </section>
 
       {isAdvertisement ? (
-        <>
-          <section className="py-7">
-            {sectionTitle("소재지", "mapPin")}
-            <AdLocationSection s={s} />
-          </section>
-          <section className="py-7">
-            {sectionTitle("지원 방법", "checklist")}
-            <ApplySection s={s} />
-          </section>
-        </>
+        <section className="py-7">
+          {sectionTitle("소재지", "mapPin")}
+          <AdLocationSection s={s} />
+        </section>
+      ) : null}
+
+      {(s.original_notice_image_urls?.length ||
+        s.original_notice_image_url ||
+        s.original_notice_text?.trim()) && (
+        <section className="w-full overflow-x-hidden py-7">
+          {sectionTitle("원문 공고문", "newspaper")}
+          <OriginalNoticeSection s={s} />
+        </section>
+      )}
+
+      {isAdvertisement ? (
+        <section className="py-7">
+          {sectionTitle("지원 방법", "checklist")}
+          <ApplySection s={s} />
+        </section>
       ) : (
         <>
           <section className="py-7">
@@ -1045,15 +1055,6 @@ export default function ScholarshipTabs({
             <ApplySection s={s} />
           </section>
         </>
-      )}
-
-      {(s.original_notice_image_urls?.length ||
-        s.original_notice_image_url ||
-        s.original_notice_text?.trim()) && (
-        <section className="w-full overflow-x-hidden py-7">
-          {sectionTitle("원문 공고문", "newspaper")}
-          <OriginalNoticeSection s={s} />
-        </section>
       )}
     </div>
   );
