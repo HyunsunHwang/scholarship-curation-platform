@@ -79,17 +79,24 @@ function parseArgs(argv: string[]) {
   let skipFormatted = false;
   let limit: number | null = null;
   let ids: Set<string> | null = null;
-  let kind: string | null = null;
+  let kind: "contest" | "education" | "activity" | null = null;
+  const validKinds = new Set(["contest", "education", "activity"] as const);
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === "--dry-run") dryRun = true;
     else if (a === "--skip-formatted") skipFormatted = true;
     else if (a === "--force") skipFormatted = false;
     else if (a === "--kind") {
-      kind = String(argv[i + 1] ?? "").toLowerCase() || null;
+      const raw = String(argv[i + 1] ?? "").toLowerCase();
+      if (validKinds.has(raw as "contest" | "education" | "activity")) {
+        kind = raw as "contest" | "education" | "activity";
+      }
       i += 1;
     } else if (a.startsWith("--kind=")) {
-      kind = a.slice("--kind=".length).toLowerCase() || null;
+      const raw = a.slice("--kind=".length).toLowerCase();
+      if (validKinds.has(raw as "contest" | "education" | "activity")) {
+        kind = raw as "contest" | "education" | "activity";
+      }
     } else if (a === "--limit") {
       const n = Number.parseInt(argv[i + 1] ?? "", 10);
       if (!Number.isNaN(n) && n > 0) {
