@@ -79,12 +79,18 @@ function parseArgs(argv: string[]) {
   let skipFormatted = false;
   let limit: number | null = null;
   let ids: Set<string> | null = null;
+  let kind: string | null = null;
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === "--dry-run") dryRun = true;
     else if (a === "--skip-formatted") skipFormatted = true;
     else if (a === "--force") skipFormatted = false;
-    else if (a === "--limit") {
+    else if (a === "--kind") {
+      kind = String(argv[i + 1] ?? "").toLowerCase() || null;
+      i += 1;
+    } else if (a.startsWith("--kind=")) {
+      kind = a.slice("--kind=".length).toLowerCase() || null;
+    } else if (a === "--limit") {
       const n = Number.parseInt(argv[i + 1] ?? "", 10);
       if (!Number.isNaN(n) && n > 0) {
         limit = n;
@@ -111,7 +117,7 @@ function parseArgs(argv: string[]) {
       );
     }
   }
-  return { dryRun, skipFormatted, limit, ids };
+  return { dryRun, skipFormatted, limit, ids, kind };
 }
 
 function sleep(ms: number) {
@@ -125,7 +131,7 @@ function normalizeSupabaseUrl(raw: string): string {
 }
 
 async function main() {
-  const { dryRun, skipFormatted, limit, ids } = parseArgs(process.argv.slice(2));
+  const { dryRun, skipFormatted, limit, ids, kind } = parseArgs(process.argv.slice(2));
   const supabaseUrl = normalizeSupabaseUrl(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL ?? ""
   );
@@ -148,7 +154,7 @@ async function main() {
   });
 
   console.log(
-    `[reformat:contests] today(KST)=${today} dryRun=${dryRun} skipFormatted=${skipFormatted} limit=${limit ?? "none"} delayMs=${delayMs}`
+    `[reformat:contests] today(KST)=${today} kind=${kind ?? "all"} dryRun=${dryRun} skipFormatted=${skipFormatted} limit=${limit ?? "none"} delayMs=${delayMs}`
   );
 
   // Paginate — contests table can be large
@@ -159,16 +165,19 @@ async function main() {
     apply_end_date: string | null;
     original_notice_text: string | null;
     external_id: string | null;
+    content_kind: string | null;
   }[] = [];
 
   for (let from = 0; ; from += pageSize) {
-    const { data, error } = await supabase
+    let q = supabase
       .from("contests")
-      .select("id, name, apply_end_date, original_notice_text, external_id")
+      .select("id, name, apply_end_date, original_notice_text, external_id, content_kind")
       .eq("is_verified", true)
       .not("original_notice_text", "is", null)
       .order("id", { ascending: true })
       .range(from, from + pageSize - 1);
+    if (kind) q = q.eq("content_kind", kind);
+    const { data, error } = await q;
     if (error) {
       console.error("[reformat:contests] query failed:", error.message);
       process.exit(1);

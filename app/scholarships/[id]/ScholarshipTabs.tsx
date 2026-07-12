@@ -443,7 +443,12 @@ function ScheduleTimelineItem({
 }) {
   const isSelection = phase === "selection";
   const dateText = getScheduleRowDateText(row, alwaysOpen);
-  const isUrgent = row.kind === "milestone" && row.urgent;
+  const isDeadlineMilestone = row.kind === "milestone" && row.milestoneKind === "end";
+  const isDeadlineStage =
+    row.kind === "stage" && /접수\s*마감|모집\s*마감|신청\s*마감/.test(row.label);
+  const showDeadlineBadge =
+    !alwaysOpen && daysLeft >= 0 && (isDeadlineMilestone || isDeadlineStage);
+  const isUrgent = showDeadlineBadge && daysLeft <= 7;
   const note = row.kind === "stage" ? row.note : null;
 
   return (
@@ -465,7 +470,7 @@ function ScheduleTimelineItem({
             }`}
           >
             {dateText}
-            {isUrgent && (
+            {showDeadlineBadge && (
               <span className="ml-1 inline-flex items-center rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
                 D-{daysLeft}
               </span>
@@ -506,20 +511,33 @@ function ScheduleAfterAcceptanceDivider() {
   );
 }
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
+function stageTitleCoversMilestone(
+  stages: { title: string }[],
+  kind: "start" | "end",
+): boolean {
+  const patterns =
+    kind === "start"
+      ? [/접수\s*시작/, /모집\s*시작/, /신청\s*시작/]
+      : [/접수\s*마감/, /모집\s*마감/, /신청\s*마감/];
+  return stages.some((st) => patterns.some((p) => p.test(st.title)));
+}
+
 function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selectionStages: SelectionStageDetail[] }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
 
   const daysLeft = daysUntilApplyDeadlineKorea(s.apply_end_date);
-  const isUrgent = !alwaysOpen && daysLeft >= 0 && daysLeft <= 7;
+  const isUrgentDeadline = !alwaysOpen && daysLeft >= 0 && daysLeft <= 7;
 
   const rows: SortableScheduleRow[] = [];
 
   const stages = collectSelectionStages(selectionStages);
   const hasStages = stages.length > 0;
+  const startCovered = hasStages && stageTitleCoversMilestone(stages, "start");
+  const endCovered = hasStages && stageTitleCoversMilestone(stages, "end");
 
-  // 전형 단계가 있으면 접수 시작/마감은 단계 일정과 중복되므로 제외하고,
-  // 전형 단계가 없을 때만 접수 시작/마감을 표시한다.
-  if (!hasStages && s.apply_start_date) {
+  // 전형 단계에 동일 마일스톤이 없을 때만 접수 시작/마감을 보강한다.
+  // (상단 하이라이트에서 마감을 제거했으므로 일정 섹션에 반드시 남아야 함)
+  if (!startCovered && s.apply_start_date) {
     const sortMs = parseYYYYMMDDToUtcMs(s.apply_start_date);
     if (sortMs !== null) {
       rows.push({
@@ -534,7 +552,7 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
     }
   }
 
-  if (!hasStages) {
+  if (!endCovered) {
     const endSortMs = parseYYYYMMDDToUtcMs(s.apply_end_date);
     if (endSortMs !== null) {
       rows.push({
@@ -543,7 +561,7 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
         milestoneKind: "end",
         label: "접수 마감",
         value: alwaysOpen ? "상시모집" : formatDate(s.apply_end_date),
-        urgent: isUrgent,
+        urgent: isUrgentDeadline,
         sortMs: endSortMs,
       });
     }

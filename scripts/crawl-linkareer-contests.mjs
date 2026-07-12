@@ -1,23 +1,38 @@
 /**
- * One-shot crawl of currently listed Linkareer contests.
+ * Crawl Linkareer contest / education / activity listings.
  *
  * Usage:
- *   node scripts/crawl-linkareer-contests.mjs
- *   node scripts/crawl-linkareer-contests.mjs --limit 30
- *   node scripts/crawl-linkareer-contests.mjs --out exports/linkareer/contests.json
+ *   node scripts/crawl-linkareer-contests.mjs --kind contest
+ *   node scripts/crawl-linkareer-contests.mjs --kind education --limit 30
+ *   node scripts/crawl-linkareer-contests.mjs --kind activity --out exports/linkareer/activity.json
  *
  * Notes:
  * - Public list/detail only (no login).
  * - Be polite: default delay between detail requests.
- * - Output is a local snapshot for exploration — not wired into production ingest.
  */
 
 import fs from "fs";
 import path from "path";
 
-const LIST_URL = "https://linkareer.com/list/contest";
 const GRAPHQL_URL = "https://api.linkareer.com/graphql";
-const ACTIVITY_TYPE_CONTEST = 3;
+
+const KIND_CONFIG = {
+  contest: {
+    listPath: "contest",
+    activityTypeId: 3,
+    contentCategory: "contest",
+  },
+  education: {
+    listPath: "education",
+    activityTypeId: 6,
+    contentCategory: "education",
+  },
+  activity: {
+    listPath: "activity",
+    activityTypeId: 1,
+    contentCategory: "activity",
+  },
+};
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -28,14 +43,24 @@ function argValue(flag, fallback = null) {
   if (i === -1) return fallback;
   return args[i + 1] ?? fallback;
 }
+
+const KIND = String(argValue("--kind", "contest") || "contest").toLowerCase();
+if (!KIND_CONFIG[KIND]) {
+  console.error(`Unknown --kind ${KIND}. Use contest|education|activity`);
+  process.exit(1);
+}
+const cfg = KIND_CONFIG[KIND];
+const LIST_URL = `https://linkareer.com/list/${cfg.listPath}`;
+const ACTIVITY_TYPE_ID = cfg.activityTypeId;
+
 const LIMIT = Number(argValue("--limit", "0")) || 0;
 const DELAY_MS = Number(argValue("--delay", "250")) || 250;
 const MAX_PAGES = Number(argValue("--max-pages", "80")) || 80;
 const OUT =
   argValue(
     "--out",
-    `exports/linkareer/contests-${new Date().toISOString().slice(0, 10)}.json`
-  ) || `exports/linkareer/contests-${new Date().toISOString().slice(0, 10)}.json`;
+    `exports/linkareer/${KIND}-${new Date().toISOString().slice(0, 10)}.json`
+  ) || `exports/linkareer/${KIND}-${new Date().toISOString().slice(0, 10)}.json`;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -93,7 +118,7 @@ function activitiesFromListPage(nextData) {
   const out = [];
   for (const value of Object.values(state)) {
     if (!value || value.__typename !== "Activity") continue;
-    if (Number(value.activityTypeID) !== ACTIVITY_TYPE_CONTEST) continue;
+    if (Number(value.activityTypeID) !== ACTIVITY_TYPE_ID) continue;
     out.push({
       id: String(value.id),
       title: value.title ?? null,
@@ -168,7 +193,7 @@ function normalizeActivity(raw, listMeta = {}) {
   );
   return {
     source: "linkareer",
-    content_category: "contest",
+    content_category: cfg.contentCategory,
     id: String(raw.id),
     url: `https://linkareer.com/activity/${raw.id}`,
     title: raw.title ?? listMeta.title ?? null,
@@ -189,7 +214,9 @@ function normalizeActivity(raw, listMeta = {}) {
     benefits: (raw.benefits || []).map((x) => x.name).filter(Boolean),
     interests: (raw.interests || []).map((x) => x.name).filter(Boolean),
     additional_benefit: raw.additionalBenefit || null,
-    reward_manwon: raw.tenThousandUnitOfReward ?? (rewardInteger ? Number(rewardInteger.integer) : null),
+    reward_manwon:
+      raw.tenThousandUnitOfReward ??
+      (rewardInteger ? Number(rewardInteger.integer) : null),
     recruit_scale: raw.recruitScale ?? null,
     view_count: raw.viewCount ?? listMeta.viewCount ?? null,
     scrap_count: raw.scrapCount ?? listMeta.scrapCount ?? null,
@@ -241,7 +268,7 @@ async function collectListIds() {
 
 async function main() {
   console.log(
-    `[crawl-linkareer] limit=${LIMIT || "all"} delay=${DELAY_MS}ms out=${OUT}`
+    `[crawl-linkareer] kind=${KIND} limit=${LIMIT || "all"} delay=${DELAY_MS}ms out=${OUT}`
   );
   const listItems = await collectListIds();
   console.log(`[crawl-linkareer] list ids=${listItems.length}`);
@@ -257,11 +284,20 @@ async function main() {
     try {
       const raw = await fetchActivityDetail(meta.id);
       if (!raw) throw new Error("empty activity");
+      // Drop cross-type leaks from list pages
+      if (Number(raw.activityTypeID) !== ACTIVITY_TYPE_ID) {
+        console.log(`skip type=${raw.activityTypeID}`);
+        continue;
+      }
       results.push(normalizeActivity(raw, meta));
       console.log("ok");
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      errors.push({ id: meta.id, url: `https://linkareer.com/activity/${meta.id}`, error: message });
+      errors.push({
+        id: meta.id,
+        url: `https://linkareer.com/activity/${meta.id}`,
+        error: message,
+      });
       console.log("FAIL", message);
     }
     await sleep(DELAY_MS);
@@ -269,6 +305,7 @@ async function main() {
 
   const payload = {
     source: "linkareer",
+    kind: KIND,
     list_url: LIST_URL,
     crawled_at: new Date().toISOString(),
     count: results.length,
@@ -286,6 +323,7 @@ async function main() {
     JSON.stringify(
       {
         source: payload.source,
+        kind: KIND,
         crawled_at: payload.crawled_at,
         count: payload.count,
         error_count: payload.error_count,
@@ -298,7 +336,9 @@ async function main() {
     "utf8"
   );
 
-  console.log(`[crawl-linkareer] done count=${results.length} errors=${errors.length}`);
+  console.log(
+    `[crawl-linkareer] done kind=${KIND} count=${results.length} errors=${errors.length}`
+  );
   console.log(`[crawl-linkareer] wrote ${OUT}`);
 }
 

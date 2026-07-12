@@ -156,7 +156,7 @@ export const getCachedHomeContests = unstable_cache(
     const { data, error } = await supabase
       .from("contests")
       .select(
-        "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order"
+        "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
@@ -185,10 +185,13 @@ export const getCachedHomeContests = unstable_cache(
       is_recommended: contest.is_recommended,
       recommended_sort_order: contest.recommended_sort_order,
       is_advertisement: false,
-      content_kind: "contest" as const,
+      content_kind: (contest.content_kind ?? "contest") as
+        | "contest"
+        | "education"
+        | "activity",
     }));
   },
-  ["home-contests-v1"],
+  ["home-contests-v2"],
   { revalidate: 60 }
 );
 

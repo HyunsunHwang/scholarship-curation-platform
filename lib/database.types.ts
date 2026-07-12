@@ -606,6 +606,8 @@ export interface Database {
           apply_types: string[] | null;
           /** lib/interestCategories.ts 고정 ID */
           interest_categories: string[] | null;
+          /** contest | education | activity */
+          content_kind: "contest" | "education" | "activity";
           required_documents: string[];
           /** Downloaded docs: [{name, url, source_url, mime_type, size}] */
           document_files: ContestDocumentFile[];
@@ -633,12 +635,12 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["contests"]["Row"],
-          "id" | "created_at" | "updated_at" | "view_count" | "document_files"
+          "id" | "created_at" | "updated_at" | "view_count" | "document_files" | "content_kind"
         > &
           Partial<
             Pick<
               Database["public"]["Tables"]["contests"]["Row"],
-              "id" | "created_at" | "updated_at" | "view_count" | "document_files"
+              "id" | "created_at" | "updated_at" | "view_count" | "document_files" | "content_kind"
             >
           >;
         Update: Partial<Database["public"]["Tables"]["contests"]["Insert"]>;

@@ -1,9 +1,9 @@
 import OpportunityDetailPage from "@/components/opportunity/OpportunityDetailPage";
 
-export default function ContestDetailPage({
+export default function EducationDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  return <OpportunityDetailPage params={params} expectedKind="contest" />;
+  return <OpportunityDetailPage params={params} expectedKind="education" />;
 }

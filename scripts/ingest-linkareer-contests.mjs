@@ -36,6 +36,43 @@ const CATEGORY_TO_INTEREST = {
   "건축/건설/인테리어": "engineering",
   "창업": "startup",
   "네이밍/슬로건": "marketing",
+  // education / activity labels
+  "프론트엔드 개발": "dev",
+  "백엔드 개발": "dev",
+  "모바일 앱 개발": "dev",
+  "게임 개발": "dev",
+  "프로그래밍": "dev",
+  "컴퓨터 공학/SW 엔지니어링": "dev",
+  "DevOps/Infra": "dev",
+  "블록체인 개발": "dev",
+  IOS: "dev",
+  안드로이드: "dev",
+  "AI/ML": "data_ai",
+  머신러닝: "data_ai",
+  딥러닝: "data_ai",
+  데이터사이언스: "data_ai",
+  데이터분석: "data_ai",
+  데이터엔지니어링: "data_ai",
+  인공지능: "data_ai",
+  자연어처리: "data_ai",
+  컴퓨터비전: "data_ai",
+  ChatGPT: "data_ai",
+  로보틱스: "engineering",
+  임베디드: "engineering",
+  반도체: "engineering",
+  IoT: "engineering",
+  "IoT · 임베디드 · 반도체": "engineering",
+  "3D/CG": "design",
+  "3D/건축": "design",
+  "2D/그래픽/브랜딩": "design",
+  콘텐츠마케팅: "marketing",
+  브랜드마케팅: "marketing",
+  "PM/PO/기획": "planning",
+  "봉사단-국내": "public",
+  "봉사단-해외": "public",
+  자격증: "education",
+  "취업/이직": "business",
+  비즈니스: "business",
 };
 
 const INTEREST_LABEL_TO_ID = {
@@ -90,6 +127,7 @@ function hasFlag(flag) {
 }
 
 const IN_PATH = argValue("--in", "exports/linkareer/contests-2026-07-10.json");
+const KIND_ARG = String(argValue("--kind", "") || "").toLowerCase();
 const LIMIT = Number(argValue("--limit", "0")) || 0;
 const ONLY_WITH_DOCS = hasFlag("--only-with-docs");
 const SKIP_UPLOAD = hasFlag("--skip-upload");
@@ -100,6 +138,13 @@ const IDS = new Set(
     .map((s) => s.trim())
     .filter(Boolean)
 );
+
+const VALID_KINDS = new Set(["contest", "education", "activity"]);
+const KIND_DEFAULT_NAME = {
+  contest: "공모전",
+  education: "교육",
+  activity: "대외활동",
+};
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -185,11 +230,14 @@ function mapInterestCategories(item) {
   for (const i of item.interests || []) push(INTEREST_LABEL_TO_ID[i]);
 
   const blob = `${item.title || ""} ${(item.categories || []).join(" ")}`.toLowerCase();
-  if (/ai|인공지능|머신러닝|데이터/.test(blob)) push("data_ai");
-  if (/개발|프로그래밍|코딩|소프트웨어|앱|웹/.test(blob)) push("dev");
+  if (/ai|인공지능|머신러닝|데이터|딥러닝|llm|rag/.test(blob)) push("data_ai");
+  if (/개발|프로그래밍|코딩|소프트웨어|앱|웹|풀스택|프론트|백엔드/.test(blob)) push("dev");
   if (/마케팅|광고|브랜딩/.test(blob)) push("marketing");
   if (/기획|아이디어|전략/.test(blob)) push("planning");
   if (/창업|스타트업/.test(blob)) push("startup");
+  if (/봉사|사회공헌|기부/.test(blob)) push("public");
+  if (/교육|부트캠프|국비|아카데미/.test(blob)) push("education");
+  if (/로봇|반도체|임베디드|iot|cae|cad/.test(blob)) push("engineering");
 
   return out;
 }
@@ -309,12 +357,13 @@ async function upsertContest(row) {
   return { id: data.id, action: "inserted", docs: data.document_files?.length ?? 0 };
 }
 
-async function ingestOne(item, index, total) {
+async function ingestOne(item, index, total, contentKind) {
   const externalId = String(item.id);
   process.stdout.write(`[${index + 1}/${total}] ${externalId} ${item.title?.slice(0, 40) || ""} ... `);
 
   const posterMeta = pickPoster(item);
-  const bodyImgs = extractBodyImages(item.body_html);
+  // Cap body images — education HTML can embed dozens of assets
+  const bodyImgs = extractBodyImages(item.body_html).slice(0, 12);
   const docs = pickDocs(item);
 
   let posterUrl = posterMeta?.url ?? null;
@@ -390,18 +439,22 @@ async function ingestOne(item, index, total) {
   const interest = mapInterestCategories(item);
   const noticeText = lightFormatNotice(item.title, item.body_text);
   const requiredDocs = documentFiles.map((d) => d.name).filter(Boolean);
+  const defaultLabel = KIND_DEFAULT_NAME[contentKind] || "공고";
+
+  const applyEnd = toDate(item.recruit_close_at) || "2099-12-31";
 
   const row = {
-    name: item.title || `공모전 ${externalId}`,
+    name: item.title || `${defaultLabel} ${externalId}`,
     organization: item.organization_name || "미상",
     organization_type: item.organization_type || null,
+    content_kind: contentKind,
     support_amount_text:
       item.reward_manwon != null && item.reward_manwon !== ""
         ? `${item.reward_manwon}만원`
         : null,
     selection_count: item.recruit_scale ? Number(item.recruit_scale) || null : null,
     apply_start_date: toDate(item.recruit_start_at),
-    apply_end_date: toDate(item.recruit_close_at),
+    apply_end_date: applyEnd,
     announcement_date: null,
     targets: item.targets?.length ? item.targets : null,
     benefits: item.benefits?.length ? item.benefits : null,
@@ -440,13 +493,13 @@ async function ingestOne(item, index, total) {
 
   if (DRY_RUN) {
     console.log(
-      `dry-run interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
+      `dry-run kind=${contentKind} interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
     );
     return { dry: true };
   }
 
   const result = await upsertContest(row);
-  console.log(`${result.action} id=${result.id} docs=${result.docs}`);
+  console.log(`${result.action} id=${result.id} kind=${contentKind} docs=${result.docs}`);
   return result;
 }
 
@@ -457,6 +510,13 @@ async function main() {
   }
   const payload = JSON.parse(fs.readFileSync(IN_PATH, "utf8"));
   let items = payload.items || [];
+  const contentKindRaw =
+    KIND_ARG ||
+    payload.kind ||
+    items[0]?.content_category ||
+    "contest";
+  const contentKind = VALID_KINDS.has(contentKindRaw) ? contentKindRaw : "contest";
+
   if (IDS.size) items = items.filter((x) => IDS.has(String(x.id)));
   if (ONLY_WITH_DOCS) {
     items = items.filter((x) =>
@@ -466,21 +526,21 @@ async function main() {
   if (LIMIT > 0) items = items.slice(0, LIMIT);
 
   console.log(
-    `[ingest-linkareer] in=${IN_PATH} count=${items.length} skipUpload=${SKIP_UPLOAD} dryRun=${DRY_RUN}`
+    `[ingest-linkareer] kind=${contentKind} in=${IN_PATH} count=${items.length} skipUpload=${SKIP_UPLOAD} dryRun=${DRY_RUN}`
   );
 
   let ok = 0;
   let fail = 0;
   for (let i = 0; i < items.length; i += 1) {
     try {
-      await ingestOne(items[i], i, items.length);
+      await ingestOne(items[i], i, items.length, contentKind);
       ok += 1;
     } catch (err) {
       fail += 1;
       console.log("FAIL", err instanceof Error ? err.message : String(err));
     }
   }
-  console.log(`[ingest-linkareer] done ok=${ok} fail=${fail}`);
+  console.log(`[ingest-linkareer] done kind=${contentKind} ok=${ok} fail=${fail}`);
 }
 
 main().catch((err) => {

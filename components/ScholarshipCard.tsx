@@ -7,6 +7,7 @@ import { toggleBookmark } from "@/app/mypage/actions";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { formatSupportAmount } from "@/lib/support-amount";
+import { contentKindHref } from "@/lib/content-categories";
 
 export type CardScholarship = {
   id: number;
@@ -92,11 +93,11 @@ function ScholarshipCard({
   const deadlineLabel = formatDeadline(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const supportAmount = formatSupportAmount(scholarship.support_amount_text);
-  const href =
-    scholarship.content_kind === "contest"
-      ? `/contests/${scholarship.id}`
-      : `/scholarships/${scholarship.id}`;
-  const hideBookmark = scholarship.content_kind === "contest";
+  const href = contentKindHref(scholarship.content_kind, scholarship.id);
+  const hideBookmark =
+    scholarship.content_kind === "contest" ||
+    scholarship.content_kind === "education" ||
+    scholarship.content_kind === "activity";
   const kind = scholarship.content_kind ?? "scholarship";
   const kindLabel =
     kind === "contest"
@@ -114,6 +115,8 @@ function ScholarshipCard({
         : kind === "activity"
           ? "border-violet-600 text-violet-700"
           : "border-brand text-brand";
+  const unoptimizedPoster =
+    kind === "contest" || kind === "education" || kind === "activity";
 
   return (
     <div className="group flex flex-col">
@@ -129,7 +132,7 @@ function ScholarshipCard({
             fill
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, 50vw"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            unoptimized={scholarship.content_kind === "contest"}
+            unoptimized={unoptimizedPoster}
           />
         ) : (
           <div

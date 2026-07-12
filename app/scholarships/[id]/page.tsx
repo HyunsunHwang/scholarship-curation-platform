@@ -6,10 +6,10 @@ import BookmarkApplyButtons from "./BookmarkApplyButtons";
 import ScholarshipDetailHero from "./ScholarshipDetailHero";
 import ScholarshipPoster from "./ScholarshipPoster";
 import ScholarshipTabs from "./ScholarshipTabs";
-import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
-import { formatSupportAmount } from "@/lib/support-amount";
+import { resolveScholarshipBenefits } from "@/lib/benefit-categories";
+import BenefitHighlights from "@/components/BenefitHighlights";
 import ViewCountIncrementer from "./ViewCountIncrementer";
 import LiveEngagementBadges from "./LiveEngagementBadges";
 import {
@@ -19,14 +19,6 @@ import {
 } from "@/lib/scholarship-qualification-match";
 
 const posterPlaceholderGradient = "from-brand to-[#c00000]";
-
-/** "YYYY-MM-DD" → "YYYY년 M월 D일" (접수 마감에 연도까지 자연스럽게 표기) */
-function formatKoreanDate(dateStr: string): string {
-  const part = dateStr.split("T")[0];
-  const [y, m, d] = part.split("-").map((v) => parseInt(v, 10));
-  if (!y || !m || !d) return part;
-  return `${y}년 ${m}월 ${d}일`;
-}
 
 type ContactChannel = { icon: "mail" | "phone" | "info"; text: string; href: string | null };
 
@@ -115,12 +107,13 @@ export default async function ScholarshipDetailPage({
   const initialBookmarked = !!bookmarkResult;
   const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
 
-  const alwaysOpen = isAlwaysOpenRecruitment(scholarship.apply_end_date);
-  const days = alwaysOpen ? null : daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const isAdvertisement = scholarship.is_advertisement === true;
-  const supportAmount = formatSupportAmount(scholarship.support_amount_text);
-  const fullSupportAmount = supportAmount;
+  const benefitHighlights = resolveScholarshipBenefits({
+    supportTypes: scholarship.support_types,
+    supportAmountText: scholarship.support_amount_text,
+    isAdvertisement,
+  });
 
   const autoCheckApplicable = !isAdvertisement && hasAutoCheckableQualifications(scholarship);
   const qualMatchItems = user && autoCheckApplicable
@@ -206,28 +199,7 @@ export default async function ScholarshipDetailPage({
                   </span>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-gray-100 pt-6">
-                  <div>
-                    <p className="text-xs text-ink/50">{isAdvertisement ? "급여" : "지원 금액"}</p>
-                    <p
-                      className="mt-1.5 wrap-break-word text-sm font-bold text-brand"
-                      title={fullSupportAmount}
-                    >
-                      {supportAmount}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-ink/50">{isAdvertisement ? "마감" : "접수 마감"}</p>
-                    <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-bold text-ink">
-                      {alwaysOpen ? "상시모집" : formatKoreanDate(scholarship.apply_end_date)}
-                      {days !== null && days >= 0 && (
-                        <span className="inline-flex items-center rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white">
-                          D-{days}
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
+                <BenefitHighlights benefits={benefitHighlights} />
 
                 {isAdvertisement && scholarship.ad_job_role && (
                   <div className="mt-6 border-t border-gray-100 pt-6 text-sm text-ink/80">
