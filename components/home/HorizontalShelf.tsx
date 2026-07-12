@@ -3,13 +3,12 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 
-/** ShelfCard 폭·간격과 동일한 브레이크포인트 (Tailwind sm/md/lg) */
+/** ShelfCard 폭·간격 — Tailwind sm/md/lg와 맞춤 */
 function getShelfMetrics(viewportWidth: number) {
   if (viewportWidth >= 1024) return { itemWidth: 188, gap: 16 };
   if (viewportWidth >= 768) return { itemWidth: 172, gap: 16 };
@@ -17,106 +16,77 @@ function getShelfMetrics(viewportWidth: number) {
   return { itemWidth: 138, gap: 12 };
 }
 
-const OVERSCAN = 3;
-
-type VirtualHorizontalShelfProps<T> = {
+type HorizontalShelfProps<T> = {
   items: T[];
   label: string;
   getKey: (item: T, index: number) => string;
   renderItem: (item: T, index: number) => ReactNode;
 };
 
+/**
+ * 가로 선반.
+ * 가상화 없이 전체 카드를 렌더링해 스크롤 중 포스터 크기 흔들림을 막고,
+ * scroll-snap + stride 단위 이동으로 카드가 중간에 잘리지 않게 한다.
+ */
 export default function HorizontalShelf<T>({
   items,
   label,
   getKey,
   renderItem,
-}: VirtualHorizontalShelfProps<T>) {
+}: HorizontalShelfProps<T>) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(0);
   const [metrics, setMetrics] = useState(() =>
     typeof window === "undefined"
-      ? { itemWidth: 138, gap: 12 }
+      ? { itemWidth: 188, gap: 16 }
       : getShelfMetrics(window.innerWidth)
   );
 
   const stride = metrics.itemWidth + metrics.gap;
-  const totalWidth =
-    items.length === 0
-      ? 0
-      : items.length * metrics.itemWidth + (items.length - 1) * metrics.gap;
 
   const updateArrows = useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
     const maxScroll = el.scrollWidth - el.clientWidth;
-    setCanPrev(el.scrollLeft > 4);
-    setCanNext(el.scrollLeft < maxScroll - 4);
+    setCanPrev(el.scrollLeft > 2);
+    setCanNext(el.scrollLeft < maxScroll - 2);
   }, []);
-
-  const onScroll = useCallback(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    setScrollLeft(el.scrollLeft);
-    updateArrows();
-  }, [updateArrows]);
 
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
 
     const sync = () => {
-      setViewportWidth(el.clientWidth);
       setMetrics(getShelfMetrics(window.innerWidth));
-      setScrollLeft(el.scrollLeft);
       updateArrows();
     };
 
     sync();
-    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("scroll", updateArrows, { passive: true });
     const ro = new ResizeObserver(sync);
     ro.observe(el);
     window.addEventListener("resize", sync);
 
     return () => {
-      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("scroll", updateArrows);
       ro.disconnect();
       window.removeEventListener("resize", sync);
     };
-  }, [onScroll, updateArrows, items.length]);
-
-  const { startIndex, endIndex, offsetLeft } = useMemo(() => {
-    if (items.length === 0 || stride <= 0) {
-      return { startIndex: 0, endIndex: -1, offsetLeft: 0 };
-    }
-    const view = viewportWidth || metrics.itemWidth * 4;
-    const rawStart = Math.floor(scrollLeft / stride);
-    const rawEnd = Math.ceil((scrollLeft + view) / stride);
-    const start = Math.max(0, rawStart - OVERSCAN);
-    const end = Math.min(items.length - 1, rawEnd + OVERSCAN);
-    return {
-      startIndex: start,
-      endIndex: end,
-      offsetLeft: start * stride,
-    };
-  }, [items.length, metrics.itemWidth, scrollLeft, stride, viewportWidth]);
-
-  const visibleItems = useMemo(() => {
-    if (endIndex < startIndex) return [];
-    return items.slice(startIndex, endIndex + 1).map((item, i) => ({
-      item,
-      index: startIndex + i,
-    }));
-  }, [endIndex, items, startIndex]);
+  }, [updateArrows, items.length]);
 
   function scrollByDir(dir: -1 | 1) {
     const el = scrollerRef.current;
-    if (!el) return;
-    const amount = Math.max(el.clientWidth * 0.75, 240);
-    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+    if (!el || stride <= 0) return;
+
+    // 화면에 보이는 카드 수만큼 이동하되, 항상 카드 시작점에 스냅
+    const page = Math.max(1, Math.floor((el.clientWidth + metrics.gap) / stride));
+    const currentIndex = Math.round(el.scrollLeft / stride);
+    const nextIndex = Math.max(
+      0,
+      Math.min(items.length - 1, currentIndex + dir * page)
+    );
+    el.scrollTo({ left: nextIndex * stride, behavior: "smooth" });
   }
 
   return (
@@ -179,28 +149,27 @@ export default function HorizontalShelf<T>({
         ref={scrollerRef}
         role="list"
         aria-label={label}
-        className="-mx-1 overflow-x-auto scroll-smooth px-1 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="snap-x snap-mandatory overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <div style={{ width: Math.max(totalWidth, 0) }}>
-          <div
-            className="flex"
-            style={{
-              gap: metrics.gap,
-              transform: `translate3d(${offsetLeft}px, 0, 0)`,
-              willChange: "transform",
-            }}
-          >
-            {visibleItems.map(({ item, index }) => (
-              <div
-                key={getKey(item, index)}
-                role="listitem"
-                className="shrink-0"
-                style={{ width: metrics.itemWidth }}
-              >
-                {renderItem(item, index)}
-              </div>
-            ))}
-          </div>
+        <div
+          className="flex"
+          style={{
+            gap: metrics.gap,
+            // 첫/끝 카드가 컨테이너에 잘리지 않도록 좌우 여백
+            paddingLeft: 2,
+            paddingRight: 2,
+          }}
+        >
+          {items.map((item, index) => (
+            <div
+              key={getKey(item, index)}
+              role="listitem"
+              className="shrink-0 snap-start"
+              style={{ width: metrics.itemWidth }}
+            >
+              {renderItem(item, index)}
+            </div>
+          ))}
         </div>
       </div>
     </div>

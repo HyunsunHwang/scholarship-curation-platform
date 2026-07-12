@@ -99,16 +99,16 @@ export default function ScholarshipCard({
     <div className="group flex flex-col">
       <Link
         href={href}
-        className="relative block overflow-hidden rounded-xl aspect-2/3 sm:rounded-2xl"
+        className="relative block aspect-2/3 w-full overflow-hidden rounded-xl sm:rounded-2xl"
       >
         {scholarship.poster_image_url ? (
           <Image
             src={scholarship.poster_image_url}
             alt={displayName}
             fill
-            sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, 50vw"
+            sizes="(max-width: 639px) 138px, (max-width: 767px) 156px, (max-width: 1023px) 172px, 188px"
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div
