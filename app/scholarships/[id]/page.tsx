@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Navbar from "@/components/Navbar";
+import SpotifyTopNav from "@/components/home/SpotifyTopNav";
+import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
 import ScholarshipDetailHero from "./ScholarshipDetailHero";
@@ -161,14 +162,17 @@ export default async function ScholarshipDetailPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* 데스크톱만 상단 네비 — 모바일은 에어비앤비식 풀블리드 히어로 */}
+      {/* 데스크톱만 검색 헤더 — 모바일은 에어비앤비식 풀블리드 히어로 */}
       <div className="hidden md:block">
-        <Navbar
-          currentUser={user}
-          currentUserRole={navContext.role}
-          currentUserName={navContext.name}
-          urgentBookmarkCount={navContext.urgentBookmarkCount}
-        />
+        <HomeSearchRoot>
+          <SpotifyTopNav
+            variant="compact"
+            currentUser={user}
+            currentUserRole={navContext.role}
+            currentUserName={navContext.name}
+            urgentBookmarkCount={navContext.urgentBookmarkCount}
+          />
+        </HomeSearchRoot>
       </div>
 
       <main className="relative flex-1 bg-white">

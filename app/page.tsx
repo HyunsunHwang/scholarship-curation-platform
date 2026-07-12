@@ -27,11 +27,17 @@ const SpotifyHomeShell = dynamic(
   }
 );
 
-export default async function Home() {
-  const [homeScholarships, homeContests] = await Promise.all([
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const [{ q }, homeScholarships, homeContests] = await Promise.all([
+    searchParams,
     getCachedHomeScholarships(),
     getCachedHomeContests(),
   ]);
+  const initialQuery = typeof q === "string" ? q : "";
 
   const homeFeedItems: CardScholarship[] = [
     ...homeContests,
@@ -58,7 +64,7 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-white">
-      <HomeSearchRoot>
+      <HomeSearchRoot initialQuery={initialQuery}>
         <SpotifyTopNav
           currentUser={user}
           currentUserRole={navContext.role}

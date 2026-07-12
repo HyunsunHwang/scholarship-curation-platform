@@ -1,7 +1,8 @@
 ﻿import { notFound } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Navbar from "@/components/Navbar";
+import SpotifyTopNav from "@/components/home/SpotifyTopNav";
+import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import { createClient } from "@/lib/supabase/server";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import BookmarkApplyButtons from "@/app/scholarships/[id]/BookmarkApplyButtons";
@@ -210,12 +211,15 @@ export default async function OpportunityDetailPage({
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <div className="hidden md:block">
-        <Navbar
-          currentUser={user}
-          currentUserRole={navContext.role}
-          currentUserName={navContext.name}
-          urgentBookmarkCount={navContext.urgentBookmarkCount}
-        />
+        <HomeSearchRoot>
+          <SpotifyTopNav
+            variant="compact"
+            currentUser={user}
+            currentUserRole={navContext.role}
+            currentUserName={navContext.name}
+            urgentBookmarkCount={navContext.urgentBookmarkCount}
+          />
+        </HomeSearchRoot>
       </div>
 
       <main className="relative flex-1 bg-white">

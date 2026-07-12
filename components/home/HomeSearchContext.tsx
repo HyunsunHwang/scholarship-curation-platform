@@ -21,8 +21,14 @@ type HomeSearchContextValue = {
 
 const HomeSearchContext = createContext<HomeSearchContextValue | null>(null);
 
-export function HomeSearchProvider({ children }: { children: ReactNode }) {
-  const [query, setQueryState] = useState("");
+export function HomeSearchProvider({
+  children,
+  initialQuery = "",
+}: {
+  children: ReactNode;
+  initialQuery?: string;
+}) {
+  const [query, setQueryState] = useState(initialQuery);
   const [category, setCategoryState] = useState<ContentCategoryKey>("all");
   const deferredQuery = useDeferredValue(query);
   const setQuery = useCallback((next: string) => {

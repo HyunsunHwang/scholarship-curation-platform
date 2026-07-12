@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
@@ -17,6 +18,8 @@ type AirbnbHeaderProps = {
   displayInitial: string;
   profileTitle: string;
   urgentBookmarkCount: number;
+  /** expandable(홈): 스크롤에 따라 카테고리↔검색. compact(상세): 항상 검색 헤더 */
+  variant?: "expandable" | "compact";
 };
 
 /** 접힘: 이 이상 스크롤하면 컴팩트 / 펼침: 이 미만이면 확장 (히스테리시스로 출렁임 방지) */
@@ -115,12 +118,29 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
+function useNavigateHomeSearch() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { query } = useHomeSearch();
+
+  return () => {
+    if (pathname === "/") return;
+    const q = query.trim();
+    router.push(q ? `/?q=${encodeURIComponent(q)}` : "/");
+  };
+}
+
 function CompactSearch({ className }: { className?: string }) {
   const { query, setQuery } = useHomeSearch();
+  const navigateHomeSearch = useNavigateHomeSearch();
 
   return (
-    <div
+    <form
       className={`flex items-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg focus-within:shadow-lg ${className ?? ""}`}
+      onSubmit={(e) => {
+        e.preventDefault();
+        navigateHomeSearch();
+      }}
     >
       <input
         type="search"
@@ -131,10 +151,14 @@ function CompactSearch({ className }: { className?: string }) {
         autoComplete="off"
         aria-label="공고 검색"
       />
-      <span className="m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white">
+      <button
+        type="submit"
+        className="m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white"
+        aria-label="검색"
+      >
         <SearchIcon className="h-3 w-3" />
-      </span>
-    </div>
+      </button>
+    </form>
   );
 }
 
@@ -288,13 +312,22 @@ export default function AirbnbHeader({
   displayInitial,
   profileTitle,
   urgentBookmarkCount,
+  variant = "expandable",
 }: AirbnbHeaderProps) {
   const { query, setQuery } = useHomeSearch();
-  const [compact, setCompact] = useState(false);
-  const compactRef = useRef(false);
+  const navigateHomeSearch = useNavigateHomeSearch();
+  const forceCompact = variant === "compact";
+  const [compact, setCompact] = useState(forceCompact);
+  const compactRef = useRef(forceCompact);
   const rafRef = useRef(0);
 
   useEffect(() => {
+    if (forceCompact) {
+      compactRef.current = true;
+      setCompact(true);
+      return;
+    }
+
     const applyScroll = () => {
       rafRef.current = 0;
       const y = window.scrollY;
@@ -321,7 +354,7 @@ export default function AirbnbHeader({
       window.removeEventListener("scroll", onScroll);
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [forceCompact]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
@@ -333,39 +366,41 @@ export default function AirbnbHeader({
           className="-ml-0.5 h-10 max-h-10 max-w-[140px] sm:h-12 sm:max-h-12 sm:max-w-[180px] md:h-14 md:max-h-14 md:max-w-[210px]"
         />
 
-        {/* 데스크톱 중앙 — 크로스페이드 */}
+        {/* 데스크톱 중앙 — 크로스페이드 (compact 변형은 검색만) */}
         <div className="absolute left-1/2 top-1/2 hidden h-11 w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 md:block">
-          <div
-            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              compact
-                ? "pointer-events-none translate-y-1 scale-95 opacity-0"
-                : "pointer-events-auto translate-y-0 scale-100 opacity-100"
-            }`}
-            aria-hidden={compact}
-          >
-            <CategoryTabs />
-          </div>
+          {!forceCompact ? (
+            <div
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                compact
+                  ? "pointer-events-none translate-y-1 scale-95 opacity-0"
+                  : "pointer-events-auto translate-y-0 scale-100 opacity-100"
+              }`}
+              aria-hidden={compact}
+            >
+              <CategoryTabs />
+            </div>
+          ) : null}
           <div
             className={`absolute inset-0 flex items-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              compact
+              forceCompact || compact
                 ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
                 : "pointer-events-none -translate-y-1 scale-95 opacity-0"
             }`}
-            aria-hidden={!compact}
+            aria-hidden={!forceCompact && !compact}
           >
             <CompactSearch className="w-full" />
           </div>
         </div>
 
-        {/* 모바일: 축소 시 검색 */}
+        {/* 모바일: 축소 시 검색 / compact 변형은 항상 */}
         <div className="min-w-0 flex-1 md:hidden">
           <div
             className={`transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              compact
+              forceCompact || compact
                 ? "pointer-events-auto scale-100 opacity-100"
                 : "pointer-events-none scale-95 opacity-0"
             }`}
-            aria-hidden={!compact}
+            aria-hidden={!forceCompact && !compact}
           >
             <CompactSearch />
           </div>
@@ -380,53 +415,64 @@ export default function AirbnbHeader({
         />
       </div>
 
-      {/* 확장 영역(카테고리 모바일 + 큰 검색) — grid로 자연스럽게 높이 축소 */}
-      <div
-        className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-        style={{ gridTemplateRows: compact ? "0fr" : "1fr" }}
-        aria-hidden={compact}
-      >
-        <div className="min-h-0 overflow-hidden">
-          <div
-            className={`transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              compact ? "pointer-events-none opacity-0" : "opacity-100"
-            }`}
-          >
-            <div className="px-2 pb-0.5 md:hidden">
-              <CategoryTabs />
-            </div>
+      {/* 확장 영역(카테고리 모바일 + 큰 검색) — compact 변형에서는 숨김 */}
+      {!forceCompact ? (
+        <div
+          className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{ gridTemplateRows: compact ? "0fr" : "1fr" }}
+          aria-hidden={compact}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div
+              className={`transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                compact ? "pointer-events-none opacity-0" : "opacity-100"
+              }`}
+            >
+              <div className="px-2 pb-0.5 md:hidden">
+                <CategoryTabs />
+              </div>
 
-            <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-3 pt-0.5 sm:px-6 lg:px-10">
-              <div
-                className={`flex w-full max-w-xl origin-top items-center rounded-full border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] focus-within:shadow-[0_3px_12px_rgba(0,0,0,0.1)] ${
-                  compact
-                    ? "translate-y-[-6px] scale-[0.97]"
-                    : "translate-y-0 scale-100"
-                }`}
-              >
-                <div className="min-w-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5">
-                  <span className="block text-[10px] font-bold leading-tight text-ink">
-                    검색
-                  </span>
-                  <input
-                    type="search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="어떤 공고를 찾고 계신가요?"
-                    className="w-full bg-transparent text-sm leading-tight text-ink placeholder:text-ink/40 outline-none"
-                    autoComplete="off"
-                    aria-label="공고 검색"
+              <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-3 pt-0.5 sm:px-6 lg:px-10">
+                <form
+                  className={`flex w-full max-w-xl origin-top items-center rounded-full border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] focus-within:shadow-[0_3px_12px_rgba(0,0,0,0.1)] ${
+                    compact
+                      ? "translate-y-[-6px] scale-[0.97]"
+                      : "translate-y-0 scale-100"
+                  }`}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    navigateHomeSearch();
+                  }}
+                >
+                  <div className="min-w-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5">
+                    <span className="block text-[10px] font-bold leading-tight text-ink">
+                      검색
+                    </span>
+                    <input
+                      type="search"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="어떤 공고를 찾고 계신가요?"
+                      className="w-full bg-transparent text-sm leading-tight text-ink placeholder:text-ink/40 outline-none"
+                      autoComplete="off"
+                      aria-label="공고 검색"
+                      tabIndex={compact ? -1 : 0}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="m-1.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm"
+                    aria-label="검색"
                     tabIndex={compact ? -1 : 0}
-                  />
-                </div>
-                <span className="m-1.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm">
-                  <SearchIcon className="h-3.5 w-3.5" />
-                </span>
+                  >
+                    <SearchIcon className="h-3.5 w-3.5" />
+                  </button>
+                </form>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
     </header>
   );
 }

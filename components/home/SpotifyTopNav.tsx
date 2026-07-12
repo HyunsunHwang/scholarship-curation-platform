@@ -8,11 +8,14 @@ export default async function SpotifyTopNav({
   currentUserRole,
   currentUserName,
   urgentBookmarkCount: urgentBookmarkCountProp,
+  variant = "expandable",
 }: {
   currentUser?: User | null;
   currentUserRole?: string | null;
   currentUserName?: string | null;
   urgentBookmarkCount?: number;
+  /** compact: 상세 등 — 항상 검색 헤더(카테고리 탭 없음) */
+  variant?: "expandable" | "compact";
 } = {}) {
   const siteSettingsPromise = getCachedSiteSettings();
   let supabase: Awaited<ReturnType<typeof createClient>> | null = null;
@@ -74,6 +77,7 @@ export default async function SpotifyTopNav({
       displayInitial={displayInitial}
       profileTitle={profileTitle}
       urgentBookmarkCount={urgentBookmarkCount}
+      variant={variant}
     />
   );
 }
