@@ -123,19 +123,19 @@ function CompactSearch({ className }: { className?: string }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="공고 검색"
-        className="min-w-0 flex-1 bg-transparent px-4 py-2.5 text-sm font-semibold text-ink placeholder:font-medium placeholder:text-ink/45 outline-none sm:px-5"
+        className="min-w-0 flex-1 bg-transparent px-3.5 py-1.5 text-sm font-semibold text-ink placeholder:font-medium placeholder:text-ink/45 outline-none sm:px-4"
         autoComplete="off"
         aria-label="공고 검색"
       />
       <span
-        className="hidden h-6 w-px shrink-0 bg-gray-200 sm:block"
+        className="hidden h-5 w-px shrink-0 bg-gray-200 sm:block"
         aria-hidden
       />
-      <span className="hidden shrink-0 px-3 text-sm text-ink/45 sm:inline">
+      <span className="hidden shrink-0 px-2.5 text-xs text-ink/45 sm:inline">
         키워드
       </span>
-      <span className="m-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-white">
-        <SearchIcon className="h-3.5 w-3.5" />
+      <span className="m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white">
+        <SearchIcon className="h-3 w-3" />
       </span>
     </div>
   );
@@ -161,19 +161,19 @@ function CategoryTabs({ compact }: { compact?: boolean }) {
             role="tab"
             aria-selected={active}
             onClick={() => setCategory(tab.key)}
-            className={`group relative flex shrink-0 flex-col items-center gap-1 px-2.5 pb-2.5 pt-1 text-[11px] font-semibold transition-colors sm:px-3.5 sm:text-sm ${
+            className={`group relative flex shrink-0 flex-col items-center gap-0.5 px-2 pb-1.5 pt-0.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ${
               active ? "text-ink" : "text-ink/45 hover:text-ink/75"
             }`}
           >
             <CategoryIcon
               categoryKey={tab.key}
-              className={`h-5 w-5 transition-opacity sm:h-6 sm:w-6 ${
+              className={`h-4 w-4 transition-opacity sm:h-5 sm:w-5 ${
                 active ? "opacity-100" : "opacity-70 group-hover:opacity-100"
               }`}
             />
             <span className="whitespace-nowrap">{tab.label}</span>
             <span
-              className={`absolute inset-x-1.5 bottom-0 h-[2.5px] rounded-full transition-colors sm:inset-x-2 ${
+              className={`absolute inset-x-1.5 bottom-0 h-[2px] rounded-full transition-colors sm:inset-x-2 ${
                 active ? "bg-ink" : "bg-transparent group-hover:bg-ink/20"
               }`}
             />
@@ -320,17 +320,17 @@ export default function AirbnbHeader({
     <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90">
       {/* 상단: 로고 | 카테고리(확장) / 컴팩트검색(축소) | 유저 */}
       <div
-        className={`relative mx-auto flex max-w-[1760px] items-center justify-between gap-2 px-3 transition-[height] duration-300 ease-out sm:gap-3 sm:px-6 lg:px-10 ${
-          scrolled ? "h-16" : "h-[72px] sm:h-[80px]"
+        className={`relative mx-auto flex max-w-[1760px] items-center justify-between gap-2 pl-0.5 pr-3 transition-[height] duration-300 ease-out sm:gap-3 sm:pl-1 sm:pr-6 lg:pl-2 lg:pr-10 ${
+          scrolled ? "h-14" : "h-16 sm:h-[68px]"
         }`}
       >
         <BrandLogo
           logoSrc={logoSrc || undefined}
           priority
-          className={`transition-all duration-300 ${
+          className={`-ml-1 transition-all duration-300 sm:-ml-1.5 ${
             scrolled
-              ? "h-9 max-h-9 max-w-[110px] sm:h-10 sm:max-h-10 sm:max-w-[140px]"
-              : "h-10 max-h-10 max-w-[130px] sm:h-12 sm:max-h-12 sm:max-w-[170px] md:h-14 md:max-h-14 md:max-w-[190px]"
+              ? "h-10 max-h-10 max-w-[140px] sm:h-11 sm:max-h-11 sm:max-w-[170px]"
+              : "h-11 max-h-11 max-w-[150px] sm:h-14 sm:max-h-14 sm:max-w-[200px] md:h-16 md:max-h-16 md:max-w-[230px]"
           }`}
         />
 
@@ -380,10 +380,10 @@ export default function AirbnbHeader({
         className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
           scrolled
             ? "pointer-events-none max-h-0 opacity-0"
-            : "max-h-20 opacity-100"
+            : "max-h-16 opacity-100"
         }`}
       >
-        <div className="px-2 pb-1">
+        <div className="px-2 pb-0.5">
           <CategoryTabs />
         </div>
       </div>
@@ -393,25 +393,27 @@ export default function AirbnbHeader({
         className={`overflow-hidden transition-all duration-300 ease-out ${
           scrolled
             ? "pointer-events-none max-h-0 opacity-0"
-            : "max-h-28 opacity-100"
+            : "max-h-20 opacity-100"
         }`}
       >
-        <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-5 pt-1 sm:px-6 lg:px-10">
-          <div className="flex w-full max-w-2xl items-center rounded-full border border-gray-200 bg-white shadow-[0_3px_12px_rgba(0,0,0,0.08)] transition hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] focus-within:shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
-            <div className="min-w-0 flex-1 px-5 py-3.5 sm:px-6 sm:py-4">
-              <span className="block text-xs font-bold text-ink">검색</span>
+        <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-3 pt-0.5 sm:px-6 lg:px-10">
+          <div className="flex w-full max-w-xl items-center rounded-full border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] focus-within:shadow-[0_3px_12px_rgba(0,0,0,0.1)]">
+            <div className="min-w-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5">
+              <span className="block text-[10px] font-bold leading-tight text-ink">
+                검색
+              </span>
               <input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="어떤 공고를 찾고 계신가요?"
-                className="w-full bg-transparent text-sm text-ink placeholder:text-ink/40 outline-none"
+                className="w-full bg-transparent text-sm leading-tight text-ink placeholder:text-ink/40 outline-none"
                 autoComplete="off"
                 aria-label="공고 검색"
               />
             </div>
-            <span className="m-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm sm:h-12 sm:w-12">
-              <SearchIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="m-1.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm sm:h-10 sm:w-10">
+              <SearchIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </span>
           </div>
         </div>
