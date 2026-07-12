@@ -14,9 +14,6 @@ import { useHomeSearch } from "./HomeSearchContext";
 import HorizontalShelf from "./HorizontalShelf";
 
 const TRENDING_LIMIT = 16;
-/** 전체 공고 선반 초기 노출 수 — 나머지는 더보기로 */
-const ALL_SHELF_INITIAL = 36;
-const ALL_SHELF_STEP = 36;
 
 function itemKey(item: CardScholarship) {
   return `${item.content_kind ?? "scholarship"}-${item.id}`;
@@ -54,15 +51,10 @@ function ShelfCard({
   bookmarked: boolean;
 }) {
   return (
-    <div
-      role="listitem"
-      className="w-[138px] shrink-0 sm:w-[156px] md:w-[172px] lg:w-[188px]"
-    >
-      <ScholarshipCard
-        scholarship={scholarship}
-        initialBookmarked={bookmarked}
-      />
-    </div>
+    <ScholarshipCard
+      scholarship={scholarship}
+      initialBookmarked={bookmarked}
+    />
   );
 }
 
@@ -74,17 +66,8 @@ export default function HomeFeed({
   bookmarkedIds?: number[];
 }) {
   const [category, setCategory] = useState<ContentCategoryKey>("all");
-  const [allVisibleCount, setAllVisibleCount] = useState(ALL_SHELF_INITIAL);
   const { query: searchQuery, deferredQuery: deferredSearch } = useHomeSearch();
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
-
-  // 검색어·카테고리 변경 시 더보기 커서 리셋
-  const filterKey = `${category}|${deferredSearch}`;
-  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
-  if (prevFilterKey !== filterKey) {
-    setPrevFilterKey(filterKey);
-    setAllVisibleCount(ALL_SHELF_INITIAL);
-  }
 
   const filtered = useMemo(() => {
     const byCategory = filterByCategory(scholarships, category);
@@ -120,25 +103,24 @@ export default function HomeFeed({
         daysUntilApplyDeadlineKorea(b.apply_end_date)
       );
     });
-    // 인기 선반에 이미 올린 카드는 전체 선반에서 제외해 DOM 이중 마운트 방지
     if (trendingKeys.size === 0) return sorted;
     return sorted.filter((item) => !trendingKeys.has(itemKey(item)));
   }, [filtered, trendingKeys]);
-
-  const visibleAll = useMemo(
-    () => allSorted.slice(0, allVisibleCount),
-    [allSorted, allVisibleCount]
-  );
-  const hasMoreAll = allSorted.length > visibleAll.length;
 
   const emptyCategory = !categoryHasData(category);
   const categoryLabel =
     CONTENT_CATEGORIES.find((c) => c.key === category)?.label ?? "";
   const totalShown = trending.length + allSorted.length;
 
+  function isBookmarked(scholarship: CardScholarship) {
+    return (
+      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
+      bookmarkedSet.has(scholarship.id)
+    );
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-white lg:rounded-2xl">
-      {/* 카테고리 탭 */}
       <div className="sticky top-0 z-10 border-b border-gray-100 bg-white/95 px-4 py-3 backdrop-blur sm:px-5">
         <div
           role="tablist"
@@ -199,7 +181,6 @@ export default function HomeFeed({
           </div>
         ) : (
           <>
-            {/* 인기 상승 공고 — 검색 중이 아닐 때만 */}
             {trending.length > 0 && (
               <section aria-labelledby="trending-heading">
                 <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
@@ -216,22 +197,20 @@ export default function HomeFeed({
                     모두 표시
                   </Link>
                 </div>
-                <HorizontalShelf label="인기 상승 공고">
-                  {trending.map((scholarship) => (
+                <HorizontalShelf
+                  label="인기 상승 공고"
+                  items={trending}
+                  getKey={(s) => `trend-${itemKey(s)}`}
+                  renderItem={(scholarship) => (
                     <ShelfCard
-                      key={`trend-${itemKey(scholarship)}`}
                       scholarship={scholarship}
-                      bookmarked={
-                        (scholarship.content_kind ?? "scholarship") ===
-                          "scholarship" && bookmarkedSet.has(scholarship.id)
-                      }
+                      bookmarked={isBookmarked(scholarship)}
                     />
-                  ))}
-                </HorizontalShelf>
+                  )}
+                />
               </section>
             )}
 
-            {/* 전체 공고 — 가로 스크롤 */}
             <section
               id="all-announcements"
               aria-labelledby="all-heading"
@@ -259,31 +238,17 @@ export default function HomeFeed({
                   </p>
                 </div>
               </div>
-              <HorizontalShelf label={isSearching ? "검색 결과" : "전체 공고"}>
-                {visibleAll.map((scholarship) => (
+              <HorizontalShelf
+                label={isSearching ? "검색 결과" : "전체 공고"}
+                items={allSorted}
+                getKey={(s) => itemKey(s)}
+                renderItem={(scholarship) => (
                   <ShelfCard
-                    key={itemKey(scholarship)}
                     scholarship={scholarship}
-                    bookmarked={
-                      (scholarship.content_kind ?? "scholarship") ===
-                        "scholarship" && bookmarkedSet.has(scholarship.id)
-                    }
+                    bookmarked={isBookmarked(scholarship)}
                   />
-                ))}
-              </HorizontalShelf>
-              {hasMoreAll && (
-                <div className="mt-4 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setAllVisibleCount((n) => n + ALL_SHELF_STEP)
-                    }
-                    className="rounded-full border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-ink/70 transition-colors hover:border-brand/40 hover:text-brand"
-                  >
-                    더 보기 ({allSorted.length - visibleAll.length}개)
-                  </button>
-                </div>
-              )}
+                )}
+              />
             </section>
           </>
         )}
