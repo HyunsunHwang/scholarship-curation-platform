@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
 import {
@@ -18,6 +18,10 @@ type AirbnbHeaderProps = {
   profileTitle: string;
   urgentBookmarkCount: number;
 };
+
+/** 접힘: 이 이상 스크롤하면 컴팩트 / 펼침: 이 미만이면 확장 (히스테리시스로 출렁임 방지) */
+const COLLAPSE_AT = 100;
+const EXPAND_AT = 8;
 
 function CategoryIcon({
   categoryKey,
@@ -116,7 +120,7 @@ function CompactSearch({ className }: { className?: string }) {
 
   return (
     <div
-      className={`flex items-center rounded-full border border-gray-200 bg-white shadow-md transition hover:shadow-lg focus-within:shadow-lg ${className ?? ""}`}
+      className={`flex items-center rounded-full border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg focus-within:shadow-lg ${className ?? ""}`}
     >
       <input
         type="search"
@@ -127,13 +131,6 @@ function CompactSearch({ className }: { className?: string }) {
         autoComplete="off"
         aria-label="공고 검색"
       />
-      <span
-        className="hidden h-5 w-px shrink-0 bg-gray-200 sm:block"
-        aria-hidden
-      />
-      <span className="hidden shrink-0 px-2.5 text-xs text-ink/45 sm:inline">
-        키워드
-      </span>
       <span className="m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white">
         <SearchIcon className="h-3 w-3" />
       </span>
@@ -141,16 +138,14 @@ function CompactSearch({ className }: { className?: string }) {
   );
 }
 
-function CategoryTabs({ compact }: { compact?: boolean }) {
+function CategoryTabs() {
   const { category, setCategory } = useHomeSearch();
 
   return (
     <nav
       role="tablist"
       aria-label="공고 종류"
-      className={`flex items-end justify-center gap-0.5 overflow-x-auto [scrollbar-width:none] sm:gap-1 ${
-        compact ? "gap-0" : ""
-      }`}
+      className="flex items-end justify-center gap-0.5 overflow-x-auto [scrollbar-width:none] sm:gap-1"
     >
       {CONTENT_CATEGORIES.map((tab) => {
         const active = category === tab.key;
@@ -161,19 +156,19 @@ function CategoryTabs({ compact }: { compact?: boolean }) {
             role="tab"
             aria-selected={active}
             onClick={() => setCategory(tab.key)}
-            className={`group relative flex shrink-0 flex-col items-center gap-0.5 px-2 pb-1.5 pt-0.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ${
+            className={`group relative flex shrink-0 flex-col items-center gap-0.5 px-2.5 pb-2 pt-0.5 text-[11px] font-semibold transition-colors sm:px-3.5 sm:text-xs ${
               active ? "text-ink" : "text-ink/45 hover:text-ink/75"
             }`}
           >
             <CategoryIcon
               categoryKey={tab.key}
-              className={`h-4 w-4 transition-opacity sm:h-5 sm:w-5 ${
+              className={`h-5 w-5 sm:h-5 sm:w-5 ${
                 active ? "opacity-100" : "opacity-70 group-hover:opacity-100"
               }`}
             />
             <span className="whitespace-nowrap">{tab.label}</span>
             <span
-              className={`absolute inset-x-1.5 bottom-0 h-[2px] rounded-full transition-colors sm:inset-x-2 ${
+              className={`absolute inset-x-2 bottom-0 h-[2px] rounded-full ${
                 active ? "bg-ink" : "bg-transparent group-hover:bg-ink/20"
               }`}
             />
@@ -190,14 +185,12 @@ function UserActions({
   displayInitial,
   profileTitle,
   urgentBookmarkCount,
-  compact,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
   displayInitial: string;
   profileTitle: string;
   urgentBookmarkCount: number;
-  compact?: boolean;
 }) {
   return (
     <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
@@ -213,9 +206,7 @@ function UserActions({
           )}
           <Link
             href="/mypage"
-            className={`relative inline-flex items-center justify-center rounded-full bg-beige text-ink/70 transition-colors hover:bg-cream hover:text-brand ${
-              compact ? "h-8 w-8" : "h-9 w-9 sm:h-10 sm:w-10"
-            }`}
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-beige text-ink/70 transition-colors hover:bg-cream hover:text-brand"
             aria-label="마이페이지"
           >
             <svg
@@ -248,9 +239,7 @@ function UserActions({
           </form>
           <Link
             href="/mypage"
-            className={`flex items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm transition hover:shadow-md ${
-              compact ? "gap-1.5 py-1 pl-2.5 pr-1" : "gap-2 py-1.5 pl-3 pr-1.5"
-            }`}
+            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-2.5 pr-1 shadow-sm transition hover:shadow-md"
             aria-label="프로필"
             title={profileTitle}
           >
@@ -267,11 +256,7 @@ function UserActions({
                 clipRule="evenodd"
               />
             </svg>
-            <span
-              className={`flex items-center justify-center rounded-full bg-brand font-bold text-white ${
-                compact ? "h-7 w-7 text-xs" : "h-8 w-8 text-sm"
-              }`}
-            >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
               {displayInitial}
             </span>
           </Link>
@@ -305,64 +290,85 @@ export default function AirbnbHeader({
   urgentBookmarkCount,
 }: AirbnbHeaderProps) {
   const { query, setQuery } = useHomeSearch();
-  const [scrolled, setScrolled] = useState(false);
+  const [compact, setCompact] = useState(false);
+  const compactRef = useRef(false);
+  const rafRef = useRef(0);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24);
+    const applyScroll = () => {
+      rafRef.current = 0;
+      const y = window.scrollY;
+
+      // 히스테리시스: 중간 구간(EXPAND_AT ~ COLLAPSE_AT)에서는 상태 유지
+      let resolved = compactRef.current;
+      if (!compactRef.current && y >= COLLAPSE_AT) resolved = true;
+      if (compactRef.current && y <= EXPAND_AT) resolved = false;
+
+      if (resolved !== compactRef.current) {
+        compactRef.current = resolved;
+        setCompact(resolved);
+      }
     };
-    onScroll();
+
+    const onScroll = () => {
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(applyScroll);
+    };
+
+    applyScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
       {/* 상단: 로고 | 카테고리(확장) / 컴팩트검색(축소) | 유저 */}
-      <div
-        className={`relative mx-auto flex max-w-[1760px] items-center justify-between gap-2 pl-0.5 pr-3 transition-[height] duration-300 ease-out sm:gap-3 sm:pl-1 sm:pr-6 lg:pl-2 lg:pr-10 ${
-          scrolled ? "h-14" : "h-16 sm:h-[68px]"
-        }`}
-      >
+      <div className="relative mx-auto flex h-14 max-w-[1760px] items-center justify-between gap-2 pl-1 pr-3 sm:h-[60px] sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
         <BrandLogo
           logoSrc={logoSrc || undefined}
           priority
-          className={`-ml-1 transition-all duration-300 sm:-ml-1.5 ${
-            scrolled
-              ? "h-10 max-h-10 max-w-[140px] sm:h-11 sm:max-h-11 sm:max-w-[170px]"
-              : "h-11 max-h-11 max-w-[150px] sm:h-14 sm:max-h-14 sm:max-w-[200px] md:h-16 md:max-h-16 md:max-w-[230px]"
-          }`}
+          className="-ml-0.5 h-10 max-h-10 max-w-[140px] sm:h-12 sm:max-h-12 sm:max-w-[180px] md:h-14 md:max-h-14 md:max-w-[210px]"
         />
 
-        {/* 중앙: 확장=카테고리, 축소=컴팩트 검색 */}
-        <div className="absolute left-1/2 top-1/2 hidden w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 md:block">
+        {/* 데스크톱 중앙 — 크로스페이드 */}
+        <div className="absolute left-1/2 top-1/2 hidden h-11 w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 md:block">
           <div
-            className={`transition-all duration-300 ${
-              scrolled
-                ? "pointer-events-none absolute inset-0 scale-95 opacity-0"
-                : "pointer-events-auto relative scale-100 opacity-100"
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              compact
+                ? "pointer-events-none translate-y-1 scale-95 opacity-0"
+                : "pointer-events-auto translate-y-0 scale-100 opacity-100"
             }`}
+            aria-hidden={compact}
           >
             <CategoryTabs />
           </div>
           <div
-            className={`transition-all duration-300 ${
-              scrolled
-                ? "pointer-events-auto relative scale-100 opacity-100"
-                : "pointer-events-none absolute inset-0 scale-95 opacity-0"
+            className={`absolute inset-0 flex items-center transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              compact
+                ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+                : "pointer-events-none -translate-y-1 scale-95 opacity-0"
             }`}
+            aria-hidden={!compact}
           >
-            <CompactSearch />
+            <CompactSearch className="w-full" />
           </div>
         </div>
 
-        {/* 모바일 중앙: 축소 시 검색 */}
-        <div
-          className={`min-w-0 flex-1 md:hidden ${
-            scrolled ? "" : "pointer-events-none max-w-0 overflow-hidden opacity-0"
-          }`}
-        >
-          <CompactSearch />
+        {/* 모바일: 축소 시 검색 */}
+        <div className="min-w-0 flex-1 md:hidden">
+          <div
+            className={`transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              compact
+                ? "pointer-events-auto scale-100 opacity-100"
+                : "pointer-events-none scale-95 opacity-0"
+            }`}
+            aria-hidden={!compact}
+          >
+            <CompactSearch />
+          </div>
         </div>
 
         <UserActions
@@ -371,50 +377,53 @@ export default function AirbnbHeader({
           displayInitial={displayInitial}
           profileTitle={profileTitle}
           urgentBookmarkCount={urgentBookmarkCount}
-          compact={scrolled}
         />
       </div>
 
-      {/* 모바일 확장: 카테고리 (md 미만, 검색바 위) */}
+      {/* 확장 영역(카테고리 모바일 + 큰 검색) — grid로 자연스럽게 높이 축소 */}
       <div
-        className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
-          scrolled
-            ? "pointer-events-none max-h-0 opacity-0"
-            : "max-h-16 opacity-100"
-        }`}
+        className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={{ gridTemplateRows: compact ? "0fr" : "1fr" }}
+        aria-hidden={compact}
       >
-        <div className="px-2 pb-0.5">
-          <CategoryTabs />
-        </div>
-      </div>
-
-      {/* 확장 모드: 큰 검색바 (카테고리 아래) */}
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-out ${
-          scrolled
-            ? "pointer-events-none max-h-0 opacity-0"
-            : "max-h-20 opacity-100"
-        }`}
-      >
-        <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-3 pt-0.5 sm:px-6 lg:px-10">
-          <div className="flex w-full max-w-xl items-center rounded-full border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] focus-within:shadow-[0_3px_12px_rgba(0,0,0,0.1)]">
-            <div className="min-w-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5">
-              <span className="block text-[10px] font-bold leading-tight text-ink">
-                검색
-              </span>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="어떤 공고를 찾고 계신가요?"
-                className="w-full bg-transparent text-sm leading-tight text-ink placeholder:text-ink/40 outline-none"
-                autoComplete="off"
-                aria-label="공고 검색"
-              />
+        <div className="min-h-0 overflow-hidden">
+          <div
+            className={`transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              compact ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+          >
+            <div className="px-2 pb-0.5 md:hidden">
+              <CategoryTabs />
             </div>
-            <span className="m-1.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm sm:h-10 sm:w-10">
-              <SearchIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </span>
+
+            <div className="mx-auto flex max-w-[1760px] justify-center px-4 pb-3 pt-0.5 sm:px-6 lg:px-10">
+              <div
+                className={`flex w-full max-w-xl origin-top items-center rounded-full border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] focus-within:shadow-[0_3px_12px_rgba(0,0,0,0.1)] ${
+                  compact
+                    ? "translate-y-[-6px] scale-[0.97]"
+                    : "translate-y-0 scale-100"
+                }`}
+              >
+                <div className="min-w-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5">
+                  <span className="block text-[10px] font-bold leading-tight text-ink">
+                    검색
+                  </span>
+                  <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="어떤 공고를 찾고 계신가요?"
+                    className="w-full bg-transparent text-sm leading-tight text-ink placeholder:text-ink/40 outline-none"
+                    autoComplete="off"
+                    aria-label="공고 검색"
+                    tabIndex={compact ? -1 : 0}
+                  />
+                </div>
+                <span className="m-1.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-sm">
+                  <SearchIcon className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

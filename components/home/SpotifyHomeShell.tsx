@@ -11,7 +11,7 @@ export default function SpotifyHomeShell({
   bookmarkedIds: number[];
 }) {
   return (
-    <div className="mx-auto w-full max-w-[1760px] px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-10">
+    <div className="mx-auto w-full max-w-[1760px] px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
       <HomeFeed scholarships={scholarships} bookmarkedIds={bookmarkedIds} />
     </div>
   );
