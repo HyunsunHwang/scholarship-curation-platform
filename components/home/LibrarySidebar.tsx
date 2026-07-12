@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import {
   contentKindHref,
@@ -27,8 +27,6 @@ type LibrarySidebarProps = {
   /** 데스크톱에서 왼쪽 패널 접기 */
   onCollapse?: () => void;
 };
-
-type LibraryTab = "recent" | "saved";
 
 function deadlineShort(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "상시모집";
@@ -164,10 +162,71 @@ function LibraryItemRow({
   );
 }
 
+/** 담은 공고를 담는 고정 라이브러리 파일(플레이리스트) */
+function SavedLibraryFile({
+  isLoggedIn,
+  count,
+  expanded,
+  onToggle,
+}: {
+  isLoggedIn: boolean;
+  count: number;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-1 rounded-md hover:bg-beige">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1.5 text-left"
+        aria-expanded={expanded}
+      >
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-linear-to-br from-amber-400 to-orange-500 text-white"
+          aria-hidden
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold text-ink">
+            담은 공고
+          </span>
+          <span className="block truncate text-xs text-ink/50">
+            라이브러리 · {isLoggedIn ? `${count}개` : "로그인 필요"}
+          </span>
+        </span>
+        <svg
+          className={`h-4 w-4 shrink-0 text-ink/40 transition-transform ${expanded ? "rotate-90" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+      <Link
+        href={isLoggedIn ? "/mypage" : "/auth"}
+        className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/40 hover:bg-cream hover:text-ink"
+        aria-label={isLoggedIn ? "담은 공고 전체 보기" : "로그인하고 담기"}
+        title={isLoggedIn ? "전체 보기" : "로그인"}
+      >
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+        </svg>
+      </Link>
+    </div>
+  );
+}
+
 /**
  * 스포티파이 '내 라이브러리' 스타일.
- * - 최근 본 공고: 비로그인 포함 (localStorage)
- * - 로그인: 맞춤/교내 핀 + 담은 공고
+ * - 고정 파일「담은 공고」에 북마크 수집
+ * - 그 아래「최근 본 공고」(비로그인 포함)
  */
 export default function LibrarySidebar({
   isLoggedIn,
@@ -175,9 +234,8 @@ export default function LibrarySidebar({
   variant = "sidebar",
   onCollapse,
 }: LibrarySidebarProps) {
-  const [libraryQuery, setLibraryQuery] = useState("");
-  const [tab, setTab] = useState<LibraryTab>("recent");
   const [recentViews, setRecentViews] = useState<RecentViewItem[]>([]);
+  const [savedExpanded, setSavedExpanded] = useState(true);
 
   useEffect(() => {
     const sync = () => setRecentViews(readRecentViews());
@@ -189,61 +247,6 @@ export default function LibrarySidebar({
       window.removeEventListener("storage", sync);
     };
   }, []);
-
-  const filteredRecent = useMemo(() => {
-    const q = libraryQuery.trim().toLowerCase();
-    if (!q) return recentViews;
-    return recentViews.filter((s) => {
-      const name = cleanScholarshipName(s.name).toLowerCase();
-      return (
-        name.includes(q) ||
-        s.name.toLowerCase().includes(q) ||
-        s.organization.toLowerCase().includes(q)
-      );
-    });
-  }, [recentViews, libraryQuery]);
-
-  const filteredSaved = useMemo(() => {
-    const q = libraryQuery.trim().toLowerCase();
-    if (!q) return bookmarkedScholarships;
-    return bookmarkedScholarships.filter((s) => {
-      const name = cleanScholarshipName(s.name).toLowerCase();
-      return (
-        name.includes(q) ||
-        s.name.toLowerCase().includes(q) ||
-        s.organization.toLowerCase().includes(q)
-      );
-    });
-  }, [bookmarkedScholarships, libraryQuery]);
-
-  const activeTab: LibraryTab = isLoggedIn ? tab : "recent";
-  const listItems =
-    activeTab === "saved"
-      ? filteredSaved.map((item) => ({
-          key: `saved-${item.id}`,
-          href: contentKindHref(item.content_kind, item.id),
-          name: cleanScholarshipName(item.name),
-          posterUrl: item.poster_image_url ?? null,
-          kindLabel: contentKindLabel(item.content_kind),
-          meta: deadlineShort(item.apply_end_date),
-        }))
-      : filteredRecent.map((item) => ({
-          key: `recent-${item.content_kind}-${item.id}`,
-          href: contentKindHref(item.content_kind, item.id),
-          name: cleanScholarshipName(item.name),
-          posterUrl: item.poster_image_url,
-          kindLabel: contentKindLabel(item.content_kind),
-          meta: deadlineShort(item.apply_end_date),
-        }));
-
-  const emptyMessage =
-    activeTab === "saved"
-      ? bookmarkedScholarships.length === 0
-        ? "아직 담은 공고가 없어요"
-        : "검색 결과가 없어요"
-      : recentViews.length === 0
-        ? "최근 본 공고가 없어요"
-        : "검색 결과가 없어요";
 
   const listBody = (
     <>
@@ -280,90 +283,74 @@ export default function LibrarySidebar({
         </div>
       )}
 
-      {isLoggedIn ? (
-        <div className="flex gap-1.5 overflow-x-auto px-2.5 pb-2 [scrollbar-width:none]">
-          {(
-            [
-              { key: "recent", label: "최근 본" },
-              { key: "saved", label: "담은 공고" },
-            ] as const
-          ).map((chip) => {
-            const active = tab === chip.key;
-            return (
-              <button
-                key={chip.key}
-                type="button"
-                onClick={() => setTab(chip.key)}
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                  active
-                    ? "bg-brand text-white"
-                    : "bg-beige text-ink/70 hover:bg-cream"
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
-          최근 본 공고
-        </p>
-      )}
-
-      <div className="px-2.5 pb-2">
-        <div className="relative">
-          <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink/35">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-          </span>
-          <input
-            type="search"
-            value={libraryQuery}
-            onChange={(e) => setLibraryQuery(e.target.value)}
-            placeholder={activeTab === "saved" ? "담은 공고 검색" : "최근 본 공고 검색"}
-            className="w-full rounded-lg bg-beige py-1.5 pl-8 pr-2 text-xs text-ink placeholder:text-ink/40 outline-none focus:ring-1 focus:ring-brand/30"
-            aria-label={activeTab === "saved" ? "담은 공고 검색" : "최근 본 공고 검색"}
-          />
-        </div>
-      </div>
-
       <div className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
-        {listItems.length === 0 ? (
-          <div className="px-2 py-6 text-center">
-            <p className="text-xs font-medium text-ink/60">{emptyMessage}</p>
-            {activeTab === "recent" && recentViews.length === 0 && (
+        {/* 고정 라이브러리 파일: 담은 공고 */}
+        <div className="mb-1">
+          <SavedLibraryFile
+            isLoggedIn={isLoggedIn}
+            count={bookmarkedScholarships.length}
+            expanded={savedExpanded}
+            onToggle={() => setSavedExpanded((v) => !v)}
+          />
+          {savedExpanded ? (
+            <div className="ml-2 border-l border-gray-100 pl-1">
+              {!isLoggedIn ? (
+                <p className="px-2 py-2 text-[11px] leading-relaxed text-ink/45">
+                  로그인하면 담아둔 공고가 이 라이브러리에 모입니다.
+                </p>
+              ) : bookmarkedScholarships.length === 0 ? (
+                <p className="px-2 py-2 text-[11px] text-ink/45">
+                  아직 담은 공고가 없어요
+                </p>
+              ) : (
+                <ul className="flex flex-col">
+                  {bookmarkedScholarships.map((item) => (
+                    <li key={`saved-${item.id}`}>
+                      <LibraryItemRow
+                        href={contentKindHref(item.content_kind, item.id)}
+                        name={cleanScholarshipName(item.name)}
+                        posterUrl={item.poster_image_url ?? null}
+                        kindLabel={contentKindLabel(item.content_kind)}
+                        meta={deadlineShort(item.apply_end_date)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {/* 최근 본 공고 */}
+        <div className="mt-2 border-t border-gray-100 pt-2">
+          <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
+            최근 본 공고
+          </p>
+          {recentViews.length === 0 ? (
+            <div className="px-2 py-3">
+              <p className="text-xs font-medium text-ink/60">
+                최근 본 공고가 없어요
+              </p>
               <p className="mt-1 text-[11px] text-ink/40">
                 공고를 열어보면 여기에 쌓여요
               </p>
-            )}
-            {isLoggedIn &&
-              activeTab === "saved" &&
-              bookmarkedScholarships.length === 0 && (
-                <Link
-                  href="/mypage"
-                  className="mt-2 inline-block text-xs font-semibold text-brand hover:underline"
-                >
-                  마이페이지로 이동
-                </Link>
-              )}
-          </div>
-        ) : (
-          <ul className="flex flex-col">
-            {listItems.map((item) => (
-              <li key={item.key}>
-                <LibraryItemRow
-                  href={item.href}
-                  name={item.name}
-                  posterUrl={item.posterUrl}
-                  kindLabel={item.kindLabel}
-                  meta={item.meta}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+            </div>
+          ) : (
+            <ul className="flex flex-col">
+              {recentViews.map((item) => (
+                <li key={`recent-${item.content_kind}-${item.id}`}>
+                  <LibraryItemRow
+                    href={contentKindHref(item.content_kind, item.id)}
+                    name={cleanScholarshipName(item.name)}
+                    posterUrl={item.poster_image_url}
+                    kindLabel={contentKindLabel(item.content_kind)}
+                    meta={deadlineShort(item.apply_end_date)}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </>
   );
@@ -386,7 +373,7 @@ export default function LibrarySidebar({
             </Link>
           )}
         </div>
-        <div className="flex max-h-[360px] flex-col pt-1">{listBody}</div>
+        <div className="flex max-h-[420px] flex-col pt-1">{listBody}</div>
       </section>
     );
   }
