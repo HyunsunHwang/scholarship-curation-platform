@@ -158,7 +158,10 @@ export default function ScholarshipCard({
                 {scholarship.is_advertisement ? "광고" : "추천"}
               </span>
             )}
-          <p className="min-w-0 flex-1 text-xs font-semibold leading-snug text-ink line-clamp-2 group-hover:text-brand transition-colors sm:text-sm">
+          <p
+            className="min-w-0 flex-1 truncate text-xs font-semibold leading-snug text-ink transition-colors group-hover:text-brand sm:text-sm"
+            title={displayName}
+          >
             {displayName}
           </p>
         </div>
