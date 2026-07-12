@@ -1,28 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-
-const cards = [
-  {
-    href: "/admin/scholarships",
-    title: "장학금 관리",
-    description: "등록된 장학금을 조회·추가·수정합니다.",
-  },
-  {
-    href: "/admin/ads",
-    title: "광고 관리",
-    description: "광고(인턴/채용) 공고를 조회·추가·수정합니다.",
-  },
-  {
-    href: "/admin/site-settings",
-    title: "사이트 설정",
-    description: "메인 헤더에 표시되는 로고 이미지를 변경합니다.",
-  },
-  {
-    href: "/admin/org-signup-requests",
-    title: "기관 가입 요청",
-    description: "숨김 링크를 통해 들어온 기관 담당자 가입 요청을 승인/반려합니다.",
-  },
-];
+import {
+  ADMIN_CONTENT_KINDS,
+  adminKindLabel,
+  contentPath,
+  reviewPath,
+  type AdminContentKind,
+} from "@/lib/admin-kinds";
 
 function formatDateKst(date: Date) {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(date);
@@ -64,6 +48,14 @@ export default async function AdminDashboardPage() {
     { data: todaySearchRows },
     { data: scholarshipKpiRows },
     { data: retentionRows },
+    schReview,
+    conReview,
+    eduReview,
+    actReview,
+    schUnverified,
+    conUnverified,
+    eduUnverified,
+    actUnverified,
   ] = await Promise.all([
     supabase
       .from("analytics_daily_kpi")
@@ -91,7 +83,59 @@ export default async function AdminDashboardPage() {
       )
       .gte("cohort_date", retentionStartDate)
       .order("cohort_date", { ascending: true }),
+    supabase
+      .from("crawled_notices")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new"),
+    supabase
+      .from("crawled_contests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new")
+      .eq("content_kind", "contest"),
+    supabase
+      .from("crawled_contests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new")
+      .eq("content_kind", "education"),
+    supabase
+      .from("crawled_contests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "new")
+      .eq("content_kind", "activity"),
+    supabase
+      .from("scholarships")
+      .select("id", { count: "exact", head: true })
+      .eq("is_advertisement", false)
+      .eq("is_verified", false),
+    supabase
+      .from("contests")
+      .select("id", { count: "exact", head: true })
+      .eq("content_kind", "contest")
+      .eq("is_verified", false),
+    supabase
+      .from("contests")
+      .select("id", { count: "exact", head: true })
+      .eq("content_kind", "education")
+      .eq("is_verified", false),
+    supabase
+      .from("contests")
+      .select("id", { count: "exact", head: true })
+      .eq("content_kind", "activity")
+      .eq("is_verified", false),
   ]);
+
+  const reviewByKind: Record<AdminContentKind, number> = {
+    scholarship: schReview.count ?? 0,
+    contest: conReview.count ?? 0,
+    education: eduReview.count ?? 0,
+    activity: actReview.count ?? 0,
+  };
+  const unverifiedByKind: Record<AdminContentKind, number> = {
+    scholarship: schUnverified.count ?? 0,
+    contest: conUnverified.count ?? 0,
+    education: eduUnverified.count ?? 0,
+    activity: actUnverified.count ?? 0,
+  };
 
   const totals = (dailyRows ?? []).reduce(
     (acc, row) => {
@@ -142,10 +186,48 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-      <p className="text-sm text-gray-500 mt-1 mb-8">
-        관리 메뉴에서 작업을 선택하세요.
-      </p>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
+        <p className="mt-1 text-sm text-gray-500">검수·발행 현황과 최근 이용 지표입니다.</p>
+      </div>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-gray-900">검수 대기</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {ADMIN_CONTENT_KINDS.map((kind) => (
+            <Link
+              key={kind}
+              href={reviewPath(kind)}
+              className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-300"
+            >
+              <p className="text-xs font-medium text-gray-500">{adminKindLabel(kind)}</p>
+              <p className="mt-2 text-2xl font-bold text-gray-900">
+                {formatNumber(reviewByKind[kind])}
+              </p>
+              <p className="mt-1 text-xs text-blue-600">검수 큐 →</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-gray-900">미검증 발행본</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {ADMIN_CONTENT_KINDS.map((kind) => (
+            <Link
+              key={kind}
+              href={contentPath(kind, { verified: "false" })}
+              className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-emerald-300"
+            >
+              <p className="text-xs font-medium text-gray-500">{adminKindLabel(kind)}</p>
+              <p className="mt-2 text-2xl font-bold text-gray-900">
+                {formatNumber(unverifiedByKind[kind])}
+              </p>
+              <p className="mt-1 text-xs text-emerald-600">콘텐츠 →</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -173,32 +255,17 @@ export default async function AdminDashboardPage() {
             <p className="mt-1 text-xl font-bold text-gray-900">
               {latestD1Row ? formatPercent(toSafeNumber(latestD1Row.d1_retention_rate)) : "-"}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
-              {latestD1Row
-                ? `${latestD1Row.cohort_date} 코호트 · ${formatNumber(latestD1Row.d1_return_users)}/${formatNumber(latestD1Row.cohort_size)}`
-                : "아직 계산 가능한 코호트가 없습니다."}
-            </p>
           </div>
           <div className="rounded-lg bg-gray-50 px-4 py-3">
             <p className="text-xs font-medium text-gray-500">D3 리텐션</p>
             <p className="mt-1 text-xl font-bold text-gray-900">
               {latestD3Row ? formatPercent(toSafeNumber(latestD3Row.d3_retention_rate)) : "-"}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
-              {latestD3Row
-                ? `${latestD3Row.cohort_date} 코호트 · ${formatNumber(latestD3Row.d3_return_users)}/${formatNumber(latestD3Row.cohort_size)}`
-                : "아직 계산 가능한 코호트가 없습니다."}
-            </p>
           </div>
           <div className="rounded-lg bg-gray-50 px-4 py-3">
             <p className="text-xs font-medium text-gray-500">D7 리텐션</p>
             <p className="mt-1 text-xl font-bold text-gray-900">
               {latestD7Row ? formatPercent(toSafeNumber(latestD7Row.d7_retention_rate)) : "-"}
-            </p>
-            <p className="mt-1 text-xs text-gray-500">
-              {latestD7Row
-                ? `${latestD7Row.cohort_date} 코호트 · ${formatNumber(latestD7Row.d7_return_users)}/${formatNumber(latestD7Row.cohort_size)}`
-                : "아직 계산 가능한 코호트가 없습니다."}
             </p>
           </div>
         </div>
@@ -231,7 +298,10 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-gray-500">오늘 검색 데이터가 없습니다.</p>
             ) : (
               (todaySearchRows ?? []).map((row, index) => (
-                <div key={`${row.search_query}-${index}`} className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm">
+                <div
+                  key={`${row.search_query}-${index}`}
+                  className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm"
+                >
                   <span className="truncate text-gray-800">
                     {index + 1}. {row.search_query}
                   </span>
@@ -254,12 +324,10 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-500">장학금 성과 데이터가 없습니다.</p>
           ) : (
             topScholarshipRows.map((row, index) => (
-              <div
-                key={row.scholarshipId}
-                className="rounded-lg border border-gray-100 px-3 py-2 text-sm"
-              >
+              <div key={row.scholarshipId} className="rounded-lg border border-gray-100 px-3 py-2 text-sm">
                 <p className="font-medium text-gray-900">
-                  {index + 1}. {scholarshipNameMap.get(row.scholarshipId) ?? `장학금 #${row.scholarshipId}`}
+                  {index + 1}.{" "}
+                  {scholarshipNameMap.get(row.scholarshipId) ?? `장학금 #${row.scholarshipId}`}
                 </p>
                 <p className="mt-1 text-gray-600">
                   상세조회 {formatNumber(row.detail)} · 스크랩 {formatNumber(row.bookmark)} · 지원클릭{" "}
@@ -271,59 +339,43 @@ export default async function AdminDashboardPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 className="text-base font-semibold text-gray-900">리텐션 코호트 (최근 21일)</h2>
-        <div className="mt-4 overflow-x-auto">
-          {(retentionRows ?? []).length === 0 ? (
-            <p className="text-sm text-gray-500">리텐션 집계 데이터가 없습니다.</p>
-          ) : (
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 text-left text-xs text-gray-500">
-                  <th className="px-3 py-2 font-medium">코호트</th>
-                  <th className="px-3 py-2 font-medium">초기 유저</th>
-                  <th className="px-3 py-2 font-medium">D1</th>
-                  <th className="px-3 py-2 font-medium">D3</th>
-                  <th className="px-3 py-2 font-medium">D7</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...(retentionRows ?? [])].reverse().map((row) => (
-                  <tr key={row.cohort_date} className="border-b border-gray-100 text-gray-700">
-                    <td className="px-3 py-2">{row.cohort_date}</td>
-                    <td className="px-3 py-2">{formatNumber(row.cohort_size)}</td>
-                    <td className="px-3 py-2">
-                      {formatNumber(row.d1_return_users)} ({formatPercent(toSafeNumber(row.d1_retention_rate))})
-                    </td>
-                    <td className="px-3 py-2">
-                      {formatNumber(row.d3_return_users)} ({formatPercent(toSafeNumber(row.d3_retention_rate))})
-                    </td>
-                    <td className="px-3 py-2">
-                      {formatNumber(row.d7_return_users)} ({formatPercent(toSafeNumber(row.d7_retention_rate))})
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </section>
-
       <ul className="grid gap-4 sm:grid-cols-2">
-        {cards.map((c) => (
-          <li key={c.href}>
-            <Link
-              href={c.href}
-              className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md hover:border-brand/30"
-            >
-              <h2 className="text-lg font-semibold text-gray-900">{c.title}</h2>
-              <p className="text-sm text-gray-600 mt-1">{c.description}</p>
-              <span className="inline-block mt-3 text-sm font-medium text-brand">
-                이동 →
-              </span>
-            </Link>
-          </li>
-        ))}
+        <li>
+          <Link
+            href="/admin/review"
+            className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:border-brand/30 hover:shadow-md"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">검수 큐</h2>
+            <p className="mt-1 text-sm text-gray-600">수집 공지를 종류별로 검수합니다.</p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/content"
+            className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:border-brand/30 hover:shadow-md"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">콘텐츠</h2>
+            <p className="mt-1 text-sm text-gray-600">장학금·공모전·교육·대외활동을 관리합니다.</p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/users"
+            className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:border-brand/30 hover:shadow-md"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">사용자</h2>
+            <p className="mt-1 text-sm text-gray-600">관리자 권한을 부여·회수합니다.</p>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/settings"
+            className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:border-brand/30 hover:shadow-md"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">설정</h2>
+            <p className="mt-1 text-sm text-gray-600">사이트 로고 등 기본 설정을 변경합니다.</p>
+          </Link>
+        </li>
       </ul>
     </div>
   );

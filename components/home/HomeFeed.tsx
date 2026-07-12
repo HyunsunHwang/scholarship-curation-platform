@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
   CONTENT_CATEGORIES,
@@ -14,6 +14,13 @@ import { useHomeSearchQuery } from "./HomeSearchBar";
 import HorizontalShelf from "./HorizontalShelf";
 
 const TRENDING_LIMIT = 16;
+/** 전체 공고 선반 초기 노출 수 — 나머지는 더보기로 */
+const ALL_SHELF_INITIAL = 36;
+const ALL_SHELF_STEP = 36;
+
+function itemKey(item: CardScholarship) {
+  return `${item.content_kind ?? "scholarship"}-${item.id}`;
+}
 
 function matchesSearch(
   name: string,
@@ -67,17 +74,30 @@ export default function HomeFeed({
   bookmarkedIds?: number[];
 }) {
   const [category, setCategory] = useState<ContentCategoryKey>("all");
+  const [allVisibleCount, setAllVisibleCount] = useState(ALL_SHELF_INITIAL);
   const searchQuery = useHomeSearchQuery();
+  const deferredSearch = useDeferredValue(searchQuery);
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
+
+  // 검색어·카테고리 변경 시 더보기 커서 리셋
+  const filterKey = `${category}|${deferredSearch}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setAllVisibleCount(ALL_SHELF_INITIAL);
+  }
 
   const filtered = useMemo(() => {
     const byCategory = filterByCategory(scholarships, category);
     return byCategory.filter((s) =>
-      matchesSearch(s.name, s.organization, searchQuery)
+      matchesSearch(s.name, s.organization, deferredSearch)
     );
-  }, [scholarships, category, searchQuery]);
+  }, [scholarships, category, deferredSearch]);
+
+  const isSearching = deferredSearch.trim().length > 0;
 
   const trending = useMemo(() => {
+    if (isSearching) return [];
     return [...filtered]
       .sort((a, b) => {
         const scrapDiff = (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
@@ -85,10 +105,15 @@ export default function HomeFeed({
         return (b.view_count ?? 0) - (a.view_count ?? 0);
       })
       .slice(0, TRENDING_LIMIT);
-  }, [filtered]);
+  }, [filtered, isSearching]);
+
+  const trendingKeys = useMemo(
+    () => new Set(trending.map(itemKey)),
+    [trending]
+  );
 
   const allSorted = useMemo(() => {
-    return [...filtered].sort((a, b) => {
+    const sorted = [...filtered].sort((a, b) => {
       if (a.is_recommended && !b.is_recommended) return -1;
       if (!a.is_recommended && b.is_recommended) return 1;
       return (
@@ -96,11 +121,21 @@ export default function HomeFeed({
         daysUntilApplyDeadlineKorea(b.apply_end_date)
       );
     });
-  }, [filtered]);
+    // 인기 선반에 이미 올린 카드는 전체 선반에서 제외해 DOM 이중 마운트 방지
+    if (trendingKeys.size === 0) return sorted;
+    return sorted.filter((item) => !trendingKeys.has(itemKey(item)));
+  }, [filtered, trendingKeys]);
+
+  const visibleAll = useMemo(
+    () => allSorted.slice(0, allVisibleCount),
+    [allSorted, allVisibleCount]
+  );
+  const hasMoreAll = allSorted.length > visibleAll.length;
 
   const emptyCategory = !categoryHasData(category);
   const categoryLabel =
     CONTENT_CATEGORIES.find((c) => c.key === category)?.label ?? "";
+  const totalShown = trending.length + allSorted.length;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-white lg:rounded-2xl">
@@ -165,43 +200,43 @@ export default function HomeFeed({
           </div>
         ) : (
           <>
-            {/* 인기 상승 공고 — 가로 스크롤 */}
-            <section aria-labelledby="trending-heading">
-              <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
-                <h2
-                  id="trending-heading"
-                  className="text-xl font-bold tracking-tight text-ink sm:text-2xl"
-                >
-                  인기 상승 공고
-                </h2>
-                {trending.length > 0 && (
+            {/* 인기 상승 공고 — 검색 중이 아닐 때만 */}
+            {trending.length > 0 && (
+              <section aria-labelledby="trending-heading">
+                <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
+                  <h2
+                    id="trending-heading"
+                    className="text-xl font-bold tracking-tight text-ink sm:text-2xl"
+                  >
+                    인기 상승 공고
+                  </h2>
                   <Link
                     href="#all-announcements"
                     className="shrink-0 text-sm font-semibold text-ink/50 transition-colors hover:text-brand"
                   >
                     모두 표시
                   </Link>
-                )}
-              </div>
-              <HorizontalShelf label="인기 상승 공고">
-                {trending.map((scholarship) => (
-                  <ShelfCard
-                    key={`trend-${scholarship.content_kind ?? "scholarship"}-${scholarship.id}`}
-                    scholarship={scholarship}
-                    bookmarked={
-                      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
-                      bookmarkedSet.has(scholarship.id)
-                    }
-                  />
-                ))}
-              </HorizontalShelf>
-            </section>
+                </div>
+                <HorizontalShelf label="인기 상승 공고">
+                  {trending.map((scholarship) => (
+                    <ShelfCard
+                      key={`trend-${itemKey(scholarship)}`}
+                      scholarship={scholarship}
+                      bookmarked={
+                        (scholarship.content_kind ?? "scholarship") ===
+                          "scholarship" && bookmarkedSet.has(scholarship.id)
+                      }
+                    />
+                  ))}
+                </HorizontalShelf>
+              </section>
+            )}
 
             {/* 전체 공고 — 가로 스크롤 */}
             <section
               id="all-announcements"
               aria-labelledby="all-heading"
-              className="mt-8 scroll-mt-4 sm:mt-10"
+              className={`scroll-mt-4 ${trending.length > 0 ? "mt-8 sm:mt-10" : ""}`}
             >
               <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
                 <div>
@@ -209,28 +244,47 @@ export default function HomeFeed({
                     id="all-heading"
                     className="text-xl font-bold tracking-tight text-ink sm:text-2xl"
                   >
-                    전체 공고
+                    {isSearching ? "검색 결과" : "전체 공고"}
                   </h2>
                   <p className="mt-1 text-sm text-ink/50">
                     총{" "}
                     <span className="font-semibold text-brand">
-                      {allSorted.length}개
+                      {totalShown}개
                     </span>
+                    {trending.length > 0 ? (
+                      <span className="text-ink/40">
+                        {" "}
+                        (인기 {trending.length} · 나머지 {allSorted.length})
+                      </span>
+                    ) : null}
                   </p>
                 </div>
               </div>
-              <HorizontalShelf label="전체 공고">
-                {allSorted.map((scholarship) => (
+              <HorizontalShelf label={isSearching ? "검색 결과" : "전체 공고"}>
+                {visibleAll.map((scholarship) => (
                   <ShelfCard
-                    key={`${scholarship.content_kind ?? "scholarship"}-${scholarship.id}`}
+                    key={itemKey(scholarship)}
                     scholarship={scholarship}
                     bookmarked={
-                      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
-                      bookmarkedSet.has(scholarship.id)
+                      (scholarship.content_kind ?? "scholarship") ===
+                        "scholarship" && bookmarkedSet.has(scholarship.id)
                     }
                   />
                 ))}
               </HorizontalShelf>
+              {hasMoreAll && (
+                <div className="mt-4 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAllVisibleCount((n) => n + ALL_SHELF_STEP)
+                    }
+                    className="rounded-full border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-ink/70 transition-colors hover:border-brand/40 hover:text-brand"
+                  >
+                    더 보기 ({allSorted.length - visibleAll.length}개)
+                  </button>
+                </div>
+              )}
             </section>
           </>
         )}

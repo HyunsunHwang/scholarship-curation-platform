@@ -115,8 +115,6 @@ function ScholarshipCard({
         : kind === "activity"
           ? "border-violet-600 text-violet-700"
           : "border-brand text-brand";
-  const unoptimizedPoster =
-    kind === "contest" || kind === "education" || kind === "activity";
 
   return (
     <div className="group flex flex-col">
@@ -131,8 +129,8 @@ function ScholarshipCard({
             alt={displayName}
             fill
             sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, 50vw"
+            loading="lazy"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            unoptimized={unoptimizedPoster}
           />
         ) : (
           <div

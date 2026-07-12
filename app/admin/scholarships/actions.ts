@@ -75,7 +75,7 @@ export async function createScholarship(formData: FormData) {
   if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
 
   const payload = buildPayload(formData);
-  const returnPath = getAdminReturnPath(formData, "/admin/scholarships");
+  const returnPath = getAdminReturnPath(formData, "/admin/content?kind=scholarship");
 
   const { data: inserted, error } = await supabase
     .from("scholarships")
@@ -103,7 +103,7 @@ export async function createScholarship(formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
-  revalidatePath("/admin/ads");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
   redirect(returnPath);
@@ -122,7 +122,7 @@ export async function updateScholarship(id: number, formData: FormData) {
   if (!isAdmin.data) return { error: "관리자 권한이 필요합니다." };
 
   const payload = buildPayload(formData);
-  const returnPath = getAdminReturnPath(formData, "/admin/scholarships");
+  const returnPath = getAdminReturnPath(formData, "/admin/content?kind=scholarship");
 
   const { error } = await supabase
     .from("scholarships")
@@ -150,7 +150,7 @@ export async function updateScholarship(id: number, formData: FormData) {
   }
 
   revalidatePath("/admin/scholarships");
-  revalidatePath("/admin/ads");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
   revalidatePath(`/scholarships/${id}`);
@@ -178,6 +178,7 @@ export async function deleteScholarship(id: number) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
   return { success: true };
@@ -203,6 +204,7 @@ export async function toggleVerified(id: number, current: boolean) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
   return { success: true };
@@ -228,6 +230,7 @@ export async function toggleRecommended(id: number, current: boolean) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
   return { success: true };

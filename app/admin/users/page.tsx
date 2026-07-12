@@ -1,15 +1,40 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { UserRoleButton } from "./UserRoleButton";
 
-export default async function AdminUsersPage() {
+const PAGE_SIZE = 40;
+
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ page?: string; q?: string }>;
+}) {
+  const resolved = (await searchParams) ?? {};
+  const query = (resolved.q ?? "").trim();
+  const pageFromQuery = Number.parseInt(resolved.page ?? "1", 10);
+  const currentPage =
+    Number.isFinite(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
   const supabase = await createClient();
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser();
 
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
-
-  const { data: profiles, error } = await supabase
+  let profilesQuery = supabase
     .from("profiles")
-    .select("id, email, name, role, is_onboarded, created_at")
+    .select("id, email, name, role, is_onboarded, created_at", { count: "exact" })
     .order("created_at", { ascending: false });
+
+  if (query) {
+    const escaped = query.replace(/[%_]/g, "\\$&");
+    profilesQuery = profilesQuery.or(
+      `name.ilike.%${escaped}%,email.ilike.%${escaped}%`
+    );
+  }
+
+  const { data: profiles, error, count } = await profilesQuery.range(from, to);
 
   if (error) {
     return (
@@ -19,18 +44,44 @@ export default async function AdminUsersPage() {
     );
   }
 
-  const totalCount = profiles?.length ?? 0;
-  const adminCount = profiles?.filter((p) => p.role === "admin").length ?? 0;
-  const onboardedCount = profiles?.filter((p) => p.is_onboarded).length ?? 0;
+  const totalCount = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const hasNextPage = currentPage < totalPages;
+  const adminCount = (profiles ?? []).filter((p) => p.role === "admin").length;
+  const onboardedCount = (profiles ?? []).filter((p) => p.is_onboarded).length;
+
+  function href(page: number) {
+    const qs = new URLSearchParams();
+    if (page > 1) qs.set("page", String(page));
+    if (query) qs.set("q", query);
+    const s = qs.toString();
+    return `/admin/users${s ? `?${s}` : ""}`;
+  }
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">유저 관리</h1>
+        <h1 className="text-2xl font-bold text-gray-900">사용자</h1>
         <p className="text-sm text-gray-500 mt-1">
-          총 {totalCount}명 · 관리자 {adminCount}명 · 온보딩 완료 {onboardedCount}명
+          총 {totalCount}명 · 이 페이지 관리자 {adminCount}명 · 온보딩 완료 {onboardedCount}명
         </p>
       </div>
+
+      <form method="get" action="/admin/users" className="mb-4 flex gap-2">
+        <input
+          type="search"
+          name="q"
+          defaultValue={query}
+          placeholder="이름 또는 이메일 검색"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+        />
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          검색
+        </button>
+      </form>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
@@ -80,17 +131,17 @@ export default async function AdminUsersPage() {
                         {profile.is_onboarded ? "완료" : "미완료"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">
-                      {new Date(profile.created_at).toLocaleDateString("ko-KR")}
+                    <td className="px-4 py-3 text-gray-500">
+                      {profile.created_at
+                        ? new Date(profile.created_at).toLocaleDateString("ko-KR")
+                        : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {isSelf ? (
-                        <span className="text-xs text-gray-400">—</span>
-                      ) : (
+                      {!isSelf && (
                         <UserRoleButton
                           userId={profile.id}
                           currentRole={profile.role}
-                          targetUserEmail={profile.email}
+                          targetUserEmail={profile.email ?? profile.name ?? profile.id}
                         />
                       )}
                     </td>
@@ -99,13 +150,41 @@ export default async function AdminUsersPage() {
               })
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
-                  가입한 유저가 없습니다.
+                <td colSpan={5} className="px-4 py-10 text-center text-gray-400">
+                  사용자가 없습니다.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-5 flex items-center justify-between text-sm">
+        <Link
+          href={href(Math.max(1, currentPage - 1))}
+          aria-disabled={currentPage <= 1}
+          className={`rounded-lg border px-3 py-1.5 ${
+            currentPage <= 1
+              ? "pointer-events-none border-gray-200 text-gray-300"
+              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          이전
+        </Link>
+        <span className="text-gray-600">
+          페이지 {currentPage} / {totalPages}
+        </span>
+        <Link
+          href={href(currentPage + 1)}
+          aria-disabled={!hasNextPage}
+          className={`rounded-lg border px-3 py-1.5 ${
+            !hasNextPage
+              ? "pointer-events-none border-gray-200 text-gray-300"
+              : "border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          다음
+        </Link>
       </div>
     </div>
   );

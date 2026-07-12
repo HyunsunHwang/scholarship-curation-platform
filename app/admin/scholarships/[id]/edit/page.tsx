@@ -1,72 +1,10 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import ScholarshipForm from "../../ScholarshipForm";
-import { updateScholarship } from "../../actions";
-import { loadCrawlerDepartments } from "@/lib/crawler-departments";
+import { redirect } from "next/navigation";
 
-export default async function EditScholarshipPage({
+export default async function LegacyScholarshipEditRedirect({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ type?: string }>;
 }) {
   const { id } = await params;
-  const resolvedSearchParams = (await searchParams) ?? {};
-  const returnPath =
-    resolvedSearchParams.type === "on_campus" || resolvedSearchParams.type === "off_campus"
-      ? `/admin/scholarships?type=${resolvedSearchParams.type}`
-      : "/admin/scholarships";
-  const scholarshipId = parseInt(id, 10);
-
-  if (isNaN(scholarshipId)) notFound();
-
-  const supabase = await createClient();
-  const [{ data: scholarship }, { data: universities }, { data: targetUnits }, { data: stages }, crawlerDepartments] =
-    await Promise.all([
-      supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
-      supabase.from("universities").select("id, name").order("name"),
-      supabase.from("scholarship_target_units").select("org_unit_id").eq("scholarship_id", scholarshipId),
-      supabase
-        .from("scholarship_selection_stages")
-        .select("title, phase, schedule_text, note")
-        .eq("scholarship_id", scholarshipId)
-        .order("stage_order"),
-      loadCrawlerDepartments(),
-    ]);
-  const universityNames = (universities ?? []).map((u) => u.name);
-
-  if (!scholarship || scholarship.is_advertisement === true) notFound();
-
-  const boundAction = updateScholarship.bind(null, scholarshipId);
-
-  return (
-    <div>
-      <div className="mb-6">
-        <Link
-          href="/admin/scholarships"
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          ← 목록으로
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">
-          장학금 수정: {scholarship.name}
-        </h1>
-      </div>
-      <ScholarshipForm
-        defaultValues={scholarship}
-        action={boundAction}
-        submitLabel="변경사항 저장"
-        universities={universityNames}
-        universityDepartments={crawlerDepartments.map((entry) => ({
-          university: entry.university,
-          department: entry.department,
-        }))}
-        defaultTargetOrgUnitIds={(targetUnits ?? []).map((t) => t.org_unit_id)}
-        defaultStages={stages ?? []}
-        returnPath={returnPath}
-      />
-    </div>
-  );
+  redirect(`/admin/content/scholarships/${id}/edit`);
 }

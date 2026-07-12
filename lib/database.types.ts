@@ -690,6 +690,7 @@ export interface Database {
           image_urls: string[] | null;
           poster_image_url: string | null;
           document_files: ContestDocumentFile[];
+          content_kind: "contest" | "education" | "activity";
           status: "new" | "promoted" | "rejected";
           contest_id: number | null;
           extracted_draft: Record<string, unknown> | null;
@@ -707,6 +708,7 @@ export interface Database {
           source_group?: string;
           source_id: string;
           source_name?: string;
+          content_kind?: "contest" | "education" | "activity";
           title: string;
           notice_url: string;
           notice_posted_at?: string | null;

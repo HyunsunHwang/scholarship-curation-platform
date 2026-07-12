@@ -119,15 +119,19 @@ export default function ScholarshipTable({
   scholarships,
   initialQuery,
   basePath = "/admin/scholarships",
+  editBasePath,
   createLabel = "장학금 추가",
   fixedParams = {},
 }: {
   scholarships: ScholarshipRow[];
   initialQuery: string;
   basePath?: string;
+  /** 수정 페이지 prefix (기본: basePath) */
+  editBasePath?: string;
   createLabel?: string;
   fixedParams?: Record<string, string>;
 }) {
+  const resolvedEditBase = editBasePath ?? basePath;
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [deadlineSort, setDeadlineSort] = useState<SortDir>("none");
@@ -314,7 +318,7 @@ export default function ScholarshipTable({
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`${basePath}/${s.id}/edit${Object.keys(fixedParams).length > 0 ? `?${new URLSearchParams(fixedParams).toString()}` : ""}`}
+                        href={`${resolvedEditBase}/${s.id}/edit`}
                         className="px-3 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         수정

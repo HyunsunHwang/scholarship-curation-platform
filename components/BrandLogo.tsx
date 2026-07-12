@@ -11,6 +11,8 @@ type Props = {
   className?: string;
   /** 로고 이미지 정렬 등 */
   imageClassName?: string;
+  /** LCP용 — 홈 헤더 등 첫 화면에서만 true */
+  priority?: boolean;
 };
 
 /**
@@ -21,6 +23,7 @@ export default function BrandLogo({
   logoSrc,
   className,
   imageClassName = "object-contain object-left",
+  priority = false,
 }: Props) {
   const src = logoSrc?.trim() || "/brand-logo.png";
 
@@ -37,7 +40,7 @@ export default function BrandLogo({
         alt="장학쌤"
         width={432}
         height={144}
-        priority
+        priority={priority}
         sizes="(max-width: 640px) 176px, (max-width: 768px) 280px, 432px"
         className={twMerge(
           "max-h-full w-auto max-w-full object-contain object-left",

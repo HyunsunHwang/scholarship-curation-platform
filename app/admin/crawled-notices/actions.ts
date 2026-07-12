@@ -116,10 +116,12 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
   if (markError) return { error: markError.message };
 
   revalidatePath("/admin/crawled-notices");
+  revalidatePath("/admin/review");
   revalidatePath("/admin/scholarships");
+  revalidatePath("/admin/content");
   revalidatePath("/");
   revalidatePath("/matched");
-  redirect("/admin/crawled-notices");
+  redirect("/admin/review?kind=scholarship");
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -200,6 +202,7 @@ export async function generateNoticeDraft(
   if (updateError) return { error: updateError.message };
 
   revalidatePath(`/admin/crawled-notices/${noticeId}`);
+  revalidatePath(`/admin/review/scholarships/${noticeId}`);
   return { success: true };
 }
 
@@ -238,6 +241,7 @@ export async function formatNoticeBody(
   if (updateError) return { error: updateError.message };
 
   revalidatePath(`/admin/crawled-notices/${noticeId}`);
+  revalidatePath(`/admin/review/scholarships/${noticeId}`);
   return { success: true };
 }
 
@@ -263,6 +267,7 @@ export async function rejectNotice(
   if (error) return { error: error.message };
 
   revalidatePath("/admin/crawled-notices");
+  revalidatePath("/admin/review");
   return { success: true };
 }
 
@@ -288,5 +293,6 @@ export async function restoreNotice(
   if (error) return { error: error.message };
 
   revalidatePath("/admin/crawled-notices");
+  revalidatePath("/admin/review");
   return { success: true };
 }

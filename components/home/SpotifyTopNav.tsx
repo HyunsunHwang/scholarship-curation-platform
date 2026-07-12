@@ -75,6 +75,7 @@ export default async function SpotifyTopNav({
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <BrandLogo
             logoSrc={headerLogoSrc || undefined}
+            priority
             className="h-9 max-h-9 max-w-[120px] sm:h-11 sm:max-h-11 sm:max-w-[160px] md:h-12 md:max-h-12 md:max-w-[200px]"
           />
           <Link

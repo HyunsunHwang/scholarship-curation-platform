@@ -102,6 +102,10 @@ export function getHeaderLogoSrc(
   return `${base}${sep}v=${encodeURIComponent(siteSettings.updated_at)}`;
 }
 
+/** 홈 피드 초기 로드 상한 — 전체 카탈로그를 한 번에 실지 않음 */
+const HOME_SCHOLARSHIP_LIMIT = 72;
+const HOME_CONTEST_LIMIT = 36;
+
 export const getCachedHomeScholarships = unstable_cache(
   async () => {
     const supabase = createPublicSupabaseClient();
@@ -117,7 +121,9 @@ export const getCachedHomeScholarships = unstable_cache(
         .gte("apply_end_date", today)
         .order("is_recommended", { ascending: false })
         .order("recommended_sort_order", { ascending: true, nullsFirst: false })
-        .order("apply_end_date", { ascending: true }),
+        .order("apply_end_date", { ascending: true })
+        // 홈 초기 페이로드 상한 — 전체 카탈로그를 클라이언트로 보내지 않음
+        .limit(HOME_SCHOLARSHIP_LIMIT),
       getCachedUniversityNames(),
     ]);
 
@@ -125,7 +131,7 @@ export const getCachedHomeScholarships = unstable_cache(
       console.error("Failed to load cached home scholarships", error);
       const fallbackPage = await getHomeScholarshipsPage({
         page: 1,
-        pageSize: 50,
+        pageSize: Math.min(50, HOME_SCHOLARSHIP_LIMIT),
       });
       return fallbackPage.scholarships.filter(
         (scholarship) => !isUniversitySpecificScholarship(scholarship, universityNames)
@@ -145,7 +151,7 @@ export const getCachedHomeScholarships = unstable_cache(
       scrap_count: scrapCounts.get(scholarship.id) ?? 0,
     }));
   },
-  ["home-scholarships-v2"],
+  ["home-scholarships-v3"],
   { revalidate: 5 * 60 }
 );
 
@@ -163,7 +169,8 @@ export const getCachedHomeContests = unstable_cache(
       .gte("apply_end_date", today)
       .order("is_recommended", { ascending: false })
       .order("recommended_sort_order", { ascending: true, nullsFirst: false })
-      .order("apply_end_date", { ascending: true });
+      .order("apply_end_date", { ascending: true })
+      .limit(HOME_CONTEST_LIMIT);
 
     if (error) {
       console.error("Failed to load cached home contests", error);
@@ -191,7 +198,7 @@ export const getCachedHomeContests = unstable_cache(
         | "activity",
     }));
   },
-  ["home-contests-v2"],
+  ["home-contests-v3"],
   { revalidate: 60 }
 );
 

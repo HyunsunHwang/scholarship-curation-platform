@@ -10,7 +10,7 @@ import "./globals.css";
 const notoSansKr = Noto_Sans_KR({
   // next/font 생성 타입에 korean이 누락되어 있음(실제 Google Fonts는 지원).
   subsets: ["latin", "korean"] as ("latin")[],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "700"],
   variable: "--font-noto-sans-kr",
   display: "swap",
   adjustFontFallback: true,

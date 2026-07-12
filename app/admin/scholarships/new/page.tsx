@@ -1,51 +1,15 @@
-import Link from "next/link";
-import ScholarshipForm from "../ScholarshipForm";
-import { createScholarship } from "../actions";
-import { createClient } from "@/lib/supabase/server";
-import { loadCrawlerDepartments } from "@/lib/crawler-departments";
+import { redirect } from "next/navigation";
 
-export default async function NewScholarshipPage({
+export default async function LegacyScholarshipNewRedirect({
   searchParams,
 }: {
   searchParams?: Promise<{ type?: string }>;
 }) {
-  const resolvedSearchParams = (await searchParams) ?? {};
-  const preferredType =
-    resolvedSearchParams.type === "on_campus" || resolvedSearchParams.type === "off_campus"
-      ? resolvedSearchParams.type
-      : "off_campus";
-  const returnPath =
-    preferredType === "off_campus" ? "/admin/scholarships?type=off_campus" : "/admin/scholarships?type=on_campus";
-
-  const supabase = await createClient();
-  const [{ data: universities }, crawlerDepartments] = await Promise.all([
-    supabase.from("universities").select("id, name").order("name"),
-    loadCrawlerDepartments(),
-  ]);
-  const universityNames = (universities ?? []).map((u) => u.name);
-
-  return (
-    <div>
-      <div className="mb-6">
-        <Link
-          href={returnPath}
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          ← 목록으로
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mt-2">장학금 추가</h1>
-      </div>
-      <ScholarshipForm
-        defaultValues={{ scholarship_type: preferredType }}
-        action={createScholarship}
-        submitLabel="장학금 등록"
-        universities={universityNames}
-        universityDepartments={crawlerDepartments.map((entry) => ({
-          university: entry.university,
-          department: entry.department,
-        }))}
-        returnPath={returnPath}
-      />
-    </div>
-  );
+  const resolved = (await searchParams) ?? {};
+  const qs = new URLSearchParams();
+  if (resolved.type === "on_campus" || resolved.type === "off_campus") {
+    qs.set("type", resolved.type);
+  }
+  const query = qs.toString();
+  redirect(`/admin/content/scholarships/new${query ? `?${query}` : ""}`);
 }

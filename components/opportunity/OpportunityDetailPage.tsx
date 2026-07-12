@@ -1,14 +1,15 @@
 ﻿import { notFound } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import BookmarkApplyButtons from "@/app/scholarships/[id]/BookmarkApplyButtons";
 import ScholarshipDetailHero from "@/app/scholarships/[id]/ScholarshipDetailHero";
 import ScholarshipPoster from "@/app/scholarships/[id]/ScholarshipPoster";
-import ScholarshipTabs, {
-  type ScholarshipDetail,
-  type SelectionStageDetail,
+import type {
+  ScholarshipDetail,
+  SelectionStageDetail,
 } from "@/app/scholarships/[id]/ScholarshipTabs";
 import {
   daysUntilApplyDeadlineKorea,
@@ -24,6 +25,18 @@ import { contentKindLabel } from "@/lib/content-categories";
 import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
 
+const ScholarshipTabs = dynamic(
+  () => import("@/app/scholarships/[id]/ScholarshipTabs"),
+  {
+    loading: () => (
+      <div className="mt-8 space-y-4" aria-hidden>
+        <div className="h-8 w-40 animate-pulse rounded-lg bg-gray-100" />
+        <div className="h-24 w-full animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-24 w-full animate-pulse rounded-xl bg-gray-100" />
+      </div>
+    ),
+  }
+);
 const posterPlaceholderGradient = "from-sky-400 to-sky-700";
 
 type OpportunityKind = "contest" | "education" | "activity";
@@ -214,7 +227,6 @@ export default async function OpportunityDetailPage({
             organizationInitial={organizationInitial}
             initialBookmarked={false}
             showBookmark={false}
-            unoptimizedPoster
           />
         </div>
 
@@ -344,7 +356,6 @@ export default async function OpportunityDetailPage({
                       <ScholarshipPoster
                         posterUrl={contest.poster_image_url}
                         alt={posterAlt}
-                        unoptimized
                       />
                     ) : (
                       <div

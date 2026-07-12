@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import BookmarkApplyButtons from "./BookmarkApplyButtons";
 import ScholarshipDetailHero from "./ScholarshipDetailHero";
 import ScholarshipPoster from "./ScholarshipPoster";
-import ScholarshipTabs from "./ScholarshipTabs";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { resolveScholarshipBenefits } from "@/lib/benefit-categories";
@@ -17,6 +17,16 @@ import {
   hasAutoCheckableQualifications,
   type AutoCheckState,
 } from "@/lib/scholarship-qualification-match";
+
+const ScholarshipTabs = dynamic(() => import("./ScholarshipTabs"), {
+  loading: () => (
+    <div className="mt-8 space-y-4" aria-hidden>
+      <div className="h-8 w-40 animate-pulse rounded-lg bg-gray-100" />
+      <div className="h-24 w-full animate-pulse rounded-xl bg-gray-100" />
+      <div className="h-24 w-full animate-pulse rounded-xl bg-gray-100" />
+    </div>
+  ),
+});
 
 const posterPlaceholderGradient = "from-brand to-[#c00000]";
 
@@ -79,22 +89,33 @@ export default async function ScholarshipDetailPage({
 
   const supabase = await createClient();
 
-  const [{ data: scholarship }, { data: { user } }, scrapCountByScholarship, { data: selectionStages }] =
-    await Promise.all([
-      supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
-      supabase.auth.getUser(),
-      getScholarshipScrapCounts(supabase, [scholarshipId]),
-      supabase
-        .from("scholarship_selection_stages")
-        .select("stage_order, title, phase, schedule_date, schedule_text, note")
-        .eq("scholarship_id", scholarshipId)
-        .order("stage_order"),
-    ]);
+  const [
+    { data: scholarship },
+    {
+      data: { user },
+    },
+    scrapCountByScholarship,
+    { data: selectionStages },
+  ] = await Promise.all([
+    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+    supabase.auth.getUser(),
+    getScholarshipScrapCounts(supabase, [scholarshipId]),
+    supabase
+      .from("scholarship_selection_stages")
+      .select("stage_order, title, phase, schedule_date, schedule_text, note")
+      .eq("scholarship_id", scholarshipId)
+      .order("stage_order"),
+  ]);
 
   if (!scholarship) notFound();
 
   const currentViewCount = scholarship.view_count ?? 0;
-  const { data: bookmarkResult } = await (
+  const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
+  const isAdvertisement = scholarship.is_advertisement === true;
+  const autoCheckApplicable =
+    !isAdvertisement && hasAutoCheckableQualifications(scholarship);
+
+  const [bookmarkResult, qualMatchItems] = await Promise.all([
     user
       ? supabase
           .from("bookmarks")
@@ -102,23 +123,22 @@ export default async function ScholarshipDetailPage({
           .eq("user_id", user.id)
           .eq("scholarship_id", scholarshipId)
           .maybeSingle()
-      : Promise.resolve({ data: null })
-  );
+          .then(({ data }) => data)
+      : Promise.resolve(null),
+    user && autoCheckApplicable
+      ? getScholarshipQualMatch(supabase, user.id, scholarship)
+      : Promise.resolve(null),
+  ]);
+
   const initialBookmarked = !!bookmarkResult;
-  const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
 
   const displayName = cleanScholarshipName(scholarship.name);
-  const isAdvertisement = scholarship.is_advertisement === true;
   const benefitHighlights = resolveScholarshipBenefits({
     supportTypes: scholarship.support_types,
     supportAmountText: scholarship.support_amount_text,
     isAdvertisement,
   });
 
-  const autoCheckApplicable = !isAdvertisement && hasAutoCheckableQualifications(scholarship);
-  const qualMatchItems = user && autoCheckApplicable
-    ? await getScholarshipQualMatch(supabase, user.id, scholarship)
-    : null;
   const autoCheck: AutoCheckState = !autoCheckApplicable
     ? { kind: "none" }
     : qualMatchItems

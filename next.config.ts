@@ -17,6 +17,25 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  async redirects() {
+    return [
+      {
+        source: "/admin/ads",
+        destination: "/admin/content",
+        permanent: false,
+      },
+      {
+        source: "/admin/ads/:path*",
+        destination: "/admin/content",
+        permanent: false,
+      },
+      {
+        source: "/admin/org-signup-requests",
+        destination: "/admin",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       ...(supabaseHostname

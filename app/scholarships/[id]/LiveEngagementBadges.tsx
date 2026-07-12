@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getScholarshipLiveCounts } from "./actions";
 
 const BOOKMARK_EVENT = "scholarship:bookmark-toggled";
 const VIEW_EVENT = "scholarship:view-incremented";
@@ -16,6 +15,10 @@ type ViewEventDetail = {
   viewCount?: number;
 };
 
+/**
+ * 서버에서 받은 초기 조회/스크랩 수를 보여주고,
+ * 같은 탭 내 북마크·조회수 이벤트만 반영한다. (폴링 없음)
+ */
 export default function LiveEngagementBadges({
   scholarshipId,
   initialViewCount,
@@ -29,15 +32,11 @@ export default function LiveEngagementBadges({
   const [scrapCount, setScrapCount] = useState(initialScrapCount);
 
   useEffect(() => {
-    let isUnmounted = false;
+    setViewCount(initialViewCount);
+    setScrapCount(initialScrapCount);
+  }, [scholarshipId, initialViewCount, initialScrapCount]);
 
-    const syncCounts = async () => {
-      const latest = await getScholarshipLiveCounts(scholarshipId);
-      if (isUnmounted) return;
-      setViewCount(latest.viewCount);
-      setScrapCount(latest.scrapCount);
-    };
-
+  useEffect(() => {
     const onBookmarkToggled = (event: Event) => {
       const detail = (event as CustomEvent<BookmarkEventDetail>).detail;
       if (!detail || detail.scholarshipId !== scholarshipId) return;
@@ -54,28 +53,12 @@ export default function LiveEngagementBadges({
       }
     };
 
-    const onFocusOrVisible = () => {
-      if (document.visibilityState === "visible") {
-        void syncCounts();
-      }
-    };
-
     window.addEventListener(BOOKMARK_EVENT, onBookmarkToggled as EventListener);
     window.addEventListener(VIEW_EVENT, onViewIncremented as EventListener);
-    window.addEventListener("focus", onFocusOrVisible);
-    document.addEventListener("visibilitychange", onFocusOrVisible);
-
-    const intervalId = window.setInterval(() => {
-      void syncCounts();
-    }, 15000);
 
     return () => {
-      isUnmounted = true;
       window.removeEventListener(BOOKMARK_EVENT, onBookmarkToggled as EventListener);
       window.removeEventListener(VIEW_EVENT, onViewIncremented as EventListener);
-      window.removeEventListener("focus", onFocusOrVisible);
-      document.removeEventListener("visibilitychange", onFocusOrVisible);
-      window.clearInterval(intervalId);
     };
   }, [scholarshipId]);
 

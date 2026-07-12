@@ -1,15 +1,15 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { flushSync } from "react-dom";
-import NavbarSkeleton from "@/components/skeletons/NavbarSkeleton";
-import { Skeleton } from "@/components/skeletons/skeleton";
+import { useEffect, useRef, useState } from "react";
 
 /**
- * Next.js `loading.tsx`만으로는 프리패치·빠른 RSC 전환 때문에 로딩 UI가 거의 안 보일 수 있음.
- * 같은 도메인 내부 링크 클릭 시 스켈레톤 오버레이를 올려 체감 로딩을 보장한다.
+ * 빠른 RSC 전환에서는 오버레이를 띄우지 않고,
+ * 전환이 OVERLAY_DELAY_MS 이상 걸릴 때만 얇은 상단 진행 바를 표시한다.
+ * (이전 풀스크린 스켈레톤은 체감 지연을 키웠음)
  */
+const OVERLAY_DELAY_MS = 200;
+
 export default function NavigationPendingOverlay({
   children,
 }: {
@@ -19,13 +19,20 @@ export default function NavigationPendingOverlay({
   const searchParams = useSearchParams();
   const routeKey = `${pathname}?${searchParams.toString()}`;
   const [pending, setPending] = useState(false);
+  const delayTimerRef = useRef<number | null>(null);
+
+  function clearDelayTimer() {
+    if (delayTimerRef.current != null) {
+      window.clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = null;
+    }
+  }
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setPending(false));
-    return () => cancelAnimationFrame(frame);
+    clearDelayTimer();
+    setPending(false);
   }, [routeKey]);
 
-  // 라우트 전환이 실패/중단된 경우 오버레이가 고착되는 것을 방지한다.
   useEffect(() => {
     if (!pending) return;
     const timer = window.setTimeout(() => setPending(false), 2500);
@@ -72,14 +79,17 @@ export default function NavigationPendingOverlay({
       const currentPathSearch = `${window.location.pathname}${window.location.search}`;
       if (nextPathSearch === currentPathSearch) return;
 
-      flushSync(() => {
+      clearDelayTimer();
+      delayTimerRef.current = window.setTimeout(() => {
         setPending(true);
-      });
+      }, OVERLAY_DELAY_MS);
     }
 
     document.addEventListener("click", handleCaptureClick, true);
-    return () =>
+    return () => {
       document.removeEventListener("click", handleCaptureClick, true);
+      clearDelayTimer();
+    };
   }, []);
 
   return (
@@ -90,42 +100,9 @@ export default function NavigationPendingOverlay({
           role="progressbar"
           aria-busy="true"
           aria-label="페이지 불러오는 중"
-          className="fixed inset-0 z-100 flex cursor-wait flex-col bg-white/90 backdrop-blur-sm pointer-events-auto"
+          className="pointer-events-none fixed inset-x-0 top-0 z-100 h-0.5 overflow-hidden bg-transparent"
         >
-          <NavbarSkeleton />
-          <div className="flex flex-1 flex-col overflow-y-auto px-4 py-10 sm:px-6 lg:px-8">
-            <div className="mx-auto w-full max-w-7xl space-y-10">
-              <div className="grid gap-10 lg:grid-cols-2">
-                <div className="space-y-4">
-                  <Skeleton className="h-10 w-full max-w-md" />
-                  <Skeleton className="h-10 w-4/5 max-w-sm" />
-                  <Skeleton className="h-4 w-full max-w-lg" />
-                  <div className="flex gap-3 pt-4">
-                    <Skeleton className="h-12 w-36 rounded-xl" />
-                    <Skeleton className="h-12 w-28 rounded-xl" />
-                  </div>
-                </div>
-                <Skeleton className="hidden aspect-square max-h-[min(100%,380px)] w-full rounded-3xl lg:block" />
-              </div>
-              <div className="rounded-3xl border border-gray-100 bg-beige/80 p-6">
-                <div className="mb-6 flex flex-wrap gap-2">
-                  <Skeleton className="h-9 w-24 rounded-full" />
-                  <Skeleton className="h-9 w-28 rounded-full" />
-                  <Skeleton className="h-9 w-20 rounded-full" />
-                </div>
-                <Skeleton className="mb-8 h-11 max-w-xl rounded-xl" />
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="flex flex-col gap-2">
-                      <Skeleton className="aspect-2/3 w-full rounded-xl sm:rounded-2xl" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-3 w-2/3" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="h-full w-1/3 animate-pulse bg-brand" />
         </div>
       )}
     </>
