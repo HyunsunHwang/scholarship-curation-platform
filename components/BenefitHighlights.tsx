@@ -63,7 +63,7 @@ export default function BenefitHighlights({
   }
 
   return (
-    <ul className="mt-6 grid grid-cols-1 gap-x-8 gap-y-5 border-t border-gray-100 pt-6 sm:grid-cols-2">
+    <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-gray-100 pt-6 sm:gap-x-8">
       {benefits.map((b) => (
         <li key={`${b.id}-${b.label}`} className="flex min-w-0 items-center gap-3">
           <BenefitIcon id={b.id} accent={b.accent} />
