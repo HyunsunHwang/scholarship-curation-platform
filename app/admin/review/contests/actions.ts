@@ -8,8 +8,26 @@ import {
   buildContestSelectionStagesPayload,
   parseContestContentKind,
 } from "@/lib/contest-payload";
+import { resolveContestBenefits } from "@/lib/benefit-categories";
 import { formatOriginalNoticeText } from "@/lib/notice-extraction";
 import type { ContestContentKind } from "@/lib/admin-kinds";
+
+function asDraftRecord(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function asDraftStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (item): item is string => typeof item === "string" && item.trim() !== ""
+  );
+}
+
+function asDraftString(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
 
 function normalizeRejectTag(reviewNote?: string) {
   const note = (reviewNote ?? "").trim();
@@ -93,7 +111,7 @@ export async function formatCrawledContestBody(
 
   const { data: row, error } = await supabase
     .from("crawled_contests")
-    .select("id, title, body")
+    .select("id, title, body, content_kind, extracted_draft")
     .eq("id", crawledId)
     .single();
   if (error) return { error: error.message };
@@ -110,9 +128,32 @@ export async function formatCrawledContestBody(
     return { error: formatError };
   }
 
+  const noticeText = formatted.trim() || body;
+  const draft = asDraftRecord(row.extracted_draft);
+  const contentKind = parseContestContentKind(row.content_kind);
+
+  // 원문(시상/혜택 섹션) 우선 + 링커리어 필드는 보강만
+  const benefitLabels = resolveContestBenefits({
+    noticeText,
+    benefits: asDraftStringArray(draft.benefits),
+    supportAmountText: asDraftString(draft.support_amount_text),
+    additionalNote: asDraftString(draft.note),
+    contentKind,
+    name: asDraftString(draft.name) ?? row.title,
+  }).map((b) => b.label);
+
+  const nextDraft: Record<string, unknown> = {
+    ...draft,
+    original_notice_text: noticeText,
+    ...(benefitLabels.length > 0 ? { benefits: benefitLabels } : {}),
+  };
+
   const { error: updateError } = await supabase
     .from("crawled_contests")
-    .update({ body: formatted.trim() || body })
+    .update({
+      body: noticeText,
+      extracted_draft: nextDraft,
+    })
     .eq("id", crawledId);
   if (updateError) return { error: updateError.message };
 

@@ -84,7 +84,8 @@ export default async function ReviewContestDetailPage({
     selection_note: asString(draft.selection_note),
     poster_image_url: asString(draft.poster_image_url) ?? row.poster_image_url,
     original_notice_image_urls: imageUrls,
-    original_notice_text: asString(draft.original_notice_text) ?? row.body,
+    // 원문 섹션 body가 소스 오브 트루스 (본문 형식 정리 후 폼과 동기화)
+    original_notice_text: row.body?.trim() || asString(draft.original_notice_text),
     source: row.source_group,
     external_id: row.source_id,
     source_url: row.notice_url,
