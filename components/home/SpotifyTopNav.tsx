@@ -32,7 +32,7 @@ export default async function SpotifyTopNav({
   const siteSettings = await siteSettingsPromise;
 
   let profile: { role: string; name: string | null } | null =
-    currentUserRole || currentUserName
+    currentUserRole !== undefined || currentUserName !== undefined
       ? { role: currentUserRole ?? "", name: currentUserName ?? null }
       : null;
   let urgentBookmarkCount = urgentBookmarkCountProp ?? 0;

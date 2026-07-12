@@ -17,6 +17,11 @@ import {
   hasAutoCheckableQualifications,
   type AutoCheckState,
 } from "@/lib/scholarship-qualification-match";
+import { SCHOLARSHIP_DETAIL_SELECT } from "@/lib/detail-select";
+import { resolveNavUserContext } from "@/lib/nav-user-context";
+import type { Database } from "@/lib/database.types";
+
+type ScholarshipRow = Database["public"]["Tables"]["scholarships"]["Row"];
 
 const ScholarshipTabs = dynamic(() => import("./ScholarshipTabs"), {
   loading: () => (
@@ -90,14 +95,18 @@ export default async function ScholarshipDetailPage({
   const supabase = await createClient();
 
   const [
-    { data: scholarship },
+    scholarshipResult,
     {
       data: { user },
     },
     scrapCountByScholarship,
     { data: selectionStages },
   ] = await Promise.all([
-    supabase.from("scholarships").select("*").eq("id", scholarshipId).single(),
+    supabase
+      .from("scholarships")
+      .select(SCHOLARSHIP_DETAIL_SELECT)
+      .eq("id", scholarshipId)
+      .single(),
     supabase.auth.getUser(),
     getScholarshipScrapCounts(supabase, [scholarshipId]),
     supabase
@@ -107,15 +116,16 @@ export default async function ScholarshipDetailPage({
       .order("stage_order"),
   ]);
 
-  if (!scholarship) notFound();
+  if (scholarshipResult.error || !scholarshipResult.data) notFound();
 
-  const currentViewCount = scholarship.view_count ?? 0;
+  const scholarship = scholarshipResult.data as unknown as ScholarshipRow;
   const scrapCount = scrapCountByScholarship.get(scholarshipId) ?? 0;
+  const currentViewCount = scholarship.view_count ?? 0;
   const isAdvertisement = scholarship.is_advertisement === true;
   const autoCheckApplicable =
     !isAdvertisement && hasAutoCheckableQualifications(scholarship);
 
-  const [bookmarkResult, qualMatchItems] = await Promise.all([
+  const [bookmarkResult, qualMatchItems, navContext] = await Promise.all([
     user
       ? supabase
           .from("bookmarks")
@@ -128,6 +138,7 @@ export default async function ScholarshipDetailPage({
     user && autoCheckApplicable
       ? getScholarshipQualMatch(supabase, user.id, scholarship)
       : Promise.resolve(null),
+    resolveNavUserContext(user),
   ]);
 
   const initialBookmarked = !!bookmarkResult;
@@ -152,7 +163,12 @@ export default async function ScholarshipDetailPage({
     <div className="flex min-h-screen flex-col bg-white">
       {/* 데스크톱만 상단 네비 — 모바일은 에어비앤비식 풀블리드 히어로 */}
       <div className="hidden md:block">
-        <Navbar currentUser={user} />
+        <Navbar
+          currentUser={user}
+          currentUserRole={navContext.role}
+          currentUserName={navContext.name}
+          urgentBookmarkCount={navContext.urgentBookmarkCount}
+        />
       </div>
 
       <main className="relative flex-1 bg-white">

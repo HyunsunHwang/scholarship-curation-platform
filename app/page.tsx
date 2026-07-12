@@ -1,11 +1,13 @@
 import dynamic from "next/dynamic";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
+import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
+import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 const SpotifyHomeShell = dynamic(
   () => import("@/components/home/SpotifyHomeShell"),
@@ -37,6 +39,8 @@ export default async function Home() {
   const {
     data: { user },
   } = await authSupabase.auth.getUser();
+
+  const navContextPromise = resolveNavUserContext(user);
 
   let bookmarkedIds: number[] = [];
   let bookmarkedScholarships: CardScholarship[] = [];
@@ -88,17 +92,26 @@ export default async function Home() {
     }
   }
 
+  const navContext = await navContextPromise;
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-beige">
-      <SpotifyTopNav currentUser={user} />
-      <main className="flex min-h-0 flex-1 flex-col">
-        <SpotifyHomeShell
-          isLoggedIn={Boolean(user)}
-          scholarships={homeFeedItems}
-          bookmarkedScholarships={bookmarkedScholarships}
-          bookmarkedIds={bookmarkedIds}
+      <HomeSearchRoot>
+        <SpotifyTopNav
+          currentUser={user}
+          currentUserRole={navContext.role}
+          currentUserName={navContext.name}
+          urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
-      </main>
+        <main className="flex min-h-0 flex-1 flex-col">
+          <SpotifyHomeShell
+            isLoggedIn={Boolean(user)}
+            scholarships={homeFeedItems}
+            bookmarkedScholarships={bookmarkedScholarships}
+            bookmarkedIds={bookmarkedIds}
+          />
+        </main>
+      </HomeSearchRoot>
       <footer className="shrink-0 border-t border-gray-200/80 bg-white px-4 py-2.5 text-center text-xs text-ink/50">
         문의:{" "}
         <a

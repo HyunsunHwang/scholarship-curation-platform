@@ -1,32 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const SEARCH_EVENT = "home:search-query";
-
-export function dispatchHomeSearch(query: string) {
-  window.dispatchEvent(
-    new CustomEvent(SEARCH_EVENT, { detail: { query } })
-  );
-}
-
-export function useHomeSearchQuery() {
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    function onSearch(e: Event) {
-      const detail = (e as CustomEvent<{ query: string }>).detail;
-      setQuery(detail?.query ?? "");
-    }
-    window.addEventListener(SEARCH_EVENT, onSearch);
-    return () => window.removeEventListener(SEARCH_EVENT, onSearch);
-  }, []);
-
-  return query;
-}
+import { useHomeSearch } from "./HomeSearchContext";
 
 export default function HomeSearchBar() {
-  const [value, setValue] = useState("");
+  const { query, setQuery } = useHomeSearch();
 
   return (
     <div className="relative w-full">
@@ -48,12 +25,8 @@ export default function HomeSearchBar() {
       </span>
       <input
         type="search"
-        value={value}
-        onChange={(e) => {
-          const next = e.target.value;
-          setValue(next);
-          dispatchHomeSearch(next);
-        }}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder="어떤 공고를 찾고 계신가요?"
         className="w-full rounded-full border border-transparent bg-beige py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink/40 outline-none transition-shadow focus:border-brand/40 focus:bg-white focus:ring-2 focus:ring-brand/15"
         autoComplete="off"

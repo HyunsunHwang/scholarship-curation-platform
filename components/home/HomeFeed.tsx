@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
   CONTENT_CATEGORIES,
@@ -10,7 +10,7 @@ import {
 } from "@/lib/content-categories";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
-import { useHomeSearchQuery } from "./HomeSearchBar";
+import { useHomeSearch } from "./HomeSearchContext";
 import HorizontalShelf from "./HorizontalShelf";
 
 const TRENDING_LIMIT = 16;
@@ -75,8 +75,7 @@ export default function HomeFeed({
 }) {
   const [category, setCategory] = useState<ContentCategoryKey>("all");
   const [allVisibleCount, setAllVisibleCount] = useState(ALL_SHELF_INITIAL);
-  const searchQuery = useHomeSearchQuery();
-  const deferredSearch = useDeferredValue(searchQuery);
+  const { query: searchQuery, deferredQuery: deferredSearch } = useHomeSearch();
   const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
 
   // 검색어·카테고리 변경 시 더보기 커서 리셋

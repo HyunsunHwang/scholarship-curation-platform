@@ -24,6 +24,8 @@ import {
 import { contentKindLabel } from "@/lib/content-categories";
 import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
+import { CONTEST_DETAIL_SELECT } from "@/lib/detail-select";
+import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 const ScholarshipTabs = dynamic(
   () => import("@/app/scholarships/[id]/ScholarshipTabs"),
@@ -171,12 +173,12 @@ export default async function OpportunityDetailPage({
 
   let contestQuery = publicClient
     .from("contests")
-    .select("*")
+    .select(CONTEST_DETAIL_SELECT)
     .eq("id", contestId)
     .eq("is_verified", true);
   if (expectedKind) contestQuery = contestQuery.eq("content_kind", expectedKind);
 
-  const [{ data: contest }, { data: { user } }, { data: selectionStages }] =
+  const [contestResult, { data: { user } }, { data: selectionStages }] =
     await Promise.all([
       contestQuery.maybeSingle(),
       authSupabase.auth.getUser(),
@@ -187,7 +189,10 @@ export default async function OpportunityDetailPage({
         .order("stage_order"),
     ]);
 
-  if (!contest) notFound();
+  if (contestResult.error || !contestResult.data) notFound();
+
+  const contest = contestResult.data as unknown as Contest;
+  const navContext = await resolveNavUserContext(user);
 
   const kind = (contest.content_kind ?? "contest") as OpportunityKind;
   const kindLabel = contentKindLabel(kind);
@@ -214,7 +219,12 @@ export default async function OpportunityDetailPage({
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <div className="hidden md:block">
-        <Navbar currentUser={user} />
+        <Navbar
+          currentUser={user}
+          currentUserRole={navContext.role}
+          currentUserName={navContext.name}
+          urgentBookmarkCount={navContext.urgentBookmarkCount}
+        />
       </div>
 
       <main className="relative flex-1 bg-white">
