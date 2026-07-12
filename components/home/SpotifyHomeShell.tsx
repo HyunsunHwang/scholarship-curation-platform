@@ -37,6 +37,12 @@ export default function SpotifyHomeShell({
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    const open = () => setLibraryLeftOpen(true);
+    window.addEventListener("janghakssam:open-library", open);
+    return () => window.removeEventListener("janghakssam:open-library", open);
+  }, []);
+
   function setLibraryLeftOpen(next: boolean) {
     setLeftOpen(next);
     try {

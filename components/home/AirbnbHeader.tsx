@@ -208,99 +208,212 @@ function UserActions({
   isAdmin,
   displayInitial,
   profileTitle,
-  urgentBookmarkCount,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
   displayInitial: string;
   profileTitle: string;
-  urgentBookmarkCount: number;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onPointer = (e: MouseEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  function openLibrary() {
+    setMenuOpen(false);
+    try {
+      window.localStorage.setItem("janghakssam:library-left-open", "1");
+    } catch {
+      // ignore
+    }
+    window.dispatchEvent(new Event("janghakssam:open-library"));
+    if (window.location.pathname !== "/") {
+      window.location.href = "/";
+    }
+  }
+
+  function showComingSoon(label: string) {
+    setMenuOpen(false);
+    setComingSoon(label);
+  }
+
   return (
-    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-      {isLoggedIn ? (
-        <>
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="hidden rounded-full border border-brand/30 bg-brand/10 px-3 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-brand/20 sm:inline-flex"
-            >
-              관리자
-            </Link>
-          )}
-          <Link
-            href="/mypage"
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-beige text-ink/70 transition-colors hover:bg-cream hover:text-brand"
-            aria-label="마이페이지"
+    <div className="relative flex shrink-0 items-center gap-1 sm:gap-2">
+      {/* 톡 서비스 */}
+      <button
+        type="button"
+        onClick={() => showComingSoon("톡")}
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-beige hover:text-ink"
+        aria-label="톡"
+        title="톡"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.75}
+          aria-hidden
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.1 48.1 0 005.714-.215c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+          />
+        </svg>
+      </button>
+
+      {/* 프로필 메뉴 */}
+      <div ref={menuRef} className="relative">
+        <button
+          type="button"
+          onClick={() => setMenuOpen((v) => !v)}
+          className="flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-2.5 pr-1 shadow-sm transition hover:shadow-md"
+          aria-label="메뉴"
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          title={profileTitle}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className="h-4 w-4 text-ink"
+            fill="currentColor"
+            aria-hidden
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a3 3 0 0 1-5.714 0m5.714 0H9.143"
-              />
-            </svg>
-            {urgentBookmarkCount > 0 && (
-              <span className="absolute right-0 top-0 flex h-4 min-w-4 translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white">
-                {urgentBookmarkCount > 99 ? "99+" : urgentBookmarkCount}
-              </span>
-            )}
-          </Link>
-          <form action={logout}>
+            <path
+              fillRule="evenodd"
+              d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+            {isLoggedIn ? displayInitial : "?"}
+          </span>
+        </button>
+
+        {menuOpen ? (
+          <div
+            role="menu"
+            className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-2 shadow-lg"
+          >
             <button
-              type="submit"
-              className="hidden rounded-full px-3 py-1.5 text-sm font-medium text-ink/60 transition-colors hover:bg-cream hover:text-ink sm:inline-flex"
+              type="button"
+              role="menuitem"
+              onClick={openLibrary}
+              className="flex w-full px-4 py-2.5 text-left text-sm font-semibold text-ink hover:bg-beige"
             >
-              로그아웃
+              내 라이브러리
             </button>
-          </form>
-          <Link
-            href="/mypage"
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-2.5 pr-1 shadow-sm transition hover:shadow-md"
-            aria-label="프로필"
-            title={profileTitle}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="h-4 w-4 text-ink"
-              fill="currentColor"
-              aria-hidden
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => showComingSoon("메시지")}
+              className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-beige"
             >
-              <path
-                fillRule="evenodd"
-                d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
-              {displayInitial}
-            </span>
-          </Link>
-        </>
-      ) : (
-        <>
-          <Link
-            href="/auth"
-            className="hidden text-sm font-medium text-ink/60 transition-colors hover:text-ink sm:inline-flex"
+              메시지
+            </button>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/mypage"
+                  role="menuitem"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-beige"
+                >
+                  프로필
+                </Link>
+                {isAdmin ? (
+                  <Link
+                    href="/admin"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige"
+                  >
+                    관리자
+                  </Link>
+                ) : null}
+                <div className="my-1 border-t border-gray-100" />
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    role="menuitem"
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-beige"
+                  >
+                    로그아웃
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth"
+                  role="menuitem"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex w-full px-4 py-2.5 text-left text-sm font-semibold text-ink hover:bg-beige"
+                >
+                  프로필
+                </Link>
+                <div className="my-1 border-t border-gray-100" />
+                <Link
+                  href="/auth"
+                  role="menuitem"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-beige"
+                >
+                  로그인 / 회원가입
+                </Link>
+              </>
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      {comingSoon ? (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="coming-soon-title"
+          onClick={() => setComingSoon(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            가입하기
-          </Link>
-          <Link
-            href="/auth"
-            className="inline-flex h-8 items-center rounded-full bg-brand px-3.5 text-xs font-semibold text-white transition-colors hover:bg-brand/85 sm:h-9 sm:px-5 sm:text-sm"
-          >
-            로그인하기
-          </Link>
-        </>
-      )}
+            <h2
+              id="coming-soon-title"
+              className="text-lg font-bold text-ink"
+            >
+              {comingSoon} 서비스
+            </h2>
+            <p className="mt-2 text-sm text-ink/60">서비스 준비중입니다.</p>
+            <button
+              type="button"
+              onClick={() => setComingSoon(null)}
+              className="mt-5 w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand/85"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -411,7 +524,6 @@ export default function AirbnbHeader({
           isAdmin={isAdmin}
           displayInitial={displayInitial}
           profileTitle={profileTitle}
-          urgentBookmarkCount={urgentBookmarkCount}
         />
       </div>
 
