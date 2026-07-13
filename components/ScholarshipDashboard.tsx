@@ -188,7 +188,7 @@ export default function ScholarshipDashboard({
   }, [deferredSearchQuery, filtered.length, scopeFilter, sortBy]);
 
   return (
-    <section id="scholarships" className="bg-[#fafafa] py-16">
+    <section id="scholarships" className="bg-beige py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* 헤더 */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -208,7 +208,7 @@ export default function ScholarshipDashboard({
             <div
               role="toolbar"
               aria-label="정렬 기준 선택"
-              className="flex min-h-[2.25rem] min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:thin]"
+              className="flex min-h-9 min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:thin]"
             >
               {SORT_OPTIONS.map((option) => (
                 <button
@@ -226,7 +226,7 @@ export default function ScholarshipDashboard({
                   className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                     sortBy === option.key
                       ? "bg-brand text-white"
-                      : "border border-gray-200 bg-white text-ink/70 hover:bg-[#fff0f0]"
+                      : "border border-gray-200 bg-white text-ink/70 hover:bg-cream"
                   }`}
                 >
                   {option.label}
@@ -301,7 +301,7 @@ export default function ScholarshipDashboard({
                 setSearchQuery("");
                 setPage(1);
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-[#fff0f0] hover:text-ink"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-ink/40 hover:bg-cream hover:text-ink"
               aria-label="검색어 지우기"
             >
               <svg
