@@ -1,0 +1,1144 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-f0-adapter-foundation/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "migration": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "fixture_name": "post-phase-f0-fixture-aggregate",
+  "source_identity_policy": {
+    "canonical_db_identifier": "notice_sources.source_id",
+    "crawler_facing_key": "source_key",
+    "exact_resolution_only": true,
+    "no_fuzzy_matching": true,
+    "no_automatic_source_creation": true,
+    "resolved_only_normal_candidates": true,
+    "fail_closed_statuses": [
+      "unresolved",
+      "ambiguous",
+      "missing_source_key",
+      "inactive_source",
+      "source_key_alias_required"
+    ]
+  },
+  "counts": {
+    "candidate_count": 13,
+    "resolved_source_count": 8,
+    "unresolved_source_count": 1,
+    "ambiguous_source_count": 1,
+    "missing_source_key_count": 1,
+    "inactive_source_count": 1,
+    "source_key_alias_required_count": 1,
+    "clean_count": 2,
+    "duplicate_review_count": 1,
+    "quality_review_count": 1,
+    "blocked_count": 7,
+    "no_assets_count": 1,
+    "image_only_suspected_count": 1,
+    "zero_match_observed_count": 1,
+    "admin_review_required_count": 11,
+    "auto_apply_allowed_count": 2,
+    "batch_warning_count": 3,
+    "rollback_scope_available_count": 4
+  },
+  "review_read_model": [
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_001:f0-clean",
+      "title": "Resolved clean adapter candidate",
+      "original_url": "https://example.edu/f0/clean",
+      "normalized_url": "https://example.edu/f0/clean",
+      "published_at": "2026-07-01",
+      "body_text": "This fixture provides sufficient public scholarship text and a captured attachment so the adapter can emit a resolved clean review read-model row without any database interaction.",
+      "body_text_length": 179,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "clean",
+      "quality_status": "accepted",
+      "blocker_status": null,
+      "duplicate_status": "unique",
+      "auto_apply_allowed": true,
+      "admin_review_required": false,
+      "recommended_action": "retain_for_later_approved_apply_path",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [
+        "scholarship"
+      ],
+      "latest_run_id": "f0-run-clean",
+      "latest_batch_label": "f0-healthy",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 0,
+      "rollback_scope_available": true,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "clean"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 경영학부",
+            "university_slug": "cau",
+            "org_unit_id": "719",
+            "source_level": "department",
+            "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/clean.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-healthy",
+          "latest_run_id": "f0-run-clean",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 0,
+          "rollback_scope_available": true,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_002:f0-no-assets",
+      "title": "Resolved text sufficient without assets",
+      "original_url": "https://example.edu/f0/no-assets",
+      "normalized_url": "https://example.edu/f0/no-assets",
+      "published_at": "2026-07-02",
+      "body_text": "No attachment was captured for this public notice, but the extracted text clearly contains eligibility, selection criteria, amount, application deadline, contact, and submission procedure, so no-assets alone must not become a blocker.",
+      "body_text_length": 234,
+      "has_assets": false,
+      "asset_count": 0,
+      "no_assets": true,
+      "body_quality": "text_sufficient_no_assets",
+      "image_only_suspected": false,
+      "review_status": "clean",
+      "quality_status": "accepted",
+      "blocker_status": null,
+      "duplicate_status": "unique",
+      "auto_apply_allowed": true,
+      "admin_review_required": false,
+      "recommended_action": "retain_text_evidence",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-no-assets",
+      "latest_batch_label": "f0-healthy",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 0,
+      "rollback_scope_available": true,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "no_assets_text_sufficient"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 경제학부",
+            "university_slug": "cau",
+            "org_unit_id": "720",
+            "source_level": "department",
+            "list_url": "https://econ.cau.ac.kr/news/notice/",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "success",
+          "assets": [],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-healthy",
+          "latest_run_id": "f0-run-no-assets",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 0,
+          "rollback_scope_available": true,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_003:f0-duplicate",
+      "title": "Resolved duplicate review candidate",
+      "original_url": "https://example.edu/f0/duplicate",
+      "normalized_url": "https://example.edu/f0/duplicate",
+      "published_at": "2026-07-03",
+      "body_text": "The candidate text and attachment are sufficient, but its canonical key overlaps a previously observed record and requires human evidence comparison before any later approved apply path.",
+      "body_text_length": 186,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "needs_review",
+      "quality_status": "accepted",
+      "blocker_status": null,
+      "duplicate_status": "duplicate_existing",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "compare_duplicate_evidence",
+      "target_summary": [
+        "graduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-duplicate",
+      "latest_batch_label": "f0-healthy",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 0,
+      "rollback_scope_available": true,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "duplicate_review"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_003",
+          "source_id": "cau_003",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 광고홍보학과",
+            "university_slug": "cau",
+            "org_unit_id": "721",
+            "source_level": "department",
+            "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/duplicate.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-healthy",
+          "latest_run_id": "f0-run-duplicate",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 0,
+          "rollback_scope_available": true,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_004",
+      "source_key_snapshot": "cau_004",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_004:f0-quality",
+      "title": "Resolved short body review candidate",
+      "original_url": "https://example.edu/f0/quality",
+      "normalized_url": "https://example.edu/f0/quality",
+      "published_at": "2026-07-04",
+      "body_text": "Short body requires quality review.",
+      "body_text_length": 35,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "short_body_needs_review",
+      "image_only_suspected": false,
+      "review_status": "needs_review",
+      "quality_status": "short_body_needs_review",
+      "blocker_status": null,
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "review_body_quality",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-quality",
+      "latest_batch_label": "f0-healthy",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 0,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "quality_review"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_004",
+          "source_id": "cau_004",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 국제물류학과",
+            "university_slug": "cau",
+            "org_unit_id": "722",
+            "source_level": "department",
+            "list_url": "https://log.cau.ac.kr/dm/dm_1.php",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/quality.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-healthy",
+          "latest_run_id": "f0-run-quality",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 0,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "unresolved_999",
+      "source_resolution_status": "unresolved",
+      "source_resolution_reason": "no_exact_source_key_mapping",
+      "canonical_key": "unresolved_999:f0",
+      "title": "Unresolved source candidate",
+      "original_url": "https://example.edu/f0/unresolved",
+      "normalized_url": "https://example.edu/f0/unresolved",
+      "published_at": "2026-07-05",
+      "body_text": "The candidate has usable-looking public text but cannot be a normal review candidate because its crawler source key did not resolve to a canonical source identifier.",
+      "body_text_length": 165,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "source_resolution_unresolved",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "resolve_source_identity_before_review",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-unresolved",
+      "latest_batch_label": "f0-unresolved",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "blocked_missing_source"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "unresolved_999",
+          "source_id": null,
+          "status": "unresolved",
+          "reason": "no_exact_source_key_mapping",
+          "evidence": {
+            "reason": "no exact source_key match"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "missing",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/unresolved.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-unresolved",
+          "latest_run_id": "f0-run-unresolved",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "ambiguous_source",
+      "source_resolution_status": "ambiguous",
+      "source_resolution_reason": "multiple_source_id_candidates",
+      "canonical_key": "ambiguous_source:f0",
+      "title": "Ambiguous source candidate",
+      "original_url": "https://example.edu/f0/ambiguous",
+      "normalized_url": "https://example.edu/f0/ambiguous",
+      "published_at": "2026-07-06",
+      "body_text": "Two synthetic source identifier candidates intentionally map to this key, so the adapter must retain evidence and block silent selection or insertion.",
+      "body_text_length": 150,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "source_resolution_ambiguous",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "resolve_source_identity_before_review",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-ambiguous",
+      "latest_batch_label": "f0-ambiguous",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "blocked_missing_source"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "ambiguous_source",
+          "source_id": null,
+          "status": "ambiguous",
+          "reason": "multiple_source_id_candidates",
+          "evidence": {
+            "reason": "multiple source_id candidates for source_key",
+            "candidates": [
+              {
+                "source_id": "ambiguous_a",
+                "source_name": "Synthetic ambiguous source A",
+                "list_url": "https://example.edu/ambiguous/a",
+                "mapping_source": "fixture"
+              },
+              {
+                "source_id": "ambiguous_b",
+                "source_name": "Synthetic ambiguous source B",
+                "list_url": "https://example.edu/ambiguous/b",
+                "mapping_source": "fixture"
+              }
+            ]
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "missing",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/ambiguous.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-ambiguous",
+          "latest_run_id": "f0-run-ambiguous",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "",
+      "source_resolution_status": "missing_source_key",
+      "source_resolution_reason": "source_key_missing",
+      "canonical_key": "missing-key:f0",
+      "title": "Missing source key candidate",
+      "original_url": "https://example.edu/f0/missing-key",
+      "normalized_url": "https://example.edu/f0/missing-key",
+      "published_at": "2026-07-07",
+      "body_text": "A candidate without a crawler source key cannot be matched to notice_sources.source_id and must fail closed before review actions are considered.",
+      "body_text_length": 145,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "source_resolution_missing_source_key",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "resolve_source_identity_before_review",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-missing-key",
+      "latest_batch_label": "f0-missing-key",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "blocked_missing_source"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "",
+          "source_id": null,
+          "status": "missing_source_key",
+          "reason": "source_key_missing",
+          "evidence": {
+            "reason": "source_key is empty"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "missing",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/missing-key.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-missing-key",
+          "latest_run_id": "f0-run-missing-key",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_006",
+      "source_key_snapshot": "cau_006",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_006:f0-image-only",
+      "title": "Image-only suspected candidate",
+      "original_url": "https://example.edu/f0/image-only",
+      "normalized_url": "https://example.edu/f0/image-only",
+      "published_at": "2026-07-08",
+      "body_text": "",
+      "body_text_length": 0,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "image_only_suspected",
+      "image_only_suspected": true,
+      "review_status": "needs_review",
+      "quality_status": "image_only_suspected",
+      "blocker_status": null,
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "review_image_or_attachment_content",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-image",
+      "latest_batch_label": "f0-image",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 0,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "image_only_suspected"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_006",
+          "source_id": "cau_006",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 산업보안학과",
+            "university_slug": "cau",
+            "org_unit_id": "724",
+            "source_level": "department",
+            "list_url": "https://security.cau.ac.kr/board.htm?bbsid=notice",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/image-only.png",
+              "kind": "image"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-image",
+          "latest_run_id": "f0-run-image",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 0,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_007",
+      "source_key_snapshot": "cau_007",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_007:f0-zero-match",
+      "title": "Observed zero match source result",
+      "original_url": "https://example.edu/f0/zero-match",
+      "normalized_url": "https://example.edu/f0/zero-match",
+      "published_at": "2026-07-09",
+      "body_text": "This row retains source-run context for review, but an observed zero match does not prove that the source is exhausted or that scholarships are absent.",
+      "body_text_length": 151,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "zero_match_observed",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "review_source_coverage_before_any_conclusion",
+      "target_summary": [
+        "source-health"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-zero-match",
+      "latest_batch_label": "f0-zero-match",
+      "batch_observability_status": "degraded",
+      "source_result_status": "zero_match_observed",
+      "zero_match_observed": true,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "zero_match_observed"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_007",
+          "source_id": "cau_007",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 응용통계학과",
+            "university_slug": "cau",
+            "org_unit_id": "725",
+            "source_level": "department",
+            "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "zero_match_observed",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/zero-match.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": "Observed no match is source-run evidence only and is not a source-exhaustion or scholarship-absence proof."
+        },
+        "observability": {
+          "latest_batch_label": "f0-zero-match",
+          "latest_run_id": "f0-run-zero-match",
+          "batch_observability_status": "degraded",
+          "source_result_status": "zero_match_observed",
+          "zero_match_observed": true,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": "Observed no match only; not a source-exhaustion or scholarship-absence proof."
+        },
+        "adapter_warning_codes": [
+          "batch_degraded",
+          "zero_match_observed_not_absence_proof"
+        ]
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_008",
+      "source_key_snapshot": "cau_008",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_008:f0-incomplete",
+      "title": "Batch incomplete warning candidate",
+      "original_url": "https://example.edu/f0/incomplete",
+      "normalized_url": "https://example.edu/f0/incomplete",
+      "published_at": "2026-07-10",
+      "body_text": "The candidate content is otherwise clean, but the corresponding batch is incomplete and should be surfaced as a warning rather than silently becoming auto-apply eligible.",
+      "body_text_length": 170,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "needs_review",
+      "quality_status": "accepted",
+      "blocker_status": null,
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "review_incomplete_batch_evidence",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-incomplete",
+      "latest_batch_label": "f0-incomplete",
+      "batch_observability_status": "incomplete",
+      "source_result_status": "partial",
+      "zero_match_observed": false,
+      "observability_issue_count": 2,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "clean"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_008",
+          "source_id": "cau_008",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 지식경영학부",
+            "university_slug": "cau",
+            "org_unit_id": "726",
+            "source_level": "department",
+            "list_url": "https://global.cau.ac.kr/kr/notice/notice.php",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "partial",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/incomplete.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-incomplete",
+          "latest_run_id": "f0-run-incomplete",
+          "batch_observability_status": "incomplete",
+          "source_result_status": "partial",
+          "zero_match_observed": false,
+          "observability_issue_count": 2,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": [
+          "batch_incomplete"
+        ]
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "future_alias_key",
+      "source_resolution_status": "source_key_alias_required",
+      "source_resolution_reason": "explicit_alias_mapping_required",
+      "canonical_key": "future_alias_key:f0",
+      "title": "Alias mapping required candidate",
+      "original_url": "https://example.edu/f0/alias",
+      "normalized_url": "https://example.edu/f0/alias",
+      "published_at": "2026-07-11",
+      "body_text": "The crawler key differs from the canonical source identifier and an explicit mapping source is required before this row may be considered for normal review.",
+      "body_text_length": 156,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "source_resolution_source_key_alias_required",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "resolve_source_identity_before_review",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-mixed",
+      "latest_batch_label": "f0-mixed",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "blocked_missing_source"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "future_alias_key",
+          "source_id": null,
+          "status": "source_key_alias_required",
+          "reason": "explicit_alias_mapping_required",
+          "evidence": {
+            "reason": "no exact source_key match"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "missing",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/alias.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-mixed",
+          "latest_run_id": "f0-run-mixed",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_009",
+      "source_key_snapshot": "cau_009",
+      "source_resolution_status": "inactive_source",
+      "source_resolution_reason": "source_marked_inactive",
+      "canonical_key": "cau_009:f0",
+      "title": "Inactive source candidate",
+      "original_url": "https://example.edu/f0/inactive",
+      "normalized_url": "https://example.edu/f0/inactive",
+      "published_at": "2026-07-12",
+      "body_text": "An inactive source can resolve its historical identifier but must not proceed as a normal candidate until source activation is separately reviewed.",
+      "body_text_length": 147,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "source_resolution_inactive_source",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "resolve_source_identity_before_review",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-mixed",
+      "latest_batch_label": "f0-mixed",
+      "batch_observability_status": "healthy",
+      "source_result_status": "success",
+      "zero_match_observed": false,
+      "observability_issue_count": 1,
+      "rollback_scope_available": false,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "blocked_missing_source"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_009",
+          "source_id": "cau_009",
+          "status": "inactive_source",
+          "reason": "source_marked_inactive",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 건설환경플랜트공학전공",
+            "university_slug": "cau",
+            "org_unit_id": "731",
+            "source_level": "department",
+            "list_url": "https://civil.cau.ac.kr/?version=135&spkey=5b3a3e4874f80210e3b655253439c7e702c29894&module=true&PageAccess=main/board&brcode=notice01",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "missing",
+          "source_result_status": "success",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/inactive.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-mixed",
+          "latest_run_id": "f0-run-mixed",
+          "batch_observability_status": "healthy",
+          "source_result_status": "success",
+          "zero_match_observed": false,
+          "observability_issue_count": 1,
+          "rollback_scope_available": false,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_010",
+      "source_key_snapshot": "cau_010",
+      "source_resolution_status": "resolved",
+      "source_resolution_reason": "exact_source_key_mapping_resolved",
+      "canonical_key": "cau_010:f0",
+      "title": "Blocked batch candidate",
+      "original_url": "https://example.edu/f0/blocked-batch",
+      "normalized_url": "https://example.edu/f0/blocked-batch",
+      "published_at": "2026-07-13",
+      "body_text": "This source resolves and its content is sufficient, but a blocked aggregate batch must remain visible as an adapter blocker until the operational issue is reviewed.",
+      "body_text_length": 164,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "review_status": "blocked",
+      "quality_status": "accepted",
+      "blocker_status": "batch_observability_blocked",
+      "duplicate_status": "unique",
+      "auto_apply_allowed": false,
+      "admin_review_required": true,
+      "recommended_action": "review_blocked_batch_observability",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "latest_run_id": "f0-run-mixed",
+      "latest_batch_label": "f0-mixed",
+      "batch_observability_status": "blocked",
+      "source_result_status": "blocked",
+      "zero_match_observed": false,
+      "observability_issue_count": 3,
+      "rollback_scope_available": true,
+      "occurrence_summary": {
+        "occurrence_count": 1,
+        "classification_status": "clean"
+      },
+      "evidence_json": {
+        "source_resolution": {
+          "source_key": "cau_010",
+          "source_id": "cau_010",
+          "status": "resolved",
+          "reason": "exact_source_key_mapping_resolved",
+          "evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 건축학부",
+            "university_slug": "cau",
+            "org_unit_id": "732",
+            "source_level": "department",
+            "list_url": "http://archicau.com/wordpress/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/",
+            "mapping_source": "data/notice-sources.csv"
+          }
+        },
+        "quality_policy": {
+          "source_resolution_status": "resolved",
+          "source_result_status": "blocked",
+          "assets": [
+            {
+              "url": "https://example.edu/f0/blocked-batch.pdf",
+              "kind": "attachment"
+            }
+          ],
+          "input_evidence": {},
+          "policy_note": null
+        },
+        "observability": {
+          "latest_batch_label": "f0-mixed",
+          "latest_run_id": "f0-run-mixed",
+          "batch_observability_status": "blocked",
+          "source_result_status": "blocked",
+          "zero_match_observed": false,
+          "observability_issue_count": 3,
+          "rollback_scope_available": true,
+          "zero_match_interpretation": null
+        },
+        "adapter_warning_codes": []
+      },
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    }
+  ],
+  "required_output_fields": [
+    "source_id",
+    "source_key_snapshot",
+    "source_resolution_status",
+    "source_resolution_reason",
+    "canonical_key",
+    "title",
+    "original_url",
+    "normalized_url",
+    "published_at",
+    "body_text",
+    "body_text_length",
+    "has_assets",
+    "asset_count",
+    "no_assets",
+    "body_quality",
+    "image_only_suspected",
+    "review_status",
+    "quality_status",
+    "blocker_status",
+    "duplicate_status",
+    "auto_apply_allowed",
+    "admin_review_required",
+    "recommended_action",
+    "target_summary",
+    "keyword_summary",
+    "latest_run_id",
+    "latest_batch_label",
+    "batch_observability_status",
+    "source_result_status",
+    "zero_match_observed",
+    "observability_issue_count",
+    "rollback_scope_available",
+    "occurrence_summary",
+    "evidence_json",
+    "created_at",
+    "updated_at"
+  ]
+}
