@@ -89,7 +89,8 @@ export default async function ReviewContestDetailPage({
     source: row.source_group,
     external_id: row.source_id,
     source_url: row.notice_url,
-    is_verified: false,
+    // 검수 후 등록 = 바로 공개 (체크박스 hidden+true 패턴은 payload에서 getAll 처리)
+    is_verified: true,
     list_on_home: true,
     is_recommended: false,
   };

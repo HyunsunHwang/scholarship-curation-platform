@@ -66,6 +66,10 @@ export function buildContestPayload(
     lockedKind ??
     parseContestContentKind((formData.get("content_kind") as string) || null);
 
+  // hidden+checkbox 패턴은 formData.get()이 hidden(false)을 먼저 반환하므로
+  // getAll()로 "true"가 포함됐는지 확인해야 함 (scholarship-payload와 동일)
+  const bool = (key: string) => formData.getAll(key).includes("true");
+
   return {
     name: ((formData.get("name") as string) || "").trim(),
     organization: ((formData.get("organization") as string) || "").trim(),
@@ -104,11 +108,9 @@ export function buildContestPayload(
     source: ((formData.get("source") as string) || "").trim() || null,
     external_id: ((formData.get("external_id") as string) || "").trim() || null,
     source_url: ((formData.get("source_url") as string) || "").trim() || null,
-    is_verified: formData.get("is_verified") === "on" || formData.get("is_verified") === "true",
-    list_on_home:
-      formData.get("list_on_home") === "on" || formData.get("list_on_home") === "true",
-    is_recommended:
-      formData.get("is_recommended") === "on" || formData.get("is_recommended") === "true",
+    is_verified: bool("is_verified"),
+    list_on_home: bool("list_on_home"),
+    is_recommended: bool("is_recommended"),
     recommended_sort_order: parseOptionalInt(
       formData.get("recommended_sort_order") as string | null
     ),

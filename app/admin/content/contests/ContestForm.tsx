@@ -128,8 +128,26 @@ export default function ContestForm({
       {/* hidden fields */}
       <input type="hidden" name="admin_return_path" value={returnPath} />
       <input type="hidden" name="content_kind" value={lockedKind} />
-      <input type="hidden" name="document_files" value="[]" />
-      <input type="hidden" name="original_notice_image_urls" value="[]" />
+      <input
+        type="hidden"
+        name="document_files"
+        value={JSON.stringify(dv.document_files ?? [])}
+      />
+      <input
+        type="hidden"
+        name="original_notice_image_urls"
+        value={JSON.stringify(dv.original_notice_image_urls ?? [])}
+      />
+      <input type="hidden" name="source" value={dv.source ?? ""} />
+      <input type="hidden" name="external_id" value={dv.external_id ?? ""} />
+      <input type="hidden" name="source_url" value={dv.source_url ?? ""} />
+      {dv.original_notice_image_url ? (
+        <input
+          type="hidden"
+          name="original_notice_image_url"
+          value={dv.original_notice_image_url}
+        />
+      ) : null}
 
       {/* ── 기본 정보 ─────────────────────────────────────────── */}
       <Section title="기본 정보">
