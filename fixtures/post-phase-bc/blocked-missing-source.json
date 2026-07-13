@@ -1,0 +1,19 @@
+{
+  "fixture_name": "blocked-missing-source",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "blocked_missing_source_count": 1, "blocked_count": 1 },
+  "candidates": [
+    {
+      "source_key": "unknown_999",
+      "source_resolution_status": "missing",
+      "canonical_key": "unknown_999:missing-source",
+      "title": "Missing source identity candidate",
+      "original_url": "https://example.edu/notices/missing-source",
+      "published_at": "2026-07-06",
+      "body_text": "The candidate has text, but the crawler source key did not resolve to a canonical notice source and must fail closed.",
+      "assets": [{ "url": "https://example.edu/files/missing-source.pdf", "kind": "attachment" }],
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}

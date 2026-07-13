@@ -1,0 +1,20 @@
+{
+  "fixture_name": "duplicate-review-candidate",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "duplicate_review_count": 1, "admin_review_required_count": 1 },
+  "candidates": [
+    {
+      "source_id": "cau_002",
+      "source_key": "cau_002",
+      "canonical_key": "cau_002:duplicate",
+      "title": "Potential duplicate scholarship candidate",
+      "original_url": "https://example.edu/notices/duplicate",
+      "published_at": "2026-07-02",
+      "body_text": "This candidate has enough extracted text and an attachment, but its canonical identity overlaps a prior candidate and must be reviewed instead of merged automatically.",
+      "assets": [{ "url": "https://example.edu/files/duplicate.pdf", "kind": "attachment" }],
+      "duplicate_status": "duplicate_existing",
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}

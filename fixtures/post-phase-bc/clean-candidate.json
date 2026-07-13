@@ -1,0 +1,22 @@
+{
+  "fixture_name": "clean-candidate",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "clean_count": 1 },
+  "candidates": [
+    {
+      "source_id": "cau_001",
+      "source_key": "cau_001",
+      "canonical_key": "cau_001:2026-clean",
+      "title": "Clean scholarship candidate",
+      "original_url": "https://example.edu/notices/clean",
+      "published_at": "2026-07-01",
+      "body_text": "This fixture has sufficient text and a verified attachment so the foundation can classify it as a clean read-model candidate without allowing any database write.",
+      "assets": [{ "url": "https://example.edu/files/clean.pdf", "kind": "attachment" }],
+      "target_summary": ["undergraduate"],
+      "keyword_summary": ["scholarship"],
+      "latest_run_id": "fixture-clean-run",
+      "latest_batch_label": "fixture-batch",
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}
