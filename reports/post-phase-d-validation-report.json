@@ -1,0 +1,2163 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "status": "PASS",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "cleanup_execution": false,
+  "sql_generation": false,
+  "inputs": {
+    "fixtures": [
+      "fixtures/post-phase-d/clean-single-run.json",
+      "fixtures/post-phase-d/multi-source-batch.json",
+      "fixtures/post-phase-d/shared-record-risk.json",
+      "fixtures/post-phase-d/orphan-risk.json",
+      "fixtures/post-phase-d/partial-write.json",
+      "fixtures/post-phase-d/missing-identifier.json"
+    ]
+  },
+  "metrics": {
+    "input_record_count": 27,
+    "scoped_run_count": 6,
+    "scoped_source_count": 6,
+    "scoped_canonical_key_count": 6,
+    "table_entity_count": 10,
+    "estimated_affected_row_count": 27,
+    "shared_record_risk_count": 3,
+    "orphan_risk_count": 2,
+    "partial_write_finding_count": 4,
+    "blocked_reason_count": 9,
+    "manual_review_required_count": 7,
+    "missing_identifier_count": 1,
+    "ambiguous_identifier_count": 1,
+    "deterministic_rerun_match": true,
+    "output_schema_valid": true,
+    "db_access": false,
+    "db_write": false,
+    "cleanup_execution": false
+  },
+  "tests": [
+    {
+      "name": "single rehearsal/run scope is identified",
+      "pass": true
+    },
+    {
+      "name": "multi-source batch scope is aggregated",
+      "pass": true
+    },
+    {
+      "name": "missing rollback identifier is blocked",
+      "pass": true
+    },
+    {
+      "name": "ambiguous identifier is blocked",
+      "pass": true
+    },
+    {
+      "name": "shared notice/alias/asset relation is not auto-cleanable",
+      "pass": true
+    },
+    {
+      "name": "orphan risk is detected",
+      "pass": true
+    },
+    {
+      "name": "partial write pattern is detected",
+      "pass": true
+    },
+    {
+      "name": "pre-existing and newly-created ownership ambiguity is blocked",
+      "pass": true
+    },
+    {
+      "name": "source row is not a default cleanup target",
+      "pass": true
+    },
+    {
+      "name": "zero affected row is no-op/review, not success",
+      "pass": true
+    },
+    {
+      "name": "same fixture produces deterministic dry-run plan",
+      "pass": true
+    },
+    {
+      "name": "output schema has required dry-run safety fields",
+      "pass": true
+    },
+    {
+      "name": "cleanup SQL or delete/update command is not generated",
+      "pass": true
+    }
+  ],
+  "fixture_results": [
+    {
+      "fixture": "clean-single-run",
+      "fixture_path": "fixtures/post-phase-d/clean-single-run.json",
+      "estimated_affected_row_count": 8,
+      "blocked_reason_count": 0,
+      "manual_review_required_count": 0,
+      "shared_record_risk_count": 0,
+      "orphan_risk_count": 0,
+      "partial_write_finding_count": 0
+    },
+    {
+      "fixture": "multi-source-batch",
+      "fixture_path": "fixtures/post-phase-d/multi-source-batch.json",
+      "estimated_affected_row_count": 8,
+      "blocked_reason_count": 1,
+      "manual_review_required_count": 0,
+      "shared_record_risk_count": 0,
+      "orphan_risk_count": 0,
+      "partial_write_finding_count": 0
+    },
+    {
+      "fixture": "shared-record-risk",
+      "fixture_path": "fixtures/post-phase-d/shared-record-risk.json",
+      "estimated_affected_row_count": 5,
+      "blocked_reason_count": 3,
+      "manual_review_required_count": 3,
+      "shared_record_risk_count": 3,
+      "orphan_risk_count": 0,
+      "partial_write_finding_count": 1
+    },
+    {
+      "fixture": "orphan-risk",
+      "fixture_path": "fixtures/post-phase-d/orphan-risk.json",
+      "estimated_affected_row_count": 3,
+      "blocked_reason_count": 2,
+      "manual_review_required_count": 2,
+      "shared_record_risk_count": 0,
+      "orphan_risk_count": 2,
+      "partial_write_finding_count": 1
+    },
+    {
+      "fixture": "partial-write",
+      "fixture_path": "fixtures/post-phase-d/partial-write.json",
+      "estimated_affected_row_count": 3,
+      "blocked_reason_count": 1,
+      "manual_review_required_count": 1,
+      "shared_record_risk_count": 0,
+      "orphan_risk_count": 0,
+      "partial_write_finding_count": 2
+    },
+    {
+      "fixture": "missing-identifier",
+      "fixture_path": "fixtures/post-phase-d/missing-identifier.json",
+      "estimated_affected_row_count": 0,
+      "blocked_reason_count": 2,
+      "manual_review_required_count": 1,
+      "shared_record_risk_count": 0,
+      "orphan_risk_count": 0,
+      "partial_write_finding_count": 0
+    }
+  ],
+  "plans": [
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "clean-single-run",
+        "input_path": "fixtures/post-phase-d/clean-single-run.json"
+      },
+      "scope": {
+        "rehearsal_label": "post-phase-d-clean-single-run",
+        "batch_id": "post-phase-d-clean-batch",
+        "run_ids": [
+          "post-phase-d-run-clean-001"
+        ],
+        "source_ids": [
+          "cau_001"
+        ],
+        "source_keys": [
+          "cau_001"
+        ],
+        "canonical_keys": [
+          "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026"
+        ],
+        "scoped_record_count": 8,
+        "primary_selectors": [
+          "rehearsal_label",
+          "batch_id",
+          "run_id"
+        ],
+        "secondary_evidence": [
+          "source_id",
+          "source_key",
+          "canonical_key"
+        ]
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": [
+            "resolved"
+          ]
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": [
+          {
+            "source_key": "cau_001",
+            "source_id": "cau_001",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 경영학부",
+              "university_slug": "cau",
+              "org_unit_id": "719",
+              "source_level": "department",
+              "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          }
+        ]
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 1,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 1,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 1,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [],
+      "orphan_risks": [],
+      "partial_write_findings": [],
+      "unknown_entities": [],
+      "blocked_reasons": [],
+      "manual_review_required": [],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 8,
+        "scoped_run_count": 1,
+        "scoped_source_count": 1,
+        "scoped_canonical_key_count": 1,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 8,
+        "shared_record_risk_count": 0,
+        "orphan_risk_count": 0,
+        "partial_write_finding_count": 0,
+        "blocked_reason_count": 0,
+        "manual_review_required_count": 0,
+        "missing_identifier_count": 0,
+        "ambiguous_identifier_count": 0,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    },
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "multi-source-batch",
+        "input_path": "fixtures/post-phase-d/multi-source-batch.json"
+      },
+      "scope": {
+        "rehearsal_label": "post-phase-d-multi-source-batch",
+        "batch_id": "post-phase-d-batch-001",
+        "run_ids": [
+          "post-phase-d-run-batch-001",
+          "post-phase-d-run-batch-002"
+        ],
+        "source_ids": [
+          "cau_001",
+          "cau_002"
+        ],
+        "source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "canonical_keys": [
+          "cau_001|https://biz.cau.ac.kr/scholarship/batch-a",
+          "cau_002|https://econ.cau.ac.kr/news/notice/batch-b"
+        ],
+        "scoped_record_count": 8,
+        "primary_selectors": [
+          "rehearsal_label",
+          "batch_id",
+          "run_id"
+        ],
+        "secondary_evidence": [
+          "source_id",
+          "source_key",
+          "canonical_key"
+        ]
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 2,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "high_if_multiple",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 2,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 2,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": [
+            "resolved",
+            "resolved"
+          ]
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 2,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": [
+          {
+            "source_key": "cau_001",
+            "source_id": "cau_001",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 경영학부",
+              "university_slug": "cau",
+              "org_unit_id": "719",
+              "source_level": "department",
+              "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          },
+          {
+            "source_key": "cau_002",
+            "source_id": "cau_002",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 경제학부",
+              "university_slug": "cau",
+              "org_unit_id": "720",
+              "source_level": "department",
+              "list_url": "https://econ.cau.ac.kr/news/notice/",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          }
+        ]
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 2,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 2,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 2,
+          "estimated_newly_created_count": 2,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 2,
+          "estimated_newly_created_count": 2,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 2,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 2,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [],
+      "orphan_risks": [],
+      "partial_write_findings": [],
+      "unknown_entities": [],
+      "blocked_reasons": [
+        "ambiguous_identifier_requires_manual_disambiguation"
+      ],
+      "manual_review_required": [],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 8,
+        "scoped_run_count": 2,
+        "scoped_source_count": 2,
+        "scoped_canonical_key_count": 2,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 8,
+        "shared_record_risk_count": 0,
+        "orphan_risk_count": 0,
+        "partial_write_finding_count": 0,
+        "blocked_reason_count": 1,
+        "manual_review_required_count": 0,
+        "missing_identifier_count": 0,
+        "ambiguous_identifier_count": 1,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    },
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "shared-record-risk",
+        "input_path": "fixtures/post-phase-d/shared-record-risk.json"
+      },
+      "scope": {
+        "rehearsal_label": "post-phase-d-shared-record-risk",
+        "batch_id": "post-phase-d-shared-batch",
+        "run_ids": [
+          "post-phase-d-run-shared-001"
+        ],
+        "source_ids": [
+          "cau_003"
+        ],
+        "source_keys": [
+          "cau_003"
+        ],
+        "canonical_keys": [
+          "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared"
+        ],
+        "scoped_record_count": 5,
+        "primary_selectors": [
+          "rehearsal_label",
+          "batch_id",
+          "run_id"
+        ],
+        "secondary_evidence": [
+          "source_id",
+          "source_key",
+          "canonical_key"
+        ]
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": [
+            "resolved"
+          ]
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": [
+          {
+            "source_key": "cau_003",
+            "source_id": "cau_003",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 광고홍보학과",
+              "university_slug": "cau",
+              "org_unit_id": "721",
+              "source_level": "department",
+              "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          }
+        ]
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 1,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 1,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [
+        {
+          "entity": "notice",
+          "id": "notice-shared-001",
+          "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+          "reason": "canonical notice existed before apply and has out-of-scope occurrence",
+          "out_of_scope_refs": [
+            "occ-existing-previous-run"
+          ],
+          "classification": "blocked"
+        },
+        {
+          "entity": "url_alias",
+          "id": "alias-shared-001",
+          "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+          "reason": "URL alias also points to pre-existing notice evidence",
+          "out_of_scope_refs": [
+            "notice-existing-previous-run"
+          ],
+          "classification": "blocked"
+        },
+        {
+          "entity": "asset",
+          "id": "asset-shared-001",
+          "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+          "reason": "asset may be reused by out-of-scope review record",
+          "out_of_scope_refs": [
+            "notice-existing-previous-run"
+          ],
+          "classification": "blocked"
+        }
+      ],
+      "orphan_risks": [],
+      "partial_write_findings": [
+        {
+          "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+          "pattern": "pre_existing_and_new_records_mixed",
+          "classification": "blocked"
+        }
+      ],
+      "unknown_entities": [],
+      "blocked_reasons": [
+        "partial_write_state_unclassified_for_execution",
+        "pre_existing_and_new_ownership_must_be_separated",
+        "shared_reference_exists"
+      ],
+      "manual_review_required": [
+        "partial write finding requires apply/audit reconciliation",
+        "pre-existing rows must be separated from newly-created rows before any destructive phase",
+        "shared record references require human ownership review"
+      ],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 5,
+        "scoped_run_count": 1,
+        "scoped_source_count": 1,
+        "scoped_canonical_key_count": 1,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 5,
+        "shared_record_risk_count": 3,
+        "orphan_risk_count": 0,
+        "partial_write_finding_count": 1,
+        "blocked_reason_count": 3,
+        "manual_review_required_count": 3,
+        "missing_identifier_count": 0,
+        "ambiguous_identifier_count": 0,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    },
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "orphan-risk",
+        "input_path": "fixtures/post-phase-d/orphan-risk.json"
+      },
+      "scope": {
+        "rehearsal_label": "post-phase-d-orphan-risk",
+        "batch_id": "post-phase-d-orphan-batch",
+        "run_ids": [
+          "post-phase-d-run-orphan-001"
+        ],
+        "source_ids": [
+          "cau_006"
+        ],
+        "source_keys": [
+          "cau_006"
+        ],
+        "canonical_keys": [
+          "cau_006|https://security.cau.ac.kr/board.htm?orphan"
+        ],
+        "scoped_record_count": 3,
+        "primary_selectors": [
+          "rehearsal_label",
+          "batch_id",
+          "run_id"
+        ],
+        "secondary_evidence": [
+          "source_id",
+          "source_key",
+          "canonical_key"
+        ]
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": [
+            "resolved"
+          ]
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": [
+          {
+            "source_key": "cau_006",
+            "source_id": "cau_006",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 산업보안학과",
+              "university_slug": "cau",
+              "org_unit_id": "724",
+              "source_level": "department",
+              "list_url": "https://security.cau.ac.kr/board.htm?bbsid=notice",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          }
+        ]
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 1,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [],
+      "orphan_risks": [
+        {
+          "entity": "occurrence",
+          "id": "occ-orphan-001",
+          "reason": "occurrence exists but owner notice is outside scoped evidence",
+          "classification": "blocked"
+        },
+        {
+          "entity": "asset",
+          "id": "asset-orphan-001",
+          "reason": "asset exists but owner notice is outside scoped evidence",
+          "classification": "blocked"
+        }
+      ],
+      "partial_write_findings": [
+        {
+          "canonical_key": "cau_006|https://security.cau.ac.kr/board.htm?orphan",
+          "pattern": "occurrence_without_notice",
+          "classification": "blocked"
+        }
+      ],
+      "unknown_entities": [],
+      "blocked_reasons": [
+        "orphan_risk_exists",
+        "partial_write_state_unclassified_for_execution"
+      ],
+      "manual_review_required": [
+        "orphan risk requires table-by-table evidence review",
+        "partial write finding requires apply/audit reconciliation"
+      ],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 3,
+        "scoped_run_count": 1,
+        "scoped_source_count": 1,
+        "scoped_canonical_key_count": 1,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 3,
+        "shared_record_risk_count": 0,
+        "orphan_risk_count": 2,
+        "partial_write_finding_count": 1,
+        "blocked_reason_count": 2,
+        "manual_review_required_count": 2,
+        "missing_identifier_count": 0,
+        "ambiguous_identifier_count": 0,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    },
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "partial-write",
+        "input_path": "fixtures/post-phase-d/partial-write.json"
+      },
+      "scope": {
+        "rehearsal_label": "post-phase-d-partial-write",
+        "batch_id": "post-phase-d-partial-batch",
+        "run_ids": [
+          "post-phase-d-run-partial-001"
+        ],
+        "source_ids": [
+          "cau_007"
+        ],
+        "source_keys": [
+          "cau_007"
+        ],
+        "canonical_keys": [
+          "cau_007|source-health|partial-write"
+        ],
+        "scoped_record_count": 3,
+        "primary_selectors": [
+          "rehearsal_label",
+          "batch_id",
+          "run_id"
+        ],
+        "secondary_evidence": [
+          "source_id",
+          "source_key",
+          "canonical_key"
+        ]
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 1,
+          "cleanup_scope_role": "primary_selector",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": [
+            "resolved"
+          ]
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 1,
+          "cleanup_scope_role": "secondary_evidence",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": [
+          {
+            "source_key": "cau_007",
+            "source_id": "cau_007",
+            "resolution_status": "resolved",
+            "resolution_evidence": {
+              "match_rule": "exact",
+              "source_name": "중앙대 응용통계학과",
+              "university_slug": "cau",
+              "org_unit_id": "725",
+              "source_level": "department",
+              "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+              "mapping_source": "data/notice-sources.csv"
+            },
+            "blocked": false
+          }
+        ]
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 1,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 1,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 1,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 1,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [],
+      "orphan_risks": [],
+      "partial_write_findings": [
+        {
+          "canonical_key": "cau_007|source-health|partial-write",
+          "pattern": "notice_without_occurrence",
+          "classification": "blocked"
+        },
+        {
+          "canonical_key": "cau_007|source-health|partial-write",
+          "pattern": "source_result_success_but_expected_children_missing",
+          "classification": "blocked"
+        }
+      ],
+      "unknown_entities": [],
+      "blocked_reasons": [
+        "partial_write_state_unclassified_for_execution"
+      ],
+      "manual_review_required": [
+        "partial write finding requires apply/audit reconciliation"
+      ],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 3,
+        "scoped_run_count": 1,
+        "scoped_source_count": 1,
+        "scoped_canonical_key_count": 1,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 3,
+        "shared_record_risk_count": 0,
+        "orphan_risk_count": 0,
+        "partial_write_finding_count": 2,
+        "blocked_reason_count": 1,
+        "manual_review_required_count": 1,
+        "missing_identifier_count": 0,
+        "ambiguous_identifier_count": 0,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    },
+    {
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "cleanup_execution": false,
+      "sql_generation": false,
+      "input": {
+        "fixture_name": "missing-identifier",
+        "input_path": "fixtures/post-phase-d/missing-identifier.json"
+      },
+      "scope": {
+        "rehearsal_label": null,
+        "batch_id": null,
+        "run_ids": [],
+        "source_ids": [],
+        "source_keys": [],
+        "canonical_keys": [],
+        "scoped_record_count": 0,
+        "primary_selectors": [],
+        "secondary_evidence": []
+      },
+      "identifier_assessment": [
+        {
+          "identifier": "rehearsal_label",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": false,
+          "evidence_state": "documented_fixture_evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "batch_id",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "medium",
+          "shared_record_possible": true,
+          "evidence_state": "immutable when emitted by apply result",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "run_id",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "high_if_multiple",
+          "shared_record_possible": true,
+          "evidence_state": "immutable crawler/apply evidence",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "source_id",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "upstream canonical source identifier",
+          "personal_dev_verified": false,
+          "upstream_status": "notice_sources.source_id exists"
+        },
+        {
+          "identifier": "source_key",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "high_without_source_id_resolution",
+          "shared_record_possible": true,
+          "evidence_state": "crawler-facing natural/idempotency key",
+          "personal_dev_verified": false,
+          "upstream_status": "adapter contract only",
+          "source_resolution_statuses": []
+        },
+        {
+          "identifier": "canonical_key",
+          "value_count": 0,
+          "cleanup_scope_role": "missing",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "immutable normalized notice identity when produced by crawler",
+          "personal_dev_verified": false,
+          "upstream_status": "not in upstream schema"
+        },
+        {
+          "identifier": "notice/occurrence/url_alias/asset/target/keyword ids",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high",
+          "shared_record_possible": true,
+          "evidence_state": "fixture/apply evidence only",
+          "personal_dev_verified": false,
+          "upstream_status": "normalized graph proposal"
+        },
+        {
+          "identifier": "created_at/updated_at",
+          "value_count": 0,
+          "cleanup_scope_role": "secondary_evidence_only",
+          "standalone_use_risk": "high_mutable_or_non_unique",
+          "shared_record_possible": true,
+          "evidence_state": "mutable state; never a primary selector alone",
+          "personal_dev_verified": false,
+          "upstream_status": "exists on several upstream tables but not rollback ownership evidence"
+        }
+      ],
+      "source_resolution": {
+        "policy": {
+          "canonical_db_source_identifier": "notice_sources.source_id",
+          "crawler_facing_key": "source_key",
+          "match_rule": "exact source_key/source_id match only",
+          "no_fuzzy_matching": true,
+          "no_auto_create": true,
+          "unresolved_behavior": "blocked",
+          "ambiguous_behavior": "blocked"
+        },
+        "resolutions": []
+      },
+      "table_impacts": [
+        {
+          "entity": "source",
+          "conceptual_entity": "source",
+          "current_personal_dev_table": "crawler_notice_sources",
+          "current_upstream_equivalent": "notice_sources",
+          "integration_status": "existing upstream canonical source row; not a cleanup target",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "notice",
+          "conceptual_entity": "canonical notice",
+          "current_personal_dev_table": "crawler_notices",
+          "current_upstream_equivalent": "crawled_notices/read-model compatibility",
+          "integration_status": "graph-backed canonical proposal; current upstream equivalent is transitional",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "occurrence",
+          "conceptual_entity": "source notice occurrence",
+          "current_personal_dev_table": "crawler_notice_occurrences",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "url_alias",
+          "conceptual_entity": "URL alias",
+          "current_personal_dev_table": "crawler_notice_url_aliases",
+          "current_upstream_equivalent": "notice_url/normalized_url fields",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "asset",
+          "conceptual_entity": "notice asset",
+          "current_personal_dev_table": "crawler_notice_assets",
+          "current_upstream_equivalent": "crawled_notices.image_urls",
+          "integration_status": "adapter-derived compatibility field",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "target",
+          "conceptual_entity": "target relation",
+          "current_personal_dev_table": "crawler_notice_targets",
+          "current_upstream_equivalent": "scholarship target fields/manual review",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "keyword_match",
+          "conceptual_entity": "keyword match relation",
+          "current_personal_dev_table": "crawler_notice_keyword_matches",
+          "current_upstream_equivalent": "review evidence only",
+          "integration_status": "normalized graph concept only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": true,
+          "cleanup_plan_status": "dry_run_only"
+        },
+        {
+          "entity": "crawler_run",
+          "conceptual_entity": "crawler run",
+          "current_personal_dev_table": "crawler_runs",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "source_result",
+          "conceptual_entity": "source result",
+          "current_personal_dev_table": "crawler_source_results",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        },
+        {
+          "entity": "error_audit_record",
+          "conceptual_entity": "error/audit record",
+          "current_personal_dev_table": "crawler_audit_events",
+          "current_upstream_equivalent": "none yet",
+          "integration_status": "audit metadata only",
+          "estimated_affected_row_count": 0,
+          "estimated_newly_created_count": 0,
+          "estimated_pre_existing_count": 0,
+          "estimated_unknown_ownership_count": 0,
+          "default_cleanup_target": false,
+          "cleanup_plan_status": "not_cleanup_target"
+        }
+      ],
+      "shared_record_risks": [],
+      "orphan_risks": [],
+      "partial_write_findings": [],
+      "unknown_entities": [],
+      "blocked_reasons": [
+        "rollback_identifier_missing",
+        "zero_affected_rows_requires_review"
+      ],
+      "manual_review_required": [
+        "zero affected row dry-run is no-op/review, not cleanup success"
+      ],
+      "safe_to_generate_execution_plan": false,
+      "safety_note": "This is a read-only cleanup scope dry-run. It is not approval to generate or execute destructive cleanup SQL.",
+      "metrics": {
+        "input_record_count": 0,
+        "scoped_run_count": 0,
+        "scoped_source_count": 0,
+        "scoped_canonical_key_count": 0,
+        "table_entity_count": 10,
+        "estimated_affected_row_count": 0,
+        "shared_record_risk_count": 0,
+        "orphan_risk_count": 0,
+        "partial_write_finding_count": 0,
+        "blocked_reason_count": 2,
+        "manual_review_required_count": 1,
+        "missing_identifier_count": 1,
+        "ambiguous_identifier_count": 0,
+        "db_access": false,
+        "db_write": false,
+        "cleanup_execution": false
+      },
+      "limitations": [
+        "all counts are fixture/evidence-based estimates, not live DB row counts",
+        "no DB state was read, inferred, or mutated",
+        "source identity uses exact source_key to notice_sources.source_id resolution only",
+        "source rows are audit/context records and are not default cleanup targets",
+        "safe_to_generate_execution_plan=false in this phase by design"
+      ]
+    }
+  ],
+  "safety": {
+    "production_main_access": false,
+    "personal_dev_supabase_access": false,
+    "db_access": false,
+    "db_write": false,
+    "cleanup_execution": false,
+    "sql_generation": false,
+    "migration": false,
+    "generated_database_types_changed": false,
+    "admin_ui_changed": false,
+    "product_ui_changed": false
+  },
+  "evidence_and_limitations": {
+    "personal_dev_evidence_used": false,
+    "synthetic_fixture_only": true,
+    "live_db_state_verified": false,
+    "production_cleanup_readiness_proven": false,
+    "team_agreement_required_before_destructive_cleanup": true
+  },
+  "limitations": [
+    "This phase proves read-only scope classification against local fixtures, not production cleanup readiness.",
+    "All affected row counts are estimated from fixture evidence and are not live DB row counts.",
+    "No personal-dev or production/main Supabase access was used.",
+    "No destructive SQL, migration, guarded apply, admin UI, or product UI integration is included.",
+    "Future destructive cleanup requires separate team approval, DB-backed evidence, and execution-specific safeguards."
+  ]
+}
