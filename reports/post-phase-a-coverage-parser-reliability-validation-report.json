@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "status": "PASS",
+  "input": "reports/post-phase-a0-a1-coverage-readability-triage.json",
+  "metrics": {
+    "zero_match_source_count": 4,
+    "false_negative_review_count": 3,
+    "keyword_expansion_candidate_count": 2,
+    "high_confidence_keyword_candidate_count": 0,
+    "noisy_keyword_candidate_count": 2,
+    "parser_failure_count": 13,
+    "remediation_category_count": 7,
+    "p0_remediation_count": 3,
+    "p1_remediation_count": 2,
+    "encoding_issue_count": 1,
+    "attachment_parser_required_count": 1,
+    "board_count": 12,
+    "item_count": 20,
+    "carry_forward_risk_count": 23,
+    "deterministic_rerun_match": true,
+    "output_schema_valid": true,
+    "arithmetic_consistency_valid": true,
+    "zero_match_absence_claim_valid": true,
+    "production_detector_unchanged": true,
+    "remediation_priority_valid": true
+  },
+  "tests": [
+    {
+      "name": "summary output is deterministic",
+      "pass": true
+    },
+    {
+      "name": "summary schema contains required completion sections",
+      "pass": true
+    },
+    {
+      "name": "summary arithmetic is consistent",
+      "pass": true
+    },
+    {
+      "name": "zero-match absence claim remains false",
+      "pass": true
+    },
+    {
+      "name": "keyword review does not change production detector rules",
+      "pass": true
+    },
+    {
+      "name": "every observed remediation has a valid priority",
+      "pass": true
+    },
+    {
+      "name": "spot-check plan covers every observed zero-match source",
+      "pass": true
+    },
+    {
+      "name": "completion runtime is read-only",
+      "pass": true
+    }
+  ],
+  "safety": {
+    "db_access": false,
+    "db_write": false,
+    "supabase_access": false,
+    "migration": false,
+    "crawler_execution": false,
+    "destructive_action": false,
+    "admin_ui_modified": false,
+    "workflow_or_package_modified": false
+  }
+}
