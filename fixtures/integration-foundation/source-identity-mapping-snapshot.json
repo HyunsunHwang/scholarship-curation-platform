@@ -1,0 +1,24 @@
+{
+  "snapshot_name": "integration-foundation-source-identity-validation-snapshot",
+  "description": "Additional local-only mapping rows used to validate fail-closed ambiguous source behavior. These rows are not production source inventory.",
+  "mapping_priority": [
+    "1. upstream data/notice-sources.csv exact source_id match",
+    "2. local validation snapshot rows for synthetic missing/ambiguous test cases"
+  ],
+  "sources": [
+    {
+      "source_key": "ambiguous_source",
+      "source_id": "ambiguous_a",
+      "source_name": "Synthetic ambiguous source A",
+      "list_url": "https://example.edu/ambiguous/a",
+      "mapping_source": "fixture"
+    },
+    {
+      "source_key": "ambiguous_source",
+      "source_id": "ambiguous_b",
+      "source_name": "Synthetic ambiguous source B",
+      "list_url": "https://example.edu/ambiguous/b",
+      "mapping_source": "fixture"
+    }
+  ]
+}

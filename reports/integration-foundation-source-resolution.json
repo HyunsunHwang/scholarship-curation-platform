@@ -1,0 +1,135 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "mapping_policy": {
+    "canonical_db_source_identifier": "notice_sources.source_id",
+    "crawler_facing_key": "source_key",
+    "match_rule": "exact source_key/source_id match only",
+    "no_fuzzy_matching": true,
+    "no_auto_create": true,
+    "unresolved_behavior": "blocked",
+    "ambiguous_behavior": "blocked"
+  },
+  "mapping_sources": {
+    "source_csv": "data/notice-sources.csv",
+    "mapping_snapshot": "fixtures/integration-foundation/source-identity-mapping-snapshot.json"
+  },
+  "counts": {
+    "total": 7,
+    "resolved_count": 5,
+    "missing_count": 1,
+    "ambiguous_count": 1,
+    "invalid_count": 0
+  },
+  "resolutions": [
+    {
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "resolution_status": "resolved",
+      "resolution_evidence": {
+        "match_rule": "exact",
+        "source_name": "중앙대 경영학부",
+        "university_slug": "cau",
+        "org_unit_id": "719",
+        "source_level": "department",
+        "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+        "mapping_source": "data/notice-sources.csv"
+      },
+      "blocked": false
+    },
+    {
+      "source_key": "missing_999",
+      "source_id": null,
+      "resolution_status": "missing",
+      "resolution_evidence": {
+        "reason": "no exact source_key match"
+      },
+      "blocked": true
+    },
+    {
+      "source_key": "ambiguous_source",
+      "source_id": null,
+      "resolution_status": "ambiguous",
+      "resolution_evidence": {
+        "reason": "multiple source_id candidates for source_key",
+        "candidates": [
+          {
+            "source_id": "ambiguous_a",
+            "source_name": "Synthetic ambiguous source A",
+            "list_url": "https://example.edu/ambiguous/a",
+            "mapping_source": "fixture"
+          },
+          {
+            "source_id": "ambiguous_b",
+            "source_name": "Synthetic ambiguous source B",
+            "list_url": "https://example.edu/ambiguous/b",
+            "mapping_source": "fixture"
+          }
+        ]
+      },
+      "blocked": true
+    },
+    {
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "resolution_status": "resolved",
+      "resolution_evidence": {
+        "match_rule": "exact",
+        "source_name": "중앙대 경제학부",
+        "university_slug": "cau",
+        "org_unit_id": "720",
+        "source_level": "department",
+        "list_url": "https://econ.cau.ac.kr/news/notice/",
+        "mapping_source": "data/notice-sources.csv"
+      },
+      "blocked": false
+    },
+    {
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "resolution_status": "resolved",
+      "resolution_evidence": {
+        "match_rule": "exact",
+        "source_name": "중앙대 광고홍보학과",
+        "university_slug": "cau",
+        "org_unit_id": "721",
+        "source_level": "department",
+        "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+        "mapping_source": "data/notice-sources.csv"
+      },
+      "blocked": false
+    },
+    {
+      "source_key": "cau_006",
+      "source_id": "cau_006",
+      "resolution_status": "resolved",
+      "resolution_evidence": {
+        "match_rule": "exact",
+        "source_name": "중앙대 산업보안학과",
+        "university_slug": "cau",
+        "org_unit_id": "724",
+        "source_level": "department",
+        "list_url": "https://security.cau.ac.kr/board.htm?bbsid=notice",
+        "mapping_source": "data/notice-sources.csv"
+      },
+      "blocked": false
+    },
+    {
+      "source_key": "cau_007",
+      "source_id": "cau_007",
+      "resolution_status": "resolved",
+      "resolution_evidence": {
+        "match_rule": "exact",
+        "source_name": "중앙대 응용통계학과",
+        "university_slug": "cau",
+        "org_unit_id": "725",
+        "source_level": "department",
+        "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+        "mapping_source": "data/notice-sources.csv"
+      },
+      "blocked": false
+    }
+  ]
+}
