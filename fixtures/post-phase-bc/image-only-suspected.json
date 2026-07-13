@@ -1,0 +1,19 @@
+{
+  "fixture_name": "image-only-suspected",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "image_only_suspected_count": 1, "admin_review_required_count": 1 },
+  "candidates": [
+    {
+      "source_id": "cau_005",
+      "source_key": "cau_005",
+      "canonical_key": "cau_005:image-only",
+      "title": "Image-only suspected candidate",
+      "original_url": "https://example.edu/notices/image-only",
+      "published_at": "2026-07-05",
+      "body_text": "",
+      "assets": [{ "url": "https://example.edu/images/notice.png", "kind": "image" }],
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "fixture_name": "mixed-review-batch",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 4, "blocked_missing_target_count": 1, "blocked_invalid_url_count": 1, "source_failure_count": 1, "no_assets_needs_review_count": 1, "blocked_count": 3, "admin_review_required_count": 4 },
+  "candidates": [
+    {
+      "source_id": "cau_008",
+      "source_key": "cau_008",
+      "canonical_key": "cau_008:missing-target",
+      "title": "Missing target candidate",
+      "original_url": "https://example.edu/notices/missing-target",
+      "published_at": "2026-07-08",
+      "body_text": "The notice text is sufficient, but the required target evidence is missing and the candidate must remain blocked.",
+      "assets": [{ "url": "https://example.edu/files/missing-target.pdf", "kind": "attachment" }],
+      "target_required": true,
+      "target_summary": [],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_009",
+      "source_key": "cau_009",
+      "canonical_key": "cau_009:invalid-url",
+      "title": "Invalid URL candidate",
+      "original_url": "not-a-url",
+      "published_at": "2026-07-09",
+      "body_text": "The candidate includes enough text and attachment evidence, but the URL is invalid and requires correction before it can be applied.",
+      "assets": [{ "url": "https://example.edu/files/invalid-url.pdf", "kind": "attachment" }],
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_010",
+      "source_key": "cau_010",
+      "canonical_key": "cau_010:failed-source",
+      "title": "Source failure observation",
+      "original_url": "https://example.edu/notices/failed-source",
+      "published_at": "2026-07-10",
+      "body_text": "A source failure takes precedence over otherwise usable candidate evidence and must be handled as an operational blocker.",
+      "assets": [{ "url": "https://example.edu/files/failed-source.pdf", "kind": "attachment" }],
+      "source_result_status": "failed",
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_011",
+      "source_key": "cau_011",
+      "canonical_key": "cau_011:no-assets-needs-review",
+      "title": "No-assets candidate with attachment uncertainty",
+      "original_url": "https://example.edu/notices/no-assets-review",
+      "published_at": "2026-07-11",
+      "body_text": "The public page contains useful text but indicates an attachment may be required, so the absence of captured assets requires human review.",
+      "attachment_required_unknown": true,
+      "target_summary": ["undergraduate"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}

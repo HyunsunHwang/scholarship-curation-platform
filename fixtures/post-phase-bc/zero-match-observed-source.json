@@ -1,0 +1,20 @@
+{
+  "fixture_name": "zero-match-observed-source",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "zero_match_observed_count": 1, "blocked_count": 1 },
+  "candidates": [
+    {
+      "source_id": "cau_007",
+      "source_key": "cau_007",
+      "canonical_key": "cau_007:zero-match",
+      "title": "Observed zero-match source result",
+      "original_url": "https://example.edu/notices/zero-match",
+      "published_at": "2026-07-07",
+      "body_text": "This source result is represented as a review record only to retain its operational observation and must not imply that the source has no scholarships.",
+      "assets": [{ "url": "https://example.edu/files/zero-match.pdf", "kind": "attachment" }],
+      "source_result_status": "zero_match_observed",
+      "target_summary": ["source-health"],
+      "created_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}

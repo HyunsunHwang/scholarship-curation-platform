@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "status": "PASS",
+  "inputs": [
+    "fixtures/post-phase-bc/clean-candidate.json",
+    "fixtures/post-phase-bc/duplicate-review-candidate.json",
+    "fixtures/post-phase-bc/quality-review-short-body.json",
+    "fixtures/post-phase-bc/no-assets-text-sufficient.json",
+    "fixtures/post-phase-bc/image-only-suspected.json",
+    "fixtures/post-phase-bc/blocked-missing-source.json",
+    "fixtures/post-phase-bc/blocked-invalid-date.json",
+    "fixtures/post-phase-bc/zero-match-observed-source.json",
+    "fixtures/post-phase-bc/mixed-review-batch.json"
+  ],
+  "metrics": {
+    "fixture_count": 9,
+    "clean_count": 1,
+    "duplicate_review_count": 1,
+    "quality_review_count": 1,
+    "blocked_count": 6,
+    "no_assets_count": 2,
+    "image_only_suspected_count": 1,
+    "zero_match_observed_count": 1,
+    "admin_review_required_count": 10,
+    "auto_apply_allowed_count": 2,
+    "read_model_deterministic_rerun_match": true,
+    "output_schema_valid": true,
+    "arithmetic_consistency_valid": true
+  },
+  "tests": [
+    {
+      "name": "fixtures/post-phase-bc/clean-candidate.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/duplicate-review-candidate.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/quality-review-short-body.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/no-assets-text-sufficient.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/image-only-suspected.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/blocked-missing-source.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/blocked-invalid-date.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/zero-match-observed-source.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "fixtures/post-phase-bc/mixed-review-batch.json expected classification counts",
+      "pass": true
+    },
+    {
+      "name": "all fixture outputs satisfy review read-model schema",
+      "pass": true
+    },
+    {
+      "name": "all fixture outputs satisfy arithmetic consistency",
+      "pass": true
+    },
+    {
+      "name": "review read-model semantic output is deterministic for every fixture",
+      "pass": true
+    },
+    {
+      "name": "blocked rows never allow auto apply",
+      "pass": true
+    },
+    {
+      "name": "duplicate and quality review rows never allow auto apply",
+      "pass": true
+    },
+    {
+      "name": "no-assets text-sufficient rows are not blockers",
+      "pass": true
+    },
+    {
+      "name": "image-only suspected rows require review",
+      "pass": true
+    },
+    {
+      "name": "zero-match is not expressed as source exhaustion proof",
+      "pass": true
+    },
+    {
+      "name": "foundation runtime performs no DB access, write, migration, crawler execution, or destructive action",
+      "pass": true
+    }
+  ],
+  "safety": {
+    "db_access": false,
+    "db_write": false,
+    "supabase_access": false,
+    "migration": false,
+    "crawler_execution": false,
+    "destructive_action": false,
+    "admin_ui_modified": false,
+    "workflow_or_package_modified": false
+  }
+}

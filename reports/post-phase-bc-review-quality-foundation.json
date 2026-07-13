@@ -1,0 +1,655 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-bc-review-quality-foundation/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "migration": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "fixture_name": "post-phase-bc-fixture-aggregate",
+  "counts": {
+    "clean_count": 1,
+    "duplicate_review_count": 1,
+    "quality_review_count": 1,
+    "blocked_missing_source_count": 1,
+    "blocked_missing_target_count": 1,
+    "blocked_invalid_date_count": 1,
+    "blocked_invalid_url_count": 1,
+    "no_assets_text_sufficient_count": 1,
+    "no_assets_needs_review_count": 1,
+    "image_only_suspected_count": 1,
+    "source_failure_count": 1,
+    "zero_match_observed_count": 1,
+    "body_quality_good_text_count": 6,
+    "body_quality_text_sufficient_no_assets_count": 1,
+    "body_quality_short_body_needs_review_count": 3,
+    "body_quality_image_only_suspected_count": 1,
+    "body_quality_empty_or_missing_body_count": 0,
+    "body_quality_attachment_required_unknown_count": 1,
+    "candidate_count": 12,
+    "blocked_count": 6,
+    "admin_review_required_count": 10,
+    "auto_apply_allowed_count": 2,
+    "no_assets_count": 2,
+    "quality_backlog_count": 3
+  },
+  "review_backlog": [
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "canonical_key": "cau_001:2026-clean",
+      "title": "Clean scholarship candidate",
+      "original_url": "https://example.edu/notices/clean",
+      "normalized_url": "https://example.edu/notices/clean",
+      "published_at": "2026-07-01",
+      "body_text": "This fixture has sufficient text and a verified attachment so the foundation can classify it as a clean read-model candidate without allowing any database write.",
+      "body_text_length": 161,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "clean",
+      "review_status": "clean",
+      "blocker_status": null,
+      "quality_status": "accepted",
+      "status": "clean",
+      "reason_code": "clean_candidate",
+      "severity": "info",
+      "is_auto_apply_allowed": true,
+      "requires_admin_review": false,
+      "is_blocking": false,
+      "recommended_action": "retain_for_later_approved_apply_path",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [
+        "scholarship"
+      ],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/clean.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": "fixture-clean-run",
+      "latest_batch_label": "fixture-batch",
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "canonical_key": "cau_002:duplicate",
+      "title": "Potential duplicate scholarship candidate",
+      "original_url": "https://example.edu/notices/duplicate",
+      "normalized_url": "https://example.edu/notices/duplicate",
+      "published_at": "2026-07-02",
+      "body_text": "This candidate has enough extracted text and an attachment, but its canonical identity overlaps a prior candidate and must be reviewed instead of merged automatically.",
+      "body_text_length": 167,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "duplicate_existing",
+      "classification_status": "duplicate_review",
+      "review_status": "needs_review",
+      "blocker_status": null,
+      "quality_status": "accepted",
+      "status": "duplicate_review",
+      "reason_code": "duplicate_requires_review",
+      "severity": "warning",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": false,
+      "recommended_action": "compare_duplicate_evidence",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/duplicate.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "canonical_key": "cau_003:short-body",
+      "title": "Short body candidate",
+      "original_url": "https://example.edu/notices/short-body",
+      "normalized_url": "https://example.edu/notices/short-body",
+      "published_at": "2026-07-03",
+      "body_text": "The extracted body is too short for safe review.",
+      "body_text_length": 48,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "short_body_needs_review",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [
+        "short_body_needs_review"
+      ],
+      "quality_review_required": true,
+      "duplicate_status": "unique",
+      "classification_status": "quality_review",
+      "review_status": "needs_review",
+      "blocker_status": null,
+      "quality_status": "short_body_needs_review",
+      "status": "quality_review",
+      "reason_code": "body_quality_requires_review",
+      "severity": "warning",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": false,
+      "recommended_action": "review_body_quality",
+      "target_summary": [
+        "graduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/short-body.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_004",
+      "source_key_snapshot": "cau_004",
+      "canonical_key": "cau_004:no-assets",
+      "title": "Text sufficient candidate without assets",
+      "original_url": "https://example.edu/notices/no-assets",
+      "normalized_url": "https://example.edu/notices/no-assets",
+      "published_at": "2026-07-04",
+      "body_text": "The source did not expose attachment or image assets, but the extracted notice body contains the eligibility, amount, deadline, and application instructions in sufficient detail for the read-only policy to retain it without treating no-assets as a blocker.",
+      "body_text_length": 256,
+      "has_assets": false,
+      "asset_count": 0,
+      "no_assets": true,
+      "body_quality": "text_sufficient_no_assets",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [
+        "no_assets",
+        "text_sufficient_no_assets"
+      ],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "no_assets_text_sufficient",
+      "review_status": "clean",
+      "blocker_status": null,
+      "quality_status": "accepted",
+      "status": "no_assets_text_sufficient",
+      "reason_code": "no_assets_text_sufficient",
+      "severity": "info",
+      "is_auto_apply_allowed": true,
+      "requires_admin_review": false,
+      "is_blocking": false,
+      "recommended_action": "retain_text_evidence",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_005",
+      "source_key_snapshot": "cau_005",
+      "canonical_key": "cau_005:image-only",
+      "title": "Image-only suspected candidate",
+      "original_url": "https://example.edu/notices/image-only",
+      "normalized_url": "https://example.edu/notices/image-only",
+      "published_at": "2026-07-05",
+      "body_text": "",
+      "body_text_length": 0,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "image_only_suspected",
+      "image_only_suspected": true,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [
+        "image_only_suspected"
+      ],
+      "quality_review_required": true,
+      "duplicate_status": "unique",
+      "classification_status": "image_only_suspected",
+      "review_status": "needs_review",
+      "blocker_status": null,
+      "quality_status": "image_only_suspected",
+      "status": "image_only_suspected",
+      "reason_code": "image_only_content_suspected",
+      "severity": "warning",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": false,
+      "recommended_action": "review_image_or_attachment_content",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/images/notice.png",
+            "kind": "image"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "unknown_999",
+      "canonical_key": "unknown_999:missing-source",
+      "title": "Missing source identity candidate",
+      "original_url": "https://example.edu/notices/missing-source",
+      "normalized_url": "https://example.edu/notices/missing-source",
+      "published_at": "2026-07-06",
+      "body_text": "The candidate has text, but the crawler source key did not resolve to a canonical notice source and must fail closed.",
+      "body_text_length": 117,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "short_body_needs_review",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [
+        "short_body_needs_review"
+      ],
+      "quality_review_required": true,
+      "duplicate_status": "unique",
+      "classification_status": "blocked_missing_source",
+      "review_status": "blocked",
+      "blocker_status": "blocked_missing_source",
+      "quality_status": "short_body_needs_review",
+      "status": "blocked_missing_source",
+      "reason_code": "source_identity_missing",
+      "severity": "error",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "resolve_source_identity_explicitly",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "missing",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/missing-source.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_006",
+      "source_key_snapshot": "cau_006",
+      "canonical_key": "cau_006:invalid-date",
+      "title": "Invalid date candidate",
+      "original_url": "https://example.edu/notices/invalid-date",
+      "normalized_url": "https://example.edu/notices/invalid-date",
+      "published_at": "2026-02-31",
+      "body_text": "The candidate includes enough evidence, but the published date is impossible and the record cannot move forward without correction.",
+      "body_text_length": 131,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "blocked_invalid_date",
+      "review_status": "blocked",
+      "blocker_status": "blocked_invalid_date",
+      "quality_status": "accepted",
+      "status": "blocked_invalid_date",
+      "reason_code": "published_at_invalid",
+      "severity": "error",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "correct_published_date",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/invalid-date.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_007",
+      "source_key_snapshot": "cau_007",
+      "canonical_key": "cau_007:zero-match",
+      "title": "Observed zero-match source result",
+      "original_url": "https://example.edu/notices/zero-match",
+      "normalized_url": "https://example.edu/notices/zero-match",
+      "published_at": "2026-07-07",
+      "body_text": "This source result is represented as a review record only to retain its operational observation and must not imply that the source has no scholarships.",
+      "body_text_length": 151,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "zero_match_observed",
+      "review_status": "blocked",
+      "blocker_status": "zero_match_observed",
+      "quality_status": "accepted",
+      "status": "zero_match_observed",
+      "reason_code": "zero_match_observed_not_absence_proof",
+      "severity": "warning",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "review_source_coverage_before_any_conclusion",
+      "target_summary": [
+        "source-health"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "zero_match_observed",
+        "assets": [
+          {
+            "url": "https://example.edu/files/zero-match.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": "Observed no match is source-run evidence only and is not a source-exhaustion or scholarship-absence proof."
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_008",
+      "source_key_snapshot": "cau_008",
+      "canonical_key": "cau_008:missing-target",
+      "title": "Missing target candidate",
+      "original_url": "https://example.edu/notices/missing-target",
+      "normalized_url": "https://example.edu/notices/missing-target",
+      "published_at": "2026-07-08",
+      "body_text": "The notice text is sufficient, but the required target evidence is missing and the candidate must remain blocked.",
+      "body_text_length": 113,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "short_body_needs_review",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [
+        "short_body_needs_review"
+      ],
+      "quality_review_required": true,
+      "duplicate_status": "unique",
+      "classification_status": "blocked_missing_target",
+      "review_status": "blocked",
+      "blocker_status": "blocked_missing_target",
+      "quality_status": "short_body_needs_review",
+      "status": "blocked_missing_target",
+      "reason_code": "target_missing",
+      "severity": "error",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "supply_target_evidence",
+      "target_summary": [],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/missing-target.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_009",
+      "source_key_snapshot": "cau_009",
+      "canonical_key": "cau_009:invalid-url",
+      "title": "Invalid URL candidate",
+      "original_url": "not-a-url",
+      "normalized_url": "not-a-url",
+      "published_at": "2026-07-09",
+      "body_text": "The candidate includes enough text and attachment evidence, but the URL is invalid and requires correction before it can be applied.",
+      "body_text_length": 132,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "blocked_invalid_url",
+      "review_status": "blocked",
+      "blocker_status": "blocked_invalid_url",
+      "quality_status": "accepted",
+      "status": "blocked_invalid_url",
+      "reason_code": "notice_url_invalid",
+      "severity": "error",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "correct_notice_url",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [
+          {
+            "url": "https://example.edu/files/invalid-url.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_010",
+      "source_key_snapshot": "cau_010",
+      "canonical_key": "cau_010:failed-source",
+      "title": "Source failure observation",
+      "original_url": "https://example.edu/notices/failed-source",
+      "normalized_url": "https://example.edu/notices/failed-source",
+      "published_at": "2026-07-10",
+      "body_text": "A source failure takes precedence over otherwise usable candidate evidence and must be handled as an operational blocker.",
+      "body_text_length": 121,
+      "has_assets": true,
+      "asset_count": 1,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "image_only_suspected": false,
+      "attachment_required_unknown": false,
+      "quality_reason_codes": [],
+      "quality_review_required": false,
+      "duplicate_status": "unique",
+      "classification_status": "source_failure",
+      "review_status": "blocked",
+      "blocker_status": "source_failure",
+      "quality_status": "accepted",
+      "status": "source_failure",
+      "reason_code": "source_run_failed",
+      "severity": "error",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": true,
+      "recommended_action": "investigate_source_run",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "failed",
+        "assets": [
+          {
+            "url": "https://example.edu/files/failed-source.pdf",
+            "kind": "attachment"
+          }
+        ],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_011",
+      "source_key_snapshot": "cau_011",
+      "canonical_key": "cau_011:no-assets-needs-review",
+      "title": "No-assets candidate with attachment uncertainty",
+      "original_url": "https://example.edu/notices/no-assets-review",
+      "normalized_url": "https://example.edu/notices/no-assets-review",
+      "published_at": "2026-07-11",
+      "body_text": "The public page contains useful text but indicates an attachment may be required, so the absence of captured assets requires human review.",
+      "body_text_length": 138,
+      "has_assets": false,
+      "asset_count": 0,
+      "no_assets": true,
+      "body_quality": "attachment_required_unknown",
+      "image_only_suspected": false,
+      "attachment_required_unknown": true,
+      "quality_reason_codes": [
+        "no_assets",
+        "attachment_required_unknown"
+      ],
+      "quality_review_required": true,
+      "duplicate_status": "unique",
+      "classification_status": "no_assets_needs_review",
+      "review_status": "needs_review",
+      "blocker_status": null,
+      "quality_status": "attachment_required_unknown",
+      "status": "no_assets_needs_review",
+      "reason_code": "no_assets_quality_uncertain",
+      "severity": "warning",
+      "is_auto_apply_allowed": false,
+      "requires_admin_review": true,
+      "is_blocking": false,
+      "recommended_action": "review_attachment_or_body_completeness",
+      "target_summary": [
+        "undergraduate"
+      ],
+      "keyword_summary": [],
+      "evidence_json": {
+        "source_resolution_status": "resolved",
+        "source_result_status": "success",
+        "assets": [],
+        "input_evidence": {},
+        "policy_note": null
+      },
+      "latest_run_id": null,
+      "latest_batch_label": null,
+      "created_at": "2026-07-13T00:00:00.000Z",
+      "updated_at": "2026-07-13T00:00:00.000Z"
+    }
+  ]
+}
