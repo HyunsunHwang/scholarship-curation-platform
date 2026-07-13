@@ -1,0 +1,1560 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "status": "PASS",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "inputs": {
+    "fixtures": [
+      "fixtures/post-phase-e/healthy-batch.json",
+      "fixtures/post-phase-e/mixed-outcome-batch.json",
+      "fixtures/post-phase-e/partial-batch.json",
+      "fixtures/post-phase-e/conflicting-duplicate-result.json",
+      "fixtures/post-phase-e/unresolved-source-batch.json",
+      "fixtures/post-phase-e/cross-batch-contamination.json",
+      "fixtures/post-phase-e/empty-batch.json"
+    ]
+  },
+  "metrics": {
+    "fixture_count": 7,
+    "healthy_batch_count": 1,
+    "degraded_batch_count": 1,
+    "incomplete_batch_count": 2,
+    "blocked_batch_count": 3,
+    "expected_source_count": 13,
+    "observed_unique_source_count": 12,
+    "run_count": 13,
+    "source_result_count": 13,
+    "success_source_count": 8,
+    "zero_match_observed_source_count": 1,
+    "failed_source_count": 0,
+    "timeout_source_count": 1,
+    "partial_source_count": 1,
+    "blocked_source_count": 0,
+    "crawled_item_count": 33,
+    "matched_item_count": 15,
+    "candidate_count": 15,
+    "clean_candidate_count": 12,
+    "needs_review_candidate_count": 1,
+    "blocked_candidate_count": 2,
+    "missing_expected_source_count": 1,
+    "duplicate_source_result_count": 0,
+    "conflicting_source_result_count": 1,
+    "unresolved_source_count": 1,
+    "ambiguous_source_count": 1,
+    "cross_batch_record_count": 2,
+    "issue_count": 14,
+    "deterministic_rerun_match": true,
+    "output_schema_valid": true,
+    "arithmetic_consistency_valid": true,
+    "db_access": false,
+    "db_write": false,
+    "crawler_execution": false,
+    "destructive_action": false
+  },
+  "fixture_results": [
+    {
+      "fixture": "healthy-batch",
+      "expected_batch_status": "healthy",
+      "actual_batch_status": "healthy",
+      "expected_source_count": 2,
+      "observed_unique_source_count": 2,
+      "issue_count": 0,
+      "safe_to_mark_batch_complete": true,
+      "pass": true
+    },
+    {
+      "fixture": "mixed-outcome-batch",
+      "expected_batch_status": "degraded",
+      "actual_batch_status": "degraded",
+      "expected_source_count": 3,
+      "observed_unique_source_count": 3,
+      "issue_count": 3,
+      "safe_to_mark_batch_complete": true,
+      "pass": true
+    },
+    {
+      "fixture": "partial-batch",
+      "expected_batch_status": "incomplete",
+      "actual_batch_status": "incomplete",
+      "expected_source_count": 3,
+      "observed_unique_source_count": 2,
+      "issue_count": 2,
+      "safe_to_mark_batch_complete": false,
+      "pass": true
+    },
+    {
+      "fixture": "conflicting-duplicate-result",
+      "expected_batch_status": "blocked",
+      "actual_batch_status": "blocked",
+      "expected_source_count": 1,
+      "observed_unique_source_count": 1,
+      "issue_count": 2,
+      "safe_to_mark_batch_complete": false,
+      "pass": true
+    },
+    {
+      "fixture": "unresolved-source-batch",
+      "expected_batch_status": "blocked",
+      "actual_batch_status": "blocked",
+      "expected_source_count": 2,
+      "observed_unique_source_count": 2,
+      "issue_count": 4,
+      "safe_to_mark_batch_complete": false,
+      "pass": true
+    },
+    {
+      "fixture": "cross-batch-contamination",
+      "expected_batch_status": "blocked",
+      "actual_batch_status": "blocked",
+      "expected_source_count": 2,
+      "observed_unique_source_count": 2,
+      "issue_count": 2,
+      "safe_to_mark_batch_complete": false,
+      "pass": true
+    },
+    {
+      "fixture": "empty-batch",
+      "expected_batch_status": "incomplete",
+      "actual_batch_status": "incomplete",
+      "expected_source_count": 0,
+      "observed_unique_source_count": 0,
+      "issue_count": 1,
+      "safe_to_mark_batch_complete": false,
+      "pass": true
+    }
+  ],
+  "tests": [
+    {
+      "name": "healthy batch is classified as healthy",
+      "pass": true
+    },
+    {
+      "name": "complete healthy batch can be marked complete",
+      "pass": true
+    },
+    {
+      "name": "zero-match is an observation, not absence proof",
+      "pass": true
+    },
+    {
+      "name": "mixed complete outcomes are degraded, not healthy",
+      "pass": true
+    },
+    {
+      "name": "missing expected source result makes batch incomplete",
+      "pass": true
+    },
+    {
+      "name": "partial result makes batch incomplete",
+      "pass": true
+    },
+    {
+      "name": "conflicting duplicate makes batch blocked",
+      "pass": true
+    },
+    {
+      "name": "unresolved source identity makes batch blocked",
+      "pass": true
+    },
+    {
+      "name": "ambiguous source identity makes batch blocked",
+      "pass": true
+    },
+    {
+      "name": "cross-batch record makes batch blocked",
+      "pass": true
+    },
+    {
+      "name": "empty batch is no-op/review, not healthy",
+      "pass": true
+    },
+    {
+      "name": "source result counts reconcile with unique source counts",
+      "pass": true
+    },
+    {
+      "name": "candidate sub-counts reconcile with candidate total",
+      "pass": true
+    },
+    {
+      "name": "negative counts are rejected or blocked",
+      "pass": true
+    },
+    {
+      "name": "unknown statuses fail closed",
+      "pass": true
+    },
+    {
+      "name": "source rows are not modified or created",
+      "pass": true
+    },
+    {
+      "name": "output schema contains required fields",
+      "pass": true
+    },
+    {
+      "name": "same fixture produces deterministic semantic output",
+      "pass": true
+    },
+    {
+      "name": "output arrays have stable ordering",
+      "pass": true
+    },
+    {
+      "name": "no DB access or write occurs",
+      "pass": true
+    },
+    {
+      "name": "no crawler execution occurs",
+      "pass": true
+    },
+    {
+      "name": "no destructive SQL or cleanup command is generated",
+      "pass": true
+    },
+    {
+      "name": "rollback scope evidence remains read-only",
+      "pass": true
+    },
+    {
+      "name": "safe_to_claim_source_exhaustion is always false",
+      "pass": true
+    }
+  ],
+  "sample_summary_report": {
+    "schema_version": "post-phase-e/v1",
+    "generated_at": "2026-07-13T00:00:00.000Z",
+    "input": {
+      "fixture_name": "mixed-outcome-batch",
+      "input_path": "fixtures/post-phase-e/mixed-outcome-batch.json"
+    },
+    "read_only": true,
+    "db_access": false,
+    "db_write": false,
+    "crawler_execution": false,
+    "destructive_action": false,
+    "sql_generation": false,
+    "batch_identity": {
+      "rehearsal_label": "post-phase-e-mixed",
+      "batch_id": "post-phase-e-batch-mixed",
+      "run_ids": [
+        "post-phase-e-run-mixed-001",
+        "post-phase-e-run-mixed-002",
+        "post-phase-e-run-mixed-003"
+      ],
+      "expected_source_keys": [
+        "cau_001",
+        "cau_002",
+        "cau_003"
+      ],
+      "observed_source_keys": [
+        "cau_001",
+        "cau_002",
+        "cau_003"
+      ],
+      "resolved_source_ids": [
+        "cau_001",
+        "cau_002",
+        "cau_003"
+      ]
+    },
+    "batch_status": "degraded",
+    "completion": {
+      "expected_sources_complete": true,
+      "source_results_complete": true,
+      "counts_consistent": true,
+      "source_identity_complete": true,
+      "safe_to_mark_batch_complete": true,
+      "safe_to_claim_source_exhaustion": false
+    },
+    "metrics": {
+      "expected_source_count": 3,
+      "observed_unique_source_count": 3,
+      "run_count": 3,
+      "source_result_count": 3,
+      "success_source_count": 1,
+      "zero_match_observed_source_count": 1,
+      "failed_source_count": 0,
+      "timeout_source_count": 1,
+      "partial_source_count": 0,
+      "blocked_source_count": 0,
+      "crawled_item_count": 4,
+      "matched_item_count": 2,
+      "candidate_count": 2,
+      "clean_candidate_count": 1,
+      "needs_review_candidate_count": 1,
+      "blocked_candidate_count": 0,
+      "missing_expected_source_count": 0,
+      "duplicate_source_result_count": 0,
+      "conflicting_source_result_count": 0,
+      "unresolved_source_count": 0,
+      "ambiguous_source_count": 0,
+      "cross_batch_record_count": 0,
+      "issue_count": 3,
+      "arithmetic_consistency_valid": true
+    },
+    "source_summaries": [
+      {
+        "source_key": "cau_001",
+        "source_id": "cau_001",
+        "source_resolution_status": "resolved",
+        "run_ids": [
+          "post-phase-e-run-mixed-001"
+        ],
+        "source_result_status": "success",
+        "operational_status": "complete",
+        "crawled_item_count": 4,
+        "matched_item_count": 2,
+        "candidate_counts": {
+          "clean": 1,
+          "needs_review": 1,
+          "blocked": 0
+        },
+        "issue_codes": [
+          "candidate_review_backlog"
+        ],
+        "complete": true,
+        "manual_review_required": true
+      },
+      {
+        "source_key": "cau_002",
+        "source_id": "cau_002",
+        "source_resolution_status": "resolved",
+        "run_ids": [
+          "post-phase-e-run-mixed-002"
+        ],
+        "source_result_status": "zero_match_observed",
+        "operational_status": "complete",
+        "crawled_item_count": 0,
+        "matched_item_count": 0,
+        "candidate_counts": {
+          "clean": 0,
+          "needs_review": 0,
+          "blocked": 0
+        },
+        "issue_codes": [
+          "zero_match_observed"
+        ],
+        "complete": true,
+        "manual_review_required": false
+      },
+      {
+        "source_key": "cau_003",
+        "source_id": "cau_003",
+        "source_resolution_status": "resolved",
+        "run_ids": [
+          "post-phase-e-run-mixed-003"
+        ],
+        "source_result_status": "timeout",
+        "operational_status": "degraded",
+        "crawled_item_count": 0,
+        "matched_item_count": 0,
+        "candidate_counts": {
+          "clean": 0,
+          "needs_review": 0,
+          "blocked": 0
+        },
+        "issue_codes": [
+          "source_timeout"
+        ],
+        "complete": true,
+        "manual_review_required": false
+      }
+    ],
+    "issues": [
+      {
+        "code": "candidate_review_backlog",
+        "severity": "warning",
+        "source_key": "cau_001",
+        "run_id": "post-phase-e-run-mixed-001",
+        "message": "source result contains candidates requiring review",
+        "blocks_completion": false
+      },
+      {
+        "code": "source_timeout",
+        "severity": "warning",
+        "source_key": "cau_003",
+        "run_id": "post-phase-e-run-mixed-003",
+        "message": "source result timed out",
+        "blocks_completion": false
+      },
+      {
+        "code": "zero_match_observed",
+        "severity": "info",
+        "source_key": "cau_002",
+        "run_id": "post-phase-e-run-mixed-002",
+        "message": "zero-match is an observation for this run, not proof that no scholarship notice exists",
+        "blocks_completion": false
+      }
+    ],
+    "rollback_scope_evidence": {
+      "rehearsal_label": "post-phase-e-mixed",
+      "batch_id": "post-phase-e-batch-mixed",
+      "run_ids": [
+        "post-phase-e-run-mixed-001",
+        "post-phase-e-run-mixed-002",
+        "post-phase-e-run-mixed-003"
+      ],
+      "source_keys": [
+        "cau_001",
+        "cau_002",
+        "cau_003"
+      ],
+      "source_ids": [
+        "cau_001",
+        "cau_002",
+        "cau_003"
+      ],
+      "canonical_keys": [
+        "cau_001|mixed-001"
+      ],
+      "evidence_complete": true,
+      "destructive_action_authorized": false
+    },
+    "zero_match_policy": {
+      "observation_only": true,
+      "absence_proof": false,
+      "safe_to_claim_source_exhaustion": false
+    },
+    "required_output_fields_present": true,
+    "limitations": [
+      "synthetic local fixture evidence only",
+      "not a live crawler run aggregate",
+      "no live DB state or production observability readiness is proven",
+      "zero-match is not absence proof",
+      "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+    ]
+  },
+  "plans": [
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "healthy-batch",
+        "input_path": "fixtures/post-phase-e/healthy-batch.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-healthy",
+        "batch_id": "post-phase-e-batch-healthy",
+        "run_ids": [
+          "post-phase-e-run-healthy-001",
+          "post-phase-e-run-healthy-002"
+        ],
+        "expected_source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "observed_source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "resolved_source_ids": [
+          "cau_001",
+          "cau_002"
+        ]
+      },
+      "batch_status": "healthy",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": true,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": true,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 2,
+        "observed_unique_source_count": 2,
+        "run_count": 2,
+        "source_result_count": 2,
+        "success_source_count": 2,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 14,
+        "matched_item_count": 5,
+        "candidate_count": 5,
+        "clean_candidate_count": 5,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 0,
+        "issue_count": 0,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-healthy-001"
+          ],
+          "source_result_status": "success",
+          "operational_status": "complete",
+          "crawled_item_count": 8,
+          "matched_item_count": 3,
+          "candidate_counts": {
+            "clean": 3,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [],
+          "complete": true,
+          "manual_review_required": false
+        },
+        {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-healthy-002"
+          ],
+          "source_result_status": "success",
+          "operational_status": "complete",
+          "crawled_item_count": 6,
+          "matched_item_count": 2,
+          "candidate_counts": {
+            "clean": 2,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [],
+          "complete": true,
+          "manual_review_required": false
+        }
+      ],
+      "issues": [],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-healthy",
+        "batch_id": "post-phase-e-batch-healthy",
+        "run_ids": [
+          "post-phase-e-run-healthy-001",
+          "post-phase-e-run-healthy-002"
+        ],
+        "source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "source_ids": [
+          "cau_001",
+          "cau_002"
+        ],
+        "canonical_keys": [
+          "cau_001|healthy-001",
+          "cau_002|healthy-001"
+        ],
+        "evidence_complete": true,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "mixed-outcome-batch",
+        "input_path": "fixtures/post-phase-e/mixed-outcome-batch.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-mixed",
+        "batch_id": "post-phase-e-batch-mixed",
+        "run_ids": [
+          "post-phase-e-run-mixed-001",
+          "post-phase-e-run-mixed-002",
+          "post-phase-e-run-mixed-003"
+        ],
+        "expected_source_keys": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "observed_source_keys": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "resolved_source_ids": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ]
+      },
+      "batch_status": "degraded",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": true,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": true,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 3,
+        "observed_unique_source_count": 3,
+        "run_count": 3,
+        "source_result_count": 3,
+        "success_source_count": 1,
+        "zero_match_observed_source_count": 1,
+        "failed_source_count": 0,
+        "timeout_source_count": 1,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 4,
+        "matched_item_count": 2,
+        "candidate_count": 2,
+        "clean_candidate_count": 1,
+        "needs_review_candidate_count": 1,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 0,
+        "issue_count": 3,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-mixed-001"
+          ],
+          "source_result_status": "success",
+          "operational_status": "complete",
+          "crawled_item_count": 4,
+          "matched_item_count": 2,
+          "candidate_counts": {
+            "clean": 1,
+            "needs_review": 1,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "candidate_review_backlog"
+          ],
+          "complete": true,
+          "manual_review_required": true
+        },
+        {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-mixed-002"
+          ],
+          "source_result_status": "zero_match_observed",
+          "operational_status": "complete",
+          "crawled_item_count": 0,
+          "matched_item_count": 0,
+          "candidate_counts": {
+            "clean": 0,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "zero_match_observed"
+          ],
+          "complete": true,
+          "manual_review_required": false
+        },
+        {
+          "source_key": "cau_003",
+          "source_id": "cau_003",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-mixed-003"
+          ],
+          "source_result_status": "timeout",
+          "operational_status": "degraded",
+          "crawled_item_count": 0,
+          "matched_item_count": 0,
+          "candidate_counts": {
+            "clean": 0,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "source_timeout"
+          ],
+          "complete": true,
+          "manual_review_required": false
+        }
+      ],
+      "issues": [
+        {
+          "code": "candidate_review_backlog",
+          "severity": "warning",
+          "source_key": "cau_001",
+          "run_id": "post-phase-e-run-mixed-001",
+          "message": "source result contains candidates requiring review",
+          "blocks_completion": false
+        },
+        {
+          "code": "source_timeout",
+          "severity": "warning",
+          "source_key": "cau_003",
+          "run_id": "post-phase-e-run-mixed-003",
+          "message": "source result timed out",
+          "blocks_completion": false
+        },
+        {
+          "code": "zero_match_observed",
+          "severity": "info",
+          "source_key": "cau_002",
+          "run_id": "post-phase-e-run-mixed-002",
+          "message": "zero-match is an observation for this run, not proof that no scholarship notice exists",
+          "blocks_completion": false
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-mixed",
+        "batch_id": "post-phase-e-batch-mixed",
+        "run_ids": [
+          "post-phase-e-run-mixed-001",
+          "post-phase-e-run-mixed-002",
+          "post-phase-e-run-mixed-003"
+        ],
+        "source_keys": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "source_ids": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "canonical_keys": [
+          "cau_001|mixed-001"
+        ],
+        "evidence_complete": true,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "partial-batch",
+        "input_path": "fixtures/post-phase-e/partial-batch.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-partial",
+        "batch_id": "post-phase-e-batch-partial",
+        "run_ids": [
+          "post-phase-e-run-partial-001",
+          "post-phase-e-run-partial-002"
+        ],
+        "expected_source_keys": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "observed_source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "resolved_source_ids": [
+          "cau_001",
+          "cau_002"
+        ]
+      },
+      "batch_status": "incomplete",
+      "completion": {
+        "expected_sources_complete": false,
+        "source_results_complete": false,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 3,
+        "observed_unique_source_count": 2,
+        "run_count": 2,
+        "source_result_count": 2,
+        "success_source_count": 1,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 1,
+        "blocked_source_count": 0,
+        "crawled_item_count": 5,
+        "matched_item_count": 2,
+        "candidate_count": 2,
+        "clean_candidate_count": 2,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 1,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 0,
+        "issue_count": 2,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-partial-001"
+          ],
+          "source_result_status": "success",
+          "operational_status": "complete",
+          "crawled_item_count": 3,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 1,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [],
+          "complete": true,
+          "manual_review_required": false
+        },
+        {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-partial-002"
+          ],
+          "source_result_status": "partial",
+          "operational_status": "blocked",
+          "crawled_item_count": 2,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 1,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "source_partial"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        },
+        {
+          "source_key": "cau_003",
+          "source_id": null,
+          "source_resolution_status": "missing",
+          "run_ids": [],
+          "source_result_status": "conflicting",
+          "operational_status": "blocked",
+          "crawled_item_count": 0,
+          "matched_item_count": 0,
+          "candidate_counts": {
+            "clean": 0,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "missing_expected_source_result"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        }
+      ],
+      "issues": [
+        {
+          "code": "missing_expected_source_result",
+          "severity": "blocking",
+          "source_key": "cau_003",
+          "run_id": null,
+          "message": "expected source has no observed source result",
+          "blocks_completion": true
+        },
+        {
+          "code": "source_partial",
+          "severity": "blocking",
+          "source_key": "cau_002",
+          "run_id": "post-phase-e-run-partial-002",
+          "message": "source result is partial",
+          "blocks_completion": true
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-partial",
+        "batch_id": "post-phase-e-batch-partial",
+        "run_ids": [
+          "post-phase-e-run-partial-001",
+          "post-phase-e-run-partial-002"
+        ],
+        "source_keys": [
+          "cau_001",
+          "cau_002",
+          "cau_003"
+        ],
+        "source_ids": [
+          "cau_001",
+          "cau_002"
+        ],
+        "canonical_keys": [
+          "cau_001|partial-001",
+          "cau_002|partial-001"
+        ],
+        "evidence_complete": false,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "conflicting-duplicate-result",
+        "input_path": "fixtures/post-phase-e/conflicting-duplicate-result.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-conflict",
+        "batch_id": "post-phase-e-batch-conflict",
+        "run_ids": [
+          "post-phase-e-run-conflict-001",
+          "post-phase-e-run-conflict-002"
+        ],
+        "expected_source_keys": [
+          "cau_001"
+        ],
+        "observed_source_keys": [
+          "cau_001"
+        ],
+        "resolved_source_ids": [
+          "cau_001"
+        ]
+      },
+      "batch_status": "blocked",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": true,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 1,
+        "observed_unique_source_count": 1,
+        "run_count": 2,
+        "source_result_count": 2,
+        "success_source_count": 0,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 4,
+        "matched_item_count": 2,
+        "candidate_count": 2,
+        "clean_candidate_count": 2,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 1,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 0,
+        "issue_count": 2,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-conflict-001",
+            "post-phase-e-run-conflict-002"
+          ],
+          "source_result_status": "conflicting",
+          "operational_status": "blocked",
+          "crawled_item_count": 4,
+          "matched_item_count": 2,
+          "candidate_counts": {
+            "clean": 2,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "conflicting_source_result",
+            "source_failed"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        }
+      ],
+      "issues": [
+        {
+          "code": "conflicting_source_result",
+          "severity": "blocking",
+          "source_key": "cau_001",
+          "run_id": "post-phase-e-run-conflict-001,post-phase-e-run-conflict-002",
+          "message": "duplicate source result has conflicting operational content",
+          "blocks_completion": true
+        },
+        {
+          "code": "source_failed",
+          "severity": "warning",
+          "source_key": "cau_001",
+          "run_id": "post-phase-e-run-conflict-002",
+          "message": "source result failed",
+          "blocks_completion": false
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-conflict",
+        "batch_id": "post-phase-e-batch-conflict",
+        "run_ids": [
+          "post-phase-e-run-conflict-001",
+          "post-phase-e-run-conflict-002"
+        ],
+        "source_keys": [
+          "cau_001"
+        ],
+        "source_ids": [
+          "cau_001"
+        ],
+        "canonical_keys": [
+          "cau_001|conflict-a"
+        ],
+        "evidence_complete": true,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "unresolved-source-batch",
+        "input_path": "fixtures/post-phase-e/unresolved-source-batch.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-unresolved",
+        "batch_id": "post-phase-e-batch-unresolved",
+        "run_ids": [
+          "post-phase-e-run-unresolved-001",
+          "post-phase-e-run-unresolved-002"
+        ],
+        "expected_source_keys": [
+          "ambiguous_source",
+          "missing_999"
+        ],
+        "observed_source_keys": [
+          "ambiguous_source",
+          "missing_999"
+        ],
+        "resolved_source_ids": []
+      },
+      "batch_status": "blocked",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": true,
+        "counts_consistent": true,
+        "source_identity_complete": false,
+        "safe_to_mark_batch_complete": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 2,
+        "observed_unique_source_count": 2,
+        "run_count": 2,
+        "source_result_count": 2,
+        "success_source_count": 2,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 2,
+        "matched_item_count": 2,
+        "candidate_count": 2,
+        "clean_candidate_count": 0,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 2,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 1,
+        "ambiguous_source_count": 1,
+        "cross_batch_record_count": 0,
+        "issue_count": 4,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "ambiguous_source",
+          "source_id": null,
+          "source_resolution_status": "ambiguous",
+          "run_ids": [
+            "post-phase-e-run-unresolved-002"
+          ],
+          "source_result_status": "success",
+          "operational_status": "blocked",
+          "crawled_item_count": 1,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 0,
+            "needs_review": 0,
+            "blocked": 1
+          },
+          "issue_codes": [
+            "ambiguous_source_identity",
+            "candidate_blocked"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        },
+        {
+          "source_key": "missing_999",
+          "source_id": null,
+          "source_resolution_status": "missing",
+          "run_ids": [
+            "post-phase-e-run-unresolved-001"
+          ],
+          "source_result_status": "success",
+          "operational_status": "blocked",
+          "crawled_item_count": 1,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 0,
+            "needs_review": 0,
+            "blocked": 1
+          },
+          "issue_codes": [
+            "candidate_blocked",
+            "unresolved_source_identity"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        }
+      ],
+      "issues": [
+        {
+          "code": "ambiguous_source_identity",
+          "severity": "blocking",
+          "source_key": "ambiguous_source",
+          "run_id": "post-phase-e-run-unresolved-002",
+          "message": "source_key resolved to multiple source_id candidates",
+          "blocks_completion": true
+        },
+        {
+          "code": "candidate_blocked",
+          "severity": "warning",
+          "source_key": "ambiguous_source",
+          "run_id": "post-phase-e-run-unresolved-002",
+          "message": "source result contains blocked candidates",
+          "blocks_completion": false
+        },
+        {
+          "code": "candidate_blocked",
+          "severity": "warning",
+          "source_key": "missing_999",
+          "run_id": "post-phase-e-run-unresolved-001",
+          "message": "source result contains blocked candidates",
+          "blocks_completion": false
+        },
+        {
+          "code": "unresolved_source_identity",
+          "severity": "blocking",
+          "source_key": "missing_999",
+          "run_id": "post-phase-e-run-unresolved-001",
+          "message": "source_key did not resolve by exact notice_sources.source_id identity",
+          "blocks_completion": true
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-unresolved",
+        "batch_id": "post-phase-e-batch-unresolved",
+        "run_ids": [
+          "post-phase-e-run-unresolved-001",
+          "post-phase-e-run-unresolved-002"
+        ],
+        "source_keys": [
+          "ambiguous_source",
+          "missing_999"
+        ],
+        "source_ids": [],
+        "canonical_keys": [
+          "ambiguous_source|unresolved-001",
+          "missing_999|unresolved-001"
+        ],
+        "evidence_complete": false,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "cross-batch-contamination",
+        "input_path": "fixtures/post-phase-e/cross-batch-contamination.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-cross",
+        "batch_id": "post-phase-e-batch-cross",
+        "run_ids": [
+          "post-phase-e-run-cross-001",
+          "post-phase-e-run-cross-foreign"
+        ],
+        "expected_source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "observed_source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "resolved_source_ids": [
+          "cau_001",
+          "cau_002"
+        ]
+      },
+      "batch_status": "blocked",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": true,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 2,
+        "observed_unique_source_count": 2,
+        "run_count": 2,
+        "source_result_count": 2,
+        "success_source_count": 2,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 4,
+        "matched_item_count": 2,
+        "candidate_count": 2,
+        "clean_candidate_count": 2,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 2,
+        "issue_count": 2,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [
+        {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-cross-001"
+          ],
+          "source_result_status": "success",
+          "operational_status": "complete",
+          "crawled_item_count": 2,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 1,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [],
+          "complete": true,
+          "manual_review_required": false
+        },
+        {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "source_resolution_status": "resolved",
+          "run_ids": [
+            "post-phase-e-run-cross-foreign"
+          ],
+          "source_result_status": "success",
+          "operational_status": "blocked",
+          "crawled_item_count": 2,
+          "matched_item_count": 1,
+          "candidate_counts": {
+            "clean": 1,
+            "needs_review": 0,
+            "blocked": 0
+          },
+          "issue_codes": [
+            "cross_batch_record"
+          ],
+          "complete": false,
+          "manual_review_required": true
+        }
+      ],
+      "issues": [
+        {
+          "code": "cross_batch_record",
+          "severity": "blocking",
+          "source_key": "cau_002",
+          "run_id": "post-phase-e-run-cross-foreign",
+          "message": "source result has a different batch_id than the batch",
+          "blocks_completion": true
+        },
+        {
+          "code": "cross_batch_record",
+          "severity": "blocking",
+          "source_key": "cau_002",
+          "run_id": "post-phase-e-run-cross-foreign",
+          "message": "source result has a different rehearsal_label than the batch",
+          "blocks_completion": true
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-cross",
+        "batch_id": "post-phase-e-batch-cross",
+        "run_ids": [
+          "post-phase-e-run-cross-001",
+          "post-phase-e-run-cross-foreign"
+        ],
+        "source_keys": [
+          "cau_001",
+          "cau_002"
+        ],
+        "source_ids": [
+          "cau_001",
+          "cau_002"
+        ],
+        "canonical_keys": [
+          "cau_001|cross-001",
+          "cau_002|cross-foreign"
+        ],
+        "evidence_complete": true,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    },
+    {
+      "schema_version": "post-phase-e/v1",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "input": {
+        "fixture_name": "empty-batch",
+        "input_path": "fixtures/post-phase-e/empty-batch.json"
+      },
+      "read_only": true,
+      "db_access": false,
+      "db_write": false,
+      "crawler_execution": false,
+      "destructive_action": false,
+      "sql_generation": false,
+      "batch_identity": {
+        "rehearsal_label": "post-phase-e-empty",
+        "batch_id": "post-phase-e-batch-empty",
+        "run_ids": [],
+        "expected_source_keys": [],
+        "observed_source_keys": [],
+        "resolved_source_ids": []
+      },
+      "batch_status": "incomplete",
+      "completion": {
+        "expected_sources_complete": true,
+        "source_results_complete": false,
+        "counts_consistent": true,
+        "source_identity_complete": true,
+        "safe_to_mark_batch_complete": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "metrics": {
+        "expected_source_count": 0,
+        "observed_unique_source_count": 0,
+        "run_count": 0,
+        "source_result_count": 0,
+        "success_source_count": 0,
+        "zero_match_observed_source_count": 0,
+        "failed_source_count": 0,
+        "timeout_source_count": 0,
+        "partial_source_count": 0,
+        "blocked_source_count": 0,
+        "crawled_item_count": 0,
+        "matched_item_count": 0,
+        "candidate_count": 0,
+        "clean_candidate_count": 0,
+        "needs_review_candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "missing_expected_source_count": 0,
+        "duplicate_source_result_count": 0,
+        "conflicting_source_result_count": 0,
+        "unresolved_source_count": 0,
+        "ambiguous_source_count": 0,
+        "cross_batch_record_count": 0,
+        "issue_count": 1,
+        "arithmetic_consistency_valid": true
+      },
+      "source_summaries": [],
+      "issues": [
+        {
+          "code": "empty_batch",
+          "severity": "blocking",
+          "source_key": null,
+          "run_id": null,
+          "message": "batch has no expected sources and no observed source results",
+          "blocks_completion": true
+        }
+      ],
+      "rollback_scope_evidence": {
+        "rehearsal_label": "post-phase-e-empty",
+        "batch_id": "post-phase-e-batch-empty",
+        "run_ids": [],
+        "source_keys": [],
+        "source_ids": [],
+        "canonical_keys": [],
+        "evidence_complete": false,
+        "destructive_action_authorized": false
+      },
+      "zero_match_policy": {
+        "observation_only": true,
+        "absence_proof": false,
+        "safe_to_claim_source_exhaustion": false
+      },
+      "required_output_fields_present": true,
+      "limitations": [
+        "synthetic local fixture evidence only",
+        "not a live crawler run aggregate",
+        "no live DB state or production observability readiness is proven",
+        "zero-match is not absence proof",
+        "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+      ]
+    }
+  ],
+  "limitations": [
+    "synthetic local fixture based validation only",
+    "not a live crawler run aggregate",
+    "live DB state and live row counts are not verified",
+    "production observability readiness is not proven",
+    "zero-match is an observation, not absence proof",
+    "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented",
+    "Post-Phase D destructive execution remains unauthorized"
+  ]
+}

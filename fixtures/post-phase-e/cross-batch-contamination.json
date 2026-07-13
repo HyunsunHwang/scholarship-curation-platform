@@ -1,0 +1,41 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "fixture_name": "cross-batch-contamination",
+  "expected_batch_status": "blocked",
+  "rehearsal_label": "post-phase-e-cross",
+  "batch_id": "post-phase-e-batch-cross",
+  "expected_source_keys": ["cau_001", "cau_002"],
+  "source_results": [
+    {
+      "run_id": "post-phase-e-run-cross-001",
+      "rehearsal_label": "post-phase-e-cross",
+      "batch_id": "post-phase-e-batch-cross",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "status": "success",
+      "crawled_item_count": 2,
+      "matched_item_count": 1,
+      "candidate_counts": { "clean": 1, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["cau_001|cross-001"]
+    },
+    {
+      "run_id": "post-phase-e-run-cross-foreign",
+      "rehearsal_label": "post-phase-e-other",
+      "batch_id": "post-phase-e-batch-other",
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "status": "success",
+      "crawled_item_count": 2,
+      "matched_item_count": 1,
+      "candidate_counts": { "clean": 1, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["cau_002|cross-foreign"]
+    }
+  ]
+}

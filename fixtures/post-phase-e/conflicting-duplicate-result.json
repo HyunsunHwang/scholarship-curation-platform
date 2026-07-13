@@ -1,0 +1,41 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "fixture_name": "conflicting-duplicate-result",
+  "expected_batch_status": "blocked",
+  "rehearsal_label": "post-phase-e-conflict",
+  "batch_id": "post-phase-e-batch-conflict",
+  "expected_source_keys": ["cau_001"],
+  "source_results": [
+    {
+      "run_id": "post-phase-e-run-conflict-001",
+      "rehearsal_label": "post-phase-e-conflict",
+      "batch_id": "post-phase-e-batch-conflict",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "status": "success",
+      "crawled_item_count": 4,
+      "matched_item_count": 2,
+      "candidate_counts": { "clean": 2, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["cau_001|conflict-a"]
+    },
+    {
+      "run_id": "post-phase-e-run-conflict-002",
+      "rehearsal_label": "post-phase-e-conflict",
+      "batch_id": "post-phase-e-batch-conflict",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "status": "failed",
+      "crawled_item_count": 0,
+      "matched_item_count": 0,
+      "candidate_counts": { "clean": 0, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:02:00.000Z",
+      "error_code": "CONFLICTING_RESULT",
+      "canonical_keys": []
+    }
+  ]
+}
