@@ -1,0 +1,289 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-a-coverage-parser-reliability/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "migration": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "input_path": "reports/post-phase-a0-a1-coverage-readability-triage.json",
+  "post_phase_a_scope": {
+    "a0_a1_triage_reused": true,
+    "combined_pr_scope": "Post-Phase A",
+    "production_detector_rule_changed": false,
+    "source_exhaustion_proven": false
+  },
+  "bounded_real_source_spot_check_plan": [
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "spot_check_priority": "P0",
+      "triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "detail_fetch_or_body_parse_issue",
+        "manual_spot_check_required"
+      ],
+      "reason_codes": [
+        "detail_body_not_parsed",
+        "list_items_read_but_no_scholarship_keyword",
+        "manual_spot_check_required",
+        "no_keyword_match_observed",
+        "selector_mismatch_suspected"
+      ],
+      "crawl_depth": 1,
+      "listed_item_count": 1,
+      "detail_attempt_count": 1,
+      "keyword_match_count": 0,
+      "candidate_count": 0,
+      "manual_spot_check_required": true,
+      "source_exhaustion_proven": false,
+      "recommended_evidence": [
+        "sample recent list items",
+        "inspect pinned and pagination scope",
+        "compare title/body/attachment text before any detector change"
+      ]
+    },
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "spot_check_priority": "P1",
+      "triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "manual_spot_check_required"
+      ],
+      "reason_codes": [
+        "list_items_read_but_no_scholarship_keyword",
+        "manual_spot_check_required",
+        "no_keyword_match_observed"
+      ],
+      "crawl_depth": 1,
+      "listed_item_count": 1,
+      "detail_attempt_count": 1,
+      "keyword_match_count": 0,
+      "candidate_count": 0,
+      "manual_spot_check_required": true,
+      "source_exhaustion_proven": false,
+      "recommended_evidence": [
+        "sample recent list items",
+        "inspect pinned and pagination scope",
+        "compare title/body/attachment text before any detector change"
+      ]
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "spot_check_priority": "P1",
+      "triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "pagination_depth_limited",
+        "manual_spot_check_required"
+      ],
+      "reason_codes": [
+        "list_items_read_but_no_scholarship_keyword",
+        "manual_spot_check_required",
+        "no_keyword_match_observed",
+        "pagination_depth_limited",
+        "pinned_notice_not_checked"
+      ],
+      "crawl_depth": 1,
+      "listed_item_count": 1,
+      "detail_attempt_count": 1,
+      "keyword_match_count": 0,
+      "candidate_count": 0,
+      "manual_spot_check_required": true,
+      "source_exhaustion_proven": false,
+      "recommended_evidence": [
+        "sample recent list items",
+        "inspect pinned and pagination scope",
+        "compare title/body/attachment text before any detector change"
+      ]
+    },
+    {
+      "source_id": "cau_004",
+      "source_key_snapshot": "cau_004",
+      "spot_check_priority": "P2",
+      "triage_types": [
+        "keyword_miss_suspected",
+        "true_no_recent_scholarship_possible",
+        "manual_spot_check_required"
+      ],
+      "reason_codes": [
+        "list_items_read_but_no_scholarship_keyword",
+        "manual_spot_check_required",
+        "no_keyword_match_observed",
+        "true_no_recent_scholarship_possible"
+      ],
+      "crawl_depth": 2,
+      "listed_item_count": 1,
+      "detail_attempt_count": 1,
+      "keyword_match_count": 0,
+      "candidate_count": 0,
+      "manual_spot_check_required": true,
+      "source_exhaustion_proven": false,
+      "recommended_evidence": [
+        "sample recent list items",
+        "inspect pinned and pagination scope",
+        "compare title/body/attachment text before any detector change"
+      ]
+    }
+  ],
+  "keyword_expansion_recommendations": [
+    {
+      "term": "financial-support",
+      "evidence": [
+        {
+          "source_id": "cau_001",
+          "item_id": "zm-key-1",
+          "detector_reason": "title_keyword_miss",
+          "false_negative_evidence": true
+        }
+      ],
+      "confidence": "conditional_noisy",
+      "noise_risk": "high",
+      "usage": "requires_scholarship_context",
+      "production_detector_rule_changed": false,
+      "recommendation_status": "evidence_review_required"
+    },
+    {
+      "term": "grant-support",
+      "evidence": [
+        {
+          "source_id": "cau_013",
+          "item_id": "mix-3",
+          "detector_reason": "title_keyword_miss",
+          "false_negative_evidence": true
+        }
+      ],
+      "confidence": "conditional_noisy",
+      "noise_risk": "high",
+      "usage": "requires_scholarship_context",
+      "production_detector_rule_changed": false,
+      "recommendation_status": "evidence_review_required"
+    }
+  ],
+  "remediation_priorities": [
+    {
+      "remediation_category": "selector_fix_required",
+      "priority": "P0",
+      "reason_codes": [
+        "body_missing",
+        "selector_mismatch"
+      ],
+      "affected_source_ids": [
+        "cau_003",
+        "cau_011",
+        "cau_013"
+      ],
+      "affected_item_count": 4,
+      "rationale": "Blocks candidate creation or can cause major false negatives."
+    },
+    {
+      "remediation_category": "source_specific_adapter_required",
+      "priority": "P0",
+      "reason_codes": [
+        "detail_fetch_failed"
+      ],
+      "affected_source_ids": [
+        "cau_010",
+        "cau_012"
+      ],
+      "affected_item_count": 3,
+      "rationale": "Blocks candidate creation or can cause major false negatives."
+    },
+    {
+      "remediation_category": "url_canonicalization_fix_required",
+      "priority": "P0",
+      "reason_codes": [
+        "detail_url_missing"
+      ],
+      "affected_source_ids": [
+        "cau_011"
+      ],
+      "affected_item_count": 2,
+      "rationale": "Blocks candidate creation or can cause major false negatives."
+    },
+    {
+      "remediation_category": "attachment_parser_required",
+      "priority": "P1",
+      "reason_codes": [
+        "attachment_metadata_missing",
+        "attachment_only_possible",
+        "attachment_parser_recommended"
+      ],
+      "affected_source_ids": [
+        "cau_008"
+      ],
+      "affected_item_count": 1,
+      "rationale": "Sends many candidates to review or obscures key evidence."
+    },
+    {
+      "remediation_category": "encoding_normalization_review",
+      "priority": "P1",
+      "reason_codes": [
+        "body_mojibake_detected",
+        "encoding_suspected",
+        "replacement_character_detected"
+      ],
+      "affected_source_ids": [
+        "cau_007"
+      ],
+      "affected_item_count": 1,
+      "rationale": "Sends many candidates to review or obscures key evidence."
+    },
+    {
+      "remediation_category": "second_pass_parser_recommended",
+      "priority": "P2",
+      "reason_codes": [
+        "body_too_short",
+        "image_only_suspected",
+        "second_pass_parser_recommended"
+      ],
+      "affected_source_ids": [
+        "cau_003",
+        "cau_006",
+        "cau_010",
+        "cau_013"
+      ],
+      "affected_item_count": 4,
+      "rationale": "Improves quality after blocking failures are addressed."
+    },
+    {
+      "remediation_category": "manual_review_only",
+      "priority": "P3",
+      "reason_codes": [
+        "keyword_not_detected"
+      ],
+      "affected_source_ids": [
+        "cau_001",
+        "cau_013"
+      ],
+      "affected_item_count": 2,
+      "rationale": "Future enhancement or manual-only follow-up."
+    }
+  ],
+  "carry_forward_risks": [
+    "zero-match false-negative risk",
+    "non-clean parsing risk",
+    "board/item-level readability risk"
+  ],
+  "metrics": {
+    "zero_match_source_count": 4,
+    "false_negative_review_count": 3,
+    "keyword_expansion_candidate_count": 2,
+    "high_confidence_keyword_candidate_count": 0,
+    "noisy_keyword_candidate_count": 2,
+    "parser_failure_count": 13,
+    "remediation_category_count": 7,
+    "p0_remediation_count": 3,
+    "p1_remediation_count": 2,
+    "encoding_issue_count": 1,
+    "attachment_parser_required_count": 1,
+    "board_count": 12,
+    "item_count": 20,
+    "carry_forward_risk_count": 23
+  }
+}
