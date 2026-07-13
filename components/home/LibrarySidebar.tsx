@@ -86,10 +86,10 @@ function PinnedRow({
       className="flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-beige"
     >
       <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white ${
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${
           tone === "brand"
-            ? "bg-linear-to-br from-brand to-[#c00000]"
-            : "bg-linear-to-br from-sky-400 to-sky-700"
+            ? "bg-brand/10 text-brand"
+            : "bg-skyblue/55 text-ink/75"
         }`}
         aria-hidden
       >
@@ -116,6 +116,45 @@ function PinnedRow({
         <span className="block truncate text-xs text-ink/50">{subtitle}</span>
       </span>
     </Link>
+  );
+}
+
+function CoverThumb({
+  urls,
+  fallbackLabel,
+}: {
+  urls: (string | null | undefined)[];
+  fallbackLabel: string;
+}) {
+  const covers = urls.filter((url): url is string => Boolean(url)).slice(0, 4);
+
+  if (covers.length === 0) {
+    return (
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-beige text-xs font-bold text-ink/40">
+        {fallbackLabel.charAt(0)}
+      </div>
+    );
+  }
+
+  if (covers.length === 1) {
+    return (
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-cream ring-1 ring-black/5">
+        <Image src={covers[0]} alt="" fill sizes="40px" className="object-cover" />
+      </div>
+    );
+  }
+
+  const cells = [...covers];
+  while (cells.length < 4) cells.push(covers[cells.length % covers.length]);
+
+  return (
+    <div className="grid h-10 w-10 shrink-0 grid-cols-2 grid-rows-2 gap-px overflow-hidden rounded-md bg-white ring-1 ring-black/5">
+      {cells.slice(0, 4).map((url, i) => (
+        <div key={`${url}-${i}`} className="relative bg-cream">
+          <Image src={url} alt="" fill sizes="20px" className="object-cover" />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -162,15 +201,21 @@ function LibraryItemRow({
   );
 }
 
-/** 담은 공고를 담는 고정 라이브러리 파일(플레이리스트) */
-function SavedLibraryFile({
-  isLoggedIn,
-  count,
+/** 접을 수 있는 고정 라이브러리 파일 — 담은 공고·최근 본 공고 (포스터 커버) */
+function LibraryFile({
+  title,
+  subtitle,
+  href,
+  hrefLabel,
+  coverUrls,
   expanded,
   onToggle,
 }: {
-  isLoggedIn: boolean;
-  count: number;
+  title: string;
+  subtitle: string;
+  href: string;
+  hrefLabel: string;
+  coverUrls: (string | null | undefined)[];
   expanded: boolean;
   onToggle: () => void;
 }) {
@@ -182,21 +227,12 @@ function SavedLibraryFile({
         className="flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1.5 text-left"
         aria-expanded={expanded}
       >
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-linear-to-br from-amber-400 to-orange-500 text-white"
-          aria-hidden
-        >
-          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-          </svg>
-        </span>
+        <CoverThumb urls={coverUrls} fallbackLabel={title} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">
-            담은 공고
+            {title}
           </span>
-          <span className="block truncate text-xs text-ink/50">
-            라이브러리 · {isLoggedIn ? `${count}개` : "로그인 필요"}
-          </span>
+          <span className="block truncate text-xs text-ink/50">{subtitle}</span>
         </span>
         <svg
           className={`h-4 w-4 shrink-0 text-ink/40 transition-transform ${expanded ? "rotate-90" : ""}`}
@@ -210,10 +246,10 @@ function SavedLibraryFile({
         </svg>
       </button>
       <Link
-        href={isLoggedIn ? "/library/saved" : "/auth"}
+        href={href}
         className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/40 hover:bg-cream hover:text-ink"
-        aria-label={isLoggedIn ? "담은 공고 전체 보기" : "로그인하고 담기"}
-        title={isLoggedIn ? "전체 보기" : "로그인"}
+        aria-label={hrefLabel}
+        title={hrefLabel}
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -235,7 +271,8 @@ export default function LibrarySidebar({
   onCollapse,
 }: LibrarySidebarProps) {
   const [recentViews, setRecentViews] = useState<RecentViewItem[]>([]);
-  const [savedExpanded, setSavedExpanded] = useState(true);
+  const [savedExpanded, setSavedExpanded] = useState(false);
+  const [recentExpanded, setRecentExpanded] = useState(false);
 
   useEffect(() => {
     const sync = () => setRecentViews(readRecentViews());
@@ -250,46 +287,59 @@ export default function LibrarySidebar({
 
   const listBody = (
     <>
-      {isLoggedIn ? (
-        <div className="shrink-0 space-y-0.5 px-1.5 pb-1">
-          <PinnedRow
-            href="/matched"
-            title="조건에 맞는 장학금"
-            subtitle="맞춤 추천"
-            tone="brand"
-          />
-          <PinnedRow
-            href="/matched?scope=campus"
-            title="교내 기회"
-            subtitle="우리 학교 전용"
-            tone="campus"
-          />
-        </div>
-      ) : (
-        <div className="shrink-0 space-y-2 px-2.5 pb-2">
-          <ServiceCard
-            title="조건에 맞는 장학금"
-            description="프로필로 자격 맞는 장학금만 골라드려요."
-            ctaLabel="로그인하고 시작하기"
-            href="/auth"
-            primary
-          />
-          <ServiceCard
-            title="교내 기회"
-            description="로그인하면 우리 학교 전용 이벤트를 볼 수 있어요."
-            ctaLabel="로그인하고 보기"
-            href="/auth"
-          />
-        </div>
-      )}
-
       <div className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3">
-        {/* 고정 라이브러리 파일: 담은 공고 — 로그인 시에만 */}
+        {/* 1. 최근 본 공고 (비로그인 포함) */}
+        <div className="mb-1">
+          <LibraryFile
+            title="최근 본 공고"
+            subtitle={`라이브러리 · ${recentViews.length}개`}
+            href="/library/recent"
+            hrefLabel="최근 본 공고 전체 보기"
+            coverUrls={recentViews.map((item) => item.poster_image_url)}
+            expanded={recentExpanded}
+            onToggle={() => setRecentExpanded((v) => !v)}
+          />
+          {recentExpanded ? (
+            <div className="ml-2 border-l border-gray-100 pl-1">
+              {recentViews.length === 0 ? (
+                <div className="px-2 py-2">
+                  <p className="text-[11px] text-ink/45">
+                    최근 본 공고가 없어요
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-ink/40">
+                    공고를 열어보면 여기에 쌓여요
+                  </p>
+                </div>
+              ) : (
+                <ul className="flex flex-col">
+                  {recentViews.map((item) => (
+                    <li key={`recent-${item.content_kind}-${item.id}`}>
+                      <LibraryItemRow
+                        href={contentKindHref(item.content_kind, item.id)}
+                        name={cleanScholarshipName(item.name)}
+                        posterUrl={item.poster_image_url}
+                        kindLabel={contentKindLabel(item.content_kind)}
+                        meta={deadlineShort(item.apply_end_date)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {/* 2. 담은 공고 — 로그인 시에만 */}
         {isLoggedIn ? (
           <div className="mb-1">
-            <SavedLibraryFile
-              isLoggedIn={isLoggedIn}
-              count={bookmarkedScholarships.length}
+            <LibraryFile
+              title="담은 공고"
+              subtitle={`라이브러리 · ${bookmarkedScholarships.length}개`}
+              href="/library/saved"
+              hrefLabel="담은 공고 전체 보기"
+              coverUrls={bookmarkedScholarships.map(
+                (item) => item.poster_image_url
+              )}
               expanded={savedExpanded}
               onToggle={() => setSavedExpanded((v) => !v)}
             />
@@ -319,38 +369,39 @@ export default function LibrarySidebar({
           </div>
         ) : null}
 
-        {/* 최근 본 공고 */}
-        <div className={isLoggedIn ? "mt-2 border-t border-gray-100 pt-2" : "pt-1"}>
-          <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
-            <Link href="/library/recent" className="hover:text-ink/70">
-              최근 본 공고
-            </Link>
-          </p>
-          {recentViews.length === 0 ? (
-            <div className="px-2 py-3">
-              <p className="text-xs font-medium text-ink/60">
-                최근 본 공고가 없어요
-              </p>
-              <p className="mt-1 text-[11px] text-ink/40">
-                공고를 열어보면 여기에 쌓여요
-              </p>
-            </div>
-          ) : (
-            <ul className="flex flex-col">
-              {recentViews.map((item) => (
-                <li key={`recent-${item.content_kind}-${item.id}`}>
-                  <LibraryItemRow
-                    href={contentKindHref(item.content_kind, item.id)}
-                    name={cleanScholarshipName(item.name)}
-                    posterUrl={item.poster_image_url}
-                    kindLabel={contentKindLabel(item.content_kind)}
-                    meta={deadlineShort(item.apply_end_date)}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        {/* 3–4. 조건에 맞는 장학금 · 교내 기회 */}
+        {isLoggedIn ? (
+          <div className="mt-1 space-y-0.5 border-t border-gray-100 pt-2">
+            <PinnedRow
+              href="/matched"
+              title="조건에 맞는 장학금"
+              subtitle="맞춤 추천"
+              tone="brand"
+            />
+            <PinnedRow
+              href="/matched?scope=campus"
+              title="교내 기회"
+              subtitle="우리 학교 전용"
+              tone="campus"
+            />
+          </div>
+        ) : (
+          <div className="mt-2 space-y-2 border-t border-gray-100 px-1 pt-3">
+            <ServiceCard
+              title="조건에 맞는 장학금"
+              description="프로필로 자격 맞는 장학금만 골라드려요."
+              ctaLabel="로그인하고 시작하기"
+              href="/auth"
+              primary
+            />
+            <ServiceCard
+              title="교내 기회"
+              description="로그인하면 우리 학교 전용 이벤트를 볼 수 있어요."
+              ctaLabel="로그인하고 보기"
+              href="/auth"
+            />
+          </div>
+        )}
       </div>
     </>
   );
@@ -375,14 +426,14 @@ export default function LibrarySidebar({
             </Link>
           )}
         </div>
-        <div className="flex max-h-[420px] flex-col pt-1">{listBody}</div>
+        <div className="flex max-h-[420px] flex-col pt-3">{listBody}</div>
       </section>
     );
   }
 
   return (
     <aside className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-gray-200/80 bg-white">
-        <div className="flex shrink-0 items-center justify-between gap-2 px-3 pb-1 pt-3">
+        <div className="flex shrink-0 items-center justify-between gap-2 px-3 pb-4 pt-3">
         <Link href="/library" className="text-sm font-bold text-ink hover:text-brand">
           내 라이브러리
         </Link>
