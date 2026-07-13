@@ -1,0 +1,37 @@
+{
+  "fixture_name": "partial-write",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": "post-phase-d-partial-write",
+  "batch_id": "post-phase-d-partial-batch",
+  "run_ids": ["post-phase-d-run-partial-001"],
+  "source_keys": ["cau_007"],
+  "canonical_keys": ["cau_007|source-health|partial-write"],
+  "applied_records": [
+    {
+      "entity": "notice",
+      "id": "notice-partial-001",
+      "notice_id": "notice-partial-001",
+      "run_id": "post-phase-d-run-partial-001",
+      "source_key": "cau_007",
+      "source_id": "cau_007",
+      "canonical_key": "cau_007|source-health|partial-write",
+      "created_by_apply": true
+    },
+    {
+      "entity": "source_result",
+      "id": "source-result-partial-001",
+      "run_id": "post-phase-d-run-partial-001",
+      "source_key": "cau_007",
+      "source_id": "cau_007",
+      "canonical_key": "cau_007|source-health|partial-write",
+      "status": "success",
+      "expected_child_records": 3,
+      "actual_child_records": 1
+    }
+  ],
+  "graph_records": {
+    "sources": [
+      { "id": "cau_007", "source_key": "cau_007", "source_id": "cau_007", "pre_existing": true }
+    ]
+  }
+}

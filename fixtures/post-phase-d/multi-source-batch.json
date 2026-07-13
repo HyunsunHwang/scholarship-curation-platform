@@ -1,0 +1,79 @@
+{
+  "fixture_name": "multi-source-batch",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": "post-phase-d-multi-source-batch",
+  "batch_id": "post-phase-d-batch-001",
+  "run_ids": ["post-phase-d-run-batch-001", "post-phase-d-run-batch-002"],
+  "source_keys": ["cau_001", "cau_002"],
+  "canonical_keys": [
+    "cau_001|https://biz.cau.ac.kr/scholarship/batch-a",
+    "cau_002|https://econ.cau.ac.kr/news/notice/batch-b"
+  ],
+  "ambiguous_identifier": true,
+  "applied_records": [
+    {
+      "entity": "notice",
+      "id": "notice-batch-001",
+      "notice_id": "notice-batch-001",
+      "run_id": "post-phase-d-run-batch-001",
+      "batch_id": "post-phase-d-batch-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/batch-a",
+      "created_by_apply": true
+    },
+    {
+      "entity": "occurrence",
+      "id": "occ-batch-001",
+      "occurrence_id": "occ-batch-001",
+      "notice_id": "notice-batch-001",
+      "run_id": "post-phase-d-run-batch-001",
+      "batch_id": "post-phase-d-batch-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/batch-a",
+      "created_by_apply": true
+    },
+    {
+      "entity": "notice",
+      "id": "notice-batch-002",
+      "notice_id": "notice-batch-002",
+      "run_id": "post-phase-d-run-batch-002",
+      "batch_id": "post-phase-d-batch-001",
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "canonical_key": "cau_002|https://econ.cau.ac.kr/news/notice/batch-b",
+      "created_by_apply": true
+    },
+    {
+      "entity": "occurrence",
+      "id": "occ-batch-002",
+      "occurrence_id": "occ-batch-002",
+      "notice_id": "notice-batch-002",
+      "run_id": "post-phase-d-run-batch-002",
+      "batch_id": "post-phase-d-batch-001",
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "canonical_key": "cau_002|https://econ.cau.ac.kr/news/notice/batch-b",
+      "created_by_apply": true
+    },
+    {
+      "entity": "crawler_run",
+      "id": "post-phase-d-run-batch-001",
+      "run_id": "post-phase-d-run-batch-001",
+      "batch_id": "post-phase-d-batch-001"
+    },
+    {
+      "entity": "crawler_run",
+      "id": "post-phase-d-run-batch-002",
+      "run_id": "post-phase-d-run-batch-002",
+      "batch_id": "post-phase-d-batch-001"
+    }
+  ],
+  "graph_records": {
+    "sources": [
+      { "id": "cau_001", "source_key": "cau_001", "source_id": "cau_001", "pre_existing": true },
+      { "id": "cau_002", "source_key": "cau_002", "source_id": "cau_002", "pre_existing": true }
+    ]
+  }
+}
