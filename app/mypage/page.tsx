@@ -1,28 +1,18 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/server";
 import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
-import ScholarshipDashboard from "@/components/ScholarshipDashboard";
-import type { CardScholarship } from "@/components/ScholarshipCard";
-import {
-  daysUntilApplyDeadlineKorea,
-  isAlwaysOpenRecruitment,
-  isScholarshipExpired,
-} from "@/lib/scholarship-dates";
-import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
-import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
+import ProfileSpecBoard from "@/components/profile/ProfileSpecBoard";
+import { SPEC_SECTIONS, type SpecItem } from "@/lib/profile-spec";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 
-const BookmarkedScholarshipCalendar = dynamic(
-  () => import("@/components/BookmarkedScholarshipCalendar"),
-  {
-    loading: () => (
-      <div className="mx-auto mt-8 h-64 w-full max-w-7xl animate-pulse rounded-3xl bg-gray-100" />
-    ),
-  }
-);
+function enrollmentBadge(status: string | null, academicYear: number | null): string {
+  const parts: string[] = [];
+  if (academicYear) parts.push(`${academicYear}학년`);
+  if (status) parts.push(status);
+  return parts.join(" · ");
+}
 
 export default async function MyPage() {
   const supabase = await createClient();
@@ -33,178 +23,160 @@ export default async function MyPage() {
 
   if (!user) redirect("/auth");
 
-  const [{ data: profile }, bookmarkedIds] = await Promise.all([
-    supabase.from("profiles").select("name, email").eq("id", user.id).single(),
-    getBookmarkedScholarshipIds(supabase, user.id),
+  const [{ data: profile }, specItemsResult, navContext] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select(
+        "name, email, headline, bio, skills, school_name, department, academic_year, enrollment_status"
+      )
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("profile_spec_items")
+      .select(
+        "id, item_type, title, organization, description, start_date, end_date, is_current"
+      )
+      .eq("user_id", user.id)
+      .order("sort_order", { ascending: true })
+      .order("start_date", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false }),
+    resolveNavUserContext(user),
   ]);
 
-  // 북마크된 장학금 상세 정보를 별도 쿼리로 조회
-  const [scholarshipRowsResult, scrapCountByScholarship] = await Promise.all([
-    bookmarkedIds.length > 0
-      ? supabase
-          .from("scholarships")
-          .select(
-            "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
-          )
-          .in("id", bookmarkedIds)
-      : Promise.resolve({ data: [] }),
-    getScholarshipScrapCounts(supabase, bookmarkedIds),
-  ]);
-  const scholarshipRows = scholarshipRowsResult.data;
-
-  // bookmarks 순서(최신 북마크순) 유지
-  const scholarshipMap = new Map(
-    (scholarshipRows ?? []).map((s) => [s.id, s])
-  );
-  const bookmarkedScholarships: CardScholarship[] = bookmarkedIds.flatMap((id) => {
-    const s = scholarshipMap.get(id);
-    if (!s) return [];
-    if (isScholarshipExpired(s.apply_end_date)) return [];
-    return [{
-      id: s.id,
-      name: s.name,
-      organization: s.organization,
-      institution_type: s.institution_type as string,
-      support_types: s.support_types as string[],
-      support_amount_text: s.support_amount_text,
-      apply_end_date: s.apply_end_date,
-      poster_image_url: s.poster_image_url ?? null,
-      created_at: s.created_at,
-      view_count: s.view_count,
-      scrap_count: scrapCountByScholarship.get(s.id) ?? 0,
-      is_recommended: s.is_recommended,
-      recommended_sort_order: s.recommended_sort_order,
-      is_advertisement: s.is_advertisement,
-    }];
-  });
+  const specItems = (specItemsResult.data ?? []) as SpecItem[];
 
   const displayName = profile?.name ?? user.email ?? "";
   const initial = displayName.charAt(0).toUpperCase();
-  const urgentBookmarkCount = bookmarkedScholarships.filter((scholarship) => {
-    if (isAlwaysOpenRecruitment(scholarship.apply_end_date)) return false;
-    const days = daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
-    return days >= 0 && days <= 6;
-  }).length;
-  const navContext = await resolveNavUserContext(user);
+  const schoolLine = [profile?.school_name, profile?.department]
+    .filter(Boolean)
+    .join(" · ");
+  const statusLine = enrollmentBadge(
+    profile?.enrollment_status ?? null,
+    profile?.academic_year ?? null
+  );
+
+  // 프로필 완성도: 소개 3항목 + 섹션별 1개 이상
+  const filledSections = SPEC_SECTIONS.filter((s) =>
+    specItems.some((item) => item.item_type === s.type)
+  ).length;
+  const introFilled =
+    Number(Boolean(profile?.headline)) +
+    Number(Boolean(profile?.bio)) +
+    Number((profile?.skills ?? []).length > 0);
+  const completeness = Math.round(
+    ((introFilled + filledSections) / (3 + SPEC_SECTIONS.length)) * 100
+  );
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-cream/40">
       <HomeSearchRoot>
         <SpotifyTopNav
           variant="compact"
           currentUser={user}
           currentUserRole={navContext.role}
           currentUserName={profile?.name ?? navContext.name}
-          urgentBookmarkCount={urgentBookmarkCount}
+          urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
       </HomeSearchRoot>
 
       <main className="flex-1">
-        {/* 프로필 헤더 */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-xl font-bold text-white">
+        <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+          {/* 프로필 히어로 카드 */}
+          <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white">
+            <div className="h-24 bg-linear-to-r from-brand/80 via-brand to-[#8a1a1a] sm:h-28" />
+            <div className="px-5 pb-5 sm:px-8 sm:pb-6">
+              <div className="-mt-10 flex items-end justify-between sm:-mt-12">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-brand text-3xl font-bold text-white sm:h-24 sm:w-24">
                   {initial}
                 </div>
-                <div className="min-w-0">
-                  <h1 className="text-xl font-bold text-ink truncate">
-                    {displayName}
-                  </h1>
-                  <p className="mt-0.5 text-sm text-ink/60 truncate">
-                    {user.email}
+                <Link
+                  href="/onboarding"
+                  className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-semibold text-ink transition-colors hover:bg-cream"
+                >
+                  기본 정보 수정
+                </Link>
+              </div>
+
+              <div className="mt-3">
+                <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+                  {displayName}
+                </h1>
+                {profile?.headline ? (
+                  <p className="mt-1 text-sm font-medium text-ink/75">
+                    {profile.headline}
                   </p>
+                ) : null}
+                <div className="mt-1.5 space-y-0.5 text-sm text-ink/55">
+                  {schoolLine ? <p>{schoolLine}</p> : null}
+                  {statusLine ? <p>{statusLine}</p> : null}
+                  <p>{user.email}</p>
                 </div>
               </div>
-              <Link
-                href="/onboarding"
-                className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-cream sm:self-center"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"
-                  />
-                </svg>
-                프로필 수정
-              </Link>
             </div>
+          </section>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]">
+            {/* 메인: 소개 + 스펙 섹션 */}
+            <ProfileSpecBoard
+              intro={{
+                headline: profile?.headline ?? null,
+                bio: profile?.bio ?? null,
+                skills: profile?.skills ?? null,
+              }}
+              items={specItems}
+            />
+
+            {/* 사이드바 */}
+            <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+              <section className="rounded-2xl border border-gray-200/80 bg-white p-5">
+                <h2 className="text-sm font-bold text-ink">프로필 완성도</h2>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-brand transition-[width]"
+                    style={{ width: `${completeness}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-ink/55">
+                  <span className="font-bold text-brand">{completeness}%</span>{" "}
+                  완성 — 스펙을 채울수록 지원서 준비가 쉬워져요.
+                </p>
+              </section>
+
+              <section className="rounded-2xl border border-gray-200/80 bg-white p-5">
+                <h2 className="text-sm font-bold text-ink">바로가기</h2>
+                <ul className="mt-2 space-y-1">
+                  <li>
+                    <Link
+                      href="/library/saved"
+                      className="flex items-center justify-between rounded-lg px-2 py-2 text-sm font-medium text-ink/75 hover:bg-beige hover:text-ink"
+                    >
+                      담은 공고
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/matched"
+                      className="flex items-center justify-between rounded-lg px-2 py-2 text-sm font-medium text-ink/75 hover:bg-beige hover:text-ink"
+                    >
+                      조건에 맞는 장학금
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/library/recent"
+                      className="flex items-center justify-between rounded-lg px-2 py-2 text-sm font-medium text-ink/75 hover:bg-beige hover:text-ink"
+                    >
+                      최근 조회
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </li>
+                </ul>
+              </section>
+            </aside>
           </div>
         </div>
-
-        {/* 북마크 섹션 */}
-        {bookmarkedScholarships.length === 0 ? (
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 flex flex-col items-center text-center gap-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="h-10 w-10 text-peach"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-ink">
-                아직 북마크한 장학금이 없어요
-              </p>
-              <p className="mt-1 text-sm text-ink/60">
-                관심 있는 장학금에 북마크를 추가해보세요.
-              </p>
-            </div>
-            <Link
-              href="/#scholarships"
-              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand/85"
-            >
-              장학금 둘러보기
-            </Link>
-          </div>
-        ) : (
-          <div>
-            {/* 섹션 헤더 */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-0">
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5 fill-brand stroke-brand"
-                  strokeWidth={1.8}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                  />
-                </svg>
-                <h2 className="text-lg font-bold text-ink">내 북마크</h2>
-                <span className="inline-flex items-center rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand">
-                  {bookmarkedScholarships.length}개
-                </span>
-              </div>
-            </div>
-            <BookmarkedScholarshipCalendar scholarships={bookmarkedScholarships} />
-            <ScholarshipDashboard
-              scholarships={bookmarkedScholarships}
-              bookmarkedIds={bookmarkedIds}
-              heading="내 북마크"
-            />
-          </div>
-        )}
       </main>
 
       <footer className="border-t border-gray-200 bg-white py-8">

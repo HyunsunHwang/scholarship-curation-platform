@@ -50,6 +50,15 @@ export type ContestDocumentFile = {
 /** 선발 단계 구분: selection = 지원자가 통과해야 하는 선발 관문, post_acceptance = 합격 후 이어지는 절차(오리엔테이션·파견·수혜 등) */
 export type SelectionStagePhase = "selection" | "post_acceptance";
 
+/** 프로필 스펙 항목 유형 (profile_spec_items.item_type) */
+export type SpecItemType =
+  | "experience"
+  | "award"
+  | "certification"
+  | "activity"
+  | "project"
+  | "language";
+
 // ── Database 타입 ─────────────────────────────────────────────────────────
 
 export interface Database {
@@ -203,6 +212,10 @@ export interface Database {
           military_status: MilitaryStatusType | null;
           /** 관심 분야 태그 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
           interest_categories: string[] | null;
+          // 프로필(스펙) 소개
+          headline: string | null;
+          bio: string | null;
+          skills: string[] | null;
           created_at: string;
           updated_at: string;
         };
@@ -250,10 +263,49 @@ export interface Database {
           parent_occupation?: ParentOccupationType[] | null;
           military_status?: MilitaryStatusType | null;
           interest_categories?: string[] | null;
+          headline?: string | null;
+          bio?: string | null;
+          skills?: string[] | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Relationships: [];
+      };
+
+      // ── 학생 스펙 항목 ───────────────────────────────────────────────────
+      profile_spec_items: {
+        Row: {
+          id: string;
+          user_id: string;
+          item_type: SpecItemType;
+          title: string;
+          organization: string | null;
+          description: string | null;
+          start_date: string | null;
+          end_date: string | null;
+          is_current: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          item_type: SpecItemType;
+          title: string;
+          organization?: string | null;
+          description?: string | null;
+          start_date?: string | null;
+          end_date?: string | null;
+          is_current?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["profile_spec_items"]["Insert"]
+        >;
         Relationships: [];
       };
 

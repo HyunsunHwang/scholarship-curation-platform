@@ -210,7 +210,7 @@ function SavedLibraryFile({
         </svg>
       </button>
       <Link
-        href={isLoggedIn ? "/mypage" : "/auth"}
+        href={isLoggedIn ? "/library/saved" : "/auth"}
         className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/40 hover:bg-cream hover:text-ink"
         aria-label={isLoggedIn ? "담은 공고 전체 보기" : "로그인하고 담기"}
         title={isLoggedIn ? "전체 보기" : "로그인"}
@@ -322,7 +322,9 @@ export default function LibrarySidebar({
         {/* 최근 본 공고 */}
         <div className={isLoggedIn ? "mt-2 border-t border-gray-100 pt-2" : "pt-1"}>
           <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
-            최근 본 공고
+            <Link href="/library/recent" className="hover:text-ink/70">
+              최근 본 공고
+            </Link>
           </p>
           {recentViews.length === 0 ? (
             <div className="px-2 py-3">
@@ -360,14 +362,16 @@ export default function LibrarySidebar({
         className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white"
       >
         <div className="flex items-center justify-between gap-2 px-3 pt-3">
-          <h2 className="text-sm font-bold text-ink">내 라이브러리</h2>
+          <Link href="/library" className="text-sm font-bold text-ink hover:text-brand">
+            내 라이브러리
+          </Link>
           {isLoggedIn ? (
-            <Link href="/mypage" className="text-xs font-semibold text-brand hover:underline">
+            <Link href="/library" className="text-xs font-semibold text-brand hover:underline">
               전체
             </Link>
           ) : (
-            <Link href="/auth" className="text-xs font-semibold text-brand hover:underline">
-              로그인
+            <Link href="/library" className="text-xs font-semibold text-brand hover:underline">
+              전체
             </Link>
           )}
         </div>
@@ -378,8 +382,10 @@ export default function LibrarySidebar({
 
   return (
     <aside className="flex h-full min-h-0 w-full flex-col rounded-2xl border border-gray-200/80 bg-white">
-      <div className="flex shrink-0 items-center justify-between gap-2 px-3 pb-1 pt-3">
-        <h2 className="text-sm font-bold text-ink">내 라이브러리</h2>
+        <div className="flex shrink-0 items-center justify-between gap-2 px-3 pb-1 pt-3">
+        <Link href="/library" className="text-sm font-bold text-ink hover:text-brand">
+          내 라이브러리
+        </Link>
         <div className="flex items-center gap-0.5">
           {onCollapse ? (
             <button
@@ -406,10 +412,10 @@ export default function LibrarySidebar({
             </button>
           ) : null}
           <Link
-            href={isLoggedIn ? "/mypage" : "/auth"}
+            href="/library"
             className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 transition-colors hover:bg-beige hover:text-ink"
-            aria-label={isLoggedIn ? "마이페이지" : "로그인"}
-            title={isLoggedIn ? "마이페이지" : "로그인"}
+            aria-label="내 라이브러리 전체 보기"
+            title="내 라이브러리"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

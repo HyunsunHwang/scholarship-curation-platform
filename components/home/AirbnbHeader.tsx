@@ -165,15 +165,7 @@ function UserActions({
 
   function openLibrary() {
     setMenuOpen(false);
-    try {
-      window.localStorage.setItem("janghakssam:library-left-open", "1");
-    } catch {
-      // ignore
-    }
-    window.dispatchEvent(new Event("janghakssam:open-library"));
-    if (window.location.pathname !== "/") {
-      window.location.href = "/";
-    }
+    window.location.href = "/library";
   }
 
   function showComingSoon(label: string) {

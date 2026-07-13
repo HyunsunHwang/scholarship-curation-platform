@@ -41,6 +41,8 @@ export async function toggleBookmark(
     });
     revalidatePath("/");
     revalidatePath("/mypage");
+    revalidatePath("/library");
+    revalidatePath("/library/saved");
     return { bookmarked: false };
   } else {
     const { error: insertError } = await supabase
@@ -57,6 +59,8 @@ export async function toggleBookmark(
     });
     revalidatePath("/");
     revalidatePath("/mypage");
+    revalidatePath("/library");
+    revalidatePath("/library/saved");
     return { bookmarked: true };
   }
 }
@@ -98,6 +102,8 @@ export async function toggleContestBookmark(
     });
     revalidatePath("/");
     revalidatePath("/mypage");
+    revalidatePath("/library");
+    revalidatePath("/library/saved");
     revalidatePath("/contests");
     revalidatePath("/educations");
     revalidatePath("/activities");
@@ -117,6 +123,8 @@ export async function toggleContestBookmark(
   });
   revalidatePath("/");
   revalidatePath("/mypage");
+  revalidatePath("/library");
+  revalidatePath("/library/saved");
   revalidatePath("/contests");
   revalidatePath("/educations");
   revalidatePath("/activities");
