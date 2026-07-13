@@ -1,0 +1,7 @@
+{
+  "id": "after-cau_010-kboard-detail-url",
+  "kind": "url",
+  "source": { "sourceId": "cau_010", "sourceKey": "cau_010", "listUrl": "http://archicau.com/wordpress/notice/", "baseUrl": "http://archicau.com" },
+  "link_html": "<a href=\"?uid=1608&amp;mod=document&amp;pageid=1&amp;utm_source=fixture\">Detail link</a>",
+  "expected": { "notice_url": "http://archicau.com/wordpress/notice/?uid=1608&mod=document", "classification": "needs_review" }
+}

@@ -435,6 +435,7 @@ async function enrichDetail(source, item) {
     $detail("script, style, nav, footer, header, aside, noscript").remove();
     const { content, imageUrls } = extractDetailFromCheerio($detail, {
       baseUrl: item.noticeUrl || source.baseUrl || source.listUrl,
+      sourceId: source.sourceId,
       detailContentSelector: source.detailContentSelector,
     });
     const detailDate = source.detailDateSelector

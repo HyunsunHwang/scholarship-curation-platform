@@ -16,6 +16,10 @@ export type AdminCrawlerReviewDiagnostic = {
   itemReadabilityStatus: string;
   boardReadabilityStatus: string | null;
   remediationPriority: "P0" | "P1" | "P2" | "P3" | null;
+  f2RemediationStatus: "resolved" | "deferred" | null;
+  f2ClassificationBefore: string | null;
+  f2ClassificationAfter: string | null;
+  f2NextAction: string | null;
   nextAction: string;
   batchWarning: string | null;
   batchStatus: string;

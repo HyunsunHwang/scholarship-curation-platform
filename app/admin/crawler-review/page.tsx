@@ -131,8 +131,9 @@ export default async function AdminCrawlerReviewPage({
                     {item.zeroMatchObserved ? <p className="mt-2 text-xs font-semibold text-red-700">Zero match observed</p> : null}
                     {item.falseNegativeReview ? <p className="mt-1 text-xs font-semibold text-amber-700">False-negative review</p> : null}
                     {item.remediationPriority ? <p className="mt-1 text-xs font-semibold text-amber-700">{item.remediationPriority} remediation</p> : null}
+                    {item.f2RemediationStatus ? <p className="mt-1 text-xs font-semibold text-gray-700">F-2: {item.f2RemediationStatus} ({item.f2ClassificationBefore} to {item.f2ClassificationAfter})</p> : null}
                   </td>
-                  <td className="px-4 py-3"><p className="max-w-56 text-xs text-gray-700">{item.nextAction}</p></td>
+                  <td className="px-4 py-3"><p className="max-w-56 text-xs text-gray-700">{item.nextAction}</p>{item.f2NextAction && item.f2NextAction !== item.nextAction ? <p className="mt-1 max-w-56 text-xs text-gray-500">F-2: {item.f2NextAction}</p> : null}</td>
                   <td className="px-4 py-3">
                     <p className="text-xs text-gray-700">{item.batchStatus} / {item.sourceResultStatus}</p>
                     <p className="mt-1 text-xs text-gray-500">{item.batchWarning ?? "No batch warning"}</p>
@@ -161,6 +162,7 @@ export default async function AdminCrawlerReviewPage({
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">B/C no-assets evidence</dt><dd className="mt-1">Text sufficient: {report.review_quality_summary.no_assets_text_sufficient_count} / Needs review: {report.review_quality_summary.no_assets_needs_review_count}</dd></div>
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">B/C image-only suspected</dt><dd className="mt-1">{report.review_quality_summary.image_only_suspected_count}</dd></div>
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">A Foundation</dt><dd className="mt-1">Coverage/parser/remediation policy only; remediation implementation remains a follow-up.</dd></div>
+            <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">F-2 bounded P0</dt><dd className="mt-1">Resolved: {report.f2_summary.p0_resolved_count} / Deferred: {report.f2_summary.p0_deferred_count} / Review retained: {report.f2_summary.manual_review_retained_count}</dd></div>
           </dl>
         </div>
       </section>

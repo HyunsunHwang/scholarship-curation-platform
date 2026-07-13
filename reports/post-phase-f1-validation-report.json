@@ -31,7 +31,7 @@
       "pass": true
     },
     {
-      "name": "F-0, B/C, E, and A reports are all referenced",
+      "name": "F-0, B/C, E, A, and F-2 reports are all referenced",
       "pass": true
     },
     {
@@ -44,6 +44,10 @@
     },
     {
       "name": "production detector/parser/crawler unchanged policy is visible",
+      "pass": true
+    },
+    {
+      "name": "F-2 bounded remediation notices and statuses are visible",
       "pass": true
     },
     {

@@ -11,6 +11,7 @@ const INPUTS = {
   aClosure: "reports/post-phase-a-closure-review-note.json",
   aSpotChecks: "reports/post-phase-a-spot-check-decisions.json",
   aRemediation: "reports/post-phase-a-remediation-priority-decisions.json",
+  f2: "reports/post-phase-f2-source-parser-remediation.json",
 };
 const DEFAULT_OUTPUT = "reports/post-phase-f1-admin-review-integration.json";
 
@@ -33,6 +34,7 @@ function priorityFor(remediation) {
 
 export function buildAdminCrawlerReviewDiagnostics(inputs) {
   const sourceSpotChecks = new Map(array(inputs.aSpotChecks.decisions).map((row) => [row.source_id, row]));
+  const f2BySource = new Map(array(inputs.f2.source_spot_check_results).map((row) => [row.source_id, row]));
   const remediationBySource = new Map();
   for (const remediation of array(inputs.aSummary.remediation_priorities)) {
     for (const sourceId of array(remediation.affected_source_ids)) {
@@ -46,6 +48,7 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
     const sourceKey = row.source_key_snapshot || undefined;
     const remediation = sourceId ? remediationBySource.get(sourceId) ?? [] : [];
     const spotCheck = sourceId ? sourceSpotChecks.get(sourceId) : null;
+    const f2 = sourceId ? f2BySource.get(sourceId) : null;
     const qualityFlags = [];
     if (row.no_assets) qualityFlags.push("no_assets");
     if (row.image_only_suspected) qualityFlags.push("image_only_suspected");
@@ -62,7 +65,7 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       ]),
     ];
     const remediationPriority = priorityFor(remediation);
-    const nextAction = remediation[0]?.rationale ?? spotCheck?.bounded_real_source_spot_check?.next_action ?? row.recommended_action;
+    const nextAction = f2?.next_action ?? remediation[0]?.rationale ?? spotCheck?.bounded_real_source_spot_check?.next_action ?? row.recommended_action;
     const batchWarning = row.observability_issue_count > 0
       ? `${row.batch_observability_status}: ${row.observability_issue_count} observability issue(s)`
       : null;
@@ -82,6 +85,10 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       itemReadabilityStatus: row.body_quality,
       boardReadabilityStatus: spotCheck?.fixture_backed_triage_types?.join(", ") ?? null,
       remediationPriority,
+      f2RemediationStatus: f2 ? (f2.p0_resolved ? "resolved" : "deferred") : null,
+      f2ClassificationBefore: f2?.classification_before ?? null,
+      f2ClassificationAfter: f2?.classification_after ?? null,
+      f2NextAction: f2?.next_action ?? null,
       nextAction,
       batchWarning,
       batchStatus: row.batch_observability_status,
@@ -133,11 +140,21 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       rollback_scope_available_count: inputs.f0.counts.rollback_scope_available_count,
       zero_match_policy: inputs.e.zero_match_policy,
     },
+    f2_summary: {
+      p0_resolved_count: inputs.f2.metrics.p0_resolved_count,
+      p0_deferred_count: inputs.f2.metrics.p0_deferred_count,
+      source_spot_check_count: inputs.f2.metrics.source_spot_check_count,
+      manual_review_retained_count: inputs.f2.metrics.manual_review_retained_count,
+    },
     scope_notices: [
       "This page is read-only and does not create an apply path.",
       "Zero-match is an observation, not proof of scholarship absence or source exhaustion.",
       "Post-Phase A Foundation does not mean full coverage remediation is complete.",
       "Production detector, parser, and crawler behavior are unchanged by this page.",
+      "F-2 resolves only bounded P0 source/parser issues.",
+      "Unverified detail/pagination/attachment cases remain review/backlog.",
+      "Fail-closed behavior is preserved.",
+      "No production apply or DB write is performed.",
     ],
     metrics,
   };

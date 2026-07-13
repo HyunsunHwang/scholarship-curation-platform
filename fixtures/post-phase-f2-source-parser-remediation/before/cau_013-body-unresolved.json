@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_013-body-unresolved",
+  "kind": "body",
+  "source": { "sourceId": "cau_013", "sourceKey": "cau_013", "listUrl": "http://cauese.co.kr/", "baseUrl": "http://cauese.co.kr" },
+  "html": "<article><div class=\"post-shell\">Short wrapper only.</div></article>",
+  "expected": { "content_selector": "", "classification": "blocked" }
+}

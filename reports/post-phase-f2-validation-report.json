@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "status": "PASS",
+  "metrics": {
+    "remediation_item_count": 3,
+    "p0_target_count": 3,
+    "p0_resolved_count": 1,
+    "p0_deferred_count": 2,
+    "source_spot_check_count": 4,
+    "detail_verified_count": 3,
+    "body_parser_improved_count": 2,
+    "source_adapter_improved_count": 1,
+    "url_canonicalization_improved_count": 2,
+    "unresolved_source_count": 2,
+    "manual_review_retained_count": 3,
+    "blocked_retained_count": 1,
+    "false_clean_prevented_count": 3,
+    "zero_match_absence_claim_valid": true,
+    "fail_closed_policy_valid": true,
+    "production_apply_unchanged": true,
+    "deterministic_rerun_match": true,
+    "output_schema_valid": true,
+    "restricted_file_scope_valid": true
+  },
+  "tests": [
+    {
+      "name": "all source-report P0 items are resolved or deferred",
+      "pass": true
+    },
+    {
+      "name": "resolved P0 items retain evidence and success criteria",
+      "pass": true
+    },
+    {
+      "name": "deferred P0 sources retain explicit next actions",
+      "pass": true
+    },
+    {
+      "name": "before and after body fixtures pass",
+      "pass": true
+    },
+    {
+      "name": "before and after URL canonicalization fixtures pass",
+      "pass": true
+    },
+    {
+      "name": "source adapter outcome is documented without clean promotion",
+      "pass": true
+    },
+    {
+      "name": "no unresolved P0 source lacks a next action",
+      "pass": true
+    },
+    {
+      "name": "absence and source-exhaustion claims are prohibited",
+      "pass": true
+    },
+    {
+      "name": "fail-closed policy is preserved",
+      "pass": true
+    },
+    {
+      "name": "F-2 reporting performs no DB or crawler operation",
+      "pass": true
+    },
+    {
+      "name": "restricted files are unchanged",
+      "pass": true
+    },
+    {
+      "name": "generated report is deterministic",
+      "pass": true
+    }
+  ],
+  "safety": {
+    "db_access": false,
+    "db_write": false,
+    "supabase_access": false,
+    "migration": false,
+    "destructive_sql": false,
+    "production_crawler_execution": false,
+    "full_crawl": false,
+    "production_detector_keyword_change": false,
+    "production_apply_path": false
+  }
+}

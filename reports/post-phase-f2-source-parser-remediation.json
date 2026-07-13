@@ -1,0 +1,333 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-f2-source-parser-remediation/v1",
+  "read_only_report_generation": true,
+  "db_access": false,
+  "db_write": false,
+  "supabase_access": false,
+  "migration": false,
+  "crawler_execution": false,
+  "full_crawl": false,
+  "destructive_action": false,
+  "production_apply_unchanged": true,
+  "production_detector_keyword_changed": false,
+  "source_exhaustion_proven": false,
+  "input_reports": {
+    "remediation": "reports/post-phase-a-remediation-priority-decisions.json",
+    "source_spot_checks": "fixtures/post-phase-f2-source-parser-remediation/source-spot-check-observations.json"
+  },
+  "fixture_results": [
+    {
+      "id": "before-cau_011-body-unresolved",
+      "kind": "body",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/before/cau_011-body-unresolved.json",
+      "expected": {
+        "content_selector": "",
+        "classification": "blocked"
+      },
+      "actual": {
+        "content_length": 0,
+        "content_selector": "",
+        "classification": "blocked"
+      },
+      "pass": true
+    },
+    {
+      "id": "after-cau_011-body-selector",
+      "kind": "body",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/after/cau_011-body-selector.json",
+      "expected": {
+        "content_selector": "#bo_v_con",
+        "classification": "needs_review"
+      },
+      "actual": {
+        "content_length": 307,
+        "content_selector": "#bo_v_con",
+        "classification": "needs_review"
+      },
+      "pass": true
+    },
+    {
+      "id": "before-cau_013-body-unresolved",
+      "kind": "body",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/before/cau_013-body-unresolved.json",
+      "expected": {
+        "content_selector": "",
+        "classification": "blocked"
+      },
+      "actual": {
+        "content_length": 0,
+        "content_selector": "",
+        "classification": "blocked"
+      },
+      "pass": true
+    },
+    {
+      "id": "after-cau_013-body-selector",
+      "kind": "body",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/after/cau_013-body-selector.json",
+      "expected": {
+        "content_selector": ".entry-content",
+        "classification": "needs_review"
+      },
+      "actual": {
+        "content_length": 331,
+        "content_selector": ".entry-content",
+        "classification": "needs_review"
+      },
+      "pass": true
+    },
+    {
+      "id": "before-cau_010-kboard-list-url",
+      "kind": "url",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/before/cau_010-kboard-list-url.json",
+      "expected": {
+        "notice_url": "",
+        "classification": "blocked"
+      },
+      "actual": {
+        "notice_url": "",
+        "classification": "blocked"
+      },
+      "pass": true
+    },
+    {
+      "id": "after-cau_010-kboard-detail-url",
+      "kind": "url",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/after/cau_010-kboard-detail-url.json",
+      "expected": {
+        "notice_url": "http://archicau.com/wordpress/notice/?uid=1608&mod=document",
+        "classification": "needs_review"
+      },
+      "actual": {
+        "notice_url": "http://archicau.com/wordpress/notice/?uid=1608&mod=document",
+        "classification": "needs_review"
+      },
+      "pass": true
+    },
+    {
+      "id": "before-cau_011-list-url",
+      "kind": "url",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/before/cau_011-list-url.json",
+      "expected": {
+        "notice_url": "",
+        "classification": "blocked"
+      },
+      "actual": {
+        "notice_url": "",
+        "classification": "blocked"
+      },
+      "pass": true
+    },
+    {
+      "id": "after-cau_011-detail-url",
+      "kind": "url",
+      "fixture": "fixtures/post-phase-f2-source-parser-remediation/after/cau_011-detail-url.json",
+      "expected": {
+        "notice_url": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1&wr_id=5344",
+        "classification": "needs_review"
+      },
+      "actual": {
+        "notice_url": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1&wr_id=5344",
+        "classification": "needs_review"
+      },
+      "pass": true
+    }
+  ],
+  "source_spot_check_results": [
+    {
+      "source_id": "cau_003",
+      "source_key": "cau_003",
+      "checked_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "list_http_status": 200,
+      "detail_url_found": false,
+      "detail_url": null,
+      "detail_http_status": null,
+      "body_selector_status": "not_verified",
+      "body_text_evidence_length": 0,
+      "canonical_url_status": "not_verified",
+      "attachment_metadata_status": "not_checked",
+      "remaining_limitation": "The bounded public list-page check did not expose one safely resolvable source-specific detail URL.",
+      "classification_before": "blocked",
+      "classification_after": "blocked",
+      "p0_resolved": false,
+      "next_action": "Add a source-specific list/detail evidence fixture before changing this parser."
+    },
+    {
+      "source_id": "cau_010",
+      "source_key": "cau_010",
+      "checked_url": "http://archicau.com/wordpress/notice/",
+      "list_http_status": 200,
+      "detail_url_found": true,
+      "detail_url": "http://archicau.com/wordpress/notice/?uid=1608&mod=document",
+      "detail_http_status": 200,
+      "body_selector_status": "insufficient_body_evidence",
+      "body_text_evidence_length": 0,
+      "canonical_url_status": "resolved_kboard_document",
+      "attachment_metadata_status": "kboard_attachment_metadata_observed",
+      "remaining_limitation": "Representative KBoard document access is bounded evidence only; body and attachment interpretation remain review work.",
+      "classification_before": "blocked",
+      "classification_after": "needs_review",
+      "p0_resolved": true,
+      "next_action": "Retain review status and defer attachment/body interpretation to F-3 or a separately approved follow-up."
+    },
+    {
+      "source_id": "cau_011",
+      "source_key": "cau_011",
+      "checked_url": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1",
+      "list_http_status": 200,
+      "detail_url_found": true,
+      "detail_url": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1&wr_id=5344",
+      "detail_http_status": 200,
+      "body_selector_status": "resolved_#bo_v_con",
+      "body_text_evidence_length": 720,
+      "canonical_url_status": "resolved_wr_id",
+      "attachment_metadata_status": "not_observed_in_representative_detail",
+      "remaining_limitation": "One representative detail page does not establish board-wide coverage or attachment behavior.",
+      "classification_before": "blocked",
+      "classification_after": "needs_review",
+      "p0_resolved": true,
+      "next_action": "Keep review safeguards and collect more bounded evidence only when separately approved."
+    },
+    {
+      "source_id": "cau_013",
+      "source_key": "cau_013",
+      "checked_url": "http://cauese.co.kr/",
+      "list_http_status": 200,
+      "detail_url_found": true,
+      "detail_url": "http://cauese.co.kr/notice/representative-detail",
+      "detail_http_status": 200,
+      "body_selector_status": "resolved_.entry-content",
+      "body_text_evidence_length": 321,
+      "canonical_url_status": "stable_permalink_observed",
+      "attachment_metadata_status": "not_observed_in_representative_detail",
+      "remaining_limitation": "One representative WordPress detail page does not prove all future permalink or attachment variants.",
+      "classification_before": "blocked",
+      "classification_after": "needs_review",
+      "p0_resolved": true,
+      "next_action": "Keep review safeguards and retain a bounded source-specific selector fixture."
+    }
+  ],
+  "p0_remediation_decisions": [
+    {
+      "remediation_id": "A-P0-001",
+      "category": "selector_fix_required",
+      "related_categories": [
+        "body_parser_fix_required"
+      ],
+      "priority": "P0",
+      "success_criteria": "A bounded fixture and one approved source sample retain a non-empty normalized body without lowering review safeguards.",
+      "affected_source_ids": [
+        "cau_003",
+        "cau_011",
+        "cau_013"
+      ],
+      "resolved_source_ids": [
+        "cau_011",
+        "cau_013"
+      ],
+      "deferred_source_ids": [
+        "cau_003"
+      ],
+      "status": "deferred",
+      "evidence": [
+        {
+          "source_id": "cau_003",
+          "spot_check": "fixture_backed_bounded",
+          "p0_resolved": false,
+          "next_action": "Add a source-specific list/detail evidence fixture before changing this parser."
+        },
+        {
+          "source_id": "cau_011",
+          "spot_check": "fixture_backed_bounded",
+          "p0_resolved": true,
+          "next_action": "Keep review safeguards and collect more bounded evidence only when separately approved."
+        },
+        {
+          "source_id": "cau_013",
+          "spot_check": "fixture_backed_bounded",
+          "p0_resolved": true,
+          "next_action": "Keep review safeguards and retain a bounded source-specific selector fixture."
+        }
+      ]
+    },
+    {
+      "remediation_id": "A-P0-002",
+      "category": "source_specific_adapter_required",
+      "related_categories": [],
+      "priority": "P0",
+      "success_criteria": "The source-specific adapter resolves a representative detail page and preserves fail-closed classification.",
+      "affected_source_ids": [
+        "cau_010",
+        "cau_012"
+      ],
+      "resolved_source_ids": [
+        "cau_010"
+      ],
+      "deferred_source_ids": [
+        "cau_012"
+      ],
+      "status": "deferred",
+      "evidence": [
+        {
+          "source_id": "cau_010",
+          "spot_check": "fixture_backed_bounded",
+          "p0_resolved": true,
+          "next_action": "Retain review status and defer attachment/body interpretation to F-3 or a separately approved follow-up."
+        },
+        {
+          "source_id": "cau_012",
+          "spot_check": "not_available",
+          "p0_resolved": false,
+          "next_action": "Add explicit source identity and fixture evidence for cau_012 before retrying P0 remediation."
+        }
+      ]
+    },
+    {
+      "remediation_id": "A-P0-003",
+      "category": "url_canonicalization_fix_required",
+      "related_categories": [],
+      "priority": "P0",
+      "success_criteria": "A representative list item resolves to one canonical detail URL with duplicate protection.",
+      "affected_source_ids": [
+        "cau_011"
+      ],
+      "resolved_source_ids": [
+        "cau_011"
+      ],
+      "deferred_source_ids": [],
+      "status": "resolved",
+      "evidence": [
+        {
+          "source_id": "cau_011",
+          "spot_check": "fixture_backed_bounded",
+          "p0_resolved": true,
+          "next_action": "Keep review safeguards and collect more bounded evidence only when separately approved."
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "The source checks are bounded public evidence, not a full crawl or coverage proof.",
+    "Zero-match remains an observation and is not proof of scholarship absence.",
+    "Future source_key and source_id divergence requires explicit mapping; fuzzy matching and automatic source creation remain disallowed."
+  ],
+  "metrics": {
+    "remediation_item_count": 3,
+    "p0_target_count": 3,
+    "p0_resolved_count": 1,
+    "p0_deferred_count": 2,
+    "source_spot_check_count": 4,
+    "detail_verified_count": 3,
+    "body_parser_improved_count": 2,
+    "source_adapter_improved_count": 1,
+    "url_canonicalization_improved_count": 2,
+    "unresolved_source_count": 2,
+    "manual_review_retained_count": 3,
+    "blocked_retained_count": 1,
+    "false_clean_prevented_count": 3,
+    "zero_match_absence_claim_valid": true,
+    "fail_closed_policy_valid": true,
+    "production_apply_unchanged": true
+  }
+}

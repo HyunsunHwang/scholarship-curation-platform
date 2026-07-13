@@ -1,0 +1,7 @@
+{
+  "id": "after-cau_011-body-selector",
+  "kind": "body",
+  "source": { "sourceId": "cau_011", "sourceKey": "cau_011", "listUrl": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1", "baseUrl": "https://me.cau.ac.kr" },
+  "html": "<main><div id=\"bo_v_con\">Scholarship application detail evidence includes eligibility dates, submission documents, contact information, and a review notice. This fixture deliberately contains enough normalized body text to verify that the source-specific detail selector is used without promoting the item to automatic clean status.</div></main>",
+  "expected": { "content_selector": "#bo_v_con", "classification": "needs_review" }
+}
