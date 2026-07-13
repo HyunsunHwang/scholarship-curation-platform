@@ -1,0 +1,68 @@
+{
+  "fixture_name": "shared-record-risk",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": "post-phase-d-shared-record-risk",
+  "batch_id": "post-phase-d-shared-batch",
+  "run_ids": ["post-phase-d-run-shared-001"],
+  "source_keys": ["cau_003"],
+  "canonical_keys": ["cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared"],
+  "applied_records": [
+    {
+      "entity": "notice",
+      "id": "notice-shared-001",
+      "notice_id": "notice-shared-001",
+      "run_id": "post-phase-d-run-shared-001",
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+      "pre_existing": true,
+      "shared_with_out_of_scope": true,
+      "shared_reason": "canonical notice existed before apply and has out-of-scope occurrence",
+      "out_of_scope_refs": ["occ-existing-previous-run"]
+    },
+    {
+      "entity": "occurrence",
+      "id": "occ-shared-001",
+      "occurrence_id": "occ-shared-001",
+      "notice_id": "notice-shared-001",
+      "run_id": "post-phase-d-run-shared-001",
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+      "created_by_apply": true
+    },
+    {
+      "entity": "url_alias",
+      "id": "alias-shared-001",
+      "url_alias_id": "alias-shared-001",
+      "notice_id": "notice-shared-001",
+      "run_id": "post-phase-d-run-shared-001",
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+      "created_by_apply": true,
+      "shared_with_out_of_scope": true,
+      "shared_reason": "URL alias also points to pre-existing notice evidence",
+      "out_of_scope_refs": ["notice-existing-previous-run"]
+    },
+    {
+      "entity": "asset",
+      "id": "asset-shared-001",
+      "asset_id": "asset-shared-001",
+      "notice_id": "notice-shared-001",
+      "run_id": "post-phase-d-run-shared-001",
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?shared",
+      "created_by_apply": true,
+      "shared_with_out_of_scope": true,
+      "shared_reason": "asset may be reused by out-of-scope review record",
+      "out_of_scope_refs": ["notice-existing-previous-run"]
+    }
+  ],
+  "graph_records": {
+    "sources": [
+      { "id": "cau_003", "source_key": "cau_003", "source_id": "cau_003", "pre_existing": true }
+    ]
+  }
+}

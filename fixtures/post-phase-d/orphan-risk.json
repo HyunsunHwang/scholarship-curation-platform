@@ -1,0 +1,39 @@
+{
+  "fixture_name": "orphan-risk",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": "post-phase-d-orphan-risk",
+  "batch_id": "post-phase-d-orphan-batch",
+  "run_ids": ["post-phase-d-run-orphan-001"],
+  "source_keys": ["cau_006"],
+  "canonical_keys": ["cau_006|https://security.cau.ac.kr/board.htm?orphan"],
+  "applied_records": [
+    {
+      "entity": "occurrence",
+      "id": "occ-orphan-001",
+      "occurrence_id": "occ-orphan-001",
+      "notice_id": "notice-missing-owner",
+      "run_id": "post-phase-d-run-orphan-001",
+      "source_key": "cau_006",
+      "source_id": "cau_006",
+      "canonical_key": "cau_006|https://security.cau.ac.kr/board.htm?orphan",
+      "created_by_apply": true
+    },
+    {
+      "entity": "asset",
+      "id": "asset-orphan-001",
+      "asset_id": "asset-orphan-001",
+      "notice_id": "notice-missing-owner",
+      "occurrence_id": "occ-orphan-001",
+      "run_id": "post-phase-d-run-orphan-001",
+      "source_key": "cau_006",
+      "source_id": "cau_006",
+      "canonical_key": "cau_006|https://security.cau.ac.kr/board.htm?orphan",
+      "created_by_apply": true
+    }
+  ],
+  "graph_records": {
+    "sources": [
+      { "id": "cau_006", "source_key": "cau_006", "source_id": "cau_006", "pre_existing": true }
+    ]
+  }
+}

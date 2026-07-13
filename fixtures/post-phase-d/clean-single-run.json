@@ -1,0 +1,97 @@
+{
+  "fixture_name": "clean-single-run",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": "post-phase-d-clean-single-run",
+  "batch_id": "post-phase-d-clean-batch",
+  "run_ids": ["post-phase-d-run-clean-001"],
+  "source_keys": ["cau_001"],
+  "canonical_keys": ["cau_001|https://biz.cau.ac.kr/scholarship/clean-2026"],
+  "applied_records": [
+    {
+      "entity": "notice",
+      "id": "notice-clean-001",
+      "notice_id": "notice-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "batch_id": "post-phase-d-clean-batch",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "created_by_apply": true,
+      "created_at": "2026-07-13T00:01:00.000Z",
+      "updated_at": "2026-07-13T00:01:00.000Z"
+    },
+    {
+      "entity": "occurrence",
+      "id": "occ-clean-001",
+      "occurrence_id": "occ-clean-001",
+      "notice_id": "notice-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "batch_id": "post-phase-d-clean-batch",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "created_by_apply": true
+    },
+    {
+      "entity": "url_alias",
+      "id": "alias-clean-001",
+      "url_alias_id": "alias-clean-001",
+      "notice_id": "notice-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "created_by_apply": true
+    },
+    {
+      "entity": "target",
+      "id": "target-clean-001",
+      "target_id": "target-clean-001",
+      "notice_id": "notice-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "created_by_apply": true
+    },
+    {
+      "entity": "keyword_match",
+      "id": "keyword-clean-001",
+      "keyword_match_id": "keyword-clean-001",
+      "notice_id": "notice-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "created_by_apply": true
+    },
+    {
+      "entity": "crawler_run",
+      "id": "post-phase-d-run-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "batch_id": "post-phase-d-clean-batch",
+      "created_by_apply": false
+    },
+    {
+      "entity": "source_result",
+      "id": "source-result-clean-001",
+      "run_id": "post-phase-d-run-clean-001",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "status": "success",
+      "expected_child_records": 4,
+      "actual_child_records": 4
+    }
+  ],
+  "graph_records": {
+    "sources": [
+      {
+        "entity": "source",
+        "id": "cau_001",
+        "source_key": "cau_001",
+        "source_id": "cau_001",
+        "pre_existing": true
+      }
+    ]
+  }
+}

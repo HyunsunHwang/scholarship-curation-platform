@@ -1,0 +1,12 @@
+{
+  "fixture_name": "missing-identifier",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "rehearsal_label": null,
+  "batch_id": null,
+  "run_ids": [],
+  "source_keys": [],
+  "source_ids": [],
+  "canonical_keys": [],
+  "applied_records": [],
+  "graph_records": {}
+}
