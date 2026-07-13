@@ -4,7 +4,7 @@ import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
-import { getBookmarkedScholarships } from "@/lib/user-bookmarks";
+import { getBookmarkedScholarships, getBookmarkedCardKeys } from "@/lib/user-bookmarks";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 const SpotifyHomeShell = dynamic(
@@ -59,15 +59,14 @@ export default async function Home({
 
   const navContextPromise = resolveNavUserContext(user);
 
-  let bookmarkedIds: number[] = [];
+  let bookmarkedKeys: string[] = [];
   let bookmarkedScholarships: CardScholarship[] = [];
 
   if (user) {
-    bookmarkedScholarships = await getBookmarkedScholarships(
-      authSupabase,
-      user.id
-    );
-    bookmarkedIds = bookmarkedScholarships.map((s) => s.id);
+    [bookmarkedScholarships, bookmarkedKeys] = await Promise.all([
+      getBookmarkedScholarships(authSupabase, user.id),
+      getBookmarkedCardKeys(authSupabase, user.id),
+    ]);
   }
 
   const navContext = await navContextPromise;
@@ -84,7 +83,7 @@ export default async function Home({
         <main className="flex-1">
           <SpotifyHomeShell
             scholarships={homeFeedItems}
-            bookmarkedIds={bookmarkedIds}
+            bookmarkedKeys={bookmarkedKeys}
             bookmarkedScholarships={bookmarkedScholarships}
             isLoggedIn={Boolean(user)}
           />

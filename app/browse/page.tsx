@@ -7,7 +7,7 @@ import {
   parseBrowseParams,
 } from "@/lib/browse-data";
 import { createClient } from "@/lib/supabase/server";
-import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
+import { getBookmarkedCardKeys } from "@/lib/user-bookmarks";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 export default async function BrowsePage({
@@ -46,9 +46,9 @@ export default async function BrowsePage({
   } = await authSupabase.auth.getUser();
   const navContext = await resolveNavUserContext(user);
 
-  let bookmarkedIds: number[] = [];
+  let bookmarkedKeys: string[] = [];
   if (user) {
-    bookmarkedIds = await getBookmarkedScholarshipIds(authSupabase, user.id);
+    bookmarkedKeys = await getBookmarkedCardKeys(authSupabase, user.id);
   }
 
   return (
@@ -68,7 +68,7 @@ export default async function BrowsePage({
           kind={kind}
           sort={sort}
           section={section}
-          bookmarkedIds={bookmarkedIds}
+          bookmarkedKeys={bookmarkedKeys}
         />
       </main>
     </div>

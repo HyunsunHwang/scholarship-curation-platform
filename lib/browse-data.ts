@@ -78,6 +78,7 @@ export function browseHref(opts: {
 }
 
 type ScrapCountRow = { scholarship_id: number; scrap_count: number | string };
+type ContestScrapCountRow = { contest_id: number; scrap_count: number | string };
 
 async function scrapCountMap(ids: number[]) {
   const unique = Array.from(new Set(ids));
@@ -93,6 +94,24 @@ async function scrapCountMap(ids: number[]) {
   }
   for (const row of (data ?? []) as ScrapCountRow[]) {
     map.set(row.scholarship_id, Number(row.scrap_count) || 0);
+  }
+  return map;
+}
+
+async function contestScrapCountMap(ids: number[]) {
+  const unique = Array.from(new Set(ids));
+  const map = new Map<number, number>();
+  if (unique.length === 0) return map;
+  const supabase = createPublicSupabaseClient();
+  const { data, error } = await supabase.rpc("get_contest_scrap_counts", {
+    p_contest_ids: unique,
+  });
+  if (error) {
+    console.error("browse contest scrap counts failed", error);
+    return map;
+  }
+  for (const row of (data ?? []) as ContestScrapCountRow[]) {
+    map.set(row.contest_id, Number(row.scrap_count) || 0);
   }
   return map;
 }
@@ -141,7 +160,8 @@ function mapContestRow(
     recommended_sort_order: number | null;
     content_kind: string | null;
   },
-  today: string
+  today: string,
+  scrapCount = 0
 ): CardScholarship {
   return {
     id: contest.id,
@@ -154,7 +174,7 @@ function mapContestRow(
     poster_image_url: contest.poster_image_url,
     created_at: contest.created_at,
     view_count: contest.view_count,
-    scrap_count: 0,
+    scrap_count: scrapCount,
     is_recommended: contest.is_recommended,
     recommended_sort_order: contest.recommended_sort_order,
     is_advertisement: false,
@@ -205,7 +225,19 @@ async function fetchContestPage(opts: {
     return { items: [], totalCount: 0, hasMore: false };
   }
 
-  const items = (data ?? []).map((row) => mapContestRow(row, today));
+  const scrapCounts = await contestScrapCountMap((data ?? []).map((row) => row.id));
+  let items = (data ?? []).map((row) =>
+    mapContestRow(row, today, scrapCounts.get(row.id) ?? 0)
+  );
+
+  if (opts.sort === "scraps" || opts.section === "trending") {
+    items = [...items].sort((a, b) => {
+      const scrapDiff = (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
+      if (scrapDiff !== 0) return scrapDiff;
+      return (b.view_count ?? 0) - (a.view_count ?? 0);
+    });
+  }
+
   const totalCount = count ?? items.length;
   return {
     items,

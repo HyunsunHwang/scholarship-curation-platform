@@ -20,12 +20,12 @@ function readLibraryLeftOpen(): boolean {
 
 export default function SpotifyHomeShell({
   scholarships,
-  bookmarkedIds,
+  bookmarkedKeys,
   bookmarkedScholarships = [],
   isLoggedIn,
 }: {
   scholarships: CardScholarship[];
-  bookmarkedIds: number[];
+  bookmarkedKeys: string[];
   bookmarkedScholarships?: CardScholarship[];
   isLoggedIn: boolean;
 }) {
@@ -107,7 +107,7 @@ export default function SpotifyHomeShell({
         </div>
 
         <div className="min-w-0 flex-1 px-4 sm:px-6 lg:pr-8 lg:pl-1 xl:pr-10">
-          <HomeFeed scholarships={scholarships} bookmarkedIds={bookmarkedIds} />
+          <HomeFeed scholarships={scholarships} bookmarkedKeys={bookmarkedKeys} />
         </div>
       </div>
     </div>

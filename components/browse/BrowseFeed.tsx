@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
+import { cardBookmarkKey } from "@/lib/bookmark-keys";
 import {
   BROWSE_SORT_OPTIONS,
   browseHref,
@@ -21,7 +22,7 @@ type BrowseFeedProps = {
   kind: BrowseKind;
   sort: BrowseSort;
   section: BrowseSection;
-  bookmarkedIds: number[];
+  bookmarkedKeys: string[];
 };
 
 export default function BrowseFeed({
@@ -32,11 +33,11 @@ export default function BrowseFeed({
   kind,
   sort,
   section,
-  bookmarkedIds,
+  bookmarkedKeys,
 }: BrowseFeedProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const bookmarkedSet = new Set(bookmarkedIds);
+  const bookmarkedSet = new Set(bookmarkedKeys);
   const title = browsePageTitle(kind, section);
 
   function goTo(opts: {
@@ -139,10 +140,7 @@ export default function BrowseFeed({
               <ScholarshipCard
                 key={`${item.content_kind ?? "scholarship"}-${item.id}`}
                 scholarship={item}
-                initialBookmarked={
-                  (item.content_kind ?? "scholarship") === "scholarship" &&
-                  bookmarkedSet.has(item.id)
-                }
+                initialBookmarked={bookmarkedSet.has(cardBookmarkKey(item))}
               />
             ))}
           </div>

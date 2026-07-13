@@ -60,3 +60,65 @@ export async function toggleBookmark(
     return { bookmarked: true };
   }
 }
+
+export async function toggleContestBookmark(
+  contestId: number
+): Promise<{ bookmarked: boolean } | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const { data: existing, error: selectError } = await supabase
+    .from("contest_bookmarks")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("contest_id", contestId)
+    .maybeSingle();
+
+  if (selectError) {
+    console.error("[toggleContestBookmark] select error:", selectError.message);
+    return { error: selectError.message };
+  }
+
+  if (existing) {
+    const { error: deleteError } = await supabase
+      .from("contest_bookmarks")
+      .delete()
+      .eq("id", existing.id);
+    if (deleteError) {
+      console.error("[toggleContestBookmark] delete error:", deleteError.message);
+      return { error: deleteError.message };
+    }
+    await supabase.rpc("track_analytics_event", {
+      p_event_name: "bookmark_toggled",
+      p_metadata: { bookmarked: false, contest_id: contestId },
+    });
+    revalidatePath("/");
+    revalidatePath("/mypage");
+    revalidatePath("/contests");
+    revalidatePath("/educations");
+    revalidatePath("/activities");
+    return { bookmarked: false };
+  }
+
+  const { error: insertError } = await supabase
+    .from("contest_bookmarks")
+    .insert({ user_id: user.id, contest_id: contestId });
+  if (insertError) {
+    console.error("[toggleContestBookmark] insert error:", insertError.message);
+    return { error: insertError.message };
+  }
+  await supabase.rpc("track_analytics_event", {
+    p_event_name: "bookmark_toggled",
+    p_metadata: { bookmarked: true, contest_id: contestId },
+  });
+  revalidatePath("/");
+  revalidatePath("/mypage");
+  revalidatePath("/contests");
+  revalidatePath("/educations");
+  revalidatePath("/activities");
+  return { bookmarked: true };
+}

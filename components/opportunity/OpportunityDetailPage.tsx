@@ -16,6 +16,8 @@ import { contentKindLabel } from "@/lib/content-categories";
 import { resolveContestBenefits } from "@/lib/benefit-categories";
 import BenefitHighlights from "@/components/BenefitHighlights";
 import RecentViewTracker from "@/components/RecentViewTracker";
+import ContestViewCountIncrementer from "@/components/opportunity/ContestViewCountIncrementer";
+import LiveEngagementBadges from "@/app/scholarships/[id]/LiveEngagementBadges";
 import {
   interestCategoryLabel,
   isInterestCategoryId,
@@ -25,6 +27,7 @@ import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
 import { CONTEST_DETAIL_SELECT } from "@/lib/detail-select";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
+import { getContestScrapCounts } from "@/lib/contest-scrap-counts";
 
 const ScholarshipTabs = dynamic(
   () => import("@/app/scholarships/[id]/ScholarshipTabs"),
@@ -170,7 +173,7 @@ export default async function OpportunityDetailPage({
     .eq("is_verified", true);
   if (expectedKind) contestQuery = contestQuery.eq("content_kind", expectedKind);
 
-  const [contestResult, { data: { user } }, { data: selectionStages }] =
+  const [contestResult, { data: { user } }, { data: selectionStages }, scrapCountByContest] =
     await Promise.all([
       contestQuery.maybeSingle(),
       authSupabase.auth.getUser(),
@@ -179,12 +182,28 @@ export default async function OpportunityDetailPage({
         .select("stage_order, title, phase, schedule_date, schedule_text, note")
         .eq("contest_id", contestId)
         .order("stage_order"),
+      getContestScrapCounts(authSupabase, [contestId]),
     ]);
 
   if (contestResult.error || !contestResult.data) notFound();
 
   const contest = contestResult.data as unknown as Contest;
-  const navContext = await resolveNavUserContext(user);
+  const scrapCount = scrapCountByContest.get(contestId) ?? 0;
+
+  const [bookmarkResult, navContext] = await Promise.all([
+    user
+      ? authSupabase
+          .from("contest_bookmarks")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("contest_id", contestId)
+          .maybeSingle()
+          .then(({ data }) => data)
+      : Promise.resolve(null),
+    resolveNavUserContext(user),
+  ]);
+
+  const initialBookmarked = !!bookmarkResult;
 
   const kind = (contest.content_kind ?? "contest") as OpportunityKind;
   const kindLabel = contentKindLabel(kind);
@@ -231,8 +250,8 @@ export default async function OpportunityDetailPage({
             alt={posterAlt}
             title={displayName}
             organizationInitial={organizationInitial}
-            initialBookmarked={false}
-            showBookmark={false}
+            initialBookmarked={initialBookmarked}
+            bookmarkTarget="contest"
           />
         </div>
 
@@ -249,14 +268,12 @@ export default async function OpportunityDetailPage({
                 목록으로 돌아가기
               </Link>
 
-              <div className="flex w-full min-w-0 items-center gap-3 text-xs text-ink/40 md:w-auto md:justify-end">
-                <span className="inline-flex items-center gap-1">
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z" />
-                    <circle cx="12" cy="12" r="2.25" />
-                  </svg>
-                  {currentViewCount.toLocaleString()}
-                </span>
+              <div className="flex w-full min-w-0 items-center md:w-auto md:justify-end">
+                <LiveEngagementBadges
+                  scholarshipId={contestId}
+                  initialViewCount={currentViewCount}
+                  initialScrapCount={scrapCount}
+                />
               </div>
             </div>
 
@@ -291,6 +308,12 @@ export default async function OpportunityDetailPage({
                       <circle cx="12" cy="12" r="2.25" />
                     </svg>
                     {currentViewCount.toLocaleString()}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.5 3.75-.75.75a4.5 4.5 0 0 0-6.364 0l-.75-.75a5.625 5.625 0 0 0-7.955 7.955l7.159 7.159a1.125 1.125 0 0 0 1.59 0l7.159-7.159A5.625 5.625 0 0 0 16.5 3.75Z" />
+                    </svg>
+                    {scrapCount.toLocaleString()}
                   </span>
                 </div>
 
@@ -349,8 +372,8 @@ export default async function OpportunityDetailPage({
                   <BookmarkApplyButtons
                     scholarshipId={contest.id}
                     applyUrl={contest.apply_url}
-                    initialBookmarked={false}
-                    showBookmark={false}
+                    initialBookmarked={initialBookmarked}
+                    bookmarkTarget="contest"
                   />
                 </div>
               </div>
@@ -359,6 +382,7 @@ export default async function OpportunityDetailPage({
         </div>
       </main>
 
+      <ContestViewCountIncrementer contestId={contestId} />
       <RecentViewTracker
         id={contestId}
         name={displayName}

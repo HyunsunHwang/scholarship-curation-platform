@@ -73,11 +73,9 @@ export default function ScholarshipCard({
   const displayName = cleanScholarshipName(scholarship.name);
   const supportAmount = formatSupportAmount(scholarship.support_amount_text);
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
-  const hideBookmark =
-    scholarship.content_kind === "contest" ||
-    scholarship.content_kind === "education" ||
-    scholarship.content_kind === "activity";
   const kind = scholarship.content_kind ?? "scholarship";
+  const isContestLike =
+    kind === "contest" || kind === "education" || kind === "activity";
   const kindLabel =
     kind === "contest"
       ? "공모전"
@@ -133,12 +131,11 @@ export default function ScholarshipCard({
           </span>
         </div>
 
-        {!hideBookmark && (
-          <CardBookmarkButton
-            scholarshipId={scholarship.id}
-            initialBookmarked={initialBookmarked}
-          />
-        )}
+        <CardBookmarkButton
+          scholarshipId={scholarship.id}
+          initialBookmarked={initialBookmarked}
+          bookmarkTarget={isContestLike ? "contest" : "scholarship"}
+        />
       </Link>
 
       <Link href={href} className="mt-2 flex flex-col gap-0.5 sm:mt-3">

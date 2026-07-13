@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { toggleBookmark } from "@/app/mypage/actions";
+import { toggleBookmark, toggleContestBookmark } from "@/app/mypage/actions";
 import { trackAnalyticsEventClient } from "@/lib/analytics/client";
 
 const BOOKMARK_EVENT = "scholarship:bookmark-toggled";
@@ -11,11 +11,14 @@ export default function BookmarkApplyButtons({
   applyUrl,
   initialBookmarked,
   showBookmark = true,
+  bookmarkTarget = "scholarship",
 }: {
   scholarshipId: number;
   applyUrl: string;
   initialBookmarked: boolean;
   showBookmark?: boolean;
+  /** 공모전·교육·대외활동은 contest_bookmarks 사용 */
+  bookmarkTarget?: "scholarship" | "contest";
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [isPending, startTransition] = useTransition();
@@ -34,7 +37,10 @@ export default function BookmarkApplyButtons({
     const next = !bookmarked;
     setBookmarked(next);
     startTransition(async () => {
-      const result = await toggleBookmark(scholarshipId);
+      const result =
+        bookmarkTarget === "contest"
+          ? await toggleContestBookmark(scholarshipId)
+          : await toggleBookmark(scholarshipId);
       if ("error" in result) {
         setBookmarked(!next);
         if (result.error === "로그인이 필요합니다.") {

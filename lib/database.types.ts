@@ -274,6 +274,22 @@ export interface Database {
         Relationships: [];
       };
 
+      contest_bookmarks: {
+        Row: {
+          id: number;
+          user_id: string;
+          contest_id: number;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          contest_id: number;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["contest_bookmarks"]["Insert"]>;
+        Relationships: [];
+      };
+
       org_signup_requests: {
         Row: {
           id: number;
@@ -745,8 +761,16 @@ export interface Database {
         Args: { p_scholarship_ids: number[] };
         Returns: { scholarship_id: number; scrap_count: number }[];
       };
+      get_contest_scrap_counts: {
+        Args: { p_contest_ids: number[] };
+        Returns: { contest_id: number; scrap_count: number }[];
+      };
       increment_scholarship_view_count: {
         Args: { p_scholarship_id: number };
+        Returns: number;
+      };
+      increment_contest_view_count: {
+        Args: { p_contest_id: number };
         Returns: number;
       };
       get_public_home_scholarships_page: {

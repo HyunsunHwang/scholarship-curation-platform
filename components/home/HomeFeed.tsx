@@ -13,6 +13,7 @@ import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
 import { useHomeSearch } from "./HomeSearchContext";
 import HorizontalShelf from "./HorizontalShelf";
+import { cardBookmarkKey } from "@/lib/bookmark-keys";
 
 const TRENDING_LIMIT = 16;
 const KIND_SHELF_LIMIT = 16;
@@ -134,10 +135,10 @@ function ShelfCard({
 
 export default function HomeFeed({
   scholarships,
-  bookmarkedIds = [],
+  bookmarkedKeys = [],
 }: {
   scholarships: CardScholarship[];
-  bookmarkedIds?: number[];
+  bookmarkedKeys?: string[];
 }) {
   const {
     query: searchQuery,
@@ -145,7 +146,7 @@ export default function HomeFeed({
     category,
     setCategory,
   } = useHomeSearch();
-  const bookmarkedSet = useMemo(() => new Set(bookmarkedIds), [bookmarkedIds]);
+  const bookmarkedSet = useMemo(() => new Set(bookmarkedKeys), [bookmarkedKeys]);
 
   const filtered = useMemo(() => {
     const byCategory = filterByCategory(scholarships, category);
@@ -195,10 +196,7 @@ export default function HomeFeed({
   const browseKind: BrowseKind = category === "all" ? "all" : category;
 
   function isBookmarked(scholarship: CardScholarship) {
-    return (
-      (scholarship.content_kind ?? "scholarship") === "scholarship" &&
-      bookmarkedSet.has(scholarship.id)
-    );
+    return bookmarkedSet.has(cardBookmarkKey(scholarship));
   }
 
   return (

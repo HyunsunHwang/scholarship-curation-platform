@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { toggleBookmark } from "@/app/mypage/actions";
+import { toggleBookmark, toggleContestBookmark } from "@/app/mypage/actions";
 
 /**
  * 카드 북마크만 client island로 분리 — 카드 본문 hydration 부담을 줄인다.
@@ -9,9 +9,11 @@ import { toggleBookmark } from "@/app/mypage/actions";
 export default function CardBookmarkButton({
   scholarshipId,
   initialBookmarked = false,
+  bookmarkTarget = "scholarship",
 }: {
   scholarshipId: number;
   initialBookmarked?: boolean;
+  bookmarkTarget?: "scholarship" | "contest";
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [isPending, startTransition] = useTransition();
@@ -22,7 +24,10 @@ export default function CardBookmarkButton({
     const next = !bookmarked;
     setBookmarked(next);
     startTransition(async () => {
-      const result = await toggleBookmark(scholarshipId);
+      const result =
+        bookmarkTarget === "contest"
+          ? await toggleContestBookmark(scholarshipId)
+          : await toggleBookmark(scholarshipId);
       if ("error" in result) {
         setBookmarked(!next);
         if (result.error === "로그인이 필요합니다.") {

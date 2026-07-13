@@ -29,6 +29,11 @@ type ScrapCountRow = {
   scrap_count: number | string;
 };
 
+type ContestScrapCountRow = {
+  contest_id: number;
+  scrap_count: number | string;
+};
+
 async function getPublicScrapCountMap(
   supabase: PublicSupabaseClient,
   scholarshipIds: number[]
@@ -48,6 +53,30 @@ async function getPublicScrapCountMap(
 
   for (const row of (data ?? []) as ScrapCountRow[]) {
     counts.set(row.scholarship_id, Number(row.scrap_count) || 0);
+  }
+
+  return counts;
+}
+
+async function getPublicContestScrapCountMap(
+  supabase: PublicSupabaseClient,
+  contestIds: number[]
+) {
+  const uniqueIds = Array.from(new Set(contestIds));
+  const counts = new Map<number, number>();
+  if (uniqueIds.length === 0) return counts;
+
+  const { data, error } = await supabase.rpc("get_contest_scrap_counts", {
+    p_contest_ids: uniqueIds,
+  });
+
+  if (error) {
+    console.error("Failed to load public contest scrap counts", error);
+    return counts;
+  }
+
+  for (const row of (data ?? []) as ContestScrapCountRow[]) {
+    counts.set(row.contest_id, Number(row.scrap_count) || 0);
   }
 
   return counts;
@@ -178,6 +207,11 @@ export const getCachedHomeContests = unstable_cache(
       return [];
     }
 
+    const scrapCounts = await getPublicContestScrapCountMap(
+      supabase,
+      (data ?? []).map((contest) => contest.id)
+    );
+
     return (data ?? []).map((contest) => ({
       id: contest.id,
       name: contest.name,
@@ -189,7 +223,7 @@ export const getCachedHomeContests = unstable_cache(
       poster_image_url: contest.poster_image_url,
       created_at: contest.created_at,
       view_count: contest.view_count,
-      scrap_count: 0,
+      scrap_count: scrapCounts.get(contest.id) ?? 0,
       is_recommended: contest.is_recommended,
       recommended_sort_order: contest.recommended_sort_order,
       is_advertisement: false,
@@ -199,7 +233,7 @@ export const getCachedHomeContests = unstable_cache(
         | "activity",
     }));
   },
-  ["home-contests-v4"],
+  ["home-contests-v5"],
   { revalidate: 60 }
 );
 

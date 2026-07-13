@@ -4,7 +4,7 @@ import { useEffect, useId, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
-import { toggleBookmark } from "@/app/mypage/actions";
+import { toggleBookmark, toggleContestBookmark } from "@/app/mypage/actions";
 
 const BOOKMARK_EVENT = "scholarship:bookmark-toggled";
 
@@ -17,8 +17,10 @@ type Props = {
   title: string;
   organizationInitial: string;
   initialBookmarked: boolean;
-  /** false면 스크랩 버튼 숨김 (공모전 등) */
+  /** false면 스크랩 버튼 숨김 */
   showBookmark?: boolean;
+  /** 공모전·교육·대외활동은 contest_bookmarks 사용 */
+  bookmarkTarget?: "scholarship" | "contest";
   /** 외부 CDN 포스터 등 */
   unoptimizedPoster?: boolean;
 };
@@ -31,6 +33,7 @@ export default function ScholarshipDetailHero({
   organizationInitial,
   initialBookmarked,
   showBookmark = true,
+  bookmarkTarget = "scholarship",
   unoptimizedPoster = false,
 }: Props) {
   const router = useRouter();
@@ -83,7 +86,10 @@ export default function ScholarshipDetailHero({
     const next = !bookmarked;
     setBookmarked(next);
     startTransition(async () => {
-      const result = await toggleBookmark(scholarshipId);
+      const result =
+        bookmarkTarget === "contest"
+          ? await toggleContestBookmark(scholarshipId)
+          : await toggleBookmark(scholarshipId);
       if ("error" in result) {
         setBookmarked(!next);
         if (result.error === "로그인이 필요합니다.") {

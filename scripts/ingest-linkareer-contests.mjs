@@ -340,9 +340,11 @@ async function upsertContest(row) {
   if (findErr) throw new Error(`lookup: ${findErr.message}`);
 
   if (existing?.id) {
+    // 기존 행 업데이트 시 플랫폼 조회수를 크롤 값으로 덮어쓰지 않음
+    const { view_count: _seedViewCount, ...updateRow } = row;
     const { data, error } = await supabase
       .from("contests")
-      .update(row)
+      .update(updateRow)
       .eq("id", existing.id)
       .select("id, name, document_files")
       .single();
@@ -583,6 +585,14 @@ async function ingestOne(item, index, total, contentKind) {
     recommended_sort_order: null,
     collected_at: new Date().toISOString().slice(0, 10),
   };
+
+  const seedView =
+    item.view_count != null && Number.isFinite(Number(item.view_count))
+      ? Math.max(0, Math.floor(Number(item.view_count)))
+      : null;
+  if (seedView != null) {
+    row.view_count = seedView;
+  }
 
   if (!row.apply_url) {
     console.log("SKIP (no apply_url)");
