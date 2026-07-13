@@ -1,0 +1,443 @@
+{
+  "generated_at": "2026-07-13T03:37:39.390Z",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "migration": false,
+  "candidate_count_requested": 7,
+  "counts": {
+    "clean_count": 1,
+    "needs_review_count": 3,
+    "blocked_count": 3,
+    "duplicate_review_count": 1,
+    "quality_review_count": 3,
+    "no_assets_count": 5,
+    "zero_match_source_count": 1,
+    "unique_count": 6,
+    "no_assets_but_text_sufficient_count": 1,
+    "good_text_count": 3,
+    "short_body_needs_review_count": 1,
+    "image_only_suspected_count": 1,
+    "attachment_required_unknown_count": 1
+  },
+  "read_model": [
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "canonical_key": "cau_001|https://biz.cau.ac.kr/scholarship/clean-2026",
+      "title": "2026-1 경영학부 장학금 신청 안내",
+      "original_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+      "normalized_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+      "body_text": "2026학년도 1학기 경영학부 장학금 신청 안내입니다. 신청 대상, 신청 기간, 제출 서류, 선발 기준, 문의처가 본문에 충분히 포함되어 있어 검수자가 원문 없이도 주요 조건을 확인할 수 있습니다.",
+      "published_at": "2026-03-02",
+      "asset_count": 0,
+      "has_assets": false,
+      "no_assets": true,
+      "body_quality": "no_assets_but_text_sufficient",
+      "duplicate_status": "unique",
+      "review_status": "clean",
+      "target_summary": [
+        {
+          "org_unit_id": "719",
+          "label": "중앙대 경영학부"
+        }
+      ],
+      "keyword_summary": [
+        "장학금"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "clean_candidate",
+        "source_resolution": {
+          "source_key": "cau_001",
+          "source_id": "cau_001",
+          "resolution_status": "resolved",
+          "resolution_evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 경영학부",
+            "university_slug": "cau",
+            "org_unit_id": "719",
+            "source_level": "department",
+            "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+            "mapping_source": "data/notice-sources.csv"
+          },
+          "blocked": false
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "missing_999",
+      "canonical_key": "missing_999|https://example.edu/missing-source",
+      "title": "출처가 없는 장학금 후보",
+      "original_url": "https://example.edu/missing-source",
+      "normalized_url": "https://example.edu/missing-source",
+      "body_text": "source_key가 upstream notice_sources.source_id로 resolve되지 않아야 하는 검증용 후보입니다.",
+      "published_at": null,
+      "asset_count": 0,
+      "has_assets": false,
+      "no_assets": true,
+      "body_quality": "good_text",
+      "duplicate_status": "unique",
+      "review_status": "blocked",
+      "target_summary": [],
+      "keyword_summary": [
+        "장학"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "missing_source",
+        "source_resolution": {
+          "source_key": "missing_999",
+          "source_id": null,
+          "resolution_status": "missing",
+          "resolution_evidence": {
+            "reason": "no exact source_key match"
+          },
+          "blocked": true
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": null,
+      "source_key_snapshot": "ambiguous_source",
+      "canonical_key": "ambiguous_source|https://example.edu/ambiguous-source",
+      "title": "모호한 출처 장학금 후보",
+      "original_url": "https://example.edu/ambiguous-source",
+      "normalized_url": "https://example.edu/ambiguous-source",
+      "body_text": "source_key가 둘 이상의 source_id 후보로 resolve되면 blocked가 되어야 합니다.",
+      "published_at": null,
+      "asset_count": 0,
+      "has_assets": false,
+      "no_assets": true,
+      "body_quality": "good_text",
+      "duplicate_status": "unique",
+      "review_status": "blocked",
+      "target_summary": [],
+      "keyword_summary": [
+        "장학"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "ambiguous_source",
+        "source_resolution": {
+          "source_key": "ambiguous_source",
+          "source_id": null,
+          "resolution_status": "ambiguous",
+          "resolution_evidence": {
+            "reason": "multiple source_id candidates for source_key",
+            "candidates": [
+              {
+                "source_id": "ambiguous_a",
+                "source_name": "Synthetic ambiguous source A",
+                "list_url": "https://example.edu/ambiguous/a",
+                "mapping_source": "fixture"
+              },
+              {
+                "source_id": "ambiguous_b",
+                "source_name": "Synthetic ambiguous source B",
+                "list_url": "https://example.edu/ambiguous/b",
+                "mapping_source": "fixture"
+              }
+            ]
+          },
+          "blocked": true
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "canonical_key": "cau_002|https://econ.cau.ac.kr/news/notice/duplicate-review",
+      "title": "경제학부 장학금 중복 검토 후보",
+      "original_url": "https://econ.cau.ac.kr/news/notice/duplicate-review",
+      "normalized_url": "https://econ.cau.ac.kr/news/notice/duplicate-review",
+      "body_text": "제목과 게시일이 기존 후보와 유사하여 duplicate review가 필요한 장학금 후보입니다.",
+      "published_at": "2026-03-05",
+      "asset_count": 1,
+      "has_assets": true,
+      "no_assets": false,
+      "body_quality": "good_text",
+      "duplicate_status": "duplicate_review",
+      "review_status": "needs_review",
+      "target_summary": [
+        {
+          "org_unit_id": "720",
+          "label": "중앙대 경제학부"
+        }
+      ],
+      "keyword_summary": [
+        "장학금"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "duplicate_review",
+        "source_resolution": {
+          "source_key": "cau_002",
+          "source_id": "cau_002",
+          "resolution_status": "resolved",
+          "resolution_evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 경제학부",
+            "university_slug": "cau",
+            "org_unit_id": "720",
+            "source_level": "department",
+            "list_url": "https://econ.cau.ac.kr/news/notice/",
+            "mapping_source": "data/notice-sources.csv"
+          },
+          "blocked": false
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "canonical_key": "cau_003|https://iadpr.cau.ac.kr/fm/fm_1.php?short-body",
+      "title": "광고홍보학과 장학 공지",
+      "original_url": "https://iadpr.cau.ac.kr/fm/fm_1.php?short-body",
+      "normalized_url": "https://iadpr.cau.ac.kr/fm/fm_1.php?short-body",
+      "body_text": "장학 공지입니다.",
+      "published_at": "2026-03-07",
+      "asset_count": 0,
+      "has_assets": false,
+      "no_assets": true,
+      "body_quality": "short_body_needs_review",
+      "duplicate_status": "unique",
+      "review_status": "needs_review",
+      "target_summary": [
+        {
+          "org_unit_id": "721",
+          "label": "중앙대 광고홍보학과"
+        }
+      ],
+      "keyword_summary": [
+        "장학"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "quality_review",
+        "source_resolution": {
+          "source_key": "cau_003",
+          "source_id": "cau_003",
+          "resolution_status": "resolved",
+          "resolution_evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 광고홍보학과",
+            "university_slug": "cau",
+            "org_unit_id": "721",
+            "source_level": "department",
+            "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+            "mapping_source": "data/notice-sources.csv"
+          },
+          "blocked": false
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_006",
+      "source_key_snapshot": "cau_006",
+      "canonical_key": "cau_006|https://security.cau.ac.kr/board.htm?image-only",
+      "title": "산업보안학과 장학금 포스터 안내",
+      "original_url": "https://security.cau.ac.kr/board.htm?image-only",
+      "normalized_url": "https://security.cau.ac.kr/board.htm?image-only",
+      "body_text": "",
+      "published_at": "2026-03-08",
+      "asset_count": 1,
+      "has_assets": true,
+      "no_assets": false,
+      "body_quality": "image_only_suspected",
+      "duplicate_status": "unique",
+      "review_status": "needs_review",
+      "target_summary": [
+        {
+          "org_unit_id": "724",
+          "label": "중앙대 산업보안학과"
+        }
+      ],
+      "keyword_summary": [
+        "장학금"
+      ],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "success",
+      "evidence_json": {
+        "classification": "image_only_suspected",
+        "source_resolution": {
+          "source_key": "cau_006",
+          "source_id": "cau_006",
+          "resolution_status": "resolved",
+          "resolution_evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 산업보안학과",
+            "university_slug": "cau",
+            "org_unit_id": "724",
+            "source_level": "department",
+            "list_url": "https://security.cau.ac.kr/board.htm?bbsid=notice",
+            "mapping_source": "data/notice-sources.csv"
+          },
+          "blocked": false
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "source_id": "cau_007",
+      "source_key_snapshot": "cau_007",
+      "canonical_key": "cau_007|source-health|zero-match",
+      "title": "응용통계학과 zero-match source-health observation",
+      "original_url": "https://stat.cau.ac.kr/notice/undergraduate",
+      "normalized_url": "https://stat.cau.ac.kr/notice/undergraduate",
+      "body_text": "",
+      "published_at": null,
+      "asset_count": 0,
+      "has_assets": false,
+      "no_assets": true,
+      "body_quality": "attachment_required_unknown",
+      "duplicate_status": "unique",
+      "review_status": "blocked",
+      "target_summary": [
+        {
+          "org_unit_id": "725",
+          "label": "중앙대 응용통계학과"
+        }
+      ],
+      "keyword_summary": [],
+      "occurrence_count": 1,
+      "latest_run_id": "integration-foundation-run-001",
+      "latest_source_result_status": "zero_match_observed",
+      "evidence_json": {
+        "classification": "source_health_only",
+        "note": "zero-match is source-health evidence, not proof that no scholarship exists.",
+        "source_resolution": {
+          "source_key": "cau_007",
+          "source_id": "cau_007",
+          "resolution_status": "resolved",
+          "resolution_evidence": {
+            "match_rule": "exact",
+            "source_name": "중앙대 응용통계학과",
+            "university_slug": "cau",
+            "org_unit_id": "725",
+            "source_level": "department",
+            "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+            "mapping_source": "data/notice-sources.csv"
+          },
+          "blocked": false
+        },
+        "admin_review_field_mapping": {
+          "source_group": "derived from source_id prefix for crawled_notices compatibility",
+          "source_id": "resolved notice_sources.source_id",
+          "source_name": "available from source resolution evidence",
+          "title": "direct from normalized record",
+          "notice_url": "normalized_url fallback original_url",
+          "notice_posted_at": "published_at",
+          "raw_date_text": "default nullable",
+          "body": "body_text",
+          "image_urls": "derived from image assets",
+          "scholarship_type": "default on_campus until review contract expands",
+          "status": "new/promoted/rejected legacy field remains separate from adapter review_status"
+        }
+      },
+      "created_at": "1970-01-01T00:00:00.000Z",
+      "updated_at": "1970-01-01T00:00:00.000Z"
+    }
+  ]
+}
