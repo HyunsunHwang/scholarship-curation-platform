@@ -1,0 +1,204 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "input": {
+    "fixture_name": "mixed-outcome-batch",
+    "input_path": "fixtures/post-phase-e/mixed-outcome-batch.json"
+  },
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "sql_generation": false,
+  "batch_identity": {
+    "rehearsal_label": "post-phase-e-mixed",
+    "batch_id": "post-phase-e-batch-mixed",
+    "run_ids": [
+      "post-phase-e-run-mixed-001",
+      "post-phase-e-run-mixed-002",
+      "post-phase-e-run-mixed-003"
+    ],
+    "expected_source_keys": [
+      "cau_001",
+      "cau_002",
+      "cau_003"
+    ],
+    "observed_source_keys": [
+      "cau_001",
+      "cau_002",
+      "cau_003"
+    ],
+    "resolved_source_ids": [
+      "cau_001",
+      "cau_002",
+      "cau_003"
+    ]
+  },
+  "batch_status": "degraded",
+  "completion": {
+    "expected_sources_complete": true,
+    "source_results_complete": true,
+    "counts_consistent": true,
+    "source_identity_complete": true,
+    "safe_to_mark_batch_complete": true,
+    "safe_to_claim_source_exhaustion": false
+  },
+  "metrics": {
+    "expected_source_count": 3,
+    "observed_unique_source_count": 3,
+    "run_count": 3,
+    "source_result_count": 3,
+    "success_source_count": 1,
+    "zero_match_observed_source_count": 1,
+    "failed_source_count": 0,
+    "timeout_source_count": 1,
+    "partial_source_count": 0,
+    "blocked_source_count": 0,
+    "crawled_item_count": 4,
+    "matched_item_count": 2,
+    "candidate_count": 2,
+    "clean_candidate_count": 1,
+    "needs_review_candidate_count": 1,
+    "blocked_candidate_count": 0,
+    "missing_expected_source_count": 0,
+    "duplicate_source_result_count": 0,
+    "conflicting_source_result_count": 0,
+    "unresolved_source_count": 0,
+    "ambiguous_source_count": 0,
+    "cross_batch_record_count": 0,
+    "issue_count": 3,
+    "arithmetic_consistency_valid": true
+  },
+  "source_summaries": [
+    {
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "source_resolution_status": "resolved",
+      "run_ids": [
+        "post-phase-e-run-mixed-001"
+      ],
+      "source_result_status": "success",
+      "operational_status": "complete",
+      "crawled_item_count": 4,
+      "matched_item_count": 2,
+      "candidate_counts": {
+        "clean": 1,
+        "needs_review": 1,
+        "blocked": 0
+      },
+      "issue_codes": [
+        "candidate_review_backlog"
+      ],
+      "complete": true,
+      "manual_review_required": true
+    },
+    {
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "source_resolution_status": "resolved",
+      "run_ids": [
+        "post-phase-e-run-mixed-002"
+      ],
+      "source_result_status": "zero_match_observed",
+      "operational_status": "complete",
+      "crawled_item_count": 0,
+      "matched_item_count": 0,
+      "candidate_counts": {
+        "clean": 0,
+        "needs_review": 0,
+        "blocked": 0
+      },
+      "issue_codes": [
+        "zero_match_observed"
+      ],
+      "complete": true,
+      "manual_review_required": false
+    },
+    {
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "source_resolution_status": "resolved",
+      "run_ids": [
+        "post-phase-e-run-mixed-003"
+      ],
+      "source_result_status": "timeout",
+      "operational_status": "degraded",
+      "crawled_item_count": 0,
+      "matched_item_count": 0,
+      "candidate_counts": {
+        "clean": 0,
+        "needs_review": 0,
+        "blocked": 0
+      },
+      "issue_codes": [
+        "source_timeout"
+      ],
+      "complete": true,
+      "manual_review_required": false
+    }
+  ],
+  "issues": [
+    {
+      "code": "candidate_review_backlog",
+      "severity": "warning",
+      "source_key": "cau_001",
+      "run_id": "post-phase-e-run-mixed-001",
+      "message": "source result contains candidates requiring review",
+      "blocks_completion": false
+    },
+    {
+      "code": "source_timeout",
+      "severity": "warning",
+      "source_key": "cau_003",
+      "run_id": "post-phase-e-run-mixed-003",
+      "message": "source result timed out",
+      "blocks_completion": false
+    },
+    {
+      "code": "zero_match_observed",
+      "severity": "info",
+      "source_key": "cau_002",
+      "run_id": "post-phase-e-run-mixed-002",
+      "message": "zero-match is an observation for this run, not proof that no scholarship notice exists",
+      "blocks_completion": false
+    }
+  ],
+  "rollback_scope_evidence": {
+    "rehearsal_label": "post-phase-e-mixed",
+    "batch_id": "post-phase-e-batch-mixed",
+    "run_ids": [
+      "post-phase-e-run-mixed-001",
+      "post-phase-e-run-mixed-002",
+      "post-phase-e-run-mixed-003"
+    ],
+    "source_keys": [
+      "cau_001",
+      "cau_002",
+      "cau_003"
+    ],
+    "source_ids": [
+      "cau_001",
+      "cau_002",
+      "cau_003"
+    ],
+    "canonical_keys": [
+      "cau_001|mixed-001"
+    ],
+    "evidence_complete": true,
+    "destructive_action_authorized": false
+  },
+  "zero_match_policy": {
+    "observation_only": true,
+    "absence_proof": false,
+    "safe_to_claim_source_exhaustion": false
+  },
+  "required_output_fields_present": true,
+  "limitations": [
+    "synthetic local fixture evidence only",
+    "not a live crawler run aggregate",
+    "no live DB state or production observability readiness is proven",
+    "zero-match is not absence proof",
+    "no DB-level batch table, API route, UI, alerting, or cleanup execution is implemented"
+  ]
+}

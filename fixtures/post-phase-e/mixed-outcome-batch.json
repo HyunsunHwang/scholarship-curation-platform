@@ -1,0 +1,56 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "fixture_name": "mixed-outcome-batch",
+  "expected_batch_status": "degraded",
+  "rehearsal_label": "post-phase-e-mixed",
+  "batch_id": "post-phase-e-batch-mixed",
+  "expected_source_keys": ["cau_001", "cau_002", "cau_003"],
+  "source_results": [
+    {
+      "run_id": "post-phase-e-run-mixed-001",
+      "rehearsal_label": "post-phase-e-mixed",
+      "batch_id": "post-phase-e-batch-mixed",
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "status": "success",
+      "crawled_item_count": 4,
+      "matched_item_count": 2,
+      "candidate_counts": { "clean": 1, "needs_review": 1, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:02:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["cau_001|mixed-001"]
+    },
+    {
+      "run_id": "post-phase-e-run-mixed-002",
+      "rehearsal_label": "post-phase-e-mixed",
+      "batch_id": "post-phase-e-batch-mixed",
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "status": "zero_match_observed",
+      "crawled_item_count": 0,
+      "matched_item_count": 0,
+      "candidate_counts": { "clean": 0, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": []
+    },
+    {
+      "run_id": "post-phase-e-run-mixed-003",
+      "rehearsal_label": "post-phase-e-mixed",
+      "batch_id": "post-phase-e-batch-mixed",
+      "source_key": "cau_003",
+      "source_id": "cau_003",
+      "status": "timeout",
+      "crawled_item_count": 0,
+      "matched_item_count": 0,
+      "candidate_counts": { "clean": 0, "needs_review": 0, "blocked": 0 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:05:00.000Z",
+      "error_code": "SOURCE_TIMEOUT",
+      "canonical_keys": []
+    }
+  ]
+}

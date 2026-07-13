@@ -1,0 +1,41 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "fixture_name": "unresolved-source-batch",
+  "expected_batch_status": "blocked",
+  "rehearsal_label": "post-phase-e-unresolved",
+  "batch_id": "post-phase-e-batch-unresolved",
+  "expected_source_keys": ["missing_999", "ambiguous_source"],
+  "source_results": [
+    {
+      "run_id": "post-phase-e-run-unresolved-001",
+      "rehearsal_label": "post-phase-e-unresolved",
+      "batch_id": "post-phase-e-batch-unresolved",
+      "source_key": "missing_999",
+      "source_id": null,
+      "status": "success",
+      "crawled_item_count": 1,
+      "matched_item_count": 1,
+      "candidate_counts": { "clean": 0, "needs_review": 0, "blocked": 1 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["missing_999|unresolved-001"]
+    },
+    {
+      "run_id": "post-phase-e-run-unresolved-002",
+      "rehearsal_label": "post-phase-e-unresolved",
+      "batch_id": "post-phase-e-batch-unresolved",
+      "source_key": "ambiguous_source",
+      "source_id": null,
+      "status": "success",
+      "crawled_item_count": 1,
+      "matched_item_count": 1,
+      "candidate_counts": { "clean": 0, "needs_review": 0, "blocked": 1 },
+      "started_at": "2026-07-13T00:00:00.000Z",
+      "finished_at": "2026-07-13T00:01:00.000Z",
+      "error_code": null,
+      "canonical_keys": ["ambiguous_source|unresolved-001"]
+    }
+  ]
+}

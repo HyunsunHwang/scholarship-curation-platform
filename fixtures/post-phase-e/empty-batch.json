@@ -1,0 +1,10 @@
+{
+  "schema_version": "post-phase-e/v1",
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "fixture_name": "empty-batch",
+  "expected_batch_status": "incomplete",
+  "rehearsal_label": "post-phase-e-empty",
+  "batch_id": "post-phase-e-batch-empty",
+  "expected_source_keys": [],
+  "source_results": []
+}
