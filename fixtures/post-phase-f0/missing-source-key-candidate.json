@@ -1,0 +1,5 @@
+{
+  "fixture_name": "missing-source-key-candidate", "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "missing_source_key_count": 1, "blocked_count": 1, "admin_review_required_count": 1 },
+  "candidates": [{ "source_key": "", "canonical_key": "missing-key:f0", "title": "Missing source key candidate", "original_url": "https://example.edu/f0/missing-key", "published_at": "2026-07-07", "body_text": "A candidate without a crawler source key cannot be matched to notice_sources.source_id and must fail closed before review actions are considered.", "assets": [{ "url": "https://example.edu/f0/missing-key.pdf", "kind": "attachment" }], "target_summary": ["undergraduate"], "observability": { "latest_batch_label": "f0-missing-key", "latest_run_id": "f0-run-missing-key", "batch_status": "healthy", "source_result_status": "success", "issue_count": 1, "rollback_scope_available": false }, "created_at": "2026-07-13T00:00:00.000Z" }]
+}

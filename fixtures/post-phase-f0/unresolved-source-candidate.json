@@ -1,0 +1,5 @@
+{
+  "fixture_name": "unresolved-source-candidate", "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "unresolved_source_count": 1, "blocked_count": 1, "admin_review_required_count": 1 },
+  "candidates": [{ "source_key": "unresolved_999", "canonical_key": "unresolved_999:f0", "title": "Unresolved source candidate", "original_url": "https://example.edu/f0/unresolved", "published_at": "2026-07-05", "body_text": "The candidate has usable-looking public text but cannot be a normal review candidate because its crawler source key did not resolve to a canonical source identifier.", "assets": [{ "url": "https://example.edu/f0/unresolved.pdf", "kind": "attachment" }], "target_summary": ["undergraduate"], "observability": { "latest_batch_label": "f0-unresolved", "latest_run_id": "f0-run-unresolved", "batch_status": "healthy", "source_result_status": "success", "issue_count": 1, "rollback_scope_available": false }, "created_at": "2026-07-13T00:00:00.000Z" }]
+}

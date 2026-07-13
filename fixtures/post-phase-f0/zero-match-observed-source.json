@@ -1,0 +1,5 @@
+{
+  "fixture_name": "zero-match-observed-source", "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "resolved_source_count": 1, "zero_match_observed_count": 1, "blocked_count": 1, "batch_warning_count": 1 },
+  "candidates": [{ "source_key": "cau_007", "canonical_key": "cau_007:f0-zero-match", "title": "Observed zero match source result", "original_url": "https://example.edu/f0/zero-match", "published_at": "2026-07-09", "body_text": "This row retains source-run context for review, but an observed zero match does not prove that the source is exhausted or that scholarships are absent.", "assets": [{ "url": "https://example.edu/f0/zero-match.pdf", "kind": "attachment" }], "target_summary": ["source-health"], "observability": { "latest_batch_label": "f0-zero-match", "latest_run_id": "f0-run-zero-match", "batch_status": "degraded", "source_result_status": "zero_match_observed", "issue_count": 1, "rollback_scope_available": false }, "created_at": "2026-07-13T00:00:00.000Z" }]
+}

@@ -1,0 +1,5 @@
+{
+  "fixture_name": "image-only-suspected-candidate", "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "resolved_source_count": 1, "image_only_suspected_count": 1, "admin_review_required_count": 1 },
+  "candidates": [{ "source_key": "cau_006", "canonical_key": "cau_006:f0-image-only", "title": "Image-only suspected candidate", "original_url": "https://example.edu/f0/image-only", "published_at": "2026-07-08", "body_text": "", "assets": [{ "url": "https://example.edu/f0/image-only.png", "kind": "image" }], "target_summary": ["undergraduate"], "observability": { "latest_batch_label": "f0-image", "latest_run_id": "f0-run-image", "batch_status": "healthy", "source_result_status": "success", "issue_count": 0, "rollback_scope_available": false }, "created_at": "2026-07-13T00:00:00.000Z" }]
+}

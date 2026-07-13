@@ -1,0 +1,5 @@
+{
+  "fixture_name": "batch-incomplete-warning", "generated_at": "2026-07-13T00:00:00.000Z",
+  "expected_counts": { "candidate_count": 1, "resolved_source_count": 1, "batch_warning_count": 1, "admin_review_required_count": 1 },
+  "candidates": [{ "source_key": "cau_008", "canonical_key": "cau_008:f0-incomplete", "title": "Batch incomplete warning candidate", "original_url": "https://example.edu/f0/incomplete", "published_at": "2026-07-10", "body_text": "The candidate content is otherwise clean, but the corresponding batch is incomplete and should be surfaced as a warning rather than silently becoming auto-apply eligible.", "assets": [{ "url": "https://example.edu/f0/incomplete.pdf", "kind": "attachment" }], "target_summary": ["undergraduate"], "observability": { "latest_batch_label": "f0-incomplete", "latest_run_id": "f0-run-incomplete", "batch_status": "incomplete", "source_result_status": "partial", "issue_count": 2, "rollback_scope_available": false }, "created_at": "2026-07-13T00:00:00.000Z" }]
+}
