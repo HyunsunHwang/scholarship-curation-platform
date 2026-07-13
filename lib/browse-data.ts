@@ -52,13 +52,24 @@ export function parseBrowseParams(searchParams: {
   sort?: string;
   section?: string;
   page?: string;
+  list?: string;
 }) {
   const page = Math.max(1, Number.parseInt(searchParams.page ?? "1", 10) || 1);
+  const kind = parseBrowseKind(searchParams.kind);
+  const section = parseBrowseSection(searchParams.section);
+  const list =
+    searchParams.list === "1" ||
+    searchParams.list === "true" ||
+    kind !== "all" ||
+    section === "trending" ||
+    page > 1;
   return {
-    kind: parseBrowseKind(searchParams.kind),
+    kind,
     sort: parseBrowseSort(searchParams.sort),
-    section: parseBrowseSection(searchParams.section),
+    section,
     page,
+    /** false면 탐색 허브(카테고리 그리드), true면 목록 */
+    list,
   };
 }
 
@@ -67,14 +78,132 @@ export function browseHref(opts: {
   sort?: BrowseSort;
   section?: BrowseSection;
   page?: number;
+  /** 전체 목록 — 탐색 허브를 건너뛰고 리스트로 */
+  list?: boolean;
 }): string {
   const params = new URLSearchParams();
   if (opts.kind && opts.kind !== "all") params.set("kind", opts.kind);
   if (opts.sort && opts.sort !== "deadline") params.set("sort", opts.sort);
   if (opts.section === "trending") params.set("section", "trending");
   if (opts.page && opts.page > 1) params.set("page", String(opts.page));
+  if (
+    opts.list &&
+    (!opts.kind || opts.kind === "all") &&
+    opts.section !== "trending"
+  ) {
+    params.set("list", "1");
+  }
   const q = params.toString();
   return q ? `/browse?${q}` : "/browse";
+}
+
+/** 탐색 허브 카테고리 타일 */
+export type BrowseExploreTile = {
+  key: string;
+  label: string;
+  href: string;
+  color: string;
+  coverUrl: string | null;
+};
+
+const EXPLORE_TILE_DEFS: Omit<BrowseExploreTile, "coverUrl">[] = [
+  {
+    key: "contest",
+    label: "공모전",
+    href: browseHref({ kind: "contest" }),
+    color: "#DC148C",
+  },
+  {
+    key: "education",
+    label: "교육",
+    href: browseHref({ kind: "education" }),
+    color: "#14833B",
+  },
+  {
+    key: "activity",
+    label: "대외활동",
+    href: browseHref({ kind: "activity" }),
+    color: "#8D67AB",
+  },
+  {
+    key: "scholarship",
+    label: "장학금",
+    href: browseHref({ kind: "scholarship" }),
+    color: "#BA5D07",
+  },
+  {
+    key: "trending",
+    label: "인기 상승",
+    href: browseHref({ section: "trending", sort: "scraps" }),
+    color: "#E13300",
+  },
+  {
+    key: "all",
+    label: "전체 공고",
+    href: browseHref({ list: true }),
+    color: "#1E3264",
+  },
+];
+
+async function fetchOnePoster(opts: {
+  table: "contests" | "scholarships";
+  contentKind?: "contest" | "education" | "activity";
+}): Promise<string | null> {
+  const supabase = createPublicSupabaseClient();
+  const today = todayKoreaYYYYMMDD();
+
+  if (opts.table === "contests") {
+    let query = supabase
+      .from("contests")
+      .select("poster_image_url")
+      .eq("is_verified", true)
+      .eq("list_on_home", true)
+      .gte("apply_end_date", today)
+      .not("poster_image_url", "is", null)
+      .order("view_count", { ascending: false, nullsFirst: false })
+      .limit(1);
+    if (opts.contentKind) {
+      query = query.eq("content_kind", opts.contentKind);
+    }
+    const { data } = await query;
+    return data?.[0]?.poster_image_url ?? null;
+  }
+
+  const { data } = await supabase
+    .from("scholarships")
+    .select("poster_image_url")
+    .eq("is_verified", true)
+    .eq("list_on_home", true)
+    .gte("apply_end_date", today)
+    .not("poster_image_url", "is", null)
+    .order("view_count", { ascending: false, nullsFirst: false })
+    .limit(1);
+  return data?.[0]?.poster_image_url ?? null;
+}
+
+export async function fetchBrowseExploreTiles(): Promise<BrowseExploreTile[]> {
+  const [contest, education, activity, scholarship, trending] =
+    await Promise.all([
+      fetchOnePoster({ table: "contests", contentKind: "contest" }),
+      fetchOnePoster({ table: "contests", contentKind: "education" }),
+      fetchOnePoster({ table: "contests", contentKind: "activity" }),
+      fetchOnePoster({ table: "scholarships" }),
+      fetchOnePoster({ table: "contests" }),
+    ]);
+
+  const covers: Record<string, string | null> = {
+    contest,
+    education,
+    activity,
+    scholarship,
+    trending: trending ?? scholarship,
+    all: scholarship ?? contest,
+  };
+
+  return EXPLORE_TILE_DEFS.map((tile) => ({
+    ...tile,
+    coverUrl: covers[tile.key] ?? null,
+  }));
 }
 
 type ScrapCountRow = { scholarship_id: number; scrap_count: number | string };

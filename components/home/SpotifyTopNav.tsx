@@ -14,7 +14,7 @@ export default async function SpotifyTopNav({
   currentUserRole?: string | null;
   currentUserName?: string | null;
   urgentBookmarkCount?: number;
-  /** compact: 상세 등 — 항상 검색 헤더(카테고리 탭 없음) */
+  /** 호환용 prop — 헤더 UI는 variant와 무관하게 동일 */
   variant?: "expandable" | "compact";
 } = {}) {
   const siteSettingsPromise = getCachedSiteSettings();

@@ -1,8 +1,11 @@
-import Navbar from "@/components/Navbar";
+import BrowseExploreHub from "@/components/browse/BrowseExploreHub";
 import BrowseFeed from "@/components/browse/BrowseFeed";
+import HomeSearchRoot from "@/components/home/HomeSearchRoot";
+import SpotifyTopNav from "@/components/home/SpotifyTopNav";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import {
   BROWSE_PAGE_SIZE,
+  fetchBrowseExploreTiles,
   fetchBrowsePage,
   parseBrowseParams,
 } from "@/lib/browse-data";
@@ -21,14 +24,41 @@ export default async function BrowsePage({
     return Array.isArray(v) ? v[0] : v;
   };
 
-  const { kind, sort, section, page } = parseBrowseParams({
+  const { kind, sort, section, page, list } = parseBrowseParams({
     kind: pick("kind"),
     sort: pick("sort"),
     section: pick("section"),
     page: pick("page"),
+    list: pick("list"),
   });
 
-  const [{ items, totalCount, totalPages }, authSupabase] = await Promise.all([
+  const authSupabase = await createClient();
+  const {
+    data: { user },
+  } = await authSupabase.auth.getUser();
+  const navContext = await resolveNavUserContext(user);
+
+  if (!list) {
+    const tiles = await fetchBrowseExploreTiles();
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <HomeSearchRoot>
+          <SpotifyTopNav
+            variant="compact"
+            currentUser={user}
+            currentUserRole={navContext.role}
+            currentUserName={navContext.name}
+            urgentBookmarkCount={navContext.urgentBookmarkCount}
+          />
+        </HomeSearchRoot>
+        <main className="flex-1 bg-white">
+          <BrowseExploreHub tiles={tiles} />
+        </main>
+      </div>
+    );
+  }
+
+  const [{ items, totalCount, totalPages }, bookmarkedKeys] = await Promise.all([
     fetchBrowsePage({
       kind,
       sort,
@@ -36,29 +66,24 @@ export default async function BrowsePage({
       page,
       pageSize: BROWSE_PAGE_SIZE,
     }),
-    createClient(),
+    user
+      ? getBookmarkedCardKeys(authSupabase, user.id)
+      : Promise.resolve([] as string[]),
   ]);
 
   const safePage = Math.min(page, totalPages);
 
-  const {
-    data: { user },
-  } = await authSupabase.auth.getUser();
-  const navContext = await resolveNavUserContext(user);
-
-  let bookmarkedKeys: string[] = [];
-  if (user) {
-    bookmarkedKeys = await getBookmarkedCardKeys(authSupabase, user.id);
-  }
-
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar
-        currentUser={user}
-        currentUserRole={navContext.role}
-        currentUserName={navContext.name}
-        urgentBookmarkCount={navContext.urgentBookmarkCount}
-      />
+      <HomeSearchRoot>
+        <SpotifyTopNav
+          variant="compact"
+          currentUser={user}
+          currentUserRole={navContext.role}
+          currentUserName={navContext.name}
+          urgentBookmarkCount={navContext.urgentBookmarkCount}
+        />
+      </HomeSearchRoot>
       <main className="flex-1 bg-white">
         <BrowseFeed
           items={items as CardScholarship[]}

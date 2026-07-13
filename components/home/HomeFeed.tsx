@@ -300,7 +300,11 @@ export default function HomeFeed({
                     ? "검색 결과"
                     : `${categoryLabel === "홈" ? "전체" : categoryLabel} 공고`
                 }
-                href={browseHref({ kind: browseKind, sort: "deadline" })}
+                href={browseHref({
+                  kind: browseKind,
+                  sort: "deadline",
+                  list: browseKind === "all",
+                })}
                 subtitle={
                   isSearching
                     ? undefined

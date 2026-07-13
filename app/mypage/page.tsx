@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/server";
-import Navbar from "@/components/Navbar";
+import HomeSearchRoot from "@/components/home/HomeSearchRoot";
+import SpotifyTopNav from "@/components/home/SpotifyTopNav";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/lib/scholarship-dates";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
+import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 const BookmarkedScholarshipCalendar = dynamic(
   () => import("@/components/BookmarkedScholarshipCalendar"),
@@ -83,14 +85,19 @@ export default async function MyPage() {
     const days = daysUntilApplyDeadlineKorea(scholarship.apply_end_date);
     return days >= 0 && days <= 6;
   }).length;
+  const navContext = await resolveNavUserContext(user);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar
-        currentUser={user}
-        currentUserName={profile?.name ?? null}
-        urgentBookmarkCount={urgentBookmarkCount}
-      />
+      <HomeSearchRoot>
+        <SpotifyTopNav
+          variant="compact"
+          currentUser={user}
+          currentUserRole={navContext.role}
+          currentUserName={profile?.name ?? navContext.name}
+          urgentBookmarkCount={urgentBookmarkCount}
+        />
+      </HomeSearchRoot>
 
       <main className="flex-1">
         {/* 프로필 헤더 */}
