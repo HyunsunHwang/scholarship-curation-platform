@@ -19,7 +19,7 @@ PASS
 - quality_review_count: 3
 - no_assets_count: 5
 - zero_match_source_count: 1
-- deterministic_rerun_match: true
+- read_model_deterministic_rerun_match: true
 - output_schema_valid: true
 
 ## Tests
@@ -33,7 +33,7 @@ PASS
 - PASS: no_assets alone is not an automatic blocker
 - PASS: no_assets with sufficient body can be clean
 - PASS: zero-match is source-health evidence, not absence proof
-- PASS: same input rerun is deterministic
+- PASS: read-model semantic output is deterministic for same input
 - PASS: output includes required adapter fields
 - PASS: validation path performs no DB write
 
@@ -56,6 +56,15 @@ PASS
 - admin_ui_changed: false
 - product_ui_changed: false
 - production_main_access: false
+
+## Limitations
+
+- current upstream data/notice-sources.csv resolves crawler source_key by exact identity match to notice_sources.source_id
+- missing and ambiguous source resolution paths are fixture-tested and fail closed
+- this fixture validation does not prove a separate alias mapping for all 613 source rows
+- future source_key/source_id divergence requires an explicit mapping source
+- fuzzy matching and automatic source creation remain prohibited
+- deterministic validation covers read-model semantic output for the same fixture, not cross-machine absolute execution metadata
 
 ## Remaining Decisions
 

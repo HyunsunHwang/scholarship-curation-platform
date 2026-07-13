@@ -2,9 +2,9 @@
   "generated_at": "2026-07-13T00:00:00.000Z",
   "status": "PASS",
   "inputs": {
-    "normalized_fixture": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\fixtures\\integration-foundation\\normalized-crawler-sample.json",
-    "source_csv": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\data\\notice-sources.csv",
-    "mapping_snapshot": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\fixtures\\integration-foundation\\source-identity-mapping-snapshot.json"
+    "normalized_fixture": "fixtures/integration-foundation/normalized-crawler-sample.json",
+    "source_csv": "data/notice-sources.csv",
+    "mapping_snapshot": "fixtures/integration-foundation/source-identity-mapping-snapshot.json"
   },
   "metrics": {
     "candidate_count_requested": 7,
@@ -18,7 +18,7 @@
     "quality_review_count": 3,
     "no_assets_count": 5,
     "zero_match_source_count": 1,
-    "deterministic_rerun_match": true,
+    "read_model_deterministic_rerun_match": true,
     "output_schema_valid": true
   },
   "tests": [
@@ -59,7 +59,7 @@
       "pass": true
     },
     {
-      "name": "same input rerun is deterministic",
+      "name": "read-model semantic output is deterministic for same input",
       "pass": true
     },
     {
@@ -86,8 +86,8 @@
       "ambiguous_behavior": "blocked"
     },
     "mapping_sources": {
-      "source_csv": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\data\\notice-sources.csv",
-      "mapping_snapshot": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\fixtures\\integration-foundation\\source-identity-mapping-snapshot.json"
+      "source_csv": "data/notice-sources.csv",
+      "mapping_snapshot": "fixtures/integration-foundation/source-identity-mapping-snapshot.json"
     },
     "counts": {
       "total": 7,
@@ -723,6 +723,14 @@
     "product_ui_changed": false,
     "production_main_access": false
   },
+  "limitations": [
+    "current upstream data/notice-sources.csv resolves crawler source_key by exact identity match to notice_sources.source_id",
+    "missing and ambiguous source resolution paths are fixture-tested and fail closed",
+    "this fixture validation does not prove a separate alias mapping for all 613 source rows",
+    "future source_key/source_id divergence requires an explicit mapping source",
+    "fuzzy matching and automatic source creation remain prohibited",
+    "deterministic validation covers read-model semantic output for the same fixture, not cross-machine absolute execution metadata"
+  ],
   "remaining_decisions": [
     "schema proposal before graph table migration",
     "admin integration field contract before UI wiring",

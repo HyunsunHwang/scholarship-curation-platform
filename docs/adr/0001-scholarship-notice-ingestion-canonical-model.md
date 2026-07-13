@@ -4,7 +4,13 @@
 
 Proposed.
 
-Not yet implemented.
+The read-only Integration Foundation prototype is implemented for local JSON validation.
+
+Schema migration is not implemented or approved.
+
+DB write and guarded apply paths are not implemented or approved.
+
+Admin and product UI integration is not implemented.
 
 Requires team review before schema migration or UI integration.
 

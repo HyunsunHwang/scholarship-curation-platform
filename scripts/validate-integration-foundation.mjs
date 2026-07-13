@@ -62,6 +62,10 @@ function writeJson(filePath, value) {
   fs.writeFileSync(resolved, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+function repoRelativePath(filePath) {
+  return path.relative(process.cwd(), path.resolve(filePath)).split(path.sep).join("/");
+}
+
 function stableStringify(value) {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (value && typeof value === "object") {
@@ -162,7 +166,7 @@ function collectTests({ resolutionReport, firstReadModel, secondReadModel }) {
         /not proof/i.test(String(zeroMatchRow.evidence_json?.note ?? "")),
     },
     {
-      name: "same input rerun is deterministic",
+      name: "read-model semantic output is deterministic for same input",
       pass: stableStringify(stripGeneratedAt(firstReadModel)) ===
         stableStringify(stripGeneratedAt(secondReadModel)),
     },
@@ -215,6 +219,12 @@ function buildMarkdownReport(report) {
     lines.push(`- ${key}: ${value}`);
   }
   lines.push("");
+  lines.push("## Limitations");
+  lines.push("");
+  for (const limitation of report.limitations) {
+    lines.push(`- ${limitation}`);
+  }
+  lines.push("");
   lines.push("## Remaining Decisions");
   lines.push("");
   for (const decision of report.remaining_decisions) {
@@ -260,7 +270,9 @@ function buildReport({ inputPath, sourceCsvPath, mappingSnapshotPath }) {
     quality_review_count: firstReadModel.counts.quality_review_count,
     no_assets_count: firstReadModel.counts.no_assets_count,
     zero_match_source_count: firstReadModel.counts.zero_match_source_count,
-    deterministic_rerun_match: tests.find((test) => test.name.includes("deterministic"))?.pass ?? false,
+    read_model_deterministic_rerun_match: tests.find((test) =>
+      test.name.includes("read-model semantic output"),
+    )?.pass ?? false,
     output_schema_valid: tests.find((test) => test.name.includes("required adapter fields"))?.pass ?? false,
   };
 
@@ -268,9 +280,9 @@ function buildReport({ inputPath, sourceCsvPath, mappingSnapshotPath }) {
     generated_at: generatedAt,
     status: pass ? "PASS" : "HOLD",
     inputs: {
-      normalized_fixture: path.resolve(inputPath),
-      source_csv: path.resolve(sourceCsvPath),
-      mapping_snapshot: path.resolve(mappingSnapshotPath),
+      normalized_fixture: repoRelativePath(inputPath),
+      source_csv: repoRelativePath(sourceCsvPath),
+      mapping_snapshot: repoRelativePath(mappingSnapshotPath),
     },
     metrics,
     tests,
@@ -297,6 +309,14 @@ function buildReport({ inputPath, sourceCsvPath, mappingSnapshotPath }) {
       product_ui_changed: false,
       production_main_access: false,
     },
+    limitations: [
+      "current upstream data/notice-sources.csv resolves crawler source_key by exact identity match to notice_sources.source_id",
+      "missing and ambiguous source resolution paths are fixture-tested and fail closed",
+      "this fixture validation does not prove a separate alias mapping for all 613 source rows",
+      "future source_key/source_id divergence requires an explicit mapping source",
+      "fuzzy matching and automatic source creation remain prohibited",
+      "deterministic validation covers read-model semantic output for the same fixture, not cross-machine absolute execution metadata",
+    ],
     remaining_decisions: [
       "schema proposal before graph table migration",
       "admin integration field contract before UI wiring",

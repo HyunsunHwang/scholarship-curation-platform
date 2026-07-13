@@ -83,6 +83,10 @@ function writeJson(filePath, value) {
   fs.writeFileSync(resolved, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+function repoRelativePath(filePath) {
+  return path.relative(process.cwd(), path.resolve(filePath)).split(path.sep).join("/");
+}
+
 function readSourceRowsFromCsv(csvPath) {
   const resolved = path.resolve(csvPath);
   const raw = fs.readFileSync(resolved, "utf8").replace(/^\uFEFF/, "");
@@ -259,8 +263,10 @@ export function resolveSourceIdentities(input, options = {}) {
     db_write: false,
     mapping_policy: index.mapping_policy,
     mapping_sources: {
-      source_csv: path.resolve(options.sourceCsvPath ?? DEFAULT_SOURCES),
-      mapping_snapshot: path.resolve(options.mappingSnapshotPath ?? DEFAULT_MAPPING_SNAPSHOT),
+      source_csv: repoRelativePath(options.sourceCsvPath ?? DEFAULT_SOURCES),
+      mapping_snapshot: repoRelativePath(
+        options.mappingSnapshotPath ?? DEFAULT_MAPPING_SNAPSHOT,
+      ),
     },
     counts,
     resolutions,

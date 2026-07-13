@@ -13,8 +13,8 @@
     "ambiguous_behavior": "blocked"
   },
   "mapping_sources": {
-    "source_csv": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\data\\notice-sources.csv",
-    "mapping_snapshot": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\fixtures\\integration-foundation\\source-identity-mapping-snapshot.json"
+    "source_csv": "data/notice-sources.csv",
+    "mapping_snapshot": "fixtures/integration-foundation/source-identity-mapping-snapshot.json"
   },
   "counts": {
     "total": 7,

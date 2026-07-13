@@ -9,7 +9,7 @@ Included:
 - Integration 0: canonical ingestion ADR and adapter contract alignment.
 - Integration 1: read-only `source_key -> notice_sources.source_id` resolver.
 - Integration 2: local JSON adapter/read-model prototype for scholarship admin review.
-- Fixture-based validation and deterministic report generation.
+- Fixture-based validation and deterministic read-model rerun checks.
 
 Excluded:
 
@@ -54,6 +54,18 @@ For this first read-only prototype, `source_key` resolves by exact match against
 
 The original crawler key is preserved as `source_key_snapshot`.
 
+## Source Mapping Limitations
+
+Current upstream `data/notice-sources.csv` uses the same value for crawler `source_key` and `notice_sources.source_id`, so this prototype resolves source identity by exact identity match.
+
+Missing and ambiguous source resolution paths are fixture-tested and fail closed.
+
+This fixture validation does not prove that a separate alias mapping has been completed for all 613 source rows.
+
+If future crawler `source_key` values diverge from `notice_sources.source_id`, an explicit mapping source will be required before write/apply paths can be considered.
+
+Fuzzy matching and automatic source creation remain prohibited.
+
 ## Admin Review Field Mapping
 
 Current upstream scholarship review reads from `crawled_notices`.
@@ -92,10 +104,10 @@ Fields that need later design agreement:
 
 ## Validation Command
 
-Use the bundled Node executable in this Codex Windows environment when `node` is not on PATH:
+Use `node` when it is on PATH, or the Codex bundled Node executable when this Windows environment does not expose `node` directly:
 
 ```powershell
-C:\Users\82108\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe scripts/validate-integration-foundation.mjs
+node scripts/validate-integration-foundation.mjs
 ```
 
 The validation is local-only and performs no DB access.
