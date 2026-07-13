@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-07-13",
+  "read_only": true,
+  "production_behavior_changed": false,
+  "decisions": [
+    {
+      "remediation_id": "A-P0-001",
+      "category": "selector_fix_required",
+      "related_categories": [
+        "body_parser_fix_required"
+      ],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "body_missing",
+          "selector_mismatch"
+        ],
+        "affected_source_ids": [
+          "cau_003",
+          "cau_011",
+          "cau_013"
+        ],
+        "affected_item_count": 4
+      },
+      "expected_impact": "Restores detail body evidence where selector/body extraction is missing.",
+      "suggested_owner_or_next_work_unit": "crawler parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A bounded fixture and one approved source sample retain a non-empty normalized body without lowering review safeguards."
+    },
+    {
+      "remediation_id": "A-P0-002",
+      "category": "source_specific_adapter_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_fetch_failed"
+        ],
+        "affected_source_ids": [
+          "cau_010",
+          "cau_012"
+        ],
+        "affected_item_count": 3
+      },
+      "expected_impact": "Restores detail access for sources whose generic parsing path fails.",
+      "suggested_owner_or_next_work_unit": "source adapter follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "The source-specific adapter resolves a representative detail page and preserves fail-closed classification."
+    },
+    {
+      "remediation_id": "A-P0-003",
+      "category": "url_canonicalization_fix_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_url_missing"
+        ],
+        "affected_source_ids": [
+          "cau_011"
+        ],
+        "affected_item_count": 2
+      },
+      "expected_impact": "Prevents missing or malformed detail URLs from blocking candidate evidence.",
+      "suggested_owner_or_next_work_unit": "URL resolution follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A representative list item resolves to one canonical detail URL with duplicate protection."
+    },
+    {
+      "remediation_id": "A-P1-002",
+      "category": "attachment_parser_required",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "attachment_metadata_missing",
+          "attachment_only_possible",
+          "attachment_parser_recommended"
+        ],
+        "affected_source_ids": [
+          "cau_008"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Retains attachment-only eligibility evidence instead of silently passing it.",
+      "suggested_owner_or_next_work_unit": "attachment parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "Attachment-only cases expose metadata or remain explicitly blocked for review."
+    },
+    {
+      "remediation_id": "A-P1-001",
+      "category": "encoding_normalization_review",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "body_mojibake_detected",
+          "encoding_suspected",
+          "replacement_character_detected"
+        ],
+        "affected_source_ids": [
+          "cau_007"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Prevents corrupted text from concealing eligibility and review evidence.",
+      "suggested_owner_or_next_work_unit": "text normalization follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A mojibake fixture is diagnosed before review, with uncertain text still routed to review."
+    }
+  ]
+}

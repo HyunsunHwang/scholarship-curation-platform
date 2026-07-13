@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-07-13",
+  "read_only": true,
+  "source_exhaustion_proven": false,
+  "decisions": [
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "detail_fetch_or_body_parse_issue",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "detail_fetch_or_body_parse_issue",
+          "selector_mismatch_suspected",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term, but this check did not resolve a detail URL or parse a detail body.",
+        "next_action": "Capture one current detail URL and compare the rendered body with the configured selector before a parser change."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "keyword_miss",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term, but no detail item was sampled; the fixture keyword-miss diagnosis remains unresolved.",
+        "next_action": "Manually compare a recent financial-support title/body with detector context before considering a contextual keyword rule."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "list_url": "https://econ.cau.ac.kr/news/notice/",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "pagination_depth_limited",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "pagination_depth_limited",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term. The bounded check did not inspect pinned notices or later pages.",
+        "next_action": "Inspect the pinned region and one later page before treating depth as a crawler remediation."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_004",
+      "source_key_snapshot": "cau_004",
+      "list_url": "https://log.cau.ac.kr/dm/dm_1.php",
+      "fixture_backed_triage_types": [
+        "keyword_miss_suspected",
+        "true_no_recent_scholarship_possible",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "true_no_recent_scholarship_possible",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term. That observation prevents confirming the fixture's possible no-recent-scholarship explanation.",
+        "next_action": "Review a bounded recent-title sample before retaining or rejecting the no-recent-scholarship hypothesis."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    }
+  ]
+}

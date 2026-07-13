@@ -1,0 +1,407 @@
+{
+  "generated_at": "2026-07-13",
+  "contract_version": "post-phase-a-closure-decisions/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "supabase_access": false,
+  "migration": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "input_path": "reports/post-phase-a-coverage-parser-reliability-summary.json",
+  "fixture_backed_validation_result": {
+    "metrics": {
+      "zero_match_source_count": 4,
+      "false_negative_review_count": 3,
+      "keyword_expansion_candidate_count": 2,
+      "high_confidence_keyword_candidate_count": 0,
+      "noisy_keyword_candidate_count": 2,
+      "parser_failure_count": 13,
+      "remediation_category_count": 7,
+      "p0_remediation_count": 3,
+      "p1_remediation_count": 2,
+      "encoding_issue_count": 1,
+      "attachment_parser_required_count": 1,
+      "board_count": 12,
+      "item_count": 20,
+      "carry_forward_risk_count": 23
+    },
+    "scope": "A-0/A-1 fixtures and deterministic read-model validation"
+  },
+  "bounded_real_source_spot_check_result": [
+    {
+      "source_id": "cau_003",
+      "source_key_snapshot": "cau_003",
+      "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "detail_fetch_or_body_parse_issue",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "detail_fetch_or_body_parse_issue",
+          "selector_mismatch_suspected",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term, but this check did not resolve a detail URL or parse a detail body.",
+        "next_action": "Capture one current detail URL and compare the rendered body with the configured selector before a parser change."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_001",
+      "source_key_snapshot": "cau_001",
+      "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "keyword_miss",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term, but no detail item was sampled; the fixture keyword-miss diagnosis remains unresolved.",
+        "next_action": "Manually compare a recent financial-support title/body with detector context before considering a contextual keyword rule."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_002",
+      "source_key_snapshot": "cau_002",
+      "list_url": "https://econ.cau.ac.kr/news/notice/",
+      "fixture_backed_triage_types": [
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "pagination_depth_limited",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "pagination_depth_limited",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term. The bounded check did not inspect pinned notices or later pages.",
+        "next_action": "Inspect the pinned region and one later page before treating depth as a crawler remediation."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    },
+    {
+      "source_id": "cau_004",
+      "source_key_snapshot": "cau_004",
+      "list_url": "https://log.cau.ac.kr/dm/dm_1.php",
+      "fixture_backed_triage_types": [
+        "keyword_miss_suspected",
+        "true_no_recent_scholarship_possible",
+        "manual_spot_check_required"
+      ],
+      "bounded_real_source_spot_check": {
+        "observed_on": "2026-07-13",
+        "method": "single public list-page HTTP fetch; no crawler workflow",
+        "http_status": 200,
+        "scholarship_term_observed": true,
+        "detail_pages_sampled": 0,
+        "decision_categories": [
+          "true_no_recent_scholarship_possible",
+          "manual_spot_check_required"
+        ],
+        "evidence_limited_inference": "The public list page was reachable and contained a scholarship-related term. That observation prevents confirming the fixture's possible no-recent-scholarship explanation.",
+        "next_action": "Review a bounded recent-title sample before retaining or rejecting the no-recent-scholarship hypothesis."
+      },
+      "verified_source": true,
+      "unresolved_backlog": true,
+      "source_exhaustion_proven": false
+    }
+  ],
+  "evidence_limited_inference": "Four public list pages were fetched once. This is reachability and visible-term evidence only, not a full crawl, detail-body verification, nationwide coverage claim, or source-exhaustion proof.",
+  "keyword_expansion_decisions": [
+    {
+      "candidate_keyword": "financial-support",
+      "supporting_evidence": [
+        {
+          "source_id": "cau_001",
+          "item_id": "zm-key-1",
+          "detector_reason": "title_keyword_miss",
+          "false_negative_evidence": true
+        }
+      ],
+      "false_positive_noise_risk": "high",
+      "standalone_allowed": false,
+      "required_context_terms": [
+        "scholarship",
+        "financial-aid",
+        "tuition",
+        "eligibility",
+        "application"
+      ],
+      "recommendation": "Keep as review evidence only; do not add a standalone production detector rule.",
+      "decision": "contextual_only",
+      "production_detector_change_in_this_pr": false
+    },
+    {
+      "candidate_keyword": "grant-support",
+      "supporting_evidence": [
+        {
+          "source_id": "cau_013",
+          "item_id": "mix-3",
+          "detector_reason": "title_keyword_miss",
+          "false_negative_evidence": true
+        }
+      ],
+      "false_positive_noise_risk": "high",
+      "standalone_allowed": false,
+      "required_context_terms": [
+        "scholarship",
+        "grant",
+        "award",
+        "eligibility",
+        "application"
+      ],
+      "recommendation": "Keep as review evidence only; require a scholarship or award context before any future experiment.",
+      "decision": "contextual_only",
+      "production_detector_change_in_this_pr": false
+    }
+  ],
+  "remediation_priority_decisions": [
+    {
+      "remediation_id": "A-P0-001",
+      "category": "selector_fix_required",
+      "related_categories": [
+        "body_parser_fix_required"
+      ],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "body_missing",
+          "selector_mismatch"
+        ],
+        "affected_source_ids": [
+          "cau_003",
+          "cau_011",
+          "cau_013"
+        ],
+        "affected_item_count": 4
+      },
+      "expected_impact": "Restores detail body evidence where selector/body extraction is missing.",
+      "suggested_owner_or_next_work_unit": "crawler parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A bounded fixture and one approved source sample retain a non-empty normalized body without lowering review safeguards."
+    },
+    {
+      "remediation_id": "A-P0-002",
+      "category": "source_specific_adapter_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_fetch_failed"
+        ],
+        "affected_source_ids": [
+          "cau_010",
+          "cau_012"
+        ],
+        "affected_item_count": 3
+      },
+      "expected_impact": "Restores detail access for sources whose generic parsing path fails.",
+      "suggested_owner_or_next_work_unit": "source adapter follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "The source-specific adapter resolves a representative detail page and preserves fail-closed classification."
+    },
+    {
+      "remediation_id": "A-P0-003",
+      "category": "url_canonicalization_fix_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_url_missing"
+        ],
+        "affected_source_ids": [
+          "cau_011"
+        ],
+        "affected_item_count": 2
+      },
+      "expected_impact": "Prevents missing or malformed detail URLs from blocking candidate evidence.",
+      "suggested_owner_or_next_work_unit": "URL resolution follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A representative list item resolves to one canonical detail URL with duplicate protection."
+    },
+    {
+      "remediation_id": "A-P1-002",
+      "category": "attachment_parser_required",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "attachment_metadata_missing",
+          "attachment_only_possible",
+          "attachment_parser_recommended"
+        ],
+        "affected_source_ids": [
+          "cau_008"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Retains attachment-only eligibility evidence instead of silently passing it.",
+      "suggested_owner_or_next_work_unit": "attachment parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "Attachment-only cases expose metadata or remain explicitly blocked for review."
+    },
+    {
+      "remediation_id": "A-P1-001",
+      "category": "encoding_normalization_review",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "body_mojibake_detected",
+          "encoding_suspected",
+          "replacement_character_detected"
+        ],
+        "affected_source_ids": [
+          "cau_007"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Prevents corrupted text from concealing eligibility and review evidence.",
+      "suggested_owner_or_next_work_unit": "text normalization follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A mojibake fixture is diagnosed before review, with uncertain text still routed to review."
+    }
+  ],
+  "quality_readability_policy": [
+    {
+      "case": "no_assets",
+      "disposition": "auto_pass_allowed",
+      "policy": "No assets alone is not a blocker when title, body, date, and classification evidence are otherwise clean."
+    },
+    {
+      "case": "image_only_suspected",
+      "disposition": "admin_review_required",
+      "policy": "Image-only evidence requires review; do not infer readable detail text."
+    },
+    {
+      "case": "attachment_only_possible",
+      "disposition": "blocked_until_parser_fix",
+      "policy": "Do not silently pass; expose the attachment gap and route it to the attachment-parser follow-up."
+    },
+    {
+      "case": "short_body",
+      "disposition": "manual_spot_check_required",
+      "policy": "Require a reason-level diagnosis before deciding that the body is adequate."
+    },
+    {
+      "case": "second_pass_parser_recommended",
+      "disposition": "admin_review_required",
+      "policy": "Keep the first-pass evidence and request a second parser pass or reviewer confirmation."
+    },
+    {
+      "case": "encoding_or_mojibake_suspected",
+      "disposition": "blocked_until_parser_fix",
+      "policy": "Treat corrupted text as insufficient evidence until normalization review resolves it."
+    },
+    {
+      "case": "detail_body_not_parsed",
+      "disposition": "blocked_until_source_check",
+      "policy": "Require a bounded detail and selector check before treating the source as readable."
+    },
+    {
+      "case": "list_only_supported",
+      "disposition": "admin_review_required",
+      "policy": "List evidence can be retained, but one matched item never proves full board readability."
+    }
+  ],
+  "phase_a_exit_gate": {
+    "phase_a_exit_gate_status": "ready_for_review",
+    "ready_to_merge_after_review": true,
+    "blocking_open_questions": [],
+    "unresolved_backlog_source_ids": [
+      "cau_003",
+      "cau_001",
+      "cau_002",
+      "cau_004"
+    ],
+    "followup_work_units": [
+      {
+        "work_unit": "A-P0-001",
+        "priority": "P0",
+        "owner_or_next_work_unit": "crawler parsing follow-up"
+      },
+      {
+        "work_unit": "A-P0-002",
+        "priority": "P0",
+        "owner_or_next_work_unit": "source adapter follow-up"
+      },
+      {
+        "work_unit": "A-P0-003",
+        "priority": "P0",
+        "owner_or_next_work_unit": "URL resolution follow-up"
+      },
+      {
+        "work_unit": "A-P1-002",
+        "priority": "P1",
+        "owner_or_next_work_unit": "attachment parsing follow-up"
+      },
+      {
+        "work_unit": "A-P1-001",
+        "priority": "P1",
+        "owner_or_next_work_unit": "text normalization follow-up"
+      },
+      {
+        "work_unit": "A-SPOT-CHECK-001",
+        "priority": "P0",
+        "owner_or_next_work_unit": "bounded manual source review for four unresolved source decisions"
+      }
+    ],
+    "required_conditions": {
+      "p0_p1_next_work_unit_assigned": true,
+      "keyword_candidates_decided": true,
+      "unresolved_spot_checks_backlogged": true,
+      "f1_dependency_policy_documented": true,
+      "production_behavior_changed": false,
+      "source_exhaustion_proven": false
+    }
+  },
+  "metrics": {
+    "spot_check_source_count": 4,
+    "verified_source_count": 4,
+    "unresolved_backlog_source_count": 4,
+    "keyword_candidate_count": 2,
+    "high_confidence_keyword_count": 0,
+    "contextual_only_keyword_count": 2,
+    "rejected_keyword_count": 0,
+    "p0_remediation_count": 3,
+    "p1_remediation_count": 2,
+    "followup_work_unit_count": 6,
+    "blocking_open_question_count": 0
+  }
+}
