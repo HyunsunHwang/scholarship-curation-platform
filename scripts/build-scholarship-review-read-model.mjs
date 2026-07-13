@@ -231,7 +231,7 @@ export function buildScholarshipReviewReadModel(input, options = {}) {
     (statusCounts.attachment_required_unknown_count ?? 0);
 
   return {
-    generated_at: new Date().toISOString(),
+    generated_at: options.generatedAt ?? input.generated_at ?? new Date().toISOString(),
     read_only: true,
     db_access: false,
     db_write: false,

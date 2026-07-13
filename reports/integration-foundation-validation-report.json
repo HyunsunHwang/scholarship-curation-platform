@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13T03:39:08.513Z",
+  "generated_at": "2026-07-13T00:00:00.000Z",
   "status": "PASS",
   "inputs": {
     "normalized_fixture": "C:\\Users\\82108\\Documents\\Codex\\2026-06-25\\you-are-working-on-the-scholar\\work\\scholarship-curation-platform\\fixtures\\integration-foundation\\normalized-crawler-sample.json",
@@ -72,7 +72,7 @@
     }
   ],
   "source_resolution": {
-    "generated_at": "2026-07-13T03:39:08.494Z",
+    "generated_at": "2026-07-13T00:00:00.000Z",
     "read_only": true,
     "db_access": false,
     "db_write": false,
@@ -207,7 +207,7 @@
     ]
   },
   "read_model": {
-    "generated_at": "2026-07-13T03:39:08.507Z",
+    "generated_at": "2026-07-13T00:00:00.000Z",
     "read_only": true,
     "db_access": false,
     "db_write": false,

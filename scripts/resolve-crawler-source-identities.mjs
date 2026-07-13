@@ -253,7 +253,7 @@ export function resolveSourceIdentities(input, options = {}) {
   );
 
   return {
-    generated_at: new Date().toISOString(),
+    generated_at: options.generatedAt ?? input.generated_at ?? new Date().toISOString(),
     read_only: true,
     db_access: false,
     db_write: false,

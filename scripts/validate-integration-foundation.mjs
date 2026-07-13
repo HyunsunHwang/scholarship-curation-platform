@@ -225,17 +225,21 @@ function buildMarkdownReport(report) {
 
 function buildReport({ inputPath, sourceCsvPath, mappingSnapshotPath }) {
   const input = readJson(inputPath);
+  const generatedAt = input.generated_at ?? new Date().toISOString();
   const resolutionReport = resolveSourceIdentities(input, {
     sourceCsvPath,
     mappingSnapshotPath,
+    generatedAt,
   });
   const firstReadModel = buildScholarshipReviewReadModel(input, {
     sourceCsvPath,
     mappingSnapshotPath,
+    generatedAt,
   });
   const secondReadModel = buildScholarshipReviewReadModel(input, {
     sourceCsvPath,
     mappingSnapshotPath,
+    generatedAt,
   });
   const tests = collectTests({ resolutionReport, firstReadModel, secondReadModel });
   const pass = tests.every((test) => test.pass);
@@ -261,7 +265,7 @@ function buildReport({ inputPath, sourceCsvPath, mappingSnapshotPath }) {
   };
 
   return {
-    generated_at: new Date().toISOString(),
+    generated_at: generatedAt,
     status: pass ? "PASS" : "HOLD",
     inputs: {
       normalized_fixture: path.resolve(inputPath),
