@@ -13,7 +13,7 @@ const secretPatterns = [
   ["token", /token/i], ["secret", /secret/i], ["cookie", /cookie/i],
   ["session", /session/i], ["api_key", /api_key/i], ["authorization", /authorization/i],
 ];
-const absolutePathPattern = /C:\\Users\\|\/Users\/|\/home\/|Documents\\Codex|\/workspaces\//;
+const absolutePathPattern = /C:\/|C:\\|\/Users\/|\/home\/|\/workspaces\/|\/mnt\/data\/|Documents\\Codex/;
 
 async function filesUnder(directory) {
   const entries = await readdir(resolve(root, directory), { withFileTypes: true });
@@ -84,10 +84,16 @@ const second = await buildPostPhaseI();
 const metrics = first.metrics;
 const risks = JSON.parse(await readFile(resolve(root, "reports/post-phase-master-risk-register.json"), "utf8"));
 const safetyScan = await scanPersistedArtifacts();
-const unresolvedRisks = risks.risks.filter((risk) => risk.status !== "resolved");
-const requiredRiskFields = ["id", "status", "severity", "description", "next_resolution_phase", "next_work_unit", "success_criteria"];
-const missingRiskFields = unresolvedRisks.filter((risk) => requiredRiskFields.some((field) => !risk[field]));
+const terminalRiskStatuses = new Set(risks.status_policy?.terminal_statuses ?? []);
+const isTerminalRiskStatus = (status) => terminalRiskStatuses.has(status);
+const unresolvedRisks = risks.risks.filter((risk) => !isTerminalRiskStatus(risk.status));
+const requiredRiskFields = ["id", "origin_phase", "status", "evidence", "severity", "deferral_reason", "next_resolution_phase", "next_work_unit", "success_criteria", "owner", "blocking_for_next_phase"];
+const missingRiskFields = unresolvedRisks.filter((risk) => requiredRiskFields.some((field) => risk[field] === undefined || risk[field] === null || risk[field] === ""));
 const unassignedRiskCount = unresolvedRisks.filter((risk) => !risk.next_resolution_phase).length;
+const completedResolutionPhases = new Set(["H", "I", "Post-Phase H", "Post-Phase I"]);
+const staleResolutionPhaseCount = unresolvedRisks.filter((risk) => completedResolutionPhases.has(risk.next_resolution_phase)).length;
+const missingOwnerCount = unresolvedRisks.filter((risk) => typeof risk.owner !== "string" || !risk.owner.trim()).length;
+const missingBlockingStatusCount = unresolvedRisks.filter((risk) => typeof risk.blocking_for_next_phase !== "boolean").length;
 const checks = [
   ["deterministic replay", JSON.stringify(first) === JSON.stringify(second)],
   ["positive cases accepted", metrics.schema_valid_count === metrics.evaluation_case_count && metrics.evidence_link_valid_count === metrics.evaluation_case_count],
@@ -96,7 +102,8 @@ const checks = [
   ["provider and policy fail closed", metrics.provider_failure_count === metrics.provider_failure_case_count && metrics.auto_approve_attempt_count === 1 && metrics.auto_reject_attempt_count === 1 && metrics.public_exposure_attempt_count === 1 && metrics.automatic_decision_count === 0],
   ["public and review state preserved", metrics.public_exposure_before === metrics.public_exposure_after && metrics.review_state_change_count === 0],
   ["persisted artifact safety", safetyScan.actual_persisted_secret_count === 0 && safetyScan.unclassified_match_count === 0 && safetyScan.actual_persisted_absolute_path_count === 0],
-  ["risk ownership", missingRiskFields.length === 0 && unassignedRiskCount === 0],
+  ["risk status policy", terminalRiskStatuses.size > 0 && unresolvedRisks.every((risk) => risks.status_policy.unresolved_statuses.includes(risk.status))],
+  ["risk contract", missingRiskFields.length === 0 && unassignedRiskCount === 0 && staleResolutionPhaseCount === 0 && missingOwnerCount === 0 && missingBlockingStatusCount === 0],
 ];
 const failures = checks.filter(([, pass]) => !pass).map(([name]) => name);
 if (failures.length) throw new Error(failures.join(", "));
@@ -113,6 +120,9 @@ const result = {
     unresolved_risk_count: unresolvedRisks.length,
     unresolved_risk_missing_required_field_count: missingRiskFields.length,
     risk_unassigned_resolution_phase_count: unassignedRiskCount,
+    risk_stale_resolution_phase_count: staleResolutionPhaseCount,
+    risk_missing_owner_count: missingOwnerCount,
+    risk_missing_blocking_status_count: missingBlockingStatusCount,
     actual_persisted_absolute_path_count: safetyScan.actual_persisted_absolute_path_count,
     total_secret_scan_match_count: safetyScan.total_secret_scan_match_count,
     classified_false_positive_count: safetyScan.classified_false_positive_count,

@@ -10,7 +10,8 @@
     "provider and policy fail closed",
     "public and review state preserved",
     "persisted artifact safety",
-    "risk ownership"
+    "risk status policy",
+    "risk contract"
   ],
   "metrics": {
     "evaluation_case_count": 9,
@@ -41,6 +42,9 @@
     "unresolved_risk_count": 13,
     "unresolved_risk_missing_required_field_count": 0,
     "risk_unassigned_resolution_phase_count": 0,
+    "risk_stale_resolution_phase_count": 0,
+    "risk_missing_owner_count": 0,
+    "risk_missing_blocking_status_count": 0,
     "actual_persisted_absolute_path_count": 0,
     "total_secret_scan_match_count": 19,
     "classified_false_positive_count": 19,

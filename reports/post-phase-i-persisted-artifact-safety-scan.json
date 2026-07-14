@@ -35,14 +35,14 @@
     },
     {
       "file": "reports/post-phase-i-validation-report.json",
-      "line": 45,
+      "line": 49,
       "matched_pattern": "secret",
       "classification": "harmless_identifier",
       "reason": "Generated evidence preserves a fixture identifier, not a credential value."
     },
     {
       "file": "reports/post-phase-i-validation-report.json",
-      "line": 47,
+      "line": 51,
       "matched_pattern": "secret",
       "classification": "harmless_identifier",
       "reason": "Generated evidence preserves a fixture identifier, not a credential value."
@@ -56,70 +56,49 @@
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 11,
+      "line": 29,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 24,
+      "line": 45,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 37,
+      "line": 61,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 50,
+      "line": 77,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 63,
+      "line": 93,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 76,
+      "line": 109,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 89,
-      "matched_pattern": "sk-",
-      "classification": "harmless_identifier",
-      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
-    },
-    {
-      "file": "reports/post-phase-master-risk-register.json",
-      "line": 102,
-      "matched_pattern": "sk-",
-      "classification": "harmless_identifier",
-      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
-    },
-    {
-      "file": "reports/post-phase-master-risk-register.json",
-      "line": 117,
-      "matched_pattern": "sk-",
-      "classification": "harmless_identifier",
-      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
-    },
-    {
-      "file": "reports/post-phase-master-risk-register.json",
-      "line": 129,
+      "line": 125,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
@@ -133,21 +112,42 @@
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 153,
+      "line": 156,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 165,
+      "line": 171,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
     },
     {
       "file": "reports/post-phase-master-risk-register.json",
-      "line": 178,
+      "line": 186,
+      "matched_pattern": "sk-",
+      "classification": "harmless_identifier",
+      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
+    },
+    {
+      "file": "reports/post-phase-master-risk-register.json",
+      "line": 201,
+      "matched_pattern": "sk-",
+      "classification": "harmless_identifier",
+      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
+    },
+    {
+      "file": "reports/post-phase-master-risk-register.json",
+      "line": 216,
+      "matched_pattern": "sk-",
+      "classification": "harmless_identifier",
+      "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
+    },
+    {
+      "file": "reports/post-phase-master-risk-register.json",
+      "line": 231,
       "matched_pattern": "sk-",
       "classification": "harmless_identifier",
       "reason": "Case-insensitive pattern matched a RISK- identifier, not an API-key prefix."
