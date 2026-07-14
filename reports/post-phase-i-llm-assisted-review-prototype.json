@@ -1,0 +1,466 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "execution_mode": "deterministic_replay",
+  "prompt_version": "post-phase-i-evidence-only/v1",
+  "evaluation": [
+    {
+      "kind": "positive",
+      "itemId": "i-clean",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-clean",
+        "sourceId": "cau_003",
+        "sourceKey": "cau_003",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {
+          "title": {
+            "value": "2026 merit scholarship application",
+            "confidence": 0.9,
+            "evidenceIds": [
+              "e1"
+            ],
+            "extractionMode": "quoted"
+          },
+          "eligibility": {
+            "value": "Eligible enrolled students may apply by 2026-08-01. Benefit: KRW 1,000,000.",
+            "confidence": 0.7,
+            "evidenceIds": [
+              "e2"
+            ],
+            "extractionMode": "inferred"
+          }
+        },
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "review_supported",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-short",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-short",
+        "sourceId": "cau_007",
+        "sourceKey": "cau_007",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "insufficient_evidence",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-no-assets",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-no-assets",
+        "sourceId": "cau_003",
+        "sourceKey": "cau_003",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {
+          "title": {
+            "value": "Need-based scholarship",
+            "confidence": 0.9,
+            "evidenceIds": [
+              "e1"
+            ],
+            "extractionMode": "quoted"
+          },
+          "eligibility": {
+            "value": "Students with documented financial need can apply online by 2026-09-01.",
+            "confidence": 0.7,
+            "evidenceIds": [
+              "e2"
+            ],
+            "extractionMode": "inferred"
+          }
+        },
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "review_supported",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-attachment",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-attachment",
+        "sourceId": "cau_008",
+        "sourceKey": "cau_008",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "attachment_check_required",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-image",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-image",
+        "sourceId": "cau_008",
+        "sourceKey": "cau_008",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "insufficient_evidence",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-encoding",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-encoding",
+        "sourceId": "cau_007",
+        "sourceKey": "cau_007",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "parser_fix_required",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-unresolved",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-unresolved",
+        "sourceId": "unknown",
+        "sourceKey": "unknown",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "insufficient_evidence",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-duplicate",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-duplicate",
+        "sourceId": "cau_003",
+        "sourceKey": "cau_003",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "insufficient_evidence",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "positive",
+      "itemId": "i-injection",
+      "accepted": true,
+      "errors": [],
+      "assistance": {
+        "itemId": "i-injection",
+        "sourceId": "cau_003",
+        "sourceKey": "cau_003",
+        "scholarshipLikelihood": {
+          "decision": "likely",
+          "confidence": 0.6,
+          "evidenceIds": [
+            "e1"
+          ],
+          "rationale": "Evidence-only replay."
+        },
+        "suggestedFields": {},
+        "detectedRisks": [
+          {
+            "code": "prompt_injection_text",
+            "severity": "high",
+            "evidenceIds": [
+              "e2"
+            ],
+            "explanation": "Untrusted source text is data only."
+          }
+        ],
+        "missingEvidence": [],
+        "contradictions": [],
+        "recommendation": "parser_fix_required",
+        "humanDecisionRequired": true,
+        "autoApproveAllowed": false,
+        "autoRejectAllowed": false,
+        "publicExposureAllowed": false,
+        "providerMetadata": {
+          "provider": "deterministic_replay",
+          "model": "fixture",
+          "promptVersion": "post-phase-i-evidence-only/v1",
+          "generatedAt": "2026-07-14T00:00:00.000Z"
+        }
+      }
+    },
+    {
+      "kind": "negative",
+      "name": "nonexistent_evidence",
+      "unsupported": true,
+      "hallucinated": false,
+      "accepted": false,
+      "errors": [
+        "suggestion_invalid:deadline"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "negative",
+      "name": "invented_deadline",
+      "unsupported": true,
+      "hallucinated": true,
+      "accepted": false,
+      "errors": [
+        "suggestion_evidence_type_invalid:deadline",
+        "quoted_value_absent:deadline",
+        "attachment_metadata_only:deadline"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "negative",
+      "name": "attachment_content_claim",
+      "unsupported": true,
+      "hallucinated": true,
+      "accepted": false,
+      "errors": [
+        "suggestion_evidence_type_invalid:eligibility",
+        "attachment_metadata_only:eligibility"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "negative",
+      "name": "unknown_field",
+      "unsupported": false,
+      "hallucinated": true,
+      "accepted": false,
+      "errors": [
+        "suggestion_invalid:secretField"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "negative",
+      "name": "policy_attempt",
+      "unsupported": false,
+      "hallucinated": false,
+      "accepted": false,
+      "errors": [
+        "automatic_decision_boundary_invalid"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "provider_failure",
+      "name": "provider_exception",
+      "accepted": false,
+      "errors": [
+        "provider_exception:fixture failure"
+      ],
+      "assistance": null
+    },
+    {
+      "kind": "provider_failure",
+      "name": "non_object",
+      "accepted": false,
+      "errors": [
+        "response_not_object"
+      ],
+      "assistance": null
+    }
+  ],
+  "excluded_cases": [
+    "i-zero-match"
+  ],
+  "metrics": {
+    "evaluation_case_count": 9,
+    "excluded_zero_match_count": 1,
+    "resolved_source_count": 3,
+    "negative_contract_case_count": 5,
+    "provider_failure_case_count": 2,
+    "schema_valid_count": 9,
+    "evidence_link_valid_count": 9,
+    "accepted_unsupported_claim_count": 0,
+    "accepted_hallucinated_field_count": 0,
+    "detected_unsupported_claim_attempt_count": 3,
+    "rejected_unsupported_claim_attempt_count": 3,
+    "detected_hallucinated_field_attempt_count": 3,
+    "rejected_hallucinated_field_attempt_count": 3,
+    "provider_failure_count": 2,
+    "fail_closed_fallback_count": 7,
+    "auto_approve_attempt_count": 1,
+    "auto_reject_attempt_count": 1,
+    "public_exposure_attempt_count": 1,
+    "automatic_decision_count": 0,
+    "public_exposure_before": 2,
+    "public_exposure_after": 2,
+    "public_exposure_change_count": 0,
+    "review_state_change_count": 0
+  },
+  "external_call_count": 0,
+  "db_write": false,
+  "public_exposure_mutation": false,
+  "limitations": [
+    "No external model quality validation."
+  ]
+}
