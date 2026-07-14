@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { load as loadHtml } from "cheerio";
 import { Agent as UndiciAgent } from "undici";
 import {
@@ -99,7 +100,7 @@ function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
-function formatFetchError(error) {
+export function formatFetchError(error) {
   const msg = String(error?.message ?? error);
   const cause = error?.cause;
   if (!cause) return msg;
@@ -248,7 +249,7 @@ function decodeHtmlBuffer(buffer, headerCharset) {
   return new TextDecoder("utf-8").decode(buffer);
 }
 
-async function fetchHtml(url) {
+export async function fetchHtmlWithMetadata(url) {
   let parsedUrl = null;
   try {
     parsedUrl = new URL(url);
@@ -277,11 +278,20 @@ async function fetchHtml(url) {
         },
       });
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        const error = new Error(`HTTP ${response.status}`);
+        error.httpStatus = response.status;
+        error.finalUrl = response.url || url;
+        throw error;
       }
       const headerCharset = detectCharsetFromHeaders(response.headers.get("content-type") ?? "");
       const bytes = new Uint8Array(await response.arrayBuffer());
-      return decodeHtmlBuffer(bytes, headerCharset);
+      return {
+        html: decodeHtmlBuffer(bytes, headerCharset),
+        httpStatus: response.status,
+        finalUrl: response.url || url,
+        contentType: response.headers.get("content-type") ?? "",
+        retryCount: attempt,
+      };
     } catch (error) {
       lastError = error;
       if (attempt < REQUEST_RETRY_COUNT) {
@@ -296,7 +306,11 @@ async function fetchHtml(url) {
   throw lastError ?? new Error("fetch failed");
 }
 
-function extractFromList(source, html) {
+export async function fetchHtml(url) {
+  return (await fetchHtmlWithMetadata(url)).html;
+}
+
+export function extractFromList(source, html) {
   const $ = loadHtml(html);
   const results = [];
   const seen = new Set();
@@ -793,15 +807,17 @@ async function run() {
   console.log(`state=${resolvedStatePath}`);
 }
 
-run()
-  .then(() => {
-    // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
-    // the event loop alive well after all work is done, especially on
-    // Windows. Force an explicit exit once results are written so the
-    // process (and any CI job wrapping it) doesn't hang.
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  run()
+    .then(() => {
+      // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
+      // the event loop alive well after all work is done, especially on
+      // Windows. Force an explicit exit once results are written so the
+      // process (and any CI job wrapping it) doesn't hang.
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
+}

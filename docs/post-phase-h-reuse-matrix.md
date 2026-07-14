@@ -1,0 +1,16 @@
+# Post-Phase H Reuse Matrix
+
+H inspected the latest main at `83c1d3f` before adding files. The phase adds no parallel crawler, parser, detector, source adapter, or public data route.
+
+| Requirement | Existing implementation path | Current behavior | Decision | Evidence | Reason |
+| --- | --- | --- | --- | --- |
+| Source allowlist, timeout, retries, item cap | `scripts/crawl-scholarship-notices.mjs` | Supports source filtering and request controls. | reuse | Live report records four explicit source keys, 15-second timeout, two retries, and source-local caps. | The operational crawler workflow is not run; H composes exported read-only helpers under a stricter budget. |
+| Detail URL and canonical URL handling | `scripts/crawl-scholarship-notices.mjs` | Resolves list links and filters obvious non-detail URLs. | reuse with fail-closed limitation | The live report shows that generic anchors from three sources are not verified notice mappings without source-specific configuration. | H does not add a second resolver or credit those candidates as notice details. |
+| Detail body parsing | `lib/notice-body-extraction.mjs` | Reuses source-specific selectors, preferred selectors, quality signals, and fail-closed classification. | reuse | Fixture builder calls `extractDetailFromHtml`; closure runner calls `extractDetailFromCheerio` on bounded live responses. | Live parser output is diagnostic only until list-to-detail mapping is verified. |
+| Attachment metadata | `lib/notice-body-extraction.mjs` | Extracts attachment metadata and marks downloads unverified. | reuse | Live closure persists metadata only and records zero download attempts. | No attachment content parser or download behavior is added. |
+| Keyword detector | `scripts/crawl-scholarship-notices.mjs` and A triage fixtures | Uses existing configured keywords and records keyword-miss evidence. | test-only | No detector configuration changed in the fixture or live closure. | H records `contextual_only` and `insufficient_evidence`; production detector rules are unchanged. |
+| Source health and false-negative metrics | A, E, F0, F1 reports | Existing reports retain zero-match, parser, no-assets, and review states. | extend | H publishes separate fixture/live comparison and does not overwrite prior reports. | It does not replace those reports or infer source exhaustion. |
+| Public exposure policy | `lib/scholarships/public-scholarship-exposure-policy.ts` | Fail-closed policy exposes only reviewed safe items. | reuse | Live validator fixes `public_exposure_change_count` at zero. | No review decision or public route changed. |
+| Master risk register | `reports/post-phase-master-risk-register.json` | Carries phase ownership and safety risk metadata. | extend | H records TLS failure and source-specific mapping limitations with next ownership. | It does not resolve schema/apply risks. |
+
+No duplicate implementation was introduced. `scripts/build-post-phase-h-bounded-coverage-expansion.mjs` is a phase report compiler, and `scripts/run-post-phase-h-live-bounded-source-verification.mjs` is a bounded composition of existing source loading, fetch/list, and extraction helpers rather than a parallel crawler, parser, detector, adapter, or public read-model.

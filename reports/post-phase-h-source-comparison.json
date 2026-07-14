@@ -1,0 +1,403 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "source_comparison": [
+    {
+      "source_id": "cau_002",
+      "source_key": "cau_002",
+      "list_url": "https://econ.cau.ac.kr/news/notice/",
+      "linked_risk_ids": [
+        "RISK-COVERAGE-COMPLETENESS",
+        "RISK-CONTEXTUAL-KEYWORD"
+      ],
+      "baseline": {
+        "source_id": "cau_002",
+        "source_key": "cau_002",
+        "list_url": "https://econ.cau.ac.kr/news/notice/",
+        "source_identity_status": "resolved",
+        "linked_risk_ids": [
+          "RISK-COVERAGE-COMPLETENESS",
+          "RISK-CONTEXTUAL-KEYWORD"
+        ],
+        "pages_checked": 1,
+        "list_items_observed": 3,
+        "detail_urls_resolved": 0,
+        "detail_fetch_success": 0,
+        "body_parse_success": 0,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 0,
+        "zero_match_observed": true,
+        "parser_failure_count": 0,
+        "no_assets_count": 3,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 0,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 0,
+        "source_health_status": "zero_match_observed",
+        "known_limitations": [
+          "pagination_depth_limited",
+          "contextual_keyword_evidence_not_evaluated"
+        ]
+      },
+      "after": {
+        "source_id": "cau_002",
+        "source_key": "cau_002",
+        "list_url": "https://econ.cau.ac.kr/news/notice/",
+        "source_identity_status": "resolved",
+        "pages_checked": 3,
+        "list_items_observed": 7,
+        "detail_urls_resolved": 0,
+        "detail_fetch_success": 0,
+        "body_parse_success": 0,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 1,
+        "zero_match_observed": false,
+        "parser_failure_count": 0,
+        "no_assets_count": 7,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 1,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 0,
+        "source_health_status": "fixture_only_needs_public_capture",
+        "pagination_stop_reason": "bounded_page_limit_reached",
+        "source_exhaustion_proven": false,
+        "known_limitations": [
+          "fixture pagination evidence only",
+          "matched item remains review-only"
+        ],
+        "detail_evidence": null
+      },
+      "deltas": {
+        "pages_checked": 2,
+        "additional_unique_item_count": 4,
+        "additional_matched_item_count": 1,
+        "false_negative_reduced_count": 1,
+        "parser_failure_reduced_count": 0,
+        "detail_resolution_improved": false,
+        "attachment_metadata_improved": false
+      }
+    },
+    {
+      "source_id": "cau_003",
+      "source_key": "cau_003",
+      "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "linked_risk_ids": [
+        "RISK-CAU003-DUPLICATE"
+      ],
+      "baseline": {
+        "source_id": "cau_003",
+        "source_key": "cau_003",
+        "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+        "source_identity_status": "resolved",
+        "linked_risk_ids": [
+          "RISK-CAU003-DUPLICATE"
+        ],
+        "pages_checked": 1,
+        "list_items_observed": 1,
+        "detail_urls_resolved": 0,
+        "detail_fetch_success": 0,
+        "body_parse_success": 0,
+        "body_missing_or_short": 1,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 0,
+        "zero_match_observed": true,
+        "parser_failure_count": 1,
+        "no_assets_count": 1,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 1,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 1,
+        "source_health_status": "blocked",
+        "known_limitations": [
+          "detail_url_missing",
+          "duplicate_evidence_not_compared"
+        ]
+      },
+      "after": {
+        "source_id": "cau_003",
+        "source_key": "cau_003",
+        "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+        "source_identity_status": "resolved",
+        "pages_checked": 2,
+        "list_items_observed": 3,
+        "detail_urls_resolved": 1,
+        "detail_fetch_success": 1,
+        "body_parse_success": 1,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 1,
+        "attachment_download_unverified": 1,
+        "matched_scholarship_items": 1,
+        "zero_match_observed": false,
+        "parser_failure_count": 0,
+        "no_assets_count": 0,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 1,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 0,
+        "source_health_status": "fixture_only_needs_duplicate_review",
+        "pagination_stop_reason": "no_next_page_observed",
+        "source_exhaustion_proven": false,
+        "detail_html": "<main><article><h1>Scholarship support notice</h1><p>This bounded fixture retains enough readable notice text to validate the existing detail extractor without asserting that a live source was fetched. Eligibility, document review, a published schedule, and contact guidance are present for evidence handling only.</p><a href=\"/files/cau003-support.pdf\" download>support.pdf</a></article></main>",
+        "known_limitations": [
+          "fixture detail is not live-source evidence",
+          "duplicate decision remains human review"
+        ],
+        "detail_evidence": {
+          "evidence_kind": "fixture_only",
+          "content_selector": "heuristic",
+          "body_text_length": 298,
+          "attachment_metadata_count": 1,
+          "attachment_download_verified": false,
+          "quality_classification": "clean",
+          "reason_codes": []
+        }
+      },
+      "deltas": {
+        "pages_checked": 1,
+        "additional_unique_item_count": 2,
+        "additional_matched_item_count": 1,
+        "false_negative_reduced_count": 1,
+        "parser_failure_reduced_count": 1,
+        "detail_resolution_improved": true,
+        "attachment_metadata_improved": true
+      }
+    },
+    {
+      "source_id": "cau_007",
+      "source_key": "cau_007",
+      "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+      "linked_risk_ids": [
+        "RISK-CAU007-ZERO-MATCH"
+      ],
+      "baseline": {
+        "source_id": "cau_007",
+        "source_key": "cau_007",
+        "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+        "source_identity_status": "resolved",
+        "linked_risk_ids": [
+          "RISK-CAU007-ZERO-MATCH"
+        ],
+        "pages_checked": 1,
+        "list_items_observed": 1,
+        "detail_urls_resolved": 1,
+        "detail_fetch_success": 1,
+        "body_parse_success": 0,
+        "body_missing_or_short": 1,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 0,
+        "zero_match_observed": true,
+        "parser_failure_count": 1,
+        "no_assets_count": 1,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 1,
+        "duplicate_or_canonical_collision_count": 0,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 1,
+        "source_health_status": "blocked",
+        "known_limitations": [
+          "source_provided_readable_body_not_captured"
+        ]
+      },
+      "after": {
+        "source_id": "cau_007",
+        "source_key": "cau_007",
+        "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+        "source_identity_status": "resolved",
+        "pages_checked": 1,
+        "list_items_observed": 1,
+        "detail_urls_resolved": 1,
+        "detail_fetch_success": 1,
+        "body_parse_success": 1,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 1,
+        "zero_match_observed": false,
+        "parser_failure_count": 0,
+        "no_assets_count": 1,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 0,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 0,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 0,
+        "source_health_status": "fixture_only_needs_public_capture",
+        "pagination_stop_reason": "manual_review_required",
+        "source_exhaustion_proven": false,
+        "detail_html": "<main><article><h1>Scholarship eligibility guidance</h1><p>This readable fixture demonstrates the existing text normalization path with no replacement characters. It is deliberately marked as fixture-only evidence and cannot establish that the live source provides an equivalent readable body.</p></article></main>",
+        "known_limitations": [
+          "source-provided readable body remains uncaptured",
+          "no public promotion"
+        ],
+        "detail_evidence": {
+          "evidence_kind": "fixture_only",
+          "content_selector": "heuristic",
+          "body_text_length": 266,
+          "attachment_metadata_count": 0,
+          "attachment_download_verified": false,
+          "quality_classification": "clean",
+          "reason_codes": []
+        }
+      },
+      "deltas": {
+        "pages_checked": 0,
+        "additional_unique_item_count": 0,
+        "additional_matched_item_count": 1,
+        "false_negative_reduced_count": 1,
+        "parser_failure_reduced_count": 1,
+        "detail_resolution_improved": false,
+        "attachment_metadata_improved": false
+      }
+    },
+    {
+      "source_id": "cau_008",
+      "source_key": "cau_008",
+      "list_url": "https://global.cau.ac.kr/kr/notice/notice.php",
+      "linked_risk_ids": [
+        "RISK-CAU008-INCOMPLETE-BATCH"
+      ],
+      "baseline": {
+        "source_id": "cau_008",
+        "source_key": "cau_008",
+        "list_url": "https://global.cau.ac.kr/kr/notice/notice.php",
+        "source_identity_status": "resolved",
+        "linked_risk_ids": [
+          "RISK-CAU008-INCOMPLETE-BATCH"
+        ],
+        "pages_checked": 1,
+        "list_items_observed": 1,
+        "detail_urls_resolved": 1,
+        "detail_fetch_success": 1,
+        "body_parse_success": 1,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 0,
+        "attachment_download_unverified": 0,
+        "matched_scholarship_items": 1,
+        "zero_match_observed": false,
+        "parser_failure_count": 1,
+        "no_assets_count": 0,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 1,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 0,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 1,
+        "source_health_status": "blocked",
+        "known_limitations": [
+          "attachment_metadata_missing",
+          "attachment_download_not_attempted"
+        ]
+      },
+      "after": {
+        "source_id": "cau_008",
+        "source_key": "cau_008",
+        "list_url": "https://global.cau.ac.kr/kr/notice/notice.php",
+        "source_identity_status": "resolved",
+        "pages_checked": 1,
+        "list_items_observed": 1,
+        "detail_urls_resolved": 1,
+        "detail_fetch_success": 1,
+        "body_parse_success": 1,
+        "body_missing_or_short": 0,
+        "attachment_metadata_present": 1,
+        "attachment_download_unverified": 1,
+        "matched_scholarship_items": 1,
+        "zero_match_observed": false,
+        "parser_failure_count": 0,
+        "no_assets_count": 0,
+        "image_only_suspected_count": 0,
+        "attachment_only_possible_count": 1,
+        "encoding_or_mojibake_suspected_count": 0,
+        "duplicate_or_canonical_collision_count": 0,
+        "timeout_count": 0,
+        "manual_review_count": 1,
+        "blocked_count": 1,
+        "source_health_status": "blocked_attachment_content_unverified",
+        "pagination_stop_reason": "manual_review_required",
+        "source_exhaustion_proven": false,
+        "detail_html": "<main><article><h1>Scholarship application materials</h1><p>The full eligibility criteria are retained in an attachment. The visible body remains insufficient to pass policy without attachment content review, so this fixture must remain blocked.</p><a href=\"/files/cau008-application.hwp\" download>application.hwp</a></article></main>",
+        "known_limitations": [
+          "attachment metadata only",
+          "download and content parsing deferred to I"
+        ],
+        "detail_evidence": {
+          "evidence_kind": "fixture_only",
+          "content_selector": "heuristic",
+          "body_text_length": 233,
+          "attachment_metadata_count": 1,
+          "attachment_download_verified": false,
+          "quality_classification": "clean",
+          "reason_codes": []
+        }
+      },
+      "deltas": {
+        "pages_checked": 0,
+        "additional_unique_item_count": 0,
+        "additional_matched_item_count": 0,
+        "false_negative_reduced_count": 0,
+        "parser_failure_reduced_count": 1,
+        "detail_resolution_improved": false,
+        "attachment_metadata_improved": true
+      }
+    }
+  ],
+  "metrics": {
+    "target_source_count": 4,
+    "improved_source_count": 3,
+    "unchanged_source_count": 1,
+    "degraded_source_count": 0,
+    "additional_unique_item_count": 6,
+    "additional_matched_item_count": 3,
+    "false_negative_reduced_count": 3,
+    "parser_failure_reduced_count": 3,
+    "detail_resolution_improved_count": 1,
+    "attachment_metadata_improved_count": 2,
+    "no_assets_reclassified_count": 0,
+    "public_exposure_change_count": 0,
+    "baseline": {
+      "list_items": 6,
+      "detail_resolved": 2,
+      "body_parsed": 1,
+      "attachment_metadata": 0,
+      "matched_items": 1,
+      "zero_match": 3,
+      "parser_failures": 3,
+      "no_assets": 5,
+      "manual_review": 4,
+      "blocked": 3
+    },
+    "after": {
+      "list_items": 12,
+      "detail_resolved": 3,
+      "body_parsed": 3,
+      "attachment_metadata": 2,
+      "matched_items": 4,
+      "zero_match": 0,
+      "parser_failures": 0,
+      "no_assets": 8,
+      "manual_review": 4,
+      "blocked": 1
+    }
+  }
+}

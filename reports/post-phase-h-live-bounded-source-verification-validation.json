@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-07-14T07:06:30.319Z",
+  "contract_version": "post-phase-h-live-bounded-source-verification-validation/v1",
+  "status": "PASS",
+  "exit_condition": "all_targets_have_evidence_backed_unresolved_causes",
+  "checks": [
+    "exact bounded source allowlist",
+    "read-only safety",
+    "public exposure preserved",
+    "bounded requests",
+    "provenance fields",
+    "cau_002 fail closed",
+    "unverified generic list mapping is not credited",
+    "no attachment download",
+    "fixture and live evidence separated",
+    "sanitized minimal fixture",
+    "no persisted absolute path"
+  ],
+  "metrics": {
+    "target_source_count": 4,
+    "live_evidence_captured_count": 0,
+    "live_evidence_insufficient_count": 3,
+    "live_verification_blocked_count": 1,
+    "public_exposure_change_count": 0,
+    "attachment_download_attempt_count": 0
+  },
+  "safety": {
+    "db_access": false,
+    "db_write": false,
+    "supabase_access": false,
+    "migration": false,
+    "production_apply": false,
+    "operational_crawler_workflow_execution": false,
+    "full_crawl": false,
+    "public_exposure_auto_expansion": false
+  }
+}
