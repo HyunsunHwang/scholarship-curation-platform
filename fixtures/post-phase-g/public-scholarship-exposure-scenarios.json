@@ -1,0 +1,12 @@
+{
+  "contract_version": "post-phase-g-public-scholarship-exposure/v1",
+  "policy": "fail_closed_public_exposure",
+  "scenarios": [
+    { "canonical_key": "cau_001:f0-clean", "expected_exposure_status": "public" },
+    { "canonical_key": "cau_002:f0-no-assets", "expected_exposure_status": "public" },
+    { "canonical_key": "cau_003:f0-duplicate", "expected_exposure_status": "hidden_review_required" },
+    { "canonical_key": "unresolved_999:f0", "expected_exposure_status": "hidden_unresolved_source" },
+    { "canonical_key": "cau_007:f0-zero-match", "expected_exposure_status": "hidden_blocked" },
+    { "canonical_key": "cau_008:f0-incomplete", "expected_exposure_status": "hidden_review_required" }
+  ]
+}

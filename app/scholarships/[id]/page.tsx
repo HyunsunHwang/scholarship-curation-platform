@@ -22,6 +22,11 @@ import {
 import { SCHOLARSHIP_DETAIL_SELECT } from "@/lib/detail-select";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 import type { Database } from "@/lib/database.types";
+import { PublicScholarshipDetail } from "@/components/public-scholarships/PublicScholarshipDetail";
+import {
+  getPublicScholarshipDetail,
+  isPublicScholarshipId,
+} from "@/lib/scholarships/public-scholarship-read-model";
 
 type ScholarshipRow = Database["public"]["Tables"]["scholarships"]["Row"];
 
@@ -91,6 +96,12 @@ export default async function ScholarshipDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  if (isPublicScholarshipId(id)) {
+    const publicScholarship = getPublicScholarshipDetail(id);
+    if (!publicScholarship) notFound();
+    return <PublicScholarshipDetail scholarship={publicScholarship} />;
+  }
+
   const scholarshipId = parseInt(id, 10);
   if (isNaN(scholarshipId)) notFound();
 

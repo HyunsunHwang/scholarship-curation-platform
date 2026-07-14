@@ -1,0 +1,337 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "contract_version": "post-phase-g-user-facing-scholarship-mvp/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "supabase_access": false,
+  "migration": false,
+  "crawler_execution": false,
+  "input_reports": {
+    "f0_adapter_foundation": "reports/post-phase-f0-adapter-foundation.json",
+    "f1_admin_review_integration": "reports/post-phase-f1-admin-review-integration.json",
+    "exposure_scenarios": "fixtures/post-phase-g/public-scholarship-exposure-scenarios.json"
+  },
+  "exposure_policy": {
+    "mode": "fail_closed_public_exposure",
+    "public_requirements": [
+      "exact_resolved_source_identity",
+      "clean_review_status",
+      "no_admin_review_required",
+      "unique_duplicate_status",
+      "accepted_quality",
+      "healthy_successful_batch",
+      "minimum_public_evidence"
+    ],
+    "hidden_states": [
+      "hidden_unresolved_source",
+      "hidden_review_required",
+      "hidden_blocked",
+      "hidden_duplicate_risk",
+      "hidden_quality_risk",
+      "hidden_missing_evidence"
+    ],
+    "no_automatic_source_creation": true,
+    "no_fuzzy_source_matching": true,
+    "attachment_downloads_verified": false
+  },
+  "metrics": {
+    "input_candidate_count": 13,
+    "public_item_count": 2,
+    "hidden_item_count": 11,
+    "exposure_status_counts": {
+      "public": 2,
+      "hidden_review_required": 4,
+      "hidden_unresolved_source": 5,
+      "hidden_blocked": 2
+    },
+    "scenario_pass_count": 6,
+    "scenario_fail_count": 0,
+    "deterministic_output": true,
+    "public_detail_route": "/scholarships/[id]",
+    "db_access": false,
+    "db_write": false
+  },
+  "public_items": [
+    {
+      "id": "public-cau-002-f0-no-assets",
+      "canonical_key": "cau_002:f0-no-assets",
+      "title": "Resolved text sufficient without assets",
+      "organization": "CAU_002",
+      "category": "Department notice",
+      "target_labels": [
+        "undergraduate"
+      ],
+      "keyword_labels": [],
+      "published_at": "2026-07-02",
+      "source_url": "https://example.edu/f0/no-assets",
+      "no_assets": true,
+      "attachment_count": 0,
+      "provenance_label": "Reviewed scholarship information"
+    },
+    {
+      "id": "public-cau-001-f0-clean",
+      "canonical_key": "cau_001:f0-clean",
+      "title": "Resolved clean adapter candidate",
+      "organization": "CAU_001",
+      "category": "Department notice",
+      "target_labels": [
+        "undergraduate"
+      ],
+      "keyword_labels": [
+        "scholarship"
+      ],
+      "published_at": "2026-07-01",
+      "source_url": "https://example.edu/f0/clean",
+      "no_assets": false,
+      "attachment_count": 1,
+      "provenance_label": "Reviewed scholarship information"
+    }
+  ],
+  "exposure_decisions": [
+    {
+      "canonical_key": "cau_001:f0-clean",
+      "source_id": "cau_001",
+      "exposure_status": "public",
+      "source_resolution_status": "resolved",
+      "review_status": "clean",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "keyword_not_detected",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "manual_spot_check_required"
+      ],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_002:f0-no-assets",
+      "source_id": "cau_002",
+      "exposure_status": "public",
+      "source_resolution_status": "resolved",
+      "review_status": "clean",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "no_assets",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "pagination_depth_limited",
+        "manual_spot_check_required"
+      ],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_003:f0-duplicate",
+      "source_id": "cau_003",
+      "exposure_status": "hidden_review_required",
+      "source_resolution_status": "resolved",
+      "review_status": "needs_review",
+      "duplicate_status": "duplicate_existing",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "second_pass_parser_recommended",
+        "detail_body_not_parsed",
+        "short_body",
+        "body_missing",
+        "selector_mismatch",
+        "body_too_short",
+        "image_only_suspected",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "detail_fetch_or_body_parse_issue",
+        "manual_spot_check_required"
+      ],
+      "f3_risk_codes": [
+        "short_body"
+      ]
+    },
+    {
+      "canonical_key": "cau_004:f0-quality",
+      "source_id": "cau_004",
+      "exposure_status": "hidden_review_required",
+      "source_resolution_status": "resolved",
+      "review_status": "needs_review",
+      "duplicate_status": "unique",
+      "quality_status": "short_body_needs_review",
+      "parser_failure_reason_codes": [
+        "short_body",
+        "keyword_miss_suspected",
+        "true_no_recent_scholarship_possible",
+        "manual_spot_check_required"
+      ],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "unresolved_999:f0",
+      "source_id": null,
+      "exposure_status": "hidden_unresolved_source",
+      "source_resolution_status": "unresolved",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "ambiguous_source:f0",
+      "source_id": null,
+      "exposure_status": "hidden_unresolved_source",
+      "source_resolution_status": "ambiguous",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "missing-key:f0",
+      "source_id": null,
+      "exposure_status": "hidden_unresolved_source",
+      "source_resolution_status": "missing_source_key",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_006:f0-image-only",
+      "source_id": "cau_006",
+      "exposure_status": "hidden_review_required",
+      "source_resolution_status": "resolved",
+      "review_status": "needs_review",
+      "duplicate_status": "unique",
+      "quality_status": "image_only_suspected",
+      "parser_failure_reason_codes": [
+        "image_only_suspected",
+        "second_pass_parser_recommended",
+        "body_too_short"
+      ],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_007:f0-zero-match",
+      "source_id": "cau_007",
+      "exposure_status": "hidden_blocked",
+      "source_resolution_status": "resolved",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "encoding_or_mojibake_suspected",
+        "body_mojibake_detected",
+        "encoding_suspected",
+        "replacement_character_detected"
+      ],
+      "f3_risk_codes": [
+        "encoding_or_mojibake_suspected"
+      ]
+    },
+    {
+      "canonical_key": "cau_008:f0-incomplete",
+      "source_id": "cau_008",
+      "exposure_status": "hidden_review_required",
+      "source_resolution_status": "resolved",
+      "review_status": "needs_review",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "attachment_only_possible",
+        "attachment_metadata_missing",
+        "attachment_parser_recommended"
+      ],
+      "f3_risk_codes": [
+        "attachment_only_possible"
+      ]
+    },
+    {
+      "canonical_key": "future_alias_key:f0",
+      "source_id": null,
+      "exposure_status": "hidden_unresolved_source",
+      "source_resolution_status": "source_key_alias_required",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_009:f0",
+      "source_id": "cau_009",
+      "exposure_status": "hidden_unresolved_source",
+      "source_resolution_status": "inactive_source",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [],
+      "f3_risk_codes": []
+    },
+    {
+      "canonical_key": "cau_010:f0",
+      "source_id": "cau_010",
+      "exposure_status": "hidden_blocked",
+      "source_resolution_status": "resolved",
+      "review_status": "blocked",
+      "duplicate_status": "unique",
+      "quality_status": "accepted",
+      "parser_failure_reason_codes": [
+        "second_pass_parser_recommended",
+        "short_body",
+        "detail_fetch_failed",
+        "body_too_short",
+        "image_only_suspected",
+        "attachment_metadata_present",
+        "attachment_download_unverified"
+      ],
+      "f3_risk_codes": [
+        "short_body"
+      ]
+    }
+  ],
+  "scenario_checks": [
+    {
+      "canonical_key": "cau_001:f0-clean",
+      "expected_exposure_status": "public",
+      "actual_exposure_status": "public",
+      "pass": true
+    },
+    {
+      "canonical_key": "cau_002:f0-no-assets",
+      "expected_exposure_status": "public",
+      "actual_exposure_status": "public",
+      "pass": true
+    },
+    {
+      "canonical_key": "cau_003:f0-duplicate",
+      "expected_exposure_status": "hidden_review_required",
+      "actual_exposure_status": "hidden_review_required",
+      "pass": true
+    },
+    {
+      "canonical_key": "unresolved_999:f0",
+      "expected_exposure_status": "hidden_unresolved_source",
+      "actual_exposure_status": "hidden_unresolved_source",
+      "pass": true
+    },
+    {
+      "canonical_key": "cau_007:f0-zero-match",
+      "expected_exposure_status": "hidden_blocked",
+      "actual_exposure_status": "hidden_blocked",
+      "pass": true
+    },
+    {
+      "canonical_key": "cau_008:f0-incomplete",
+      "expected_exposure_status": "hidden_review_required",
+      "actual_exposure_status": "hidden_review_required",
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Post-Phase G exposes only a reviewed, policy-approved subset of scholarship data.",
+    "It does not claim complete source coverage, parser completeness, or national scholarship completeness.",
+    "Attachment downloads and attachment contents remain unverified in this MVP.",
+    "This adapter does not persist review decisions or apply data to a production schema."
+  ]
+}
