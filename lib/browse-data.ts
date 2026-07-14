@@ -1,4 +1,5 @@
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import { clipNoticeForCard } from "@/lib/support-amount";
 import type { ContentCategoryKey } from "@/lib/content-categories";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
@@ -281,6 +282,9 @@ function mapContestRow(
     organization: string;
     organization_type: string | null;
     support_amount_text: string | null;
+    benefits?: string[] | null;
+    note?: string | null;
+    original_notice_text?: string | null;
     apply_end_date: string | null;
     poster_image_url: string | null;
     created_at: string;
@@ -299,6 +303,9 @@ function mapContestRow(
     institution_type: contest.organization_type || "기타",
     support_types: [],
     support_amount_text: contest.support_amount_text,
+    benefits: contest.benefits ?? null,
+    benefit_note: contest.note ?? null,
+    benefit_notice_text: clipNoticeForCard(contest.original_notice_text),
     apply_end_date: contest.apply_end_date ?? today,
     poster_image_url: contest.poster_image_url,
     created_at: contest.created_at,
@@ -330,7 +337,7 @@ async function fetchContestPage(opts: {
   let query = supabase
     .from("contests")
     .select(
-      "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
       { count: "exact" }
     )
     .eq("is_verified", true)

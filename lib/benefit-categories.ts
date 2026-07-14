@@ -44,7 +44,7 @@ export const BENEFIT_CATEGORIES = [
   { id: "event", label: "행사 참여" },
   { id: "networking", label: "교류" },
   { id: "lodging", label: "숙식" },
-  { id: "goods", label: "사은품" },
+  { id: "goods", label: "상품" },
   { id: "discount", label: "할인" },
   { id: "other", label: "기타" },
 ] as const;
@@ -154,12 +154,22 @@ const EXACT_BENEFIT_MAP: Record<string, BenefitCategoryId[]> = {
   "해외연수, 전시기회": ["overseas", "exhibition"],
   "인턴/정규직채용": ["internship", "hiring"],
   "입사시 가산점": ["hiring_bonus"],
+  상품: ["goods"],
+  "상품 지급": ["goods"],
+  "상품 제공": ["goods"],
+  "상품 수여": ["goods"],
+  경품: ["goods"],
+  "경품 지급": ["goods"],
+  현물: ["goods"],
+  시상품: ["goods"],
+  부상: ["goods"],
   // activity
   "수료증 및 인증서": ["certificate"],
   봉사활동시간: ["volunteer_hours"],
   활동비: ["activity_fee"],
   "행사 참여": ["event"],
   "사은품 지급": ["goods"],
+  사은품: ["goods"],
   "실무 교육": ["training"],
   "전문가/임직원 멘토링": ["mentoring"],
   교통비: ["transport_fee"],
@@ -171,14 +181,15 @@ const EXACT_BENEFIT_MAP: Record<string, BenefitCategoryId[]> = {
 const RAW_BENEFIT_ALIASES: { match: RegExp; ids: BenefitCategoryId[] }[] = [
   { match: /국비|K-?\s*디지털|내일배움|HRD|직업훈련/, ids: ["gov_support"] },
   { match: /교육비[^\n]{0,24}(무료|지원)|무료\s*(교육|수강|과정)|전액\s*무료|국비전액무료/, ids: ["free_edu"] },
-  { match: /상장|장관상|총리상|대상|표창|상패/, ids: ["award"] },
+  { match: /상장|장관상|총리상|표창|상패|대상\s*수여/, ids: ["award"] },
   { match: /수료증|인증서|디지털\s*인증/, ids: ["certificate"] },
   { match: /자격증|물류관리사|국제무역사/, ids: ["license"] },
   { match: /위촉장|기자증/, ids: ["appointment"] },
   { match: /봉사\s*(활동\s*)?시간|1365/, ids: ["volunteer_hours"] },
   { match: /활동비|체재비|용돈|경비/, ids: ["activity_fee"] },
   { match: /교통비/, ids: ["transport_fee"] },
-  { match: /상금|포상금|부상/, ids: ["prize"] },
+  // 현금 상금만 — 부상(현물)·상품과 구분
+  { match: /상금|포상금|현금\s*시상/, ids: ["prize"] },
   { match: /장학금/, ids: ["academic"] },
   { match: /인턴/, ids: ["internship"] },
   { match: /입사\s*시?\s*가산|가산점/, ids: ["hiring_bonus"] },
@@ -194,7 +205,12 @@ const RAW_BENEFIT_ALIASES: { match: RegExp; ids: BenefitCategoryId[] }[] = [
   { match: /행사\s*참여|프로그램\s*참여/, ids: ["event"] },
   { match: /네트워킹|교류\s*경험|네트워크/, ids: ["networking"] },
   { match: /숙소|숙박|숙식|기숙사|식사\s*제공|중식|간식/, ids: ["lodging"] },
-  { match: /사은품|기념품|굿즈|상품권|기프티콘|경품|현물|상품\s*(지급|증정)|아이패드|갤럭시|맥북|티셔츠|메달/, ids: ["goods"] },
+  // 공모전 상품·경품·현물 부상 (단독 "상품" 포함)
+  {
+    match:
+      /시상품|경품|현물|부상|사은품|기념품|굿즈|상품권|기프티콘|상품(?:\s*(?:지급|제공|수여|증정))?|아이패드|갤럭시|맥북|에어팟|태블릿|노트북|스마트폰|티셔츠|메달|트로피/,
+    ids: ["goods"],
+  },
   { match: /할인|구독권|무료\s*관람/, ids: ["discount"] },
   { match: /^기타$/, ids: ["other"] },
 ];
@@ -323,6 +339,35 @@ function inferEducationBenefits(name?: string | null, noticeText?: string | null
   return ids;
 }
 
+/** 공모전·대외활동: 섹션 파싱 실패 시 본문에서 상품·상장 등 추론 */
+function inferContestActivityBenefits(
+  name?: string | null,
+  noticeText?: string | null
+): BenefitCategoryId[] {
+  const blob = `${name ?? ""}\n${(noticeText ?? "").slice(0, 2500)}`;
+  if (!blob.trim()) return [];
+
+  const ids: BenefitCategoryId[] = [];
+  const rules: { match: RegExp; id: BenefitCategoryId }[] = [
+    {
+      match:
+        /시상품|경품|현물|부상|사은품|기념품|굿즈|상품권|기프티콘|상품(?:\s*(?:지급|제공|수여|증정))?|아이패드|갤럭시|맥북|에어팟|태블릿|노트북/,
+      id: "goods",
+    },
+    { match: /상장|표창|상패|트로피|메달|대상\s*수여/, id: "award" },
+    { match: /상금|포상금|현금\s*시상/, id: "prize" },
+    { match: /전시|상영|발표\s*기회/, id: "exhibition" },
+    { match: /인턴|채용\s*연계/, id: "internship" },
+    { match: /수료증|위촉장/, id: "certificate" },
+  ];
+
+  for (const rule of rules) {
+    if (rule.match.test(blob) && !ids.includes(rule.id)) ids.push(rule.id);
+    if (ids.length >= 5) break;
+  }
+  return ids;
+}
+
 /**
  * AI 정리 원문(가./나. 섹션)에서 시상·혜택·특전 등 관련 섹션만 골라 코퍼스로 만든다.
  * 해당 섹션이 없으면 null (호출측이 폴백).
@@ -339,7 +384,7 @@ export function extractBenefitCorpusFromNotice(noticeText?: string | null): {
   const parts: string[] = [];
 
   const BENEFIT_SECTION_RE =
-    /(시상|혜택|특전|상금|부상|수혜|포상|지원\s*(금액|내역|내용|규모)|제공\s*혜택|활동\s*혜택|교육\s*수강\s*시|취득\s*가능\s*한?\s*자격|자격증|취업\s*지원|숙소|기숙사|봉사\s*시간|수료)/;
+    /(시상|혜택|특전|상금|부상|수혜|포상|상품|경품|현물|시상품|지원\s*(금액|내역|내용|규모)|제공\s*혜택|활동\s*혜택|교육\s*수강\s*시|취득\s*가능\s*한?\s*자격|자격증|취업\s*지원|숙소|기숙사|봉사\s*시간|수료)/;
 
   for (const block of blocks) {
     if (block.kind !== "section") continue;
@@ -368,8 +413,16 @@ function mapNoticeCorpusToIds(corpus: string): BenefitCategoryId[] {
     }
   }
 
-  if (!ids.includes("prize") && /\d+\s*만\s*원/.test(corpus) && /시상|상금|포상|부상/.test(corpus)) {
+  if (!ids.includes("prize") && /\d+\s*만\s*원/.test(corpus) && /시상|상금|포상|현금/.test(corpus)) {
     ids.unshift("prize");
+  }
+  if (
+    !ids.includes("goods") &&
+    /시상품|경품|현물|부상|상품(?:\s*(?:지급|제공|수여|증정))?|사은품|아이패드|맥북|갤럭시/.test(
+      corpus
+    )
+  ) {
+    ids.push("goods");
   }
 
   return ids;
@@ -403,6 +456,13 @@ export function resolveContestBenefits(opts: {
     }
   } else if (opts.contentKind === "education" && opts.noticeText?.trim()) {
     for (const id of inferEducationBenefits(opts.name, opts.noticeText)) {
+      pushUnique(out, id);
+    }
+  } else if (
+    (opts.contentKind === "contest" || opts.contentKind === "activity") &&
+    opts.noticeText?.trim()
+  ) {
+    for (const id of inferContestActivityBenefits(opts.name, opts.noticeText)) {
       pushUnique(out, id);
     }
   }
@@ -443,6 +503,26 @@ export function resolveContestBenefits(opts: {
   if (opts.contentKind === "education" && out.length === 0) {
     for (const id of inferEducationBenefits(opts.name, opts.noticeText)) {
       pushUnique(out, id);
+    }
+  }
+
+  if (
+    (opts.contentKind === "contest" || opts.contentKind === "activity") &&
+    out.length === 0
+  ) {
+    for (const id of inferContestActivityBenefits(opts.name, opts.noticeText)) {
+      pushUnique(out, id);
+    }
+  }
+
+  // 시상 섹션만 잡히고 상품 키워드가 본문에만 있는 경우 보강
+  if (
+    (opts.contentKind === "contest" || opts.contentKind === "activity") &&
+    !out.some((b) => b.id === "goods") &&
+    opts.noticeText?.trim()
+  ) {
+    for (const id of inferContestActivityBenefits(opts.name, opts.noticeText)) {
+      if (id === "goods") pushUnique(out, id);
     }
   }
 

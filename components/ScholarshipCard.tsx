@@ -3,7 +3,7 @@ import Image from "next/image";
 import CardBookmarkButton from "@/components/CardBookmarkButton";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
-import { formatSupportAmount } from "@/lib/support-amount";
+import { formatCardSupportLine } from "@/lib/support-amount";
 import { contentKindHref } from "@/lib/content-categories";
 
 export type CardScholarship = {
@@ -13,6 +13,12 @@ export type CardScholarship = {
   institution_type: string;
   support_types: string[];
   support_amount_text?: string | null;
+  /** 공모전·교육·대외활동 혜택 키워드 (목록 하단 폴백용) */
+  benefits?: string[] | null;
+  /** additionalBenefit 등 */
+  benefit_note?: string | null;
+  /** 목록 키워드 보강용 원문 스니펫 */
+  benefit_notice_text?: string | null;
   apply_end_date: string;
   poster_image_url?: string | null;
   created_at: string;
@@ -71,7 +77,13 @@ export default function ScholarshipCard({
   const color = deadlineColor(scholarship.apply_end_date);
   const deadlineLabel = formatDeadline(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
-  const supportAmount = formatSupportAmount(scholarship.support_amount_text);
+  const supportAmount = formatCardSupportLine({
+    contentKind: scholarship.content_kind,
+    supportAmountText: scholarship.support_amount_text,
+    benefits: scholarship.benefits,
+    additionalNote: scholarship.benefit_note,
+    noticeText: scholarship.benefit_notice_text,
+  });
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
   const kind = scholarship.content_kind ?? "scholarship";
   const isContestLike =

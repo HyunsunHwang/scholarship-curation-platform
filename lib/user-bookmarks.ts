@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
+import { clipNoticeForCard } from "@/lib/support-amount";
 
 export { cardBookmarkKey } from "@/lib/bookmark-keys";
 
@@ -69,7 +70,7 @@ export async function getBookmarkedScholarships(
       ? supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
           )
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
@@ -117,6 +118,9 @@ export async function getBookmarkedScholarships(
         institution_type: c.organization_type || "기타",
         support_types: [] as string[],
         support_amount_text: c.support_amount_text,
+        benefits: c.benefits ?? null,
+        benefit_note: c.note ?? null,
+        benefit_notice_text: clipNoticeForCard(c.original_notice_text),
         apply_end_date: endDate,
         poster_image_url: c.poster_image_url ?? null,
         created_at: c.created_at,

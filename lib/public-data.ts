@@ -3,6 +3,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
+import { clipNoticeForCard } from "@/lib/support-amount";
 
 type SiteSettingsLogoRow = Pick<
   Database["public"]["Tables"]["site_settings"]["Row"],
@@ -192,7 +193,7 @@ export const getCachedHomeContests = unstable_cache(
     const { data, error } = await supabase
       .from("contests")
       .select(
-        "id, name, organization, organization_type, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
+        "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
@@ -219,6 +220,9 @@ export const getCachedHomeContests = unstable_cache(
       institution_type: contest.organization_type || "기타",
       support_types: [] as string[],
       support_amount_text: contest.support_amount_text,
+      benefits: contest.benefits ?? null,
+      benefit_note: contest.note ?? null,
+      benefit_notice_text: clipNoticeForCard(contest.original_notice_text),
       apply_end_date: contest.apply_end_date ?? today,
       poster_image_url: contest.poster_image_url,
       created_at: contest.created_at,
@@ -233,7 +237,7 @@ export const getCachedHomeContests = unstable_cache(
         | "activity",
     }));
   },
-  ["home-contests-v5"],
+  ["home-contests-v7"],
   { revalidate: 60 }
 );
 
