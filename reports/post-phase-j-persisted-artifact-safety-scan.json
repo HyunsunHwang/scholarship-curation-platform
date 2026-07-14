@@ -1,0 +1,34 @@
+{
+  "scope": [
+    "docs/post-phase-j-current-schema-inventory.md",
+    "docs/post-phase-j-canonical-schema-proposal.md",
+    "docs/post-phase-j-consumer-compatibility-matrix.md",
+    "docs/post-phase-j-additive-migration-sequence.md",
+    "docs/post-phase-j-backfill-reconciliation-plan.md",
+    "docs/post-phase-j-rollback-recovery-plan.md",
+    "docs/post-phase-j-guarded-production-apply-design.md",
+    "docs/post-phase-j-target-schema-inventory-request.md",
+    "docs/post-phase-j-implementation-readiness.md",
+    "reports/post-phase-j-canonical-schema-proposal.json",
+    "reports/post-phase-j-schema-production-migration-planning.json",
+    "reports/post-phase-master-risk-register.json"
+  ],
+  "total_match_count": 2,
+  "actual_persisted_secret_count": 0,
+  "unclassified_match_count": 0,
+  "actual_persisted_absolute_path_count": 0,
+  "matches": [
+    {
+      "file": "docs/post-phase-j-target-schema-inventory-request.md",
+      "line": 16,
+      "matched_pattern": "token",
+      "classification": "documentation_or_governance_text"
+    },
+    {
+      "file": "docs/post-phase-j-target-schema-inventory-request.md",
+      "line": 16,
+      "matched_pattern": "cookie",
+      "classification": "documentation_or_governance_text"
+    }
+  ]
+}

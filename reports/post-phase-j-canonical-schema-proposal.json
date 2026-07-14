@@ -1,0 +1,58 @@
+{
+  "contract_version": "post-phase-j-canonical-schema-proposal/v1",
+  "source_authority": {
+    "canonical_internal_source_identifier": "notice_sources.source_id",
+    "crawler_natural_key": "source_key",
+    "resolution": "exact_only",
+    "fuzzy_matching": false,
+    "automatic_source_creation": false
+  },
+  "architecture": [
+    "normalized_ingestion_graph",
+    "append_only_review_decision_events",
+    "public_scholarship_projection"
+  ],
+  "notice_identity": {
+    "primary": "source_id + external_article_id when stable external article ID is available",
+    "fallback": "source_id + canonical_detail_url_hash",
+    "content_hash": "revision_change_detection_only",
+    "url_aliases_required": true,
+    "absence_is_deletion_evidence": false
+  },
+  "value_separation": {
+    "raw_observation": "immutable occurrence evidence",
+    "normalized_extraction": "versioned parser output",
+    "human_decision": "append-only review event",
+    "human_edit": "review-event referenced approved value",
+    "effective_approved": "derived review projection",
+    "public_value": "existing scholarships projection"
+  },
+  "entities": [
+    {"name":"ingestion_crawl_runs","first_stage":true,"lifecycle":"append_only","purpose":"crawl execution provenance"},
+    {"name":"ingestion_source_run_results","first_stage":true,"lifecycle":"append_only","purpose":"per-source run evidence"},
+    {"name":"ingestion_notices","first_stage":true,"lifecycle":"stable_identity","purpose":"canonical source-scoped notice"},
+    {"name":"ingestion_notice_url_aliases","first_stage":true,"lifecycle":"add_only","purpose":"redirect and alternate URL evidence"},
+    {"name":"ingestion_notice_occurrences","first_stage":true,"lifecycle":"append_only","purpose":"raw source observation"},
+    {"name":"ingestion_notice_revisions","first_stage":true,"lifecycle":"append_only","purpose":"normalized versioned extraction"},
+    {"name":"ingestion_notice_assets","first_stage":true,"lifecycle":"append_only","purpose":"asset metadata and optional storage reference"},
+    {"name":"review_items","first_stage":true,"lifecycle":"operational_case","purpose":"review target"},
+    {"name":"review_decision_events","first_stage":true,"lifecycle":"append_only","purpose":"human decision audit trail"},
+    {"name":"review_evidence_references","first_stage":true,"lifecycle":"append_only","purpose":"event evidence links"},
+    {"name":"review_effective_decisions","first_stage":true,"lifecycle":"rebuildable_projection","purpose":"current effective approved state"},
+    {"name":"scholarship_projection_mappings","first_stage":false,"deferred":true,"lifecycle":"rebuildable_projection","purpose":"existing scholarships compatibility"},
+    {"name":"ingestion_asset_extractions","first_stage":false,"deferred":true,"lifecycle":"append_only","purpose":"future OCR/extracted-text evidence"}
+  ],
+  "compatibility": {
+    "scholarships": "unchanged_first_stage_numeric_id_and_route_preserved",
+    "crawled_notices": "physical_legacy_table_no_dual_write_in_j",
+    "public_projection": "future_only_after_separate_approval",
+    "llm_persistence": false
+  },
+  "safety": {
+    "automatic_approval": false,
+    "automatic_rejection": false,
+    "production_dual_write": false,
+    "destructive_cutover": false,
+    "attachment_download_or_ocr": false
+  }
+}

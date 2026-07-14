@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "contract_version": "post-phase-j-schema-production-migration-planning/v1",
+  "base_commit": "8b8cd838b1ab328b9972fd34dcc2e292e0b65b1c",
+  "branch": "feat/post-phase-j-schema-production-migration-planning",
+  "post_phase_j_planning_status": "PASS",
+  "production_migration_implementation_readiness": "NOT_READY",
+  "production_apply_readiness": "NOT_READY",
+  "repository_tables_inspected": ["notice_sources", "crawled_notices", "scholarships", "site_settings", "scholarship_target_units", "scholarship_selection_stages", "org_units", "crawled_contests", "contests"],
+  "proposed_entities": ["ingestion_crawl_runs", "ingestion_source_run_results", "ingestion_notices", "ingestion_notice_url_aliases", "ingestion_notice_occurrences", "ingestion_notice_revisions", "ingestion_notice_assets", "review_items", "review_decision_events", "review_evidence_references", "review_effective_decisions", "scholarship_projection_mappings", "ingestion_asset_extractions"],
+  "first_stage_entities": ["ingestion_crawl_runs", "ingestion_source_run_results", "ingestion_notices", "ingestion_notice_url_aliases", "ingestion_notice_occurrences", "ingestion_notice_revisions", "ingestion_notice_assets", "review_items", "review_decision_events", "review_evidence_references", "review_effective_decisions"],
+  "deferred_entities": ["scholarship_projection_mappings", "ingestion_asset_extractions", "persistent_llm_suggestions"],
+  "compatibility_consumers": ["notice_sources", "crawled_notices", "scholarships", "site_settings", "admin_review", "admin_scholarship_crud", "public_scholarship_list", "public_scholarship_detail", "report_backed_g_read_model", "normalized_graph_adapter"],
+  "migration_work_units": ["J-M0", "J-M1", "J-M2", "J-M3", "J-M4", "J-M5", "J-M6", "J-M7"],
+  "backfill_classes": ["exactly_mappable", "mappable_with_review", "ambiguous_identity", "missing_source", "missing_notice_evidence", "legacy_public_only", "excluded_from_backfill"],
+  "rollback_gates": ["legacy_data_retained", "scoped_audit_key", "projection_rebuild", "schema_divergence_stop"],
+  "apply_gates": ["environment_allowlist", "confirmation_phrase", "dry_run_artifact", "schema_fingerprint", "backup_reference", "reconciliation"],
+  "required_target_inventory_items": ["tables", "columns_and_types", "pk_fk_constraints", "unique_constraints", "indexes", "rls_policies", "approximate_row_counts", "migration_history", "site_settings_presence", "crawled_notices_constraints", "scholarships_constraints", "schema_fingerprint"],
+  "unresolved_risks": ["RISK-TARGET-SCHEMA-INVENTORY", "RISK-MIGRATION-HISTORY-DIVERGENCE", "RISK-BACKFILL-IDENTITY-AMBIGUITY", "RISK-RLS-COMPATIBILITY", "RISK-PUBLIC-PROJECTION-RECONCILIATION"],
+  "blocking_risks": ["RISK-TARGET-SCHEMA-INVENTORY", "RISK-MIGRATION-HISTORY-DIVERGENCE", "RISK-BACKFILL-IDENTITY-AMBIGUITY", "RISK-RLS-COMPATIBILITY", "RISK-PUBLIC-PROJECTION-RECONCILIATION"],
+  "prohibited_action_counts": {
+    "db_access_count": 0, "db_write_count": 0, "migration_file_created_count": 0, "migration_apply_count": 0, "backfill_execution_count": 0, "crawler_execution_count": 0, "external_provider_call_count": 0, "public_exposure_mutation_count": 0, "review_state_mutation_count": 0
+  },
+  "limitations": ["Target environment schema inventory has not been collected.", "Migration SQL has not been written or reviewed.", "No non-production rehearsal or backfill execution occurred.", "No production authorization exists.", "External LLM quality evaluation remains deferred."]
+}
