@@ -5,6 +5,7 @@ import {
   parseAdminCrawlerReviewFilter,
   type AdminCrawlerReviewFilter,
 } from "@/lib/admin/crawler-review-diagnostics";
+import { getLlmReviewAssistanceReport } from "@/lib/admin/llm-review-assistance";
 
 const FILTERS: Array<{ key: AdminCrawlerReviewFilter; label: string }> = [
   { key: "all", label: "All" },
@@ -34,6 +35,7 @@ export default async function AdminCrawlerReviewPage({
 }) {
   const filter = parseAdminCrawlerReviewFilter((await searchParams)?.filter);
   const report = getAdminCrawlerReviewDiagnostics();
+  const llmAssistance = getLlmReviewAssistanceReport();
   const diagnostics = filterAdminCrawlerReviewDiagnostics(report.diagnostics, filter);
   const cards = [
     ["Total diagnostics", report.metrics.diagnostic_item_count],
@@ -69,6 +71,16 @@ export default async function AdminCrawlerReviewPage({
         <ul className="mt-2 space-y-1 text-amber-800">
           {report.scope_notices.map((notice) => <li key={notice}>{notice}</li>)}
         </ul>
+      </section>
+
+      <section className="rounded-lg border border-violet-200 bg-violet-50 p-4 text-sm text-violet-950">
+        <p className="font-semibold">AI review assistance prototype</p>
+        <p className="mt-1">AI suggestions are evidence-linked review assistance only. Human judgment is required; approval, rejection, persistence, and public exposure are disabled.</p>
+        <dl className="mt-3 grid gap-2 sm:grid-cols-3">
+          <div><dt className="text-xs font-medium text-violet-700">Mode</dt><dd>{llmAssistance.execution_mode}</dd></div>
+          <div><dt className="text-xs font-medium text-violet-700">Evaluation cases</dt><dd>{llmAssistance.metrics.evaluation_case_count}</dd></div>
+          <div><dt className="text-xs font-medium text-violet-700">Public exposure change</dt><dd>{llmAssistance.metrics.public_exposure_change_count}</dd></div>
+        </dl>
       </section>
 
       <section>

@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "execution_mode": "deterministic_replay",
+  "metrics": {
+    "evaluation_case_count": 9,
+    "excluded_zero_match_count": 1,
+    "source_count": 4,
+    "schema_valid_count": 9,
+    "evidence_link_valid_count": 9,
+    "unsupported_claim_count": 0,
+    "hallucinated_field_count": 0,
+    "missing_evidence_count": 5,
+    "contradiction_detected_count": 0,
+    "manual_review_required_count": 2,
+    "parser_fix_required_count": 2,
+    "attachment_check_required_count": 1,
+    "review_supported_count": 2,
+    "auto_approve_attempt_count": 0,
+    "public_exposure_attempt_count": 0,
+    "provider_failure_count": 1,
+    "fail_closed_fallback_count": 1,
+    "public_exposure_before": 2,
+    "public_exposure_after": 2,
+    "public_exposure_change_count": 0,
+    "review_state_change_count": 0,
+    "automatic_decision_count": 0
+  },
+  "limitations": [
+    "Deterministic replay validates contract behavior, not external model quality.",
+    "No provider API key or source body beyond fixtures was used."
+  ]
+}

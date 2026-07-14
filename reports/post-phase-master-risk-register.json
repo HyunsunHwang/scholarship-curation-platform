@@ -162,6 +162,19 @@
       "success_criteria": "Confirm whether site_settings exists in the target environment schema; if needed, prepare a migration and compatibility plan."
     },
     {
+      "id": "RISK-LLM-REVIEW-PROTOTYPE-LIMITATIONS",
+      "status": "deferred",
+      "severity": "high",
+      "origin_phase": "I",
+      "description": "Deterministic replay validates evidence and policy contracts but not external model quality, prompt robustness, outage behavior, cost, latency, or version drift.",
+      "blocking_for_next_phase": false,
+      "why_not_resolved_now": "No provider credential or live call is used in the bounded prototype; automatic decisions and persistence remain prohibited.",
+      "next_resolution_phase": "J",
+      "next_work_unit": "Provider audit, privacy, cost, and production-readiness design",
+      "owner": "AI governance owner",
+      "success_criteria": "A separately approved provider evaluation records quality, citation correctness, prompt-injection resistance, outage fallback, privacy, latency, and cost evidence without enabling automatic approval."
+    },
+    {
       "id": "RISK-MAIN-LINT-BASELINE",
       "status": "deferred",
       "severity": "low",
