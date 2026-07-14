@@ -334,7 +334,7 @@
             "evidenceIds": [
               "e2"
             ],
-            "explanation": "Untrusted source content is data only."
+            "explanation": "Untrusted source text is data only."
           }
         ],
         "missingEvidence": [],
@@ -355,6 +355,8 @@
     {
       "kind": "negative",
       "name": "nonexistent_evidence",
+      "unsupported": true,
+      "hallucinated": false,
       "accepted": false,
       "errors": [
         "suggestion_invalid:deadline"
@@ -364,6 +366,8 @@
     {
       "kind": "negative",
       "name": "invented_deadline",
+      "unsupported": true,
+      "hallucinated": true,
       "accepted": false,
       "errors": [
         "suggestion_evidence_type_invalid:deadline",
@@ -375,6 +379,8 @@
     {
       "kind": "negative",
       "name": "attachment_content_claim",
+      "unsupported": true,
+      "hallucinated": true,
       "accepted": false,
       "errors": [
         "suggestion_evidence_type_invalid:eligibility",
@@ -385,6 +391,8 @@
     {
       "kind": "negative",
       "name": "unknown_field",
+      "unsupported": false,
+      "hallucinated": true,
       "accepted": false,
       "errors": [
         "suggestion_invalid:secretField"
@@ -394,6 +402,8 @@
     {
       "kind": "negative",
       "name": "policy_attempt",
+      "unsupported": false,
+      "hallucinated": false,
       "accepted": false,
       "errors": [
         "automatic_decision_boundary_invalid"
@@ -430,9 +440,12 @@
     "provider_failure_case_count": 2,
     "schema_valid_count": 9,
     "evidence_link_valid_count": 9,
-    "unsupported_claim_count": 5,
-    "hallucinated_field_count": 3,
-    "contradiction_detected_count": 0,
+    "accepted_unsupported_claim_count": 0,
+    "accepted_hallucinated_field_count": 0,
+    "detected_unsupported_claim_attempt_count": 3,
+    "rejected_unsupported_claim_attempt_count": 3,
+    "detected_hallucinated_field_attempt_count": 3,
+    "rejected_hallucinated_field_attempt_count": 3,
     "provider_failure_count": 2,
     "fail_closed_fallback_count": 7,
     "auto_approve_attempt_count": 1,
