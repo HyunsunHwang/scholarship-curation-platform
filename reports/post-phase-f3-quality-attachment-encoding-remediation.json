@@ -1,0 +1,555 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-f3-quality-attachment-encoding-remediation/v1",
+  "read_only_report_generation": true,
+  "db_access": false,
+  "db_write": false,
+  "supabase_access": false,
+  "migration": false,
+  "crawler_execution": false,
+  "full_crawl": false,
+  "destructive_action": false,
+  "production_apply_unchanged": true,
+  "production_detector_keyword_changed": false,
+  "source_exhaustion_proven": false,
+  "input_reports": {
+    "remediation": "reports/post-phase-a-remediation-priority-decisions.json",
+    "f2": "reports/post-phase-f2-source-parser-remediation.json",
+    "source_item_spot_checks": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/source-item-spot-check-observations.json"
+  },
+  "fixture_results": [
+    {
+      "id": "before-cau_008-attachment-metadata-missing",
+      "kind": "attachment",
+      "source_id": "cau_008",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/before/cau_008-attachment-metadata-missing.json",
+      "expected": {
+        "attachment_metadata_count": 0,
+        "attachment_only_possible": true,
+        "classification": "blocked",
+        "disposition": "blocked_until_attachment_check"
+      },
+      "actual": {
+        "attachment_metadata_count": 0,
+        "attachment_extension": "",
+        "attachment_download_unverified": false,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": false,
+        "no_assets": true,
+        "image_only_suspected": false,
+        "attachment_only_possible": true,
+        "short_body_suspected": false,
+        "classification": "blocked",
+        "disposition": "blocked_until_attachment_check",
+        "reason_codes": [
+          "attachment_only_possible"
+        ],
+        "body_text_length": 163
+      },
+      "attachment_metadata": [],
+      "pass": true
+    },
+    {
+      "id": "after-cau_010-attachment-metadata-present",
+      "kind": "attachment",
+      "source_id": "cau_010",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/after/cau_010-attachment-metadata-present.json",
+      "expected": {
+        "attachment_metadata_count": 1,
+        "attachment_extension": "pdf",
+        "attachment_download_unverified": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required"
+      },
+      "actual": {
+        "attachment_metadata_count": 1,
+        "attachment_extension": "pdf",
+        "attachment_download_unverified": true,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": false,
+        "no_assets": false,
+        "image_only_suspected": false,
+        "attachment_only_possible": false,
+        "short_body_suspected": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required",
+        "reason_codes": [
+          "short_body",
+          "second_pass_parser_recommended"
+        ],
+        "body_text_length": 88
+      },
+      "attachment_metadata": [
+        {
+          "url": "https://example.edu/files/scholarship-guide.pdf",
+          "fileName": "scholarship-guide.pdf",
+          "extension": "pdf",
+          "mimeLikeHint": "application/pdf",
+          "relation": "detail_page",
+          "label": "scholarship-guide.pdf"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "id": "before-cau_007-replacement-character",
+      "kind": "encoding",
+      "source_id": "cau_007",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/before/cau_007-replacement-character.json",
+      "expected": {
+        "replacement_character_count": 2,
+        "encoding_or_mojibake_suspected": true,
+        "classification": "blocked",
+        "disposition": "blocked_until_encoding_review"
+      },
+      "actual": {
+        "attachment_metadata_count": 0,
+        "attachment_extension": "",
+        "attachment_download_unverified": false,
+        "replacement_character_count": 2,
+        "encoding_or_mojibake_suspected": true,
+        "encoding_normalization_improved": false,
+        "no_assets": true,
+        "image_only_suspected": false,
+        "attachment_only_possible": false,
+        "short_body_suspected": false,
+        "classification": "blocked",
+        "disposition": "blocked_until_encoding_review",
+        "reason_codes": [
+          "encoding_or_mojibake_suspected"
+        ],
+        "body_text_length": 192
+      },
+      "attachment_metadata": [],
+      "pass": true
+    },
+    {
+      "id": "after-encoding-normalization-clean-candidate",
+      "kind": "encoding",
+      "source_id": "fixture_encoding_001",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/after/encoding-normalization-clean-candidate.json",
+      "expected": {
+        "replacement_character_count": 0,
+        "encoding_normalization_improved": true,
+        "classification": "clean",
+        "disposition": "auto_pass_allowed"
+      },
+      "actual": {
+        "attachment_metadata_count": 0,
+        "attachment_extension": "",
+        "attachment_download_unverified": false,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": true,
+        "no_assets": true,
+        "image_only_suspected": false,
+        "attachment_only_possible": false,
+        "short_body_suspected": false,
+        "classification": "clean",
+        "disposition": "auto_pass_allowed",
+        "reason_codes": [],
+        "body_text_length": 204
+      },
+      "attachment_metadata": [],
+      "pass": true
+    },
+    {
+      "id": "after-no-assets-text-sufficient",
+      "kind": "policy",
+      "source_id": "fixture_no_assets_001",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/after/no-assets-text-sufficient.json",
+      "expected": {
+        "attachment_metadata_count": 0,
+        "no_assets": true,
+        "classification": "clean",
+        "disposition": "auto_pass_allowed"
+      },
+      "actual": {
+        "attachment_metadata_count": 0,
+        "attachment_extension": "",
+        "attachment_download_unverified": false,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": false,
+        "no_assets": true,
+        "image_only_suspected": false,
+        "attachment_only_possible": false,
+        "short_body_suspected": false,
+        "classification": "clean",
+        "disposition": "auto_pass_allowed",
+        "reason_codes": [],
+        "body_text_length": 254
+      },
+      "attachment_metadata": [],
+      "pass": true
+    },
+    {
+      "id": "before-image-only-suspected",
+      "kind": "policy",
+      "source_id": "fixture_image_001",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/before/image-only-suspected.json",
+      "expected": {
+        "image_only_suspected": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required"
+      },
+      "actual": {
+        "attachment_metadata_count": 0,
+        "attachment_extension": "",
+        "attachment_download_unverified": false,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": false,
+        "no_assets": false,
+        "image_only_suspected": true,
+        "attachment_only_possible": false,
+        "short_body_suspected": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required",
+        "reason_codes": [
+          "image_only_suspected",
+          "short_body",
+          "second_pass_parser_recommended"
+        ],
+        "body_text_length": 0
+      },
+      "attachment_metadata": [],
+      "pass": true
+    },
+    {
+      "id": "after-short-body-with-attachment",
+      "kind": "policy",
+      "source_id": "fixture_short_001",
+      "fixture": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/after/short-body-with-attachment.json",
+      "expected": {
+        "attachment_metadata_count": 1,
+        "short_body_suspected": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required"
+      },
+      "actual": {
+        "attachment_metadata_count": 1,
+        "attachment_extension": "hwp",
+        "attachment_download_unverified": true,
+        "replacement_character_count": 0,
+        "encoding_or_mojibake_suspected": false,
+        "encoding_normalization_improved": false,
+        "no_assets": false,
+        "image_only_suspected": false,
+        "attachment_only_possible": false,
+        "short_body_suspected": true,
+        "classification": "needs_review",
+        "disposition": "admin_review_required",
+        "reason_codes": [
+          "short_body",
+          "second_pass_parser_recommended"
+        ],
+        "body_text_length": 0
+      },
+      "attachment_metadata": [
+        {
+          "url": "https://example.edu/files/eligibility.hwp",
+          "fileName": "eligibility.hwp",
+          "extension": "hwp",
+          "mimeLikeHint": null,
+          "relation": "detail_page",
+          "label": "eligibility.hwp"
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "source_item_spot_checks": [
+    {
+      "source_id": "cau_003",
+      "source_key": "cau_003",
+      "checked_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "list_http_status": 200,
+      "detail_url_found": false,
+      "detail_http_status": null,
+      "attachment_metadata_status": "not_checked_without_detail",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 0,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": true,
+      "classification_before": "blocked",
+      "classification_after": "blocked",
+      "p1_resolved": false,
+      "deferred_reason": "F-2 bounded evidence still lacks a safely resolvable detail URL.",
+      "next_action": "Capture a reviewed list-to-detail fixture before any further parser work."
+    },
+    {
+      "source_id": "cau_012",
+      "source_key": "cau_012",
+      "checked_url": null,
+      "list_http_status": null,
+      "detail_url_found": false,
+      "detail_http_status": null,
+      "attachment_metadata_status": "not_checked_inventory_missing",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 0,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": true,
+      "classification_before": "blocked",
+      "classification_after": "blocked",
+      "p1_resolved": false,
+      "deferred_reason": "cau_012 is absent from the committed notice-sources inventory used for F-3.",
+      "next_action": "Establish explicit source identity and inventory evidence before source adapter or quality work."
+    },
+    {
+      "source_id": "cau_010",
+      "source_key": "cau_010",
+      "checked_url": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/after/cau_010-attachment-metadata-present.json",
+      "list_http_status": null,
+      "detail_url_found": true,
+      "detail_http_status": "fixture_only",
+      "attachment_metadata_status": "metadata_present_pdf",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 86,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": true,
+      "classification_before": "needs_review",
+      "classification_after": "needs_review",
+      "p1_resolved": true,
+      "deferred_reason": null,
+      "next_action": "Keep attachment download and short-body interpretation in review; no download was attempted."
+    },
+    {
+      "source_id": "cau_007",
+      "source_key": "cau_007",
+      "checked_url": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/before/cau_007-replacement-character.json",
+      "list_http_status": null,
+      "detail_url_found": true,
+      "detail_http_status": "fixture_only",
+      "attachment_metadata_status": "not_applicable",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 161,
+      "replacement_character_count": 2,
+      "mojibake_suspected": true,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": false,
+      "classification_before": "needs_review",
+      "classification_after": "blocked",
+      "p1_resolved": true,
+      "deferred_reason": null,
+      "next_action": "Retain blocked/review handling until a source-provided readable body is available."
+    },
+    {
+      "source_id": "cau_008",
+      "source_key": "cau_008",
+      "checked_url": "fixtures/post-phase-f3-quality-attachment-encoding-remediation/before/cau_008-attachment-metadata-missing.json",
+      "list_http_status": null,
+      "detail_url_found": true,
+      "detail_http_status": "fixture_only",
+      "attachment_metadata_status": "metadata_missing",
+      "attachment_download_attempted": false,
+      "attachment_download_required": true,
+      "body_text_length": 156,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": true,
+      "short_body_suspected": false,
+      "classification_before": "needs_review",
+      "classification_after": "blocked",
+      "p1_resolved": false,
+      "deferred_reason": "The P1 source still lacks trustworthy attachment metadata.",
+      "next_action": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured."
+    }
+  ],
+  "p1_remediation_decisions": [
+    {
+      "remediation_id": "A-P1-002",
+      "category": "attachment_parser_required",
+      "priority": "P1",
+      "success_criteria": "Attachment-only cases expose metadata or remain explicitly blocked for review.",
+      "affected_source_ids": [
+        "cau_008"
+      ],
+      "resolved_source_ids": [],
+      "deferred_source_ids": [
+        "cau_008"
+      ],
+      "status": "deferred",
+      "evidence": [
+        {
+          "source_id": "cau_008",
+          "spot_check": "fixture_backed_bounded",
+          "p1_resolved": false,
+          "reason": "The P1 source still lacks trustworthy attachment metadata.",
+          "next_action": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured."
+        }
+      ]
+    },
+    {
+      "remediation_id": "A-P1-001",
+      "category": "encoding_normalization_review",
+      "priority": "P1",
+      "success_criteria": "A mojibake fixture is diagnosed before review, with uncertain text still routed to review.",
+      "affected_source_ids": [
+        "cau_007"
+      ],
+      "resolved_source_ids": [
+        "cau_007"
+      ],
+      "deferred_source_ids": [],
+      "status": "resolved",
+      "evidence": [
+        {
+          "source_id": "cau_007",
+          "spot_check": "fixture_backed_bounded",
+          "p1_resolved": true,
+          "reason": null,
+          "next_action": "Retain blocked/review handling until a source-provided readable body is available."
+        }
+      ]
+    }
+  ],
+  "quality_readability_policy": [
+    {
+      "case": "no_assets",
+      "disposition": "auto_pass_allowed",
+      "policy": "No assets alone is not a blocker when readable text evidence is sufficient."
+    },
+    {
+      "case": "image_only_suspected",
+      "disposition": "admin_review_required",
+      "policy": "Image-only evidence is not readable text evidence."
+    },
+    {
+      "case": "attachment_only_possible",
+      "disposition": "blocked_until_attachment_check",
+      "policy": "Do not silently pass without attachment metadata."
+    },
+    {
+      "case": "short_body",
+      "disposition": "manual_spot_check_required",
+      "policy": "Short text requires a reason-level review."
+    },
+    {
+      "case": "second_pass_parser_recommended",
+      "disposition": "admin_review_required",
+      "policy": "Keep the first pass and request reviewer or parser confirmation."
+    },
+    {
+      "case": "encoding_or_mojibake_suspected",
+      "disposition": "blocked_until_encoding_review",
+      "policy": "Corrupted text is insufficient for clean promotion."
+    },
+    {
+      "case": "detail_body_not_parsed",
+      "disposition": "blocked_until_parser_fix",
+      "policy": "No detail body is not sufficient evidence."
+    },
+    {
+      "case": "list_only_supported",
+      "disposition": "manual_spot_check_required",
+      "policy": "List evidence does not prove detail readability."
+    },
+    {
+      "case": "attachment_metadata_present",
+      "disposition": "admin_review_required",
+      "policy": "Metadata is preserved, but download or short-body uncertainty remains review work."
+    },
+    {
+      "case": "attachment_download_unverified",
+      "disposition": "deferred_to_followup",
+      "policy": "No attachment download is attempted by this bounded remediation."
+    }
+  ],
+  "f2_handoff": {
+    "cau_003": {
+      "source_id": "cau_003",
+      "source_key": "cau_003",
+      "checked_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "list_http_status": 200,
+      "detail_url_found": false,
+      "detail_http_status": null,
+      "attachment_metadata_status": "not_checked_without_detail",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 0,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": true,
+      "classification_before": "blocked",
+      "classification_after": "blocked",
+      "p1_resolved": false,
+      "deferred_reason": "F-2 bounded evidence still lacks a safely resolvable detail URL.",
+      "next_action": "Capture a reviewed list-to-detail fixture before any further parser work."
+    },
+    "cau_012": {
+      "source_id": "cau_012",
+      "source_key": "cau_012",
+      "checked_url": null,
+      "list_http_status": null,
+      "detail_url_found": false,
+      "detail_http_status": null,
+      "attachment_metadata_status": "not_checked_inventory_missing",
+      "attachment_download_attempted": false,
+      "attachment_download_required": false,
+      "body_text_length": 0,
+      "replacement_character_count": 0,
+      "mojibake_suspected": false,
+      "image_only_suspected": false,
+      "attachment_only_possible": false,
+      "short_body_suspected": true,
+      "classification_before": "blocked",
+      "classification_after": "blocked",
+      "p1_resolved": false,
+      "deferred_reason": "cau_012 is absent from the committed notice-sources inventory used for F-3.",
+      "next_action": "Establish explicit source identity and inventory evidence before source adapter or quality work."
+    }
+  },
+  "limitations": [
+    "Attachment evidence is metadata-level only; no attachment was downloaded.",
+    "cau_003 and cau_012 remain deferred F-2 handoff items.",
+    "Zero-match is an observation, not proof of scholarship absence or source exhaustion."
+  ],
+  "metrics": {
+    "p1_target_count": 2,
+    "p1_resolved_count": 1,
+    "p1_deferred_count": 1,
+    "unresolved_without_next_action_count": 0,
+    "source_spot_check_count": 5,
+    "item_spot_check_count": 7,
+    "detail_verified_count": 3,
+    "attachment_case_count": 3,
+    "attachment_metadata_present_count": 2,
+    "attachment_only_possible_count": 1,
+    "attachment_download_unverified_count": 2,
+    "encoding_case_count": 2,
+    "mojibake_suspected_count": 1,
+    "replacement_character_case_count": 1,
+    "encoding_normalization_improved_count": 1,
+    "image_only_suspected_count": 1,
+    "short_body_case_count": 3,
+    "second_pass_parser_recommended_count": 3,
+    "clean_after_fix_count": 1,
+    "review_retained_count": 3,
+    "blocked_retained_count": 2,
+    "false_clean_prevented_count": 5,
+    "manual_review_required_count": 3,
+    "fail_closed_policy_valid": true,
+    "zero_match_absence_claim_valid": true,
+    "production_apply_unchanged": true
+  }
+}

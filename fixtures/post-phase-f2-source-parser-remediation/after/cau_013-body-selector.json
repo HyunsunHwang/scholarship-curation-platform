@@ -1,0 +1,7 @@
+{
+  "id": "after-cau_013-body-selector",
+  "kind": "body",
+  "source": { "sourceId": "cau_013", "sourceKey": "cau_013", "listUrl": "http://cauese.co.kr/", "baseUrl": "http://cauese.co.kr" },
+  "html": "<article><div class=\"entry-content\">Scholarship notice detail includes a representative eligibility statement, application period, required documents, review contact, and a reminder that supporting evidence requires manual review. The body is intentionally long enough to demonstrate the WordPress source-specific selector while retaining needs-review classification.</div></article>",
+  "expected": { "content_selector": ".entry-content", "classification": "needs_review" }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_011-list-url",
+  "kind": "url",
+  "source": { "sourceId": "cau_011", "sourceKey": "cau_011", "listUrl": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1", "baseUrl": "https://me.cau.ac.kr" },
+  "link_html": "<a href=\"board.php?bo_table=sub5_1&amp;sst=wr_datetime&amp;page=1\">Sort link</a>",
+  "expected": { "notice_url": "", "classification": "blocked" }
+}

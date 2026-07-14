@@ -1,0 +1,744 @@
+{
+  "generated_at": "2026-07-13T00:00:00.000Z",
+  "contract_version": "post-phase-f1-admin-review-integration/v1",
+  "read_only": true,
+  "db_access": false,
+  "db_write": false,
+  "supabase_access": false,
+  "migration": false,
+  "crawler_execution": false,
+  "destructive_action": false,
+  "production_detector_parser_crawler_changed": false,
+  "input_reports": {
+    "f0": "reports/post-phase-f0-adapter-foundation.json",
+    "bc": "reports/post-phase-bc-review-quality-foundation.json",
+    "e": "reports/post-phase-e-batch-observability.json",
+    "aSummary": "reports/post-phase-a-coverage-parser-reliability-summary.json",
+    "aClosure": "reports/post-phase-a-closure-review-note.json",
+    "aSpotChecks": "reports/post-phase-a-spot-check-decisions.json",
+    "aRemediation": "reports/post-phase-a-remediation-priority-decisions.json",
+    "f2": "reports/post-phase-f2-source-parser-remediation.json",
+    "f3": "reports/post-phase-f3-quality-attachment-encoding-remediation.json"
+  },
+  "diagnostics": [
+    {
+      "id": "cau_001:f0-clean",
+      "sourceId": "cau_001",
+      "sourceKey": "cau_001",
+      "title": "Resolved clean adapter candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "clean",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": true,
+      "parserFailureReasonCodes": [
+        "keyword_not_detected",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "manual_spot_check_required"
+      ],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": "high_priority_false_negative_review, keyword_miss_suspected, manual_spot_check_required",
+      "remediationPriority": "P3",
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "Future enhancement or manual-only follow-up.",
+      "batchWarning": null,
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": true,
+      "adminReviewRequired": false,
+      "autoApplyAllowed": true
+    },
+    {
+      "id": "cau_002:f0-no-assets",
+      "sourceId": "cau_002",
+      "sourceKey": "cau_002",
+      "title": "Resolved text sufficient without assets",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "clean",
+      "qualityStatus": "accepted",
+      "qualityFlags": [
+        "no_assets"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": true,
+      "parserFailureReasonCodes": [
+        "no_assets",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "pagination_depth_limited",
+        "manual_spot_check_required"
+      ],
+      "itemReadabilityStatus": "text_sufficient_no_assets",
+      "boardReadabilityStatus": "high_priority_false_negative_review, keyword_miss_suspected, pagination_depth_limited, manual_spot_check_required",
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "Inspect the pinned region and one later page before treating depth as a crawler remediation.",
+      "batchWarning": null,
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": true,
+      "adminReviewRequired": false,
+      "autoApplyAllowed": true
+    },
+    {
+      "id": "cau_003:f0-duplicate",
+      "sourceId": "cau_003",
+      "sourceKey": "cau_003",
+      "title": "Resolved duplicate review candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "needs_review",
+      "qualityStatus": "accepted",
+      "qualityFlags": [
+        "second_pass_parser_recommended",
+        "detail_body_not_parsed",
+        "short_body"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": true,
+      "parserFailureReasonCodes": [
+        "second_pass_parser_recommended",
+        "detail_body_not_parsed",
+        "short_body",
+        "body_missing",
+        "selector_mismatch",
+        "body_too_short",
+        "image_only_suspected",
+        "high_priority_false_negative_review",
+        "keyword_miss_suspected",
+        "detail_fetch_or_body_parse_issue",
+        "manual_spot_check_required"
+      ],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": "high_priority_false_negative_review, keyword_miss_suspected, detail_fetch_or_body_parse_issue, manual_spot_check_required",
+      "remediationPriority": "P0",
+      "f2RemediationStatus": "deferred",
+      "f2ClassificationBefore": "blocked",
+      "f2ClassificationAfter": "blocked",
+      "f2NextAction": "Add a source-specific list/detail evidence fixture before changing this parser.",
+      "f3RemediationStatus": "deferred",
+      "f3ClassificationBefore": "blocked",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "short_body"
+      ],
+      "f3NextAction": "Capture a reviewed list-to-detail fixture before any further parser work.",
+      "nextAction": "Capture a reviewed list-to-detail fixture before any further parser work.",
+      "batchWarning": null,
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": true,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_004:f0-quality",
+      "sourceId": "cau_004",
+      "sourceKey": "cau_004",
+      "title": "Resolved short body review candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "needs_review",
+      "qualityStatus": "short_body_needs_review",
+      "qualityFlags": [
+        "short_body"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [
+        "short_body",
+        "keyword_miss_suspected",
+        "true_no_recent_scholarship_possible",
+        "manual_spot_check_required"
+      ],
+      "itemReadabilityStatus": "short_body_needs_review",
+      "boardReadabilityStatus": "keyword_miss_suspected, true_no_recent_scholarship_possible, manual_spot_check_required",
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "Review a bounded recent-title sample before retaining or rejecting the no-recent-scholarship hypothesis.",
+      "batchWarning": null,
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "unresolved_999:f0",
+      "sourceKey": "unresolved_999",
+      "title": "Unresolved source candidate",
+      "sourceResolutionStatus": "unresolved",
+      "sourceResolutionReason": "no_exact_source_key_mapping",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "resolve_source_identity_before_review",
+      "batchWarning": "healthy: 1 observability issue(s)",
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "ambiguous_source:f0",
+      "sourceKey": "ambiguous_source",
+      "title": "Ambiguous source candidate",
+      "sourceResolutionStatus": "ambiguous",
+      "sourceResolutionReason": "multiple_source_id_candidates",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "resolve_source_identity_before_review",
+      "batchWarning": "healthy: 1 observability issue(s)",
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "missing-key:f0",
+      "title": "Missing source key candidate",
+      "sourceResolutionStatus": "missing_source_key",
+      "sourceResolutionReason": "source_key_missing",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "resolve_source_identity_before_review",
+      "batchWarning": "healthy: 1 observability issue(s)",
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_006:f0-image-only",
+      "sourceId": "cau_006",
+      "sourceKey": "cau_006",
+      "title": "Image-only suspected candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "needs_review",
+      "qualityStatus": "image_only_suspected",
+      "qualityFlags": [
+        "image_only_suspected",
+        "second_pass_parser_recommended"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [
+        "image_only_suspected",
+        "second_pass_parser_recommended",
+        "body_too_short"
+      ],
+      "itemReadabilityStatus": "image_only_suspected",
+      "boardReadabilityStatus": null,
+      "remediationPriority": "P2",
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "Improves quality after blocking failures are addressed.",
+      "batchWarning": null,
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_007:f0-zero-match",
+      "sourceId": "cau_007",
+      "sourceKey": "cau_007",
+      "title": "Observed zero match source result",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [
+        "encoding_or_mojibake_suspected",
+        "encoding_or_mojibake_suspected"
+      ],
+      "zeroMatchObserved": true,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [
+        "encoding_or_mojibake_suspected",
+        "body_mojibake_detected",
+        "encoding_suspected",
+        "replacement_character_detected"
+      ],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": "P1",
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": "resolved",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "encoding_or_mojibake_suspected"
+      ],
+      "f3NextAction": "Retain blocked/review handling until a source-provided readable body is available.",
+      "nextAction": "Retain blocked/review handling until a source-provided readable body is available.",
+      "batchWarning": "degraded: 1 observability issue(s)",
+      "batchStatus": "degraded",
+      "sourceResultStatus": "zero_match_observed",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_008:f0-incomplete",
+      "sourceId": "cau_008",
+      "sourceKey": "cau_008",
+      "title": "Batch incomplete warning candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "needs_review",
+      "qualityStatus": "accepted",
+      "qualityFlags": [
+        "attachment_only_possible",
+        "attachment_only_possible"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [
+        "attachment_only_possible",
+        "attachment_metadata_missing",
+        "attachment_parser_recommended"
+      ],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": "P1",
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": "deferred",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "attachment_only_possible"
+      ],
+      "f3NextAction": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured.",
+      "nextAction": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured.",
+      "batchWarning": "incomplete: 2 observability issue(s)",
+      "batchStatus": "incomplete",
+      "sourceResultStatus": "partial",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "future_alias_key:f0",
+      "sourceKey": "future_alias_key",
+      "title": "Alias mapping required candidate",
+      "sourceResolutionStatus": "source_key_alias_required",
+      "sourceResolutionReason": "explicit_alias_mapping_required",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "resolve_source_identity_before_review",
+      "batchWarning": "healthy: 1 observability issue(s)",
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_009:f0",
+      "sourceId": "cau_009",
+      "sourceKey": "cau_009",
+      "title": "Inactive source candidate",
+      "sourceResolutionStatus": "inactive_source",
+      "sourceResolutionReason": "source_marked_inactive",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": null,
+      "f2RemediationStatus": null,
+      "f2ClassificationBefore": null,
+      "f2ClassificationAfter": null,
+      "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
+      "nextAction": "resolve_source_identity_before_review",
+      "batchWarning": "healthy: 1 observability issue(s)",
+      "batchStatus": "healthy",
+      "sourceResultStatus": "success",
+      "rollbackScopeAvailable": false,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    },
+    {
+      "id": "cau_010:f0",
+      "sourceId": "cau_010",
+      "sourceKey": "cau_010",
+      "title": "Blocked batch candidate",
+      "sourceResolutionStatus": "resolved",
+      "sourceResolutionReason": "exact_source_key_mapping_resolved",
+      "reviewStatus": "blocked",
+      "qualityStatus": "accepted",
+      "qualityFlags": [
+        "second_pass_parser_recommended",
+        "short_body"
+      ],
+      "zeroMatchObserved": false,
+      "falseNegativeReview": false,
+      "parserFailureReasonCodes": [
+        "second_pass_parser_recommended",
+        "short_body",
+        "detail_fetch_failed",
+        "body_too_short",
+        "image_only_suspected",
+        "attachment_metadata_present",
+        "attachment_download_unverified"
+      ],
+      "itemReadabilityStatus": "good_text",
+      "boardReadabilityStatus": null,
+      "remediationPriority": "P0",
+      "f2RemediationStatus": "resolved",
+      "f2ClassificationBefore": "blocked",
+      "f2ClassificationAfter": "needs_review",
+      "f2NextAction": "Retain review status and defer attachment/body interpretation to F-3 or a separately approved follow-up.",
+      "f3RemediationStatus": "resolved",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "needs_review",
+      "f3RiskCodes": [
+        "short_body"
+      ],
+      "f3NextAction": "Keep attachment download and short-body interpretation in review; no download was attempted.",
+      "nextAction": "Keep attachment download and short-body interpretation in review; no download was attempted.",
+      "batchWarning": "blocked: 3 observability issue(s)",
+      "batchStatus": "blocked",
+      "sourceResultStatus": "blocked",
+      "rollbackScopeAvailable": true,
+      "adminReviewRequired": true,
+      "autoApplyAllowed": false
+    }
+  ],
+  "quality_readability_policy": [
+    {
+      "case": "no_assets",
+      "disposition": "auto_pass_allowed",
+      "policy": "No assets alone is not a blocker when title, body, date, and classification evidence are otherwise clean."
+    },
+    {
+      "case": "image_only_suspected",
+      "disposition": "admin_review_required",
+      "policy": "Image-only evidence requires review; do not infer readable detail text."
+    },
+    {
+      "case": "attachment_only_possible",
+      "disposition": "blocked_until_parser_fix",
+      "policy": "Do not silently pass; expose the attachment gap and route it to the attachment-parser follow-up."
+    },
+    {
+      "case": "short_body",
+      "disposition": "manual_spot_check_required",
+      "policy": "Require a reason-level diagnosis before deciding that the body is adequate."
+    },
+    {
+      "case": "second_pass_parser_recommended",
+      "disposition": "admin_review_required",
+      "policy": "Keep the first-pass evidence and request a second parser pass or reviewer confirmation."
+    },
+    {
+      "case": "encoding_or_mojibake_suspected",
+      "disposition": "blocked_until_parser_fix",
+      "policy": "Treat corrupted text as insufficient evidence until normalization review resolves it."
+    },
+    {
+      "case": "detail_body_not_parsed",
+      "disposition": "blocked_until_source_check",
+      "policy": "Require a bounded detail and selector check before treating the source as readable."
+    },
+    {
+      "case": "list_only_supported",
+      "disposition": "admin_review_required",
+      "policy": "List evidence can be retained, but one matched item never proves full board readability."
+    }
+  ],
+  "remediation_decisions": [
+    {
+      "remediation_id": "A-P0-001",
+      "category": "selector_fix_required",
+      "related_categories": [
+        "body_parser_fix_required"
+      ],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "body_missing",
+          "selector_mismatch"
+        ],
+        "affected_source_ids": [
+          "cau_003",
+          "cau_011",
+          "cau_013"
+        ],
+        "affected_item_count": 4
+      },
+      "expected_impact": "Restores detail body evidence where selector/body extraction is missing.",
+      "suggested_owner_or_next_work_unit": "crawler parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A bounded fixture and one approved source sample retain a non-empty normalized body without lowering review safeguards."
+    },
+    {
+      "remediation_id": "A-P0-002",
+      "category": "source_specific_adapter_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_fetch_failed"
+        ],
+        "affected_source_ids": [
+          "cau_010",
+          "cau_012"
+        ],
+        "affected_item_count": 3
+      },
+      "expected_impact": "Restores detail access for sources whose generic parsing path fails.",
+      "suggested_owner_or_next_work_unit": "source adapter follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "The source-specific adapter resolves a representative detail page and preserves fail-closed classification."
+    },
+    {
+      "remediation_id": "A-P0-003",
+      "category": "url_canonicalization_fix_required",
+      "related_categories": [],
+      "priority": "P0",
+      "evidence": {
+        "reason_codes": [
+          "detail_url_missing"
+        ],
+        "affected_source_ids": [
+          "cau_011"
+        ],
+        "affected_item_count": 2
+      },
+      "expected_impact": "Prevents missing or malformed detail URLs from blocking candidate evidence.",
+      "suggested_owner_or_next_work_unit": "URL resolution follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A representative list item resolves to one canonical detail URL with duplicate protection."
+    },
+    {
+      "remediation_id": "A-P1-002",
+      "category": "attachment_parser_required",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "attachment_metadata_missing",
+          "attachment_only_possible",
+          "attachment_parser_recommended"
+        ],
+        "affected_source_ids": [
+          "cau_008"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Retains attachment-only eligibility evidence instead of silently passing it.",
+      "suggested_owner_or_next_work_unit": "attachment parsing follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "Attachment-only cases expose metadata or remain explicitly blocked for review."
+    },
+    {
+      "remediation_id": "A-P1-001",
+      "category": "encoding_normalization_review",
+      "related_categories": [],
+      "priority": "P1",
+      "evidence": {
+        "reason_codes": [
+          "body_mojibake_detected",
+          "encoding_suspected",
+          "replacement_character_detected"
+        ],
+        "affected_source_ids": [
+          "cau_007"
+        ],
+        "affected_item_count": 1
+      },
+      "expected_impact": "Prevents corrupted text from concealing eligibility and review evidence.",
+      "suggested_owner_or_next_work_unit": "text normalization follow-up",
+      "implement_in_this_pr": false,
+      "defer_to_followup": true,
+      "success_criteria": "A mojibake fixture is diagnosed before review, with uncertain text still routed to review."
+    }
+  ],
+  "review_quality_summary": {
+    "clean_count": 1,
+    "duplicate_review_count": 1,
+    "quality_review_count": 1,
+    "no_assets_text_sufficient_count": 1,
+    "no_assets_needs_review_count": 1,
+    "image_only_suspected_count": 1
+  },
+  "batch_summary": {
+    "batch_status": "degraded",
+    "batch_warning_count": 3,
+    "rollback_scope_available_count": 4,
+    "zero_match_policy": {
+      "observation_only": true,
+      "absence_proof": false,
+      "safe_to_claim_source_exhaustion": false
+    }
+  },
+  "f2_summary": {
+    "p0_resolved_count": 1,
+    "p0_deferred_count": 2,
+    "source_spot_check_count": 4,
+    "manual_review_retained_count": 3
+  },
+  "f3_summary": {
+    "p1_resolved_count": 1,
+    "p1_deferred_count": 1,
+    "attachment_metadata_present_count": 2,
+    "encoding_case_count": 2,
+    "review_retained_count": 3
+  },
+  "scope_notices": [
+    "This page is read-only and does not create an apply path.",
+    "Zero-match is an observation, not proof of scholarship absence or source exhaustion.",
+    "Post-Phase A Foundation does not mean full coverage remediation is complete.",
+    "Production detector, parser, and crawler behavior are unchanged by this page.",
+    "F-2 resolves only bounded P0 source/parser issues.",
+    "Unverified detail/pagination/attachment cases remain review/backlog.",
+    "Fail-closed behavior is preserved.",
+    "No production apply or DB write is performed.",
+    "F-3 resolves only bounded P1 quality, attachment, and encoding issues.",
+    "Attachment-only or mojibake-suspected items are not silently promoted to clean.",
+    "Evidence-limited items remain review/backlog."
+  ],
+  "metrics": {
+    "diagnostic_item_count": 13,
+    "source_resolution_status_counts": {
+      "resolved": 8,
+      "unresolved": 1,
+      "ambiguous": 1,
+      "missing_source_key": 1,
+      "source_key_alias_required": 1,
+      "inactive_source": 1
+    },
+    "clean_count": 2,
+    "admin_review_required_count": 11,
+    "blocked_count": 7,
+    "zero_match_observed_count": 1,
+    "parser_readability_issue_count": 8,
+    "p0_remediation_count": 3,
+    "p1_remediation_count": 2,
+    "batch_warning_count": 8,
+    "auto_apply_allowed_count": 2
+  }
+}

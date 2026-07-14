@@ -1,0 +1,47 @@
+# Post-Phase F-1 Admin Review Integration Validation
+
+## Status
+
+PASS
+
+## Metrics
+
+- diagnostic_item_count: 13
+- source_resolution_status_counts: {"resolved":8,"unresolved":1,"ambiguous":1,"missing_source_key":1,"source_key_alias_required":1,"inactive_source":1}
+- clean_count: 2
+- admin_review_required_count: 11
+- blocked_count: 7
+- zero_match_observed_count: 1
+- parser_readability_issue_count: 8
+- p0_remediation_count: 3
+- p1_remediation_count: 2
+- batch_warning_count: 8
+- auto_apply_allowed_count: 2
+- deterministic_rerun_match: true
+- output_schema_valid: true
+- safety_valid: true
+- restricted_file_scope_valid: true
+
+## Tests
+
+- PASS: admin diagnostics route and helper exist
+- PASS: F-0, B/C, E, A, F-2, and F-3 reports are all referenced
+- PASS: required source-resolution statuses are represented
+- PASS: zero-match and read-only policy notices are visible
+- PASS: production detector/parser/crawler unchanged policy is visible
+- PASS: F-2 bounded remediation notices and statuses are visible
+- PASS: F-3 bounded remediation notices and statuses are visible
+- PASS: generated diagnostics view model is deterministic
+- PASS: F-1 output remains read-only
+- PASS: restricted files are unchanged
+
+## Safety
+
+- db_access: false
+- db_write: false
+- supabase_access: false
+- migration: false
+- production_crawler_execution: false
+- production_detector_parser_change: false
+- destructive_action: false
+- admin_write_path_added: false

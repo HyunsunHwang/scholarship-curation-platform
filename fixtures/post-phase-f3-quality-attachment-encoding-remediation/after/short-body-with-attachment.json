@@ -1,0 +1,7 @@
+{
+  "id": "after-short-body-with-attachment",
+  "source_id": "fixture_short_001",
+  "kind": "policy",
+  "html": "<article><div class=\"entry-content\">See attached eligibility guide.</div><a href=\"/files/eligibility.hwp\">eligibility.hwp</a></article>",
+  "expected": { "attachment_metadata_count": 1, "short_body_suspected": true, "classification": "needs_review", "disposition": "admin_review_required" }
+}

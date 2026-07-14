@@ -1,0 +1,7 @@
+{
+  "id": "after-encoding-normalization-clean-candidate",
+  "source_id": "fixture_encoding_001",
+  "kind": "encoding",
+  "html": "<article><div class=\"entry-content\">Scholarship notice​ provides eligibility, selection criteria, amount, application deadline, contact details, and submission procedure. Café evidence is normalized without masking any replacement character.</div></article>",
+  "expected": { "replacement_character_count": 0, "encoding_normalization_improved": true, "classification": "clean", "disposition": "auto_pass_allowed" }
+}

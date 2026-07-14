@@ -8,6 +8,7 @@ export const maxDuration = 60;
 const opsNav = [
   { href: "/admin", label: "대시보드" },
   { href: "/admin/review", label: "검수 큐" },
+  { href: "/admin/crawler-review", label: "Crawler diagnostics" },
   { href: "/admin/content", label: "콘텐츠" },
 ] as const;
 

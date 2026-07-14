@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_010-kboard-list-url",
+  "kind": "url",
+  "source": { "sourceId": "cau_010", "sourceKey": "cau_010", "listUrl": "http://archicau.com/wordpress/notice/", "baseUrl": "http://archicau.com" },
+  "link_html": "<a href=\"?uid=1608&amp;mod=list&amp;pageid=1\">List link</a>",
+  "expected": { "notice_url": "", "classification": "blocked" }
+}

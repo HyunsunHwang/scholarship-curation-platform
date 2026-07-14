@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_011-body-unresolved",
+  "kind": "body",
+  "source": { "sourceId": "cau_011", "sourceKey": "cau_011", "listUrl": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1", "baseUrl": "https://me.cau.ac.kr" },
+  "html": "<main><div class=\"board-shell\">Short board wrapper text only.</div></main>",
+  "expected": { "content_selector": "", "classification": "blocked" }
+}

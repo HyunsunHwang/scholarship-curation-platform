@@ -1,0 +1,7 @@
+{
+  "id": "after-cau_011-detail-url",
+  "kind": "url",
+  "source": { "sourceId": "cau_011", "sourceKey": "cau_011", "listUrl": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1", "baseUrl": "https://me.cau.ac.kr" },
+  "link_html": "<a href=\"board.php?bo_table=sub5_1&amp;wr_id=5344&amp;utm_source=fixture\">Detail link</a>",
+  "expected": { "notice_url": "https://me.cau.ac.kr/bbs/board.php?bo_table=sub5_1&wr_id=5344", "classification": "needs_review" }
+}

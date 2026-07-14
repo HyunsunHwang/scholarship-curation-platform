@@ -1,0 +1,7 @@
+{
+  "id": "before-image-only-suspected",
+  "source_id": "fixture_image_001",
+  "kind": "policy",
+  "html": "<article><div class=\"entry-content\"><img src=\"/images/scholarship-poster.png\" alt=\"scholarship poster\"></div></article>",
+  "expected": { "image_only_suspected": true, "classification": "needs_review", "disposition": "admin_review_required" }
+}
