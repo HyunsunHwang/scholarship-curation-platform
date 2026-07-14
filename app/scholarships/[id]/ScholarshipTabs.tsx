@@ -6,6 +6,7 @@ import {
   daysUntilApplyDeadlineKorea,
   isAlwaysOpenRecruitment,
 } from "@/lib/scholarship-dates";
+import { isApplyPeriodStageTitle } from "@/lib/schedule-stages";
 import type { AutoCheckState, QualMatchItem } from "@/lib/scholarship-qualification-match";
 import {
   NOTICE_LIST_RE,
@@ -511,17 +512,6 @@ function ScheduleAfterAcceptanceDivider() {
   );
 }
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
-function stageTitleCoversMilestone(
-  stages: { title: string }[],
-  kind: "start" | "end",
-): boolean {
-  const patterns =
-    kind === "start"
-      ? [/접수\s*시작/, /모집\s*시작/, /신청\s*시작/]
-      : [/접수\s*마감/, /모집\s*마감/, /신청\s*마감/];
-  return stages.some((st) => patterns.some((p) => p.test(st.title)));
-}
-
 function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selectionStages: SelectionStageDetail[] }) {
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
 
@@ -530,14 +520,12 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
 
   const rows: SortableScheduleRow[] = [];
 
-  const stages = collectSelectionStages(selectionStages);
-  const hasStages = stages.length > 0;
-  const startCovered = hasStages && stageTitleCoversMilestone(stages, "start");
-  const endCovered = hasStages && stageTitleCoversMilestone(stages, "end");
+  // 접수 시작/마감은 apply_* 마일스톤만 사용. stages의 접수·모집기간 항목은 중복이라 제외.
+  const stages = collectSelectionStages(selectionStages).filter(
+    (st) => !isApplyPeriodStageTitle(st.title),
+  );
 
-  // 전형 단계에 동일 마일스톤이 없을 때만 접수 시작/마감을 보강한다.
-  // (상단 하이라이트에서 마감을 제거했으므로 일정 섹션에 반드시 남아야 함)
-  if (!startCovered && s.apply_start_date) {
+  if (s.apply_start_date) {
     const sortMs = parseYYYYMMDDToUtcMs(s.apply_start_date);
     if (sortMs !== null) {
       rows.push({
@@ -552,7 +540,7 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
     }
   }
 
-  if (!endCovered) {
+  {
     const endSortMs = parseYYYYMMDDToUtcMs(s.apply_end_date);
     if (endSortMs !== null) {
       rows.push({

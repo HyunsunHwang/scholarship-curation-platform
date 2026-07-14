@@ -212,7 +212,11 @@ export default function ContestForm({
           label="혜택 (쉼표 구분)"
           name="benefits"
           defaultValue={(dv.benefits ?? []).join(", ")}
-          placeholder="예: 상금, 수료증, 인턴 기회"
+          placeholder={
+            lockedKind === "contest"
+              ? "예: 총상금 2300만원, 상장, 인턴 기회"
+              : "예: 상금, 수료증, 인턴 기회"
+          }
         />
         <Field
           label="신청 유형 (쉼표 구분)"

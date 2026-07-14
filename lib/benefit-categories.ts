@@ -222,6 +222,28 @@ export function hasMeaningfulPrizeAmount(text?: string | null): boolean {
   return Number.isFinite(n) && n > 0;
 }
 
+/** 지원 규모/혜택에 쓸 "총상금 N" 표기 */
+export function formatTotalPrizeLabel(amountText: string): string {
+  const raw = amountText.trim().replace(/\s+/g, " ");
+  if (!raw) return raw;
+  if (/^총\s*상금\b/.test(raw)) {
+    return raw.replace(/^총\s*상금\s*/u, "총상금 ").trim();
+  }
+  const stripped = raw.replace(/^상금\s*/u, "").trim() || raw;
+  return `총상금 ${stripped}`;
+}
+
+/** 혜택 문자열에 금액이 포함된 상금 표기인지 (예: "총상금 2300만원", "상금 500만원") */
+function prizeAmountLabelFromText(text: string): string | null {
+  const t = text.trim();
+  if (!t || !/\d/.test(t)) return null;
+  if (!/(상금|시상|포상|만원)/.test(t)) return null;
+  if (!hasMeaningfulPrizeAmount(t)) return null;
+  // 단순 "상금"만 있거나 숫자가 상금과 무관하면 제외 — 금액 단위가 보이거나 총상금 문구일 때
+  if (!/(총\s*상금|\d[\d,]*(?:\.\d+)?\s*만\s*원|\d+\s*만\b)/.test(t)) return null;
+  return formatTotalPrizeLabel(t);
+}
+
 function normalizeBenefitKey(raw: string): string {
   return raw.trim().replace(/\s+/g, " ");
 }
@@ -370,6 +392,9 @@ export function resolveContestBenefits(opts: {
 }): BenefitHighlight[] {
   const out: BenefitHighlight[] = [];
   let sawGenericOther = false;
+  let prizeAmountLabel: string | null = hasMeaningfulPrizeAmount(opts.supportAmountText)
+    ? formatTotalPrizeLabel(opts.supportAmountText!)
+    : null;
 
   const fromNotice = extractBenefitCorpusFromNotice(opts.noticeText);
   if (fromNotice) {
@@ -382,7 +407,7 @@ export function resolveContestBenefits(opts: {
     }
   }
 
-  if (hasMeaningfulPrizeAmount(opts.supportAmountText)) {
+  if (prizeAmountLabel) {
     pushUnique(out, "prize");
   }
 
@@ -393,12 +418,23 @@ export function resolveContestBenefits(opts: {
       sawGenericOther = true;
       continue;
     }
+    const amountLabel = prizeAmountLabelFromText(key);
+    if (amountLabel) {
+      if (!prizeAmountLabel) prizeAmountLabel = amountLabel;
+      pushUnique(out, "prize");
+      continue;
+    }
     for (const id of mapTextToBenefitIds(key, { allowOtherFallback: false })) {
       pushUnique(out, id);
     }
   }
 
   if (!isBlankNote(opts.additionalNote)) {
+    const noteAmount = prizeAmountLabelFromText(opts.additionalNote!);
+    if (noteAmount && !prizeAmountLabel) {
+      prizeAmountLabel = noteAmount;
+      pushUnique(out, "prize");
+    }
     for (const id of mapTextToBenefitIds(opts.additionalNote!, { allowOtherFallback: false })) {
       pushUnique(out, id);
     }
@@ -414,20 +450,34 @@ export function resolveContestBenefits(opts: {
     pushUnique(out, "other");
   }
 
-  // 시상 금액이 있으면 "총상금 N" + 금색 트로피로 맨 앞 고정
-  if (hasMeaningfulPrizeAmount(opts.supportAmountText)) {
-    const amount = opts.supportAmountText!.trim();
-    const label = /^총상금\b/.test(amount) ? amount : `총상금 ${amount}`;
+  // 공모전 등: 시상 금액이 있으면 "총상금 N" + 금색 트로피로 맨 앞 고정
+  // (혜택 배열에 단순 "상금"만 있어도 support_amount_text로 총상금 표기)
+  if (prizeAmountLabel) {
     const rest = out.filter((b) => b.id !== "prize");
     const prizeFirst: BenefitHighlight = {
       id: "prize",
-      label,
+      label: prizeAmountLabel,
       accent: "gold",
     };
     return [prizeFirst, ...rest].slice(0, MAX_HIGHLIGHTS);
   }
 
   return out;
+}
+
+/**
+ * 관리 폼·draft 저장용 혜택 라벨.
+ * 공모전에서 상금 규모가 있으면 "상금" 대신 "총상금 N"을 넣는다.
+ */
+export function contestBenefitStorageLabels(opts: {
+  benefits?: string[] | null;
+  supportAmountText?: string | null;
+  additionalNote?: string | null;
+  contentKind?: "contest" | "education" | "activity" | string | null;
+  name?: string | null;
+  noticeText?: string | null;
+}): string[] {
+  return resolveContestBenefits(opts).map((b) => b.label);
 }
 
 /**

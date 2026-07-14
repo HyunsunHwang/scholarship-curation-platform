@@ -70,6 +70,7 @@ export const CONTEST_DETAIL_SELECT = [
   "apply_end_date",
   "selection_count",
   "announcement_date",
+  "benefits",
   "apply_method",
   "required_documents",
   "document_files",

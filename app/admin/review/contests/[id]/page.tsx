@@ -12,7 +12,7 @@ import ContestForm from "@/app/admin/content/contests/ContestForm";
 import { promoteCrawledContest } from "../actions";
 import FormatCrawledContestBodyButton from "../FormatCrawledContestBodyButton";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function isDraftRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object";
@@ -59,7 +59,14 @@ export default async function ReviewContestDetailPage({
     (url): url is string => typeof url === "string" && url.trim().length > 0
   );
 
-  const defaultValues: Partial<Contest> = {
+  const defaultValues: Partial<Contest> & {
+    selection_stages?: Array<{
+      title: string;
+      phase: "selection" | "post_acceptance";
+      schedule_text?: string | null;
+      note?: string | null;
+    }>;
+  } = {
     name: asString(draft.name) ?? row.title,
     organization: asString(draft.organization) ?? row.source_name,
     organization_type: asString(draft.organization_type),
@@ -93,9 +100,47 @@ export default async function ReviewContestDetailPage({
     is_verified: true,
     list_on_home: true,
     is_recommended: false,
+    selection_stages: Array.isArray(draft.stages)
+      ? draft.stages.flatMap((item) => {
+          if (!item || typeof item !== "object") return [];
+          const s = item as Record<string, unknown>;
+          const title = typeof s.title === "string" ? s.title.trim() : "";
+          if (!title) return [];
+          return [
+            {
+              title,
+              phase:
+                s.phase === "post_acceptance"
+                  ? ("post_acceptance" as const)
+                  : ("selection" as const),
+              schedule_text:
+                typeof s.schedule_text === "string" ? s.schedule_text : null,
+              note: typeof s.note === "string" ? s.note : null,
+            },
+          ];
+        })
+      : [],
   };
 
   const boundPromote = promoteCrawledContest.bind(null, crawledId, kind);
+
+  // 원문 정리·추출 후 router.refresh() 시 defaultValues만 바뀌고
+  // ContestForm 내부 useState는 유지되므로, draft 내용이 바뀌면 폼을 리마운트한다.
+  const formResetKey = [
+    crawledId,
+    (row.body ?? "").length,
+    asString(draft.announcement_date) ?? "",
+    asStringArray(draft.benefits).join("|"),
+    Array.isArray(draft.stages)
+      ? draft.stages
+          .map((item) => {
+            if (!item || typeof item !== "object") return "";
+            const s = item as Record<string, unknown>;
+            return `${String(s.title ?? "")}:${String(s.schedule_text ?? "")}`;
+          })
+          .join(",")
+      : "",
+  ].join("::");
 
   return (
     <div className="space-y-6">
@@ -133,6 +178,7 @@ export default async function ReviewContestDetailPage({
       </section>
 
       <ContestForm
+        key={formResetKey}
         defaultValues={defaultValues}
         action={boundPromote}
         submitLabel={`${adminKindLabel(kind)}으로 등록`}

@@ -164,6 +164,26 @@ function toDate(iso) {
   return String(iso).slice(0, 10);
 }
 
+/** 링커리어 tenThousandUnitOfReward → "총상금 N만원" (공모전 총상금 소스) */
+function linkareerTotalPrizeLabel(rewardManwon) {
+  if (rewardManwon == null || rewardManwon === "") return null;
+  const n = Number(rewardManwon);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  const text = Number.isInteger(n) ? String(n) : String(rewardManwon).trim();
+  return `총상금 ${text}만원`;
+}
+
+/** 혜택 배열에 링커리어 상금을 총상금으로 넣고, 단순 "상금"은 제거 */
+function buildBenefitsWithLinkareerPrize(item) {
+  const raw = Array.isArray(item.benefits) ? item.benefits.filter(Boolean) : [];
+  const prize = linkareerTotalPrizeLabel(item.reward_manwon);
+  if (!prize) return raw.length ? raw : null;
+  const rest = raw.filter(
+    (b) => String(b).trim() !== "상금" && !/^총\s*상금\b/.test(String(b).trim())
+  );
+  return [prize, ...rest];
+}
+
 /** Display name (may include Hangul). */
 function displayFileName(name) {
   return String(name || "file")
@@ -518,21 +538,22 @@ async function ingestOne(item, index, total, contentKind) {
   const sourceUrl = item.url || `https://linkareer.com/activity/${externalId}`;
   const applyUrl = item.apply_url || item.homepage_url || item.url || "";
 
+  const prizeLabel = linkareerTotalPrizeLabel(item.reward_manwon);
+  const benefits = buildBenefitsWithLinkareerPrize(item);
+
   const extractedDraft = {
     name,
     organization,
     organization_type: item.organization_type || null,
     content_kind: contentKind,
-    support_amount_text:
-      item.reward_manwon != null && item.reward_manwon !== ""
-        ? `${item.reward_manwon}만원`
-        : null,
+    // 총상금 = 링커리어 tenThousandUnitOfReward 크롤 값 (LLM 합산 아님)
+    support_amount_text: prizeLabel,
     selection_count: item.recruit_scale ? Number(item.recruit_scale) || null : null,
     apply_start_date: toDate(item.recruit_start_at),
     apply_end_date: applyEnd,
     announcement_date: null,
     targets: item.targets?.length ? item.targets : null,
-    benefits: item.benefits?.length ? item.benefits : null,
+    benefits,
     apply_types: item.apply_types?.length ? item.apply_types : null,
     interest_categories: interest.length ? interest : null,
     required_documents: requiredDocs,
@@ -551,13 +572,13 @@ async function ingestOne(item, index, total, contentKind) {
     organization,
     organization_type: item.organization_type || null,
     content_kind: contentKind,
-    support_amount_text: extractedDraft.support_amount_text,
+    support_amount_text: prizeLabel,
     selection_count: extractedDraft.selection_count,
     apply_start_date: extractedDraft.apply_start_date,
     apply_end_date: applyEnd,
     announcement_date: null,
     targets: item.targets?.length ? item.targets : null,
-    benefits: item.benefits?.length ? item.benefits : null,
+    benefits,
     apply_types: item.apply_types?.length ? item.apply_types : null,
     interest_categories: interest.length ? interest : null,
     required_documents: requiredDocs,

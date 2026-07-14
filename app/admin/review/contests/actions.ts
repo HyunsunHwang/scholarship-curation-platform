@@ -8,8 +8,11 @@ import {
   buildContestSelectionStagesPayload,
   parseContestContentKind,
 } from "@/lib/contest-payload";
-import { resolveContestBenefits } from "@/lib/benefit-categories";
-import { formatOriginalNoticeText } from "@/lib/notice-extraction";
+import { contestBenefitStorageLabels } from "@/lib/benefit-categories";
+import {
+  formatAndExtractContestNotice,
+  type NoticeDraftStage,
+} from "@/lib/notice-extraction";
 import type { ContestContentKind } from "@/lib/admin-kinds";
 
 function asDraftRecord(value: unknown): Record<string, unknown> {
@@ -27,6 +30,15 @@ function asDraftStringArray(value: unknown): string[] {
 
 function asDraftString(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function stagesToDraftJson(stages: NoticeDraftStage[]): NoticeDraftStage[] {
+  return stages.map((s) => ({
+    title: s.title,
+    phase: s.phase,
+    schedule_text: s.schedule_text,
+    note: s.note,
+  }));
 }
 
 function normalizeRejectTag(reviewNote?: string) {
@@ -67,6 +79,53 @@ export async function promoteCrawledContest(
   if (authError) return { error: authError };
 
   const payload = buildContestPayload(formData, lockedKind);
+  let stagesFromForm = buildContestSelectionStagesPayload(formData, 0).map(
+    ({ contest_id: _cid, ...rest }) => rest
+  );
+
+  // 폼에 선발 단계가 비어 있으면 정리된 원문에서 LLM 추출을 1회 시도
+  if (stagesFromForm.length === 0 && payload.original_notice_text?.trim()) {
+    const extracted = await formatAndExtractContestNotice({
+      title: payload.name || "공고",
+      body: payload.original_notice_text,
+      contentKind: lockedKind,
+      organization: payload.organization,
+      skipFormatIfAlreadyFormatted: true,
+    });
+    payload.original_notice_text = extracted.noticeText || payload.original_notice_text;
+    if (extracted.draft.announcement_date && !payload.announcement_date) {
+      payload.announcement_date = extracted.draft.announcement_date;
+    }
+    // support_amount_text(총상금): 링커리어 크롤값 유지 — LLM으로 채우지 않음
+    if ((extracted.draft.stages?.length ?? 0) > 0) {
+      stagesFromForm = (extracted.draft.stages ?? []).map((s, index) => ({
+        stage_order: index + 1,
+        title: s.title.trim(),
+        phase:
+          s.phase === "post_acceptance"
+            ? ("post_acceptance" as const)
+            : ("selection" as const),
+        schedule_date: null as string | null,
+        schedule_text: s.schedule_text?.trim() || null,
+        note: s.note?.trim() || null,
+      }));
+    }
+  }
+
+  // 공모전: 상금 규모가 있으면 혜택에 "총상금 N"으로 저장 (단순 "상금" 대체)
+  if (lockedKind === "contest") {
+    const benefitLabels = contestBenefitStorageLabels({
+      noticeText: payload.original_notice_text,
+      benefits: payload.benefits,
+      supportAmountText: payload.support_amount_text,
+      additionalNote: payload.note,
+      contentKind: lockedKind,
+      name: payload.name,
+    });
+    if (benefitLabels.length > 0) {
+      payload.benefits = benefitLabels;
+    }
+  }
 
   const { data: inserted, error } = await supabase
     .from("contests")
@@ -76,7 +135,10 @@ export async function promoteCrawledContest(
   if (error) return { error: error.message };
 
   if (inserted?.id) {
-    const stages = buildContestSelectionStagesPayload(formData, inserted.id);
+    const stages =
+      stagesFromForm.length > 0
+        ? stagesFromForm.map((s) => ({ ...s, contest_id: inserted.id }))
+        : buildContestSelectionStagesPayload(formData, inserted.id);
     if (stages.length > 0) {
       const { error: stagesError } = await supabase
         .from("contest_selection_stages")
@@ -105,13 +167,13 @@ export async function promoteCrawledContest(
 
 export async function formatCrawledContestBody(
   crawledId: number
-): Promise<{ error?: string; success?: true }> {
+): Promise<{ error?: string; success?: true; warning?: string; stageCount?: number }> {
   const { supabase, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
   const { data: row, error } = await supabase
     .from("crawled_contests")
-    .select("id, title, body, content_kind, extracted_draft")
+    .select("id, title, body, content_kind, extracted_draft, source_name")
     .eq("id", crawledId)
     .single();
   if (error) return { error: error.message };
@@ -120,31 +182,58 @@ export async function formatCrawledContestBody(
   const body = row.body?.trim() ?? "";
   if (!body) return { error: "정리할 본문이 없습니다." };
 
-  const { text: formatted, error: formatError } = await formatOriginalNoticeText({
-    title: row.title,
-    body,
-  });
-  if (formatError && !formatted.trim()) {
-    return { error: formatError };
-  }
-
-  const noticeText = formatted.trim() || body;
   const draft = asDraftRecord(row.extracted_draft);
   const contentKind = parseContestContentKind(row.content_kind);
+  const title = asDraftString(draft.name) ?? row.title ?? "공고";
 
-  // 원문(시상/혜택 섹션) 우선 + 링커리어 필드는 보강만
-  const benefitLabels = resolveContestBenefits({
+  const extracted = await formatAndExtractContestNotice({
+    title,
+    body,
+    contentKind,
+    organization: asDraftString(draft.organization) ?? row.source_name,
+  });
+
+  if (extracted.formatError && !extracted.noticeText.trim()) {
+    return { error: extracted.formatError };
+  }
+
+  const noticeText = extracted.noticeText.trim() || body;
+  const extractedDraft = extracted.draft;
+  const stages = extractedDraft.stages ?? [];
+
+  // 총상금: 링커리어 크롤값(draft.support_amount_text) 우선 — LLM 합산으로 덮어쓰지 않음
+  const crawledPrize = asDraftString(draft.support_amount_text);
+  const supportAmountText = crawledPrize;
+
+  // 혜택: 크롤 총상금 + 원문/기타 혜택 보강 (상금 규모는 크롤 값 고정)
+  const benefitLabels = contestBenefitStorageLabels({
     noticeText,
     benefits: asDraftStringArray(draft.benefits),
-    supportAmountText: asDraftString(draft.support_amount_text),
-    additionalNote: asDraftString(draft.note),
+    supportAmountText,
+    additionalNote: extractedDraft.note ?? asDraftString(draft.note),
     contentKind,
-    name: asDraftString(draft.name) ?? row.title,
-  }).map((b) => b.label);
+    name: title,
+  });
 
   const nextDraft: Record<string, unknown> = {
     ...draft,
     original_notice_text: noticeText,
+    stages: stagesToDraftJson(stages),
+    ...(crawledPrize ? { support_amount_text: crawledPrize } : {}),
+    ...(extractedDraft.announcement_date
+      ? { announcement_date: extractedDraft.announcement_date }
+      : {}),
+    ...(extractedDraft.selection_count != null
+      ? { selection_count: extractedDraft.selection_count }
+      : {}),
+    ...(extractedDraft.apply_method
+      ? { apply_method: extractedDraft.apply_method }
+      : {}),
+    ...(extractedDraft.contact ? { contact: extractedDraft.contact } : {}),
+    ...(extractedDraft.note ? { note: extractedDraft.note } : {}),
+    ...(extractedDraft.required_documents?.length
+      ? { required_documents: extractedDraft.required_documents }
+      : {}),
     ...(benefitLabels.length > 0 ? { benefits: benefitLabels } : {}),
   };
 
@@ -158,7 +247,22 @@ export async function formatCrawledContestBody(
   if (updateError) return { error: updateError.message };
 
   revalidatePath(`/admin/review/contests/${crawledId}`);
-  return { success: true };
+
+  if (extracted.extractError) {
+    return {
+      success: true,
+      stageCount: stages.length,
+      warning: `원문은 정리됐지만 일정 추출에 실패했습니다: ${extracted.extractError}`,
+    };
+  }
+  if (stages.length === 0) {
+    return {
+      success: true,
+      stageCount: 0,
+      warning: "원문은 정리됐지만 본문에서 추출된 일정이 없습니다.",
+    };
+  }
+  return { success: true, stageCount: stages.length };
 }
 
 export async function rejectCrawledContest(

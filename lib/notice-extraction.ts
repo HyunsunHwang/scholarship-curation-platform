@@ -3,10 +3,12 @@ import {
   stripFormattedNoticeOutput,
 } from "@/lib/original-notice-format";
 import { extractDetailFromHtml } from "@/lib/notice-body-extraction.mjs";
+import { isApplyPeriodStageTitle } from "@/lib/schedule-stages";
 
 // ─────────────────────────────────────────────────────────────────
 // 공지 본문 → scholarship 필드 초안 추출 (프로바이더 비종속)
 // + 원문 공고문 형식만 정리 (formatOriginalNoticeText)
+// + 공모전·교육·대외활동 일정 추출 (extractContestDraft / formatAndExtractContestNotice)
 //
 // 환경변수:
 //   LLM_API_KEY    (필수) Bearer 토큰
@@ -156,6 +158,21 @@ export type NoticeDraft = {
   contact?: string | null;
   note?: string | null;
   /** 선발 단계 + 합격 이후 절차 (순서대로). 본문에 명시되지 않으면 빈 배열 */
+  stages?: NoticeDraftStage[];
+};
+
+/** 공모전·교육·대외활동 초안 (자격 필드 없음) */
+export type ContestDraft = {
+  support_amount_text?: string | null;
+  apply_start_date?: string | null;
+  apply_end_date?: string | null;
+  announcement_date?: string | null;
+  selection_count?: number | null;
+  required_documents?: string[];
+  apply_method?: string | null;
+  contact?: string | null;
+  note?: string | null;
+  /** 선발 단계 + 합격/선발 이후 절차 (순서대로). 본문에 명시되지 않으면 빈 배열 */
   stages?: NoticeDraftStage[];
 };
 
@@ -1471,4 +1488,185 @@ export async function formatOriginalNoticeText(input: {
     };
   }
   return { text: formatted };
+}
+
+const CONTEST_KIND_LABEL: Record<string, string> = {
+  contest: "공모전",
+  education: "교육",
+  activity: "대외활동",
+};
+
+function contestKindHint(contentKind?: string | null): string {
+  const kind = (contentKind ?? "contest").toLowerCase();
+  const label = CONTEST_KIND_LABEL[kind] ?? "공모전";
+  if (kind === "education") {
+    return `${label}: 교육 기간·수료·자격증·국비지원·취업연계 등 원문에 있는 일정·혜택만 추출하세요. 접수 시작·마감은 stages에 넣지 마세요.`;
+  }
+  if (kind === "activity") {
+    return `${label}: 활동 기간·오리엔테이션·중간/최종 발표·수료식·활동비·위촉장 등 원문에 있는 일정·혜택만 추출하세요. 접수 시작·마감은 stages에 넣지 마세요.`;
+  }
+  return `${label}: 서류/본선 심사·결과 발표·시상식 등 원문에 있는 일정·혜택만 추출하세요. 접수 시작·마감은 stages에 넣지 마세요.`;
+}
+
+const CONTEST_EXTRACT_SYSTEM_PROMPT = `당신은 한국 공모전·대외활동·교육 공고에서 정형 데이터를 추출하는 도우미입니다.
+주어진 공고 제목과 본문(가능하면 가./나. 형식으로 정리된 원문)만 근거로 JSON을 추출하세요.
+규칙:
+- 본문에 명확히 드러나지 않는 값은 절대 추측하지 말고 null(또는 빈 배열)로 두세요.
+- 날짜 필드(apply_start_date, apply_end_date, announcement_date)는 반드시 "YYYY-MM-DD". 연도가 없으면 null.
+- support_amount_text는 원문에만 있고 크롤 총상금이 없을 때만 채우세요. 등수별 합산은 하지 마세요. 없으면 null.
+- stages는 공고에 나온 전형·일정 절차를 순서대로 배열로 추출하세요. 각 항목은
+  { "title": string, "phase": "selection" | "post_acceptance", "schedule_text": string|null, "note": string|null }.
+  - phase: 지원자가 통과해야 하는 관문(서류심사, 면접, 본선, 최종발표 등)은 "selection",
+    선발/합격 후 이어지는 절차(오리엔테이션, 활동 기간, 교육 기간, 수료식, 시상식 등)는 "post_acceptance".
+  - schedule_text: 공고 원문에 쓰인 표현을 그대로 자연스러운 텍스트로 적으세요
+    (예: "2026. 7. 1. ~ 7. 14.", "2026년 8월 중", "추후 공지").
+    굳이 "YYYY-MM-DD"로 바꾸지 마세요. 날짜/시기를 전혀 알 수 없으면 null.
+  - note: 짧은 보조 설명이 있으면 적고, 없으면 null.
+  - 중요: 접수 시작·접수 마감·모집 기간·지원 기간·서류 접수(기간만)는 stages에 넣지 마세요.
+    이 일정은 별도 필드(apply_start_date/apply_end_date)로 이미 표시됩니다.
+  - 전형 절차가 본문에 없으면 빈 배열로 두세요.
+- required_documents는 제출 서류명 배열. 없으면 빈 배열.
+- apply_method·contact·note는 원문에 있을 때만.
+- 반드시 JSON 객체 하나만 출력. 설명 텍스트·마크다운 코드펜스 금지.
+- 배열 필드는 반드시 JSON 배열로, 숫자는 숫자 타입으로 출력하세요.`;
+
+function normalizeContestDraft(raw: unknown): ContestDraft {
+  const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  return {
+    support_amount_text: toStringOrNull(o.support_amount_text),
+    apply_start_date: toDateOrNull(o.apply_start_date),
+    apply_end_date: toDateOrNull(o.apply_end_date),
+    announcement_date: toDateOrNull(o.announcement_date),
+    selection_count: toNumberOrNull(o.selection_count),
+    required_documents: toStringArray(o.required_documents),
+    apply_method: toStringOrNull(o.apply_method),
+    contact: toStringOrNull(o.contact),
+    note: toStringOrNull(o.note),
+    stages: toStageArray(o.stages).filter((s) => !isApplyPeriodStageTitle(s.title)),
+  };
+}
+
+/**
+ * LLM 정리(또는 원문) 본문에서 공모전·교육·대외활동 일정·메타 필드를 추출한다.
+ * 혜택 키워드 칩은 호출측에서 resolveContestBenefits(noticeText)로 처리한다.
+ */
+export async function extractContestDraft(input: {
+  title: string;
+  body: string;
+  contentKind?: string | null;
+  organization?: string | null;
+}): Promise<{ draft?: ContestDraft; error?: string }> {
+  const body = input.body?.trim() ?? "";
+  if (!body) {
+    return { error: "추출할 본문이 비어 있습니다." };
+  }
+
+  const kindLabel =
+    CONTEST_KIND_LABEL[(input.contentKind ?? "contest").toLowerCase()] ?? "공모전";
+
+  const userPrompt = [
+    `[유형] ${kindLabel}`,
+    input.organization?.trim() ? `[주최] ${input.organization.trim()}` : null,
+    `[제목] ${input.title}`,
+    `[본문]`,
+    body.slice(0, 12000),
+    "",
+    contestKindHint(input.contentKind),
+    "",
+    "다음 키를 가진 JSON으로 출력: support_amount_text, apply_start_date, apply_end_date, announcement_date, selection_count, required_documents, apply_method, contact, note, stages",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const runExtract = async (prompt: string) =>
+    callLlm({
+      systemPrompt: CONTEST_EXTRACT_SYSTEM_PROMPT,
+      userPrompt: prompt,
+      jsonObject: true,
+      maxTokens: 4096,
+    });
+
+  let { content, error: callError } = await runExtract(userPrompt);
+  if (callError) return { error: callError };
+  if (!content) return { error: "LLM 응답 본문이 비어 있습니다." };
+
+  let { parsed, error: parseError } = parseJsonObjectFromText(content);
+
+  if (parseError || parsed === undefined) {
+    const retryPrompt = [
+      userPrompt,
+      "",
+      "이전 응답이 유효한 JSON이 아니었습니다.",
+      "설명·마크다운·코드펜스 없이 JSON 객체 하나만 다시 출력하세요.",
+    ].join("\n");
+    const retry = await runExtract(retryPrompt);
+    if (!retry.error && retry.content) {
+      const retried = parseJsonObjectFromText(retry.content);
+      if (retried.parsed !== undefined) {
+        parsed = retried.parsed;
+        parseError = undefined;
+      } else {
+        parseError = retried.error ?? parseError;
+      }
+    }
+  }
+
+  if (parseError || parsed === undefined) {
+    return { error: parseError ?? "JSON 파싱 실패" };
+  }
+
+  return { draft: normalizeContestDraft(parsed) };
+}
+
+/** 가./나. 섹션이 이미 있으면 true (LLM format 스킵 휴리스틱) */
+export function looksLikeFormattedNotice(text: string): boolean {
+  const hits = text.match(/^[가-힣]\.\s+\S+/gm);
+  return (hits?.length ?? 0) >= 2;
+}
+
+/**
+ * 원문 형식 정리 → 일정/메타 추출을 한 번에 수행.
+ * format 실패 시에도 원문으로 extract를 시도한다.
+ */
+export async function formatAndExtractContestNotice(input: {
+  title: string;
+  body: string;
+  contentKind?: string | null;
+  organization?: string | null;
+  skipFormatIfAlreadyFormatted?: boolean;
+}): Promise<{
+  noticeText: string;
+  draft: ContestDraft;
+  formatError?: string;
+  extractError?: string;
+}> {
+  const original = input.body?.trim() ?? "";
+  let noticeText = original;
+  let formatError: string | undefined;
+
+  const skipFormat =
+    Boolean(input.skipFormatIfAlreadyFormatted) && looksLikeFormattedNotice(original);
+
+  if (original && !skipFormat) {
+    const formatted = await formatOriginalNoticeText({
+      title: input.title,
+      body: original,
+    });
+    if (formatted.error) formatError = formatted.error;
+    if (formatted.text?.trim()) noticeText = formatted.text.trim();
+  }
+
+  const { draft, error: extractError } = await extractContestDraft({
+    title: input.title,
+    body: noticeText || original,
+    contentKind: input.contentKind,
+    organization: input.organization,
+  });
+
+  return {
+    noticeText: noticeText || original,
+    draft: draft ?? { stages: [] },
+    formatError,
+    extractError,
+  };
 }
