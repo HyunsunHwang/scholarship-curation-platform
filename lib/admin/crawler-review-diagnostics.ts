@@ -20,6 +20,11 @@ export type AdminCrawlerReviewDiagnostic = {
   f2ClassificationBefore: string | null;
   f2ClassificationAfter: string | null;
   f2NextAction: string | null;
+  f3RemediationStatus: "resolved" | "deferred" | null;
+  f3ClassificationBefore: string | null;
+  f3ClassificationAfter: string | null;
+  f3RiskCodes: string[];
+  f3NextAction: string | null;
   nextAction: string;
   batchWarning: string | null;
   batchStatus: string;

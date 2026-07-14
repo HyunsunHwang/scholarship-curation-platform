@@ -12,6 +12,7 @@ const INPUTS = {
   aSpotChecks: "reports/post-phase-a-spot-check-decisions.json",
   aRemediation: "reports/post-phase-a-remediation-priority-decisions.json",
   f2: "reports/post-phase-f2-source-parser-remediation.json",
+  f3: "reports/post-phase-f3-quality-attachment-encoding-remediation.json",
 };
 const DEFAULT_OUTPUT = "reports/post-phase-f1-admin-review-integration.json";
 
@@ -35,6 +36,7 @@ function priorityFor(remediation) {
 export function buildAdminCrawlerReviewDiagnostics(inputs) {
   const sourceSpotChecks = new Map(array(inputs.aSpotChecks.decisions).map((row) => [row.source_id, row]));
   const f2BySource = new Map(array(inputs.f2.source_spot_check_results).map((row) => [row.source_id, row]));
+  const f3BySource = new Map(array(inputs.f3.source_item_spot_checks).map((row) => [row.source_id, row]));
   const remediationBySource = new Map();
   for (const remediation of array(inputs.aSummary.remediation_priorities)) {
     for (const sourceId of array(remediation.affected_source_ids)) {
@@ -49,6 +51,7 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
     const remediation = sourceId ? remediationBySource.get(sourceId) ?? [] : [];
     const spotCheck = sourceId ? sourceSpotChecks.get(sourceId) : null;
     const f2 = sourceId ? f2BySource.get(sourceId) : null;
+    const f3 = sourceId ? f3BySource.get(sourceId) : null;
     const qualityFlags = [];
     if (row.no_assets) qualityFlags.push("no_assets");
     if (row.image_only_suspected) qualityFlags.push("image_only_suspected");
@@ -57,15 +60,20 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
     if (remediation.some((item) => item.remediation_category === "second_pass_parser_recommended")) qualityFlags.push("second_pass_parser_recommended");
     if (remediation.some((item) => item.remediation_category === "encoding_normalization_review")) qualityFlags.push("encoding_or_mojibake_suspected");
     if (array(spotCheck?.fixture_backed_triage_types).some((item) => item === "detail_fetch_or_body_parse_issue")) qualityFlags.push("detail_body_not_parsed");
+    if (f3?.attachment_only_possible) qualityFlags.push("attachment_only_possible");
+    if (f3?.mojibake_suspected) qualityFlags.push("encoding_or_mojibake_suspected");
+    if (f3?.image_only_suspected) qualityFlags.push("image_only_suspected");
+    if (f3?.short_body_suspected) qualityFlags.push("short_body");
     const parserFailureReasonCodes = [
       ...new Set([
         ...qualityFlags,
         ...remediation.flatMap((item) => array(item.reason_codes)),
         ...array(spotCheck?.fixture_backed_triage_types),
+        ...(f3?.attachment_metadata_status === "metadata_present_pdf" ? ["attachment_metadata_present", "attachment_download_unverified"] : []),
       ]),
     ];
     const remediationPriority = priorityFor(remediation);
-    const nextAction = f2?.next_action ?? remediation[0]?.rationale ?? spotCheck?.bounded_real_source_spot_check?.next_action ?? row.recommended_action;
+    const nextAction = f3?.next_action ?? f2?.next_action ?? remediation[0]?.rationale ?? spotCheck?.bounded_real_source_spot_check?.next_action ?? row.recommended_action;
     const batchWarning = row.observability_issue_count > 0
       ? `${row.batch_observability_status}: ${row.observability_issue_count} observability issue(s)`
       : null;
@@ -89,6 +97,16 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       f2ClassificationBefore: f2?.classification_before ?? null,
       f2ClassificationAfter: f2?.classification_after ?? null,
       f2NextAction: f2?.next_action ?? null,
+      f3RemediationStatus: f3 ? (f3.p1_resolved ? "resolved" : "deferred") : null,
+      f3ClassificationBefore: f3?.classification_before ?? null,
+      f3ClassificationAfter: f3?.classification_after ?? null,
+      f3RiskCodes: [
+        ...(f3?.attachment_only_possible ? ["attachment_only_possible"] : []),
+        ...(f3?.mojibake_suspected ? ["encoding_or_mojibake_suspected"] : []),
+        ...(f3?.image_only_suspected ? ["image_only_suspected"] : []),
+        ...(f3?.short_body_suspected ? ["short_body"] : []),
+      ],
+      f3NextAction: f3?.next_action ?? null,
       nextAction,
       batchWarning,
       batchStatus: row.batch_observability_status,
@@ -146,6 +164,13 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       source_spot_check_count: inputs.f2.metrics.source_spot_check_count,
       manual_review_retained_count: inputs.f2.metrics.manual_review_retained_count,
     },
+    f3_summary: {
+      p1_resolved_count: inputs.f3.metrics.p1_resolved_count,
+      p1_deferred_count: inputs.f3.metrics.p1_deferred_count,
+      attachment_metadata_present_count: inputs.f3.metrics.attachment_metadata_present_count,
+      encoding_case_count: inputs.f3.metrics.encoding_case_count,
+      review_retained_count: inputs.f3.metrics.review_retained_count,
+    },
     scope_notices: [
       "This page is read-only and does not create an apply path.",
       "Zero-match is an observation, not proof of scholarship absence or source exhaustion.",
@@ -155,6 +180,9 @@ export function buildAdminCrawlerReviewDiagnostics(inputs) {
       "Unverified detail/pagination/attachment cases remain review/backlog.",
       "Fail-closed behavior is preserved.",
       "No production apply or DB write is performed.",
+      "F-3 resolves only bounded P1 quality, attachment, and encoding issues.",
+      "Attachment-only or mojibake-suspected items are not silently promoted to clean.",
+      "Evidence-limited items remain review/backlog.",
     ],
     metrics,
   };

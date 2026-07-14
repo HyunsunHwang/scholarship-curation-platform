@@ -1,0 +1,7 @@
+{
+  "id": "after-cau_010-attachment-metadata-present",
+  "source_id": "cau_010",
+  "kind": "attachment",
+  "html": "<article><div class=\"entry-content\">Scholarship notice summary. Full eligibility evidence is provided in the attached guide.</div><a class=\"kboard-attach\" href=\"/files/scholarship-guide.pdf\" data-file-type=\"application/pdf\">scholarship-guide.pdf</a></article>",
+  "expected": { "attachment_metadata_count": 1, "attachment_extension": "pdf", "attachment_download_unverified": true, "classification": "needs_review", "disposition": "admin_review_required" }
+}

@@ -17,7 +17,8 @@
     "aClosure": "reports/post-phase-a-closure-review-note.json",
     "aSpotChecks": "reports/post-phase-a-spot-check-decisions.json",
     "aRemediation": "reports/post-phase-a-remediation-priority-decisions.json",
-    "f2": "reports/post-phase-f2-source-parser-remediation.json"
+    "f2": "reports/post-phase-f2-source-parser-remediation.json",
+    "f3": "reports/post-phase-f3-quality-attachment-encoding-remediation.json"
   },
   "diagnostics": [
     {
@@ -45,6 +46,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "Future enhancement or manual-only follow-up.",
       "batchWarning": null,
       "batchStatus": "healthy",
@@ -81,6 +87,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "Inspect the pinned region and one later page before treating depth as a crawler remediation.",
       "batchWarning": null,
       "batchStatus": "healthy",
@@ -100,13 +111,15 @@
       "qualityStatus": "accepted",
       "qualityFlags": [
         "second_pass_parser_recommended",
-        "detail_body_not_parsed"
+        "detail_body_not_parsed",
+        "short_body"
       ],
       "zeroMatchObserved": false,
       "falseNegativeReview": true,
       "parserFailureReasonCodes": [
         "second_pass_parser_recommended",
         "detail_body_not_parsed",
+        "short_body",
         "body_missing",
         "selector_mismatch",
         "body_too_short",
@@ -123,7 +136,14 @@
       "f2ClassificationBefore": "blocked",
       "f2ClassificationAfter": "blocked",
       "f2NextAction": "Add a source-specific list/detail evidence fixture before changing this parser.",
-      "nextAction": "Add a source-specific list/detail evidence fixture before changing this parser.",
+      "f3RemediationStatus": "deferred",
+      "f3ClassificationBefore": "blocked",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "short_body"
+      ],
+      "f3NextAction": "Capture a reviewed list-to-detail fixture before any further parser work.",
+      "nextAction": "Capture a reviewed list-to-detail fixture before any further parser work.",
       "batchWarning": null,
       "batchStatus": "healthy",
       "sourceResultStatus": "success",
@@ -158,6 +178,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "Review a bounded recent-title sample before retaining or rejecting the no-recent-scholarship hypothesis.",
       "batchWarning": null,
       "batchStatus": "healthy",
@@ -185,6 +210,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "resolve_source_identity_before_review",
       "batchWarning": "healthy: 1 observability issue(s)",
       "batchStatus": "healthy",
@@ -212,6 +242,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "resolve_source_identity_before_review",
       "batchWarning": "healthy: 1 observability issue(s)",
       "batchStatus": "healthy",
@@ -238,6 +273,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "resolve_source_identity_before_review",
       "batchWarning": "healthy: 1 observability issue(s)",
       "batchStatus": "healthy",
@@ -273,6 +313,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "Improves quality after blocking failures are addressed.",
       "batchWarning": null,
       "batchStatus": "healthy",
@@ -291,6 +336,7 @@
       "reviewStatus": "blocked",
       "qualityStatus": "accepted",
       "qualityFlags": [
+        "encoding_or_mojibake_suspected",
         "encoding_or_mojibake_suspected"
       ],
       "zeroMatchObserved": true,
@@ -308,7 +354,14 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
-      "nextAction": "Sends many candidates to review or obscures key evidence.",
+      "f3RemediationStatus": "resolved",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "encoding_or_mojibake_suspected"
+      ],
+      "f3NextAction": "Retain blocked/review handling until a source-provided readable body is available.",
+      "nextAction": "Retain blocked/review handling until a source-provided readable body is available.",
       "batchWarning": "degraded: 1 observability issue(s)",
       "batchStatus": "degraded",
       "sourceResultStatus": "zero_match_observed",
@@ -326,6 +379,7 @@
       "reviewStatus": "needs_review",
       "qualityStatus": "accepted",
       "qualityFlags": [
+        "attachment_only_possible",
         "attachment_only_possible"
       ],
       "zeroMatchObserved": false,
@@ -342,7 +396,14 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
-      "nextAction": "Sends many candidates to review or obscures key evidence.",
+      "f3RemediationStatus": "deferred",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "blocked",
+      "f3RiskCodes": [
+        "attachment_only_possible"
+      ],
+      "f3NextAction": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured.",
+      "nextAction": "Retain blocked_until_attachment_check until a source-specific metadata fixture is captured.",
       "batchWarning": "incomplete: 2 observability issue(s)",
       "batchStatus": "incomplete",
       "sourceResultStatus": "partial",
@@ -369,6 +430,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "resolve_source_identity_before_review",
       "batchWarning": "healthy: 1 observability issue(s)",
       "batchStatus": "healthy",
@@ -397,6 +463,11 @@
       "f2ClassificationBefore": null,
       "f2ClassificationAfter": null,
       "f2NextAction": null,
+      "f3RemediationStatus": null,
+      "f3ClassificationBefore": null,
+      "f3ClassificationAfter": null,
+      "f3RiskCodes": [],
+      "f3NextAction": null,
       "nextAction": "resolve_source_identity_before_review",
       "batchWarning": "healthy: 1 observability issue(s)",
       "batchStatus": "healthy",
@@ -415,15 +486,19 @@
       "reviewStatus": "blocked",
       "qualityStatus": "accepted",
       "qualityFlags": [
-        "second_pass_parser_recommended"
+        "second_pass_parser_recommended",
+        "short_body"
       ],
       "zeroMatchObserved": false,
       "falseNegativeReview": false,
       "parserFailureReasonCodes": [
         "second_pass_parser_recommended",
+        "short_body",
         "detail_fetch_failed",
         "body_too_short",
-        "image_only_suspected"
+        "image_only_suspected",
+        "attachment_metadata_present",
+        "attachment_download_unverified"
       ],
       "itemReadabilityStatus": "good_text",
       "boardReadabilityStatus": null,
@@ -432,7 +507,14 @@
       "f2ClassificationBefore": "blocked",
       "f2ClassificationAfter": "needs_review",
       "f2NextAction": "Retain review status and defer attachment/body interpretation to F-3 or a separately approved follow-up.",
-      "nextAction": "Retain review status and defer attachment/body interpretation to F-3 or a separately approved follow-up.",
+      "f3RemediationStatus": "resolved",
+      "f3ClassificationBefore": "needs_review",
+      "f3ClassificationAfter": "needs_review",
+      "f3RiskCodes": [
+        "short_body"
+      ],
+      "f3NextAction": "Keep attachment download and short-body interpretation in review; no download was attempted.",
+      "nextAction": "Keep attachment download and short-body interpretation in review; no download was attempted.",
       "batchWarning": "blocked: 3 observability issue(s)",
       "batchStatus": "blocked",
       "sourceResultStatus": "blocked",
@@ -619,6 +701,13 @@
     "source_spot_check_count": 4,
     "manual_review_retained_count": 3
   },
+  "f3_summary": {
+    "p1_resolved_count": 1,
+    "p1_deferred_count": 1,
+    "attachment_metadata_present_count": 2,
+    "encoding_case_count": 2,
+    "review_retained_count": 3
+  },
   "scope_notices": [
     "This page is read-only and does not create an apply path.",
     "Zero-match is an observation, not proof of scholarship absence or source exhaustion.",
@@ -627,7 +716,10 @@
     "F-2 resolves only bounded P0 source/parser issues.",
     "Unverified detail/pagination/attachment cases remain review/backlog.",
     "Fail-closed behavior is preserved.",
-    "No production apply or DB write is performed."
+    "No production apply or DB write is performed.",
+    "F-3 resolves only bounded P1 quality, attachment, and encoding issues.",
+    "Attachment-only or mojibake-suspected items are not silently promoted to clean.",
+    "Evidence-limited items remain review/backlog."
   ],
   "metrics": {
     "diagnostic_item_count": 13,

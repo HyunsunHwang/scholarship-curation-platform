@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_008-attachment-metadata-missing",
+  "source_id": "cau_008",
+  "kind": "attachment",
+  "html": "<article><div class=\"entry-content\">Scholarship eligibility and required supporting evidence are stated to be in an attached document, but this bounded fixture exposes no attachment link or metadata.</div></article>",
+  "expected": { "attachment_metadata_count": 0, "attachment_only_possible": true, "classification": "blocked", "disposition": "blocked_until_attachment_check" }
+}

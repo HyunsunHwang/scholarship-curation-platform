@@ -132,8 +132,10 @@ export default async function AdminCrawlerReviewPage({
                     {item.falseNegativeReview ? <p className="mt-1 text-xs font-semibold text-amber-700">False-negative review</p> : null}
                     {item.remediationPriority ? <p className="mt-1 text-xs font-semibold text-amber-700">{item.remediationPriority} remediation</p> : null}
                     {item.f2RemediationStatus ? <p className="mt-1 text-xs font-semibold text-gray-700">F-2: {item.f2RemediationStatus} ({item.f2ClassificationBefore} to {item.f2ClassificationAfter})</p> : null}
+                    {item.f3RemediationStatus ? <p className="mt-1 text-xs font-semibold text-gray-700">F-3: {item.f3RemediationStatus} ({item.f3ClassificationBefore} to {item.f3ClassificationAfter})</p> : null}
+                    {item.f3RiskCodes.length > 0 ? <p className="mt-1 max-w-52 text-xs text-amber-700">F-3 risk: {item.f3RiskCodes.join(", ")}</p> : null}
                   </td>
-                  <td className="px-4 py-3"><p className="max-w-56 text-xs text-gray-700">{item.nextAction}</p>{item.f2NextAction && item.f2NextAction !== item.nextAction ? <p className="mt-1 max-w-56 text-xs text-gray-500">F-2: {item.f2NextAction}</p> : null}</td>
+                  <td className="px-4 py-3"><p className="max-w-56 text-xs text-gray-700">{item.nextAction}</p>{item.f2NextAction && item.f2NextAction !== item.nextAction ? <p className="mt-1 max-w-56 text-xs text-gray-500">F-2: {item.f2NextAction}</p> : null}{item.f3NextAction && item.f3NextAction !== item.nextAction ? <p className="mt-1 max-w-56 text-xs text-gray-500">F-3: {item.f3NextAction}</p> : null}</td>
                   <td className="px-4 py-3">
                     <p className="text-xs text-gray-700">{item.batchStatus} / {item.sourceResultStatus}</p>
                     <p className="mt-1 text-xs text-gray-500">{item.batchWarning ?? "No batch warning"}</p>
@@ -163,6 +165,7 @@ export default async function AdminCrawlerReviewPage({
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">B/C image-only suspected</dt><dd className="mt-1">{report.review_quality_summary.image_only_suspected_count}</dd></div>
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">A Foundation</dt><dd className="mt-1">Coverage/parser/remediation policy only; remediation implementation remains a follow-up.</dd></div>
             <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">F-2 bounded P0</dt><dd className="mt-1">Resolved: {report.f2_summary.p0_resolved_count} / Deferred: {report.f2_summary.p0_deferred_count} / Review retained: {report.f2_summary.manual_review_retained_count}</dd></div>
+            <div><dt className="text-xs font-medium uppercase tracking-wide text-gray-500">F-3 bounded P1</dt><dd className="mt-1">Resolved: {report.f3_summary.p1_resolved_count} / Deferred: {report.f3_summary.p1_deferred_count} / Attachment metadata: {report.f3_summary.attachment_metadata_present_count} / Encoding cases: {report.f3_summary.encoding_case_count}</dd></div>
           </dl>
         </div>
       </section>

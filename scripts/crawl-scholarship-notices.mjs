@@ -7,6 +7,7 @@ import {
   getListAdapter,
 } from "../lib/crawler-adapters/index.mjs";
 import {
+  attachmentMetadataToCsvCell,
   extractDetailFromCheerio,
   imageUrlsToCsvCell,
 } from "../lib/notice-body-extraction.mjs";
@@ -433,7 +434,7 @@ async function enrichDetail(source, item) {
     const detailHtml = await fetchHtml(item.noticeUrl);
     const $detail = loadHtml(detailHtml);
     $detail("script, style, nav, footer, header, aside, noscript").remove();
-    const { content, imageUrls } = extractDetailFromCheerio($detail, {
+    const { content, imageUrls, attachmentMetadata, qualitySignals } = extractDetailFromCheerio($detail, {
       baseUrl: item.noticeUrl || source.baseUrl || source.listUrl,
       sourceId: source.sourceId,
       detailContentSelector: source.detailContentSelector,
@@ -445,6 +446,8 @@ async function enrichDetail(source, item) {
       ...item,
       content,
       imageUrls,
+      attachmentMetadata,
+      qualitySignals,
       detailDate,
     };
   } catch (error) {
@@ -723,6 +726,7 @@ async function run() {
     "parsed_date",
     "content",
     "image_urls",
+    "attachment_metadata",
   ];
   const csvLines = [
     csvHeader.join(","),
@@ -745,6 +749,7 @@ async function run() {
         row.parsedDate ?? "",
         row.content ?? "",
         imageUrlsToCsvCell(row.imageUrls),
+        attachmentMetadataToCsvCell(row.attachmentMetadata),
       ]
         .map((cell) => escapeCsvCell(cell))
         .join(","),

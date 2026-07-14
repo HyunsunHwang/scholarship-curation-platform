@@ -1,0 +1,7 @@
+{
+  "id": "before-cau_007-replacement-character",
+  "source_id": "cau_007",
+  "kind": "encoding",
+  "html": "<article><div class=\"entry-content\">Scholarship eligibility evidence contains corrupted text � � and cannot be trusted as complete readable detail even though the surrounding sentence is long enough for ordinary text extraction.</div></article>",
+  "expected": { "replacement_character_count": 2, "encoding_or_mojibake_suspected": true, "classification": "blocked", "disposition": "blocked_until_encoding_review" }
+}

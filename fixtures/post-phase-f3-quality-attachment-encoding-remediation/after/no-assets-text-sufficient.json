@@ -1,0 +1,7 @@
+{
+  "id": "after-no-assets-text-sufficient",
+  "source_id": "fixture_no_assets_001",
+  "kind": "policy",
+  "html": "<article><div class=\"entry-content\">Scholarship notice provides eligibility, amount, selection criteria, application deadline, contact details, and a complete submission procedure in readable text. No attachment or image is necessary to preserve the public evidence in this bounded fixture.</div></article>",
+  "expected": { "attachment_metadata_count": 0, "no_assets": true, "classification": "clean", "disposition": "auto_pass_allowed" }
+}

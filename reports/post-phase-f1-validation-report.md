@@ -25,11 +25,12 @@ PASS
 ## Tests
 
 - PASS: admin diagnostics route and helper exist
-- PASS: F-0, B/C, E, A, and F-2 reports are all referenced
+- PASS: F-0, B/C, E, A, F-2, and F-3 reports are all referenced
 - PASS: required source-resolution statuses are represented
 - PASS: zero-match and read-only policy notices are visible
 - PASS: production detector/parser/crawler unchanged policy is visible
 - PASS: F-2 bounded remediation notices and statuses are visible
+- PASS: F-3 bounded remediation notices and statuses are visible
 - PASS: generated diagnostics view model is deterministic
 - PASS: F-1 output remains read-only
 - PASS: restricted files are unchanged
