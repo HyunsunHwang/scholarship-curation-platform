@@ -82,6 +82,20 @@ export default function LibraryHub({
               : { type: "single", url: savedCovers[0] ?? null }
           }
         />
+
+        <LibraryCollectionCard
+          href={isLoggedIn ? "/matched" : "/auth"}
+          title="조건에 맞는 장학금"
+          subtitle={isLoggedIn ? "맞춤 추천" : "로그인하고 시작하기"}
+          cover={{ type: "icon", tone: "brand" }}
+        />
+
+        <LibraryCollectionCard
+          href={isLoggedIn ? "/matched?scope=campus" : "/auth"}
+          title="교내 기회"
+          subtitle={isLoggedIn ? "우리 학교 전용" : "로그인하고 보기"}
+          cover={{ type: "icon", tone: "campus" }}
+        />
       </div>
     </div>
   );
