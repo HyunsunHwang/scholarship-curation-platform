@@ -14,7 +14,7 @@
       "description": "cau_003 still requires duplicate-evidence review before it can be exposed.",
       "h_scope": "in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H fixture-only evidence exercises the existing detail and attachment extractor; duplicate evidence remains review-only.",
+      "resolution_evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only.",
       "next_resolution_phase": "J",
       "next_work_unit": "Duplicate review decision lifecycle planning",
       "owner": "Review governance",
@@ -40,11 +40,11 @@
       "description": "cau_008 has incomplete batch evidence and remains hidden from public exposure.",
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
-      "why_not_resolved_now": "H verifies metadata-only fixture handling; download and attachment content interpretation remain out of scope.",
+      "why_not_resolved_now": "The bounded live closure reached the configured list endpoint but source-specific list-to-notice mapping is absent, so attachment candidates cannot be credited as notice attachments. Download and attachment content interpretation remain out of scope.",
       "next_resolution_phase": "I",
       "next_work_unit": "Complex attachment content parsing and bounded download evidence",
       "owner": "Parser quality owner",
-      "success_criteria": "A complete bounded run or documented exception resolves the incomplete-batch state."
+      "success_criteria": "A source-specific notice mapping and bounded recheck produce attributable attachment metadata, or a documented exception resolves the incomplete-batch state."
     },
     {
       "id": "RISK-ATTACHMENT-PARSING",
@@ -66,11 +66,11 @@
       "description": "cau_007 zero-match observation is not proof of source exhaustion or scholarship absence.",
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
-      "why_not_resolved_now": "H fixture-only parsing cannot substitute for a source-provided readable body capture.",
-      "next_resolution_phase": "H",
-      "next_work_unit": "Bounded public-source readable body capture",
+      "why_not_resolved_now": "The bounded live closure reached HTTP 200 responses, but the current generic anchor candidates are not verified notice-detail mappings because source-specific mapping configuration is absent.",
+      "next_resolution_phase": "I",
+      "next_work_unit": "Source-specific list-to-notice mapping configuration and bounded readable-body recheck",
       "owner": "Coverage evidence owner",
-      "success_criteria": "Source coverage review records a bounded interpretation without turning zero match into absence."
+      "success_criteria": "A bounded source-specific mapping recheck records attributable notice-body evidence without turning zero match into absence."
     },
     {
       "id": "RISK-CONTEXTUAL-KEYWORD",
@@ -92,7 +92,7 @@
       "description": "The available fixture subset is not nationwide scholarship coverage.",
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H records a four-source bounded comparison and explicitly preserves the non-completeness limitation.",
+      "resolution_evidence": "H records a four-source bounded fixture comparison and a live closure. cau_002 failed closed on local TLS certificate verification, while three generic list mappings remain unverified; the non-completeness limitation is preserved.",
       "next_resolution_phase": "H",
       "next_work_unit": "Future bounded source coverage planning",
       "owner": "Coverage evidence owner",
