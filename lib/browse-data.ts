@@ -7,7 +7,7 @@ import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 
 export type BrowseSort = "latest" | "deadline" | "views" | "scraps";
 export type BrowseKind = Exclude<ContentCategoryKey, "all"> | "all";
-export type BrowseSection = "all" | "trending";
+export type BrowseSection = "all" | "trending" | "internship" | "hiring";
 
 export const BROWSE_SORT_OPTIONS: { key: BrowseSort; label: string }[] = [
   { key: "latest", label: "최신순" },
@@ -20,6 +20,34 @@ export const BROWSE_PAGE_SIZE = 24;
 
 const CONTEST_KINDS = new Set(["contest", "education", "activity"]);
 
+/** 링커리어·정리된 혜택 라벨 — 인턴 섹션 */
+const INTERNSHIP_BENEFIT_TAGS = [
+  "인턴쉽 기회",
+  "인턴/정규직채용",
+  "인턴십",
+  "인턴",
+];
+
+/** 링커리어·정리된 혜택 라벨 — 채용 섹션 */
+const HIRING_BENEFIT_TAGS = [
+  "인턴/정규직채용",
+  "입사시 혜택",
+  "입사시 가산점",
+  "채용연계",
+  "입사혜택",
+  "입사 가산점",
+  "채용",
+];
+
+function isCareerSection(
+  section: BrowseSection
+): section is "internship" | "hiring" {
+  return section === "internship" || section === "hiring";
+}
+
+function careerBenefitTags(section: "internship" | "hiring"): string[] {
+  return section === "internship" ? INTERNSHIP_BENEFIT_TAGS : HIRING_BENEFIT_TAGS;
+}
 function parseBrowseKind(raw: string | null | undefined): BrowseKind {
   if (
     raw === "contest" ||
@@ -45,7 +73,10 @@ function parseBrowseSort(raw: string | null | undefined): BrowseSort {
 }
 
 function parseBrowseSection(raw: string | null | undefined): BrowseSection {
-  return raw === "trending" ? "trending" : "all";
+  if (raw === "trending" || raw === "internship" || raw === "hiring") {
+    return raw;
+  }
+  return "all";
 }
 
 export function parseBrowseParams(searchParams: {
@@ -63,6 +94,7 @@ export function parseBrowseParams(searchParams: {
     searchParams.list === "true" ||
     kind !== "all" ||
     section === "trending" ||
+    isCareerSection(section) ||
     page > 1;
   return {
     kind,
@@ -85,12 +117,19 @@ export function browseHref(opts: {
   const params = new URLSearchParams();
   if (opts.kind && opts.kind !== "all") params.set("kind", opts.kind);
   if (opts.sort && opts.sort !== "deadline") params.set("sort", opts.sort);
-  if (opts.section === "trending") params.set("section", "trending");
+  if (
+    opts.section === "trending" ||
+    opts.section === "internship" ||
+    opts.section === "hiring"
+  ) {
+    params.set("section", opts.section);
+  }
   if (opts.page && opts.page > 1) params.set("page", String(opts.page));
   if (
     opts.list &&
     (!opts.kind || opts.kind === "all") &&
-    opts.section !== "trending"
+    opts.section !== "trending" &&
+    !isCareerSection(opts.section ?? "all")
   ) {
     params.set("list", "1");
   }
@@ -133,15 +172,15 @@ const EXPLORE_TILE_DEFS: Omit<BrowseExploreTile, "coverUrl">[] = [
     color: "#BA5D07",
   },
   {
-    key: "trending",
-    label: "인기 상승",
-    href: browseHref({ section: "trending", sort: "scraps" }),
-    color: "#E13300",
+    key: "internship",
+    label: "인턴",
+    href: browseHref({ section: "internship", sort: "deadline" }),
+    color: "#0D7377",
   },
   {
-    key: "all",
-    label: "전체 공고",
-    href: browseHref({ list: true }),
+    key: "hiring",
+    label: "채용",
+    href: browseHref({ section: "hiring", sort: "deadline" }),
     color: "#1E3264",
   },
 ];
@@ -149,6 +188,8 @@ const EXPLORE_TILE_DEFS: Omit<BrowseExploreTile, "coverUrl">[] = [
 async function fetchOnePoster(opts: {
   table: "contests" | "scholarships";
   contentKind?: "contest" | "education" | "activity";
+  benefitTags?: string[];
+  advertisementsOnly?: boolean;
 }): Promise<string | null> {
   const supabase = createPublicSupabaseClient();
   const today = todayKoreaYYYYMMDD();
@@ -166,11 +207,14 @@ async function fetchOnePoster(opts: {
     if (opts.contentKind) {
       query = query.eq("content_kind", opts.contentKind);
     }
+    if (opts.benefitTags?.length) {
+      query = query.overlaps("benefits", opts.benefitTags);
+    }
     const { data } = await query;
     return data?.[0]?.poster_image_url ?? null;
   }
 
-  const { data } = await supabase
+  let query = supabase
     .from("scholarships")
     .select("poster_image_url")
     .eq("is_verified", true)
@@ -179,17 +223,35 @@ async function fetchOnePoster(opts: {
     .not("poster_image_url", "is", null)
     .order("view_count", { ascending: false, nullsFirst: false })
     .limit(1);
+  if (opts.advertisementsOnly) {
+    query = query.eq("is_advertisement", true);
+  }
+  const { data } = await query;
   return data?.[0]?.poster_image_url ?? null;
 }
 
 export async function fetchBrowseExploreTiles(): Promise<BrowseExploreTile[]> {
-  const [contest, education, activity, scholarship, trending] =
+  const [contest, education, activity, scholarship, internship, hiring] =
     await Promise.all([
       fetchOnePoster({ table: "contests", contentKind: "contest" }),
       fetchOnePoster({ table: "contests", contentKind: "education" }),
       fetchOnePoster({ table: "contests", contentKind: "activity" }),
       fetchOnePoster({ table: "scholarships" }),
-      fetchOnePoster({ table: "contests" }),
+      fetchOnePoster({
+        table: "contests",
+        benefitTags: INTERNSHIP_BENEFIT_TAGS,
+      }),
+      fetchOnePoster({
+        table: "contests",
+        benefitTags: HIRING_BENEFIT_TAGS,
+      }).then(
+        async (url) =>
+          url ??
+          (await fetchOnePoster({
+            table: "scholarships",
+            advertisementsOnly: true,
+          }))
+      ),
     ]);
 
   const covers: Record<string, string | null> = {
@@ -197,8 +259,8 @@ export async function fetchBrowseExploreTiles(): Promise<BrowseExploreTile[]> {
     education,
     activity,
     scholarship,
-    trending: trending ?? scholarship,
-    all: scholarship ?? contest,
+    internship: internship ?? activity ?? contest,
+    hiring: hiring ?? scholarship ?? contest,
   };
 
   return EXPLORE_TILE_DEFS.map((tile) => ({
@@ -345,6 +407,10 @@ async function fetchContestPage(opts: {
     .eq("content_kind", opts.kind)
     .gte("apply_end_date", today);
 
+  if (isCareerSection(opts.section)) {
+    query = query.overlaps("benefits", careerBenefitTags(opts.section));
+  }
+
   if (opts.section === "trending") {
     query = query
       .order("view_count", { ascending: false, nullsFirst: false })
@@ -408,6 +474,14 @@ async function fetchScholarshipPage(opts: {
     .eq("is_verified", true)
     .eq("list_on_home", true)
     .gte("apply_end_date", today);
+
+  // 인턴 섹션: 장학금은 제외 / 채용 섹션: 광고(채용) 공고만
+  if (opts.section === "internship") {
+    return { items: [], totalCount: 0, hasMore: false };
+  }
+  if (opts.section === "hiring") {
+    query = query.eq("is_advertisement", true);
+  }
 
   if (opts.section === "trending") {
     query = query
@@ -548,6 +622,80 @@ async function fetchAllKindsPage(opts: {
   return { items, totalCount, hasMore };
 }
 
+/**
+ * 탐색 허브 인턴/채용: content_kind 구분 없이 혜택 태그로 contests를 모은다.
+ * 채용은 장학금 광고(채용) 공고도 포함한다.
+ */
+async function fetchCareerBrowsePage(opts: {
+  career: "internship" | "hiring";
+  sort: BrowseSort;
+  page: number;
+  pageSize: number;
+}): Promise<{ items: CardScholarship[]; totalCount: number; hasMore: boolean }> {
+  const supabase = createPublicSupabaseClient();
+  const today = todayKoreaYYYYMMDD();
+  const from = (opts.page - 1) * opts.pageSize;
+  const to = from + opts.pageSize - 1;
+  const order = contestOrderColumn(opts.sort);
+  const tags = careerBenefitTags(opts.career);
+
+  let contestQuery = supabase
+    .from("contests")
+    .select(
+      "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      { count: "exact" }
+    )
+    .eq("is_verified", true)
+    .eq("list_on_home", true)
+    .gte("apply_end_date", today)
+    .overlaps("benefits", tags)
+    .order(order.column, { ascending: order.ascending, nullsFirst: false })
+    .order("id", { ascending: false })
+    .range(from, to);
+
+  const { data: contestData, error: contestError, count: contestCount } =
+    await contestQuery;
+
+  if (contestError) {
+    console.error("browse career contests failed", contestError);
+  }
+
+  const contestRows = contestData ?? [];
+  const scrapCounts = await contestScrapCountMap(contestRows.map((row) => row.id));
+  let items = contestRows.map((row) =>
+    mapContestRow(row, today, scrapCounts.get(row.id) ?? 0)
+  );
+
+  let totalCount = contestCount ?? items.length;
+  let hasMore = from + contestRows.length < totalCount;
+
+  if (opts.career === "hiring") {
+    const schol = await fetchScholarshipPage({
+      sort: opts.sort,
+      section: "hiring",
+      page: opts.page,
+      pageSize: opts.pageSize,
+    });
+    items = [...items, ...schol.items];
+    totalCount += schol.totalCount;
+    hasMore = hasMore || schol.hasMore;
+    items.sort((a, b) => {
+      if (opts.sort === "views" || opts.sort === "scraps") {
+        const scrapDiff = (b.scrap_count ?? 0) - (a.scrap_count ?? 0);
+        if (scrapDiff !== 0) return scrapDiff;
+        return (b.view_count ?? 0) - (a.view_count ?? 0);
+      }
+      if (opts.sort === "latest") {
+        return (b.created_at || "").localeCompare(a.created_at || "");
+      }
+      return (a.apply_end_date || "").localeCompare(b.apply_end_date || "");
+    });
+    items = items.slice(0, opts.pageSize);
+  }
+
+  return { items, totalCount, hasMore };
+}
+
 export async function fetchBrowsePage(opts: {
   kind: BrowseKind;
   sort: BrowseSort;
@@ -573,6 +721,17 @@ export async function fetchBrowsePage(opts: {
     const totalPages = Math.max(1, Math.ceil(result.totalCount / pageSize));
     return { ...result, page, pageSize, totalPages };
   };
+
+  if (isCareerSection(opts.section) && opts.kind === "all") {
+    return withPages(
+      await fetchCareerBrowsePage({
+        career: opts.section,
+        sort: opts.sort,
+        page,
+        pageSize,
+      })
+    );
+  }
 
   if (opts.kind === "all") {
     return withPages(
@@ -608,6 +767,9 @@ export async function fetchBrowsePage(opts: {
 }
 
 export function browsePageTitle(kind: BrowseKind, section: BrowseSection): string {
+  if (section === "internship") return "인턴";
+  if (section === "hiring") return "채용";
+
   const kindLabel =
     kind === "all"
       ? "전체 공고"

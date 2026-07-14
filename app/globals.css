@@ -138,6 +138,12 @@
        제외되어 있어 가로 스크롤은 동일하게 막으면서 이 부작용이 없다. */
     overflow-x: clip;
   }
+  /* 모바일 하단 탭바(AirbnbHeader)가 있을 때 콘텐츠가 가려지지 않도록 */
+  @media (max-width: 767px) {
+    html.has-mobile-tabbar body {
+      padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
   html {
     @apply font-sans;
     overflow-x: clip;

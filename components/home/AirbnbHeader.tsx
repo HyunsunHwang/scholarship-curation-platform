@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
 import { useHomeSearch } from "./HomeSearchContext";
+import MobileBottomNav from "./MobileBottomNav";
 
 type AirbnbHeaderProps = {
   logoSrc?: string | null;
@@ -78,7 +79,7 @@ function MainNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <nav
       aria-label="주요 메뉴"
-      className="flex items-center gap-0.5 sm:gap-1"
+      className="hidden items-center gap-0.5 md:flex sm:gap-1"
     >
       {items.map((item) => {
         const active = item.match(pathname);
@@ -132,20 +133,16 @@ function UserActions({
   isAdmin,
   displayInitial,
   profileTitle,
+  onComingSoon,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
   displayInitial: string;
   profileTitle: string;
+  onComingSoon: (label: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [comingSoon, setComingSoon] = useState<string | null>(null);
-  const [portalReady, setPortalReady] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setPortalReady(true);
-  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -170,55 +167,15 @@ function UserActions({
 
   function showComingSoon(label: string) {
     setMenuOpen(false);
-    setComingSoon(label);
+    onComingSoon(label);
   }
-
-  useEffect(() => {
-    if (!comingSoon) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setComingSoon(null);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [comingSoon]);
-
-  const comingSoonModal =
-    portalReady && comingSoon
-      ? createPortal(
-          <div
-            className="fixed inset-0 z-200 flex items-center justify-center bg-black/40 p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="coming-soon-title"
-            onClick={() => setComingSoon(null)}
-          >
-            <div
-              className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 id="coming-soon-title" className="text-lg font-bold text-ink">
-                {comingSoon} 서비스
-              </h2>
-              <p className="mt-2 text-sm text-ink/60">서비스 준비중입니다.</p>
-              <button
-                type="button"
-                onClick={() => setComingSoon(null)}
-                className="mt-5 w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand/85"
-              >
-                확인
-              </button>
-            </div>
-          </div>,
-          document.body
-        )
-      : null;
 
   return (
     <div className="relative flex shrink-0 items-center gap-1 sm:gap-2">
       <button
         type="button"
         onClick={() => showComingSoon("톡")}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-beige hover:text-ink"
+        className="hidden h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-beige hover:text-ink md:inline-flex"
         aria-label="톡"
         title="톡"
       >
@@ -343,8 +300,6 @@ function UserActions({
           </div>
         ) : null}
       </div>
-
-      {comingSoonModal}
     </div>
   );
 }
@@ -358,28 +313,85 @@ export default function AirbnbHeader({
   urgentBookmarkCount: _urgentBookmarkCount,
   variant: _variant = "expandable",
 }: AirbnbHeaderProps) {
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
-      <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-2 pl-1 pr-3 sm:h-[60px] sm:gap-3 sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-          <BrandLogo
-            logoSrc={logoSrc || undefined}
-            priority
-            className="-ml-0.5 h-10 max-h-10 max-w-[120px] sm:h-12 sm:max-h-12 sm:max-w-[160px] md:h-14 md:max-h-14 md:max-w-[190px]"
-          />
-          <MainNav isLoggedIn={isLoggedIn} />
-        </div>
+  const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
-          <HeaderSearch className="w-full max-w-42 sm:max-w-md md:max-w-lg" />
-          <UserActions
-            isLoggedIn={isLoggedIn}
-            isAdmin={isAdmin}
-            displayInitial={displayInitial}
-            profileTitle={profileTitle}
-          />
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!comingSoon) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setComingSoon(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [comingSoon]);
+
+  const comingSoonModal =
+    portalReady && comingSoon
+      ? createPortal(
+          <div
+            className="fixed inset-0 z-200 flex items-center justify-center bg-black/40 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="coming-soon-title"
+            onClick={() => setComingSoon(null)}
+          >
+            <div
+              className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="coming-soon-title" className="text-lg font-bold text-ink">
+                {comingSoon} 서비스
+              </h2>
+              <p className="mt-2 text-sm text-ink/60">서비스 준비중입니다.</p>
+              <button
+                type="button"
+                onClick={() => setComingSoon(null)}
+                className="mt-5 w-full rounded-full bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand/85"
+              >
+                확인
+              </button>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
+  return (
+    <>
+      <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
+        <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-2 pl-1 pr-3 sm:h-[60px] sm:gap-3 sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+            <BrandLogo
+              logoSrc={logoSrc || undefined}
+              priority
+              className="-ml-0.5 h-10 max-h-10 max-w-[120px] sm:h-12 sm:max-h-12 sm:max-w-[160px] md:h-14 md:max-h-14 md:max-w-[190px]"
+            />
+            <MainNav isLoggedIn={isLoggedIn} />
+          </div>
+
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+            <HeaderSearch className="w-full max-w-42 sm:max-w-md md:max-w-lg" />
+            <UserActions
+              isLoggedIn={isLoggedIn}
+              isAdmin={isAdmin}
+              displayInitial={displayInitial}
+              profileTitle={profileTitle}
+              onComingSoon={setComingSoon}
+            />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <MobileBottomNav
+        isLoggedIn={isLoggedIn}
+        onMessagesClick={() => setComingSoon("메세지")}
+      />
+
+      {comingSoonModal}
+    </>
   );
 }
