@@ -28,6 +28,12 @@ It does not claim complete source coverage, parser completeness, or national sch
 
 The deterministic fixture is an adapter input, not a declaration that its notices are current live scholarships. No review decision is persisted, no database write is performed, and no source is automatically created or fuzzily matched.
 
+## Build verification closure
+
+Post-Phase G build verification is **PASS**: `npm ci`, the Next production build, `npx tsc --noEmit`, and changed-file ESLint all passed. The earlier bootstrap risk for `@next/env`, `sharp`, and `unrs-resolver` is resolved for this verified environment.
+
+The production build also observed a non-blocking `public.site_settings` schema-cache warning. It is deferred to Post-Phase J for schema alignment and site settings migration planning; it does not authorize a migration or production change in this phase.
+
 ## Verification
 
 Run:
@@ -37,4 +43,4 @@ node scripts/build-post-phase-g-user-facing-scholarship-mvp.mjs
 node scripts/validate-post-phase-g-user-facing-scholarship-mvp.mjs
 ```
 
-The validator writes `reports/post-phase-g-user-facing-scholarship-mvp.json` and the matching validation reports. It verifies two exposed items, eleven hidden items, policy scenarios, deterministic output, read-only boundaries, and complete next-phase ownership for the master risk register.
+The validator writes `reports/post-phase-g-user-facing-scholarship-mvp.json` and the matching validation reports. It verifies build closure, two exposed items, eleven hidden items, policy scenarios, deterministic output, read-only boundaries, zero blocking risks, and complete next-phase ownership for active risks.

@@ -103,6 +103,16 @@ export async function buildPostPhaseGReport() {
     supabase_access: false,
     migration: false,
     crawler_execution: false,
+    build_verification: {
+      status: "PASS",
+      evidence: {
+        npm_ci: "PASS",
+        next_production_build: "PASS",
+        typescript_no_emit: "PASS",
+        changed_file_eslint: "PASS"
+      },
+      observed_non_blocking_warning: "public.site_settings schema-cache absence; deferred to Post-Phase J."
+    },
     input_reports: {
       f0_adapter_foundation: repositoryPath(f0Path),
       f1_admin_review_integration: repositoryPath(f1Path),

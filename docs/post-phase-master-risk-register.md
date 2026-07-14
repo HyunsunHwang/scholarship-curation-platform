@@ -15,5 +15,7 @@ This register carries open and deferred risks forward without treating a read-on
 | Review persistence | Deferred | J | Approved, auditable review-decision lifecycle. |
 | Schema alignment | Deferred | J | Approved compatibility, rollback, and migration plan. |
 | Guarded production apply | Deferred | J | Separately approved dry-run, audit, and rollback design. |
+| Bootstrap dependencies (`@next/env`, `sharp`, `unrs-resolver`) | Resolved | G | `npm ci`, production build, TypeScript, and changed-file ESLint passed. |
+| `public.site_settings` schema cache | Deferred, non-blocking | J | Confirm target schema presence; prepare migration and compatibility plan if needed. |
 
 No open or deferred risk may move forward without a named resolution phase and measurable success criteria. The machine-readable counterpart is `reports/post-phase-master-risk-register.json`.

@@ -12,6 +12,12 @@ node scripts/validate-post-phase-g-user-facing-scholarship-mvp.mjs
 
 Expected result: `Post-Phase G validation PASS`, two public items, eleven hidden items, zero failed exposure scenarios, deterministic output, and no DB/Supabase access.
 
+## Build verification closure
+
+The verified G environment passed `npm ci`, the Next production build, `npx tsc --noEmit`, and changed-file ESLint. The `@next/env`, `sharp`, and `unrs-resolver` bootstrap risk is resolved for that environment.
+
+The build warning for an absent `public.site_settings` schema-cache entry is non-blocking and deferred to Post-Phase J. Its next work unit is **Schema alignment and site settings migration planning**. Do not create or apply a migration as part of G.
+
 ## Safety boundary
 
 - Do not treat the report as complete source coverage or an absence statement.

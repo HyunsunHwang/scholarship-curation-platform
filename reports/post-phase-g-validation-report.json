@@ -19,7 +19,10 @@
     "scenario_pass_count": 6,
     "scenario_fail_count": 0,
     "deterministic_output": true,
-    "open_risks_with_owner_and_success_criteria": 11,
-    "unassigned_open_or_deferred_risk_count": 0
+    "build_verification_status": "PASS",
+    "resolved_risk_count": 1,
+    "open_or_deferred_risks_with_owner_and_success_criteria": 11,
+    "blocking_risk_count": 0,
+    "unassigned_resolution_phase_count": 0
   }
 }

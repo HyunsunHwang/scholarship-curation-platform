@@ -4,13 +4,15 @@
   "scope": "Post-Phase G user-facing scholarship MVP foundation",
   "all_project_risks_resolved": false,
   "blocking_risk_count": 0,
-  "unassigned_open_or_deferred_risk_count": 0,
+  "unassigned_resolution_phase_count": 0,
+  "resolved_risk_count": 1,
   "risks": [
     {
       "id": "RISK-CAU003-DUPLICATE",
       "status": "open",
       "severity": "high",
       "description": "cau_003 still requires duplicate-evidence review before it can be exposed.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "A reviewer can compare duplicate evidence and record an explicit decision."
     },
@@ -19,6 +21,7 @@
       "status": "open",
       "severity": "high",
       "description": "cau_012 source coverage remains incomplete and is not represented as absence evidence.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "Bounded source coverage evidence is captured with an explicit result classification."
     },
@@ -27,6 +30,7 @@
       "status": "open",
       "severity": "high",
       "description": "cau_008 has incomplete batch evidence and remains hidden from public exposure.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "A complete bounded run or documented exception resolves the incomplete-batch state."
     },
@@ -35,6 +39,7 @@
       "status": "open",
       "severity": "high",
       "description": "Attachment extraction and download verification are not complete.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "I",
       "success_criteria": "Complex attachment cases have deterministic extraction evidence and explicit review handling."
     },
@@ -43,6 +48,7 @@
       "status": "open",
       "severity": "high",
       "description": "cau_007 zero-match observation is not proof of source exhaustion or scholarship absence.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "Source coverage review records a bounded interpretation without turning zero match into absence."
     },
@@ -51,6 +57,7 @@
       "status": "open",
       "severity": "medium",
       "description": "Contextual keyword detection can still miss or overclassify scholarship notices.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "A bounded corpus has measured contextual keyword precision and recall review evidence."
     },
@@ -59,15 +66,23 @@
       "status": "open",
       "severity": "high",
       "description": "The available fixture subset is not nationwide scholarship coverage.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "H",
       "success_criteria": "Coverage claims are tied to a published bounded source inventory and observation window."
     },
     {
       "id": "RISK-BOOTSTRAP-NEXT-ENV-SHARP-UNRS",
-      "status": "open",
+      "status": "resolved",
       "severity": "medium",
-      "description": "Local bootstrap may fail when @next/env, sharp, or unrs-resolver builds are unavailable.",
-      "next_resolution_phase": "G",
+      "description": "The G verification environment resolved @next/env, sharp, and unrs-resolver bootstrap concerns.",
+      "blocking_for_next_phase": false,
+      "resolved_at": "2026-07-14T00:00:00.000Z",
+      "resolution_evidence": {
+        "npm_ci": "PASS",
+        "next_production_build": "PASS",
+        "typescript_no_emit": "PASS",
+        "changed_file_eslint": "PASS"
+      },
       "success_criteria": "A standard Node and package-manager environment completes the documented build verification."
     },
     {
@@ -75,6 +90,7 @@
       "status": "deferred",
       "severity": "high",
       "description": "Review decisions are read-only diagnostics and are not persisted.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "J",
       "success_criteria": "An approved schema and auditable review-decision lifecycle are implemented and reviewed."
     },
@@ -83,6 +99,7 @@
       "status": "deferred",
       "severity": "high",
       "description": "The normalized graph has not been approved or migrated into the production schema.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "J",
       "success_criteria": "A schema proposal is approved with compatibility, rollback, and migration plans."
     },
@@ -91,8 +108,19 @@
       "status": "deferred",
       "severity": "high",
       "description": "No production apply path is approved or implemented.",
+      "blocking_for_next_phase": false,
       "next_resolution_phase": "J",
       "success_criteria": "A separately approved guarded apply design passes dry-run, audit, and rollback review."
+    },
+    {
+      "id": "RISK-SITE-SETTINGS-SCHEMA-CACHE",
+      "status": "deferred",
+      "severity": "low",
+      "description": "The production build observed a warning that public.site_settings was absent from the schema cache.",
+      "blocking_for_next_phase": false,
+      "next_resolution_phase": "J",
+      "next_work_unit": "Schema alignment and site settings migration planning",
+      "success_criteria": "Confirm whether site_settings exists in the target environment schema; if needed, prepare a migration and compatibility plan."
     }
   ]
 }

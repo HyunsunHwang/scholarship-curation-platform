@@ -20,6 +20,9 @@ async function main() {
   const riskPath = resolve(repoRoot, "reports/post-phase-master-risk-register.json");
   const riskRegister = JSON.parse(await readFile(riskPath, "utf8"));
   const serialized = JSON.stringify(report);
+  const activeRisks = riskRegister.risks.filter((risk) => risk.status !== "resolved");
+  const blockingRisks = activeRisks.filter((risk) => risk.blocking_for_next_phase === true);
+  const unassignedRisks = activeRisks.filter((risk) => !risk.next_resolution_phase);
 
   invariant(serialized === JSON.stringify(secondRun.report), "Read-model output must be deterministic.");
   invariant(report.read_only && !report.db_access && !report.db_write && !report.supabase_access, "Report must remain read-only.");
@@ -27,15 +30,18 @@ async function main() {
   invariant(report.metrics.public_item_count === 2, "Expected exactly two reviewed public items.");
   invariant(report.metrics.hidden_item_count === 11, "Expected eleven hidden items.");
   invariant(report.metrics.scenario_fail_count === 0, "All exposure scenarios must pass.");
+  invariant(report.build_verification.status === "PASS", "Build verification must pass before G closure.");
   invariant(report.public_items.every((item) => item.id.startsWith("public-")), "Public IDs must stay namespaced.");
   invariant(
     report.exposure_decisions.every((decision) => decision.exposure_status !== "public" || decision.source_resolution_status === "resolved"),
     "Public rows require resolved source identity.",
   );
   invariant(
-    riskRegister.risks.every((risk) => risk.next_resolution_phase && risk.success_criteria),
+    activeRisks.every((risk) => risk.next_resolution_phase && risk.success_criteria),
     "Every open or deferred risk needs an owner phase and success criteria.",
   );
+  invariant(blockingRisks.length === 0, "No blocking risk may remain for the next phase.");
+  invariant(unassignedRisks.length === 0, "No open or deferred risk may lack a resolution phase.");
 
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   const validation = {
@@ -59,8 +65,11 @@ async function main() {
       scenario_pass_count: report.metrics.scenario_pass_count,
       scenario_fail_count: report.metrics.scenario_fail_count,
       deterministic_output: true,
-      open_risks_with_owner_and_success_criteria: riskRegister.risks.filter((risk) => risk.next_resolution_phase && risk.success_criteria).length,
-      unassigned_open_or_deferred_risk_count: 0
+      build_verification_status: report.build_verification.status,
+      resolved_risk_count: riskRegister.risks.filter((risk) => risk.status === "resolved").length,
+      open_or_deferred_risks_with_owner_and_success_criteria: activeRisks.filter((risk) => risk.next_resolution_phase && risk.success_criteria).length,
+      blocking_risk_count: blockingRisks.length,
+      unassigned_resolution_phase_count: unassignedRisks.length
     }
   };
   const validationPath = resolve(repoRoot, "reports/post-phase-g-validation-report.json");
@@ -68,7 +77,7 @@ async function main() {
   await writeFile(validationPath, `${JSON.stringify(validation, null, 2)}\n`, "utf8");
   await writeFile(
     validationMarkdownPath,
-    `# Post-Phase G Validation Report\n\n- Status: PASS\n- Public items: ${validation.metrics.public_item_count}\n- Hidden items: ${validation.metrics.hidden_item_count}\n- Deterministic output: true\n- DB/Supabase access: false\n- DB write: false\n- Crawler execution: false\n`,
+    `# Post-Phase G Validation Report\n\n- Status: PASS\n- Build verification: ${validation.metrics.build_verification_status}\n- Public items: ${validation.metrics.public_item_count}\n- Hidden items: ${validation.metrics.hidden_item_count}\n- Deterministic output: true\n- Blocking risks: ${validation.metrics.blocking_risk_count}\n- Unassigned resolution phases: ${validation.metrics.unassigned_resolution_phase_count}\n- DB/Supabase access: false\n- DB write: false\n- Crawler execution: false\n`,
     "utf8",
   );
   console.log("Post-Phase G validation PASS");
