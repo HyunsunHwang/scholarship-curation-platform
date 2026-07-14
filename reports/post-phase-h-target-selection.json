@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "contract_version": "post-phase-h-target-selection-report/v1",
+  "read_only": true,
+  "target_selection": {
+    "contract_version": "post-phase-h-target-selection/v1",
+    "selection_method": "risk_priority_bounded_fixture_evidence",
+    "shared_budget": {
+      "max_target_sources": 4,
+      "max_list_pages_per_source": 3,
+      "max_detail_checks_per_source": 5,
+      "max_attachment_metadata_checks_per_source": 3,
+      "max_attachment_download_attempts_per_source": 0,
+      "max_retries": 2,
+      "request_timeout_ms": 15000,
+      "public_endpoints_only": true,
+      "crawler_execution": false
+    },
+    "targets": [
+      {
+        "source_id": "cau_002",
+        "source_key": "cau_002",
+        "linked_risk_ids": [
+          "RISK-COVERAGE-COMPLETENESS",
+          "RISK-CONTEXTUAL-KEYWORD"
+        ],
+        "selection_reason": "Existing A evidence identifies limited pagination and contextual-keyword uncertainty.",
+        "current_source_health": "zero_match_observed",
+        "current_known_limitation": "One-page observation did not inspect later pages.",
+        "success_criteria": "Fixture comparison records bounded page-1 to page-3 lift without an exhaustion claim."
+      },
+      {
+        "source_id": "cau_003",
+        "source_key": "cau_003",
+        "linked_risk_ids": [
+          "RISK-CAU003-DUPLICATE"
+        ],
+        "selection_reason": "Existing F2/F3 evidence lacks a safely resolvable detail fixture.",
+        "current_source_health": "blocked",
+        "current_known_limitation": "Detail body and duplicate evidence were unavailable.",
+        "success_criteria": "Existing detail extractor handles a bounded fixture while duplicate review remains non-public."
+      },
+      {
+        "source_id": "cau_007",
+        "source_key": "cau_007",
+        "linked_risk_ids": [
+          "RISK-CAU007-ZERO-MATCH"
+        ],
+        "selection_reason": "Existing F3 evidence retains replacement-character and readable-body uncertainty.",
+        "current_source_health": "blocked",
+        "current_known_limitation": "No source-provided readable body has been captured.",
+        "success_criteria": "Fixture-only parser behavior is separated from the still-required public-source capture."
+      },
+      {
+        "source_id": "cau_008",
+        "source_key": "cau_008",
+        "linked_risk_ids": [
+          "RISK-CAU008-INCOMPLETE-BATCH"
+        ],
+        "selection_reason": "Existing F3 evidence identifies missing attachment metadata and attachment-only risk.",
+        "current_source_health": "blocked",
+        "current_known_limitation": "Metadata, download, and content interpretation are distinct concerns.",
+        "success_criteria": "Existing attachment metadata extraction is exercised without download or public promotion."
+      }
+    ],
+    "non_target_risk_dispositions": [
+      {
+        "risk_id": "RISK-CAU012-COVERAGE",
+        "classification": "defer_to_j",
+        "reason": "cau_012 is absent from the committed source inventory, so schema/source identity alignment must precede bounded crawl evidence."
+      },
+      {
+        "risk_id": "RISK-ATTACHMENT-PARSING",
+        "classification": "defer_to_i",
+        "reason": "Complex attachment content parsing is outside metadata-only H evidence."
+      }
+    ]
+  }
+}

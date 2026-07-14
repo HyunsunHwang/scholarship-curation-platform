@@ -1,0 +1,28 @@
+{
+  "contract_version": "post-phase-h-contextual-keyword-decisions/v1",
+  "decisions": [
+    {
+      "keyword": "financial-support",
+      "current_decision": "contextual_only",
+      "observed_source_id": "cau_002",
+      "standalone_false_positive_risk": "high",
+      "required_context_terms": ["student", "eligibility", "application"],
+      "title_only_allowed": false,
+      "body_only_allowed": false,
+      "attachment_context_required": false,
+      "recommendation": "Do not modify the production detector; retain this as bounded manual-review evidence."
+    },
+    {
+      "keyword": "grant-support",
+      "current_decision": "insufficient_evidence",
+      "observed_source_id": "cau_002",
+      "standalone_false_positive_risk": "high",
+      "required_context_terms": ["scholarship", "tuition", "student"],
+      "title_only_allowed": false,
+      "body_only_allowed": false,
+      "attachment_context_required": true,
+      "recommendation": "Defer detector-rule consideration until a bounded true-positive and noise corpus exists."
+    }
+  ],
+  "production_detector_changed": false
+}
