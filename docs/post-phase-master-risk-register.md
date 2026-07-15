@@ -1,5 +1,9 @@
 # Post-Phase Master Risk Register
 
+## Post-Phase J update
+
+Post-Phase J supplies direct planning evidence for the canonical graph, append-only review-event, compatibility, rollback, and guarded-apply designs. It does not resolve production implementation risks. The register therefore marks only design coverage as mitigated and keeps target inventory, migration-history divergence, backfill identity, RLS compatibility, and public-projection reconciliation deferred. They block migration implementation readiness, not the next planning phase, so their `blocking_for_next_phase` value remains false. Engine Convergence and external-provider evaluation remain post-J follow-up work.
+
 This register carries unresolved risks forward without treating a read-only MVP as a production ingestion approval.
 
 ## Contract And Status Policy

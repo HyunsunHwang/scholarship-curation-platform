@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-07-15T00:00:00.000Z",
+  "status": "PASS",
+  "post_phase_j_planning_status": "PASS",
+  "production_migration_implementation_readiness": "NOT_READY",
+  "production_apply_readiness": "NOT_READY",
+  "checks": [
+    {
+      "name": "required artifacts",
+      "pass": true
+    },
+    {
+      "name": "source authority",
+      "pass": true
+    },
+    {
+      "name": "notice identity hierarchy",
+      "pass": true
+    },
+    {
+      "name": "append-only review events",
+      "pass": true
+    },
+    {
+      "name": "public projection compatibility",
+      "pass": true
+    },
+    {
+      "name": "attachment and LLM boundary",
+      "pass": true
+    },
+    {
+      "name": "raw normalized human public separation",
+      "pass": true
+    },
+    {
+      "name": "compatibility coverage",
+      "pass": true
+    },
+    {
+      "name": "additive migration sequence",
+      "pass": true
+    },
+    {
+      "name": "first-stage safety",
+      "pass": true
+    },
+    {
+      "name": "implementation readiness",
+      "pass": true
+    },
+    {
+      "name": "prohibited changed paths",
+      "pass": true
+    },
+    {
+      "name": "risk governance",
+      "pass": true
+    },
+    {
+      "name": "duplicate-key negative proof",
+      "pass": true
+    },
+    {
+      "name": "safety counts",
+      "pass": true
+    },
+    {
+      "name": "artifact safety",
+      "pass": true
+    }
+  ],
+  "failures": [],
+  "changed_files": [
+    "docs/post-phase-j-additive-migration-sequence.md",
+    "docs/post-phase-j-backfill-reconciliation-plan.md",
+    "docs/post-phase-j-canonical-schema-proposal.md",
+    "docs/post-phase-j-consumer-compatibility-matrix.md",
+    "docs/post-phase-j-current-schema-inventory.md",
+    "docs/post-phase-j-guarded-production-apply-design.md",
+    "docs/post-phase-j-implementation-readiness.md",
+    "docs/post-phase-j-rollback-recovery-plan.md",
+    "docs/post-phase-j-target-schema-inventory-request.md",
+    "docs/post-phase-master-risk-register.md",
+    "reports/post-phase-i-persisted-artifact-safety-scan.json",
+    "reports/post-phase-i-validation-report.json",
+    "reports/post-phase-j-canonical-schema-proposal.json",
+    "reports/post-phase-j-persisted-artifact-safety-scan.json",
+    "reports/post-phase-j-schema-production-migration-planning.json",
+    "reports/post-phase-j-validation-report.json",
+    "reports/post-phase-master-risk-register.json",
+    "scripts/validate-post-phase-j-schema-production-migration-planning.mjs"
+  ],
+  "forbidden_changed_files": [],
+  "unresolved_risk_count": 18,
+  "missing_risk_governance_count": 0,
+  "stale_completed_phase_assignment_count": 0,
+  "duplicate_json_key_count": 0,
+  "risk_object_duplicate_key_count": 0,
+  "duplicate_json_keys": [],
+  "duplicate_key_negative_test_passed": true,
+  "safety": {
+    "scope": [
+      "docs/post-phase-j-current-schema-inventory.md",
+      "docs/post-phase-j-canonical-schema-proposal.md",
+      "docs/post-phase-j-consumer-compatibility-matrix.md",
+      "docs/post-phase-j-additive-migration-sequence.md",
+      "docs/post-phase-j-backfill-reconciliation-plan.md",
+      "docs/post-phase-j-rollback-recovery-plan.md",
+      "docs/post-phase-j-guarded-production-apply-design.md",
+      "docs/post-phase-j-target-schema-inventory-request.md",
+      "docs/post-phase-j-implementation-readiness.md",
+      "reports/post-phase-j-canonical-schema-proposal.json",
+      "reports/post-phase-j-schema-production-migration-planning.json",
+      "reports/post-phase-master-risk-register.json"
+    ],
+    "total_match_count": 2,
+    "actual_persisted_secret_count": 0,
+    "unclassified_match_count": 0,
+    "actual_persisted_absolute_path_count": 0,
+    "matches": [
+      {
+        "file": "docs/post-phase-j-target-schema-inventory-request.md",
+        "line": 16,
+        "matched_pattern": "token",
+        "classification": "documentation_or_governance_text"
+      },
+      {
+        "file": "docs/post-phase-j-target-schema-inventory-request.md",
+        "line": 16,
+        "matched_pattern": "cookie",
+        "classification": "documentation_or_governance_text"
+      }
+    ]
+  }
+}
