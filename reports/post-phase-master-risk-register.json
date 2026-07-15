@@ -154,7 +154,6 @@
     },
     {
       "id": "RISK-REVIEW-PERSISTENCE",
-      "status": "deferred",
       "origin_phase": "G",
       "severity": "high",
       "description": "Review decisions are read-only diagnostics and are not persisted.",

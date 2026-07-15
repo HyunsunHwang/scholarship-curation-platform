@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T00:00:00.000Z",
+  "generated_at": "2026-07-15T00:00:00.000Z",
   "status": "PASS",
   "post_phase_j_planning_status": "PASS",
   "production_migration_implementation_readiness": "NOT_READY",
@@ -58,6 +58,10 @@
       "pass": true
     },
     {
+      "name": "duplicate-key negative proof",
+      "pass": true
+    },
+    {
       "name": "safety counts",
       "pass": true
     },
@@ -91,6 +95,10 @@
   "unresolved_risk_count": 18,
   "missing_risk_governance_count": 0,
   "stale_completed_phase_assignment_count": 0,
+  "duplicate_json_key_count": 0,
+  "risk_object_duplicate_key_count": 0,
+  "duplicate_json_keys": [],
+  "duplicate_key_negative_test_passed": true,
   "safety": {
     "scope": [
       "docs/post-phase-j-current-schema-inventory.md",
