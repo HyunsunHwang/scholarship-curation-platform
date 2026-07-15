@@ -1,8 +1,18 @@
 import Link from "next/link";
 
-import type { PublicScholarship } from "@/lib/scholarships/public-scholarship-read-model";
+import {
+  type PublicScholarship,
+  type PublicScholarshipReadModelStatus,
+} from "@/lib/scholarships/public-scholarship-read-model";
+import { PublicScholarshipDataStatus } from "./PublicScholarshipDataStatus";
 
-export function PublicScholarshipDetail({ scholarship }: { scholarship: PublicScholarship }) {
+export function PublicScholarshipDetail({
+  scholarship,
+  dataStatus,
+}: {
+  scholarship: PublicScholarship;
+  dataStatus: PublicScholarshipReadModelStatus;
+}) {
   return (
     <main className="min-h-screen bg-[#f8fafc] px-4 py-10 text-ink sm:px-6">
       <div className="mx-auto max-w-3xl">
@@ -14,6 +24,9 @@ export function PublicScholarshipDetail({ scholarship }: { scholarship: PublicSc
             홈
           </Link>
         </div>
+        <div className="mt-6">
+          <PublicScholarshipDataStatus status={dataStatus} />
+        </div>
         <article className="mt-8 rounded-lg border border-black/10 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-wrap gap-2 text-xs font-medium text-black/60">
             <span>{scholarship.organization}</span>
@@ -21,7 +34,9 @@ export function PublicScholarshipDetail({ scholarship }: { scholarship: PublicSc
             <time dateTime={scholarship.publishedAt}>{scholarship.publishedAt}</time>
           </div>
           <h1 className="mt-4 text-3xl font-semibold leading-tight text-ink">{scholarship.title}</h1>
-          <p className="mt-3 text-sm text-black/60">{scholarship.provenanceLabel}</p>
+          <p className="mt-3 text-sm text-black/60">
+            {scholarship.provenanceLabel} · 출처 식별자 {scholarship.sourceId ?? scholarship.sourceKey}
+          </p>
 
           <section className="mt-8 border-t border-black/10 pt-6">
             <h2 className="text-base font-semibold">공고 요약</h2>

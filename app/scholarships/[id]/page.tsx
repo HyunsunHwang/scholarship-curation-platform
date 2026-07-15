@@ -25,6 +25,7 @@ import type { Database } from "@/lib/database.types";
 import { PublicScholarshipDetail } from "@/components/public-scholarships/PublicScholarshipDetail";
 import {
   getPublicScholarshipDetail,
+  getPublicScholarshipReadModelStatus,
   isPublicScholarshipId,
 } from "@/lib/scholarships/public-scholarship-read-model";
 
@@ -99,7 +100,12 @@ export default async function ScholarshipDetailPage({
   if (isPublicScholarshipId(id)) {
     const publicScholarship = getPublicScholarshipDetail(id);
     if (!publicScholarship) notFound();
-    return <PublicScholarshipDetail scholarship={publicScholarship} />;
+    return (
+      <PublicScholarshipDetail
+        scholarship={publicScholarship}
+        dataStatus={getPublicScholarshipReadModelStatus()}
+      />
+    );
   }
 
   const scholarshipId = parseInt(id, 10);

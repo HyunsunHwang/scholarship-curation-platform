@@ -78,10 +78,22 @@ export async function promoteCrawledContest(
   const { supabase, user, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
+  const { data: reviewRow, error: reviewRowError } = await supabase
+    .from("crawled_contests")
+    .select("status, contest_id")
+    .eq("id", crawledId)
+    .single();
+  if (reviewRowError) return { error: reviewRowError.message };
+  if (reviewRow.status !== "new" || reviewRow.contest_id) {
+    return { error: "이미 처리된 공고는 다시 콘텐츠로 등록할 수 없습니다." };
+  }
+
   const payload = buildContestPayload(formData, lockedKind);
-  let stagesFromForm = buildContestSelectionStagesPayload(formData, 0).map(
-    ({ contest_id: _cid, ...rest }) => rest
-  );
+  let stagesFromForm = buildContestSelectionStagesPayload(formData, 0).map((stage) => {
+    const { contest_id, ...rest } = stage;
+    void contest_id;
+    return rest;
+  });
 
   // 폼에 선발 단계가 비어 있으면 정리된 원문에서 LLM 추출을 1회 시도
   if (stagesFromForm.length === 0 && payload.original_notice_text?.trim()) {
@@ -272,11 +284,15 @@ export async function rejectCrawledContest(
   const { supabase, user, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
-  const { data: row } = await supabase
+  const { data: row, error: rowError } = await supabase
     .from("crawled_contests")
-    .select("content_kind")
+    .select("content_kind, status, contest_id")
     .eq("id", crawledId)
     .single();
+  if (rowError) return { error: rowError.message };
+  if (row.status !== "new" || row.contest_id) {
+    return { error: "검수 대기 중인 공고만 거절할 수 있습니다." };
+  }
 
   const { error } = await supabase
     .from("crawled_contests")
@@ -301,11 +317,15 @@ export async function restoreCrawledContest(
   const { supabase, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
-  const { data: row } = await supabase
+  const { data: row, error: rowError } = await supabase
     .from("crawled_contests")
-    .select("content_kind")
+    .select("content_kind, status, contest_id")
     .eq("id", crawledId)
     .single();
+  if (rowError) return { error: rowError.message };
+  if (row.status !== "rejected" || row.contest_id) {
+    return { error: "거절된 공고만 검수 대기로 복원할 수 있습니다." };
+  }
 
   const { error } = await supabase
     .from("crawled_contests")
@@ -314,7 +334,6 @@ export async function restoreCrawledContest(
       reviewed_at: null,
       reviewed_by: null,
       review_note: null,
-      contest_id: null,
     })
     .eq("id", crawledId);
   if (error) return { error: error.message };

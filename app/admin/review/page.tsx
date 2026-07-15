@@ -14,6 +14,11 @@ import CrawledContestRowActions from "@/app/admin/review/contests/CrawledContest
 const PAGE_SIZE = 30;
 type StatusFilter = "new" | "promoted" | "rejected";
 
+const LEGACY_REVIEW_SCOPE = {
+  decisionModel: "현재 행 lifecycle 변경 방식",
+  projection: "append-only review event와 controlled public projection은 Phase L 범위",
+} as const;
+
 const SOURCE_GROUP_LABELS: Record<string, string> = {
   cau: "중앙대",
   ewha: "이화여대",
@@ -56,6 +61,8 @@ export default async function AdminReviewPage({
     Number.isFinite(pageFromQuery) && pageFromQuery > 0 ? pageFromQuery : 1;
   const from = (currentPage - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
+  const backingTable = kind === "scholarship" ? "crawled_notices" : "crawled_contests";
+  const publicDomainTable = kind === "scholarship" ? "scholarships" : "contests";
 
   const supabase = await createClient();
 
@@ -104,6 +111,20 @@ export default async function AdminReviewPage({
         extraQuery={selectedStatus !== "new" ? { status: selectedStatus } : undefined}
       />
 
+      <section className="mt-5 border-y border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950" aria-label="현재 검토 범위">
+        <p className="font-semibold">현재 검토 범위</p>
+        <p className="mt-1 leading-6 text-amber-900">
+          이 대기열은 현재 DB 기반 compatibility lifecycle을 사용합니다. 승인과 거절은 기존 행을 변경하고
+          legacy {publicDomainTable} 레코드를 만들 수 있지만, append-only review event 또는 controlled crawler
+          public projection은 아닙니다.
+        </p>
+        <dl className="mt-3 grid gap-2 text-xs text-amber-900 sm:grid-cols-3 sm:text-sm">
+          <div><dt className="font-medium">데이터 기반</dt><dd>DB 기반: {backingTable}</dd></div>
+          <div><dt className="font-medium">결정 모델</dt><dd>{LEGACY_REVIEW_SCOPE.decisionModel}</dd></div>
+          <div><dt className="font-medium">Phase L 경계</dt><dd>{LEGACY_REVIEW_SCOPE.projection}</dd></div>
+        </dl>
+      </section>
+
       {kind === "scholarship" ? (
         <ScholarshipReviewList
           selectedStatus={selectedStatus}
@@ -139,7 +160,7 @@ async function ScholarshipReviewList({
   const { data, error, count } = await supabase
     .from("crawled_notices")
     .select(
-      "id, source_group, source_name, title, notice_url, notice_posted_at, raw_date_text, status, scholarship_id, first_seen_at",
+      "id, source_group, source_id, source_name, title, notice_url, notice_posted_at, raw_date_text, status, scholarship_id, first_seen_at, last_seen_at, run_at, body, image_urls, review_note",
       { count: "exact" }
     )
     .eq("status", selectedStatus)
@@ -163,12 +184,17 @@ async function ScholarshipReviewList({
       rows={(data ?? []).map((row) => ({
         id: row.id,
         sourceLabel: SOURCE_GROUP_LABELS[row.source_group] ?? row.source_group,
+        sourceId: row.source_id,
         sourceName: row.source_name,
         title: row.title,
         noticeUrl: row.notice_url,
         postedAt: row.notice_posted_at ?? row.raw_date_text ?? "-",
         status: row.status,
         publishedId: row.scholarship_id,
+        hasBody: Boolean(row.body?.trim()),
+        attachmentCount: row.image_urls?.length ?? 0,
+        lastObservedAt: row.last_seen_at ?? row.run_at,
+        reviewNote: row.review_note,
       }))}
     />
   );
@@ -191,7 +217,7 @@ async function ContestReviewList({
   const { data, error, count } = await supabase
     .from("crawled_contests")
     .select(
-      "id, source_group, source_name, title, notice_url, notice_posted_at, raw_date_text, status, contest_id, first_seen_at, content_kind",
+      "id, source_group, source_id, source_name, title, notice_url, notice_posted_at, raw_date_text, status, contest_id, first_seen_at, last_seen_at, run_at, body, image_urls, review_note, content_kind",
       { count: "exact" }
     )
     .eq("status", selectedStatus)
@@ -216,12 +242,17 @@ async function ContestReviewList({
       rows={(data ?? []).map((row) => ({
         id: row.id,
         sourceLabel: SOURCE_GROUP_LABELS[row.source_group] ?? row.source_group,
+        sourceId: row.source_id,
         sourceName: row.source_name,
         title: row.title,
         noticeUrl: row.notice_url,
         postedAt: row.notice_posted_at ?? row.raw_date_text ?? "-",
         status: row.status,
         publishedId: row.contest_id,
+        hasBody: Boolean(row.body?.trim()),
+        attachmentCount: row.image_urls?.length ?? 0,
+        lastObservedAt: row.last_seen_at ?? row.run_at,
+        reviewNote: row.review_note,
       }))}
     />
   );
@@ -241,12 +272,17 @@ function ReviewTable({
   rows: Array<{
     id: number;
     sourceLabel: string;
+    sourceId: string;
     sourceName: string;
     title: string;
     noticeUrl: string;
     postedAt: string;
     status: StatusFilter;
     publishedId: number | null;
+    hasBody: boolean;
+    attachmentCount: number;
+    lastObservedAt: string | null;
+    reviewNote: string | null;
   }>;
 }) {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
@@ -301,6 +337,7 @@ function ReviewTable({
                   <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                     {row.sourceLabel}
                     <div className="text-xs text-gray-400">{row.sourceName}</div>
+                    <div className="mt-1 text-xs text-gray-400">소스 ID: {row.sourceId || "확인 불가"}</div>
                   </td>
                   <td className="px-4 py-3">
                     <a
@@ -311,6 +348,11 @@ function ReviewTable({
                     >
                       {row.title}
                     </a>
+                    <div className="mt-1 space-y-1 text-xs text-gray-500">
+                      <p>근거: {row.hasBody ? "본문 수집됨" : "본문 없음"} · 첨부 메타데이터 {row.attachmentCount}건</p>
+                      <p>마지막 관측: {row.lastObservedAt ?? "확인 불가"}</p>
+                      {row.reviewNote ? <p>검토 메모: {row.reviewNote}</p> : null}
+                    </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-gray-500">
                     {row.postedAt}

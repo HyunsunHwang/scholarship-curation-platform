@@ -1,5 +1,9 @@
 # Post-Phase Master Risk Register
 
+## Post-Phase K update
+
+K does not reopen Post-Phase J planning. It converts the settled architecture into truthful product boundaries and a fixed L implementation surface. The register adds K evidence for report/prototype overclaim, mutable legacy review, source identity ownership, evidence freshness/public leakage, personal-engine divergence, pilot-cohort limits, and implementation/browser authority. These are mitigated or bounded by K presentation and convergence decisions; their implementation resolution belongs to Post-Phase L or M.
+
 ## Post-Phase J update
 
 Post-Phase J supplies direct planning evidence for the canonical graph, append-only review-event, compatibility, rollback, and guarded-apply designs. It does not resolve production implementation risks. The register therefore marks only design coverage as mitigated and keeps target inventory, migration-history divergence, backfill identity, RLS compatibility, and public-projection reconciliation deferred. They block migration implementation readiness, not the next planning phase, so their `blocking_for_next_phase` value remains false. Engine Convergence and external-provider evaluation remain post-J follow-up work.
@@ -35,6 +39,13 @@ such as H or I cannot be the sole future resolution phase for such a risk.
 | Guarded production apply | Deferred | J | Separately approved dry-run, audit, and rollback design. |
 | Bootstrap dependencies (`@next/env`, `sharp`, `unrs-resolver`) | Resolved | G | `npm ci`, production build, TypeScript, and changed-file ESLint passed. |
 | `public.site_settings` schema cache | Deferred, non-blocking | J | Confirm target schema presence; prepare migration and compatibility plan if needed. |
-| Main ESLint baseline | Deferred, non-blocking | J | Remediate or explicitly baseline the seven existing errors and five warnings. |
+| Main ESLint baseline | Deferred, non-blocking | Post-Phase L | Remediate or explicitly baseline the eleven existing errors and five warnings; K changed-file ESLint is clean. |
+| Report prototype overclaim | Mitigated | Post-Phase L | Controlled projection reaches selected-cohort parity without leakage. |
+| Legacy review mutation | Mitigated | Post-Phase L | Immutable decision history works with legacy queue compatibility. |
+| Source identity and ownership | Mitigated | Post-Phase L | Exact source resolution and one canonical owner per capability. |
+| Evidence freshness and leakage | Mitigated | Post-Phase L | Attributable evidence/run state or an explicit public block. |
+| Personal engine port divergence | Mitigated | Post-Phase L | Cohort replay proves compatibility for every ported or merged capability. |
+| Pilot cohort overfitting | Accepted | Post-Phase M | Expansion is driven by operating thresholds, not pilot claims. |
+| Implementation/browser authority | Deferred | Post-Phase L | Authorized non-production target inventory and reviewer walkthrough. |
 
 No unresolved risk may move forward without a named future resolution phase and measurable success criteria.

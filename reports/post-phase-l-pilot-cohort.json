@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-07-15T00:00:00.000Z",
+  "contract_version": "post-phase-l-pilot-cohort/v1",
+  "cohort_name": "Phase L representative source cohort",
+  "cohort_size": 3,
+  "selection_policy": "A bounded cohort covers one clean exact-resolution path, one no-assets and transport-blocked path, and one source-specific adapter path. It is not a coverage claim.",
+  "sources": [
+    {
+      "source_key": "cau_001",
+      "organization_source": "CAU business administration notice board",
+      "structure_type": "configured department board",
+      "why_selected": "F-0 has an exact resolved clean candidate with body and attributable attachment metadata.",
+      "main_evidence": "data/notice-sources.csv and F-0 review read model.",
+      "personal_engine_evidence": "Representative parser-strategy evidence includes cau_001.",
+      "expected_phase_l_coverage": "First end-to-end success slice through graph, review, preview, replay, and rollback evidence.",
+      "known_blocker": "Live detail mapping must still be verified in the authorized non-production environment.",
+      "success_criteria": "Exact resolution, attributable detail/body/asset evidence, idempotent replay, reviewer parity, and controlled preview are proven."
+    },
+    {
+      "source_key": "cau_002",
+      "organization_source": "CAU economics notice board",
+      "structure_type": "department board without captured assets",
+      "why_selected": "F-0 has a clean text-sufficient no-assets case and H records a local TLS-chain failure that must remain fail-closed.",
+      "main_evidence": "data/notice-sources.csv, F-0 review read model, and H live closure report.",
+      "personal_engine_evidence": "Personal source-health evidence preserves TLS/transport failure as a diagnostic condition.",
+      "expected_phase_l_coverage": "No-assets policy, transport failure visibility, and non-leakage through the controlled projection.",
+      "known_blocker": "Local TLS validation failed in prior evidence; this is not evidence of source absence or deletion.",
+      "success_criteria": "The source either supplies attributable evidence in the authorized environment or remains explicitly blocked with no public leakage."
+    },
+    {
+      "source_key": "yonsei_060",
+      "organization_source": "Yonsei Underwood International College notice board",
+      "structure_type": "source-specific Yonsei UIC adapter",
+      "why_selected": "The source provides a distinct adapter shape beyond the CAU boards and is present in the committed main registry.",
+      "main_evidence": "data/notice-sources.csv contains the exact source key.",
+      "personal_engine_evidence": "Roadmap Phase 7 source-health evidence identifies ADAPTER:yonsei_uic and records its weak/zero-match condition.",
+      "expected_phase_l_coverage": "Source-specific adapter, pagination/detail resolution, and explicit unresolved handling.",
+      "known_blocker": "Current personal evidence has no verified scholarship match; this source cannot be treated as empty or public-ready.",
+      "success_criteria": "The adapter emits an attributable result or a reproducible blocked/unresolved result with no automatic source creation."
+    }
+  ]
+}

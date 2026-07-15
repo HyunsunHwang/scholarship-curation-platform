@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-07-15T00:00:00.000Z",
+  "contract_version": "post-phase-k-product-state-inventory/v1",
+  "state_vocabulary": [
+    "DB-backed",
+    "report-backed",
+    "fixture-backed",
+    "live",
+    "stale",
+    "blocked",
+    "prototype-only",
+    "unavailable"
+  ],
+  "surfaces": [
+    {
+      "surface": "public scholarship list",
+      "route": "/scholarships",
+      "backing": "report-backed",
+      "state": "prototype-only",
+      "evidence": "lib/scholarships/public-scholarship-read-model.ts consumes F-0/F-1 JSON and the page renders PublicScholarshipDataStatus.",
+      "user_visible_state": "Report snapshot date, public/hidden counts, fail-closed limitation, and attachment verification limit are visible.",
+      "disposition": "retain with explicit boundary until controlled DB projection parity"
+    },
+    {
+      "surface": "public scholarship report detail",
+      "route": "/scholarships/public-[canonical-key]",
+      "backing": "report-backed",
+      "state": "prototype-only",
+      "evidence": "PublicScholarshipDetail renders report snapshot status, source identifier, original notice link, and attachment limitation.",
+      "user_visible_state": "The item is distinguished from a live DB projection before the content is read.",
+      "disposition": "retain with explicit boundary until controlled DB projection parity"
+    },
+    {
+      "surface": "numeric scholarship detail",
+      "route": "/scholarships/[id]",
+      "backing": "DB-backed",
+      "state": "unavailable",
+      "evidence": "The route reads scholarships through Supabase; no local credentialed browser verification is part of K.",
+      "user_visible_state": "Existing product route is preserved; it is not represented as the G report projection.",
+      "disposition": "preserve numeric route and reconcile in L"
+    },
+    {
+      "surface": "admin review queue",
+      "route": "/admin/review",
+      "backing": "DB-backed",
+      "state": "blocked",
+      "evidence": "The queue queries crawled_notices and K adds source ID, body/attachment evidence, last observation, compatibility lifecycle wording, and terminal-state action guards. The local credential-free browser returned HTTP 500 before content rendered.",
+      "user_visible_state": "The intended operator state is explicit in implementation, but K does not claim an authenticated visual observation in the blocked local environment.",
+      "disposition": "retain as compatibility layer until approved cutover"
+    },
+    {
+      "surface": "admin review detail",
+      "route": "/admin/review/scholarships/[id]",
+      "backing": "DB-backed",
+      "state": "blocked",
+      "evidence": "The detail route and server actions block re-registration for non-new notices and label the current legacy lifecycle. The local credential-free browser returned HTTP 500 before content rendered.",
+      "user_visible_state": "Closed review behavior is implemented and build-verified; authenticated rendering remains blocked in the K environment.",
+      "disposition": "retain and migrate through a Phase L compatibility projection"
+    },
+    {
+      "surface": "admin scholarship CRUD",
+      "route": "/admin/content?kind=scholarship",
+      "backing": "DB-backed",
+      "state": "unavailable",
+      "evidence": "app/admin/scholarships/actions.ts keeps authenticated direct CRUD and numeric IDs.",
+      "user_visible_state": "No crawler public-projection claim is made for direct CRUD.",
+      "disposition": "preserve as protected compatibility behavior"
+    },
+    {
+      "surface": "admin crawler diagnostics",
+      "route": "/admin/crawler-review",
+      "backing": "report-backed",
+      "state": "blocked",
+      "evidence": "The route consumes repository diagnostic reports and K adds a read-only snapshot notice, but the local admin environment returned HTTP 500 before the route rendered.",
+      "user_visible_state": "The implementation explicitly says it is not live crawler monitoring and cannot mutate state; authenticated rendering was not claimed.",
+      "disposition": "replace inputs with integrated run evidence in L without creating a parallel diagnostics route"
+    }
+  ],
+  "misleading_prototype_findings": [
+    {
+      "id": "K-PRODUCT-001",
+      "finding": "G public report data could be mistaken for live DB-backed scholarship projection.",
+      "disposition": "connected_to_explicit_report_snapshot_presentation",
+      "evidence": "PublicScholarshipDataStatus on list and report detail routes."
+    },
+    {
+      "id": "K-PRODUCT-002",
+      "finding": "Repository diagnostics could be mistaken for live crawler monitoring.",
+      "disposition": "connected_to_explicit_read_only_snapshot_presentation",
+      "evidence": "Admin crawler-review data status section."
+    },
+    {
+      "id": "K-PRODUCT-003",
+      "finding": "A closed crawled notice could be opened directly and re-promoted into another scholarship record.",
+      "disposition": "removed_by_terminal_route_and_server_action_guards",
+      "evidence": "Admin review detail returns a closed-state view when status is not new; promotion checks new/unlinked state; restore accepts rejected/unlinked rows only."
+    },
+    {
+      "id": "K-PRODUCT-004",
+      "finding": "The current review mutation lifecycle could be mistaken for an append-only decision or controlled public projection.",
+      "disposition": "connected_to_explicit_compatibility_lifecycle_presentation",
+      "evidence": "Admin review queue and detail lifecycle sections."
+    }
+  ]
+}

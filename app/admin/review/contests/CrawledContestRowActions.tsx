@@ -23,10 +23,14 @@ export default function CrawledContestRowActions({
         type="button"
         disabled={pending}
         onClick={() => {
-          const note = window.prompt("거절 사유 (선택)") ?? undefined;
+          const note = window.prompt("거절 사유 (선택)");
           if (note === null) return;
           startTransition(async () => {
-            await rejectCrawledContest(crawledId, note);
+            const result = await rejectCrawledContest(crawledId, note);
+            if (result?.error) {
+              alert(`오류: ${result.error}`);
+              return;
+            }
             router.refresh();
           });
         }}
@@ -37,6 +41,14 @@ export default function CrawledContestRowActions({
     );
   }
 
+  if (status === "promoted") {
+    return (
+      <span className="text-xs font-medium text-emerald-700" title="연결된 콘텐츠에서 관리합니다.">
+        발행 완료
+      </span>
+    );
+  }
+
   return (
     <button
       type="button"
@@ -44,7 +56,11 @@ export default function CrawledContestRowActions({
       onClick={() => {
         if (!confirm("검수 대기로 되돌릴까요?")) return;
         startTransition(async () => {
-          await restoreCrawledContest(crawledId);
+          const result = await restoreCrawledContest(crawledId);
+          if (result?.error) {
+            alert(`오류: ${result.error}`);
+            return;
+          }
           router.refresh();
         });
       }}

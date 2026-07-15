@@ -114,14 +114,51 @@ export default async function ReviewScholarshipNoticePage({
   if (Number.isNaN(noticeId)) notFound();
 
   const supabase = await createClient();
-  const [{ data: notice }, { data: universities }, crawlerDepartments] =
-    await Promise.all([
-      supabase.from("crawled_notices").select("*").eq("id", noticeId).single(),
-      supabase.from("universities").select("id, name").order("name"),
-      loadCrawlerDepartments(),
-    ]);
+  const { data: notice } = await supabase
+    .from("crawled_notices")
+    .select("*")
+    .eq("id", noticeId)
+    .single();
 
   if (!notice) notFound();
+
+  if (notice.status !== "new") {
+    return (
+      <div>
+        <Link
+          href="/admin/review?kind=scholarship"
+          className="text-sm text-gray-500 transition-colors hover:text-gray-700"
+        >
+          검토 대기열로 돌아가기
+        </Link>
+        <h1 className="mt-2 text-2xl font-bold text-gray-900">검토가 종료된 공고</h1>
+        <section className="mt-6 border-y border-amber-200 bg-amber-50 px-4 py-5 text-sm text-amber-950" aria-label="종료된 검토 상태">
+          <p className="font-semibold">이 공고는 이미 {notice.status} 상태입니다.</p>
+          <p className="mt-1 leading-6 text-amber-900">
+            현재 compatibility lifecycle에서는 이 화면에서 scholarship 레코드를 다시 만들 수 없습니다.
+            거절 항목만 검토 대기열에서 복원할 수 있으며, 승인 항목은 연결된 장학금에서 관리합니다.
+          </p>
+          <dl className="mt-4 grid gap-2 text-xs text-amber-900 sm:grid-cols-2 sm:text-sm">
+            <div><dt className="font-medium">소스 ID</dt><dd>{notice.source_id || "확인 불가"}</dd></div>
+            <div><dt className="font-medium">검토 시각</dt><dd>{notice.reviewed_at ?? "확인 불가"}</dd></div>
+          </dl>
+          {notice.status === "promoted" && notice.scholarship_id ? (
+            <Link
+              href={`/admin/content/scholarships/${notice.scholarship_id}/edit`}
+              className="mt-4 inline-flex font-semibold text-brand hover:underline"
+            >
+              연결된 장학금 레코드 열기
+            </Link>
+          ) : null}
+        </section>
+      </div>
+    );
+  }
+
+  const [{ data: universities }, crawlerDepartments] = await Promise.all([
+    supabase.from("universities").select("id, name").order("name"),
+    loadCrawlerDepartments(),
+  ]);
 
   const universityNames = (universities ?? []).map((u) => u.name);
   const boundAction = promoteNotice.bind(null, noticeId);
@@ -161,6 +198,11 @@ export default async function ReviewScholarshipNoticePage({
           </a>
         </div>
         <p className="mt-1 text-base font-semibold text-gray-900">{notice.title}</p>
+        <dl className="mt-3 grid gap-2 text-xs text-gray-600 sm:grid-cols-3">
+          <div><dt className="font-medium text-gray-500">소스 ID</dt><dd>{notice.source_id || "확인 불가"}</dd></div>
+          <div><dt className="font-medium text-gray-500">본문 근거</dt><dd>{notice.body?.trim() ? "수집됨" : "확인 불가"}</dd></div>
+          <div><dt className="font-medium text-gray-500">첨부 메타데이터</dt><dd>{notice.image_urls?.length ?? 0}건</dd></div>
+        </dl>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <GenerateDraftButton noticeId={notice.id} />
           <FormatNoticeBodyButton noticeId={notice.id} />
@@ -181,6 +223,14 @@ export default async function ReviewScholarshipNoticePage({
           </details>
         )}
       </div>
+
+      <section className="mb-6 border-y border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950" aria-label="현재 검토 lifecycle">
+        <p className="font-semibold">현재 compatibility lifecycle</p>
+        <p className="mt-1 leading-6 text-amber-900">
+          이 공고 등록은 기존 DB 기반 `crawled_notices` lifecycle을 사용하고 legacy `scholarships` 레코드를
+          만듭니다. append-only review event를 만들거나 crawler public projection을 활성화하지는 않습니다.
+        </p>
+      </section>
 
       <ScholarshipForm
         key={`notice-${notice.id}-${notice.updated_at ?? notice.created_at}`}

@@ -1,0 +1,132 @@
+{
+  "generated_at": "2026-07-15T00:00:00.000Z",
+  "contract_version": "post-phase-k-validation/v1",
+  "status": "PASS",
+  "post_phase_j_status": "COMPLETE",
+  "meaningful_ui_behavior_change": true,
+  "convergence_decision_count": 10,
+  "critical_capability_count": 10,
+  "unresolved_duplicate_owner_count": 0,
+  "prototype_disposition_count": 4,
+  "unresolved_misleading_state_count": 0,
+  "pilot_source_count": 3,
+  "browser_walkthrough_complete": true,
+  "phase_l_scope_fixed": true,
+  "production_write_performed": false,
+  "migration_apply_performed": false,
+  "automatic_public_exposure_enabled": false,
+  "duplicate_json_key_count": 0,
+  "output_schema_valid": true,
+  "checks": [
+    {
+      "name": "required artifacts",
+      "pass": true
+    },
+    {
+      "name": "allowed convergence decisions",
+      "pass": true
+    },
+    {
+      "name": "critical capabilities have one decision",
+      "pass": true
+    },
+    {
+      "name": "critical capabilities have canonical owners",
+      "pass": true
+    },
+    {
+      "name": "unresolved duplicate ownership count is zero",
+      "pass": true
+    },
+    {
+      "name": "product surfaces classify backing and state",
+      "pass": true
+    },
+    {
+      "name": "misleading prototype findings are disposed",
+      "pass": true
+    },
+    {
+      "name": "meaningful public implementation",
+      "pass": true
+    },
+    {
+      "name": "meaningful admin implementation",
+      "pass": true
+    },
+    {
+      "name": "browser walkthrough complete",
+      "pass": true
+    },
+    {
+      "name": "bounded exact-key pilot cohort",
+      "pass": true
+    },
+    {
+      "name": "Phase L vertical slice fixed",
+      "pass": true
+    },
+    {
+      "name": "external implementation boundaries recorded",
+      "pass": true
+    },
+    {
+      "name": "K risk register coverage",
+      "pass": true
+    },
+    {
+      "name": "no prohibited implementation paths changed",
+      "pass": true
+    },
+    {
+      "name": "duplicate JSON key proof",
+      "pass": true
+    }
+  ],
+  "failures": [],
+  "missing_artifacts": [],
+  "missing_capabilities": [],
+  "invalid_decisions": [],
+  "invalid_pilot_sources": [],
+  "missing_k_risks": [],
+  "malformed_unresolved_risk_count": 0,
+  "forbidden_changed_files": [],
+  "changed_files": [
+    "app/admin/crawled-notices/CrawledNoticeRowActions.tsx",
+    "app/admin/crawled-notices/actions.ts",
+    "app/admin/crawler-review/page.tsx",
+    "app/admin/review/contests/CrawledContestRowActions.tsx",
+    "app/admin/review/contests/actions.ts",
+    "app/admin/review/page.tsx",
+    "app/admin/review/scholarships/[id]/page.tsx",
+    "app/scholarships/[id]/page.tsx",
+    "app/scholarships/page.tsx",
+    "components/public-scholarships/PublicScholarshipCard.tsx",
+    "components/public-scholarships/PublicScholarshipDataStatus.tsx",
+    "components/public-scholarships/PublicScholarshipDetail.tsx",
+    "docs/post-phase-k-browser-walkthrough.md",
+    "docs/post-phase-k-convergence-matrix.md",
+    "docs/post-phase-k-implementation-report.md",
+    "docs/post-phase-k-product-state-inventory.md",
+    "docs/post-phase-l-fixed-integration-scope.md",
+    "docs/post-phase-l-pilot-cohort.md",
+    "docs/post-phase-master-risk-register.md",
+    "lib/scholarships/public-scholarship-read-model.ts",
+    "reports/post-phase-g-validation-report.json",
+    "reports/post-phase-h-bounded-coverage-expansion.json",
+    "reports/post-phase-h-validation-report.json",
+    "reports/post-phase-j-validation-report.json",
+    "reports/post-phase-k-browser/admin-auth-block.png",
+    "reports/post-phase-k-browser/desktop-detail.png",
+    "reports/post-phase-k-browser/desktop-list.png",
+    "reports/post-phase-k-browser/empty-filter.png",
+    "reports/post-phase-k-browser/mobile-list.png",
+    "reports/post-phase-k-convergence-matrix.json",
+    "reports/post-phase-k-product-state-inventory.json",
+    "reports/post-phase-k-validation-report.json",
+    "reports/post-phase-k-validation-report.md",
+    "reports/post-phase-l-pilot-cohort.json",
+    "reports/post-phase-master-risk-register.json",
+    "scripts/validate-post-phase-k.mjs"
+  ]
+}

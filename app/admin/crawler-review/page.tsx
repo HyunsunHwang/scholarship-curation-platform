@@ -57,6 +57,14 @@ export default async function AdminCrawlerReviewPage({
         </p>
       </div>
 
+      <section className="border-y border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950" aria-label="진단 데이터 상태">
+        <p className="font-semibold">읽기 전용 보고서 스냅샷</p>
+        <p className="mt-1 leading-6 text-amber-900">
+          이 화면은 실시간 크롤러 모니터링이 아닙니다. {report.generated_at}에 생성된 저장소 진단을
+          표시하며, source 상태·검토 상태·공개 상태를 변경할 수 없습니다.
+        </p>
+      </section>
+
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Diagnostic summary">
         {cards.map(([label, value]) => (
           <div key={label} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">

@@ -50,6 +50,14 @@ export default function CrawledNoticeRowActions({ noticeId, status }: Props) {
     );
   }
 
+  if (status === "promoted") {
+    return (
+      <span className="text-xs font-medium text-emerald-700" title="연결된 장학금에서 관리합니다.">
+        발행 완료
+      </span>
+    );
+  }
+
   return (
     <button
       type="button"

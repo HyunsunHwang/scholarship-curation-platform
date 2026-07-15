@@ -1,9 +1,11 @@
 import Link from "next/link";
 
 import { PublicScholarshipCard } from "@/components/public-scholarships/PublicScholarshipCard";
+import { PublicScholarshipDataStatus } from "@/components/public-scholarships/PublicScholarshipDataStatus";
 import {
   filterPublicScholarships,
   getPublicScholarshipFilterOptions,
+  getPublicScholarshipReadModelStatus,
 } from "@/lib/scholarships/public-scholarship-read-model";
 
 type ScholarshipSearchParams = Promise<{
@@ -21,6 +23,7 @@ export default async function PublicScholarshipsPage({
   const { organizations, categories } = getPublicScholarshipFilterOptions();
   const organization = organizations.includes(params.organization ?? "") ? params.organization : undefined;
   const category = categories.includes(params.category ?? "") ? params.category : undefined;
+  const readModelStatus = getPublicScholarshipReadModelStatus();
   const scholarships = filterPublicScholarships({
     query: params.q,
     organization,
@@ -28,8 +31,8 @@ export default async function PublicScholarshipsPage({
   });
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] px-4 py-10 text-ink sm:px-6">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen overflow-hidden bg-[#f8fafc] px-4 py-10 text-ink sm:px-6">
+      <div className="mx-auto min-w-0 max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-medium text-brand">장학금 안내</p>
@@ -40,7 +43,7 @@ export default async function PublicScholarshipsPage({
           </Link>
         </header>
 
-        <form className="mt-8 grid gap-3 rounded-lg border border-black/10 bg-white p-4 md:grid-cols-[minmax(0,1fr)_180px_180px_auto]" method="get">
+        <form className="mt-8 grid w-full min-w-0 gap-3 rounded-lg border border-black/10 bg-white p-4 md:grid-cols-[minmax(0,1fr)_180px_180px_auto]" method="get">
           <label className="sr-only" htmlFor="scholarship-search">
             장학금 검색
           </label>
@@ -56,7 +59,7 @@ export default async function PublicScholarshipsPage({
             기관
           </label>
           <select
-            className="h-11 rounded-md border border-black/15 bg-white px-3 text-sm"
+            className="h-11 w-full min-w-0 rounded-md border border-black/15 bg-white px-3 text-sm"
             defaultValue={organization ?? ""}
             id="scholarship-organization"
             name="organization"
@@ -72,7 +75,7 @@ export default async function PublicScholarshipsPage({
             카테고리
           </label>
           <select
-            className="h-11 rounded-md border border-black/15 bg-white px-3 text-sm"
+            className="h-11 w-full min-w-0 rounded-md border border-black/15 bg-white px-3 text-sm"
             defaultValue={category ?? ""}
             id="scholarship-category"
             name="category"
@@ -84,13 +87,17 @@ export default async function PublicScholarshipsPage({
               </option>
             ))}
           </select>
-          <button className="h-11 rounded-md bg-brand px-5 text-sm font-semibold text-white hover:bg-brand/90" type="submit">
+          <button className="h-11 w-full rounded-md bg-brand px-5 text-sm font-semibold text-white hover:bg-brand/90" type="submit">
             검색
           </button>
         </form>
 
-        <div className="mt-4 flex items-center justify-between gap-4 text-sm text-black/60">
-          <p>검토된 공고 {scholarships.length}건</p>
+        <div className="mt-5">
+          <PublicScholarshipDataStatus status={readModelStatus} />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 text-sm text-black/60">
+          <p>현재 스냅샷에서 공개 가능한 공고 {scholarships.length}건</p>
           {(params.q || organization || category) && (
             <Link className="font-medium text-brand hover:underline" href="/scholarships">
               필터 초기화

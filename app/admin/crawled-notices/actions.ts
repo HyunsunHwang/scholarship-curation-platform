@@ -77,6 +77,16 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
   const { supabase, user, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
+  const { data: reviewRow, error: reviewRowError } = await supabase
+    .from("crawled_notices")
+    .select("status, scholarship_id")
+    .eq("id", noticeId)
+    .single();
+  if (reviewRowError) return { error: reviewRowError.message };
+  if (reviewRow.status !== "new" || reviewRow.scholarship_id) {
+    return { error: "이미 처리된 공고는 다시 장학금으로 등록할 수 없습니다." };
+  }
+
   const payload = buildScholarshipPayload(formData);
 
   const { data: inserted, error } = await supabase
@@ -255,6 +265,16 @@ export async function rejectNotice(
   const { supabase, user, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
+  const { data: reviewRow, error: reviewRowError } = await supabase
+    .from("crawled_notices")
+    .select("status, scholarship_id")
+    .eq("id", noticeId)
+    .single();
+  if (reviewRowError) return { error: reviewRowError.message };
+  if (reviewRow.status !== "new" || reviewRow.scholarship_id) {
+    return { error: "검수 대기 중인 공고만 거절할 수 있습니다." };
+  }
+
   const { error } = await supabase
     .from("crawled_notices")
     .update({
@@ -272,13 +292,23 @@ export async function rejectNotice(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// 거절/승격 취소 → 다시 검수 대기(new)로
+// 거절 취소 → 다시 검수 대기(new)로
 // ─────────────────────────────────────────────────────────────────
 export async function restoreNotice(
   noticeId: number
 ): Promise<{ error?: string; success?: true }> {
   const { supabase, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
+
+  const { data: reviewRow, error: reviewRowError } = await supabase
+    .from("crawled_notices")
+    .select("status, scholarship_id")
+    .eq("id", noticeId)
+    .single();
+  if (reviewRowError) return { error: reviewRowError.message };
+  if (reviewRow.status !== "rejected" || reviewRow.scholarship_id) {
+    return { error: "거절된 공고만 검수 대기로 복원할 수 있습니다." };
+  }
 
   const { error } = await supabase
     .from("crawled_notices")
@@ -287,7 +317,6 @@ export async function restoreNotice(
       reviewed_at: null,
       reviewed_by: null,
       review_note: null,
-      scholarship_id: null,
     })
     .eq("id", noticeId);
   if (error) return { error: error.message };

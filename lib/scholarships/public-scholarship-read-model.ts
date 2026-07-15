@@ -54,6 +54,8 @@ const diagnosticsByKey = new Map(f1Rows.map((row) => [row.id, row]));
 export type PublicScholarship = {
   id: string;
   canonicalKey: string;
+  sourceId: string | null;
+  sourceKey: string;
   title: string;
   organization: string;
   category: string;
@@ -66,6 +68,18 @@ export type PublicScholarship = {
   attachments: Array<{ url: string; kind: string }>;
   noAssets: boolean;
   provenanceLabel: string;
+};
+
+export type PublicScholarshipReadModelStatus = {
+  dataBacking: "report-backed";
+  serviceState: "prototype-only";
+  generatedAt: string;
+  sourceReport: string;
+  inputCandidateCount: number;
+  publicItemCount: number;
+  hiddenItemCount: number;
+  exposurePolicy: "fail-closed";
+  attachmentsVerified: false;
 };
 
 export type ExposureDecision = {
@@ -113,6 +127,8 @@ function toPublicScholarship(row: F0Row): PublicScholarship {
   return {
     id: toPublicId(row.canonical_key),
     canonicalKey: row.canonical_key,
+    sourceId: row.source_id,
+    sourceKey: row.source_key_snapshot,
     title: row.title,
     organization: toOrganization(row),
     category: toCategory(row),
@@ -124,7 +140,7 @@ function toPublicScholarship(row: F0Row): PublicScholarship {
     sourceUrl: row.original_url,
     attachments: row.evidence_json.quality_policy?.assets ?? [],
     noAssets: row.no_assets,
-    provenanceLabel: "Reviewed scholarship information",
+    provenanceLabel: "Reviewed report snapshot",
   };
 }
 
@@ -148,8 +164,24 @@ const publicScholarships = f0Rows
   .map(toPublicScholarship)
   .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt));
 
+const publicScholarshipReadModelStatus: PublicScholarshipReadModelStatus = {
+  dataBacking: "report-backed",
+  serviceState: "prototype-only",
+  generatedAt: f0Report.generated_at,
+  sourceReport: "reports/post-phase-f0-adapter-foundation.json",
+  inputCandidateCount: f0Rows.length,
+  publicItemCount: publicScholarships.length,
+  hiddenItemCount: f0Rows.length - publicScholarships.length,
+  exposurePolicy: "fail-closed",
+  attachmentsVerified: false,
+};
+
 export function getPublicScholarships() {
   return publicScholarships;
+}
+
+export function getPublicScholarshipReadModelStatus() {
+  return publicScholarshipReadModelStatus;
 }
 
 export function getPublicScholarshipDetail(id: string) {
