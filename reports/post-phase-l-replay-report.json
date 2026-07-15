@@ -1,6 +1,12 @@
 {
-  "generated_at": "2026-07-15T13:06:10.644Z",
-  "stage": "pre_apply_local_fixture",
+  "generated_at": "2026-07-15T13:42:01.897Z",
+  "stage": "approved_l_project_replay",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "l_project_remote_read_performed": true,
+  "l_project_remote_write_performed": true,
   "first_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
   "second_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
   "deterministic_rerun_match": true,
@@ -22,5 +28,10 @@
   "unexpected_legacy_insert_count": 0,
   "content_change_revision_test_passed": true,
   "disappearance_deletion_count": 0,
-  "remote_write_performed": false
+  "remote_write_performed": true,
+  "evidence": [
+    "reports/post-phase-l-live/fixture-replay-apply-report.json",
+    "reports/post-phase-l-live/fixture-replay-runtime-verification.json",
+    "reports/post-phase-l-live/fixture-final-runtime-after-preview.json"
+  ]
 }

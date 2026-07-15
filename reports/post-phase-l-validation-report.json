@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-15T13:08:39.862Z",
-  "stage": "pre_apply",
-  "status": "READY_FOR_OWNER_APPROVAL",
+  "generated_at": "2026-07-15T14:54:13.417Z",
+  "stage": "post_apply_runtime",
+  "status": "CONDITIONAL_PASS",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "target_project_ref_match": true,
   "production_ref_detected": false,
@@ -12,7 +12,7 @@
   "environment_guard_created_only_after_fresh_assertion": true,
   "environment_guard_upsert_in_002": false,
   "environment_guard_immutable": true,
-  "migration_apply_passed": false,
+  "migration_apply_passed": true,
   "pilot_source_count": 3,
   "exact_source_resolution_passed": true,
   "fuzzy_source_match_count": 0,
@@ -21,7 +21,7 @@
   "graph_occurrence_count": 1,
   "asset_metadata_count": 0,
   "url_alias_count": 1,
-  "append_only_review_event_count": 0,
+  "append_only_review_event_count": 2,
   "review_event_immutability_static_passed": true,
   "public_leakage_count": 0,
   "automatic_public_publish_count": 0,
@@ -30,16 +30,17 @@
   "duplicate_occurrence_count": 0,
   "duplicate_alias_count": 0,
   "schema_rollback_rehearsed": false,
-  "data_rollback_rehearsed": false,
+  "data_rollback_rehearsed": true,
   "browser_walkthrough_complete": false,
+  "browser_walkthrough_blocked_reason": "local_dev_server_server_action_fetch_failed_in_sandbox",
   "external_llm_call_count": 0,
   "external_llm_persistence_added": false,
   "preexisting_file_inclusion_count": 0,
   "secret_leak_count": 0,
   "duplicate_json_key_count": 0,
   "output_schema_valid": true,
-  "check_count": 59,
-  "passed_check_count": 59,
+  "check_count": 66,
+  "passed_check_count": 66,
   "failed_check_count": 0,
   "checks": [
     {
@@ -108,9 +109,24 @@
       "evidence": "reports/post-phase-l-rollback-report.json"
     },
     {
+      "name": "required:reports/post-phase-l-browser/authenticated-walkthrough.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-browser/authenticated-walkthrough.json"
+    },
+    {
       "name": "required:reports/post-phase-l-browser/pre-apply-readiness.json",
       "passed": true,
       "evidence": "reports/post-phase-l-browser/pre-apply-readiness.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-live/fixture-controlled-projection-preview.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-live/fixture-controlled-projection-preview.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-live/fixture-final-runtime-after-preview.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-live/fixture-final-runtime-after-preview.json"
     },
     {
       "name": "required:reports/post-phase-l-convergence-result.json",
@@ -136,6 +152,11 @@
       "name": "required:scripts/run-post-phase-l-pilot.mjs",
       "passed": true,
       "evidence": "scripts/run-post-phase-l-pilot.mjs"
+    },
+    {
+      "name": "required:scripts/run-post-phase-l-review-event.mjs",
+      "passed": true,
+      "evidence": "scripts/run-post-phase-l-review-event.mjs"
     },
     {
       "name": "required:scripts/verify-post-phase-l-runtime.mjs",
@@ -333,14 +354,29 @@
       "evidence": "1/1"
     },
     {
-      "name": "rollback is honestly pending approval",
+      "name": "remote runtime readback passed",
       "passed": true,
-      "evidence": "pre_apply_static_plan"
+      "evidence": "approved_l_project_runtime_readback"
     },
     {
-      "name": "browser is honestly pending apply",
+      "name": "append-only review event applied",
       "passed": true,
-      "evidence": "pre_apply_source_readiness"
+      "evidence": 2
+    },
+    {
+      "name": "controlled projection preview stays unpublished",
+      "passed": true,
+      "evidence": "approved_l_project_append_only_review_event"
+    },
+    {
+      "name": "bounded rollback and deterministic reapply",
+      "passed": true,
+      "evidence": "approved_l_project_bounded_rollback_reapply"
+    },
+    {
+      "name": "browser walkthrough limitation documented",
+      "passed": true,
+      "evidence": "local_dev_server_server_action_fetch_failed_in_sandbox"
     },
     {
       "name": "K convergence has ten capabilities",
@@ -366,7 +402,7 @@
     {
       "name": "L-owned manifest is unique and complete",
       "passed": true,
-      "evidence": 48
+      "evidence": 51
     },
     {
       "name": "L-owned and preexisting manifests do not overlap",
@@ -381,7 +417,7 @@
     {
       "name": "secret leak patterns zero across all L-owned artifacts",
       "passed": true,
-      "evidence": "0/48 files"
+      "evidence": "0/81 files"
     },
     {
       "name": "preexisting file inclusion zero",

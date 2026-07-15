@@ -1,15 +1,29 @@
 {
-  "generated_at": "2026-07-15T13:06:10.644Z",
-  "stage": "pre_apply_static_plan",
+  "generated_at": "2026-07-15T13:42:01.897Z",
+  "stage": "approved_l_project_bounded_rollback_reapply",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "l_project_remote_read_performed": true,
+  "l_project_remote_write_performed": true,
   "rollback_strategy": "bounded_run_rpc_then_idempotent_reapply",
   "data_rollback_file": "supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql",
   "schema_rollback_file": "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql",
   "compatibility_baseline_preserved_by_schema_rollback": true,
   "schema_rollback_rehearsed": false,
-  "data_rollback_rehearsed": false,
-  "rollback_rehearsal_passed": false,
-  "reapply_passed": false,
-  "post_reapply_replay_match": false,
-  "unrelated_table_change_count": null,
-  "pending_reason": "first_remote_write_approval_required"
+  "data_rollback_rehearsed": true,
+  "rollback_rehearsal_passed": true,
+  "reapply_passed": true,
+  "post_reapply_replay_match": true,
+  "run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+  "deleted_legacy_rows": 1,
+  "deleted_graph_notices": 1,
+  "unrelated_table_change_count": 0,
+  "pending_reason": null,
+  "evidence": [
+    "reports/post-phase-l-live/fixture-bounded-rollback-report.json",
+    "reports/post-phase-l-live/fixture-reapply-after-rollback-report.json",
+    "reports/post-phase-l-live/fixture-reapply-runtime-verification.json"
+  ]
 }

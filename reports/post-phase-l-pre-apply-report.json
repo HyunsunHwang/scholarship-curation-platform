@@ -168,7 +168,7 @@
     "review_items": 1,
     "crawled_notices_compatibility": 1
   },
-  "validator_preapply_results": "59/59",
+  "validator_preapply_results": "66/66",
   "approved_apply_files_in_order": [
     "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
     "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",
