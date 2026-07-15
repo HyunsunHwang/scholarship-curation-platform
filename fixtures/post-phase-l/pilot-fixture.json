@@ -1,0 +1,81 @@
+{
+  "fixture_name": "post-phase-l-pilot-fixture-v1",
+  "evidence_mode": "committed_attributable_fixture_not_live",
+  "generated_at": "2026-07-15T12:00:00.000Z",
+  "run": {
+    "idempotency_key": "post-phase-l-pilot-fixture-v1",
+    "execution_mode": "fixture",
+    "runner_version": "main-runner+post-phase-l-v1",
+    "status": "degraded",
+    "started_at": "2026-07-15T12:00:00.000Z",
+    "finished_at": "2026-07-15T12:00:10.000Z",
+    "metadata": {
+      "bounded": true,
+      "live_success_claimed": false,
+      "external_llm_call_count": 0
+    }
+  },
+  "source_results": [
+    {
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "source_name": "중앙대 경영학부",
+      "result_status": "success",
+      "observed_count": 1,
+      "matched_count": 1,
+      "retry_count": 0,
+      "evidence": {
+        "source": "fixtures/integration-foundation/normalized-crawler-sample.json",
+        "classification": "fixture_success"
+      },
+      "notices": [
+        {
+          "title": "2026-1 경영학부 장학금 신청 안내",
+          "original_url": "https://biz.cau.ac.kr/scholarship/clean-2026?utm_source=fixture",
+          "canonical_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "published_at": "2026-03-02",
+          "body": "2026학년도 1학기 경영학부 장학금 신청 안내입니다. 신청 대상, 신청 기간, 제출 서류, 선발 기준, 문의처가 본문에 충분히 포함되어 있어 검수자가 원문 근거와 함께 주요 조건을 확인할 수 있습니다.",
+          "body_quality_status": "no_assets_but_text_sufficient",
+          "attachment_metadata": [],
+          "provenance": {
+            "source_key": "cau_001",
+            "data_backing": "fixture"
+          }
+        }
+      ]
+    },
+    {
+      "source_key": "cau_002",
+      "source_id": "cau_002",
+      "source_name": "중앙대 경제학부",
+      "result_status": "blocked_transport",
+      "observed_count": 0,
+      "matched_count": 0,
+      "retry_count": 2,
+      "error_code": "tls_transport_fixture",
+      "error_message": "Fixture-preserved transport failure; not absence evidence.",
+      "evidence": {
+        "source": "reports/post-phase-l-pilot-cohort.json",
+        "absence_inferred": false
+      },
+      "notices": []
+    },
+    {
+      "source_key": "yonsei_060",
+      "source_id": "yonsei_060",
+      "source_name": "연세대 언더우드국제대학",
+      "result_status": "unresolved",
+      "observed_count": 0,
+      "matched_count": 0,
+      "retry_count": 0,
+      "error_code": "source_specific_adapter_fixture_only",
+      "error_message": "Yonsei UIC downstream URL shape is fixture-tested; live outcome remains unresolved.",
+      "evidence": {
+        "parser_strategy": "ADAPTER:yonsei_uic",
+        "sample_detail_url": "https://uic.yonsei.ac.kr/main/news.php?mid=m06_01_02&act=view&uid=14407",
+        "absence_inferred": false
+      },
+      "notices": []
+    }
+  ]
+}

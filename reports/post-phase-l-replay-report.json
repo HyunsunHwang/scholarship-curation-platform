@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-15T12:45:31.250Z",
+  "stage": "pre_apply_local_fixture",
+  "first_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+  "second_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+  "deterministic_rerun_match": true,
+  "second_run_insert_counts": {
+    "ingestion_crawl_runs": 0,
+    "ingestion_source_run_results": 0,
+    "ingestion_notices": 0,
+    "ingestion_notice_url_aliases": 0,
+    "ingestion_notice_occurrences": 0,
+    "ingestion_notice_revisions": 0,
+    "ingestion_notice_assets": 0,
+    "review_items": 0,
+    "crawled_notices_compatibility": 0
+  },
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_alias_count": 0,
+  "duplicate_review_event_count": 0,
+  "unexpected_legacy_insert_count": 0,
+  "content_change_revision_test_passed": true,
+  "disappearance_deletion_count": 0,
+  "remote_write_performed": false
+}

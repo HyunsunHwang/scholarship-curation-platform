@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-07-15T11:13:22.583Z",
+  "contract_version": "post-phase-l-preexisting-worktree/v1",
+  "base_commit": "a3cd1ad38414088d835647e9ebf5326147da93bd",
+  "branch": "feat/post-phase-l-integration",
+  "entries": [
+    {
+      "status": " M",
+      "path": "reports/integration-foundation-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/integration-foundation-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-closure-review-note.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-closure-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-closure-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-coverage-parser-reliability-summary.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-coverage-parser-reliability-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-coverage-parser-reliability-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-remediation-priority-decisions.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a-spot-check-decisions.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a0-a1-coverage-readability-triage.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a0-a1-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-a0-a1-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-bc-review-quality-foundation.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-bc-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-bc-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-d-rollback-scope-plan.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-d-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-d-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-e-batch-observability.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-e-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-e-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f0-adapter-foundation.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f0-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f0-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f1-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f1-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f2-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f2-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f3-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-f3-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-g-user-facing-scholarship-mvp.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-g-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-g-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-h-bounded-coverage-expansion.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-h-live-bounded-source-verification-validation.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-h-source-comparison.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-h-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-h-validation-report.md"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-i-persisted-artifact-safety-scan.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-i-validation-report.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-j-persisted-artifact-safety-scan.json"
+    },
+    {
+      "status": " M",
+      "path": "reports/post-phase-j-validation-report.json"
+    }
+  ],
+  "preexisting_path_count": 43,
+  "preexisting_modified_count": 43,
+  "preexisting_untracked_count": 0,
+  "contents_captured": false,
+  "secrets_captured": false
+}

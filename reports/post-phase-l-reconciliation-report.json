@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-07-15T12:45:31.250Z",
+  "stage": "pre_apply_local_fixture",
+  "graph_notice_count": 1,
+  "legacy_notice_count": 1,
+  "matched_count": 1,
+  "mismatch_count": 0,
+  "unresolved_count": 2,
+  "duplicate_risk_count": 0,
+  "public_preview_count": 0,
+  "public_leakage_count": 0,
+  "numeric_route_conflict_count": 0,
+  "comparisons": [
+    {
+      "graph_notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+      "notice_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+      "state": "match"
+    }
+  ],
+  "remote_read_performed": false
+}

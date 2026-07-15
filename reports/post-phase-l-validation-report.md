@@ -1,0 +1,67 @@
+# Post-Phase L Validation Report
+
+- Stage: pre_apply
+- Status: READY_FOR_OWNER_APPROVAL
+- Checks: 54/54
+- Remote read/write: false/false
+- Production ref detected: false
+- Preexisting file inclusion count: 0
+
+## Checks
+
+- PASS: required:docs/post-phase-l-schema-inventory.json
+- PASS: required:docs/post-phase-l-implementation-report.md
+- PASS: required:docs/post-phase-l-baseline-and-migration-decision.md
+- PASS: required:docs/post-phase-l-integration-contract.md
+- PASS: required:docs/post-phase-l-browser-walkthrough.md
+- PASS: required:docs/post-phase-l-replay-reconciliation-rollback.md
+- PASS: required:reports/post-phase-l-preexisting-worktree.json
+- PASS: required:reports/post-phase-l-pre-apply-report.json
+- PASS: required:reports/post-phase-l-schema-manifest.json
+- PASS: required:reports/post-phase-l-pilot-run.json
+- PASS: required:reports/post-phase-l-replay-report.json
+- PASS: required:reports/post-phase-l-reconciliation-report.json
+- PASS: required:reports/post-phase-l-rollback-report.json
+- PASS: required:reports/post-phase-l-browser/pre-apply-readiness.json
+- PASS: required:reports/post-phase-l-convergence-result.json
+- PASS: required:reports/post-phase-l-risk-register-update.json
+- PASS: required:reports/post-phase-l-local-test-report.json
+- PASS: required:reports/post-phase-l-owned-files.json
+- PASS: required:scripts/run-post-phase-l-pilot.mjs
+- PASS: required:scripts/verify-post-phase-l-runtime.mjs
+- PASS: required:supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql
+- PASS: required:supabase/post-phase-l/002_post_phase_l_normalized_graph.sql
+- PASS: required:supabase/post-phase-l/003_post_phase_l_pilot_seed.sql
+- PASS: required:supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql
+- PASS: required:supabase/post-phase-l/999_post_phase_l_schema_rollback.sql
+- PASS: required:supabase/post-phase-l/verify_post_phase_l_schema.sql
+- PASS: authoritative inventory syntax and shape
+- PASS: authoritative inventory byte fingerprint
+- PASS: historical governance snapshot is not a blocker
+- PASS: target project ref
+- PASS: required L environment variables present
+- PASS: production access zero
+- PASS: baseline strategy recorded
+- PASS: historical migration files unchanged
+- PASS: three ordered apply SQL files
+- PASS: graph schema constraints
+- PASS: exact resolver, guard, replay, adapter, revision, review, and rollback tests
+- PASS: pilot cohort exactly bounded
+- PASS: dry run did not access remote
+- PASS: graph plan generated
+- PASS: fixture does not claim live success
+- PASS: replay idempotency
+- PASS: reconciliation fail closed
+- PASS: rollback is honestly pending approval
+- PASS: browser is honestly pending apply
+- PASS: K convergence has ten capabilities
+- PASS: preexisting manifest preserved
+- PASS: L-owned manifest is unique and complete
+- PASS: L-owned and preexisting manifests do not overlap
+- PASS: duplicate JSON keys zero
+- PASS: secret leak patterns zero across all L-owned artifacts
+- PASS: preexisting file inclusion zero
+- PASS: staged files stay inside L-owned manifest
+- PASS: all non-preexisting task paths are declared L-owned
+
+Remote apply, runtime review-event immutability, rollback/reapply, and browser walkthrough remain pending the owner gate.

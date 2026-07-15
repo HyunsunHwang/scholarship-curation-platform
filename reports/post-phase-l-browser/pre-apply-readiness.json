@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-07-15T12:45:31.250Z",
+  "stage": "pre_apply_source_readiness",
+  "walkthrough_complete": false,
+  "authenticated_admin_required": true,
+  "test_admin_bootstrap_required": true,
+  "routes": [
+    "/admin/review",
+    "/admin/review/scholarships/[pilot-id]",
+    "/admin/crawler-review",
+    "/scholarships",
+    "/scholarships/[numeric-id-or-compatible-test-route]"
+  ],
+  "source_evidence": [
+    "app/admin/review/scholarships/[id]/PostPhaseLReviewEvidence.tsx",
+    "app/admin/crawler-review/page.tsx"
+  ],
+  "desktop_verified": false,
+  "mobile_390_verified": false,
+  "runtime_console_error_count": null,
+  "pending_reason": "schema_apply_and_test_admin_required"
+}

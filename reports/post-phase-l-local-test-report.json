@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-07-15T12:45:29.132Z",
+  "test_count": 13,
+  "passed_count": 13,
+  "failed_count": 0,
+  "remote_read_performed": false,
+  "remote_write_performed": false,
+  "external_llm_call_count": 0,
+  "results": [
+    {
+      "name": "authoritative pilot cohort exact resolution",
+      "passed": true
+    },
+    {
+      "name": "exact resolver blocks missing, ambiguous, wrong-case, and production-only keys",
+      "passed": true
+    },
+    {
+      "name": "target guard requires exact target and explicit apply confirmation",
+      "passed": true
+    },
+    {
+      "name": "graph replay is deterministic and creates no second-run duplicates",
+      "passed": true
+    },
+    {
+      "name": "content change creates a revision without changing notice identity",
+      "passed": true
+    },
+    {
+      "name": "database assigns revision ordinals under a per-notice lock",
+      "passed": true
+    },
+    {
+      "name": "database replay preserves canonical metadata and review state",
+      "passed": true
+    },
+    {
+      "name": "projection preview rejects an approval for a stale revision",
+      "passed": true
+    },
+    {
+      "name": "schema rollback drops trigger tables before trigger functions",
+      "passed": true
+    },
+    {
+      "name": "review RPC resolves an idempotent retry before lifecycle rejection",
+      "passed": true
+    },
+    {
+      "name": "zero match remains source-result evidence and never deletes notices",
+      "passed": true
+    },
+    {
+      "name": "URL canonicalization preserves identity and records alias-worthy differences",
+      "passed": true
+    },
+    {
+      "name": "Yonsei UIC strategy canonicalizes uid detail links and bounds pagination",
+      "passed": true
+    }
+  ]
+}

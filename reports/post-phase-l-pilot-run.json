@@ -1,0 +1,204 @@
+{
+  "generated_at": "2026-07-15T12:04:10.888Z",
+  "stage": "pre_apply_dry_run",
+  "dry_run": true,
+  "remote_read_performed": false,
+  "remote_write_performed": false,
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "source_keys": [
+    "cau_001",
+    "cau_002",
+    "yonsei_060"
+  ],
+  "graph_counts": {
+    "ingestion_crawl_runs": 1,
+    "ingestion_source_run_results": 3,
+    "ingestion_notices": 1,
+    "ingestion_notice_url_aliases": 1,
+    "ingestion_notice_occurrences": 1,
+    "ingestion_notice_revisions": 1,
+    "ingestion_notice_assets": 0,
+    "review_items": 1,
+    "crawled_notices_compatibility": 1
+  },
+  "plan": {
+    "graph_version": "post-phase-l-graph-v1",
+    "generated_at": "2026-07-15T12:00:00.000Z",
+    "execution_mode": "fixture",
+    "writes_performed": false,
+    "tables": {
+      "ingestion_crawl_runs": [
+        {
+          "id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+          "idempotency_key": "post-phase-l-pilot-fixture-v1",
+          "execution_mode": "fixture",
+          "runner_version": "main-runner+post-phase-l-v1",
+          "replay_of_run_id": null,
+          "target_project_ref": "hrayfvdggbhfmmzfblly",
+          "status": "degraded",
+          "started_at": "2026-07-15T12:00:00.000Z",
+          "finished_at": "2026-07-15T12:00:10.000Z",
+          "source_count": 3,
+          "metadata": {
+            "bounded": true,
+            "live_success_claimed": false,
+            "external_llm_call_count": 0
+          }
+        }
+      ],
+      "ingestion_source_run_results": [
+        {
+          "id": "e41edb97-63e3-5223-9272-1713f866185b",
+          "crawl_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+          "source_id": "cau_001",
+          "source_key_snapshot": "cau_001",
+          "result_status": "success",
+          "observed_count": 1,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "evidence": {
+            "source": "fixtures/integration-foundation/normalized-crawler-sample.json",
+            "classification": "fixture_success"
+          },
+          "created_at": "2026-07-15T12:00:00.000Z"
+        },
+        {
+          "id": "a08120b9-b0d4-534e-b097-fc7cd3f3040c",
+          "crawl_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+          "source_id": "cau_002",
+          "source_key_snapshot": "cau_002",
+          "result_status": "blocked_transport",
+          "observed_count": 0,
+          "matched_count": 0,
+          "retry_count": 2,
+          "error_code": "tls_transport_fixture",
+          "error_message": "Fixture-preserved transport failure; not absence evidence.",
+          "evidence": {
+            "source": "reports/post-phase-l-pilot-cohort.json",
+            "absence_inferred": false
+          },
+          "created_at": "2026-07-15T12:00:00.000Z"
+        },
+        {
+          "id": "4e253503-a95a-5c95-aa49-25011e4b1952",
+          "crawl_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+          "source_id": "yonsei_060",
+          "source_key_snapshot": "yonsei_060",
+          "result_status": "unresolved",
+          "observed_count": 0,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": "source_specific_adapter_fixture_only",
+          "error_message": "Yonsei UIC downstream URL shape is fixture-tested; live outcome remains unresolved.",
+          "evidence": {
+            "parser_strategy": "ADAPTER:yonsei_uic",
+            "sample_detail_url": "https://uic.yonsei.ac.kr/main/news.php?mid=m06_01_02&act=view&uid=14407",
+            "absence_inferred": false
+          },
+          "created_at": "2026-07-15T12:00:00.000Z"
+        }
+      ],
+      "ingestion_notices": [
+        {
+          "id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "source_id": "cau_001",
+          "identity_kind": "canonical_detail_url",
+          "identity_key": "url:f6dc82a1c0c03c5404337b4be5730220b1c35552fabeea4c760e430f2ddfb555",
+          "external_article_id": null,
+          "canonical_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "canonical_url_hash": "f6dc82a1c0c03c5404337b4be5730220b1c35552fabeea4c760e430f2ddfb555",
+          "legacy_crawled_notice_id": null,
+          "first_seen_at": "2026-07-15T12:00:00.000Z",
+          "last_seen_at": "2026-07-15T12:00:00.000Z",
+          "created_at": "2026-07-15T12:00:00.000Z"
+        }
+      ],
+      "ingestion_notice_url_aliases": [
+        {
+          "id": "d91deaa6-7baa-571a-bb97-20584a7c86d2",
+          "notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "source_id": "cau_001",
+          "original_url": "https://biz.cau.ac.kr/scholarship/clean-2026?utm_source=fixture",
+          "normalized_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "normalized_url_hash": "f6dc82a1c0c03c5404337b4be5730220b1c35552fabeea4c760e430f2ddfb555",
+          "alias_kind": "original",
+          "normalization_version": "url-normalization-v1",
+          "first_observed_at": "2026-07-15T12:00:00.000Z",
+          "last_observed_at": "2026-07-15T12:00:00.000Z"
+        }
+      ],
+      "ingestion_notice_occurrences": [
+        {
+          "id": "1efaeccb-5087-5fef-b7e4-b4e852696308",
+          "notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "crawl_run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+          "source_result_id": "e41edb97-63e3-5223-9272-1713f866185b",
+          "source_id": "cau_001",
+          "original_url": "https://biz.cau.ac.kr/scholarship/clean-2026?utm_source=fixture",
+          "canonical_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "final_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "observed_url_hash": "4a2e5f29bd4461e33e4c27b57e7855dde036bcf28fdc9561e2e849300452fa69",
+          "raw_title": "2026-1 경영학부 장학금 신청 안내",
+          "raw_body": "2026학년도 1학기 경영학부 장학금 신청 안내입니다. 신청 대상, 신청 기간, 제출 서류, 선발 기준, 문의처가 본문에 충분히 포함되어 있어 검수자가 원문 근거와 함께 주요 조건을 확인할 수 있습니다.",
+          "raw_date_text": null,
+          "observed_at": "2026-07-15T12:00:00.000Z",
+          "transport_status": "success",
+          "parser_status": "success",
+          "provenance": {
+            "source_key": "cau_001",
+            "data_backing": "fixture"
+          }
+        }
+      ],
+      "ingestion_notice_revisions": [
+        {
+          "id": "31251b83-84d9-50eb-9af5-69274f7e3624",
+          "notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "occurrence_id": "1efaeccb-5087-5fef-b7e4-b4e852696308",
+          "content_hash": "e3d16849f4f4cec35a829c6df3f6bb833b3ed6bc5aaa449c5f99fa715a6f7fc4",
+          "revision_ordinal": 1,
+          "title": "2026-1 경영학부 장학금 신청 안내",
+          "body": "2026학년도 1학기 경영학부 장학금 신청 안내입니다. 신청 대상, 신청 기간, 제출 서류, 선발 기준, 문의처가 본문에 충분히 포함되어 있어 검수자가 원문 근거와 함께 주요 조건을 확인할 수 있습니다.",
+          "normalized_payload": {},
+          "parser_version": "main-runner",
+          "body_quality_status": "no_assets_but_text_sufficient",
+          "evidence_fingerprint": "b4632fbd57e9048df1a6ad6bedf8eeb2639feed56f18c0f2de7292e3b97dd35f",
+          "created_at": "2026-07-15T12:00:00.000Z"
+        }
+      ],
+      "ingestion_notice_assets": [],
+      "review_items": [
+        {
+          "id": "6d9464c3-3bea-54a4-bb40-6813cfd18bfd",
+          "notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "current_revision_id": "31251b83-84d9-50eb-9af5-69274f7e3624",
+          "review_scope": "scholarship_notice",
+          "state": "open",
+          "created_at": "2026-07-15T12:00:00.000Z",
+          "updated_at": "2026-07-15T12:00:00.000Z"
+        }
+      ],
+      "crawled_notices_compatibility": [
+        {
+          "graph_notice_id": "f1b8e358-349d-5189-b3b5-09a0d59ac95e",
+          "source_group": "cau",
+          "source_id": "cau_001",
+          "source_name": "중앙대 경영학부",
+          "title": "2026-1 경영학부 장학금 신청 안내",
+          "notice_url": "https://biz.cau.ac.kr/scholarship/clean-2026",
+          "notice_posted_at": "2026-03-02",
+          "raw_date_text": null,
+          "body": "2026학년도 1학기 경영학부 장학금 신청 안내입니다. 신청 대상, 신청 기간, 제출 서류, 선발 기준, 문의처가 본문에 충분히 포함되어 있어 검수자가 원문 근거와 함께 주요 조건을 확인할 수 있습니다.",
+          "image_urls": [],
+          "scholarship_type": "on_campus",
+          "status": "new",
+          "run_at": "2026-07-15T12:00:00.000Z"
+        }
+      ]
+    }
+  }
+}

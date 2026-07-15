@@ -1,0 +1,365 @@
+{
+  "generated_at": "2026-07-15T12:47:12.355Z",
+  "stage": "pre_apply",
+  "status": "READY_FOR_OWNER_APPROVAL",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "migration_apply_passed": false,
+  "pilot_source_count": 3,
+  "exact_source_resolution_passed": true,
+  "fuzzy_source_match_count": 0,
+  "automatic_source_create_count": 0,
+  "graph_notice_count": 1,
+  "graph_occurrence_count": 1,
+  "asset_metadata_count": 0,
+  "url_alias_count": 1,
+  "append_only_review_event_count": 0,
+  "review_event_immutability_static_passed": true,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "deterministic_rerun_match": true,
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_alias_count": 0,
+  "schema_rollback_rehearsed": false,
+  "data_rollback_rehearsed": false,
+  "browser_walkthrough_complete": false,
+  "external_llm_call_count": 0,
+  "external_llm_persistence_added": false,
+  "preexisting_file_inclusion_count": 0,
+  "secret_leak_count": 0,
+  "duplicate_json_key_count": 0,
+  "output_schema_valid": true,
+  "check_count": 54,
+  "passed_check_count": 54,
+  "failed_check_count": 0,
+  "checks": [
+    {
+      "name": "required:docs/post-phase-l-schema-inventory.json",
+      "passed": true,
+      "evidence": "docs/post-phase-l-schema-inventory.json"
+    },
+    {
+      "name": "required:docs/post-phase-l-implementation-report.md",
+      "passed": true,
+      "evidence": "docs/post-phase-l-implementation-report.md"
+    },
+    {
+      "name": "required:docs/post-phase-l-baseline-and-migration-decision.md",
+      "passed": true,
+      "evidence": "docs/post-phase-l-baseline-and-migration-decision.md"
+    },
+    {
+      "name": "required:docs/post-phase-l-integration-contract.md",
+      "passed": true,
+      "evidence": "docs/post-phase-l-integration-contract.md"
+    },
+    {
+      "name": "required:docs/post-phase-l-browser-walkthrough.md",
+      "passed": true,
+      "evidence": "docs/post-phase-l-browser-walkthrough.md"
+    },
+    {
+      "name": "required:docs/post-phase-l-replay-reconciliation-rollback.md",
+      "passed": true,
+      "evidence": "docs/post-phase-l-replay-reconciliation-rollback.md"
+    },
+    {
+      "name": "required:reports/post-phase-l-preexisting-worktree.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-preexisting-worktree.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-pre-apply-report.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-pre-apply-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-schema-manifest.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-schema-manifest.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-pilot-run.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-pilot-run.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-replay-report.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-replay-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-reconciliation-report.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-reconciliation-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-rollback-report.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-rollback-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-browser/pre-apply-readiness.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-browser/pre-apply-readiness.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-convergence-result.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-convergence-result.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-risk-register-update.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-risk-register-update.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-local-test-report.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-local-test-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-owned-files.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-owned-files.json"
+    },
+    {
+      "name": "required:scripts/run-post-phase-l-pilot.mjs",
+      "passed": true,
+      "evidence": "scripts/run-post-phase-l-pilot.mjs"
+    },
+    {
+      "name": "required:scripts/verify-post-phase-l-runtime.mjs",
+      "passed": true,
+      "evidence": "scripts/verify-post-phase-l-runtime.mjs"
+    },
+    {
+      "name": "required:supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/003_post_phase_l_pilot_seed.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/003_post_phase_l_pilot_seed.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/999_post_phase_l_schema_rollback.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/verify_post_phase_l_schema.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/verify_post_phase_l_schema.sql"
+    },
+    {
+      "name": "authoritative inventory syntax and shape",
+      "passed": true,
+      "evidence": "57 migrations / 24 tables / 3 pilot sources"
+    },
+    {
+      "name": "authoritative inventory byte fingerprint",
+      "passed": true,
+      "evidence": "97602a9649fcb8ccd9ab93b9c06402d03a07fc8e1f4a50852cd8f39cff290406"
+    },
+    {
+      "name": "historical governance snapshot is not a blocker",
+      "passed": true,
+      "evidence": "current owner governance supersedes snapshot"
+    },
+    {
+      "name": "target project ref",
+      "passed": true,
+      "evidence": "hrayfvdggbhfmmzfblly"
+    },
+    {
+      "name": "required L environment variables present",
+      "passed": true,
+      "evidence": {
+        "NEXT_PUBLIC_SUPABASE_URL": true,
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": true,
+        "SUPABASE_SERVICE_ROLE_KEY": true
+      }
+    },
+    {
+      "name": "production access zero",
+      "passed": true,
+      "evidence": "pre-apply local only"
+    },
+    {
+      "name": "baseline strategy recorded",
+      "passed": true,
+      "evidence": "B_sanitized_l_only_application_compatibility_baseline"
+    },
+    {
+      "name": "historical migration files unchanged",
+      "passed": true,
+      "evidence": "no committed-chain diff"
+    },
+    {
+      "name": "three ordered apply SQL files",
+      "passed": true,
+      "evidence": [
+        "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
+        "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",
+        "supabase/post-phase-l/003_post_phase_l_pilot_seed.sql"
+      ]
+    },
+    {
+      "name": "graph schema constraints",
+      "passed": true,
+      "evidence": {
+        "source_exact_fk": true,
+        "source_key_snapshot_exact_check": true,
+        "run_source_unique": true,
+        "occurrence_idempotency": true,
+        "revision_change_detection": true,
+        "revision_ordinal_atomic_assignment": true,
+        "replay_preserves_notice_metadata": true,
+        "replay_preserves_review_state": true,
+        "review_event_immutable_trigger": true,
+        "public_publish_forced_false": true
+      }
+    },
+    {
+      "name": "exact resolver, guard, replay, adapter, revision, review, and rollback tests",
+      "passed": true,
+      "evidence": "13/13"
+    },
+    {
+      "name": "pilot cohort exactly bounded",
+      "passed": true,
+      "evidence": [
+        "cau_001",
+        "cau_002",
+        "yonsei_060"
+      ]
+    },
+    {
+      "name": "dry run did not access remote",
+      "passed": true,
+      "evidence": "pre_apply_dry_run"
+    },
+    {
+      "name": "graph plan generated",
+      "passed": true,
+      "evidence": {
+        "ingestion_crawl_runs": 1,
+        "ingestion_source_run_results": 3,
+        "ingestion_notices": 1,
+        "ingestion_notice_url_aliases": 1,
+        "ingestion_notice_occurrences": 1,
+        "ingestion_notice_revisions": 1,
+        "ingestion_notice_assets": 0,
+        "review_items": 1,
+        "crawled_notices_compatibility": 1
+      }
+    },
+    {
+      "name": "fixture does not claim live success",
+      "passed": true,
+      "evidence": "fixture"
+    },
+    {
+      "name": "replay idempotency",
+      "passed": true,
+      "evidence": {
+        "ingestion_crawl_runs": 0,
+        "ingestion_source_run_results": 0,
+        "ingestion_notices": 0,
+        "ingestion_notice_url_aliases": 0,
+        "ingestion_notice_occurrences": 0,
+        "ingestion_notice_revisions": 0,
+        "ingestion_notice_assets": 0,
+        "review_items": 0,
+        "crawled_notices_compatibility": 0
+      }
+    },
+    {
+      "name": "reconciliation fail closed",
+      "passed": true,
+      "evidence": "1/1"
+    },
+    {
+      "name": "rollback is honestly pending approval",
+      "passed": true,
+      "evidence": "pre_apply_static_plan"
+    },
+    {
+      "name": "browser is honestly pending apply",
+      "passed": true,
+      "evidence": "pre_apply_source_readiness"
+    },
+    {
+      "name": "K convergence has ten capabilities",
+      "passed": true,
+      "evidence": [
+        "ingestion runner",
+        "exact source resolution",
+        "source adapters",
+        "canonical URL and aliases",
+        "normalized representation",
+        "attachment evidence",
+        "body extraction quality",
+        "observability",
+        "review state",
+        "public projection"
+      ]
+    },
+    {
+      "name": "preexisting manifest preserved",
+      "passed": true,
+      "evidence": 43
+    },
+    {
+      "name": "L-owned manifest is unique and complete",
+      "passed": true,
+      "evidence": 48
+    },
+    {
+      "name": "L-owned and preexisting manifests do not overlap",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "duplicate JSON keys zero",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "secret leak patterns zero across all L-owned artifacts",
+      "passed": true,
+      "evidence": "0/48 files"
+    },
+    {
+      "name": "preexisting file inclusion zero",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "staged files stay inside L-owned manifest",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "all non-preexisting task paths are declared L-owned",
+      "passed": true,
+      "evidence": []
+    }
+  ]
+}
