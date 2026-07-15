@@ -1,5 +1,5 @@
 -- Destructive only inside the dedicated L project after explicit owner approval.
--- Compatibility baseline tables are intentionally preserved.
+-- Compatibility baseline tables and the immutable environment guard are preserved.
 
 begin;
 
@@ -32,7 +32,5 @@ drop function if exists public.post_phase_l_assign_revision_ordinal();
 drop function if exists public.post_phase_l_preserve_notice_replay_metadata();
 drop function if exists public.post_phase_l_preserve_alias_replay_metadata();
 drop function if exists public.post_phase_l_preserve_review_state_on_ingest();
-drop function if exists public.post_phase_l_assert_environment();
-drop table if exists public.post_phase_l_environment_guard;
 
 commit;

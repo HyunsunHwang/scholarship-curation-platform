@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T12:45:31.250Z",
+  "generated_at": "2026-07-15T13:06:10.644Z",
   "stage": "pre_apply_static",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "target_project_url": "https://hrayfvdggbhfmmzfblly.supabase.co",
@@ -25,6 +25,7 @@
     "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql"
   ],
   "new_tables": [
+    "post_phase_l_environment_guard",
     "profiles",
     "universities",
     "org_units",
@@ -35,7 +36,6 @@
     "crawled_contests",
     "bookmarks",
     "site_settings",
-    "post_phase_l_environment_guard",
     "ingestion_crawl_runs",
     "ingestion_source_run_results",
     "ingestion_notices",
@@ -71,6 +71,8 @@
     "review_effective_decisions_decision_idx"
   ],
   "new_functions": [
+    "post_phase_l_assert_environment",
+    "post_phase_l_block_environment_guard_mutation",
     "is_admin",
     "set_updated_at",
     "post_phase_l_handle_new_auth_user",
@@ -82,11 +84,11 @@
     "post_phase_l_preserve_review_state_on_ingest",
     "post_phase_l_block_immutable_change",
     "post_phase_l_sync_effective_decision",
-    "post_phase_l_assert_environment",
     "post_phase_l_apply_legacy_review_decision",
     "post_phase_l_rollback_run"
   ],
   "new_triggers": [
+    "post_phase_l_environment_guard_immutable",
     "post_phase_l_auth_user_profile",
     "trg_notice_sources_updated_at",
     "trg_scholarships_updated_at",
@@ -106,6 +108,7 @@
     "review_decision_events_effective_projection"
   ],
   "rls_enabled_tables": [
+    "post_phase_l_environment_guard",
     "profiles",
     "universities",
     "org_units",
@@ -116,7 +119,6 @@
     "crawled_contests",
     "bookmarks",
     "site_settings",
-    "post_phase_l_environment_guard",
     "ingestion_crawl_runs",
     "ingestion_source_run_results",
     "ingestion_notices",
@@ -130,6 +132,7 @@
     "review_evidence_references"
   ],
   "policies": [
+    "post_phase_l_environment_guard_select",
     "profiles_self_or_admin_select",
     "profiles_self_or_admin_update",
     "universities_public_select",
@@ -148,6 +151,13 @@
     "site_settings_public_select",
     "site_settings_admin_update"
   ],
+  "fresh_project_safety": {
+    "fresh_project_guard_present": true,
+    "non_empty_schema_negative_test_passed": true,
+    "environment_guard_created_only_after_fresh_assertion": true,
+    "environment_guard_upsert_in_002": false,
+    "environment_guard_immutable": true
+  },
   "graph_constraints": {
     "source_exact_fk": true,
     "source_key_snapshot_exact_check": true,

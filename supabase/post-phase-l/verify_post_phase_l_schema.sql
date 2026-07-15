@@ -12,6 +12,17 @@ select
 from public.post_phase_l_environment_guard
 where id = 1;
 
+select
+  t.tgname as trigger_name,
+  pg_get_triggerdef(t.oid) as trigger_definition
+from pg_trigger t
+join pg_class c on c.oid = t.tgrelid
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname = 'post_phase_l_environment_guard'
+  and t.tgname = 'post_phase_l_environment_guard_immutable'
+  and not t.tgisinternal;
+
 with expected(name) as (
   values
     ('ingestion_crawl_runs'),

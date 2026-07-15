@@ -115,7 +115,50 @@ const sqlByPath = Object.fromEntries(
   [...MIGRATIONS, ...ROLLBACK_FILES].map((filePath) => [filePath, readText(filePath)]),
 );
 const migrationSql = MIGRATIONS.map((filePath) => sqlByPath[filePath]).join("\n");
+const baselineSql = sqlByPath[MIGRATIONS[0]];
 const graphSql = sqlByPath[MIGRATIONS[1]];
+const schemaRollbackSql = sqlByPath[ROLLBACK_FILES[1]];
+const freshAssertionBegin = baselineSql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_BEGIN");
+const freshAssertionEnd = baselineSql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_END");
+const environmentGuardCreate = baselineSql.search(
+  /create\s+table\s+public\.post_phase_l_environment_guard/i,
+);
+const freshAssertionSql = baselineSql.slice(freshAssertionBegin, freshAssertionEnd);
+const requiredFreshProjectRelations = [
+  "profiles",
+  "scholarships",
+  "scholarship_selection_stages",
+  "notice_sources",
+  "crawled_notices",
+  "site_settings",
+];
+const environmentGuardUpsertIn002 =
+  /insert\s+into\s+public\.post_phase_l_environment_guard/i.test(graphSql) ||
+  /update\s+public\.post_phase_l_environment_guard/i.test(graphSql) ||
+  /delete\s+from\s+public\.post_phase_l_environment_guard/i.test(graphSql);
+const negativeTestPassed =
+  localTests.results.find(
+    (result) =>
+      result.name ===
+      "001 fresh-project assertion rejects a non-empty application schema before persistent mutation",
+  )?.passed === true;
+const freshProjectSafety = {
+  fresh_project_guard_present:
+    freshAssertionBegin >= 0 &&
+    freshAssertionEnd > freshAssertionBegin &&
+    freshAssertionSql.includes("POST_PHASE_L_FRESH_PROJECT_REQUIRED") &&
+    requiredFreshProjectRelations.every((name) => freshAssertionSql.includes(`'${name}'`)),
+  non_empty_schema_negative_test_passed: negativeTestPassed,
+  environment_guard_created_only_after_fresh_assertion:
+    freshAssertionEnd >= 0 && environmentGuardCreate > freshAssertionEnd,
+  environment_guard_upsert_in_002: environmentGuardUpsertIn002,
+  environment_guard_immutable:
+    baselineSql.includes("post_phase_l_block_environment_guard_mutation") &&
+    /before\s+update\s+or\s+delete\s+on\s+public\.post_phase_l_environment_guard/i.test(
+      baselineSql,
+    ) &&
+    !/drop\s+table.*post_phase_l_environment_guard/i.test(schemaRollbackSql),
+};
 
 writeJson("reports/post-phase-l-owned-files.json", {
   generated_at: GENERATED_AT,
@@ -145,12 +188,16 @@ const schemaManifest = {
   historical_migrations_modified: false,
   apply_order: MIGRATIONS,
   rollback_files: ROLLBACK_FILES,
-  new_tables: matches(migrationSql, /create table if not exists public\.([a-z0-9_]+)/gi),
+  new_tables: matches(
+    migrationSql,
+    /create table (?:if not exists )?public\.([a-z0-9_]+)/gi,
+  ),
   new_indexes: matches(migrationSql, /create (?:unique )?index if not exists ([a-z0-9_]+)/gi),
   new_functions: matches(migrationSql, /create or replace function public\.([a-z0-9_]+)/gi),
   new_triggers: matches(migrationSql, /create trigger ([a-z0-9_]+)/gi),
   rls_enabled_tables: matches(migrationSql, /alter table public\.([a-z0-9_]+) enable row level security/gi),
   policies: matches(migrationSql, /create policy ([a-z0-9_]+)/gi),
+  fresh_project_safety: freshProjectSafety,
   graph_constraints: {
     source_exact_fk: graphSql.includes("references public.notice_sources(source_id)"),
     source_key_snapshot_exact_check: graphSql.includes("check (source_key_snapshot = source_id)"),
@@ -167,7 +214,9 @@ const schemaManifest = {
       graphSql.includes("post_phase_l_preserve_review_state_on_ingest") &&
       graphSql.includes("review_items_preserve_state_on_ingest"),
     review_event_immutable_trigger: graphSql.includes("review_decision_events_immutable"),
-    public_publish_forced_false: graphSql.includes("automatic_public_publish_enabled = false"),
+    public_publish_forced_false: migrationSql.includes(
+      "automatic_public_publish_enabled = false",
+    ),
   },
   remote_apply_performed: false,
 };
@@ -337,6 +386,7 @@ const preApplyReport = {
   environment_values_printed: false,
   baseline_strategy: schemaManifest.baseline_strategy,
   historical_migrations_modified: false,
+  ...freshProjectSafety,
   migration_files: MIGRATIONS,
   rollback_files: ROLLBACK_FILES,
   new_tables: schemaManifest.new_tables,

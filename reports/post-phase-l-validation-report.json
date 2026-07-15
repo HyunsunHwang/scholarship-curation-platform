@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T12:47:12.355Z",
+  "generated_at": "2026-07-15T13:08:39.862Z",
   "stage": "pre_apply",
   "status": "READY_FOR_OWNER_APPROVAL",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
@@ -7,6 +7,11 @@
   "production_ref_detected": false,
   "production_read_performed": false,
   "production_write_performed": false,
+  "fresh_project_guard_present": true,
+  "non_empty_schema_negative_test_passed": true,
+  "environment_guard_created_only_after_fresh_assertion": true,
+  "environment_guard_upsert_in_002": false,
+  "environment_guard_immutable": true,
   "migration_apply_passed": false,
   "pilot_source_count": 3,
   "exact_source_resolution_passed": true,
@@ -33,8 +38,8 @@
   "secret_leak_count": 0,
   "duplicate_json_key_count": 0,
   "output_schema_valid": true,
-  "check_count": 54,
-  "passed_check_count": 54,
+  "check_count": 59,
+  "passed_check_count": 59,
   "failed_check_count": 0,
   "checks": [
     {
@@ -221,6 +226,38 @@
       ]
     },
     {
+      "name": "fresh_project_guard_present=true",
+      "passed": true,
+      "evidence": [
+        "profiles",
+        "scholarships",
+        "scholarship_selection_stages",
+        "notice_sources",
+        "crawled_notices",
+        "site_settings"
+      ]
+    },
+    {
+      "name": "non_empty_schema_negative_test_passed=true",
+      "passed": true,
+      "evidence": "profiles sentinel aborts before persistent mutation"
+    },
+    {
+      "name": "environment_guard_created_only_after_fresh_assertion=true",
+      "passed": true,
+      "evidence": "992<1034"
+    },
+    {
+      "name": "environment_guard_upsert_in_002=false",
+      "passed": true,
+      "evidence": "002 validates the existing exact guard without DML"
+    },
+    {
+      "name": "environment_guard_immutable=true",
+      "passed": true,
+      "evidence": "BEFORE UPDATE OR DELETE trigger; graph rollback preserves guard"
+    },
+    {
       "name": "graph schema constraints",
       "passed": true,
       "evidence": {
@@ -239,7 +276,7 @@
     {
       "name": "exact resolver, guard, replay, adapter, revision, review, and rollback tests",
       "passed": true,
-      "evidence": "13/13"
+      "evidence": "15/15"
     },
     {
       "name": "pilot cohort exactly bounded",

@@ -3,26 +3,14 @@
 
 begin;
 
-create table if not exists public.post_phase_l_environment_guard (
-  id smallint primary key default 1 check (id = 1),
-  project_ref text not null check (project_ref = 'hrayfvdggbhfmmzfblly'),
-  environment_kind text not null check (environment_kind = 'non_production'),
-  automatic_public_publish_enabled boolean not null default false
-    check (automatic_public_publish_enabled = false),
-  created_at timestamptz not null default now()
-);
-
-insert into public.post_phase_l_environment_guard(
-  id,
-  project_ref,
-  environment_kind,
-  automatic_public_publish_enabled
-)
-values (1, 'hrayfvdggbhfmmzfblly', 'non_production', false)
-on conflict (id) do update
-set project_ref = excluded.project_ref,
-    environment_kind = excluded.environment_kind,
-    automatic_public_publish_enabled = false;
+do $$
+begin
+  if to_regclass('public.post_phase_l_environment_guard') is null then
+    raise exception 'Post-Phase L environment guard must be created by 001';
+  end if;
+  perform public.post_phase_l_assert_environment();
+end
+$$;
 
 create table if not exists public.ingestion_crawl_runs (
   id uuid primary key,
@@ -458,26 +446,6 @@ create trigger review_decision_events_effective_projection
 after insert on public.review_decision_events
 for each row execute function public.post_phase_l_sync_effective_decision();
 
-create or replace function public.post_phase_l_assert_environment()
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (
-    select 1
-    from public.post_phase_l_environment_guard
-    where id = 1
-      and project_ref = 'hrayfvdggbhfmmzfblly'
-      and environment_kind = 'non_production'
-      and automatic_public_publish_enabled = false
-  ) then
-    raise exception 'Post-Phase L environment guard is missing or invalid';
-  end if;
-end;
-$$;
-
 create or replace function public.post_phase_l_apply_legacy_review_decision(
   p_legacy_notice_id bigint,
   p_decision text,
@@ -757,7 +725,6 @@ begin
 end;
 $$;
 
-alter table public.post_phase_l_environment_guard enable row level security;
 alter table public.ingestion_crawl_runs enable row level security;
 alter table public.ingestion_source_run_results enable row level security;
 alter table public.ingestion_notices enable row level security;
@@ -798,7 +765,6 @@ begin
 end
 $$;
 
-revoke all on public.post_phase_l_environment_guard from anon, authenticated;
 revoke insert, update, delete on public.review_decision_events from anon, authenticated;
 revoke insert, update, delete on public.review_evidence_references from anon, authenticated;
 revoke all on function public.post_phase_l_rollback_run(uuid, text) from public;
@@ -812,8 +778,7 @@ grant select on public.ingestion_crawl_runs, public.ingestion_source_run_results
 grant execute on function public.post_phase_l_apply_legacy_review_decision(bigint, text, text, text, bigint)
   to authenticated;
 grant execute on function public.post_phase_l_rollback_run(uuid, text) to service_role;
-grant all on public.post_phase_l_environment_guard,
-  public.ingestion_crawl_runs, public.ingestion_source_run_results,
+grant all on public.ingestion_crawl_runs, public.ingestion_source_run_results,
   public.ingestion_notices, public.ingestion_notice_url_aliases,
   public.ingestion_notice_occurrences, public.ingestion_notice_revisions,
   public.ingestion_notice_assets, public.review_items,

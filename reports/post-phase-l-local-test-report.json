@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-15T12:45:29.132Z",
-  "test_count": 13,
-  "passed_count": 13,
+  "generated_at": "2026-07-15T13:04:58.247Z",
+  "test_count": 15,
+  "passed_count": 15,
   "failed_count": 0,
   "remote_read_performed": false,
   "remote_write_performed": false,
@@ -41,6 +41,14 @@
     },
     {
       "name": "schema rollback drops trigger tables before trigger functions",
+      "passed": true
+    },
+    {
+      "name": "001 fresh-project assertion rejects a non-empty application schema before persistent mutation",
+      "passed": true
+    },
+    {
+      "name": "environment guard is created once in 001 and remains immutable",
       "passed": true
     },
     {

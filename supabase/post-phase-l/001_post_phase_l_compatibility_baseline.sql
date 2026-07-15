@@ -4,6 +4,98 @@
 
 begin;
 
+-- POST_PHASE_L_FRESH_PROJECT_ASSERTION_BEGIN
+do $$
+declare
+  existing_relations text[];
+begin
+  select array_agg(candidate.name order by candidate.name)
+  into existing_relations
+  from unnest(array[
+    'profiles',
+    'universities',
+    'org_units',
+    'notice_sources',
+    'scholarships',
+    'scholarship_selection_stages',
+    'crawled_notices',
+    'crawled_contests',
+    'bookmarks',
+    'site_settings',
+    'post_phase_l_environment_guard'
+  ]::text[]) as candidate(name)
+  where to_regclass(format('public.%I', candidate.name)) is not null;
+
+  if coalesce(cardinality(existing_relations), 0) > 0 then
+    raise exception
+      'POST_PHASE_L_FRESH_PROJECT_REQUIRED: existing public application relations: %',
+      array_to_string(existing_relations, ', ');
+  end if;
+end
+$$;
+-- POST_PHASE_L_FRESH_PROJECT_ASSERTION_END
+
+create table public.post_phase_l_environment_guard (
+  id smallint primary key default 1 check (id = 1),
+  project_ref text not null check (project_ref = 'hrayfvdggbhfmmzfblly'),
+  environment_kind text not null check (environment_kind = 'non_production'),
+  automatic_public_publish_enabled boolean not null default false
+    check (automatic_public_publish_enabled = false),
+  created_at timestamptz not null default now()
+);
+
+insert into public.post_phase_l_environment_guard(
+  id,
+  project_ref,
+  environment_kind,
+  automatic_public_publish_enabled
+)
+values (1, 'hrayfvdggbhfmmzfblly', 'non_production', false);
+
+create or replace function public.post_phase_l_assert_environment()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1
+    from public.post_phase_l_environment_guard
+    where id = 1
+      and project_ref = 'hrayfvdggbhfmmzfblly'
+      and environment_kind = 'non_production'
+      and automatic_public_publish_enabled = false
+  ) then
+    raise exception 'Post-Phase L environment guard is missing or invalid';
+  end if;
+end;
+$$;
+
+create or replace function public.post_phase_l_block_environment_guard_mutation()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  raise exception 'Post-Phase L environment guard is immutable; % is prohibited', tg_op;
+end;
+$$;
+
+create trigger post_phase_l_environment_guard_immutable
+before update or delete on public.post_phase_l_environment_guard
+for each row execute function public.post_phase_l_block_environment_guard_mutation();
+
+alter table public.post_phase_l_environment_guard enable row level security;
+create policy post_phase_l_environment_guard_select
+on public.post_phase_l_environment_guard
+for select to authenticated using (true);
+
+revoke all on public.post_phase_l_environment_guard from public, anon, authenticated, service_role;
+grant select on public.post_phase_l_environment_guard to authenticated, service_role;
+revoke all on function public.post_phase_l_assert_environment() from public;
+grant execute on function public.post_phase_l_assert_environment() to authenticated, service_role;
+
 create extension if not exists pgcrypto;
 
 do $$

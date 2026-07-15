@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T12:45:31.250Z",
+  "generated_at": "2026-07-15T13:06:10.644Z",
   "status": "READY_FOR_OWNER_APPROVAL",
   "branch": "feat/post-phase-l-integration",
   "base_commit": "a3cd1ad38414088d835647e9ebf5326147da93bd",
@@ -18,6 +18,11 @@
   "environment_values_printed": false,
   "baseline_strategy": "B_sanitized_l_only_application_compatibility_baseline",
   "historical_migrations_modified": false,
+  "fresh_project_guard_present": true,
+  "non_empty_schema_negative_test_passed": true,
+  "environment_guard_created_only_after_fresh_assertion": true,
+  "environment_guard_upsert_in_002": false,
+  "environment_guard_immutable": true,
   "migration_files": [
     "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
     "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",
@@ -28,6 +33,7 @@
     "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql"
   ],
   "new_tables": [
+    "post_phase_l_environment_guard",
     "profiles",
     "universities",
     "org_units",
@@ -38,7 +44,6 @@
     "crawled_contests",
     "bookmarks",
     "site_settings",
-    "post_phase_l_environment_guard",
     "ingestion_crawl_runs",
     "ingestion_source_run_results",
     "ingestion_notices",
@@ -86,6 +91,7 @@
     "public_publish_forced_false"
   ],
   "new_rls_policies": [
+    "post_phase_l_environment_guard_select",
     "profiles_self_or_admin_select",
     "profiles_self_or_admin_update",
     "universities_public_select",
@@ -105,6 +111,8 @@
     "site_settings_admin_update"
   ],
   "new_functions_or_triggers": [
+    "post_phase_l_assert_environment",
+    "post_phase_l_block_environment_guard_mutation",
     "is_admin",
     "set_updated_at",
     "post_phase_l_handle_new_auth_user",
@@ -116,9 +124,9 @@
     "post_phase_l_preserve_review_state_on_ingest",
     "post_phase_l_block_immutable_change",
     "post_phase_l_sync_effective_decision",
-    "post_phase_l_assert_environment",
     "post_phase_l_apply_legacy_review_decision",
     "post_phase_l_rollback_run",
+    "post_phase_l_environment_guard_immutable",
     "post_phase_l_auth_user_profile",
     "trg_notice_sources_updated_at",
     "trg_scholarships_updated_at",
@@ -148,7 +156,7 @@
   "production_write_scope": "none",
   "rollback_strategy": "bounded_run_rpc_then_idempotent_reapply",
   "reapply_strategy": "same deterministic run plan after bounded rollback",
-  "local_test_results": "13/13",
+  "local_test_results": "15/15",
   "dry_run_results": {
     "ingestion_crawl_runs": 1,
     "ingestion_source_run_results": 3,
@@ -160,7 +168,7 @@
     "review_items": 1,
     "crawled_notices_compatibility": 1
   },
-  "validator_preapply_results": "54/54",
+  "validator_preapply_results": "59/59",
   "approved_apply_files_in_order": [
     "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
     "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",

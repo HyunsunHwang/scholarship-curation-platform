@@ -22,11 +22,13 @@ The repository has 10 committed migration files. The earliest committed `notice_
 2. `supabase/post-phase-l/002_post_phase_l_normalized_graph.sql`
 3. `supabase/post-phase-l/003_post_phase_l_pilot_seed.sql`
 
-The first file creates only the minimum product/admin compatibility required by the L pilot. The second adds J-named graph and review entities. The third seeds only `cau_001`, `cau_002`, and `yonsei_060` plus their minimal org-unit references.
+Before any persistent DDL, the first file asserts that the target is a fresh project. It aborts the transaction if any known application relation already exists, including `profiles`, `scholarships`, `scholarship_selection_stages`, `notice_sources`, `crawled_notices`, or `site_settings`. Only after that assertion succeeds does it create the immutable L environment guard and the minimum product/admin compatibility required by the L pilot.
+
+The second file performs read-only validation of the guard's exact project ref, non-production kind, and disabled automatic-publication flag; it never inserts, upserts, updates, or deletes the guard. It then adds J-named graph and review entities. The third seeds only `cau_001`, `cau_002`, and `yonsei_060` plus their minimal org-unit references.
 
 The schema files are written before the owner gate but are not applied before that gate. This workstation has no `psql` or Supabase CLI executable, so the approved first apply requires the L project SQL Editor unless a separately authorized connection method is provided.
 
-After the three apply files, `supabase/post-phase-l/verify_post_phase_l_schema.sql` is the read-only SQL Editor verification step. It checks the environment guard, required graph objects, RLS, the exact three-source seed, and zero public leakage without mutating data.
+After the three apply files, `supabase/post-phase-l/verify_post_phase_l_schema.sql` is the read-only SQL Editor verification step. It checks the environment guard and its immutable trigger, required graph objects, RLS, the exact three-source seed, and zero public leakage without mutating data.
 
 ## Release and recovery ownership
 
@@ -38,4 +40,4 @@ After the three apply files, `supabase/post-phase-l/verify_post_phase_l_schema.s
 
 ## Rollback boundary
 
-`post_phase_l_rollback_run` removes only one isolated run, graph rows that have no observations outside that run, and linked `new`/unpromoted compatibility rows. The compatibility baseline is preserved. Full graph schema rollback is a separate, explicitly confirmed L-only file and is never part of normal apply order.
+`post_phase_l_rollback_run` removes only one isolated run, graph rows that have no observations outside that run, and linked `new`/unpromoted compatibility rows. The compatibility baseline is preserved. Full graph schema rollback is a separate, explicitly confirmed L-only file, preserves the immutable environment guard, and is never part of normal apply order.

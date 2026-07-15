@@ -137,6 +137,52 @@ const tests = json("reports/post-phase-l-local-test-report.json");
 const convergence = json("reports/post-phase-l-convergence-result.json");
 const preexisting = json("reports/post-phase-l-preexisting-worktree.json");
 const owned = json("reports/post-phase-l-owned-files.json");
+const baselineSql = read("supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql");
+const graphSql = read("supabase/post-phase-l/002_post_phase_l_normalized_graph.sql");
+const schemaRollbackSql = read("supabase/post-phase-l/999_post_phase_l_schema_rollback.sql");
+const freshAssertionBegin = baselineSql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_BEGIN");
+const freshAssertionEnd = baselineSql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_END");
+const freshAssertionSql = baselineSql.slice(freshAssertionBegin, freshAssertionEnd);
+const environmentGuardCreate = baselineSql.search(
+  /create\s+table\s+public\.post_phase_l_environment_guard/i,
+);
+const requiredFreshProjectRelations = [
+  "profiles",
+  "scholarships",
+  "scholarship_selection_stages",
+  "notice_sources",
+  "crawled_notices",
+  "site_settings",
+];
+const freshProjectGuardPresent =
+  freshAssertionBegin >= 0 &&
+  freshAssertionEnd > freshAssertionBegin &&
+  freshAssertionSql.includes("POST_PHASE_L_FRESH_PROJECT_REQUIRED") &&
+  requiredFreshProjectRelations.every((name) => freshAssertionSql.includes(`'${name}'`));
+const nonEmptySchemaNegativeTestPassed =
+  tests.results.find(
+    (result) =>
+      result.name ===
+      "001 fresh-project assertion rejects a non-empty application schema before persistent mutation",
+  )?.passed === true;
+const environmentGuardCreatedOnlyAfterFreshAssertion =
+  freshAssertionEnd >= 0 && environmentGuardCreate > freshAssertionEnd;
+const environmentGuardUpsertIn002 =
+  /insert\s+into\s+public\.post_phase_l_environment_guard/i.test(graphSql) ||
+  /update\s+public\.post_phase_l_environment_guard/i.test(graphSql) ||
+  /delete\s+from\s+public\.post_phase_l_environment_guard/i.test(graphSql);
+const environmentGuardReadOnlyValidationIn002 =
+  graphSql.includes("to_regclass('public.post_phase_l_environment_guard')") &&
+  /perform\s+public\.post_phase_l_assert_environment\(\)/i.test(graphSql) &&
+  baselineSql.includes("project_ref = 'hrayfvdggbhfmmzfblly'") &&
+  baselineSql.includes("environment_kind = 'non_production'") &&
+  baselineSql.includes("automatic_public_publish_enabled = false");
+const environmentGuardImmutable =
+  baselineSql.includes("post_phase_l_block_environment_guard_mutation") &&
+  /before\s+update\s+or\s+delete\s+on\s+public\.post_phase_l_environment_guard/i.test(
+    baselineSql,
+  ) &&
+  !/drop\s+table.*post_phase_l_environment_guard/i.test(schemaRollbackSql);
 
 check("authoritative inventory syntax and shape", inventory.migrations_applied_in_order.length === 57 && inventory.public_tables.length === 24 && inventory.pilot_sources.length === 3, "57 migrations / 24 tables / 3 pilot sources");
 check("authoritative inventory byte fingerprint", sha256(read("docs/post-phase-l-schema-inventory.json")) === INVENTORY_SHA256, INVENTORY_SHA256);
@@ -147,8 +193,44 @@ check("production access zero", preApply.production_read_performed === false && 
 check("baseline strategy recorded", schema.baseline_strategy.startsWith("B_") && schema.production_parity_claimed === false, schema.baseline_strategy);
 check("historical migration files unchanged", git(["diff", "--name-only", BASE_COMMIT, "--", "supabase/migrations"]) === "", "no committed-chain diff");
 check("three ordered apply SQL files", schema.apply_order.length === 3 && schema.apply_order.every((filePath) => fs.existsSync(path.join(ROOT, filePath))), schema.apply_order);
+check(
+  "fresh_project_guard_present=true",
+  freshProjectGuardPresent &&
+    schema.fresh_project_safety.fresh_project_guard_present === true &&
+    preApply.fresh_project_guard_present === true,
+  requiredFreshProjectRelations,
+);
+check(
+  "non_empty_schema_negative_test_passed=true",
+  nonEmptySchemaNegativeTestPassed &&
+    schema.fresh_project_safety.non_empty_schema_negative_test_passed === true &&
+    preApply.non_empty_schema_negative_test_passed === true,
+  "profiles sentinel aborts before persistent mutation",
+);
+check(
+  "environment_guard_created_only_after_fresh_assertion=true",
+  environmentGuardCreatedOnlyAfterFreshAssertion &&
+    schema.fresh_project_safety.environment_guard_created_only_after_fresh_assertion === true &&
+    preApply.environment_guard_created_only_after_fresh_assertion === true,
+  `${freshAssertionEnd}<${environmentGuardCreate}`,
+);
+check(
+  "environment_guard_upsert_in_002=false",
+  environmentGuardUpsertIn002 === false &&
+    environmentGuardReadOnlyValidationIn002 &&
+    schema.fresh_project_safety.environment_guard_upsert_in_002 === false &&
+    preApply.environment_guard_upsert_in_002 === false,
+  "002 validates the existing exact guard without DML",
+);
+check(
+  "environment_guard_immutable=true",
+  environmentGuardImmutable &&
+    schema.fresh_project_safety.environment_guard_immutable === true &&
+    preApply.environment_guard_immutable === true,
+  "BEFORE UPDATE OR DELETE trigger; graph rollback preserves guard",
+);
 check("graph schema constraints", Object.values(schema.graph_constraints).every(Boolean), schema.graph_constraints);
-check("exact resolver, guard, replay, adapter, revision, review, and rollback tests", tests.failed_count === 0 && tests.test_count >= 13, `${tests.passed_count}/${tests.test_count}`);
+check("exact resolver, guard, replay, adapter, revision, review, and rollback tests", tests.failed_count === 0 && tests.test_count >= 15, `${tests.passed_count}/${tests.test_count}`);
 check("pilot cohort exactly bounded", JSON.stringify(pilot.source_keys) === JSON.stringify(["cau_001", "cau_002", "yonsei_060"]), pilot.source_keys);
 check("dry run did not access remote", pilot.dry_run === true && pilot.remote_read_performed === false && pilot.remote_write_performed === false, pilot.stage);
 check("graph plan generated", pilot.graph_counts.ingestion_notices >= 1 && pilot.graph_counts.ingestion_notice_occurrences >= 1, pilot.graph_counts);
@@ -212,6 +294,12 @@ const report = {
   production_ref_detected: false,
   production_read_performed: false,
   production_write_performed: false,
+  fresh_project_guard_present: freshProjectGuardPresent,
+  non_empty_schema_negative_test_passed: nonEmptySchemaNegativeTestPassed,
+  environment_guard_created_only_after_fresh_assertion:
+    environmentGuardCreatedOnlyAfterFreshAssertion,
+  environment_guard_upsert_in_002: environmentGuardUpsertIn002,
+  environment_guard_immutable: environmentGuardImmutable,
   migration_apply_passed: false,
   pilot_source_count: 3,
   exact_source_resolution_passed: tests.failed_count === 0,
@@ -258,6 +346,11 @@ const markdown = [
   `- Remote read/write: false/false`,
   `- Production ref detected: false`,
   `- Preexisting file inclusion count: ${preexistingFileInclusionCount}`,
+  `- Fresh project guard present: ${freshProjectGuardPresent}`,
+  `- Non-empty schema negative test passed: ${nonEmptySchemaNegativeTestPassed}`,
+  `- Environment guard created only after fresh assertion: ${environmentGuardCreatedOnlyAfterFreshAssertion}`,
+  `- Environment guard upsert in 002: ${environmentGuardUpsertIn002}`,
+  `- Environment guard immutable: ${environmentGuardImmutable}`,
   "",
   "## Checks",
   "",

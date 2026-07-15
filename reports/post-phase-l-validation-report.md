@@ -2,10 +2,15 @@
 
 - Stage: pre_apply
 - Status: READY_FOR_OWNER_APPROVAL
-- Checks: 54/54
+- Checks: 59/59
 - Remote read/write: false/false
 - Production ref detected: false
 - Preexisting file inclusion count: 0
+- Fresh project guard present: true
+- Non-empty schema negative test passed: true
+- Environment guard created only after fresh assertion: true
+- Environment guard upsert in 002: false
+- Environment guard immutable: true
 
 ## Checks
 
@@ -44,6 +49,11 @@
 - PASS: baseline strategy recorded
 - PASS: historical migration files unchanged
 - PASS: three ordered apply SQL files
+- PASS: fresh_project_guard_present=true
+- PASS: non_empty_schema_negative_test_passed=true
+- PASS: environment_guard_created_only_after_fresh_assertion=true
+- PASS: environment_guard_upsert_in_002=false
+- PASS: environment_guard_immutable=true
 - PASS: graph schema constraints
 - PASS: exact resolver, guard, replay, adapter, revision, review, and rollback tests
 - PASS: pilot cohort exactly bounded

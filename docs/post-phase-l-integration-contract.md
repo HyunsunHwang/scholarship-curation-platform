@@ -30,6 +30,8 @@ All L remote writers require all of the following before a client is created:
 
 Default behavior is local dry-run. Environment values are never printed or persisted.
 
+The 001 SQL has a second, database-local boundary: before any persistent DDL it rejects a target where a known application relation already exists. It creates the exact L environment guard only after that fresh-project assertion succeeds. The 002 SQL can only read and validate that guard. A trigger rejects guard UPDATE and DELETE, and ordinary bounded or graph rollback preserves it.
+
 ## Source and notice identity
 
 `source_key` resolves only by exact equality to `notice_sources.source_id`. Zero matches produce `blocked_missing_source`; more than one exact inventory row produces `blocked_ambiguous_inventory`. Wrong case, fuzzy name matching, numeric-PK fallback, and automatic source creation are prohibited.

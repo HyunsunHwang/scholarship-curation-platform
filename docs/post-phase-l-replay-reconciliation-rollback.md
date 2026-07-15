@@ -38,7 +38,7 @@ An approved promoted scholarship is outside automatic data rollback and requires
 
 ## Schema rollback
 
-The schema rollback file removes only L graph/review objects after validating the L environment and a session confirmation. It preserves profiles, sources, legacy review, scholarships, and other compatibility baseline objects. It is not part of the apply sequence.
+The schema rollback file removes only L graph/review objects after validating the L environment and a session confirmation. It preserves profiles, sources, legacy review, scholarships, other compatibility baseline objects, and the immutable environment guard plus its assertion function. It is not part of the apply sequence.
 
 ## Reapply and recovery
 

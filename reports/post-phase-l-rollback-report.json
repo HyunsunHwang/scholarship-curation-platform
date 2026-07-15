@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T12:45:31.250Z",
+  "generated_at": "2026-07-15T13:06:10.644Z",
   "stage": "pre_apply_static_plan",
   "rollback_strategy": "bounded_run_rpc_then_idempotent_reapply",
   "data_rollback_file": "supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql",

@@ -30,6 +30,12 @@ function readText(filePath) {
   return fs.readFileSync(path.resolve(filePath), "utf8");
 }
 
+function stripSqlComments(sql) {
+  return sql
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/--.*$/gm, "");
+}
+
 const tests = [];
 function test(name, fn) {
   tests.push({ name, fn });
@@ -161,6 +167,89 @@ test("schema rollback drops trigger tables before trigger functions", () => {
   ]) {
     assert.match(sql, new RegExp(`drop function if exists public\\.${functionName}\\(\\)`));
   }
+});
+
+test("001 fresh-project assertion rejects a non-empty application schema before persistent mutation", () => {
+  const sql = readText("supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql");
+  const assertionBegin = sql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_BEGIN");
+  const assertionEnd = sql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_END");
+  assert.ok(assertionBegin >= 0 && assertionEnd > assertionBegin);
+
+  const assertionSql = sql.slice(assertionBegin, assertionEnd);
+  for (const tableName of [
+    "profiles",
+    "scholarships",
+    "scholarship_selection_stages",
+    "notice_sources",
+    "crawled_notices",
+    "site_settings",
+  ]) {
+    assert.match(assertionSql, new RegExp(`'${tableName}'`));
+  }
+  assert.match(assertionSql, /POST_PHASE_L_FRESH_PROJECT_REQUIRED/);
+
+  const persistentMutationPattern =
+    /\b(?:create|alter|drop|insert|update|delete|grant|revoke)\b/i;
+  const beforeAssertionCompletes = stripSqlComments(sql.slice(0, assertionEnd));
+  const afterAssertionCompletes = stripSqlComments(
+    sql.slice(assertionEnd + "POST_PHASE_L_FRESH_PROJECT_ASSERTION_END".length),
+  );
+  assert.doesNotMatch(beforeAssertionCompletes, persistentMutationPattern);
+  assert.match(
+    afterAssertionCompletes,
+    /^\s*create\s+table\s+public\.post_phase_l_environment_guard/i,
+  );
+
+  const simulatedApply = (existingRelations) => {
+    let persistentMutationCount = 0;
+    if (existingRelations.some((name) => assertionSql.includes(`'${name}'`))) {
+      throw Object.assign(new Error("POST_PHASE_L_FRESH_PROJECT_REQUIRED"), {
+        persistentMutationCount,
+      });
+    }
+    persistentMutationCount += 1;
+    return persistentMutationCount;
+  };
+  assert.throws(
+    () => simulatedApply(["profiles"]),
+    (error) =>
+      error.message === "POST_PHASE_L_FRESH_PROJECT_REQUIRED" &&
+      error.persistentMutationCount === 0,
+  );
+});
+
+test("environment guard is created once in 001 and remains immutable", () => {
+  const baselineRawSql = readText(
+    "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql",
+  );
+  const baselineSql = stripSqlComments(baselineRawSql);
+  const graphSql = stripSqlComments(
+    readText("supabase/post-phase-l/002_post_phase_l_normalized_graph.sql"),
+  );
+  const rollbackSql = stripSqlComments(
+    readText("supabase/post-phase-l/999_post_phase_l_schema_rollback.sql"),
+  );
+  const assertionEnd = baselineRawSql.indexOf("POST_PHASE_L_FRESH_PROJECT_ASSERTION_END");
+  const guardCreate = baselineRawSql.search(
+    /create\s+table\s+public\.post_phase_l_environment_guard/i,
+  );
+
+  assert.ok(assertionEnd >= 0 && guardCreate > assertionEnd);
+  assert.match(baselineSql, /function public\.post_phase_l_block_environment_guard_mutation\(\)/i);
+  assert.match(
+    baselineSql,
+    /create\s+trigger\s+post_phase_l_environment_guard_immutable\s+before\s+update\s+or\s+delete/i,
+  );
+  assert.doesNotMatch(
+    graphSql,
+    /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.post_phase_l_environment_guard/i,
+  );
+  assert.doesNotMatch(graphSql, /insert\s+into\s+public\.post_phase_l_environment_guard/i);
+  assert.doesNotMatch(graphSql, /update\s+public\.post_phase_l_environment_guard/i);
+  assert.doesNotMatch(graphSql, /delete\s+from\s+public\.post_phase_l_environment_guard/i);
+  assert.match(graphSql, /perform\s+public\.post_phase_l_assert_environment\(\)/i);
+  assert.doesNotMatch(rollbackSql, /drop\s+table.*post_phase_l_environment_guard/i);
+  assert.doesNotMatch(rollbackSql, /drop\s+function.*post_phase_l_assert_environment/i);
 });
 
 test("review RPC resolves an idempotent retry before lifecycle rejection", () => {

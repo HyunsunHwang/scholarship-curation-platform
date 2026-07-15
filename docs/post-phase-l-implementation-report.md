@@ -40,7 +40,9 @@ The three source pilot proves one integration path only. It does not establish b
 
 ## Local validation at this checkpoint
 
-- exact resolver/guard/graph/replay/revision/URL/adapter/review/rollback tests: 13/13
+- exact resolver/guard/fresh-project negative/graph/replay/revision/URL/adapter/review/rollback tests: 15/15
+- non-empty application schema simulation: 001 aborts before persistent mutation
+- environment guard lifecycle: created only after the fresh assertion, read-only validated by 002, and protected from UPDATE/DELETE
 - TypeScript `--noEmit`: pass
 - guarded ingest dry-run: pass, remote read/write false
 - migration application: pending owner gate
