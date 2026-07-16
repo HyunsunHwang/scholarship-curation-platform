@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T04:01:48.650Z",
+  "generated_at": "2026-07-16T05:49:14.600Z",
   "contract_version": "post-phase-m-runtime-verification/v1",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "cycle_count": 2,
@@ -22,7 +22,12 @@
   "production_read_performed": false,
   "production_write_performed": false,
   "external_llm_call_count": 0,
-  "expansion_decision": "GO",
+  "expansion_decision": "HOLD",
+  "scholarship_relevance_review_complete": true,
+  "scholarship_true_positive_expansion_count": 0,
+  "contextual_false_positive_corrected_count": 2,
+  "effective_false_positive_decision": "reject",
+  "approved_false_positive_count": 0,
   "production_migration_readiness": "HOLD",
   "passed": true
 }

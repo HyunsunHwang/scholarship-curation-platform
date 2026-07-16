@@ -3,9 +3,9 @@
 **Status: PASS**
 
 - Controlled pilot: PASS
-- Cohort expansion: GO
+- Cohort expansion: HOLD
 - Production rollout: HOLD
-- Checks passed: 45/45
+- Checks passed: 63/63
 - Secret leaks: 0
 - Duplicate JSON keys: 0
 - Absolute local paths: 0

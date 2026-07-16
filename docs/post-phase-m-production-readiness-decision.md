@@ -3,10 +3,10 @@
 ## Decision
 
 - Non-production controlled pilot: PASS
-- Cohort expansion: GO for continued non-production operation
+- Cohort expansion: HOLD
 - Production rollout: HOLD
 
-M executed no production read, write, migration, crawl, dual-write, backfill, or public automatic publication. The successful L/M project is evidence for operating behavior only; it is not production parity evidence.
+M executed no production read, write, migration, crawl, dual-write, backfill, or public automatic publication. Attribution succeeded for cau_003 and cau_007, but semantic re-evaluation found no true-positive expansion source and corrected both approvals with append-only reject events. The successful L/M project is evidence for operating behavior only; it is not production parity evidence.
 
 ## Required next gate
 

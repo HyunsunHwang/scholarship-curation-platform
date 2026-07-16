@@ -12,11 +12,14 @@ const cycle1 = readJson("reports/post-phase-m-live/cycle-1/cycle-report.json");
 const cycle2 = readJson("reports/post-phase-m-live/cycle-2/cycle-report.json");
 const cohortSeed = readJson("reports/post-phase-m-cohort-seed-result.json");
 const recovery = readJson("reports/post-phase-m-incident-recovery.json");
+const semantic = readJson("reports/post-phase-m-semantic-reevaluation.json");
 const reviewReports = [
   "reports/post-phase-m-live/review-cau-003-needs-review.json",
   "reports/post-phase-m-live/review-cau-003-approve.json",
   "reports/post-phase-m-live/review-cau-007-needs-review.json",
   "reports/post-phase-m-live/review-cau-007-approve.json",
+  "reports/post-phase-m-live/review-cau-003-reject.json",
+  "reports/post-phase-m-live/review-cau-007-reject.json",
 ].map(readJson);
 
 const generatedAt = new Date().toISOString();
@@ -44,6 +47,13 @@ const sourceHealth = [...cycleBySource].map(([sourceKey, observations]) => {
     source_key: sourceKey,
     cohort_role: ["cau_001", "cau_002", "yonsei_060"].includes(sourceKey) ? "control" : "expansion",
     health,
+    attribution_health: health,
+    scholarship_relevance_classification:
+      semantic.source_relevance.find((item) => item.source_key === sourceKey)
+        ?.scholarship_relevance_classification ?? "not_matched",
+    scholarship_expansion_eligible:
+      semantic.source_relevance.find((item) => item.source_key === sourceKey)
+        ?.scholarship_relevance_classification === "scholarship_true_positive",
     final_classification: finalClassification,
     stable_across_cycles: stable,
     observations,
@@ -67,9 +77,10 @@ const sourceHealthReport = {
   passed: sourceHealth.length === 6 && sourceHealth.every((item) => item.stable_across_cycles),
 };
 
-const successfulExpansion = sourceHealth
+const attributableExpansion = sourceHealth
   .filter((item) => item.cohort_role === "expansion" && item.health === "healthy")
   .map((item) => item.source_key);
+const successfulExpansion = semantic.scholarship_true_positive_expansion_source_keys;
 const cohortReport = {
   generated_at: generatedAt,
   contract_version: "post-phase-m-controlled-cohort-result/v1",
@@ -80,8 +91,16 @@ const cohortReport = {
   exact_source_resolution_passed: cohortSeed.exact_source_resolution_passed === true,
   seeded_source_count:
     cohortSeed.operation.inserted_source_count + cohortSeed.operation.existing_source_count,
+  attributed_expansion_source_keys: attributableExpansion,
+  attributed_expansion_source_count: semantic.attributed_expansion_source_count,
   successful_expansion_source_keys: successfulExpansion,
-  expansion_decision: successfulExpansion.length >= 2 ? "GO" : "HOLD",
+  scholarship_true_positive_expansion_count: semantic.scholarship_true_positive_expansion_count,
+  contextual_only_expansion_count: semantic.contextual_only_expansion_count,
+  false_positive_expansion_count: semantic.false_positive_expansion_count,
+  approved_false_positive_count: semantic.approved_false_positive_count,
+  scholarship_relevance_review_complete: semantic.scholarship_relevance_review_complete,
+  cohort_expansion_decision: semantic.cohort_expansion_decision,
+  expansion_decision: semantic.cohort_expansion_decision,
   control_behavior_preserved: sourceHealth.find((item) => item.source_key === "cau_001")?.health === "healthy",
   cau_002_status: sourceHealth.find((item) => item.source_key === "cau_002")?.final_classification,
   cau_008_status: sourceHealth.find((item) => item.source_key === "cau_008")?.final_classification,
@@ -90,7 +109,11 @@ const cohortReport = {
   fuzzy_source_match_count: 0,
   automatic_source_create_count: 0,
   public_leakage_count: 0,
-  passed: successfulExpansion.length >= 2,
+  passed:
+    semantic.passed === true &&
+    semantic.approved_false_positive_count === 0 &&
+    (semantic.cohort_expansion_decision === "HOLD" ||
+      semantic.scholarship_true_positive_expansion_count >= 1),
 };
 
 const reviewOperations = {
@@ -101,25 +124,42 @@ const reviewOperations = {
   decisions: reviewReports.map((item) => ({
     source_key: item.source_key,
     decision: item.decision,
+    effective_decision: item.effective_decision ?? null,
     append_only_review_event_count: item.append_only_review_event_count,
     effective_decision_match: item.effective_decision_match,
     controlled_projection_preview_enabled: item.controlled_projection_preview_enabled,
     review_rpc_duration_ms: item.review_rpc_duration_ms ?? null,
     preview_generation_duration_ms: item.preview_generation_duration_ms ?? null,
     total_review_workflow_duration_ms: item.total_review_workflow_duration_ms ?? null,
+    measurement_unavailable_reason:
+      item.total_review_workflow_duration_ms == null
+        ? "The retained historical event report predates complete latency instrumentation; no value is inferred."
+        : null,
   })),
-  approved_source_count: reviewReports.filter((item) => item.decision === "approve").length,
+  historical_approve_event_count: reviewReports.filter((item) => item.decision === "approve").length,
+  approved_source_count: semantic.approved_false_positive_count,
+  rejected_false_positive_source_count: reviewReports.filter(
+    (item) => item.decision === "reject" && item.effective_decision === "reject",
+  ).length,
   append_only_review_event_count: recovery.review_event_count_after_rollback,
-  effective_approve_source_count: 2,
+  effective_approve_source_count: semantic.approved_false_positive_count,
+  effective_reject_source_count: semantic.contextual_false_positive_corrected_count,
+  contextual_false_positive_corrected_count: semantic.contextual_false_positive_corrected_count,
+  effective_false_positive_decision: semantic.effective_false_positive_decision,
+  approved_false_positive_count: semantic.approved_false_positive_count,
   controlled_projection_preview_count: reviewReports.filter((item) => item.decision === "approve" && item.controlled_projection_preview_enabled).length,
+  preserved_hidden_preview_count: reviewReports.filter((item) => item.decision === "reject" && item.superseded_hidden_preview_preserved).length,
   review_event_update_rejected: recovery.review_event_update_rejected,
   review_event_delete_rejected: recovery.review_event_delete_rejected,
   public_leakage_count: recovery.public_leakage_count,
   automatic_public_publish_count: recovery.automatic_public_publish_count,
   latency_kind: "system_workflow_latency",
   passed:
-    reviewReports.length === 4 &&
+    reviewReports.length === 6 &&
     reviewReports.every((item) => item.passed === true) &&
+    semantic.contextual_false_positive_corrected_count >= 2 &&
+    semantic.effective_false_positive_decision === "reject" &&
+    semantic.approved_false_positive_count === 0 &&
     recovery.review_event_immutability_runtime_passed === true,
 };
 
@@ -145,6 +185,11 @@ const runtime = {
   production_write_performed: false,
   external_llm_call_count: 0,
   expansion_decision: cohortReport.expansion_decision,
+  scholarship_relevance_review_complete: semantic.scholarship_relevance_review_complete,
+  scholarship_true_positive_expansion_count: semantic.scholarship_true_positive_expansion_count,
+  contextual_false_positive_corrected_count: semantic.contextual_false_positive_corrected_count,
+  effective_false_positive_decision: semantic.effective_false_positive_decision,
+  approved_false_positive_count: semantic.approved_false_positive_count,
   production_migration_readiness: "HOLD",
   passed:
     cycle1.passed === true &&

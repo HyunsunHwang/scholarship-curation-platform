@@ -6,6 +6,8 @@ const readJson = (file) => JSON.parse(fs.readFileSync(path.join(ROOT, file), "ut
 const writeJson = (file, value) => fs.writeFileSync(path.join(ROOT, file), `${JSON.stringify(value, null, 2)}\n`);
 const writeText = (file, value) => fs.writeFileSync(path.join(ROOT, file), `${value.trim()}\n`);
 const generatedAt = new Date().toISOString();
+const semantic = readJson("reports/post-phase-m-semantic-reevaluation.json");
+const recovery = readJson("reports/post-phase-m-incident-recovery.json");
 
 const remainingLint = [
   "app/scholarships/[id]/LiveEngagementBadges.tsx",
@@ -67,7 +69,7 @@ const productionPrerequisites = [
   ["security and secrets", true, "No secret is committed or printed by the M workflow."],
   ["cost and capacity", false, "Two bounded cycles do not establish production capacity."],
   ["source parser and attachment risks", false, "cau_002 transport, cau_008 zero-match, and attachment extraction remain unresolved."],
-  ["full lint and build health", false, "Six explicitly baselined React lifecycle lint errors remain."],
+  ["full lint and build health", false, "Four explicitly baselined React lifecycle lint errors remain."],
   ["external LLM governance", false, "Provider evaluation and persistence remain prohibited and unevaluated."],
 ].map(([name, passed, evidence]) => ({ name, passed, evidence }));
 
@@ -75,13 +77,14 @@ const production = {
   generated_at: generatedAt,
   contract_version: "post-phase-m-production-readiness/v1",
   non_production_controlled_pilot_status: "PASS",
-  cohort_expansion_decision: "GO",
+  cohort_expansion_decision: semantic.cohort_expansion_decision,
   production_rollout_decision: "HOLD",
   production_rollout_authorized: false,
   production_migration_executed: false,
   production_ref_detected: false,
   production_read_performed: false,
   production_write_performed: false,
+  full_lint_error_count: platform.final_full_eslint.errors,
   prerequisites: productionPrerequisites,
   blocker_count: productionPrerequisites.filter((item) => !item.passed).length,
   exact_blockers: productionPrerequisites.filter((item) => !item.passed).map((item) => item.name),
@@ -99,12 +102,12 @@ const master = readJson("reports/post-phase-master-risk-register.json");
 const mEvidence = {
   "RISK-PILOT-COHORT-OVERFITTING": "M executed two identical six-source bounded cycles. cau_003 and cau_007 were attributable in both cycles; cau_002 remained transport-blocked and cau_008/yonsei_060 remained zero-match observations.",
   "RISK-MAIN-LINT-BASELINE": "M reproduced 11 errors and 5 warnings, removed seven deterministic errors and all warnings, and explicitly baselined four react-hooks/set-state-in-effect findings with no M-introduced finding.",
-  "RISK-CAU003-DUPLICATE": "M established an exact cau_003 list-to-detail path and append-only needs_review then approve events in non-production; automatic publication remained disabled.",
+  "RISK-CAU003-DUPLICATE": "M established exact cau_003 attribution but the only matched tuition-payment security notice was not scholarship-relevant. The mistaken approve remains in history and an append-only reject is now effective; publication remained disabled.",
   "RISK-CAU012-COVERAGE": "M found no exact cau_012 inventory row, did not create the source, and retained source_absence_proven=false.",
   "RISK-CAU008-INCOMPLETE-BATCH": "M corrected cau_008 board extraction and observed 30 bounded list items in both cycles with zero scholarship matches; this is not absence evidence.",
   "RISK-ATTACHMENT-PARSING": "M attributable notices had body evidence but no asset metadata; complex attachment parsing remains unproven.",
-  "RISK-CAU007-ZERO-MATCH": "M remediated cau_007 source-specific extraction and obtained one attributable live match in both bounded cycles, then completed append-only review and preview.",
-  "RISK-CONTEXTUAL-KEYWORD": "M retained exact source-specific list/detail parsing and rejected generic-anchor attribution; two expansion sources produced repeatable attributable matches.",
+  "RISK-CAU007-ZERO-MATCH": "M remediated cau_007 source-specific list-to-detail attribution, but the resulting tuition-payment security notice was a scholarship false positive. Attribution success is not scholarship expansion success; append-only reject is effective.",
+  "RISK-CONTEXTUAL-KEYWORD": "M proved that standalone tuition matching misclassified two attributable payment-security notices and that both were mistakenly approved. A reason-coded non-production relevance gate now blocks approval and append-only reject events supersede the approvals; production detector porting remains future work.",
   "RISK-COVERAGE-COMPLETENESS": "M expanded from three to six controlled sources, while explicitly preserving blocked and zero-match outcomes without absence inference.",
   "RISK-REVIEW-PERSISTENCE": "M exercised needs_review and approve as append-only events for two expansion sources and verified update/delete rejection in the authorized non-production project.",
   "RISK-SCHEMA-ALIGNMENT": "L schema rollback/reapply passed and M reused that schema for two cycles, but no production schema fingerprint or migration review exists.",
@@ -128,6 +131,34 @@ for (const risk of master.risks) {
   if (risk.status !== "resolved" && /Post-Phase (?:J|L|M)/.test(risk.next_resolution_phase ?? "")) {
     risk.next_resolution_phase = "Post-Phase N - Production Readiness and Controlled Expansion";
   }
+}
+
+const riskFieldUpdates = {
+  "RISK-CONTEXTUAL-KEYWORD": {
+    status: "mitigated",
+    deferral_reason: "The M relevance gate corrects the demonstrated non-production false positives, but production detector precision and recall remain unevaluated.",
+    why_not_resolved_now: "The production detector was intentionally unchanged and requires an owned shadow corpus before porting.",
+    next_work_unit: "Run a labeled scholarship relevance shadow corpus, measure precision and recall, and separately approve any production detector port.",
+    success_criteria: "The corpus reports precision and recall, standalone tuition notices cannot be approved, and production porting has a named owner and rollback plan.",
+  },
+  "RISK-CAU003-DUPLICATE": {
+    status: "mitigated",
+    deferral_reason: "Exact adapter attribution is proven, but the only M match was a scholarship false positive and duplicate governance remains future work.",
+    why_not_resolved_now: "The effective reject corrects exposure risk without proving a true scholarship corpus or completing duplicate governance.",
+    next_work_unit: "Retain exact attribution, test a true scholarship corpus, and exercise duplicate comparison only on scholarship-relevant evidence.",
+    success_criteria: "A bounded true-positive cau_003 notice is relevance-qualified before any duplicate review or preview approval.",
+  },
+  "RISK-CAU007-ZERO-MATCH": {
+    status: "mitigated",
+    deferral_reason: "Source-specific attribution is now repeatable, but the observed item was a semantic false positive rather than scholarship expansion evidence.",
+    why_not_resolved_now: "No bounded cau_007 scholarship true positive has been observed.",
+    next_work_unit: "Retain the source-specific adapter and run a bounded relevance-qualified corpus recheck without treating zero match as absence.",
+    success_criteria: "A bounded cau_007 run records either a scholarship true positive or an explicit zero-match observation with no absence inference.",
+  },
+};
+for (const [riskId, patch] of Object.entries(riskFieldUpdates)) {
+  const risk = master.risks.find((item) => item.id === riskId);
+  if (risk) Object.assign(risk, patch);
 }
 
 const newRisks = [
@@ -166,7 +197,7 @@ const newRisks = [
     severity: "medium",
     description: "A run containing reviewed revisions cannot use the generic bounded rollback path because review_items retains the current revision FK.",
     blocking_for_next_phase: false,
-    evidence: "The cycle-2 rollback probe aborted transactionally; M then rehearsed and deterministically reapplied an independent live-derived zero-match run without unrelated changes.",
+    evidence: `The reviewed cycle-2 rollback probe still aborts transactionally. Separately, M rolled back an explicitly labeled unreviewed data-bearing fixture and deleted ${recovery.deleted_graph_notice_count} notice, ${recovery.deleted_occurrence_count} occurrence, ${recovery.deleted_revision_count} revision, and ${recovery.deleted_compatibility_count} compatibility row before deterministic reapply with no unrelated changes.`,
     why_not_resolved_now: "Deleting reviewed evidence conflicts with append-only review preservation and requires an explicit archival/rollback policy.",
     owner: "Review and ingestion schema owner",
     next_resolution_phase: "Post-Phase N - Production Readiness and Controlled Expansion",
@@ -211,7 +242,7 @@ writeText("docs/post-phase-master-risk-register.md", `# Post-Phase Master Risk R
 
 ## Post-Phase M update
 
-M adds two repeatable bounded operating cycles, exact six-source health evidence, append-only review operations, hidden projection previews, and a bounded rollback/reapply drill. These are non-production results. They do not establish production schema parity, release authority, backup, RLS, canary, monitoring, or capacity evidence.
+M adds two repeatable bounded operating cycles, exact six-source attribution evidence, semantic scholarship relevance review, append-only correction events, hidden projection previews, and a data-bearing fixture rollback/reapply drill. cau_003 and cau_007 remain adapter attribution successes but are scholarship false positives, so cohort expansion is HOLD. These are non-production results and do not establish production schema parity, release authority, backup, RLS, canary, monitoring, or capacity evidence.
 
 Only \`resolved\` is terminal. Every other status remains assigned to a named owner and future work unit. Zero-match and transport-blocked observations never prove deletion or source absence.
 
@@ -242,10 +273,10 @@ writeText("docs/post-phase-m-production-readiness-decision.md", `# Post-Phase M 
 ## Decision
 
 - Non-production controlled pilot: PASS
-- Cohort expansion: GO for continued non-production operation
+- Cohort expansion: ${semantic.cohort_expansion_decision}
 - Production rollout: HOLD
 
-M executed no production read, write, migration, crawl, dual-write, backfill, or public automatic publication. The successful L/M project is evidence for operating behavior only; it is not production parity evidence.
+M executed no production read, write, migration, crawl, dual-write, backfill, or public automatic publication. Attribution succeeded for cau_003 and cau_007, but semantic re-evaluation found no true-positive expansion source and corrected both approvals with append-only reject events. The successful L/M project is evidence for operating behavior only; it is not production parity evidence.
 
 ## Required next gate
 

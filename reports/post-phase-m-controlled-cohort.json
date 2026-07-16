@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T04:01:48.650Z",
+  "generated_at": "2026-07-16T05:49:14.600Z",
   "contract_version": "post-phase-m-controlled-cohort-result/v1",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "control_source_keys": [
@@ -15,11 +15,19 @@
   "inventory_only_risk_source_key": "cau_012",
   "exact_source_resolution_passed": true,
   "seeded_source_count": 6,
-  "successful_expansion_source_keys": [
+  "attributed_expansion_source_keys": [
     "cau_003",
     "cau_007"
   ],
-  "expansion_decision": "GO",
+  "attributed_expansion_source_count": 2,
+  "successful_expansion_source_keys": [],
+  "scholarship_true_positive_expansion_count": 0,
+  "contextual_only_expansion_count": 0,
+  "false_positive_expansion_count": 2,
+  "approved_false_positive_count": 0,
+  "scholarship_relevance_review_complete": true,
+  "cohort_expansion_decision": "HOLD",
+  "expansion_decision": "HOLD",
   "control_behavior_preserved": true,
   "cau_002_status": "blocked_transport",
   "cau_008_status": "zero_match_observed",

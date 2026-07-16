@@ -1,14 +1,15 @@
 {
-  "generated_at": "2026-07-16T04:12:39.957Z",
+  "generated_at": "2026-07-16T05:46:43.156Z",
   "contract_version": "post-phase-m-production-readiness/v1",
   "non_production_controlled_pilot_status": "PASS",
-  "cohort_expansion_decision": "GO",
+  "cohort_expansion_decision": "HOLD",
   "production_rollout_decision": "HOLD",
   "production_rollout_authorized": false,
   "production_migration_executed": false,
   "production_ref_detected": false,
   "production_read_performed": false,
   "production_write_performed": false,
+  "full_lint_error_count": 4,
   "prerequisites": [
     {
       "name": "production schema migration review",
@@ -93,7 +94,7 @@
     {
       "name": "full lint and build health",
       "passed": false,
-      "evidence": "Six explicitly baselined React lifecycle lint errors remain."
+      "evidence": "Four explicitly baselined React lifecycle lint errors remain."
     },
     {
       "name": "external LLM governance",

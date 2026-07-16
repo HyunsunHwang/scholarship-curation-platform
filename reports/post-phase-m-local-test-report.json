@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-16T04:52:40.582Z",
+  "generated_at": "2026-07-16T05:51:00.202Z",
   "contract_version": "post-phase-m-local-tests/v1",
-  "test_count": 12,
-  "passed_count": 12,
+  "test_count": 24,
+  "passed_count": 24,
   "failed_count": 0,
   "results": [
     {
@@ -57,12 +57,192 @@
       "evidence": "cau_001"
     },
     {
-      "name": "expansion live attribution",
+      "name": "expansion adapter attribution remains explicit",
       "passed": true,
       "evidence": [
         "cau_003",
         "cau_007"
       ]
+    },
+    {
+      "name": "standalone tuition security notice is rejected",
+      "passed": true,
+      "evidence": {
+        "attribution_verified": true,
+        "scholarship_relevance_classification": "false_positive",
+        "scholarship_relevance_reason_codes": [
+          "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+          "TUITION_CONTEXT_ONLY",
+          "PAYMENT_ADMIN_CONTEXT",
+          "ACCOUNT_TRANSFER_CONTEXT",
+          "PAYMENT_SECURITY_CONTEXT",
+          "CAUTION_NOTICE_CONTEXT"
+        ],
+        "positive_evidence": [],
+        "negative_evidence": [
+          {
+            "reason_code": "TUITION_CONTEXT_ONLY",
+            "value": "등록금"
+          },
+          {
+            "reason_code": "PAYMENT_ADMIN_CONTEXT",
+            "value": "납부"
+          },
+          {
+            "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+            "value": "환전"
+          },
+          {
+            "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+            "value": "가상계좌"
+          },
+          {
+            "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+            "value": "송금"
+          },
+          {
+            "reason_code": "PAYMENT_SECURITY_CONTEXT",
+            "value": "불법 환전"
+          },
+          {
+            "reason_code": "CAUTION_NOTICE_CONTEXT",
+            "value": "유의사항"
+          },
+          {
+            "reason_code": "CAUTION_NOTICE_CONTEXT",
+            "value": "안내"
+          }
+        ],
+        "reviewer_disposition": "approval_blocked",
+        "approval_allowed": false
+      }
+    },
+    {
+      "name": "scholarship support opportunity is positive",
+      "passed": true,
+      "evidence": {
+        "attribution_verified": true,
+        "scholarship_relevance_classification": "scholarship_true_positive",
+        "scholarship_relevance_reason_codes": [
+          "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+          "SCHOLARSHIP_TERM",
+          "TUITION_SUPPORT",
+          "APPLICATION_CONTEXT",
+          "SELECTION_CONTEXT",
+          "BENEFIT_CONTEXT"
+        ],
+        "positive_evidence": [
+          {
+            "reason_code": "SCHOLARSHIP_TERM",
+            "value": "장학생"
+          },
+          {
+            "reason_code": "SCHOLARSHIP_TERM",
+            "value": "장학금"
+          },
+          {
+            "reason_code": "TUITION_SUPPORT",
+            "value": "등록금 감면"
+          },
+          {
+            "reason_code": "APPLICATION_CONTEXT",
+            "value": "신청 자격"
+          },
+          {
+            "reason_code": "SELECTION_CONTEXT",
+            "value": "선발"
+          },
+          {
+            "reason_code": "BENEFIT_CONTEXT",
+            "value": "혜택"
+          },
+          {
+            "reason_code": "BENEFIT_CONTEXT",
+            "value": "지급"
+          }
+        ],
+        "negative_evidence": [
+          {
+            "reason_code": "TUITION_CONTEXT_ONLY",
+            "value": "등록금"
+          },
+          {
+            "reason_code": "CAUTION_NOTICE_CONTEXT",
+            "value": "안내"
+          }
+        ],
+        "reviewer_disposition": "eligible_for_human_approval_review",
+        "approval_allowed": true
+      }
+    },
+    {
+      "name": "tuition context without opportunity stays contextual",
+      "passed": true,
+      "evidence": {
+        "attribution_verified": true,
+        "scholarship_relevance_classification": "contextual_only",
+        "scholarship_relevance_reason_codes": [
+          "CONTEXT_WITHOUT_VERIFIED_SCHOLARSHIP_OPPORTUNITY",
+          "TUITION_CONTEXT_ONLY"
+        ],
+        "positive_evidence": [],
+        "negative_evidence": [
+          {
+            "reason_code": "TUITION_CONTEXT_ONLY",
+            "value": "등록금"
+          }
+        ],
+        "reviewer_disposition": "approval_blocked",
+        "approval_allowed": false
+      }
+    },
+    {
+      "name": "unrelated notice remains insufficient evidence",
+      "passed": true,
+      "evidence": {
+        "attribution_verified": true,
+        "scholarship_relevance_classification": "insufficient_evidence",
+        "scholarship_relevance_reason_codes": [
+          "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+        ],
+        "positive_evidence": [],
+        "negative_evidence": [
+          {
+            "reason_code": "CAUTION_NOTICE_CONTEXT",
+            "value": "안내"
+          }
+        ],
+        "reviewer_disposition": "approval_blocked",
+        "approval_allowed": false
+      }
+    },
+    {
+      "name": "all matched items carry semantic evidence",
+      "passed": true,
+      "evidence": 6
+    },
+    {
+      "name": "cau_001 is semantic positive control",
+      "passed": true,
+      "evidence": "cau_001"
+    },
+    {
+      "name": "contextual false positives corrected append-only",
+      "passed": true,
+      "evidence": [
+        "cau_003",
+        "cau_007"
+      ]
+    },
+    {
+      "name": "semantic reject RPC patch is environment-guarded",
+      "passed": true,
+      "evidence": "guarded non-production SQL patch"
+    },
+    {
+      "name": "expansion decision is truthful HOLD",
+      "passed": true,
+      "evidence": "HOLD"
     },
     {
       "name": "transport is not zero-match",
@@ -85,9 +265,24 @@
       "evidence": "update/delete rejected"
     },
     {
-      "name": "bounded rollback and reapply",
+      "name": "data-bearing bounded rollback row counts",
       "passed": true,
-      "evidence": "bcd8f876-dbb3-567d-a99e-e7771bd0b176"
+      "evidence": "3c5c04bf-dd40-5058-ae14-87af85b79631"
+    },
+    {
+      "name": "data-bearing deterministic reapply",
+      "passed": true,
+      "evidence": "3c5c04bf-dd40-5058-ae14-87af85b79631"
+    },
+    {
+      "name": "recovery preserves unrelated and immutable evidence",
+      "passed": true,
+      "evidence": "unrelated state preserved"
+    },
+    {
+      "name": "review latency nulls are explained",
+      "passed": true,
+      "evidence": "measured or explained"
     },
     {
       "name": "public exposure fails closed",

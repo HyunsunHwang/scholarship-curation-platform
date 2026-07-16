@@ -1,0 +1,563 @@
+{
+  "generated_at": "2026-07-16T05:42:17.079Z",
+  "contract_version": "post-phase-m-semantic-reevaluation/v1",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "evidence_kind": "live_cycle_semantic_reevaluation",
+  "original_cycle_evidence_preserved": true,
+  "bounded_rerun_performed": false,
+  "bounded_rerun_not_required_reason": "The two retained cycles contain attributable list, detail, date, and body evidence sufficient for deterministic semantic re-evaluation.",
+  "production_detector_modified": false,
+  "production_port_plan": "Port the reason-coded relevance gate only after corpus review, threshold ownership, shadow evaluation, and an independently approved production change.",
+  "matched_item_count": 6,
+  "matched_items": [
+    {
+      "cycle_id": "post-phase-m-cycle-1",
+      "cycle_number": 1,
+      "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+      "source_key": "cau_001",
+      "cohort_role": "control",
+      "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "detail_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_view.php?bbsIdx=7345&gotoPage=1&searchKind=&searchStr=&searchBbsCode=",
+      "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+      "raw_date_text": "2026.03.05",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "scholarship_true_positive",
+      "scholarship_relevance_reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ],
+      "positive_evidence": [
+        {
+          "reason_code": "SCHOLARSHIP_TERM",
+          "value": "장학"
+        },
+        {
+          "reason_code": "SCHOLARSHIP_TERM",
+          "value": "장학금"
+        },
+        {
+          "reason_code": "FOUNDATION_TERM",
+          "value": "장학재단"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청 방법"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청절차"
+        },
+        {
+          "reason_code": "SELECTION_CONTEXT",
+          "value": "추천"
+        },
+        {
+          "reason_code": "SELECTION_CONTEXT",
+          "value": "추천서"
+        },
+        {
+          "reason_code": "BENEFIT_CONTEXT",
+          "value": "수혜"
+        }
+      ],
+      "negative_evidence": [
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "eligible_for_human_approval_review",
+      "approval_allowed": true
+    },
+    {
+      "cycle_id": "post-phase-m-cycle-1",
+      "cycle_number": 1,
+      "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+      "source_key": "cau_003",
+      "cohort_role": "expansion",
+      "title": "외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "detail_url": "https://iadpr.cau.ac.kr/fm/fm_1.php?p_idx=1103&p_mode=view",
+      "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "raw_date_text": "2026.07.02",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "positive_evidence": [],
+      "negative_evidence": [
+        {
+          "reason_code": "TUITION_CONTEXT_ONLY",
+          "value": "등록금"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "납부"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "고지서"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "환전"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "송금"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "가상계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "금융기관"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "보이스피싱"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "금융범죄"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "지급정지"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "불법 환전"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "유의사항"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "approval_blocked",
+      "approval_allowed": false
+    },
+    {
+      "cycle_id": "post-phase-m-cycle-1",
+      "cycle_number": 1,
+      "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+      "source_key": "cau_007",
+      "cohort_role": "expansion",
+      "title": "[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "detail_url": "https://stat.cau.ac.kr/notice/undergraduate?seq=195&cate=%ED%95%99%EC%83%9D&page=1",
+      "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+      "raw_date_text": "2026.07.08",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "positive_evidence": [],
+      "negative_evidence": [
+        {
+          "reason_code": "TUITION_CONTEXT_ONLY",
+          "value": "등록금"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "납부"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "고지서"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "환전"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "금융기관"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "이체"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "송금"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "가상계좌"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "보이스피싱"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "금융범죄"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "지급정지"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "유의사항"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "approval_blocked",
+      "approval_allowed": false
+    },
+    {
+      "cycle_id": "post-phase-m-cycle-2",
+      "cycle_number": 2,
+      "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+      "source_key": "cau_001",
+      "cohort_role": "control",
+      "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "detail_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_view.php?bbsIdx=7345&gotoPage=1&searchKind=&searchStr=&searchBbsCode=",
+      "list_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+      "raw_date_text": "2026.03.05",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "scholarship_true_positive",
+      "scholarship_relevance_reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ],
+      "positive_evidence": [
+        {
+          "reason_code": "SCHOLARSHIP_TERM",
+          "value": "장학"
+        },
+        {
+          "reason_code": "SCHOLARSHIP_TERM",
+          "value": "장학금"
+        },
+        {
+          "reason_code": "FOUNDATION_TERM",
+          "value": "장학재단"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청 방법"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청"
+        },
+        {
+          "reason_code": "APPLICATION_CONTEXT",
+          "value": "신청절차"
+        },
+        {
+          "reason_code": "SELECTION_CONTEXT",
+          "value": "추천"
+        },
+        {
+          "reason_code": "SELECTION_CONTEXT",
+          "value": "추천서"
+        },
+        {
+          "reason_code": "BENEFIT_CONTEXT",
+          "value": "수혜"
+        }
+      ],
+      "negative_evidence": [
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "eligible_for_human_approval_review",
+      "approval_allowed": true
+    },
+    {
+      "cycle_id": "post-phase-m-cycle-2",
+      "cycle_number": 2,
+      "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+      "source_key": "cau_003",
+      "cohort_role": "expansion",
+      "title": "외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "detail_url": "https://iadpr.cau.ac.kr/fm/fm_1.php?p_idx=1103&p_mode=view",
+      "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+      "raw_date_text": "2026.07.02",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "positive_evidence": [],
+      "negative_evidence": [
+        {
+          "reason_code": "TUITION_CONTEXT_ONLY",
+          "value": "등록금"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "납부"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "고지서"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "환전"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "송금"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "가상계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "금융기관"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "보이스피싱"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "금융범죄"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "지급정지"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "불법 환전"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "유의사항"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "approval_blocked",
+      "approval_allowed": false
+    },
+    {
+      "cycle_id": "post-phase-m-cycle-2",
+      "cycle_number": 2,
+      "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+      "source_key": "cau_007",
+      "cohort_role": "expansion",
+      "title": "[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "detail_url": "https://stat.cau.ac.kr/notice/undergraduate?seq=195&cate=%ED%95%99%EC%83%9D&page=1",
+      "list_url": "https://stat.cau.ac.kr/notice/undergraduate",
+      "raw_date_text": "2026.07.08",
+      "body_evidence_present": true,
+      "adapter_classification": "success_attributable",
+      "attribution_verified": true,
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "positive_evidence": [],
+      "negative_evidence": [
+        {
+          "reason_code": "TUITION_CONTEXT_ONLY",
+          "value": "등록금"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "납부"
+        },
+        {
+          "reason_code": "PAYMENT_ADMIN_CONTEXT",
+          "value": "고지서"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "환전"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "계좌"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "금융기관"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "이체"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "송금"
+        },
+        {
+          "reason_code": "ACCOUNT_TRANSFER_CONTEXT",
+          "value": "가상계좌"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "보이스피싱"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "금융범죄"
+        },
+        {
+          "reason_code": "PAYMENT_SECURITY_CONTEXT",
+          "value": "지급정지"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "유의사항"
+        },
+        {
+          "reason_code": "CAUTION_NOTICE_CONTEXT",
+          "value": "안내"
+        }
+      ],
+      "reviewer_disposition": "approval_blocked",
+      "approval_allowed": false
+    }
+  ],
+  "source_relevance": [
+    {
+      "source_key": "cau_001",
+      "cohort_role": "control",
+      "attribution_verified": true,
+      "adapter_classification": "success_attributable",
+      "scholarship_relevance_classification": "scholarship_true_positive",
+      "scholarship_relevance_reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ],
+      "approval_allowed": true
+    },
+    {
+      "source_key": "cau_003",
+      "cohort_role": "expansion",
+      "attribution_verified": true,
+      "adapter_classification": "success_attributable",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "approval_allowed": false
+    },
+    {
+      "source_key": "cau_007",
+      "cohort_role": "expansion",
+      "attribution_verified": true,
+      "adapter_classification": "success_attributable",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_relevance_reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ],
+      "approval_allowed": false
+    }
+  ],
+  "attributed_expansion_source_count": 2,
+  "scholarship_true_positive_expansion_count": 0,
+  "scholarship_true_positive_expansion_source_keys": [],
+  "contextual_only_expansion_count": 0,
+  "contextual_only_expansion_source_keys": [],
+  "false_positive_expansion_count": 2,
+  "false_positive_expansion_source_keys": [
+    "cau_003",
+    "cau_007"
+  ],
+  "approved_false_positive_count": 0,
+  "contextual_false_positive_corrected_count": 2,
+  "corrected_false_positive_source_keys": [
+    "cau_003",
+    "cau_007"
+  ],
+  "effective_false_positive_decision": "reject",
+  "scholarship_relevance_review_complete": true,
+  "cohort_expansion_decision": "HOLD",
+  "cau_001_positive_control_preserved": true,
+  "cau_002_status_preserved": true,
+  "zero_match_statuses_preserved": true,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "passed": true
+}

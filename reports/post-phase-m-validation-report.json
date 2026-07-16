@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-07-16T04:55:31.001Z",
+  "generated_at": "2026-07-16T05:51:23.714Z",
   "contract_version": "post-phase-m-validation/v1",
   "post_phase_m_status": "PASS",
   "controlled_pilot_status": "PASS",
-  "cohort_expansion_decision": "GO",
+  "cohort_expansion_decision": "HOLD",
   "production_rollout_decision": "HOLD",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "production_ref_detected": false,
@@ -19,14 +19,31 @@
   "duplicate_notice_count": 0,
   "duplicate_occurrence_count": 0,
   "duplicate_alias_count": 0,
-  "append_only_review_event_count": 6,
+  "append_only_review_event_count": 8,
   "effective_decision_match": true,
+  "scholarship_relevance_review_complete": true,
+  "scholarship_true_positive_expansion_count": 0,
+  "contextual_only_expansion_count": 0,
+  "false_positive_expansion_count": 2,
+  "approved_false_positive_count": 0,
+  "contextual_false_positive_corrected_count": 2,
+  "effective_false_positive_decision": "reject",
   "review_event_immutability_runtime_passed": true,
   "controlled_projection_preview_enabled": true,
   "public_leakage_count": 0,
   "automatic_public_publish_count": 0,
   "rollback_rehearsed": true,
+  "deleted_run_count": 1,
+  "deleted_source_result_count": 1,
+  "deleted_graph_notice_count": 1,
+  "deleted_occurrence_count": 1,
+  "deleted_revision_count": 1,
+  "deleted_compatibility_count": 1,
   "reapply_passed": true,
+  "reapplied_graph_notice_count": 1,
+  "reapplied_occurrence_count": 1,
+  "reapplied_revision_count": 1,
+  "reapplied_compatibility_count": 1,
   "post_reapply_replay_match": true,
   "unrelated_table_change_count": 0,
   "authenticated_admin_layout_reached": true,
@@ -37,12 +54,15 @@
   "external_llm_persistence_added": false,
   "secret_leak_count": 0,
   "duplicate_json_key_count": 0,
+  "strict_json_file_count": 24,
   "absolute_local_path_count": 0,
   "production_ref_scan_count": 0,
   "preexisting_file_inclusion_count": 0,
   "production_rollout_authorized": false,
   "production_migration_executed": false,
-  "owned_file_count": 73,
+  "l_functional_regression_passed": true,
+  "historical_l_ownership_scope_assertion_preserved": true,
+  "owned_file_count": 39,
   "checks": [
     {
       "name": "required:reports/post-phase-m-preexisting-worktree.json",
@@ -73,6 +93,11 @@
       "name": "required:reports/post-phase-m-review-operations.json",
       "passed": true,
       "evidence": "reports/post-phase-m-review-operations.json"
+    },
+    {
+      "name": "required:reports/post-phase-m-semantic-reevaluation.json",
+      "passed": true,
+      "evidence": "reports/post-phase-m-semantic-reevaluation.json"
     },
     {
       "name": "required:reports/post-phase-m-incident-recovery.json",
@@ -108,6 +133,21 @@
       "name": "required:reports/post-phase-m-local-test-report.json",
       "passed": true,
       "evidence": "reports/post-phase-m-local-test-report.json"
+    },
+    {
+      "name": "required:reports/post-phase-m-l-functional-regression.json",
+      "passed": true,
+      "evidence": "reports/post-phase-m-l-functional-regression.json"
+    },
+    {
+      "name": "required:reports/post-phase-m-live/review-cau-003-reject.json",
+      "passed": true,
+      "evidence": "reports/post-phase-m-live/review-cau-003-reject.json"
+    },
+    {
+      "name": "required:reports/post-phase-m-live/review-cau-007-reject.json",
+      "passed": true,
+      "evidence": "reports/post-phase-m-live/review-cau-007-reject.json"
     },
     {
       "name": "required:docs/post-phase-m-controlled-pilot.md",
@@ -150,9 +190,34 @@
       "evidence": "scripts/test-post-phase-m.mjs"
     },
     {
+      "name": "required:scripts/build-post-phase-m-semantic-reevaluation.mjs",
+      "passed": true,
+      "evidence": "scripts/build-post-phase-m-semantic-reevaluation.mjs"
+    },
+    {
+      "name": "required:scripts/run-post-phase-m-recovery.mjs",
+      "passed": true,
+      "evidence": "scripts/run-post-phase-m-recovery.mjs"
+    },
+    {
+      "name": "required:scripts/validate-post-phase-m-l-functional-regression.mjs",
+      "passed": true,
+      "evidence": "scripts/validate-post-phase-m-l-functional-regression.mjs"
+    },
+    {
       "name": "required:scripts/validate-post-phase-m.mjs",
       "passed": true,
       "evidence": "scripts/validate-post-phase-m.mjs"
+    },
+    {
+      "name": "required:lib/post-phase-m/scholarship-relevance.mjs",
+      "passed": true,
+      "evidence": "lib/post-phase-m/scholarship-relevance.mjs"
+    },
+    {
+      "name": "required:supabase/post-phase-m/001_post_phase_m_semantic_review_correction.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-m/001_post_phase_m_semantic_review_correction.sql"
     },
     {
       "name": "target project ref",
@@ -187,6 +252,37 @@
       "evidence": "cau_001"
     },
     {
+      "name": "scholarship relevance review complete",
+      "passed": true,
+      "evidence": 6
+    },
+    {
+      "name": "semantic evidence fields complete",
+      "passed": true,
+      "evidence": 6
+    },
+    {
+      "name": "contextual false positives corrected",
+      "passed": true,
+      "evidence": [
+        "cau_003",
+        "cau_007"
+      ]
+    },
+    {
+      "name": "reject supersession preserves history and hidden previews",
+      "passed": true,
+      "evidence": [
+        "cau_003",
+        "cau_007"
+      ]
+    },
+    {
+      "name": "cohort decision uses scholarship positives",
+      "passed": true,
+      "evidence": "HOLD"
+    },
+    {
       "name": "source health complete",
       "passed": true,
       "evidence": [
@@ -206,7 +302,7 @@
     {
       "name": "append-only review lifecycle",
       "passed": true,
-      "evidence": 6
+      "evidence": 8
     },
     {
       "name": "review event immutability",
@@ -219,9 +315,19 @@
       "evidence": "preview with zero leakage"
     },
     {
-      "name": "rollback/reapply/replay",
+      "name": "data-bearing rollback row counts",
       "passed": true,
-      "evidence": "bcd8f876-dbb3-567d-a99e-e7771bd0b176"
+      "evidence": "3c5c04bf-dd40-5058-ae14-87af85b79631"
+    },
+    {
+      "name": "data-bearing reapply row counts",
+      "passed": true,
+      "evidence": "3c5c04bf-dd40-5058-ae14-87af85b79631"
+    },
+    {
+      "name": "rollback preserves unrelated evidence",
+      "passed": true,
+      "evidence": "runs/compatibility/review preserved"
     },
     {
       "name": "authenticated browser walkthrough",
@@ -253,6 +359,11 @@
       }
     },
     {
+      "name": "lint report consistency",
+      "passed": true,
+      "evidence": "4/4"
+    },
+    {
       "name": "production decision is truthful HOLD",
       "passed": true,
       "evidence": [
@@ -277,7 +388,20 @@
     {
       "name": "M tests",
       "passed": true,
-      "evidence": "12/12"
+      "evidence": "24/24"
+    },
+    {
+      "name": "L functional regression",
+      "passed": true,
+      "evidence": {
+        "current_head_l_test_exit_code": 0,
+        "current_head_l_test_count": 17,
+        "current_head_l_test_passed_count": 17,
+        "current_head_l_test_failed_count": 0,
+        "l_manifest_git_blob_matches_final_commit": true,
+        "l_manifest_path_count_preserved": true,
+        "m_paths_outside_historical_l_scope": 67
+      }
     },
     {
       "name": "risk register strict and complete",

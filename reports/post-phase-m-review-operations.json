@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T04:01:48.650Z",
+  "generated_at": "2026-07-16T05:49:14.600Z",
   "contract_version": "post-phase-m-review-operations/v1",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "reviewed_source_keys": [
@@ -10,48 +10,87 @@
     {
       "source_key": "cau_003",
       "decision": "needs_review",
+      "effective_decision": null,
       "append_only_review_event_count": 1,
       "effective_decision_match": true,
       "controlled_projection_preview_enabled": true,
       "review_rpc_duration_ms": null,
       "preview_generation_duration_ms": null,
-      "total_review_workflow_duration_ms": null
+      "total_review_workflow_duration_ms": null,
+      "measurement_unavailable_reason": "The retained historical event report predates complete latency instrumentation; no value is inferred."
     },
     {
       "source_key": "cau_003",
       "decision": "approve",
+      "effective_decision": null,
       "append_only_review_event_count": 2,
       "effective_decision_match": true,
       "controlled_projection_preview_enabled": true,
       "review_rpc_duration_ms": null,
       "preview_generation_duration_ms": null,
-      "total_review_workflow_duration_ms": null
+      "total_review_workflow_duration_ms": null,
+      "measurement_unavailable_reason": "The retained historical event report predates complete latency instrumentation; no value is inferred."
     },
     {
       "source_key": "cau_007",
       "decision": "needs_review",
+      "effective_decision": null,
       "append_only_review_event_count": 1,
       "effective_decision_match": true,
       "controlled_projection_preview_enabled": true,
       "review_rpc_duration_ms": 81,
       "preview_generation_duration_ms": 0,
-      "total_review_workflow_duration_ms": 1306
+      "total_review_workflow_duration_ms": 1306,
+      "measurement_unavailable_reason": null
     },
     {
       "source_key": "cau_007",
       "decision": "approve",
+      "effective_decision": null,
       "append_only_review_event_count": 2,
       "effective_decision_match": true,
       "controlled_projection_preview_enabled": true,
       "review_rpc_duration_ms": 70,
       "preview_generation_duration_ms": 40,
-      "total_review_workflow_duration_ms": 992
+      "total_review_workflow_duration_ms": 992,
+      "measurement_unavailable_reason": null
+    },
+    {
+      "source_key": "cau_003",
+      "decision": "reject",
+      "effective_decision": "reject",
+      "append_only_review_event_count": 3,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": 99,
+      "preview_generation_duration_ms": 0,
+      "total_review_workflow_duration_ms": 1963,
+      "measurement_unavailable_reason": null
+    },
+    {
+      "source_key": "cau_007",
+      "decision": "reject",
+      "effective_decision": "reject",
+      "append_only_review_event_count": 3,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": 81,
+      "preview_generation_duration_ms": 0,
+      "total_review_workflow_duration_ms": 1537,
+      "measurement_unavailable_reason": null
     }
   ],
-  "approved_source_count": 2,
-  "append_only_review_event_count": 6,
-  "effective_approve_source_count": 2,
+  "historical_approve_event_count": 2,
+  "approved_source_count": 0,
+  "rejected_false_positive_source_count": 2,
+  "append_only_review_event_count": 8,
+  "effective_approve_source_count": 0,
+  "effective_reject_source_count": 2,
+  "contextual_false_positive_corrected_count": 2,
+  "effective_false_positive_decision": "reject",
+  "approved_false_positive_count": 0,
   "controlled_projection_preview_count": 2,
+  "preserved_hidden_preview_count": 2,
   "review_event_update_rejected": true,
   "review_event_delete_rejected": true,
   "public_leakage_count": 0,

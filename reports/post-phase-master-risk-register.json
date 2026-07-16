@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T04:12:39.957Z",
+  "generated_at": "2026-07-16T05:46:43.156Z",
   "contract_version": "post-phase-master-risk-register/v2",
   "scope": "Post-Phase K through M product convergence, non-production integration, controlled pilot operations, and production readiness",
   "all_project_risks_resolved": false,
@@ -33,13 +33,14 @@
       "description": "cau_003 still requires duplicate-evidence review before it can be exposed.",
       "h_scope": "in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established an exact cau_003 list-to-detail path and append-only needs_review then approve events in non-production; automatic publication remained disabled.",
-      "evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established an exact cau_003 list-to-detail path and append-only needs_review then approve events in non-production; automatic publication remained disabled.",
-      "deferral_reason": "Mitigation preserves review-only handling, but no persisted reviewer decision lifecycle exists yet.",
+      "resolution_evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established exact cau_003 attribution but the only matched tuition-payment security notice was not scholarship-relevant. The mistaken approve remains in history and an append-only reject is now effective; publication remained disabled.",
+      "evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established exact cau_003 attribution but the only matched tuition-payment security notice was not scholarship-relevant. The mistaken approve remains in history and an append-only reject is now effective; publication remained disabled.",
+      "deferral_reason": "Exact adapter attribution is proven, but the only M match was a scholarship false positive and duplicate governance remains future work.",
       "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
-      "next_work_unit": "Implement and rehearse append-only duplicate review decisions",
+      "next_work_unit": "Retain exact attribution, test a true scholarship corpus, and exercise duplicate comparison only on scholarship-relevant evidence.",
       "owner": "Review governance",
-      "success_criteria": "A reviewer can compare duplicate evidence and record an explicit decision."
+      "success_criteria": "A bounded true-positive cau_003 notice is relevance-qualified before any duplicate review or preview approval.",
+      "why_not_resolved_now": "The effective reject corrects exposure risk without proving a true scholarship corpus or completing duplicate governance."
     },
     {
       "id": "RISK-CAU012-COVERAGE",
@@ -94,20 +95,20 @@
     },
     {
       "id": "RISK-CAU007-ZERO-MATCH",
-      "status": "deferred",
+      "status": "mitigated",
       "origin_phase": "G",
       "severity": "high",
       "description": "cau_007 zero-match observation is not proof of source exhaustion or scholarship absence.",
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
-      "why_not_resolved_now": "The bounded live closure reached HTTP 200 responses, but the current generic anchor candidates are not verified notice-detail mappings because source-specific mapping configuration is absent.",
-      "evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific extraction and obtained one attributable live match in both bounded cycles, then completed append-only review and preview.",
-      "deferral_reason": "The bounded live closure reached HTTP 200 responses, but the current generic anchor candidates are not verified notice-detail mappings because source-specific mapping configuration is absent.",
+      "why_not_resolved_now": "No bounded cau_007 scholarship true positive has been observed.",
+      "evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific list-to-detail attribution, but the resulting tuition-payment security notice was a scholarship false positive. Attribution success is not scholarship expansion success; append-only reject is effective.",
+      "deferral_reason": "Source-specific attribution is now repeatable, but the observed item was a semantic false positive rather than scholarship expansion evidence.",
       "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
-      "next_work_unit": "Source-specific list-to-detail mapping, readable-body and encoding verification, and bounded source recheck",
+      "next_work_unit": "Retain the source-specific adapter and run a bounded relevance-qualified corpus recheck without treating zero match as absence.",
       "owner": "Coverage evidence owner",
-      "success_criteria": "A bounded source-specific mapping recheck records attributable notice-body evidence without turning zero match into absence.",
-      "resolution_evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific extraction and obtained one attributable live match in both bounded cycles, then completed append-only review and preview."
+      "success_criteria": "A bounded cau_007 run records either a scholarship true positive or an explicit zero-match observation with no absence inference.",
+      "resolution_evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific list-to-detail attribution, but the resulting tuition-payment security notice was a scholarship false positive. Attribution success is not scholarship expansion success; append-only reject is effective."
     },
     {
       "id": "RISK-CONTEXTUAL-KEYWORD",
@@ -117,13 +118,14 @@
       "description": "Contextual keyword detection can still miss or overclassify scholarship notices.",
       "h_scope": "in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M retained exact source-specific list/detail parsing and rejected generic-anchor attribution; two expansion sources produced repeatable attributable matches.",
-      "evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M retained exact source-specific list/detail parsing and rejected generic-anchor attribution; two expansion sources produced repeatable attributable matches.",
-      "deferral_reason": "The bounded corpus is a mitigation evidence set, not a completed precision and recall resolution for future sources.",
+      "resolution_evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M proved that standalone tuition matching misclassified two attributable payment-security notices and that both were mistakenly approved. A reason-coded non-production relevance gate now blocks approval and append-only reject events supersede the approvals; production detector porting remains future work.",
+      "evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M proved that standalone tuition matching misclassified two attributable payment-security notices and that both were mistakenly approved. A reason-coded non-production relevance gate now blocks approval and append-only reject events supersede the approvals; production detector porting remains future work.",
+      "deferral_reason": "The M relevance gate corrects the demonstrated non-production false positives, but production detector precision and recall remain unevaluated.",
       "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
-      "next_work_unit": "Bounded contextual keyword detector corpus recheck",
+      "next_work_unit": "Run a labeled scholarship relevance shadow corpus, measure precision and recall, and separately approve any production detector port.",
       "owner": "Crawler evidence owner",
-      "success_criteria": "A bounded corpus has measured contextual keyword precision and recall review evidence."
+      "success_criteria": "The corpus reports precision and recall, standalone tuition notices cannot be approved, and production porting has a named owner and rollback plan.",
+      "why_not_resolved_now": "The production detector was intentionally unchanged and requires an owned shadow corpus before porting."
     },
     {
       "id": "RISK-COVERAGE-COMPLETENESS",
@@ -470,14 +472,14 @@
       "severity": "medium",
       "description": "A run containing reviewed revisions cannot use the generic bounded rollback path because review_items retains the current revision FK.",
       "blocking_for_next_phase": false,
-      "evidence": "The cycle-2 rollback probe aborted transactionally; M then rehearsed and deterministically reapplied an independent live-derived zero-match run without unrelated changes.",
+      "evidence": "The reviewed cycle-2 rollback probe still aborts transactionally. Separately, M rolled back an explicitly labeled unreviewed data-bearing fixture and deleted 1 notice, 1 occurrence, 1 revision, and 1 compatibility row before deterministic reapply with no unrelated changes.",
       "why_not_resolved_now": "Deleting reviewed evidence conflicts with append-only review preservation and requires an explicit archival/rollback policy.",
       "owner": "Review and ingestion schema owner",
       "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Define reviewed-run rollback as logical supersession or archival and add a focused rehearsal.",
       "success_criteria": "A reviewed-run recovery procedure preserves immutable events and reaches deterministic state without FK failure or unrelated mutation.",
       "deferral_reason": "Deleting reviewed evidence conflicts with append-only review preservation and requires an explicit archival/rollback policy.",
-      "resolution_evidence": "The cycle-2 rollback probe aborted transactionally; M then rehearsed and deterministically reapplied an independent live-derived zero-match run without unrelated changes."
+      "resolution_evidence": "The reviewed cycle-2 rollback probe still aborts transactionally. Separately, M rolled back an explicitly labeled unreviewed data-bearing fixture and deleted 1 notice, 1 occurrence, 1 revision, and 1 compatibility row before deterministic reapply with no unrelated changes."
     }
   ]
 }

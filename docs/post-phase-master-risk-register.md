@@ -2,7 +2,7 @@
 
 ## Post-Phase M update
 
-M adds two repeatable bounded operating cycles, exact six-source health evidence, append-only review operations, hidden projection previews, and a bounded rollback/reapply drill. These are non-production results. They do not establish production schema parity, release authority, backup, RLS, canary, monitoring, or capacity evidence.
+M adds two repeatable bounded operating cycles, exact six-source attribution evidence, semantic scholarship relevance review, append-only correction events, hidden projection previews, and a data-bearing fixture rollback/reapply drill. cau_003 and cau_007 remain adapter attribution successes but are scholarship false positives, so cohort expansion is HOLD. These are non-production results and do not establish production schema parity, release authority, backup, RLS, canary, monitoring, or capacity evidence.
 
 Only `resolved` is terminal. Every other status remains assigned to a named owner and future work unit. Zero-match and transport-blocked observations never prove deletion or source absence.
 
@@ -20,7 +20,7 @@ Only `resolved` is terminal. Every other status remains assigned to a named owne
 | RISK-CAU012-COVERAGE | deferred | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Schema and source inventory owner |
 | RISK-CAU008-INCOMPLETE-BATCH | deferred | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Parser quality owner |
 | RISK-ATTACHMENT-PARSING | deferred | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Parser quality owner |
-| RISK-CAU007-ZERO-MATCH | deferred | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Coverage evidence owner |
+| RISK-CAU007-ZERO-MATCH | mitigated | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Coverage evidence owner |
 | RISK-CONTEXTUAL-KEYWORD | mitigated | medium | no | Post-Phase N - Production Readiness and Controlled Expansion | Crawler evidence owner |
 | RISK-COVERAGE-COMPLETENESS | accepted | high | no | Post-Phase N - Production Readiness and Controlled Expansion | Coverage evidence owner |
 | RISK-BOOTSTRAP-NEXT-ENV-SHARP-UNRS | resolved | medium | no | completed | completed |

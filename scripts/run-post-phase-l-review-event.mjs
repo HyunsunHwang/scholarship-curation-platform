@@ -85,7 +85,7 @@ async function bootstrapEphemeralAdmin({ serviceClient, targetRef }) {
   return { email, password, userId };
 }
 
-async function resolveLegacyNotice(serviceClient, runId, sourceKey = "") {
+async function resolveLegacyNotice(serviceClient, runId, sourceKey = "", decision = "needs_review") {
   const occurrences = await queryRows(
     serviceClient
       .from("ingestion_notice_occurrences")
@@ -115,10 +115,15 @@ async function resolveLegacyNotice(serviceClient, runId, sourceKey = "") {
     "legacy notice readback",
   );
   if (legacyRows.length !== 1) throw new Error("linked compatibility notice was not found");
-  if (legacyRows[0].status !== "new" || legacyRows[0].scholarship_id !== null) {
-    throw new Error("review event test requires a new, unlinked compatibility notice");
+  const legacy = legacyRows[0];
+  if (["approve", "needs_review"].includes(decision) &&
+      (legacy.status !== "new" || legacy.scholarship_id !== null)) {
+    throw new Error(`${decision} requires a new, unlinked compatibility notice`);
   }
-  return { notice: linked, legacy: legacyRows[0] };
+  if (decision === "reject" && !["promoted", "rejected"].includes(legacy.status)) {
+    throw new Error("reject requires a previously promoted or rejected compatibility notice");
+  }
+  return { notice: linked, legacy };
 }
 
 async function createHiddenScholarship(serviceClient, legacy) {
@@ -244,7 +249,12 @@ async function main() {
   }
 
   const sourceKey = typeof args.source === "string" ? args.source : "";
-  const { legacy } = await resolveLegacyNotice(serviceClient, runId, sourceKey);
+  const { legacy } = await resolveLegacyNotice(serviceClient, runId, sourceKey, decision);
+  const evidenceBefore = await readReviewEvidence(serviceClient, legacy.id);
+  if (decision === "reject" && !evidenceBefore.events.some((event) => event.decision === "approve")) {
+    throw new Error("semantic false-positive correction requires a preserved prior approve event");
+  }
+  const supersededScholarshipId = decision === "reject" ? legacy.scholarship_id : null;
   const previewStartedAt = Date.now();
   const scholarshipId = decision === "approve"
     ? await createHiddenScholarship(serviceClient, legacy)
@@ -297,6 +307,28 @@ async function main() {
   const previewOnly = evidence.events.every(
     (event) => event.intended_projection_action === "preview_only",
   );
+  const latestEvent = evidence.events.at(-1) ?? null;
+  const priorLatestEvent = evidenceBefore.events.at(-1) ?? null;
+  const supersedingEventAdded =
+    decision === "reject" &&
+    rpcResult?.duplicate !== true &&
+    evidence.events.length === evidenceBefore.events.length + 1 &&
+    latestEvent?.decision === "reject" &&
+    latestEvent?.supersedes_event_id === priorLatestEvent?.id;
+  const supersededPreviewRows = supersededScholarshipId == null
+    ? []
+    : await queryRows(
+        serviceClient
+          .from("scholarships")
+          .select("id,is_verified,list_on_home")
+          .eq("id", supersededScholarshipId),
+        "superseded hidden preview readback",
+      );
+  const supersededPreviewPreserved =
+    decision !== "reject" ||
+    (supersededPreviewRows.length === 1 &&
+      supersededPreviewRows[0].is_verified === false &&
+      supersededPreviewRows[0].list_on_home === false);
   const publicLeakageRows = await queryRows(
     serviceClient
       .from("scholarships")
@@ -321,8 +353,18 @@ async function main() {
     source_key: legacy.source_id,
     legacy_notice_id: legacy.id,
     decision,
+    effective_decision: evidence.effective[0]?.decision ?? null,
+    prior_review_event_count: evidenceBefore.events.length,
+    prior_approve_event_preserved: evidence.events.some((event) => event.decision === "approve"),
+    superseding_event_added: decision === "reject" ? supersedingEventAdded : false,
+    supersedes_prior_event_match: decision === "reject" ? supersedingEventAdded : null,
     hidden_scholarship_preview_row_created: scholarshipId !== null,
     hidden_scholarship_id_present: scholarshipId !== null,
+    superseded_hidden_scholarship_id_present: supersededScholarshipId !== null,
+    superseded_hidden_preview_preserved: supersededPreviewPreserved,
+    superseded_hidden_preview_public: supersededPreviewRows.some(
+      (row) => row.is_verified === true || row.list_on_home === true,
+    ),
     rpc_duplicate: rpcResult?.duplicate === true,
     append_only_review_event_count: evidence.events.length,
     effective_decision_count: evidence.effective.length,
@@ -344,9 +386,15 @@ async function main() {
     passed:
       evidence.events.length >= 1 &&
       effectiveMatchesLatest &&
+      evidence.effective[0]?.decision === decision &&
       evidence.evidence_references.length >= 1 &&
       previewOnly &&
-      publicLeakageRows.length === 0,
+      publicLeakageRows.length === 0 &&
+      (decision !== "reject" || (
+        supersedingEventAdded &&
+        evidence.events.some((event) => event.decision === "approve") &&
+        supersededPreviewPreserved
+      )),
   };
   const outputPath = writeJson(args.output ?? DEFAULT_OUTPUT, report);
   console.log(`post_phase_l_review_event_passed=${report.passed}`);

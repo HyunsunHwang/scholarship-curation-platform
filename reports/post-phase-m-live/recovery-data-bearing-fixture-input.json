@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "evidence_kind": "non_production_data_bearing_recovery_fixture",
+  "run": {
+    "idempotency_key": "post-phase-m-recovery-data-bearing-fixture-v1",
+    "execution_mode": "fixture",
+    "runner_version": "post-phase-m-recovery-fixture/v1",
+    "status": "succeeded",
+    "started_at": "2026-07-16T00:00:00.000Z",
+    "finished_at": "2026-07-16T00:00:00.000Z",
+    "metadata": {
+      "bounded": true,
+      "fixture": true,
+      "live_evidence": false,
+      "source_allowlist": [
+        "cau_008"
+      ],
+      "max_items_per_source": 1,
+      "max_pages_per_source": 1,
+      "source_concurrency": 1,
+      "external_llm_call_count": 0
+    }
+  },
+  "source_results": [
+    {
+      "source_key": "cau_008",
+      "source_id": "cau_008",
+      "source_name": "Post-Phase M recovery fixture",
+      "result_status": "success",
+      "observed_count": 1,
+      "matched_count": 1,
+      "retry_count": 0,
+      "error_code": null,
+      "error_message": null,
+      "evidence": {
+        "fixture": true,
+        "live_evidence": false
+      },
+      "notices": [
+        {
+          "title": "[FIXTURE] Post-Phase M data-bearing scholarship recovery notice",
+          "original_url": "https://global.cau.ac.kr/post-phase-m/recovery-fixture/data-bearing-v1",
+          "canonical_url": "https://global.cau.ac.kr/post-phase-m/recovery-fixture/data-bearing-v1",
+          "notice_posted_at": "2026-07-16",
+          "raw_date_text": "2026.07.16",
+          "body": "Non-production fixture for a scholarship application, selection, and tuition support recovery rehearsal.",
+          "image_urls": [],
+          "attachment_metadata": [],
+          "body_quality_status": "text_sufficient",
+          "parser_version": "post-phase-m-recovery-fixture/v1",
+          "provenance": {
+            "data_backing": "fixture",
+            "live_evidence": false,
+            "source_key": "cau_008"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -12,6 +12,7 @@ const REQUIRED = [
   "reports/post-phase-m-controlled-cohort.json",
   "reports/post-phase-m-source-health.json",
   "reports/post-phase-m-review-operations.json",
+  "reports/post-phase-m-semantic-reevaluation.json",
   "reports/post-phase-m-incident-recovery.json",
   "reports/post-phase-m-platform-maintenance.json",
   "reports/post-phase-m-risk-register-update.json",
@@ -19,6 +20,9 @@ const REQUIRED = [
   "reports/post-phase-m-browser-walkthrough.json",
   "reports/post-phase-m-runtime-verification.json",
   "reports/post-phase-m-local-test-report.json",
+  "reports/post-phase-m-l-functional-regression.json",
+  "reports/post-phase-m-live/review-cau-003-reject.json",
+  "reports/post-phase-m-live/review-cau-007-reject.json",
   "docs/post-phase-m-controlled-pilot.md",
   "docs/post-phase-m-operator-runbook.md",
   "docs/post-phase-m-platform-maintenance.md",
@@ -27,7 +31,12 @@ const REQUIRED = [
   "scripts/run-post-phase-m-controlled-pilot.mjs",
   "scripts/verify-post-phase-m-runtime.mjs",
   "scripts/test-post-phase-m.mjs",
+  "scripts/build-post-phase-m-semantic-reevaluation.mjs",
+  "scripts/run-post-phase-m-recovery.mjs",
+  "scripts/validate-post-phase-m-l-functional-regression.mjs",
   "scripts/validate-post-phase-m.mjs",
+  "lib/post-phase-m/scholarship-relevance.mjs",
+  "supabase/post-phase-m/001_post_phase_m_semantic_review_correction.sql",
 ];
 const jsonFiles = [];
 const checks = [];
@@ -48,12 +57,18 @@ const preexisting = json("reports/post-phase-m-preexisting-worktree.json");
 const cohort = json("reports/post-phase-m-controlled-cohort.json");
 const health = json("reports/post-phase-m-source-health.json");
 const review = json("reports/post-phase-m-review-operations.json");
+const semantic = json("reports/post-phase-m-semantic-reevaluation.json");
 const recovery = json("reports/post-phase-m-incident-recovery.json");
 const platform = json("reports/post-phase-m-platform-maintenance.json");
 const production = json("reports/post-phase-m-production-readiness.json");
 const browser = json("reports/post-phase-m-browser-walkthrough.json");
 const runtime = json("reports/post-phase-m-runtime-verification.json");
 const tests = json("reports/post-phase-m-local-test-report.json");
+const lRegression = json("reports/post-phase-m-l-functional-regression.json");
+const rejectReports = [
+  json("reports/post-phase-m-live/review-cau-003-reject.json"),
+  json("reports/post-phase-m-live/review-cau-007-reject.json"),
+];
 const cycle1 = json("reports/post-phase-m-live/cycle-1/cycle-report.json");
 const cycle2 = json("reports/post-phase-m-live/cycle-2/cycle-report.json");
 const riskUpdate = json("reports/post-phase-m-risk-register-update.json");
@@ -61,25 +76,57 @@ const masterRisk = json("reports/post-phase-master-risk-register.json");
 
 const allCycles = [cycle1, cycle2];
 const explicitHealth = new Set(["healthy", "degraded", "blocked", "unresolved", "zero_match_observed", "recovered", "regressed"]);
-const effectiveDecisionMatch = review.decisions.filter((item) => item.decision === "approve").every((item) => item.effective_decision_match);
+const rejectDecisions = review.decisions.filter((item) => item.decision === "reject");
+const effectiveDecisionMatch =
+  rejectDecisions.length >= 2 &&
+  rejectDecisions.every((item) => item.effective_decision_match && item.effective_decision === "reject");
 
 check("target project ref", runtime.target_project_ref === TARGET_REF, runtime.target_project_ref);
 check("production access zero", !runtime.production_ref_detected && !runtime.production_read_performed && !runtime.production_write_performed, "false/false/false");
 check("exact source resolution", cohort.exact_source_resolution_passed && cohort.fuzzy_source_match_count === 0 && cohort.automatic_source_create_count === 0, cohort.expansion_source_keys);
 check("two complete cycles", runtime.cycle_count >= 2 && allCycles.every((cycle) => cycle.cycle_source_results_complete && cycle.source_results.length === 6), runtime.cycle_ids);
 check("live positive control preserved", cohort.control_behavior_preserved === true, "cau_001");
+check("scholarship relevance review complete", semantic.passed === true && semantic.scholarship_relevance_review_complete === true, semantic.matched_item_count);
+check("semantic evidence fields complete", semantic.matched_items.every((item) =>
+  typeof item.attribution_verified === "boolean" &&
+  typeof item.scholarship_relevance_classification === "string" &&
+  Array.isArray(item.scholarship_relevance_reason_codes) &&
+  Array.isArray(item.positive_evidence) &&
+  Array.isArray(item.negative_evidence) &&
+  typeof item.reviewer_disposition === "string"
+), semantic.matched_item_count);
+check("contextual false positives corrected", semantic.approved_false_positive_count === 0 && semantic.contextual_false_positive_corrected_count >= 2 && semantic.effective_false_positive_decision === "reject", semantic.corrected_false_positive_source_keys);
+check("reject supersession preserves history and hidden previews", rejectReports.every((item) =>
+  item.prior_approve_event_preserved === true &&
+  item.superseding_event_added === true &&
+  item.supersedes_prior_event_match === true &&
+  item.effective_decision === "reject" &&
+  item.superseded_hidden_preview_preserved === true &&
+  item.superseded_hidden_preview_public === false
+), rejectReports.map((item) => item.source_key));
+check("cohort decision uses scholarship positives", semantic.cohort_expansion_decision === cohort.cohort_expansion_decision && (cohort.cohort_expansion_decision === "HOLD" || semantic.scholarship_true_positive_expansion_count >= 1), cohort.cohort_expansion_decision);
 check("source health complete", health.sources.length === 6 && health.sources.every((item) => explicitHealth.has(item.health)), health.sources.map((item) => `${item.source_key}:${item.health}`));
 check("duplicate counts zero", runtime.duplicate_notice_count === 0 && runtime.duplicate_occurrence_count === 0 && runtime.duplicate_alias_count === 0, "0/0/0");
-check("append-only review lifecycle", review.append_only_review_event_count >= 2 && effectiveDecisionMatch, review.append_only_review_event_count);
+check("append-only review lifecycle", review.append_only_review_event_count >= 8 && effectiveDecisionMatch && review.approved_false_positive_count === 0, review.append_only_review_event_count);
 check("review event immutability", recovery.review_event_immutability_runtime_passed === true, "update/delete rejected");
 check("controlled preview fail-closed", review.controlled_projection_preview_count >= 1 && runtime.public_leakage_count === 0 && runtime.automatic_public_publish_count === 0, "preview with zero leakage");
-check("rollback/reapply/replay", recovery.rollback_rehearsed && recovery.reapply_passed && recovery.post_reapply_replay_match && recovery.unrelated_table_change_count === 0, recovery.rollback_run_id);
+check("data-bearing rollback row counts", recovery.data_bearing_fixture === true && [
+  "deleted_run_count", "deleted_source_result_count", "deleted_graph_notice_count",
+  "deleted_occurrence_count", "deleted_revision_count", "deleted_compatibility_count",
+].every((key) => recovery[key] >= 1), recovery.rollback_run_id);
+check("data-bearing reapply row counts", recovery.reapply_passed && recovery.post_reapply_replay_match && [
+  "reapplied_run_count", "reapplied_source_result_count", "reapplied_graph_notice_count",
+  "reapplied_occurrence_count", "reapplied_revision_count", "reapplied_compatibility_count",
+].every((key) => recovery[key] >= 1), recovery.rollback_run_id);
+check("rollback preserves unrelated evidence", recovery.unrelated_run_preserved && recovery.unrelated_compatibility_rows_preserved && recovery.review_events_preserved && recovery.unrelated_table_change_count === 0, "runs/compatibility/review preserved");
 check("authenticated browser walkthrough", browser.authenticated_admin_layout_reached && browser.browser_walkthrough_complete && browser.browser_console_error_count === 0 && browser.browser_runtime_error_count === 0, browser.routes_verified);
 check("public browser fail-closed", !browser.public_list_leakage_detected && !browser.numeric_preview_route_leakage_detected && !browser.desktop_overflow && !browser.mobile_390_overflow, "no leakage or overflow");
 check("external LLM disabled", runtime.external_llm_call_count === 0 && browser.external_llm_persistence_added === false, "0 calls / no persistence");
 check("platform maintenance", platform.status === "PASS_WITH_EXPLICIT_BASELINE" && platform.m_introduced_finding_count === 0 && platform.scoped_eslint_passed === true && platform.typescript_passed === true && platform.build_passed === true, platform.final_full_eslint);
+check("lint report consistency", production.full_lint_error_count === platform.final_full_eslint.errors, `${production.full_lint_error_count}/${platform.final_full_eslint.errors}`);
 check("production decision is truthful HOLD", production.production_rollout_decision === "HOLD" && production.production_rollout_authorized === false && production.production_migration_executed === false, production.exact_blockers);
 check("M tests", tests.passed === true, `${tests.passed_count}/${tests.test_count}`);
+check("L functional regression", lRegression.functional_regression_passed === true && lRegression.historical_ownership_scope_assertion_preserved === true && lRegression.l_owned_manifest_modified === false, lRegression.functional_checks);
 check("risk register strict and complete", riskUpdate.passed && riskUpdate.duplicate_risk_id_count === 0 && riskUpdate.unresolved_without_owner_count === 0 && riskUpdate.unresolved_without_next_phase_count === 0 && masterRisk.risks.every((risk) => risk.status === "resolved" || (risk.owner && risk.next_resolution_phase && risk.next_work_unit && risk.success_criteria && risk.blocking_for_next_phase !== undefined)), masterRisk.risks.length);
 
 const safeRoot = ROOT.replace(/\\/g, "/");
@@ -112,7 +159,8 @@ check("absolute local path scan", absoluteLocalPathCount === 0, absoluteLocalPat
 check("production ref scan", forbiddenProductionRefCount === 0, forbiddenProductionRefCount);
 check("preexisting overlap", preexistingOverlap.length === 0, preexistingOverlap);
 
-const duplicateJsonKeyCount = jsonFiles.reduce((count, file) => {
+const scannedJsonFiles = scannedFiles.filter((file) => file.endsWith(".json"));
+const duplicateJsonKeyCount = scannedJsonFiles.reduce((count, file) => {
   try { parseJsonWithDuplicateKeyCheck(read(file), file); return count; }
   catch { return count + 1; }
 }, 0);
@@ -142,12 +190,29 @@ const report = {
   duplicate_alias_count: runtime.duplicate_alias_count,
   append_only_review_event_count: review.append_only_review_event_count,
   effective_decision_match: effectiveDecisionMatch,
+  scholarship_relevance_review_complete: semantic.scholarship_relevance_review_complete,
+  scholarship_true_positive_expansion_count: semantic.scholarship_true_positive_expansion_count,
+  contextual_only_expansion_count: semantic.contextual_only_expansion_count,
+  false_positive_expansion_count: semantic.false_positive_expansion_count,
+  approved_false_positive_count: semantic.approved_false_positive_count,
+  contextual_false_positive_corrected_count: semantic.contextual_false_positive_corrected_count,
+  effective_false_positive_decision: semantic.effective_false_positive_decision,
   review_event_immutability_runtime_passed: recovery.review_event_immutability_runtime_passed,
   controlled_projection_preview_enabled: review.controlled_projection_preview_count >= 1,
   public_leakage_count: runtime.public_leakage_count,
   automatic_public_publish_count: runtime.automatic_public_publish_count,
   rollback_rehearsed: recovery.rollback_rehearsed,
+  deleted_run_count: recovery.deleted_run_count,
+  deleted_source_result_count: recovery.deleted_source_result_count,
+  deleted_graph_notice_count: recovery.deleted_graph_notice_count,
+  deleted_occurrence_count: recovery.deleted_occurrence_count,
+  deleted_revision_count: recovery.deleted_revision_count,
+  deleted_compatibility_count: recovery.deleted_compatibility_count,
   reapply_passed: recovery.reapply_passed,
+  reapplied_graph_notice_count: recovery.reapplied_graph_notice_count,
+  reapplied_occurrence_count: recovery.reapplied_occurrence_count,
+  reapplied_revision_count: recovery.reapplied_revision_count,
+  reapplied_compatibility_count: recovery.reapplied_compatibility_count,
   post_reapply_replay_match: recovery.post_reapply_replay_match,
   unrelated_table_change_count: recovery.unrelated_table_change_count,
   authenticated_admin_layout_reached: browser.authenticated_admin_layout_reached,
@@ -158,11 +223,14 @@ const report = {
   external_llm_persistence_added: browser.external_llm_persistence_added,
   secret_leak_count: secretLeakCount,
   duplicate_json_key_count: duplicateJsonKeyCount,
+  strict_json_file_count: scannedJsonFiles.length,
   absolute_local_path_count: absoluteLocalPathCount,
   production_ref_scan_count: forbiddenProductionRefCount,
   preexisting_file_inclusion_count: preexistingOverlap.length,
   production_rollout_authorized: production.production_rollout_authorized,
   production_migration_executed: production.production_migration_executed,
+  l_functional_regression_passed: lRegression.functional_regression_passed,
+  historical_l_ownership_scope_assertion_preserved: lRegression.historical_ownership_scope_assertion_preserved,
   owned_file_count: ownedFiles.length,
   checks,
   passed,

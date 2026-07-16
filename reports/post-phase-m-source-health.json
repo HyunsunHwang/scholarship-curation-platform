@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T04:01:48.650Z",
+  "generated_at": "2026-07-16T05:49:14.600Z",
   "contract_version": "post-phase-m-source-health/v1",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "cycles_compared": [
@@ -12,6 +12,9 @@
       "source_key": "cau_001",
       "cohort_role": "control",
       "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "scholarship_true_positive",
+      "scholarship_expansion_eligible": true,
       "final_classification": "success_attributable",
       "stable_across_cycles": true,
       "observations": [
@@ -49,6 +52,9 @@
       "source_key": "cau_002",
       "cohort_role": "control",
       "health": "blocked",
+      "attribution_health": "blocked",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
       "final_classification": "blocked_transport",
       "stable_across_cycles": true,
       "observations": [
@@ -86,6 +92,9 @@
       "source_key": "cau_003",
       "cohort_role": "expansion",
       "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_expansion_eligible": false,
       "final_classification": "success_attributable",
       "stable_across_cycles": true,
       "observations": [
@@ -123,6 +132,9 @@
       "source_key": "cau_007",
       "cohort_role": "expansion",
       "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_expansion_eligible": false,
       "final_classification": "success_attributable",
       "stable_across_cycles": true,
       "observations": [
@@ -160,6 +172,9 @@
       "source_key": "cau_008",
       "cohort_role": "expansion",
       "health": "zero_match_observed",
+      "attribution_health": "zero_match_observed",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
       "final_classification": "zero_match_observed",
       "stable_across_cycles": true,
       "observations": [
@@ -197,6 +212,9 @@
       "source_key": "yonsei_060",
       "cohort_role": "control",
       "health": "zero_match_observed",
+      "attribution_health": "zero_match_observed",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
       "final_classification": "zero_match_observed",
       "stable_across_cycles": true,
       "observations": [
