@@ -1,7 +1,7 @@
 # Post-Phase N-Q Validation Report
 
-- Status: **PASS**
-- Checks: 25/25
+- Status: **HOLD**
+- Checks: 25/26
 - Production access: false
 - Production write: false
 - Automatic public publish: false
@@ -9,6 +9,7 @@
 ## Checks
 
 - PASS: `starting_state_gate`
+- HOLD: `remote_git_merge_readiness`
 - PASS: `existing_main_implementation_reused`
 - PASS: `nonproduction_fingerprint`
 - PASS: `schema_diff_arithmetic_and_evidence`
@@ -36,8 +37,8 @@
 
 ## Final Gates
 
-- `integrated_engineering_package`: PASS
-- `production_investigation_package`: PASS
+- `integrated_engineering_package`: HOLD
+- `production_investigation_package`: HOLD
 - `production_fingerprint`: PASS_OWNER_READ_ONLY
 - `migration_readiness`: HOLD
 - `rollback_readiness`: PASS_NONPRODUCTION
@@ -52,4 +53,4 @@
 
 ## Interpretation
 
-The production-independent N-Q engineering package passes. Production fingerprinting, migration, canary rollout, and Public Beta remain separately owner-gated.
+Engineering validation remains on hold: remote_git_merge_readiness.

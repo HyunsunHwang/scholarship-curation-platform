@@ -1,37 +1,29 @@
 # Post-Phase N-Q Final Merge Readiness
 
-## Status
+`final-merge-readiness.json` is a snapshot of live Git commands, not an input
+that can make the validator pass. The report generator fetches `origin` and
+records the fetched main SHA, evaluated HEAD SHA, merge base, ancestor result,
+ahead/behind values, unresolved-conflict count, and clean-worktree result.
 
-Engineering merge readiness is **PASS**. `origin/main` was fetched and is
-already an ancestor of `feat/post-phase-n`; the branch is `behind_by=0` with
-no merge conflict. No direct edit or merge to `main` was performed.
+The validator independently performs the same live calculation and rejects a
+report whose Git snapshot or PR/synchronization classifications disagree. A
+failed fetch is recorded as `REMOTE_FETCH_FAILED` and holds PR creation
+readiness; stale remote-tracking data is not accepted.
 
-## Gate summary
+## Independent decisions
 
-- Production fingerprint: `PASS_OWNER_READ_ONLY`
-- Migration readiness: `HOLD`
-- Production migration: `NOT_AUTHORIZED`
-- Canary write action: `NOT_AUTHORIZED`
-- Canary rollout/release: `HOLD`
-- Public beta release: `HOLD`
+- `pr_creation_readiness` is `PASS` only with a successful fetch, no unresolved
+  conflict, matching live snapshot, passing required engineering checks, and
+  preserved production safety.
+- `branch_up_to_date_with_main` is `PASS` when `behind_by=0`, otherwise
+  `OUTDATED`. It does not by itself block PR creation.
+- `direct_fast_forward_merge_readiness` is `PASS` only when `origin/main` is an
+  ancestor and `behind_by=0`; otherwise it is `NOT_APPLICABLE`.
 
-Engineering merge readiness is deliberately independent of the production
-migration HOLD. No production access, read, write, migration, backup, canary,
-or public publish was performed.
+The report records the HEAD evaluated immediately before it is written. Its
+containing commit and final pushed SHA are intentionally reported separately to
+avoid self-referential report-only commits.
 
-## Artifact retention
-
-The audit removed three SHA-256-confirmed dated crawler JSON duplicates while
-retaining their `latest` canonical copies. Tracked N-Q artifacts changed from
-47 to 44, and validator reference break count is zero. Raw owner evidence is
-local-only and tracked count is zero.
-
-## Verification
-
-N-Q focused tests (13/13), N-Q validator (25/25), owner-evidence/scoped-diff
-tests, production fingerprint runner fixture tests, Post-Phase M tests and
-validator, Post-Phase L functional regression, Post-Phase K validator,
-TypeScript, full ESLint, and production build all passed.
-
-The production build completed with the pre-existing `public.contests`
-schema-cache fallback warning; it does not change this N-Q gate decision.
+Production release gates remain independent: fingerprint
+`PASS_OWNER_READ_ONLY`, migration `HOLD`, production migration and canary write
+`NOT_AUTHORIZED`, and canary rollout/public beta `HOLD`.
