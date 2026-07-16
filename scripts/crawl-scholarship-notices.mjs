@@ -320,8 +320,31 @@ export function extractFromList(source, html) {
   const $ = loadHtml(html);
   const results = [];
   const seen = new Set();
+  const sourceId = cleanText(source.sourceId).toLowerCase();
 
-  if (cleanText(source.sourceId).toLowerCase() === "cau_001") {
+  const addBoardItem = (link, title, dateText, noticeUrlOverride = "") => {
+    const noticeUrl = noticeUrlOverride || extractNoticeUrlFromLinkNode(source, link);
+    const normalizedTitle = cleanText(title);
+    if (!noticeUrl || !normalizedTitle || seen.has(noticeUrl)) return;
+    seen.add(noticeUrl);
+    results.push({
+      sourceId: source.sourceId,
+      universitySlug: source.universitySlug,
+      universityId: source.universityId,
+      collegeId: source.collegeId,
+      departmentId: source.departmentId,
+      collegeName: source.collegeName,
+      departmentName: source.departmentName,
+      sourceLevel: source.sourceLevel,
+      sourceName: source.sourceName,
+      listUrl: source.listUrl,
+      noticeUrl,
+      title: normalizedTitle,
+      dateText: cleanText(dateText),
+    });
+  };
+
+  if (sourceId === "cau_001") {
     $("tr").each((_, node) => {
       const row = $(node);
       const link = row.find('a[href*="sub06_01_view.php"][href*="bbsIdx="]').first();
@@ -345,6 +368,54 @@ export function extractFromList(source, html) {
         title,
         dateText: extractListDateText(row, source.dateSelector),
       });
+    });
+    return results;
+  }
+
+  if (sourceId === "cau_003") {
+    $("table.board-table tbody tr").each((_, node) => {
+      const row = $(node);
+      const link = row.find("a.board-page-link").first();
+      const articleId = cleanText(link.attr("href")).match(
+        /javascript:view\(\s*['"](\d+)['"]/i,
+      )?.[1];
+      if (!articleId) return;
+      const target = new URL(source.listUrl);
+      target.search = "";
+      target.searchParams.set("p_idx", articleId);
+      target.searchParams.set("p_mode", "view");
+      addBoardItem(
+        link,
+        link.text(),
+        row.find(".board-col--mb .date").first().text() || row.find("td").last().text(),
+        target.toString(),
+      );
+    });
+    return results;
+  }
+
+  if (sourceId === "cau_007") {
+    $("ul.board_list > li").each((_, node) => {
+      const row = $(node);
+      const link = row.find('a[href*="seq="]').first();
+      addBoardItem(
+        link,
+        row.find(".board_list_tit").first().text(),
+        row.find(".board_list_info .line").last().text(),
+      );
+    });
+    return results;
+  }
+
+  if (sourceId === "cau_008") {
+    $(".bbs-list-row").each((_, node) => {
+      const row = $(node);
+      const link = row.find('a[href*="bgu=view"][href*="idx="]').first();
+      addBoardItem(
+        link,
+        row.find(".bbs-subject-txt").first().text(),
+        row.find(".bbs-inline").eq(1).text(),
+      );
     });
     return results;
   }

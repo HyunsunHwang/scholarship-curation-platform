@@ -85,7 +85,7 @@ async function bootstrapEphemeralAdmin({ serviceClient, targetRef }) {
   return { email, password, userId };
 }
 
-async function resolveLegacyNotice(serviceClient, runId) {
+async function resolveLegacyNotice(serviceClient, runId, sourceKey = "", decision = "needs_review") {
   const occurrences = await queryRows(
     serviceClient
       .from("ingestion_notice_occurrences")
@@ -102,7 +102,9 @@ async function resolveLegacyNotice(serviceClient, runId) {
       .in("id", noticeIds),
     "notice readback",
   );
-  const linked = notices.find((row) => row.legacy_crawled_notice_id != null);
+  const linked = notices.find(
+    (row) => row.legacy_crawled_notice_id != null && (!sourceKey || row.source_id === sourceKey),
+  );
   if (!linked) throw new Error(`run ${runId} has no linked compatibility notice`);
   const legacyRows = await queryRows(
     serviceClient
@@ -113,10 +115,15 @@ async function resolveLegacyNotice(serviceClient, runId) {
     "legacy notice readback",
   );
   if (legacyRows.length !== 1) throw new Error("linked compatibility notice was not found");
-  if (legacyRows[0].status !== "new" || legacyRows[0].scholarship_id !== null) {
-    throw new Error("review event test requires a new, unlinked compatibility notice");
+  const legacy = legacyRows[0];
+  if (["approve", "needs_review"].includes(decision) &&
+      (legacy.status !== "new" || legacy.scholarship_id !== null)) {
+    throw new Error(`${decision} requires a new, unlinked compatibility notice`);
   }
-  return { notice: linked, legacy: legacyRows[0] };
+  if (decision === "reject" && !["promoted", "rejected"].includes(legacy.status)) {
+    throw new Error("reject requires a previously promoted or rejected compatibility notice");
+  }
+  return { notice: linked, legacy };
 }
 
 async function createHiddenScholarship(serviceClient, legacy) {
@@ -211,6 +218,7 @@ async function readReviewEvidence(serviceClient, legacyId) {
 }
 
 async function main() {
+  const workflowStartedAt = Date.now();
   const args = parseArgs(process.argv.slice(2));
   if (args.apply !== true) {
     throw new Error("Post-Phase L review event execution requires the explicit --apply flag");
@@ -240,10 +248,20 @@ async function main() {
     throw new Error(`Post-Phase L environment assertion failed: ${environmentError.message}`);
   }
 
-  const { legacy } = await resolveLegacyNotice(serviceClient, runId);
+  const sourceKey = typeof args.source === "string" ? args.source : "";
+  const { legacy } = await resolveLegacyNotice(serviceClient, runId, sourceKey, decision);
+  const evidenceBefore = await readReviewEvidence(serviceClient, legacy.id);
+  if (decision === "reject" && !evidenceBefore.events.some((event) => event.decision === "approve")) {
+    throw new Error("semantic false-positive correction requires a preserved prior approve event");
+  }
+  const supersededScholarshipId = decision === "reject" ? legacy.scholarship_id : null;
+  const previewStartedAt = Date.now();
   const scholarshipId = decision === "approve"
     ? await createHiddenScholarship(serviceClient, legacy)
     : null;
+  const previewGenerationDurationMs = decision === "approve"
+    ? Date.now() - previewStartedAt
+    : 0;
   const admin = await bootstrapEphemeralAdmin({
     serviceClient,
     targetRef: guard.target_project_ref,
@@ -257,7 +275,8 @@ async function main() {
   });
   if (signInError) throw new Error(`ephemeral admin sign-in failed: ${signInError.message}`);
 
-  const eventKey = `runtime:${runId}:${decision}:v1`;
+  const eventKey = `runtime:${runId}:${legacy.source_id}:${decision}:v1`;
+  const rpcStartedAt = Date.now();
   const { data: rpcResult, error: rpcError } = await userClient.rpc(
     "post_phase_l_apply_legacy_review_decision",
     {
@@ -268,7 +287,14 @@ async function main() {
       p_scholarship_id: scholarshipId,
     },
   );
-  if (rpcError) throw new Error(`review event RPC failed: ${rpcError.message}`);
+  const reviewRpcDurationMs = Date.now() - rpcStartedAt;
+  if (rpcError) {
+    const { error: cleanupError } = await serviceClient.auth.admin.deleteUser(admin.userId);
+    if (cleanupError) {
+      throw new Error(`review event RPC failed: ${rpcError.message}; ephemeral admin cleanup failed`);
+    }
+    throw new Error(`review event RPC failed: ${rpcError.message}`);
+  }
 
   const evidence = await readReviewEvidence(serviceClient, legacy.id);
   const effectiveMatchesLatest =
@@ -281,6 +307,28 @@ async function main() {
   const previewOnly = evidence.events.every(
     (event) => event.intended_projection_action === "preview_only",
   );
+  const latestEvent = evidence.events.at(-1) ?? null;
+  const priorLatestEvent = evidenceBefore.events.at(-1) ?? null;
+  const supersedingEventAdded =
+    decision === "reject" &&
+    rpcResult?.duplicate !== true &&
+    evidence.events.length === evidenceBefore.events.length + 1 &&
+    latestEvent?.decision === "reject" &&
+    latestEvent?.supersedes_event_id === priorLatestEvent?.id;
+  const supersededPreviewRows = supersededScholarshipId == null
+    ? []
+    : await queryRows(
+        serviceClient
+          .from("scholarships")
+          .select("id,is_verified,list_on_home")
+          .eq("id", supersededScholarshipId),
+        "superseded hidden preview readback",
+      );
+  const supersededPreviewPreserved =
+    decision !== "reject" ||
+    (supersededPreviewRows.length === 1 &&
+      supersededPreviewRows[0].is_verified === false &&
+      supersededPreviewRows[0].list_on_home === false);
   const publicLeakageRows = await queryRows(
     serviceClient
       .from("scholarships")
@@ -302,10 +350,21 @@ async function main() {
     environment_values_printed: false,
     credential_values_printed: false,
     run_id: runId,
+    source_key: legacy.source_id,
     legacy_notice_id: legacy.id,
     decision,
+    effective_decision: evidence.effective[0]?.decision ?? null,
+    prior_review_event_count: evidenceBefore.events.length,
+    prior_approve_event_preserved: evidence.events.some((event) => event.decision === "approve"),
+    superseding_event_added: decision === "reject" ? supersedingEventAdded : false,
+    supersedes_prior_event_match: decision === "reject" ? supersedingEventAdded : null,
     hidden_scholarship_preview_row_created: scholarshipId !== null,
     hidden_scholarship_id_present: scholarshipId !== null,
+    superseded_hidden_scholarship_id_present: supersededScholarshipId !== null,
+    superseded_hidden_preview_preserved: supersededPreviewPreserved,
+    superseded_hidden_preview_public: supersededPreviewRows.some(
+      (row) => row.is_verified === true || row.list_on_home === true,
+    ),
     rpc_duplicate: rpcResult?.duplicate === true,
     append_only_review_event_count: evidence.events.length,
     effective_decision_count: evidence.effective.length,
@@ -319,12 +378,23 @@ async function main() {
     external_llm_persistence_added: false,
     ephemeral_admin_created: true,
     ephemeral_admin_user_id_present: Boolean(admin.userId),
+    ephemeral_admin_cleanup_status: "retained_as_immutable_review_event_actor",
+    latency_kind: "system_workflow_latency",
+    review_rpc_duration_ms: reviewRpcDurationMs,
+    preview_generation_duration_ms: previewGenerationDurationMs,
+    total_review_workflow_duration_ms: Date.now() - workflowStartedAt,
     passed:
       evidence.events.length >= 1 &&
       effectiveMatchesLatest &&
+      evidence.effective[0]?.decision === decision &&
       evidence.evidence_references.length >= 1 &&
       previewOnly &&
-      publicLeakageRows.length === 0,
+      publicLeakageRows.length === 0 &&
+      (decision !== "reject" || (
+        supersedingEventAdded &&
+        evidence.events.some((event) => event.decision === "approve") &&
+        supersededPreviewPreserved
+      )),
   };
   const outputPath = writeJson(args.output ?? DEFAULT_OUTPUT, report);
   console.log(`post_phase_l_review_event_passed=${report.passed}`);

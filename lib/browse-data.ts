@@ -639,7 +639,7 @@ async function fetchCareerBrowsePage(opts: {
   const order = contestOrderColumn(opts.sort);
   const tags = careerBenefitTags(opts.career);
 
-  let contestQuery = supabase
+  const contestQuery = supabase
     .from("contests")
     .select(
       "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",

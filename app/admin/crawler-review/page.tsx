@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/crawler-review-diagnostics";
 import { getLlmReviewAssistanceReport } from "@/lib/admin/llm-review-assistance";
 import { getPostPhaseLOperationsSnapshot } from "@/lib/post-phase-l/admin-review";
+import { getPostPhaseMOperationsSnapshot } from "@/lib/post-phase-m/admin-operations";
 import { createClient } from "@/lib/supabase/server";
 
 const FILTERS: Array<{ key: AdminCrawlerReviewFilter; label: string }> = [
@@ -40,6 +41,7 @@ export default async function AdminCrawlerReviewPage({
   const llmAssistance = getLlmReviewAssistanceReport();
   const supabase = await createClient();
   const lOperations = await getPostPhaseLOperationsSnapshot(supabase);
+  const mOperations = getPostPhaseMOperationsSnapshot();
   const diagnostics = filterAdminCrawlerReviewDiagnostics(report.diagnostics, filter);
   const cards = [
     ["Total diagnostics", report.metrics.diagnostic_item_count],
@@ -139,6 +141,48 @@ export default async function AdminCrawlerReviewPage({
           ) : null}
         </section>
       ) : null}
+
+      <section className="border-y border-gray-300 bg-white py-5" aria-label="Post-Phase M controlled pilot operations">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-xs font-semibold uppercase text-gray-500">Post-Phase M controlled pilot</p>
+            <h2 className="mt-1 text-base font-semibold text-gray-900">Two-cycle source health</h2>
+          </div>
+          <span className={`rounded-md px-2 py-1 text-xs font-semibold ${mOperations.mode === "report-backed" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+            {mOperations.mode}
+          </span>
+        </div>
+        {mOperations.mode === "report-backed" ? (
+          <>
+            <p className="mt-2 text-xs text-gray-500">
+              {mOperations.cycles_compared.join(" / ")} · generated {mOperations.generated_at}
+            </p>
+            <div className="mt-4 overflow-x-auto border-y border-gray-200">
+              <table className="min-w-[920px] divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-500">
+                  <tr><th className="px-3 py-2">Source</th><th className="px-3 py-2">Role</th><th className="px-3 py-2">Health</th><th className="px-3 py-2">Cycle</th><th className="px-3 py-2">Observed / matched</th><th className="px-3 py-2">Retry / error</th><th className="px-3 py-2">Body / assets</th></tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {mOperations.sources.flatMap((source) => source.observations.map((observation, index) => (
+                    <tr key={`${source.source_key}-${observation.cycle_id}`}>
+                      <td className="px-3 py-2 font-mono text-xs">{index === 0 ? source.source_key : ""}</td>
+                      <td className="px-3 py-2">{index === 0 ? source.cohort_role : ""}</td>
+                      <td className="px-3 py-2"><span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusClass(source.health)}`}>{source.health}: {source.final_classification}</span></td>
+                      <td className="px-3 py-2 text-xs">{observation.cycle_id}</td>
+                      <td className="px-3 py-2">{observation.observed_count} / {observation.matched_count}</td>
+                      <td className="px-3 py-2">{observation.retry_count} / {observation.error_code ?? "none"}</td>
+                      <td className="px-3 py-2">{observation.body_evidence_count} / {observation.asset_evidence_count}</td>
+                    </tr>
+                  )))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-xs font-medium text-gray-600">Blocked and zero-match states are observations only; they do not imply deletion or source absence.</p>
+          </>
+        ) : (
+          <p className="mt-3 text-sm text-red-700">Controlled pilot source-health evidence is unavailable.</p>
+        )}
+      </section>
 
       <section>
         <div className="flex flex-wrap gap-2" aria-label="Diagnostic filters">

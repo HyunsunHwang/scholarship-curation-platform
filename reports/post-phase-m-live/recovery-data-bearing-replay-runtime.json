@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-07-16T05:40:45.034Z",
+  "stage": "approved_l_project_runtime_readback",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "l_project_remote_read_performed": true,
+  "l_project_remote_write_performed": false,
+  "environment_values_printed": false,
+  "run_id": "3c5c04bf-dd40-5058-ae14-87af85b79631",
+  "source_keys": [
+    "cau_008"
+  ],
+  "allowed_source_keys": [
+    "cau_008"
+  ],
+  "source_count": 1,
+  "exact_source_resolution_passed": true,
+  "fuzzy_source_match_count": 0,
+  "automatic_source_create_count": 0,
+  "graph_counts": {
+    "ingestion_crawl_runs": 1,
+    "ingestion_source_run_results": 1,
+    "ingestion_notices": 1,
+    "ingestion_notice_url_aliases": 1,
+    "ingestion_notice_occurrences": 1,
+    "ingestion_notice_revisions": 1,
+    "ingestion_notice_assets": 0,
+    "review_items": 1,
+    "review_decision_events": 0,
+    "review_effective_decisions": 0,
+    "review_evidence_references": 0,
+    "crawled_notices_compatibility": 1
+  },
+  "source_results": [
+    {
+      "source_id": "cau_008",
+      "result_status": "success",
+      "observed_count": 1,
+      "matched_count": 1,
+      "error_code": null
+    }
+  ],
+  "legacy_match_count": 1,
+  "legacy_mismatch_count": 0,
+  "numeric_route_conflict_count": 0,
+  "append_only_review_event_count": 0,
+  "effective_decision_count": 0,
+  "effective_decision_match": true,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_alias_count": 0,
+  "new_notice_count": 1,
+  "new_occurrence_count": 1,
+  "new_revision_count": 1,
+  "external_llm_call_count": 0,
+  "external_llm_persistence_added": false,
+  "runtime_readback_passed": true
+}

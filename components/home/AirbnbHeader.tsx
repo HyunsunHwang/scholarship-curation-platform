@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
@@ -19,6 +19,8 @@ type AirbnbHeaderProps = {
   /** 호환용 — 헤더는 로고·메인탭·검색만 표시 */
   variant?: "expandable" | "compact";
 };
+
+const subscribeToBrowserMount = () => () => {};
 
 const MAIN_NAV = [
   { href: "/", label: "홈", match: (path: string) => path === "/" },
@@ -310,15 +312,13 @@ export default function AirbnbHeader({
   isAdmin,
   displayInitial,
   profileTitle,
-  urgentBookmarkCount: _urgentBookmarkCount,
-  variant: _variant = "expandable",
 }: AirbnbHeaderProps) {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
-  const [portalReady, setPortalReady] = useState(false);
-
-  useEffect(() => {
-    setPortalReady(true);
-  }, []);
+  const portalReady = useSyncExternalStore(
+    subscribeToBrowserMount,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     if (!comingSoon) return;

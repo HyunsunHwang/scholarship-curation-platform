@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-07-16T05:46:43.156Z",
+  "contract_version": "post-phase-m-platform-maintenance/v1",
+  "initial_full_eslint": {
+    "errors": 11,
+    "warnings": 5
+  },
+  "final_full_eslint": {
+    "errors": 4,
+    "warnings": 0
+  },
+  "remediated_error_count": 7,
+  "remediated_warning_count": 5,
+  "behavior_preserving_remediation": true,
+  "remaining_findings": [
+    {
+      "file": "app/scholarships/[id]/LiveEngagementBadges.tsx",
+      "rule": "react-hooks/set-state-in-effect",
+      "reason": "Hydration, route-reset, or browser-storage synchronization requires a component lifecycle redesign and focused UI regression coverage.",
+      "owner": "Frontend platform owner",
+      "next_action": "Replace effect-driven derived state with an external-store or remount boundary and verify navigation, hydration, and persistence behavior.",
+      "introduced_by_m": false
+    },
+    {
+      "file": "components/NavigationPendingOverlay.tsx",
+      "rule": "react-hooks/set-state-in-effect",
+      "reason": "Hydration, route-reset, or browser-storage synchronization requires a component lifecycle redesign and focused UI regression coverage.",
+      "owner": "Frontend platform owner",
+      "next_action": "Replace effect-driven derived state with an external-store or remount boundary and verify navigation, hydration, and persistence behavior.",
+      "introduced_by_m": false
+    },
+    {
+      "file": "components/library/LibraryHub.tsx",
+      "rule": "react-hooks/set-state-in-effect",
+      "reason": "Hydration, route-reset, or browser-storage synchronization requires a component lifecycle redesign and focused UI regression coverage.",
+      "owner": "Frontend platform owner",
+      "next_action": "Replace effect-driven derived state with an external-store or remount boundary and verify navigation, hydration, and persistence behavior.",
+      "introduced_by_m": false
+    },
+    {
+      "file": "components/library/LibraryRecentList.tsx",
+      "rule": "react-hooks/set-state-in-effect",
+      "reason": "Hydration, route-reset, or browser-storage synchronization requires a component lifecycle redesign and focused UI regression coverage.",
+      "owner": "Frontend platform owner",
+      "next_action": "Replace effect-driven derived state with an external-store or remount boundary and verify navigation, hydration, and persistence behavior.",
+      "introduced_by_m": false
+    }
+  ],
+  "blanket_rule_disable_added": false,
+  "m_introduced_finding_count": 0,
+  "scoped_eslint_passed": true,
+  "typescript_passed": true,
+  "build_passed": true,
+  "full_eslint_exit_zero": false,
+  "initial_build_environment_failure": "Google Fonts were unreachable in the restricted sandbox.",
+  "final_build_environment": "network-capable Windows process",
+  "schema_cache_logs": [
+    {
+      "relation": "public.contests",
+      "classification": "non-production schema mismatch",
+      "evidence": "The L compatibility baseline intentionally does not create the product contests table; fail-closed reads may warn during build-time collection.",
+      "action": "Reconcile the production schema fingerprint and committed migration history before any production rollout. Do not create an unrelated L table to silence the warning."
+    }
+  ],
+  "status": "PASS_WITH_EXPLICIT_BASELINE"
+}

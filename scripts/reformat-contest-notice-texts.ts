@@ -295,7 +295,7 @@ async function main() {
         >["stages"]
       | undefined;
     let announcementDate = row.announcement_date;
-    let supportAmount = row.support_amount_text;
+    const supportAmount = row.support_amount_text;
     let note = row.note;
 
     if (formatOnly) {

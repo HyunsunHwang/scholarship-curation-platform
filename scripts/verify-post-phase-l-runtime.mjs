@@ -91,6 +91,9 @@ async function main() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
   if (!serviceRoleKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for L readback");
   const runId = resolveRunId(args);
+  const allowedSourceKeys = typeof args["allowed-source-keys"] === "string"
+    ? args["allowed-source-keys"].split(",").map((value) => value.trim()).filter(Boolean)
+    : POST_PHASE_L_PILOT_SOURCE_KEYS;
   const { createClient } = await import("@supabase/supabase-js");
   const client = createClient(guard.target_project_url, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -166,7 +169,7 @@ async function main() {
     (row) =>
       row.source_id === row.source_key_snapshot &&
       sourceSet.has(row.source_id) &&
-      POST_PHASE_L_PILOT_SOURCE_KEYS.includes(row.source_id),
+      allowedSourceKeys.includes(row.source_id),
   );
   const revisionByNotice = latestRevisionByNotice(revisions);
   const legacyById = new Map(legacyRows.map((row) => [row.id, row]));
@@ -207,6 +210,13 @@ async function main() {
     const event = eventById.get(row.decision_event_id);
     return event && event.review_item_id === row.review_item_id && event.decision === row.decision;
   });
+  const runStartedAt = Date.parse(runs[0].started_at);
+  const newNoticeCount = notices.filter(
+    (row) => Date.parse(row.created_at) === runStartedAt,
+  ).length;
+  const newRevisionCount = revisions.filter(
+    (row) => Date.parse(row.created_at) === runStartedAt,
+  ).length;
 
   const report = {
     generated_at: new Date().toISOString(),
@@ -221,6 +231,7 @@ async function main() {
     environment_values_printed: false,
     run_id: runId,
     source_keys: sourceKeys,
+    allowed_source_keys: allowedSourceKeys,
     source_count: sourceResults.length,
     exact_source_resolution_passed: exactSourceResolutionPassed,
     fuzzy_source_match_count: 0,
@@ -257,6 +268,9 @@ async function main() {
     duplicate_notice_count: duplicateNoticeCount,
     duplicate_occurrence_count: duplicateOccurrenceCount,
     duplicate_alias_count: duplicateAliasCount,
+    new_notice_count: newNoticeCount,
+    new_occurrence_count: occurrences.length,
+    new_revision_count: newRevisionCount,
     external_llm_call_count: 0,
     external_llm_persistence_added: false,
     runtime_readback_passed:

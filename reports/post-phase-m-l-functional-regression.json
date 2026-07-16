@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-07-16T05:51:02.805Z",
+  "contract_version": "post-phase-m-l-functional-regression/v1",
+  "l_final_commit": "778ec5de7c5a2485c148f43b100a9b99399b8a26",
+  "validation_mode": "current_head_functional_tests_with_historical_scope_separation",
+  "functional_checks": {
+    "current_head_l_test_exit_code": 0,
+    "current_head_l_test_count": 17,
+    "current_head_l_test_passed_count": 17,
+    "current_head_l_test_failed_count": 0,
+    "l_manifest_git_blob_matches_final_commit": true,
+    "l_manifest_path_count_preserved": true,
+    "m_paths_outside_historical_l_scope": 67
+  },
+  "functional_regression_passed": true,
+  "historical_ownership_scope_assertion_preserved": true,
+  "historical_ownership_scope_current_head_result": "EXPECTED_FAIL_WITH_M_PATHS_OUTSIDE_L_SCOPE",
+  "historical_ownership_failure_hidden": false,
+  "l_owned_manifest_modified": false,
+  "m_files_added_to_l_owned_manifest": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "passed": true
+}

@@ -1,0 +1,258 @@
+{
+  "generated_at": "2026-07-16T05:49:14.600Z",
+  "contract_version": "post-phase-m-source-health/v1",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "cycles_compared": [
+    "post-phase-m-cycle-1",
+    "post-phase-m-cycle-2"
+  ],
+  "source_count": 6,
+  "sources": [
+    {
+      "source_key": "cau_001",
+      "cohort_role": "control",
+      "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "scholarship_true_positive",
+      "scholarship_expansion_eligible": true,
+      "final_classification": "success_attributable",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "cau_001",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "cau_001",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    },
+    {
+      "source_key": "cau_002",
+      "cohort_role": "control",
+      "health": "blocked",
+      "attribution_health": "blocked",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
+      "final_classification": "blocked_transport",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "cau_002",
+          "classification": "blocked_transport",
+          "observed_count": 0,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": "blocked_transport",
+          "error_message": "fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca)",
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "cau_002",
+          "classification": "blocked_transport",
+          "observed_count": 0,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": "blocked_transport",
+          "error_message": "fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca)",
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    },
+    {
+      "source_key": "cau_003",
+      "cohort_role": "expansion",
+      "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_expansion_eligible": false,
+      "final_classification": "success_attributable",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "cau_003",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "cau_003",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    },
+    {
+      "source_key": "cau_007",
+      "cohort_role": "expansion",
+      "health": "healthy",
+      "attribution_health": "healthy",
+      "scholarship_relevance_classification": "false_positive",
+      "scholarship_expansion_eligible": false,
+      "final_classification": "success_attributable",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "cau_007",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "cau_007",
+          "classification": "success_attributable",
+          "observed_count": 30,
+          "matched_count": 1,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 1,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    },
+    {
+      "source_key": "cau_008",
+      "cohort_role": "expansion",
+      "health": "zero_match_observed",
+      "attribution_health": "zero_match_observed",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
+      "final_classification": "zero_match_observed",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "cau_008",
+          "classification": "zero_match_observed",
+          "observed_count": 30,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "cau_008",
+          "classification": "zero_match_observed",
+          "observed_count": 30,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    },
+    {
+      "source_key": "yonsei_060",
+      "cohort_role": "control",
+      "health": "zero_match_observed",
+      "attribution_health": "zero_match_observed",
+      "scholarship_relevance_classification": "not_matched",
+      "scholarship_expansion_eligible": false,
+      "final_classification": "zero_match_observed",
+      "stable_across_cycles": true,
+      "observations": [
+        {
+          "cycle_id": "post-phase-m-cycle-1",
+          "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+          "source_key": "yonsei_060",
+          "classification": "zero_match_observed",
+          "observed_count": 30,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        },
+        {
+          "cycle_id": "post-phase-m-cycle-2",
+          "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+          "source_key": "yonsei_060",
+          "classification": "zero_match_observed",
+          "observed_count": 30,
+          "matched_count": 0,
+          "retry_count": 0,
+          "error_code": null,
+          "error_message": null,
+          "body_evidence_count": 0,
+          "asset_evidence_count": 0
+        }
+      ],
+      "absence_inferred": false,
+      "automatic_public_publish_enabled": false
+    }
+  ],
+  "healthy_attributable_count": 3,
+  "blocked_transport_count": 1,
+  "zero_match_observed_count": 2,
+  "source_state_drift_count": 0,
+  "deletion_or_absence_inference_count": 0,
+  "passed": true
+}

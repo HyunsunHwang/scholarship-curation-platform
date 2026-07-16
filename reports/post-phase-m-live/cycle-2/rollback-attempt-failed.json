@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-07-16T02:55:00.000Z",
+  "stage": "post_phase_m_cycle_2_rollback_probe",
+  "run_id": "44fb908d-31a4-597c-a076-3c299c887a23",
+  "passed": false,
+  "transaction_aborted": true,
+  "error_code": "review_items_current_revision_fk",
+  "error_message": "Bounded rollback failed because ingestion_notice_revisions remained referenced by review_items.current_revision_id.",
+  "classification": "bounded_rollback_scope_limitation",
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false
+}

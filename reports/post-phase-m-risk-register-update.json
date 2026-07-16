@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-07-16T05:46:43.156Z",
+  "contract_version": "post-phase-m-risk-register-update/v1",
+  "reevaluated_risk_ids": [
+    "RISK-PILOT-COHORT-OVERFITTING",
+    "RISK-MAIN-LINT-BASELINE",
+    "RISK-CAU003-DUPLICATE",
+    "RISK-CAU012-COVERAGE",
+    "RISK-CAU008-INCOMPLETE-BATCH",
+    "RISK-ATTACHMENT-PARSING",
+    "RISK-CAU007-ZERO-MATCH",
+    "RISK-CONTEXTUAL-KEYWORD",
+    "RISK-COVERAGE-COMPLETENESS",
+    "RISK-REVIEW-PERSISTENCE",
+    "RISK-SCHEMA-ALIGNMENT",
+    "RISK-GUARDED-PRODUCTION-APPLY",
+    "RISK-PUBLIC-PROJECTION-RECONCILIATION",
+    "RISK-REPORT-PROTOTYPE-OVERCLAIM",
+    "RISK-LEGACY-REVIEW-MUTATION",
+    "RISK-SOURCE-IDENTITY-OWNERSHIP",
+    "RISK-EVIDENCE-FRESHNESS-LEAKAGE",
+    "RISK-PERSONAL-ENGINE-PORT-DIVERGENCE",
+    "RISK-IMPLEMENTATION-AUTHORITY-AND-BROWSER-ENVIRONMENT",
+    "RISK-LLM-REVIEW-PROTOTYPE-LIMITATIONS"
+  ],
+  "reevaluated_risk_count": 20,
+  "added_risk_ids": [
+    "RISK-CAU002-TLS-TRANSPORT",
+    "RISK-PRODUCTION-SCHEMA-PARITY",
+    "RISK-RUN-ROLLBACK-REVIEW-FK"
+  ],
+  "duplicate_risk_id_count": 0,
+  "unresolved_without_owner_count": 0,
+  "unresolved_without_next_phase_count": 0,
+  "non_production_pilot_claimed_as_production_resolution": false,
+  "passed": true
+}

@@ -130,6 +130,7 @@ const [matrixRaw, productRaw, pilotRaw, riskRaw, browserWalkthrough, scopeDoc, p
   read("app/admin/crawler-review/page.tsx"),
 ]);
 const duplicateJsonKeys = [matrixRaw, productRaw, pilotRaw, riskRaw].flatMap(findDuplicateJsonKeys);
+const normalizedBrowserWalkthrough = browserWalkthrough.replace(/\r\n/g, "\n");
 const duplicateNegativeProof = findDuplicateJsonKeys('{"key":1,"key":2}').length === 1;
 const matrix = JSON.parse(matrixRaw);
 const product = JSON.parse(productRaw);
@@ -184,7 +185,7 @@ const checks = [
   ["misleading prototype findings are disposed", unresolvedPrototypeFinding.length === 0],
   ["meaningful public implementation", publicModel.includes("getPublicScholarshipReadModelStatus") && publicPage.includes("PublicScholarshipDataStatus") && publicDetail.includes("sourceId")],
   ["meaningful admin implementation", reviewPage.includes("LEGACY_REVIEW_SCOPE") && reviewDetail.includes('notice.status !== "new"') && diagnosticsPage.includes("report.generated_at")],
-  ["browser walkthrough complete", browserWalkthrough.includes("Status\n\nPASS")],
+  ["browser walkthrough complete", normalizedBrowserWalkthrough.includes("Status\n\nPASS")],
   ["bounded exact-key pilot cohort", pilot.cohort_size >= 2 && pilot.cohort_size <= 5 && pilot.sources.length === pilot.cohort_size && invalidPilotSource.length === 0],
   ["Phase L vertical slice fixed", scopeDoc.includes("cau_001 -> ingestion -> normalized graph -> review UI -> append-only review decision -> controlled public-projection preview -> rollback/replay validation")],
   ["external implementation boundaries recorded", scopeDoc.includes("authorized target-schema inventory") && scopeDoc.includes("migration/release owner")],
@@ -205,7 +206,7 @@ const result = {
   prototype_disposition_count: product.misleading_prototype_findings.length,
   unresolved_misleading_state_count: unresolvedPrototypeFinding.length,
   pilot_source_count: pilot.sources.length,
-  browser_walkthrough_complete: browserWalkthrough.includes("Status\n\nPASS"),
+  browser_walkthrough_complete: normalizedBrowserWalkthrough.includes("Status\n\nPASS"),
   phase_l_scope_fixed: scopeDoc.includes("Representative Vertical Slice"),
   production_write_performed: false,
   migration_apply_performed: false,

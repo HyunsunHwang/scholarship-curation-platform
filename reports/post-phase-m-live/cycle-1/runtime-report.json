@@ -1,0 +1,108 @@
+{
+  "generated_at": "2026-07-16T02:47:29.119Z",
+  "stage": "approved_l_project_runtime_readback",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "l_project_remote_read_performed": true,
+  "l_project_remote_write_performed": false,
+  "environment_values_printed": false,
+  "run_id": "8016115a-021f-5662-bb8d-8352484d187a",
+  "source_keys": [
+    "cau_001",
+    "cau_002",
+    "cau_003",
+    "cau_007",
+    "cau_008",
+    "yonsei_060"
+  ],
+  "allowed_source_keys": [
+    "cau_001",
+    "cau_002",
+    "yonsei_060",
+    "cau_003",
+    "cau_007",
+    "cau_008"
+  ],
+  "source_count": 6,
+  "exact_source_resolution_passed": true,
+  "fuzzy_source_match_count": 0,
+  "automatic_source_create_count": 0,
+  "graph_counts": {
+    "ingestion_crawl_runs": 1,
+    "ingestion_source_run_results": 6,
+    "ingestion_notices": 3,
+    "ingestion_notice_url_aliases": 3,
+    "ingestion_notice_occurrences": 3,
+    "ingestion_notice_revisions": 4,
+    "ingestion_notice_assets": 0,
+    "review_items": 3,
+    "review_decision_events": 2,
+    "review_effective_decisions": 1,
+    "review_evidence_references": 6,
+    "crawled_notices_compatibility": 3
+  },
+  "source_results": [
+    {
+      "source_id": "cau_001",
+      "result_status": "success",
+      "observed_count": 30,
+      "matched_count": 1,
+      "error_code": null
+    },
+    {
+      "source_id": "cau_002",
+      "result_status": "blocked_transport",
+      "observed_count": 0,
+      "matched_count": 0,
+      "error_code": "blocked_transport"
+    },
+    {
+      "source_id": "cau_003",
+      "result_status": "success",
+      "observed_count": 30,
+      "matched_count": 1,
+      "error_code": null
+    },
+    {
+      "source_id": "cau_007",
+      "result_status": "success",
+      "observed_count": 30,
+      "matched_count": 1,
+      "error_code": null
+    },
+    {
+      "source_id": "cau_008",
+      "result_status": "zero_match_observed",
+      "observed_count": 30,
+      "matched_count": 0,
+      "error_code": null
+    },
+    {
+      "source_id": "yonsei_060",
+      "result_status": "zero_match_observed",
+      "observed_count": 30,
+      "matched_count": 0,
+      "error_code": null
+    }
+  ],
+  "legacy_match_count": 3,
+  "legacy_mismatch_count": 0,
+  "numeric_route_conflict_count": 0,
+  "append_only_review_event_count": 2,
+  "effective_decision_count": 1,
+  "effective_decision_match": true,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_alias_count": 0,
+  "new_notice_count": 2,
+  "new_occurrence_count": 3,
+  "new_revision_count": 3,
+  "external_llm_call_count": 0,
+  "external_llm_persistence_added": false,
+  "runtime_readback_passed": true
+}
