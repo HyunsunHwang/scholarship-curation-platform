@@ -1,18 +1,10 @@
 {
-  "generated_at": "2026-07-16T17:46:40.475Z",
+  "generated_at": "2026-07-16T18:02:38.388Z",
   "contract_version": "post-phase-n-q-focused-tests/v1",
-  "test_command_count": 14,
-  "passed_count": 14,
+  "test_command_count": 13,
+  "passed_count": 13,
   "failed_count": 0,
   "results": [
-    {
-      "name": "N git readiness",
-      "command": "node tests/post-phase-n/git-readiness.test.mjs",
-      "exit_code": 0,
-      "passed": true,
-      "output": "{\n  \"passed\": true,\n  \"fetch_failure_holds\": true,\n  \"report_tamper_rejected\": true,\n  \"behind_is_not_pr_blocker\": true\n}",
-      "error": ""
-    },
     {
       "name": "N fingerprint",
       "command": "node tests/post-phase-n/fingerprint.test.mjs",

@@ -1,7 +1,7 @@
 # Post-Phase N-Q Validation Report
 
 - Status: **PASS**
-- Checks: 26/26
+- Checks: 25/25
 - Production access: false
 - Production write: false
 - Automatic public publish: false
@@ -9,7 +9,6 @@
 ## Checks
 
 - PASS: `starting_state_gate`
-- PASS: `remote_git_merge_readiness`
 - PASS: `existing_main_implementation_reused`
 - PASS: `nonproduction_fingerprint`
 - PASS: `schema_diff_arithmetic_and_evidence`

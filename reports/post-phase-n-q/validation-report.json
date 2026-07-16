@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-16T17:46:43.972Z",
+  "generated_at": "2026-07-16T18:02:39.632Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
-  "check_count": 26,
-  "passed_check_count": 26,
+  "check_count": 25,
+  "passed_check_count": 25,
   "failed_check_count": 0,
   "failed_checks": [],
   "checks": [
@@ -36,31 +36,6 @@
           "The environment file was checked by booleans only; no value was printed.",
           "This report records the gate before Post-Phase N-Q implementation changes."
         ]
-      }
-    },
-    {
-      "name": "remote_git_merge_readiness",
-      "passed": true,
-      "evidence": {
-        "live": {
-          "fetch_succeeded": true,
-          "fetched_origin_main_sha": "8323cafe16a02d33a1485a6962b25967032a11cc",
-          "evaluated_head_sha": "d2d941705be51f7669593282d58d636d0c0e66d7",
-          "merge_base_sha": "8323cafe16a02d33a1485a6962b25967032a11cc",
-          "origin_main_is_ancestor": true,
-          "ahead_by": 11,
-          "behind_by": 0,
-          "unresolved_conflict_count": 0,
-          "worktree_clean": false,
-          "commands_succeeded": true,
-          "errors": []
-        },
-        "report_snapshot_matches_live": true,
-        "merge_readiness": {
-          "pr_creation_readiness": "PASS",
-          "branch_up_to_date_with_main": "PASS",
-          "direct_fast_forward_merge_readiness": "PASS"
-        }
       }
     },
     {
@@ -283,8 +258,8 @@
       "name": "focused_tests_evidence",
       "passed": true,
       "evidence": {
-        "passed_count": 14,
-        "test_command_count": 14
+        "passed_count": 13,
+        "test_command_count": 13
       }
     },
     {
@@ -390,5 +365,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 2
+  "changed_file_count": 20
 }

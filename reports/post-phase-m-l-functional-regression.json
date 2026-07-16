@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T17:21:29.673Z",
+  "generated_at": "2026-07-16T05:51:02.805Z",
   "contract_version": "post-phase-m-l-functional-regression/v1",
   "l_final_commit": "778ec5de7c5a2485c148f43b100a9b99399b8a26",
   "validation_mode": "current_head_functional_tests_with_historical_scope_separation",
@@ -10,7 +10,7 @@
     "current_head_l_test_failed_count": 0,
     "l_manifest_git_blob_matches_final_commit": true,
     "l_manifest_path_count_preserved": true,
-    "m_paths_outside_historical_l_scope": 203
+    "m_paths_outside_historical_l_scope": 67
   },
   "functional_regression_passed": true,
   "historical_ownership_scope_assertion_preserved": true,

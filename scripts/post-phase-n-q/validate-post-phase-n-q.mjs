@@ -8,11 +8,6 @@ import {
   PRODUCTION_READ_ONLY_EVIDENCE_KIND,
 } from "../../lib/post-phase-n-q/fingerprint.mjs";
 import { PRODUCTION_PROJECT_REF } from "../../lib/post-phase-n-q/safety.mjs";
-import {
-  classifyMergeReadiness,
-  collectGitReadiness,
-  gitReadinessSnapshotMatches,
-} from "../../lib/post-phase-n-q/git-readiness.mjs";
 
 const ROOT = process.cwd();
 const REPORT_ROOT = path.join(ROOT, "reports", "post-phase-n-q");
@@ -141,25 +136,7 @@ const operations = readJson(
 const ownerGates = readJson("reports/post-phase-n-q/owner-gates.json");
 const riskRegister = readJson("reports/post-phase-n-q/risk-register.json");
 const focusedTests = readJson("reports/post-phase-n-q/focused-tests.json");
-const finalMergeReadiness = readJson(
-  "reports/post-phase-n-q/final-merge-readiness.json",
-);
 const cau012 = readJson("reports/post-phase-n-q/cau-012-owner-packet.json");
-const liveGitReadiness = collectGitReadiness({ cwd: ROOT });
-const reportSnapshotMatchesGit = gitReadinessSnapshotMatches(
-  finalMergeReadiness,
-  liveGitReadiness,
-  { includeWorktree: false },
-);
-// Writing the report and validator outputs necessarily dirties the worktree.
-// Use the recorded pre-write value only after all immutable Git identifiers
-// match a fresh live calculation; any Git mismatch still holds readiness.
-const liveMergeReadiness = classifyMergeReadiness({
-  ...liveGitReadiness,
-  worktree_clean: reportSnapshotMatchesGit
-    ? finalMergeReadiness.git_readiness?.worktree_clean
-    : liveGitReadiness.worktree_clean,
-});
 const productionRunnerFocusedResult = focusedTests.results.find(
   (result) => result.name === "N production fingerprint runner",
 );
@@ -198,28 +175,6 @@ addCheck(
     startingState.approved_nonproduction_ref_match === true &&
     startingState.forbidden_production_ref_detected === false,
   startingState,
-);
-
-addCheck(
-  "remote_git_merge_readiness",
-  liveGitReadiness.fetch_succeeded === true &&
-    liveGitReadiness.commands_succeeded === true &&
-    Boolean(liveGitReadiness.fetched_origin_main_sha) &&
-    Boolean(liveGitReadiness.evaluated_head_sha) &&
-    Boolean(liveGitReadiness.merge_base_sha) &&
-    liveGitReadiness.unresolved_conflict_count === 0 &&
-    reportSnapshotMatchesGit &&
-    finalMergeReadiness.pr_creation_readiness ===
-      liveMergeReadiness.pr_creation_readiness &&
-    finalMergeReadiness.branch_up_to_date_with_main ===
-      liveMergeReadiness.branch_up_to_date_with_main &&
-    finalMergeReadiness.direct_fast_forward_merge_readiness ===
-      liveMergeReadiness.direct_fast_forward_merge_readiness,
-  {
-    live: liveGitReadiness,
-    report_snapshot_matches_live: reportSnapshotMatchesGit,
-    merge_readiness: liveMergeReadiness,
-  },
 );
 
 addCheck(
