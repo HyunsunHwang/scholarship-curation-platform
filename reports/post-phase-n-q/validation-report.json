@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T10:41:20.911Z",
+  "generated_at": "2026-07-16T11:29:15.616Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
@@ -263,6 +263,12 @@
         "stale_evidence_cleanup_precedes_gate": true,
         "stale_evidence_gate_failure_tested": true,
         "execute_not_called_on_gate_failure": true,
+        "direct_url_project_ref_tested": true,
+        "session_pooler_project_ref_tested": true,
+        "session_pooler_negative_security_case_count": 5,
+        "session_pooler_credential_redaction_tested": true,
+        "production_execute_called": false,
+        "owner_runbook_connection_modes_documented": true,
         "filename_heuristic_absent": true
       }
     },
@@ -318,5 +324,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 5
+  "changed_file_count": 6
 }

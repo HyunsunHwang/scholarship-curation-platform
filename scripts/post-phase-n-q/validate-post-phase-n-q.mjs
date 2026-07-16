@@ -690,6 +690,13 @@ const productionRunnerContractSource = fs.readFileSync(
   ),
   "utf8",
 );
+const productionRunbookSource = fs.readFileSync(
+  path.join(
+    ROOT,
+    "docs/post-phase-n-q/production-read-only-investigation-runbook.md",
+  ),
+  "utf8",
+);
 const diffRunnerSource = fs.readFileSync(
   path.join(ROOT, "scripts/post-phase-n/diff-schema-fingerprints.mjs"),
   "utf8",
@@ -739,6 +746,20 @@ addCheck(
       true &&
     productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
       true &&
+    productionRunnerFocusedEvidence.direct_url_project_ref_tested === true &&
+    productionRunnerFocusedEvidence.session_pooler_project_ref_tested ===
+      true &&
+    productionRunnerFocusedEvidence.session_pooler_negative_security_case_count >=
+      5 &&
+    productionRunnerFocusedEvidence.session_pooler_credential_redaction_tested ===
+      true &&
+    productionRunnerFocusedEvidence.production_execute_called === false &&
+    productionRunbookSource.includes("Direct connection") &&
+    productionRunbookSource.includes("Shared Session pooler") &&
+    productionRunbookSource.includes("IPv4-only") &&
+    productionRunbookSource.includes("hostname") &&
+    productionRunbookSource.includes("username") &&
+    productionRunbookSource.includes("OWNER_PENDING") &&
     productionRunnerContractSource.includes(
       "validateProductionFingerprintDocument",
     ) &&
@@ -765,6 +786,23 @@ addCheck(
     execute_not_called_on_gate_failure:
       productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
       true,
+    direct_url_project_ref_tested:
+      productionRunnerFocusedEvidence.direct_url_project_ref_tested === true,
+    session_pooler_project_ref_tested:
+      productionRunnerFocusedEvidence.session_pooler_project_ref_tested ===
+      true,
+    session_pooler_negative_security_case_count:
+      productionRunnerFocusedEvidence.session_pooler_negative_security_case_count ??
+      0,
+    session_pooler_credential_redaction_tested:
+      productionRunnerFocusedEvidence.session_pooler_credential_redaction_tested ===
+      true,
+    production_execute_called:
+      productionRunnerFocusedEvidence.production_execute_called === true,
+    owner_runbook_connection_modes_documented:
+      productionRunbookSource.includes("Direct connection") &&
+      productionRunbookSource.includes("Shared Session pooler") &&
+      productionRunbookSource.includes("IPv4-only"),
     filename_heuristic_absent:
       !/productionPath\.includes\(\s*["']\.synthetic\.["']\s*\)/u.test(
         diffRunnerSource,

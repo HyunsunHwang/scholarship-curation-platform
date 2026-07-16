@@ -1,33 +1,50 @@
 # Production Read-Only Investigation Runbook
 
-이 절차는 production schema를 변경하지 않는 owner-gated catalog
-fingerprint 실행 절차다. Codex remediation 과정에서는 production에
-접속하지 않았다.
+이 문서는 production schema를 변경하지 않는 owner-gated catalog fingerprint 실행 절차를 설명한다. 현재 production fingerprint gate 상태는 `OWNER_PENDING`이며, 이 문서만으로 production 실행이 승인되지는 않는다.
 
 ## 실행 구성
 
 - Gate: `OWNER_GATE_N_PRODUCTION_READ_ONLY_FINGERPRINT`
-- Stage A SQL:
-  `supabase/post-phase-n-q/001_production_read_only_fingerprint.sql`
-- Runner:
-  `scripts/post-phase-n/run-production-read-only-fingerprint.mjs`
-- Fingerprint:
-  `reports/post-phase-n-q/production-fingerprint-owner-output.json`
-- Receipt:
-  `reports/post-phase-n-q/production-fingerprint-execution-receipt.json`
+- SQL: `supabase/post-phase-n-q/001_production_read_only_fingerprint.sql`
+- Runner: `scripts/post-phase-n/run-production-read-only-fingerprint.mjs`
+- Fingerprint: `reports/post-phase-n-q/production-fingerprint-owner-output.json`
+- Receipt: `reports/post-phase-n-q/production-fingerprint-execution-receipt.json`
 - Required local tool: `psql`
 
-Stage A는 application table이 전혀 없더라도 catalog metadata를 수집한다.
-Stage B는 Stage A에서 relation과 column이 확인된 고정 allowlist 항목만
-read-only transaction으로 조회한다. Optional relation, migration metadata,
-또는 aggregate 권한이 없으면 해당 항목을 `missing_relation`,
-`missing_column`, 또는 `unavailable`로 기록하고 base fingerprint는
-유지한다.
+SQL은 `BEGIN TRANSACTION READ ONLY`로 시작하고 마지막에 `ROLLBACK`한다. Application row body를 덤프하지 않으며 catalog metadata와 제한된 상태 집계만 수집한다.
+
+## Connection URL 형식
+
+Runner는 다음 두 Supabase PostgreSQL 연결 형식만 project ref 검증 대상으로 사용한다.
+
+### Direct connection
+
+```text
+postgresql://postgres@db.<project-ref>.supabase.co:5432/postgres
+```
+
+위 표기는 password를 생략한 구조 예시다. Direct connection에서는 project ref를 `db.<project-ref>.supabase.co` hostname에서 검증한다.
+
+### Shared Session pooler
+
+```text
+postgres://postgres.<project-ref>@aws-<region>.pooler.supabase.com:5432/postgres
+```
+
+위 표기는 password를 생략한 구조 예시다. Shared Session pooler에서는 다음 조건을 모두 검증한다.
+
+- hostname이 정확한 Supabase `*.pooler.supabase.com` 하위 호스트다.
+- URL username이 정확히 `postgres.<project-ref>` 형식이다.
+- username에서 얻은 project ref가 expected production ref와 일치한다.
+- 포트가 Session mode의 `5432`이거나 URL에서 생략돼 기본 PostgreSQL 포트로 해석된다.
+
+IPv4-only 환경에서는 Direct connection 대신 Shared Session pooler의 포트 `5432`를 사용할 수 있다. Transaction pooler 포트 `6543`은 이 runner에서 지원하지 않으며 fail-closed 처리한다.
+
+URL 전체에 project ref 문자열이 포함됐다는 이유만으로는 gate를 통과하지 않는다. 가짜 유사 도메인, 외부 호스트, 잘못된 username, 다른 project ref는 모두 차단한다.
 
 ## Owner 실행
 
-Credential은 owner의 secret store에서 로컬 환경변수에만 주입한다.
-값을 console, report, shell history 또는 repository에 기록하지 않는다.
+Credential은 owner의 local secret store에서 현재 shell 환경변수로만 주입한다. 실제 값은 console, report, shell history 또는 repository에 기록하지 않는다.
 
 ```powershell
 $env:POST_PHASE_N_PRODUCTION_READ='true'
@@ -48,11 +65,11 @@ node scripts/post-phase-n/run-production-read-only-fingerprint.mjs
 $LASTEXITCODE
 ```
 
+환경변수 존재 여부만 확인하고 URL이나 credential 값을 출력하지 않는다.
+
 ## 성공 기준
 
-Console에 출력된 정적 boolean만으로 성공을 판정하지 않는다. Runner가
-fingerprint JSON을 parse하고 다음 값을 exact 검증한 경우에만 exit code
-0과 `passed=true` receipt를 생성한다.
+Runner가 fingerprint JSON을 parse하고 다음 값을 정확히 검증한 경우에만 exit code `0`과 `passed=true` receipt를 생성한다.
 
 ```text
 schema_version = post-phase-n-fingerprint/v1
@@ -64,18 +81,7 @@ safety.dml_performed = false
 safety.row_body_dumped = false
 ```
 
-다음 두 파일이 모두 생성되고 receipt의 SHA-256과 byte count가 실제
-fingerprint 파일에 대응해야 한다.
-
-```text
-reports/post-phase-n-q/production-fingerprint-owner-output.json
-reports/post-phase-n-q/production-fingerprint-execution-receipt.json
-```
-
-불일치, malformed JSON, gate mismatch 또는 Stage A 실패 시 runner는
-nonzero로 종료하고 stale evidence 파일을 남기지 않는다. Optional Stage B
-조회 실패만 `unavailable`로 기록하며 전체 catalog fingerprint를
-실패시키지 않는다.
+Gate mismatch, malformed JSON 또는 SQL 실패 시 nonzero로 종료하며 stale owner output과 receipt를 남기지 않는다. Optional catalog 조회 권한이 없으면 해당 항목을 `unavailable`로 기록하되 credential은 어떤 결과에도 포함하지 않는다.
 
 ## 정리
 
@@ -83,6 +89,4 @@ nonzero로 종료하고 stale evidence 파일을 남기지 않는다. Optional S
 Remove-Item Env:POST_PHASE_N_PRODUCTION_READ,Env:POST_PHASE_N_PRODUCTION_PROJECT_REF,Env:POST_PHASE_N_PRODUCTION_READ_CONFIRMATION,Env:POST_PHASE_N_PRODUCTION_DATABASE_URL -ErrorAction SilentlyContinue
 ```
 
-공유 대상은 sanitized fingerprint JSON, execution receipt JSON, command
-exit code뿐이다. Connection URL, password, key, token은 공유하거나 commit하지
-않는다.
+공유 가능한 결과는 sanitized fingerprint JSON, execution receipt JSON, command exit code뿐이다. Connection URL, password, key, token은 공유하거나 commit하지 않는다.

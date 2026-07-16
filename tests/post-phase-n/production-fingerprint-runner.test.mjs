@@ -16,6 +16,7 @@ import {
   validateProductionFingerprintDocument,
 } from "../../lib/post-phase-n-q/production-fingerprint-runner.mjs";
 import {
+  extractSupabaseProjectRef,
   inspectProductionReadGate,
   PRODUCTION_READ_CONFIRMATION,
 } from "../../lib/post-phase-n-q/safety.mjs";
@@ -25,6 +26,32 @@ import {
 } from "../../scripts/post-phase-n/run-production-read-only-fingerprint.mjs";
 
 const PRODUCTION_REF = "synwudnxdkybwihwmtak";
+const NONPRODUCTION_REF = "hrayfvdggbhfmmzfblly";
+
+function fixtureDatabaseUrl({
+  protocol = "postgres:",
+  username,
+  hostname,
+  port = "5432",
+}) {
+  const url = new URL(`${protocol}//${hostname}/postgres`);
+  url.username = username;
+  url.password = "fixture-password";
+  url.port = port;
+  return url.href;
+}
+
+const DIRECT_DATABASE_URL = fixtureDatabaseUrl({
+  protocol: "postgresql:",
+  username: "postgres",
+  hostname: `db.${PRODUCTION_REF}.supabase.co`,
+});
+const SESSION_POOLER_HOST =
+  "aws-0-ap-northeast-2.pooler.supabase.com";
+const SESSION_POOLER_DATABASE_URL = fixtureDatabaseUrl({
+  username: `postgres.${PRODUCTION_REF}`,
+  hostname: SESSION_POOLER_HOST,
+});
 
 function productionFingerprint(overrides = {}) {
   const base = {
@@ -76,10 +103,27 @@ const validGateEnvironment = {
   POST_PHASE_N_PRODUCTION_READ: "true",
   POST_PHASE_N_PRODUCTION_PROJECT_REF: PRODUCTION_REF,
   POST_PHASE_N_PRODUCTION_READ_CONFIRMATION: PRODUCTION_READ_CONFIRMATION,
-  POST_PHASE_N_PRODUCTION_DATABASE_URL:
-    `postgresql://owner@db.${PRODUCTION_REF}.supabase.co:5432/postgres`,
+  POST_PHASE_N_PRODUCTION_DATABASE_URL: DIRECT_DATABASE_URL,
 };
 
+assert.equal(
+  extractSupabaseProjectRef(DIRECT_DATABASE_URL),
+  PRODUCTION_REF,
+);
+assert.equal(
+  extractSupabaseProjectRef(SESSION_POOLER_DATABASE_URL),
+  PRODUCTION_REF,
+);
+assert.equal(
+  extractSupabaseProjectRef(
+    fixtureDatabaseUrl({
+      username: `postgres.${PRODUCTION_REF}`,
+      hostname: SESSION_POOLER_HOST,
+      port: "",
+    }),
+  ),
+  PRODUCTION_REF,
+);
 assert.equal(inspectProductionReadGate({}).safe, false);
 assert.ok(
   inspectProductionReadGate({}).errors.includes(
@@ -106,6 +150,54 @@ assert.ok(
   }).errors.includes("production_database_url_ref_mismatch"),
 );
 assert.equal(inspectProductionReadGate(validGateEnvironment).safe, true);
+const validSessionPoolerEnvironment = {
+  ...validGateEnvironment,
+  POST_PHASE_N_PRODUCTION_DATABASE_URL: SESSION_POOLER_DATABASE_URL,
+};
+const validSessionPoolerGate = inspectProductionReadGate(
+  validSessionPoolerEnvironment,
+);
+assert.equal(validSessionPoolerGate.safe, true);
+assert.equal(validSessionPoolerGate.database_ref_match, true);
+assert.equal(
+  JSON.stringify(validSessionPoolerGate).includes(
+    SESSION_POOLER_DATABASE_URL,
+  ),
+  false,
+);
+
+const invalidSessionPoolerUrls = [
+  fixtureDatabaseUrl({
+    username: `postgres.${NONPRODUCTION_REF}`,
+    hostname: SESSION_POOLER_HOST,
+  }),
+  fixtureDatabaseUrl({
+    username: "postgres.wrongproject",
+    hostname: SESSION_POOLER_HOST,
+  }),
+  fixtureDatabaseUrl({
+    username: `postgres.${PRODUCTION_REF}`,
+    hostname: `${SESSION_POOLER_HOST}.evil.example`,
+  }),
+  fixtureDatabaseUrl({
+    username: "postgres",
+    hostname: SESSION_POOLER_HOST,
+  }),
+  fixtureDatabaseUrl({
+    username: `postgres.${PRODUCTION_REF}`,
+    hostname: SESSION_POOLER_HOST,
+    port: "6543",
+  }),
+];
+for (const databaseUrl of invalidSessionPoolerUrls) {
+  const gate = inspectProductionReadGate({
+    ...validGateEnvironment,
+    POST_PHASE_N_PRODUCTION_DATABASE_URL: databaseUrl,
+  });
+  assert.equal(gate.safe, false);
+  assert.ok(gate.errors.includes("production_database_url_ref_mismatch"));
+}
+
 const childEnvironment = buildPsqlEnvironment({
   ...validGateEnvironment,
   PATH: "test-path",
@@ -311,7 +403,7 @@ assert.equal(
   false,
 );
 const receipt = buildProductionExecutionReceipt({
-  guard: inspectProductionReadGate(validGateEnvironment),
+  guard: validSessionPoolerGate,
   fingerprint: valid,
   outputByteCount: 1234,
 });
@@ -334,6 +426,10 @@ assert.deepEqual(
   },
 );
 assert.equal(receipt.fingerprint_sha256, valid.fingerprint_sha256);
+assert.equal(
+  JSON.stringify(receipt).includes(SESSION_POOLER_DATABASE_URL),
+  false,
+);
 
 const sql = fs.readFileSync(
   "supabase/post-phase-n-q/001_production_read_only_fingerprint.sql",
@@ -401,6 +497,12 @@ console.log(
       stale_evidence_gate_failure_tested: true,
       execute_not_called_on_gate_failure:
         gateFailureExecuteCallCount === 0,
+      direct_url_project_ref_tested: true,
+      session_pooler_project_ref_tested: true,
+      session_pooler_negative_security_case_count:
+        invalidSessionPoolerUrls.length,
+      session_pooler_credential_redaction_tested: true,
+      production_execute_called: gateFailureExecuteCallCount > 0,
       production_access_performed: false,
     },
     null,
