@@ -90,7 +90,7 @@ async function main() {
     additionalInputs: process.argv.slice(2),
   });
   const sources = selectSources(args);
-  const maxItems = boundedInteger(args["max-items"], 10, 1, 20, "max-items");
+  const maxItems = boundedInteger(args["max-items"], 10, 1, 30, "max-items");
   const maxPages = boundedInteger(args["max-pages"], 2, 1, 5, "max-pages");
   const lookbackDays = boundedInteger(args["lookback-days"], 730, 1, 3650, "lookback-days");
   const runStamp = new Date().toISOString().replace(/[:.]/g, "-");

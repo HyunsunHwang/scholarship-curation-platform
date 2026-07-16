@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T14:02:00.000Z",
+  "generated_at": "2026-07-15T15:18:00.000Z",
   "stage": "approved_l_project_browser_walkthrough",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "production_ref_detected": false,
@@ -8,32 +8,44 @@
   "l_project_remote_read_performed": true,
   "l_project_remote_write_performed": true,
   "local_dev_server_started": true,
-  "local_dev_server_port": 3020,
+  "local_dev_server_port": 3021,
   "auth_page_rendered": true,
   "test_admin_bootstrap_ready": true,
   "credential_values_printed": false,
   "admin_login_form_submitted": true,
-  "authenticated_admin_layout_reached": false,
-  "blocked_reason": "local_dev_server_server_action_fetch_failed_in_sandbox",
-  "blocked_at_route": "/auth",
-  "intended_authenticated_routes": [
-    "/admin/review?kind=scholarship&status=promoted",
-    "/admin/review/scholarships/3",
+  "authenticated_admin_layout_reached": true,
+  "blocked_reason": null,
+  "blocked_at_route": null,
+  "verified_authenticated_routes": [
+    "/admin/review",
+    "/admin/review/scholarships/4",
     "/admin/crawler-review",
-    "/scholarships"
+    "/scholarships",
+    "/scholarships/2"
   ],
-  "runtime_evidence_fallbacks": [
-    "reports/post-phase-l-live/fixture-controlled-projection-preview.json",
-    "reports/post-phase-l-live/fixture-final-runtime-after-preview.json"
-  ],
-  "browser_walkthrough_complete": false,
+  "live_graph_legacy_evidence_visible": true,
+  "append_only_event_history_visible": true,
+  "effective_decision_visible": true,
+  "controlled_preview_visible": true,
+  "preview_only_state_visible": true,
+  "blocked_source_visible": true,
+  "unresolved_or_zero_match_source_visible": true,
+  "public_list_leakage_detected": false,
+  "numeric_preview_route_status": 404,
+  "numeric_preview_route_leakage_detected": false,
+  "desktop_overflow_detected": false,
+  "mobile_390px_overflow_detected": false,
+  "browser_console_error_count": 0,
+  "browser_runtime_error_count": 0,
+  "browser_walkthrough_complete": true,
   "external_llm_call_count": 0,
   "automatic_public_publish_count": 0,
   "public_leakage_count": 0,
   "notes": [
-    "Auth page rendered in the in-app browser against the local L dev server.",
-    "The test admin was bootstrapped in the approved L project without printing credentials.",
-    "Anon sign-in succeeded outside the browser, but the local Next server action returned fetch failed when it attempted Supabase auth from the sandboxed dev server.",
-    "Runtime API evidence verifies graph, review event, controlled preview, replay, reconciliation, rollback, and reapply; the authenticated browser layout remains pending an owner-run dev server or a network-enabled local process."
+    "The dev server ran as a network-capable Windows user process on port 3021.",
+    "A test admin authenticated through the real /auth server action and reached the admin layout.",
+    "The live cau_001 detail showed graph and legacy comparison evidence, two append-only events, the effective approve decision, and a preview-only payload.",
+    "cau_002 remained blocked_transport and yonsei_060 remained zero_match_observed in crawler diagnostics.",
+    "The hidden preview was absent from /scholarships and the numeric /scholarships/2 route returned 404 after the fail-closed detail fix."
   ]
 }

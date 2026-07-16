@@ -321,6 +321,34 @@ export function extractFromList(source, html) {
   const results = [];
   const seen = new Set();
 
+  if (cleanText(source.sourceId).toLowerCase() === "cau_001") {
+    $("tr").each((_, node) => {
+      const row = $(node);
+      const link = row.find('a[href*="sub06_01_view.php"][href*="bbsIdx="]').first();
+      if (!link.length) return;
+      const noticeUrl = extractNoticeUrlFromLinkNode(source, link);
+      const title = cleanText(link.text());
+      if (!noticeUrl || !title || seen.has(noticeUrl)) return;
+      seen.add(noticeUrl);
+      results.push({
+        sourceId: source.sourceId,
+        universitySlug: source.universitySlug,
+        universityId: source.universityId,
+        collegeId: source.collegeId,
+        departmentId: source.departmentId,
+        collegeName: source.collegeName,
+        departmentName: source.departmentName,
+        sourceLevel: source.sourceLevel,
+        sourceName: source.sourceName,
+        listUrl: source.listUrl,
+        noticeUrl,
+        title,
+        dateText: extractListDateText(row, source.dateSelector),
+      });
+    });
+    return results;
+  }
+
   const pushResult = (node, index) => {
     const itemRoot = node ? $(node) : null;
     const linkNode = itemRoot
@@ -738,6 +766,22 @@ async function run() {
         COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
     },
     perSource: stats,
+    observedItems: crawled.map((item) => ({
+      sourceId: item.sourceId,
+      title: item.title,
+      noticeUrl: item.noticeUrl,
+      listUrl: item.listUrl,
+      dateText: item.dateText ?? "",
+      detailDate: item.detailDate ?? "",
+      parsedDate: item.parsedDate ?? "",
+      detailFetchError: item.detailFetchError ?? "",
+      contentExcerpt: cleanText(item.content ?? "").slice(0, 500),
+      qualitySignals: item.qualitySignals ?? null,
+      matched: allMatched.some(
+        (matchedItem) =>
+          matchedItem.sourceId === item.sourceId && matchedItem.noticeUrl === item.noticeUrl,
+      ),
+    })),
     newNotices: allNew,
   };
 

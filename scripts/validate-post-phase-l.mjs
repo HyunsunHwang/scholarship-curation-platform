@@ -24,8 +24,9 @@ const REQUIRED = [
   "reports/post-phase-l-rollback-report.json",
   "reports/post-phase-l-browser/authenticated-walkthrough.json",
   "reports/post-phase-l-browser/pre-apply-readiness.json",
-  "reports/post-phase-l-live/fixture-controlled-projection-preview.json",
-  "reports/post-phase-l-live/fixture-final-runtime-after-preview.json",
+  "reports/post-phase-l-live/live-cau-001-vertical-slice.json",
+  "reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json",
+  "reports/post-phase-l-live/live-cau-001-final-runtime.json",
   "reports/post-phase-l-convergence-result.json",
   "reports/post-phase-l-risk-register-update.json",
   "reports/post-phase-l-local-test-report.json",
@@ -39,6 +40,7 @@ const REQUIRED = [
   "supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql",
   "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql",
   "supabase/post-phase-l/verify_post_phase_l_schema.sql",
+  "supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql",
 ];
 
 const SECRET_SCAN_PATHS = [
@@ -137,10 +139,10 @@ const pilot = json("reports/post-phase-l-pilot-run.json");
 const replay = json("reports/post-phase-l-replay-report.json");
 const reconciliation = json("reports/post-phase-l-reconciliation-report.json");
 const rollback = json("reports/post-phase-l-rollback-report.json");
-const browser = json("reports/post-phase-l-browser/pre-apply-readiness.json");
 const browserAuthenticated = json("reports/post-phase-l-browser/authenticated-walkthrough.json");
-const runtime = json("reports/post-phase-l-live/fixture-final-runtime-after-preview.json");
-const controlledPreview = json("reports/post-phase-l-live/fixture-controlled-projection-preview.json");
+const liveVertical = json("reports/post-phase-l-live/live-cau-001-vertical-slice.json");
+const runtime = json("reports/post-phase-l-live/live-cau-001-final-runtime.json");
+const controlledPreview = json("reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json");
 const tests = json("reports/post-phase-l-local-test-report.json");
 const convergence = json("reports/post-phase-l-convergence-result.json");
 const preexisting = json("reports/post-phase-l-preexisting-worktree.json");
@@ -246,10 +248,51 @@ check("fixture does not claim live success", pilot.plan.execution_mode === "fixt
 check("replay idempotency", replay.deterministic_rerun_match === true && replay.duplicate_notice_count === 0 && replay.duplicate_occurrence_count === 0 && replay.duplicate_alias_count === 0, replay.second_run_insert_counts);
 check("reconciliation fail closed", reconciliation.public_leakage_count === 0 && reconciliation.numeric_route_conflict_count === 0, `${reconciliation.matched_count}/${reconciliation.graph_notice_count}`);
 check("remote runtime readback passed", runtime.runtime_readback_passed === true && runtime.target_project_ref === TARGET_REF, runtime.stage);
+check(
+  "live_vertical_slice_complete=true",
+  liveVertical.live_vertical_slice_complete === true &&
+    liveVertical.source_key === "cau_001" &&
+    liveVertical.live_graph_notice_count >= 1 &&
+    liveVertical.live_graph_occurrence_count >= 1 &&
+    liveVertical.live_review_event_count >= 1 &&
+    liveVertical.live_projection_preview_count >= 1 &&
+    liveVertical.live_public_leakage_count === 0,
+  liveVertical.run_id,
+);
 check("append-only review event applied", controlledPreview.passed === true && controlledPreview.append_only_review_event_count >= 2 && controlledPreview.effective_decision_match === true, controlledPreview.append_only_review_event_count);
 check("controlled projection preview stays unpublished", controlledPreview.controlled_projection_preview_enabled === true && controlledPreview.public_leakage_count === 0 && controlledPreview.automatic_public_publish_count === 0, controlledPreview.stage);
 check("bounded rollback and deterministic reapply", rollback.rollback_rehearsal_passed === true && rollback.reapply_passed === true && rollback.unrelated_table_change_count === 0, rollback.stage);
-check("browser walkthrough limitation documented", browserAuthenticated.browser_walkthrough_complete === false && browserAuthenticated.blocked_reason === "local_dev_server_server_action_fetch_failed_in_sandbox" && browserAuthenticated.credential_values_printed === false, browserAuthenticated.blocked_reason);
+check(
+  "browser_walkthrough_complete=true",
+  browserAuthenticated.browser_walkthrough_complete === true &&
+    browserAuthenticated.authenticated_admin_layout_reached === true &&
+    browserAuthenticated.numeric_preview_route_status === 404 &&
+    browserAuthenticated.public_leakage_count === 0 &&
+    browserAuthenticated.browser_console_error_count === 0 &&
+    browserAuthenticated.mobile_390px_overflow_detected === false,
+  browserAuthenticated.verified_authenticated_routes,
+);
+check(
+  "schema_rollback_rehearsed=true",
+  rollback.schema_rollback_rehearsed === true &&
+    rollback.schema_rollback_passed === true &&
+    rollback.schema_reapply_passed === true &&
+    rollback.post_schema_reapply_replay_match === true &&
+    rollback.unrelated_table_change_count === 0,
+  rollback.pending_reason,
+);
+check(
+  "final safety invariants",
+  liveVertical.live_public_leakage_count === 0 &&
+    controlledPreview.automatic_public_publish_count === 0 &&
+    liveVertical.production_read_performed === false &&
+    liveVertical.production_write_performed === false &&
+    browserAuthenticated.production_read_performed === false &&
+    browserAuthenticated.production_write_performed === false &&
+    rollback.production_read_performed === false &&
+    rollback.production_write_performed === false,
+  "public leakage 0; automatic publish 0; production read/write false",
+);
 check("K convergence has ten capabilities", convergence.capabilities.length === 10, convergence.capabilities.map((row) => row.capability));
 check("preexisting manifest preserved", preexisting.base_commit === BASE_COMMIT && preexisting.preexisting_path_count === 43, preexisting.preexisting_path_count);
 const ownedPaths = new Set(owned.paths);
@@ -306,7 +349,7 @@ const failed = checks.filter((entry) => !entry.passed);
 const report = {
   generated_at: new Date().toISOString(),
   stage: "post_apply_runtime",
-  status: failed.length === 0 ? "CONDITIONAL_PASS" : "HOLD",
+  status: failed.length === 0 ? "PASS" : "HOLD",
   target_project_ref: TARGET_REF,
   target_project_ref_match: true,
   production_ref_detected: false,
@@ -323,21 +366,29 @@ const report = {
   exact_source_resolution_passed: tests.failed_count === 0,
   fuzzy_source_match_count: 0,
   automatic_source_create_count: 0,
+  live_vertical_slice_complete: liveVertical.live_vertical_slice_complete,
+  live_graph_notice_count: liveVertical.live_graph_notice_count,
+  live_graph_occurrence_count: liveVertical.live_graph_occurrence_count,
+  live_review_event_count: liveVertical.live_review_event_count,
+  live_projection_preview_count: liveVertical.live_projection_preview_count,
   graph_notice_count: runtime.graph_counts.ingestion_notices,
   graph_occurrence_count: runtime.graph_counts.ingestion_notice_occurrences,
   asset_metadata_count: runtime.graph_counts.ingestion_notice_assets,
   url_alias_count: runtime.graph_counts.ingestion_notice_url_aliases,
   append_only_review_event_count: runtime.append_only_review_event_count,
   review_event_immutability_static_passed: schema.graph_constraints.review_event_immutable_trigger,
-  public_leakage_count: reconciliation.public_leakage_count,
+  public_leakage_count: liveVertical.live_public_leakage_count,
   automatic_public_publish_count: 0,
   deterministic_rerun_match: replay.deterministic_rerun_match,
   duplicate_notice_count: runtime.duplicate_notice_count,
   duplicate_occurrence_count: runtime.duplicate_occurrence_count,
   duplicate_alias_count: runtime.duplicate_alias_count,
-  schema_rollback_rehearsed: false,
+  schema_rollback_rehearsed: rollback.schema_rollback_rehearsed === true,
+  schema_reapply_passed: rollback.schema_reapply_passed === true,
+  post_schema_reapply_replay_match: rollback.post_schema_reapply_replay_match === true,
   data_rollback_rehearsed: rollback.data_rollback_rehearsed,
   browser_walkthrough_complete: browserAuthenticated.browser_walkthrough_complete,
+  authenticated_admin_layout_reached: browserAuthenticated.authenticated_admin_layout_reached,
   browser_walkthrough_blocked_reason: browserAuthenticated.blocked_reason,
   external_llm_call_count: 0,
   external_llm_persistence_added: false,
@@ -373,6 +424,8 @@ const markdown = [
   `- Runtime readback passed: ${runtime.runtime_readback_passed}`,
   `- Append-only review events: ${runtime.append_only_review_event_count}`,
   `- Controlled preview public leakage: ${controlledPreview.public_leakage_count}`,
+  `- Live vertical slice complete: ${liveVertical.live_vertical_slice_complete}`,
+  `- Schema rollback rehearsed: ${rollback.schema_rollback_rehearsed === true}`,
   `- Data rollback rehearsed: ${rollback.data_rollback_rehearsed}`,
   `- Browser walkthrough complete: ${browserAuthenticated.browser_walkthrough_complete}`,
   `- Browser blocked reason: ${browserAuthenticated.blocked_reason}`,
@@ -381,7 +434,9 @@ const markdown = [
   "",
   ...checks.map((entry) => `- ${entry.passed ? "PASS" : "FAIL"}: ${entry.name}`),
   "",
-  "Remote schema apply, runtime review-event immutability, replay, reconciliation, bounded rollback, and deterministic reapply completed on the approved L project. Authenticated browser layout remains blocked by local sandbox server-action fetch limits and is documented as a conditional follow-up.",
+  report.status === "PASS"
+    ? "All Post-Phase L live, browser, rollback, reapply, and safety gates passed on the approved L project."
+    : "Post-Phase L remains HOLD until every live, browser, rollback, reapply, and safety gate has runtime evidence.",
   "",
 ].join("\n");
 fs.writeFileSync(path.join(ROOT, "reports/post-phase-l-validation-report.md"), markdown, "utf8");
@@ -396,6 +451,6 @@ fs.writeFileSync(
   "utf8",
 );
 
-console.log(`post_phase_l_validation_status=${report.status}`);
+console.log(`POST-PHASE L: ${report.status}`);
 console.log(`checks=${report.passed_check_count}/${report.check_count}`);
 if (failed.length > 0) process.exitCode = 1;

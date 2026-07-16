@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-15T14:53:07.949Z",
-  "test_count": 15,
-  "passed_count": 15,
+  "generated_at": "2026-07-16T01:51:52.971Z",
+  "test_count": 17,
+  "passed_count": 17,
   "failed_count": 0,
   "remote_read_performed": false,
   "remote_write_performed": false,
@@ -65,6 +65,14 @@
     },
     {
       "name": "Yonsei UIC strategy canonicalizes uid detail links and bounds pagination",
+      "passed": true
+    },
+    {
+      "name": "CAU business board extracts attributable notice rows and gotoPage pagination",
+      "passed": true
+    },
+    {
+      "name": "numeric public scholarship route rejects unverified preview rows",
       "passed": true
     }
   ]

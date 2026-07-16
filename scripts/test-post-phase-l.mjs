@@ -21,6 +21,7 @@ import {
   extractNoticeUrlFromLinkNode,
   getSourceAdapterStrategy,
 } from "../lib/crawler-adapters/index.mjs";
+import { extractFromList } from "./crawl-scholarship-notices.mjs";
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
@@ -301,6 +302,34 @@ test("Yonsei UIC strategy canonicalizes uid detail links and bounds pagination",
   assert.equal(
     extractNoticeUrlFromLinkNode(source, linkNode),
     "https://uic.yonsei.ac.kr/main/news.php?mid=m06_01_02&act=view&uid=14407",
+  );
+});
+
+test("CAU business board extracts attributable notice rows and gotoPage pagination", () => {
+  const source = {
+    sourceId: "cau_001",
+    listUrl: "https://biz.cau.ac.kr/2016/sub06/sub06_01_list.php",
+    baseUrl: "https://biz.cau.ac.kr",
+  };
+  assert.deepEqual(
+    buildBoundedPaginationUrls(source, 3).map((value) => new URL(value).searchParams.get("gotoPage")),
+    [null, "2", "3"],
+  );
+  const rows = extractFromList(
+    source,
+    `<table><tr><td>762</td><td><a href="sub06_01_view.php?bbsIdx=7281">2025-2학기 유학생 자기개발 장학금 신청 안내</a></td><td>2025.11.27</td></tr></table>`,
+  );
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].title, "2025-2학기 유학생 자기개발 장학금 신청 안내");
+  assert.equal(rows[0].dateText, "2025.11.27");
+  assert.match(rows[0].noticeUrl, /sub06_01_view\.php\?bbsIdx=7281/);
+});
+
+test("numeric public scholarship route rejects unverified preview rows", () => {
+  const page = readText("app/scholarships/[id]/page.tsx");
+  assert.match(
+    page,
+    /from\("scholarships"\)[\s\S]*?eq\("id", scholarshipId\)[\s\S]*?eq\("is_verified", true\)[\s\S]*?single\(\)/,
   );
 });
 

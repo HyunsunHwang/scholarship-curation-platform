@@ -3,12 +3,14 @@
   "contract_version": "post-phase-l-owned-files/v1",
   "base_commit": "a3cd1ad38414088d835647e9ebf5326147da93bd",
   "branch": "feat/post-phase-l-integration",
-  "path_count": 51,
+  "path_count": 54,
   "paths": [
     "app/admin/crawled-notices/actions.ts",
     "app/admin/crawler-review/page.tsx",
     "app/admin/review/scholarships/[id]/page.tsx",
     "app/admin/review/scholarships/[id]/PostPhaseLReviewEvidence.tsx",
+    "app/auth/page.tsx",
+    "app/scholarships/[id]/page.tsx",
     "docs/post-phase-l-baseline-and-migration-decision.md",
     "docs/post-phase-l-browser-walkthrough.md",
     "docs/post-phase-l-implementation-report.md",
@@ -56,5 +58,6 @@
     "supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql",
     "supabase/post-phase-l/999_post_phase_l_schema_rollback.sql",
     "supabase/post-phase-l/verify_post_phase_l_schema.sql"
+    ,"supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql"
   ]
 }

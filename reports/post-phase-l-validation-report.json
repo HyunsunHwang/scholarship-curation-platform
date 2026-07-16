@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-15T14:54:13.417Z",
+  "generated_at": "2026-07-16T01:53:51.558Z",
   "stage": "post_apply_runtime",
-  "status": "CONDITIONAL_PASS",
+  "status": "PASS",
   "target_project_ref": "hrayfvdggbhfmmzfblly",
   "target_project_ref_match": true,
   "production_ref_detected": false,
@@ -17,6 +17,11 @@
   "exact_source_resolution_passed": true,
   "fuzzy_source_match_count": 0,
   "automatic_source_create_count": 0,
+  "live_vertical_slice_complete": true,
+  "live_graph_notice_count": 1,
+  "live_graph_occurrence_count": 1,
+  "live_review_event_count": 2,
+  "live_projection_preview_count": 1,
   "graph_notice_count": 1,
   "graph_occurrence_count": 1,
   "asset_metadata_count": 0,
@@ -29,18 +34,21 @@
   "duplicate_notice_count": 0,
   "duplicate_occurrence_count": 0,
   "duplicate_alias_count": 0,
-  "schema_rollback_rehearsed": false,
+  "schema_rollback_rehearsed": true,
+  "schema_reapply_passed": true,
+  "post_schema_reapply_replay_match": true,
   "data_rollback_rehearsed": true,
-  "browser_walkthrough_complete": false,
-  "browser_walkthrough_blocked_reason": "local_dev_server_server_action_fetch_failed_in_sandbox",
+  "browser_walkthrough_complete": true,
+  "authenticated_admin_layout_reached": true,
+  "browser_walkthrough_blocked_reason": null,
   "external_llm_call_count": 0,
   "external_llm_persistence_added": false,
   "preexisting_file_inclusion_count": 0,
   "secret_leak_count": 0,
   "duplicate_json_key_count": 0,
   "output_schema_valid": true,
-  "check_count": 66,
-  "passed_check_count": 66,
+  "check_count": 71,
+  "passed_check_count": 71,
   "failed_check_count": 0,
   "checks": [
     {
@@ -119,14 +127,19 @@
       "evidence": "reports/post-phase-l-browser/pre-apply-readiness.json"
     },
     {
-      "name": "required:reports/post-phase-l-live/fixture-controlled-projection-preview.json",
+      "name": "required:reports/post-phase-l-live/live-cau-001-vertical-slice.json",
       "passed": true,
-      "evidence": "reports/post-phase-l-live/fixture-controlled-projection-preview.json"
+      "evidence": "reports/post-phase-l-live/live-cau-001-vertical-slice.json"
     },
     {
-      "name": "required:reports/post-phase-l-live/fixture-final-runtime-after-preview.json",
+      "name": "required:reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json",
       "passed": true,
-      "evidence": "reports/post-phase-l-live/fixture-final-runtime-after-preview.json"
+      "evidence": "reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json"
+    },
+    {
+      "name": "required:reports/post-phase-l-live/live-cau-001-final-runtime.json",
+      "passed": true,
+      "evidence": "reports/post-phase-l-live/live-cau-001-final-runtime.json"
     },
     {
       "name": "required:reports/post-phase-l-convergence-result.json",
@@ -192,6 +205,11 @@
       "name": "required:supabase/post-phase-l/verify_post_phase_l_schema.sql",
       "passed": true,
       "evidence": "supabase/post-phase-l/verify_post_phase_l_schema.sql"
+    },
+    {
+      "name": "required:supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql",
+      "passed": true,
+      "evidence": "supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql"
     },
     {
       "name": "authoritative inventory syntax and shape",
@@ -297,7 +315,7 @@
     {
       "name": "exact resolver, guard, replay, adapter, revision, review, and rollback tests",
       "passed": true,
-      "evidence": "15/15"
+      "evidence": "17/17"
     },
     {
       "name": "pilot cohort exactly bounded",
@@ -359,6 +377,11 @@
       "evidence": "approved_l_project_runtime_readback"
     },
     {
+      "name": "live_vertical_slice_complete=true",
+      "passed": true,
+      "evidence": "f70150d3-9312-5936-8778-548ad197ed97"
+    },
+    {
       "name": "append-only review event applied",
       "passed": true,
       "evidence": 2
@@ -371,12 +394,28 @@
     {
       "name": "bounded rollback and deterministic reapply",
       "passed": true,
-      "evidence": "approved_l_project_bounded_rollback_reapply"
+      "evidence": "approved_l_project_schema_rollback_reapply"
     },
     {
-      "name": "browser walkthrough limitation documented",
+      "name": "browser_walkthrough_complete=true",
       "passed": true,
-      "evidence": "local_dev_server_server_action_fetch_failed_in_sandbox"
+      "evidence": [
+        "/admin/review",
+        "/admin/review/scholarships/4",
+        "/admin/crawler-review",
+        "/scholarships",
+        "/scholarships/2"
+      ]
+    },
+    {
+      "name": "schema_rollback_rehearsed=true",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "final safety invariants",
+      "passed": true,
+      "evidence": "public leakage 0; automatic publish 0; production read/write false"
     },
     {
       "name": "K convergence has ten capabilities",
@@ -402,7 +441,7 @@
     {
       "name": "L-owned manifest is unique and complete",
       "passed": true,
-      "evidence": 51
+      "evidence": 54
     },
     {
       "name": "L-owned and preexisting manifests do not overlap",
@@ -417,7 +456,7 @@
     {
       "name": "secret leak patterns zero across all L-owned artifacts",
       "passed": true,
-      "evidence": "0/81 files"
+      "evidence": "0/101 files"
     },
     {
       "name": "preexisting file inclusion zero",

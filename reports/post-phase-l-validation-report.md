@@ -1,8 +1,8 @@
 # Post-Phase L Validation Report
 
 - Stage: post_apply_runtime
-- Status: CONDITIONAL_PASS
-- Checks: 66/66
+- Status: PASS
+- Checks: 71/71
 - Remote read/write: true/true on approved L project only
 - Production ref detected: false
 - Preexisting file inclusion count: 0
@@ -14,9 +14,11 @@
 - Runtime readback passed: true
 - Append-only review events: 2
 - Controlled preview public leakage: 0
+- Live vertical slice complete: true
+- Schema rollback rehearsed: true
 - Data rollback rehearsed: true
-- Browser walkthrough complete: false
-- Browser blocked reason: local_dev_server_server_action_fetch_failed_in_sandbox
+- Browser walkthrough complete: true
+- Browser blocked reason: null
 
 ## Checks
 
@@ -35,8 +37,9 @@
 - PASS: required:reports/post-phase-l-rollback-report.json
 - PASS: required:reports/post-phase-l-browser/authenticated-walkthrough.json
 - PASS: required:reports/post-phase-l-browser/pre-apply-readiness.json
-- PASS: required:reports/post-phase-l-live/fixture-controlled-projection-preview.json
-- PASS: required:reports/post-phase-l-live/fixture-final-runtime-after-preview.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-vertical-slice.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-final-runtime.json
 - PASS: required:reports/post-phase-l-convergence-result.json
 - PASS: required:reports/post-phase-l-risk-register-update.json
 - PASS: required:reports/post-phase-l-local-test-report.json
@@ -50,6 +53,7 @@
 - PASS: required:supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql
 - PASS: required:supabase/post-phase-l/999_post_phase_l_schema_rollback.sql
 - PASS: required:supabase/post-phase-l/verify_post_phase_l_schema.sql
+- PASS: required:supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql
 - PASS: authoritative inventory syntax and shape
 - PASS: authoritative inventory byte fingerprint
 - PASS: historical governance snapshot is not a blocker
@@ -73,10 +77,13 @@
 - PASS: replay idempotency
 - PASS: reconciliation fail closed
 - PASS: remote runtime readback passed
+- PASS: live_vertical_slice_complete=true
 - PASS: append-only review event applied
 - PASS: controlled projection preview stays unpublished
 - PASS: bounded rollback and deterministic reapply
-- PASS: browser walkthrough limitation documented
+- PASS: browser_walkthrough_complete=true
+- PASS: schema_rollback_rehearsed=true
+- PASS: final safety invariants
 - PASS: K convergence has ten capabilities
 - PASS: preexisting manifest preserved
 - PASS: L-owned manifest is unique and complete
@@ -87,4 +94,4 @@
 - PASS: staged files stay inside L-owned manifest
 - PASS: all non-preexisting task paths are declared L-owned
 
-Remote schema apply, runtime review-event immutability, replay, reconciliation, bounded rollback, and deterministic reapply completed on the approved L project. Authenticated browser layout remains blocked by local sandbox server-action fetch limits and is documented as a conditional follow-up.
+All Post-Phase L live, browser, rollback, reapply, and safety gates passed on the approved L project.
