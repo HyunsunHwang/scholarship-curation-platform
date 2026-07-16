@@ -9,7 +9,7 @@
     {"source_key":"cau_004","reason":"selector or scope defect"},
     {"source_key":"cau_006","reason":"selector or scope defect"},
     {"source_key":"cau_008","reason":"bounded zero-match"},
-    {"source_key":"cau_012","reason":"canonical identity owner pending"}
+    {"source_key":"cau_012","reason":"owner decision NEEDS_MORE_EVIDENCE; official unit, board, and exact list URL are not verified"}
   ],
   "expected_maximum_run_count": 2,
   "expected_maximum_notice_count": 4,
@@ -18,6 +18,10 @@
   "manual_reviewer": "OWNER_PENDING",
   "operator": "OWNER_PENDING",
   "rollback_authority": "고지석",
+  "cau_012_owner_decision": {
+    "decision": "NEEDS_MORE_EVIDENCE",
+    "canary_inclusion": false
+  },
   "stop_conditions": [
     "public row without effective approve",
     "reject or withdraw remains visible",

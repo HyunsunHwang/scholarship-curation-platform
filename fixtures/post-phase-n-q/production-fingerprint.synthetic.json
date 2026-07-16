@@ -349,6 +349,7 @@
         "schema": "public"
       }
     ],
+    "schemas": [],
     "tables": [
       {
         "definition_source": "reports/post-phase-l-schema-manifest.json",
@@ -630,5 +631,5 @@
     "synthetic_fixture": true
   },
   "schema_version": "post-phase-n-fingerprint/v1",
-  "fingerprint_sha256": "5d72723f3a5fa92957e928936da79bf1c3d33ed98cb5f757e070f46780add37e"
+  "fingerprint_sha256": "e45eacb8b85ee8b7eecbbb6828ba7e82ae110b200f540e8d99244f9d3cce5ab6"
 }

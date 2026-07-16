@@ -1,7 +1,7 @@
 # Post-Phase N-Q Validation Report
 
 - Status: **PASS**
-- Checks: 22/22
+- Checks: 23/23
 - Production access: false
 - Production write: false
 - Automatic public publish: false
@@ -27,6 +27,7 @@
 - PASS: `focused_tests_evidence`
 - PASS: `production_readiness_documents`
 - PASS: `production_fingerprint_sql_read_only`
+- PASS: `production_fingerprint_evidence_contract`
 - PASS: `tls_unsafe_bypass_absent`
 - PASS: `forbidden_repository_surfaces_unchanged`
 - PASS: `tracked_secret_material_absent`

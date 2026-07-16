@@ -20,6 +20,11 @@
     "duplicate_or_alias_conclusion": "NEEDS_MORE_EVIDENCE"
   },
   "recommendation": "NEEDS_MORE_EVIDENCE",
+  "owner_decision": {
+    "decision": "NEEDS_MORE_EVIDENCE",
+    "canary_inclusion": false,
+    "reason": "official unit, official board, and exact list URL are not verified"
+  },
   "allowed_decisions": [
     "MAP_TO_EXISTING_SOURCE",
     "ADD_AS_NEW_CANONICAL_SOURCE",
@@ -27,6 +32,7 @@
     "NEEDS_MORE_EVIDENCE"
   ],
   "automatic_source_create_count": 0,
+  "inventory_modified": false,
   "crawl_performed": false,
   "production_access_performed": false
 }

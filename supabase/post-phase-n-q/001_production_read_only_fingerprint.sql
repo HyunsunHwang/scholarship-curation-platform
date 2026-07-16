@@ -7,7 +7,10 @@ set local idle_in_transaction_session_timeout = '120s';
 
 with
 schemas as (
-  select jsonb_agg(jsonb_build_object('name', nspname) order by nspname) as value
+  select jsonb_agg(
+    jsonb_build_object('name', nspname)
+    order by nspname
+  ) as value
   from pg_namespace
   where nspname not like 'pg_%'
     and nspname <> 'information_schema'
@@ -120,7 +123,8 @@ functions as (
       'language', l.lanname,
       'security_definer', p.prosecdef,
       'volatility', p.provolatile,
-      'definition_hash', encode(digest(pg_get_functiondef(p.oid), 'sha256'), 'hex')
+      'definition_hash', md5(pg_get_functiondef(p.oid)),
+      'definition_hash_algorithm', 'md5_builtin'
     )
     order by n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)
   ) as value
@@ -129,6 +133,7 @@ functions as (
   join pg_language l on l.oid = p.prolang
   where n.nspname not like 'pg_%'
     and n.nspname <> 'information_schema'
+    and p.prokind in ('f', 'p', 'w')
 ),
 triggers as (
   select jsonb_agg(
@@ -151,7 +156,8 @@ views as (
     jsonb_build_object(
       'schema', schemaname,
       'name', viewname,
-      'definition_hash', encode(digest(definition, 'sha256'), 'hex')
+      'definition_hash', md5(definition),
+      'definition_hash_algorithm', 'md5_builtin'
     )
     order by schemaname, viewname
   ) as value
@@ -164,49 +170,25 @@ materialized_views as (
     jsonb_build_object(
       'schema', schemaname,
       'name', matviewname,
-      'definition_hash', encode(digest(definition, 'sha256'), 'hex')
+      'definition_hash', md5(definition),
+      'definition_hash_algorithm', 'md5_builtin'
     )
     order by schemaname, matviewname
   ) as value
   from pg_matviews
   where schemaname not like 'pg_%'
-),
-migration_metadata as (
-  select coalesce(
-    (
-      select jsonb_agg(
-        jsonb_build_object('version', version, 'name', name)
-        order by version
-      )
-      from supabase_migrations.schema_migrations
-    ),
-    '[]'::jsonb
-  ) as value
-),
-selected_state_distributions as (
-  select jsonb_build_object(
-    'scholarships.is_verified',
-      (select coalesce(jsonb_object_agg(state, count), '{}'::jsonb)
-       from (select is_verified::text as state, count(*) from public.scholarships group by is_verified) s),
-    'crawled_notices.status',
-      (select coalesce(jsonb_object_agg(state, count), '{}'::jsonb)
-       from (select status::text as state, count(*) from public.crawled_notices group by status) s),
-    'notice_sources.is_enabled',
-      (select coalesce(jsonb_object_agg(state, count), '{}'::jsonb)
-       from (select is_enabled::text as state, count(*) from public.notice_sources group by is_enabled) s)
-  ) as value
 )
 select jsonb_pretty(jsonb_build_object(
   'schema_version', 'post-phase-n-fingerprint/v1',
   'generated_at', clock_timestamp(),
   'evidence', jsonb_build_object(
-    'evidence_kind', 'owner_pending',
+    'evidence_kind', 'database_production_read_only',
     'environment', 'production',
-    'bounded_scope', 'schema metadata, catalog estimates, and three aggregate state distributions',
+    'bounded_scope', 'schema-agnostic catalog metadata; optional aggregates are runner-gated',
     'limitations', jsonb_build_array(
       'This output contains no row bodies.',
       'estimated_rows comes from pg_class statistics and is not an exact count.',
-      'Owner must sanitize and save the result before repository use.'
+      'Optional migration metadata and state distributions are queried only after catalog checks.'
     )
   ),
   'objects', jsonb_build_object(
@@ -222,9 +204,12 @@ select jsonb_pretty(jsonb_build_object(
     'views', coalesce(views.value, '[]'::jsonb),
     'materialized_views', coalesce(materialized_views.value, '[]'::jsonb)
   ),
-  'migration_metadata', migration_metadata.value,
+  'migration_metadata', jsonb_build_object(
+    'status', 'pending_runner_catalog_check',
+    'items', jsonb_build_array()
+  ),
   'aggregates', jsonb_build_object(
-    'selected_state_distributions', selected_state_distributions.value
+    'selected_state_distributions', jsonb_build_array()
   ),
   'safety', jsonb_build_object(
     'transaction_read_only', current_setting('transaction_read_only')::boolean,
@@ -234,7 +219,6 @@ select jsonb_pretty(jsonb_build_object(
   )
 ))
 from schemas, tables, columns, constraints, indexes, policies, grants,
-  functions, triggers, views, materialized_views, migration_metadata,
-  selected_state_distributions;
+  functions, triggers, views, materialized_views;
 
 rollback;

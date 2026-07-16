@@ -1,6 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import {
+  EVIDENCE_KINDS,
+  FINGERPRINT_SCHEMA_VERSION,
+  isProductionReadOnlyEvidence,
+  PRODUCTION_READ_ONLY_EVIDENCE_KIND,
+} from "../../lib/post-phase-n-q/fingerprint.mjs";
 
 const ROOT = process.cwd();
 const REPORT_ROOT = path.join(ROOT, "reports", "post-phase-n-q");
@@ -352,11 +358,20 @@ addCheck(
   "cau_012_fail_closed",
   cau012.gate === "OWNER_GATE_P_CAU_012_INVENTORY" &&
     cau012.recommendation === "NEEDS_MORE_EVIDENCE" &&
+    cau012.owner_decision?.decision === "NEEDS_MORE_EVIDENCE" &&
+    cau012.owner_decision?.canary_inclusion === false &&
+    cau012.owner_decision?.reason ===
+      "official unit, official board, and exact list URL are not verified" &&
     cau012.automatic_source_create_count === 0 &&
+    cau012.inventory_modified === false &&
     cau012.crawl_performed === false &&
-    cau012.production_access_performed === false,
+    cau012.production_access_performed === false &&
+    canaryPlan.cau_012_owner_decision?.decision ===
+      "NEEDS_MORE_EVIDENCE" &&
+    canaryPlan.cau_012_owner_decision?.canary_inclusion === false,
   {
     recommendation: cau012.recommendation,
+    owner_decision: cau012.owner_decision,
     automatic_source_create_count: cau012.automatic_source_create_count,
   },
 );
@@ -604,10 +619,35 @@ const sql = fs.readFileSync(
   "utf8",
 );
 const sqlWithoutComments = sql.replace(/--.*$/gmu, "");
+const requiredCatalogSources = [
+  "pg_namespace",
+  "pg_class",
+  "information_schema.columns",
+  "pg_constraint",
+  "pg_indexes",
+  "pg_policies",
+  "role_table_grants",
+  "pg_proc",
+  "pg_trigger",
+  "pg_views",
+  "pg_matviews",
+];
+const forbiddenSchemaAssumptions = [
+  "supabase_migrations.schema_migrations",
+  "public.scholarships",
+  "public.crawled_notices",
+  "public.notice_sources",
+  "digest(",
+];
 addCheck(
   "production_fingerprint_sql_read_only",
   /begin\s+transaction\s+read\s+only/iu.test(sqlWithoutComments) &&
     /\brollback\b/iu.test(sqlWithoutComments) &&
+    sql.includes(PRODUCTION_READ_ONLY_EVIDENCE_KIND) &&
+    requiredCatalogSources.every((source) => sql.includes(source)) &&
+    forbiddenSchemaAssumptions.every(
+      (assumption) => !sql.includes(assumption),
+    ) &&
     !/\b(insert|update|delete|merge|create|alter|drop|truncate|grant|revoke)\b/iu.test(
       sqlWithoutComments,
     ),
@@ -616,6 +656,85 @@ addCheck(
       sqlWithoutComments,
     ),
     contains_rollback: /\brollback\b/iu.test(sqlWithoutComments),
+    catalog_source_count: requiredCatalogSources.filter((source) =>
+      sql.includes(source),
+    ).length,
+    forbidden_schema_assumption_count: forbiddenSchemaAssumptions.filter(
+      (assumption) => sql.includes(assumption),
+    ).length,
+  },
+);
+
+const productionRunnerSource = fs.readFileSync(
+  path.join(
+    ROOT,
+    "scripts/post-phase-n/run-production-read-only-fingerprint.mjs",
+  ),
+  "utf8",
+);
+const productionRunnerContractSource = fs.readFileSync(
+  path.join(
+    ROOT,
+    "lib/post-phase-n-q/production-fingerprint-runner.mjs",
+  ),
+  "utf8",
+);
+const diffRunnerSource = fs.readFileSync(
+  path.join(ROOT, "scripts/post-phase-n/diff-schema-fingerprints.mjs"),
+  "utf8",
+);
+const validProductionEvidence = {
+  schema_version: FINGERPRINT_SCHEMA_VERSION,
+  evidence: {
+    evidence_kind: PRODUCTION_READ_ONLY_EVIDENCE_KIND,
+    environment: "production",
+  },
+  safety: {
+    transaction_read_only: true,
+    ddl_performed: false,
+    dml_performed: false,
+    row_body_dumped: false,
+  },
+};
+addCheck(
+  "production_fingerprint_evidence_contract",
+  EVIDENCE_KINDS.has(PRODUCTION_READ_ONLY_EVIDENCE_KIND) &&
+    isProductionReadOnlyEvidence(validProductionEvidence) &&
+    !isProductionReadOnlyEvidence({
+      ...validProductionEvidence,
+      evidence: {
+        evidence_kind: "owner_pending",
+        environment: "production",
+      },
+    }) &&
+    productionRunnerSource.includes(
+      "production-fingerprint-owner-output.json",
+    ) &&
+    productionRunnerSource.includes(
+      "production-fingerprint-execution-receipt.json",
+    ) &&
+    productionRunnerContractSource.includes(
+      "validateProductionFingerprintDocument",
+    ) &&
+    productionRunnerContractSource.includes(
+      "productionWritePerformedFromSafety",
+    ) &&
+    !/productionPath\.includes\(\s*["']\.synthetic\.["']\s*\)/u.test(
+      diffRunnerSource,
+    ) &&
+    !productionRunnerSource.includes(
+      "production-fingerprint-owner-output.txt",
+    ),
+  {
+    evidence_kind_registered: EVIDENCE_KINDS.has(
+      PRODUCTION_READ_ONLY_EVIDENCE_KIND,
+    ),
+    valid_production_evidence_recognized:
+      isProductionReadOnlyEvidence(validProductionEvidence),
+    filename_heuristic_absent:
+      !/productionPath\.includes\(\s*["']\.synthetic\.["']\s*\)/u.test(
+        diffRunnerSource,
+      ),
   },
 );
 

@@ -22,4 +22,7 @@ schema/RPC로 완료했으며 사용자가 실행할 수동 SQL은 없다.
 
 Credential 자체는 공유하지 않는다. 공유 대상은 sanitized fingerprint, aggregate count, SQL/command success 또는 error, verification report, owner decision value다.
 
-`cau_012`는 `reports/post-phase-n-q/cau-012-owner-packet.json`의 네 decision 중 하나와 official unit/board/list URL 근거를 팀 합의로 반환해야 한다.
+`cau_012` owner decision은 `NEEDS_MORE_EVIDENCE`로 기록했다.
+`canary_inclusion=false`이며 official unit, official board, exact list URL이
+검증되기 전에는 source 생성, inventory 수정, crawl 또는 canary 포함을
+허용하지 않는다.

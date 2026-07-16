@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-16T08:59:06.582Z",
+  "generated_at": "2026-07-16T10:30:15.313Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
-  "check_count": 22,
-  "passed_check_count": 22,
+  "check_count": 23,
+  "passed_check_count": 23,
   "failed_check_count": 0,
   "failed_checks": [],
   "checks": [
@@ -151,6 +151,11 @@
       "passed": true,
       "evidence": {
         "recommendation": "NEEDS_MORE_EVIDENCE",
+        "owner_decision": {
+          "decision": "NEEDS_MORE_EVIDENCE",
+          "canary_inclusion": false,
+          "reason": "official unit, official board, and exact list URL are not verified"
+        },
         "automatic_source_create_count": 0
       }
     },
@@ -227,8 +232,8 @@
       "name": "focused_tests_evidence",
       "passed": true,
       "evidence": {
-        "passed_count": 11,
-        "test_command_count": 11
+        "passed_count": 12,
+        "test_command_count": 12
       }
     },
     {
@@ -244,7 +249,18 @@
       "passed": true,
       "evidence": {
         "begins_read_only": true,
-        "contains_rollback": true
+        "contains_rollback": true,
+        "catalog_source_count": 11,
+        "forbidden_schema_assumption_count": 0
+      }
+    },
+    {
+      "name": "production_fingerprint_evidence_contract",
+      "passed": true,
+      "evidence": {
+        "evidence_kind_registered": true,
+        "valid_production_evidence_recognized": true,
+        "filename_heuristic_absent": true
       }
     },
     {
@@ -299,5 +315,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 115
+  "changed_file_count": 20
 }

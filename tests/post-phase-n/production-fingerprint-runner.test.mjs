@@ -1,0 +1,365 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import {
+  diffFingerprints,
+  FINGERPRINT_SCHEMA_VERSION,
+  isProductionReadOnlyEvidence,
+  normalizeFingerprint,
+  PRODUCTION_READ_ONLY_EVIDENCE_KIND,
+} from "../../lib/post-phase-n-q/fingerprint.mjs";
+import {
+  buildProductionExecutionReceipt,
+  enrichOptionalCatalogEvidence,
+  parseFingerprintJson,
+  productionWritePerformedFromSafety,
+  validateProductionFingerprintDocument,
+} from "../../lib/post-phase-n-q/production-fingerprint-runner.mjs";
+import {
+  inspectProductionReadGate,
+  PRODUCTION_READ_CONFIRMATION,
+} from "../../lib/post-phase-n-q/safety.mjs";
+import { buildPsqlEnvironment } from "../../scripts/post-phase-n/run-production-read-only-fingerprint.mjs";
+
+const PRODUCTION_REF = "synwudnxdkybwihwmtak";
+
+function productionFingerprint(overrides = {}) {
+  const base = {
+    schema_version: FINGERPRINT_SCHEMA_VERSION,
+    generated_at: "2026-07-16T00:00:00.000Z",
+    evidence: {
+      evidence_kind: PRODUCTION_READ_ONLY_EVIDENCE_KIND,
+      environment: "production",
+      bounded_scope: "test",
+      limitations: ["No row bodies."],
+    },
+    objects: {
+      schemas: [{ name: "public" }],
+      tables: [],
+      columns: [],
+      indexes: [],
+      constraints: [],
+      policies: [],
+      grants: [],
+      functions: [],
+      triggers: [],
+      views: [],
+      materialized_views: [],
+    },
+    aggregates: {
+      selected_state_distributions: [],
+    },
+    migration_metadata: {
+      status: "pending_runner_catalog_check",
+      items: [],
+    },
+    safety: {
+      transaction_read_only: true,
+      ddl_performed: false,
+      dml_performed: false,
+      row_body_dumped: false,
+    },
+  };
+  return {
+    ...base,
+    ...overrides,
+    evidence: { ...base.evidence, ...(overrides.evidence ?? {}) },
+    objects: { ...base.objects, ...(overrides.objects ?? {}) },
+    safety: { ...base.safety, ...(overrides.safety ?? {}) },
+  };
+}
+
+const validGateEnvironment = {
+  POST_PHASE_N_PRODUCTION_READ: "true",
+  POST_PHASE_N_PRODUCTION_PROJECT_REF: PRODUCTION_REF,
+  POST_PHASE_N_PRODUCTION_READ_CONFIRMATION: PRODUCTION_READ_CONFIRMATION,
+  POST_PHASE_N_PRODUCTION_DATABASE_URL:
+    `postgresql://owner@db.${PRODUCTION_REF}.supabase.co:5432/postgres`,
+};
+
+assert.equal(inspectProductionReadGate({}).safe, false);
+assert.ok(
+  inspectProductionReadGate({}).errors.includes(
+    "production_read_flag_missing",
+  ),
+);
+assert.ok(
+  inspectProductionReadGate({
+    ...validGateEnvironment,
+    POST_PHASE_N_PRODUCTION_PROJECT_REF: "wrong-project",
+  }).errors.includes("production_project_ref_mismatch"),
+);
+assert.ok(
+  inspectProductionReadGate({
+    ...validGateEnvironment,
+    POST_PHASE_N_PRODUCTION_READ_CONFIRMATION: "wrong-confirmation",
+  }).errors.includes("production_read_confirmation_mismatch"),
+);
+assert.ok(
+  inspectProductionReadGate({
+    ...validGateEnvironment,
+    POST_PHASE_N_PRODUCTION_DATABASE_URL:
+      "postgresql://owner@db.wrongproject.supabase.co:5432/postgres",
+  }).errors.includes("production_database_url_ref_mismatch"),
+);
+assert.equal(inspectProductionReadGate(validGateEnvironment).safe, true);
+const childEnvironment = buildPsqlEnvironment({
+  ...validGateEnvironment,
+  PATH: "test-path",
+  SUPABASE_SERVICE_ROLE_KEY: "must-not-be-forwarded",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "must-not-be-forwarded",
+  NEXT_PUBLIC_SUPABASE_URL: "https://nonproduction.example",
+});
+assert.equal(
+  childEnvironment.PGDATABASE,
+  validGateEnvironment.POST_PHASE_N_PRODUCTION_DATABASE_URL,
+);
+assert.equal(childEnvironment.SUPABASE_SERVICE_ROLE_KEY, undefined);
+assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_ANON_KEY, undefined);
+assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_URL, undefined);
+
+assert.throws(
+  () => parseFingerprintJson("{not-json"),
+  /not valid JSON/,
+);
+const mockedCommandOutput = JSON.stringify(productionFingerprint());
+assert.equal(
+  parseFingerprintJson(mockedCommandOutput).schema_version,
+  FINGERPRINT_SCHEMA_VERSION,
+);
+
+const ownerPending = productionFingerprint({
+  evidence: { evidence_kind: "owner_pending" },
+});
+const synthetic = productionFingerprint({
+  evidence: {
+    evidence_kind: "synthetic",
+    environment: "synthetic_production_fixture",
+  },
+});
+assert.equal(isProductionReadOnlyEvidence(ownerPending), false);
+assert.equal(isProductionReadOnlyEvidence(synthetic), false);
+assert.equal(
+  diffFingerprints({
+    production: ownerPending,
+    nonproduction: productionFingerprint({
+      evidence: {
+        evidence_kind: "database_nonproduction",
+        environment: "approved_nonproduction",
+      },
+    }),
+  }).production_fingerprint_available,
+  false,
+);
+assert.equal(
+  diffFingerprints({
+    production: synthetic,
+    nonproduction: productionFingerprint({
+      evidence: {
+        evidence_kind: "database_nonproduction",
+        environment: "approved_nonproduction",
+      },
+    }),
+  }).production_fingerprint_available,
+  false,
+);
+
+for (const [field, value, expectedError] of [
+  ["transaction_read_only", false, "transaction_read_only_not_true"],
+  ["ddl_performed", true, "ddl_performed_not_false"],
+  ["dml_performed", true, "dml_performed_not_false"],
+  ["row_body_dumped", true, "row_body_dumped_not_false"],
+]) {
+  const validation = validateProductionFingerprintDocument(
+    productionFingerprint({ safety: { [field]: value } }),
+  );
+  assert.equal(validation.passed, false);
+  assert.ok(validation.errors.includes(expectedError));
+}
+
+const missingOptional = enrichOptionalCatalogEvidence(
+  productionFingerprint(),
+  () => {
+    throw new Error("Optional executor must not run for missing relations");
+  },
+);
+assert.equal(
+  validateProductionFingerprintDocument(missingOptional).passed,
+  true,
+);
+assert.equal(missingOptional.migration_metadata.status, "missing_relation");
+assert.ok(
+  missingOptional.aggregates.selected_state_distributions.every(
+    (item) => item.status === "missing_relation",
+  ),
+);
+
+const partialCatalog = productionFingerprint({
+  objects: {
+    schemas: [
+      { name: "public" },
+      { name: "supabase_migrations" },
+    ],
+    tables: [
+      { schema: "public", name: "scholarships", rls_enabled: true },
+      {
+        schema: "supabase_migrations",
+        name: "schema_migrations",
+        rls_enabled: false,
+      },
+    ],
+    columns: [
+      {
+        schema: "public",
+        table: "scholarships",
+        name: "is_verified",
+      },
+      {
+        schema: "supabase_migrations",
+        table: "schema_migrations",
+        name: "version",
+      },
+    ],
+  },
+});
+const optionalUnavailable = enrichOptionalCatalogEvidence(
+  partialCatalog,
+  (_query, key) => {
+    if (key === "scholarships.is_verified") {
+      throw new Error("permission denied");
+    }
+    if (key === "supabase_migrations.schema_migrations") {
+      return [{ version: "1", name: null }];
+    }
+    return {};
+  },
+);
+assert.equal(
+  optionalUnavailable.aggregates.selected_state_distributions.find(
+    (item) => item.key === "scholarships.is_verified",
+  ).status,
+  "unavailable",
+);
+assert.equal(optionalUnavailable.migration_metadata.status, "available");
+assert.equal(
+  optionalUnavailable.migration_metadata.name_column_available,
+  false,
+);
+
+const valid = normalizeFingerprint(optionalUnavailable);
+assert.equal(
+  normalizeFingerprint(valid).fingerprint_sha256,
+  valid.fingerprint_sha256,
+);
+const validResult = validateProductionFingerprintDocument(valid);
+assert.equal(validResult.passed, true);
+assert.equal(isProductionReadOnlyEvidence(valid), true);
+assert.equal(
+  diffFingerprints({
+    production: valid,
+    nonproduction: productionFingerprint({
+      evidence: {
+        evidence_kind: "database_nonproduction",
+        environment: "approved_nonproduction",
+      },
+    }),
+  }).status,
+  "READY_FOR_OWNER_REVIEW",
+);
+assert.equal(
+  productionWritePerformedFromSafety(valid.safety),
+  false,
+);
+const receipt = buildProductionExecutionReceipt({
+  guard: inspectProductionReadGate(validGateEnvironment),
+  fingerprint: valid,
+  outputByteCount: 1234,
+});
+assert.deepEqual(
+  {
+    passed: receipt.passed,
+    project_ref_match: receipt.project_ref_match,
+    confirmation_match: receipt.confirmation_match,
+    database_ref_match: receipt.database_ref_match,
+    production_write_performed: receipt.production_write_performed,
+    credentials_printed: receipt.credentials_printed,
+  },
+  {
+    passed: true,
+    project_ref_match: true,
+    confirmation_match: true,
+    database_ref_match: true,
+    production_write_performed: false,
+    credentials_printed: false,
+  },
+);
+assert.equal(receipt.fingerprint_sha256, valid.fingerprint_sha256);
+
+const sql = fs.readFileSync(
+  "supabase/post-phase-n-q/001_production_read_only_fingerprint.sql",
+  "utf8",
+);
+for (const forbidden of [
+  "supabase_migrations.schema_migrations",
+  "public.scholarships",
+  "public.crawled_notices",
+  "public.notice_sources",
+  "digest(",
+]) {
+  assert.equal(sql.includes(forbidden), false, `SQL contains ${forbidden}`);
+}
+for (const required of [
+  "pg_namespace",
+  "pg_class",
+  "information_schema.columns",
+  "pg_constraint",
+  "pg_indexes",
+  "pg_policies",
+  "role_table_grants",
+  "pg_proc",
+  "pg_trigger",
+  "pg_views",
+  "pg_matviews",
+]) {
+  assert.ok(sql.includes(required), `SQL missing ${required}`);
+}
+
+const runnerSources = [
+  "lib/post-phase-n-q/production-fingerprint-runner.mjs",
+  "scripts/post-phase-n/run-production-read-only-fingerprint.mjs",
+]
+  .map((file) => fs.readFileSync(file, "utf8"))
+  .join("\n");
+assert.match(
+  runnerSources,
+  /production-fingerprint-owner-output\.json/,
+);
+assert.match(
+  runnerSources,
+  /production-fingerprint-execution-receipt\.json/,
+);
+assert.doesNotMatch(
+  runnerSources,
+  /NODE_TLS_REJECT_UNAUTHORIZED|rejectUnauthorized\s*:\s*false/,
+);
+assert.doesNotMatch(
+  runnerSources,
+  /console\.log\([^)]*POST_PHASE_N_PRODUCTION_DATABASE_URL/s,
+);
+
+console.log(
+  JSON.stringify(
+    {
+      passed: true,
+      production_gate_failures_tested: 4,
+      malformed_json_fail_closed: true,
+      evidence_kind_validation_tested: true,
+      read_only_safety_failures_tested: 4,
+      missing_optional_relation_passed: true,
+      optional_unavailable_recorded: true,
+      valid_production_evidence_passed: true,
+      production_access_performed: false,
+    },
+    null,
+    2,
+  ),
+);

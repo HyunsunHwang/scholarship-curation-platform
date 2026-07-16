@@ -9,7 +9,6 @@ const nonproductionPath =
   args[1] ?? "reports/post-phase-n-q/nonproduction-fingerprint.json";
 const outputPath =
   args[2] ?? "reports/post-phase-n-q/schema-diff.json";
-const productionEvidenceAvailable = !productionPath.includes(".synthetic.");
 
 function readJson(file) {
   return JSON.parse(fs.readFileSync(path.resolve(ROOT, file), "utf8"));
@@ -20,7 +19,6 @@ const result = diffFingerprints({
   production: readJson(productionPath),
   nonproduction: readJson(nonproductionPath),
   target,
-  productionEvidenceAvailable,
 });
 const resolved = path.resolve(ROOT, outputPath);
 fs.mkdirSync(path.dirname(resolved), { recursive: true });

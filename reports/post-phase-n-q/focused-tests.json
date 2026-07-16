@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-16T08:53:19.212Z",
+  "generated_at": "2026-07-16T10:27:42.613Z",
   "contract_version": "post-phase-n-q-focused-tests/v1",
-  "test_command_count": 11,
-  "passed_count": 11,
+  "test_command_count": 12,
+  "passed_count": 12,
   "failed_count": 0,
   "results": [
     {
@@ -11,6 +11,14 @@
       "exit_code": 0,
       "passed": true,
       "output": "{\n  \"passed\": true,\n  \"diff_classification_tested\": true,\n  \"production_gate_fail_closed\": true,\n  \"nonproduction_target_guard_tested\": true,\n  \"read_only_sql_tested\": true,\n  \"nonproduction_reachable_table_count\": 22\n}",
+      "error": ""
+    },
+    {
+      "name": "N production fingerprint runner",
+      "command": "node tests/post-phase-n/production-fingerprint-runner.test.mjs",
+      "exit_code": 0,
+      "passed": true,
+      "output": "{\n  \"passed\": true,\n  \"production_gate_failures_tested\": 4,\n  \"malformed_json_fail_closed\": true,\n  \"evidence_kind_validation_tested\": true,\n  \"read_only_safety_failures_tested\": 4,\n  \"missing_optional_relation_passed\": true,\n  \"optional_unavailable_recorded\": true,\n  \"valid_production_evidence_passed\": true,\n  \"production_access_performed\": false\n}",
       "error": ""
     },
     {
