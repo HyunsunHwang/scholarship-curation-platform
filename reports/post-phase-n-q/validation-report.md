@@ -1,7 +1,7 @@
 # Post-Phase N-Q Validation Report
 
 - Status: **PASS**
-- Checks: 24/24
+- Checks: 25/25
 - Production access: false
 - Production write: false
 - Automatic public publish: false
@@ -24,6 +24,7 @@
 - PASS: `authenticated_browser_walkthrough`
 - PASS: `operations_readiness`
 - PASS: `owner_gate_package`
+- PASS: `owner_gate_status_reconciliation`
 - PASS: `risk_register`
 - PASS: `focused_tests_evidence`
 - PASS: `production_readiness_documents`
@@ -45,6 +46,7 @@
 - `operations_readiness`: PASS_MINIMUM
 - `core_ux_readiness`: PASS
 - `production_migration`: NOT_AUTHORIZED
+- `canary_write`: NOT_AUTHORIZED
 - `canary_rollout`: HOLD
 - `public_beta`: HOLD
 

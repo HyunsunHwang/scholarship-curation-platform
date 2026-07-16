@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-16T17:04:34.825Z",
+  "generated_at": "2026-07-16T17:20:54.534Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
-  "check_count": 24,
-  "passed_check_count": 24,
+  "check_count": 25,
+  "passed_check_count": 25,
   "failed_check_count": 0,
   "failed_checks": [],
   "checks": [
@@ -236,6 +236,17 @@
       }
     },
     {
+      "name": "owner_gate_status_reconciliation",
+      "passed": true,
+      "evidence": {
+        "fingerprint_gate": "PASS_OWNER_READ_ONLY",
+        "migration_gate": "NOT_AUTHORIZED",
+        "canary_write_gate": "NOT_AUTHORIZED",
+        "canary_rollout": "HOLD",
+        "public_beta_gate": "HOLD"
+      }
+    },
+    {
       "name": "risk_register",
       "passed": true,
       "evidence": {
@@ -340,6 +351,7 @@
     "operations_readiness": "PASS_MINIMUM",
     "core_ux_readiness": "PASS",
     "production_migration": "NOT_AUTHORIZED",
+    "canary_write": "NOT_AUTHORIZED",
     "canary_rollout": "HOLD",
     "public_beta": "HOLD"
   },
@@ -353,5 +365,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 19
+  "changed_file_count": 8
 }

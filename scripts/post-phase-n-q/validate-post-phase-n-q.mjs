@@ -637,9 +637,12 @@ const requiredGateNames = [
   "OWNER_GATE_Q_PUBLIC_BETA",
 ];
 const gateNames = new Set(ownerGates.gates.map((gate) => gate.name));
+const gatesByName = new Map(
+  ownerGates.gates.map((gate) => [gate.name, gate]),
+);
 addCheck(
   "owner_gate_package",
-  ownerGates.evidence_kind === "owner_pending" &&
+  ownerGates.evidence_kind === "owner_evidence_accepted" &&
     requiredGateNames.every((name) => gateNames.has(name)) &&
     ownerGates.gates.every(
       (gate) =>
@@ -660,6 +663,32 @@ addCheck(
     required_gate_count: requiredGateNames.length,
     present_gate_count: requiredGateNames.filter((name) => gateNames.has(name))
       .length,
+  },
+);
+
+addCheck(
+  "owner_gate_status_reconciliation",
+  gatesByName.get("OWNER_GATE_N_PRODUCTION_READ_ONLY_FINGERPRINT")
+    ?.status ===
+    (ownerEvidenceValidation.passed ? "PASS_OWNER_READ_ONLY" : "OWNER_PENDING") &&
+    gatesByName.get("OWNER_GATE_N_PRODUCTION_MIGRATION")?.status ===
+      (scopedMigrationReadiness.migration_readiness === "HOLD"
+        ? "NOT_AUTHORIZED"
+        : "OWNER_PENDING") &&
+    gatesByName.get("OWNER_GATE_N_CANARY_WRITE")?.status ===
+      "NOT_AUTHORIZED" &&
+    canaryPlan.production_canary_write_authorized === false &&
+    canaryPlan.status === "OWNER_PENDING" &&
+    gatesByName.get("OWNER_GATE_Q_PUBLIC_BETA")?.status === "HOLD",
+  {
+    fingerprint_gate:
+      gatesByName.get("OWNER_GATE_N_PRODUCTION_READ_ONLY_FINGERPRINT")?.status,
+    migration_gate:
+      gatesByName.get("OWNER_GATE_N_PRODUCTION_MIGRATION")?.status,
+    canary_write_gate:
+      gatesByName.get("OWNER_GATE_N_CANARY_WRITE")?.status,
+    canary_rollout: "HOLD",
+    public_beta_gate: gatesByName.get("OWNER_GATE_Q_PUBLIC_BETA")?.status,
   },
 );
 
@@ -1141,6 +1170,7 @@ const report = {
       ? "PASS"
       : "HOLD",
     production_migration: "NOT_AUTHORIZED",
+    canary_write: "NOT_AUTHORIZED",
     canary_rollout: "HOLD",
     public_beta: "HOLD",
   },

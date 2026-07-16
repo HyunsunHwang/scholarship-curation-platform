@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T08:59:07.238Z",
+  "generated_at": "2026-07-16T17:21:30.889Z",
   "contract_version": "post-phase-m-validation/v1",
   "post_phase_m_status": "PASS",
   "controlled_pilot_status": "PASS",
@@ -54,7 +54,7 @@
   "external_llm_persistence_added": false,
   "secret_leak_count": 0,
   "duplicate_json_key_count": 0,
-  "strict_json_file_count": 1,
+  "strict_json_file_count": 3,
   "absolute_local_path_count": 0,
   "production_ref_scan_count": 0,
   "preexisting_file_inclusion_count": 0,
@@ -62,7 +62,7 @@
   "production_migration_executed": false,
   "l_functional_regression_passed": true,
   "historical_l_ownership_scope_assertion_preserved": true,
-  "owned_file_count": 115,
+  "owned_file_count": 14,
   "checks": [
     {
       "name": "required:reports/post-phase-m-preexisting-worktree.json",
@@ -400,7 +400,7 @@
         "current_head_l_test_failed_count": 0,
         "l_manifest_git_blob_matches_final_commit": true,
         "l_manifest_path_count_preserved": true,
-        "m_paths_outside_historical_l_scope": 67
+        "m_paths_outside_historical_l_scope": 203
       }
     },
     {
@@ -411,7 +411,7 @@
     {
       "name": "N-Q safety validator handoff",
       "passed": true,
-      "evidence": 100
+      "evidence": 11
     },
     {
       "name": "secret scan",

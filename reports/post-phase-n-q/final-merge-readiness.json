@@ -1,0 +1,52 @@
+{
+  "contract_version": "post-phase-n-q-final-merge-readiness/v1",
+  "status": "PASS",
+  "starting_commit": "664651fa6e0b28f01f6635ecb3887bd53bbb35a3",
+  "final_commit": "the feat/post-phase-n commit containing this report",
+  "main_commit_integrated": "8323cafe16a02d33a1485a6962b25967032a11cc",
+  "ahead_by_after_sync": 6,
+  "behind_by_after_sync": 0,
+  "merge_conflicts": 0,
+  "gate_status_reconciliation": "PASS",
+  "owner_evidence_tracked_status": "PASS (0 raw owner evidence files tracked)",
+  "artifact_retention_audit": {
+    "status": "PASS",
+    "tracked_artifact_count_before": 47,
+    "tracked_artifact_count_after": 44,
+    "exact_duplicate_removed_count": 3,
+    "validator_reference_break_count": 0
+  },
+  "validation": {
+    "nq_focused_tests": "PASS (13/13)",
+    "nq_validator": "PASS (25/25)",
+    "owner_evidence_and_scoped_diff": "PASS",
+    "production_fingerprint_runner_fixture_only": "PASS",
+    "post_phase_m_tests_and_validator": "PASS",
+    "post_phase_l_functional_regression": "PASS",
+    "post_phase_k_validator": "PASS",
+    "typescript": "PASS",
+    "full_eslint": "PASS",
+    "production_build": "PASS"
+  },
+  "safety": {
+    "production_access_performed": false,
+    "production_read_performed": false,
+    "production_write_performed": false,
+    "production_migration_performed": false,
+    "production_backup_performed": false,
+    "production_execute_count": 0,
+    "external_llm_call_performed": false
+  },
+  "engineering_merge_readiness": "PASS",
+  "production_fingerprint": "PASS_OWNER_READ_ONLY",
+  "migration_readiness": "HOLD",
+  "production_migration": "NOT_AUTHORIZED",
+  "canary_write": "NOT_AUTHORIZED",
+  "canary_rollout": "HOLD",
+  "public_beta": "HOLD",
+  "known_limitations": [
+    "Columns, constraints, and grants remain insufficiently evidenced in non-production.",
+    "Managed Supabase schemas are intentionally excluded from scoped migration readiness.",
+    "The build reports an existing public.contests schema-cache fallback warning after successful completion."
+  ]
+}
