@@ -1,0 +1,97 @@
+# Post-Phase L Validation Report
+
+- Stage: post_apply_runtime
+- Status: PASS
+- Checks: 71/71
+- Remote read/write: true/true on approved L project only
+- Production ref detected: false
+- Preexisting file inclusion count: 0
+- Fresh project guard present: true
+- Non-empty schema negative test passed: true
+- Environment guard created only after fresh assertion: true
+- Environment guard upsert in 002: false
+- Environment guard immutable: true
+- Runtime readback passed: true
+- Append-only review events: 2
+- Controlled preview public leakage: 0
+- Live vertical slice complete: true
+- Schema rollback rehearsed: true
+- Data rollback rehearsed: true
+- Browser walkthrough complete: true
+- Browser blocked reason: null
+
+## Checks
+
+- PASS: required:docs/post-phase-l-schema-inventory.json
+- PASS: required:docs/post-phase-l-implementation-report.md
+- PASS: required:docs/post-phase-l-baseline-and-migration-decision.md
+- PASS: required:docs/post-phase-l-integration-contract.md
+- PASS: required:docs/post-phase-l-browser-walkthrough.md
+- PASS: required:docs/post-phase-l-replay-reconciliation-rollback.md
+- PASS: required:reports/post-phase-l-preexisting-worktree.json
+- PASS: required:reports/post-phase-l-pre-apply-report.json
+- PASS: required:reports/post-phase-l-schema-manifest.json
+- PASS: required:reports/post-phase-l-pilot-run.json
+- PASS: required:reports/post-phase-l-replay-report.json
+- PASS: required:reports/post-phase-l-reconciliation-report.json
+- PASS: required:reports/post-phase-l-rollback-report.json
+- PASS: required:reports/post-phase-l-browser/authenticated-walkthrough.json
+- PASS: required:reports/post-phase-l-browser/pre-apply-readiness.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-vertical-slice.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-controlled-projection-preview.json
+- PASS: required:reports/post-phase-l-live/live-cau-001-final-runtime.json
+- PASS: required:reports/post-phase-l-convergence-result.json
+- PASS: required:reports/post-phase-l-risk-register-update.json
+- PASS: required:reports/post-phase-l-local-test-report.json
+- PASS: required:reports/post-phase-l-owned-files.json
+- PASS: required:scripts/run-post-phase-l-pilot.mjs
+- PASS: required:scripts/run-post-phase-l-review-event.mjs
+- PASS: required:scripts/verify-post-phase-l-runtime.mjs
+- PASS: required:supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql
+- PASS: required:supabase/post-phase-l/002_post_phase_l_normalized_graph.sql
+- PASS: required:supabase/post-phase-l/003_post_phase_l_pilot_seed.sql
+- PASS: required:supabase/post-phase-l/900_post_phase_l_bounded_data_rollback.sql
+- PASS: required:supabase/post-phase-l/999_post_phase_l_schema_rollback.sql
+- PASS: required:supabase/post-phase-l/verify_post_phase_l_schema.sql
+- PASS: required:supabase/post-phase-l/verify_post_phase_l_schema_rollback.sql
+- PASS: authoritative inventory syntax and shape
+- PASS: authoritative inventory byte fingerprint
+- PASS: historical governance snapshot is not a blocker
+- PASS: target project ref
+- PASS: required L environment variables present
+- PASS: production access zero
+- PASS: baseline strategy recorded
+- PASS: historical migration files unchanged
+- PASS: three ordered apply SQL files
+- PASS: fresh_project_guard_present=true
+- PASS: non_empty_schema_negative_test_passed=true
+- PASS: environment_guard_created_only_after_fresh_assertion=true
+- PASS: environment_guard_upsert_in_002=false
+- PASS: environment_guard_immutable=true
+- PASS: graph schema constraints
+- PASS: exact resolver, guard, replay, adapter, revision, review, and rollback tests
+- PASS: pilot cohort exactly bounded
+- PASS: dry run did not access remote
+- PASS: graph plan generated
+- PASS: fixture does not claim live success
+- PASS: replay idempotency
+- PASS: reconciliation fail closed
+- PASS: remote runtime readback passed
+- PASS: live_vertical_slice_complete=true
+- PASS: append-only review event applied
+- PASS: controlled projection preview stays unpublished
+- PASS: bounded rollback and deterministic reapply
+- PASS: browser_walkthrough_complete=true
+- PASS: schema_rollback_rehearsed=true
+- PASS: final safety invariants
+- PASS: K convergence has ten capabilities
+- PASS: preexisting manifest preserved
+- PASS: L-owned manifest is unique and complete
+- PASS: L-owned and preexisting manifests do not overlap
+- PASS: duplicate JSON keys zero
+- PASS: secret leak patterns zero across all L-owned artifacts
+- PASS: preexisting file inclusion zero
+- PASS: staged files stay inside L-owned manifest
+- PASS: all non-preexisting task paths are declared L-owned
+
+All Post-Phase L live, browser, rollback, reapply, and safety gates passed on the approved L project.

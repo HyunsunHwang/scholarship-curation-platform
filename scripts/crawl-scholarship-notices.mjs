@@ -4,8 +4,10 @@ import { fileURLToPath } from "node:url";
 import { load as loadHtml } from "cheerio";
 import { Agent as UndiciAgent } from "undici";
 import {
+  buildBoundedPaginationUrls,
   extractNoticeUrlFromLinkNode,
   getListAdapter,
+  getSourceAdapterStrategy,
 } from "../lib/crawler-adapters/index.mjs";
 import {
   attachmentMetadataToCsvCell,
@@ -39,6 +41,10 @@ const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
+const MAX_PAGES_PER_SOURCE = Math.max(
+  1,
+  Math.min(5, Number(process.env.CRAWL_MAX_PAGES_PER_SOURCE ?? 1)),
+);
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
 const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
 const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
@@ -315,6 +321,34 @@ export function extractFromList(source, html) {
   const results = [];
   const seen = new Set();
 
+  if (cleanText(source.sourceId).toLowerCase() === "cau_001") {
+    $("tr").each((_, node) => {
+      const row = $(node);
+      const link = row.find('a[href*="sub06_01_view.php"][href*="bbsIdx="]').first();
+      if (!link.length) return;
+      const noticeUrl = extractNoticeUrlFromLinkNode(source, link);
+      const title = cleanText(link.text());
+      if (!noticeUrl || !title || seen.has(noticeUrl)) return;
+      seen.add(noticeUrl);
+      results.push({
+        sourceId: source.sourceId,
+        universitySlug: source.universitySlug,
+        universityId: source.universityId,
+        collegeId: source.collegeId,
+        departmentId: source.departmentId,
+        collegeName: source.collegeName,
+        departmentName: source.departmentName,
+        sourceLevel: source.sourceLevel,
+        sourceName: source.sourceName,
+        listUrl: source.listUrl,
+        noticeUrl,
+        title,
+        dateText: extractListDateText(row, source.dateSelector),
+      });
+    });
+    return results;
+  }
+
   const pushResult = (node, index) => {
     const itemRoot = node ? $(node) : null;
     const linkNode = itemRoot
@@ -561,8 +595,20 @@ async function run() {
         );
         detailItems = listItems;
       } else {
-        const listHtml = await fetchHtml(source.listUrl);
-        listItems = trimItems(extractFromList(source, listHtml), MAX_ITEMS_PER_SOURCE);
+        const pageItems = [];
+        const seenNoticeUrls = new Set();
+        for (const listUrl of buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE)) {
+          const listHtml = await fetchHtml(listUrl);
+          const pageSource = { ...source, listUrl };
+          for (const item of extractFromList(pageSource, listHtml)) {
+            if (seenNoticeUrls.has(item.noticeUrl)) continue;
+            seenNoticeUrls.add(item.noticeUrl);
+            pageItems.push(item);
+            if (pageItems.length >= MAX_ITEMS_PER_SOURCE) break;
+          }
+          if (pageItems.length >= MAX_ITEMS_PER_SOURCE) break;
+        }
+        listItems = trimItems(pageItems, MAX_ITEMS_PER_SOURCE);
         if (DETAIL_FETCH_ENABLED) {
           for (const item of listItems) {
             // Small pacing to reduce load on university websites.
@@ -617,6 +663,7 @@ async function run() {
         sourceLevel: source.sourceLevel,
         collegeName: source.collegeName,
         sourceName: source.sourceName,
+        adapterStrategy: getSourceAdapterStrategy(source),
         detailItems,
         matched,
         error: "",
@@ -631,6 +678,7 @@ async function run() {
         sourceLevel: source.sourceLevel,
         collegeName: source.collegeName,
         sourceName: source.sourceName,
+        adapterStrategy: getSourceAdapterStrategy(source),
         error: formatFetchError(error),
         detailItems: [],
         matched: [],
@@ -649,6 +697,7 @@ async function run() {
         sourceLevel: result.sourceLevel,
         collegeName: result.collegeName,
         sourceName: result.sourceName,
+        adapterStrategy: result.adapterStrategy,
         crawledCount: 0,
         matchedCount: 0,
         newCount: 0,
@@ -679,6 +728,7 @@ async function run() {
       sourceLevel: result.sourceLevel,
       collegeName: result.collegeName,
       sourceName: result.sourceName,
+      adapterStrategy: result.adapterStrategy,
       crawledCount: result.detailItems.length,
       matchedCount: result.matched.length,
       newCount: newlyDiscovered.length,
@@ -708,12 +758,30 @@ async function run() {
       allowUndated: ALLOW_UNDATED,
       sourceConcurrency: SOURCE_CONCURRENCY,
       ignoreSeen: IGNORE_SEEN,
+      maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
+      maxPagesPerSource: MAX_PAGES_PER_SOURCE,
       sourceLevelFilterCount:
         SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
       collegeFilterCount:
         COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
     },
     perSource: stats,
+    observedItems: crawled.map((item) => ({
+      sourceId: item.sourceId,
+      title: item.title,
+      noticeUrl: item.noticeUrl,
+      listUrl: item.listUrl,
+      dateText: item.dateText ?? "",
+      detailDate: item.detailDate ?? "",
+      parsedDate: item.parsedDate ?? "",
+      detailFetchError: item.detailFetchError ?? "",
+      contentExcerpt: cleanText(item.content ?? "").slice(0, 500),
+      qualitySignals: item.qualitySignals ?? null,
+      matched: allMatched.some(
+        (matchedItem) =>
+          matchedItem.sourceId === item.sourceId && matchedItem.noticeUrl === item.noticeUrl,
+      ),
+    })),
     newNotices: allNew,
   };
 

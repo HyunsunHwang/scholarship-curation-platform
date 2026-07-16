@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-15T13:06:10.644Z",
+  "protected_shared_report": "reports/post-phase-master-risk-register.json",
+  "protected_shared_report_modified_before_l": false,
+  "shared_report_modified_by_l": false,
+  "entries": [
+    {
+      "id": "RISK-L-MIGRATION-HISTORY-DIVERGENCE",
+      "status": "mitigated_preapply",
+      "evidence": "L-only compatibility baseline is isolated from historical migrations and makes no production parity claim.",
+      "remaining": "Fresh L apply and schema fingerprint verification."
+    },
+    {
+      "id": "RISK-L-APPEND-EVENT-RUNTIME",
+      "status": "open_until_apply",
+      "evidence": "Immutable trigger and admin RPC are implemented and statically validated.",
+      "remaining": "Authenticated append/supersede/immutability runtime proof."
+    },
+    {
+      "id": "RISK-L-PILOT-LIVE-ATTRIBUTION",
+      "status": "open_until_apply",
+      "evidence": "Fixture path is explicitly non-live and all three pilot identities are exact-resolved.",
+      "remaining": "At least cau_001 attributable bounded live source-to-preview evidence."
+    }
+  ]
+}

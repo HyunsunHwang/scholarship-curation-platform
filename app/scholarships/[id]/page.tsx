@@ -125,6 +125,7 @@ export default async function ScholarshipDetailPage({
       .from("scholarships")
       .select(SCHOLARSHIP_DETAIL_SELECT)
       .eq("id", scholarshipId)
+      .eq("is_verified", true)
       .single(),
     supabase.auth.getUser(),
     getScholarshipScrapCounts(supabase, [scholarshipId]),

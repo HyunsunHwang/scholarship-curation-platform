@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-07-15T13:06:10.644Z",
+  "stage": "pre_apply_implementation",
+  "capabilities": [
+    {
+      "capability": "ingestion runner",
+      "k_decision": "merge",
+      "implemented_owner": "scripts/run-post-phase-l-pilot.mjs",
+      "runtime_evidence": "local fixture, bounded orchestrator, and syntax",
+      "remaining_limitation": "live bounded run pending"
+    },
+    {
+      "capability": "exact source resolution",
+      "k_decision": "port",
+      "implemented_owner": "lib/post-phase-l/source-resolver.mjs",
+      "runtime_evidence": "negative tests",
+      "remaining_limitation": "remote exact query pending"
+    },
+    {
+      "capability": "source adapters",
+      "k_decision": "merge",
+      "implemented_owner": "lib/crawler-adapters/index.mjs",
+      "runtime_evidence": "Yonsei UIC adapter tests",
+      "remaining_limitation": "live parser result pending"
+    },
+    {
+      "capability": "canonical URL and aliases",
+      "k_decision": "port",
+      "implemented_owner": "lib/post-phase-l/normalized-graph.mjs",
+      "runtime_evidence": "alias fixture",
+      "remaining_limitation": "redirect readback pending"
+    },
+    {
+      "capability": "normalized representation",
+      "k_decision": "merge",
+      "implemented_owner": "lib/post-phase-l/normalized-graph.mjs",
+      "runtime_evidence": "deterministic plan",
+      "remaining_limitation": "DB persistence pending"
+    },
+    {
+      "capability": "attachment evidence",
+      "k_decision": "port",
+      "implemented_owner": "ingestion_notice_assets",
+      "runtime_evidence": "metadata fixture",
+      "remaining_limitation": "live metadata pending"
+    },
+    {
+      "capability": "body extraction quality",
+      "k_decision": "port",
+      "implemented_owner": "ingestion_notice_revisions",
+      "runtime_evidence": "quality-state fixture",
+      "remaining_limitation": "live body pending"
+    },
+    {
+      "capability": "observability",
+      "k_decision": "merge",
+      "implemented_owner": "app/admin/crawler-review/page.tsx plus scripts/verify-post-phase-l-runtime.mjs",
+      "runtime_evidence": "source/type/readback checks",
+      "remaining_limitation": "DB walkthrough pending"
+    },
+    {
+      "capability": "review state",
+      "k_decision": "merge",
+      "implemented_owner": "review_decision_events",
+      "runtime_evidence": "SQL immutability/static checks",
+      "remaining_limitation": "admin event pending"
+    },
+    {
+      "capability": "public projection",
+      "k_decision": "merge",
+      "implemented_owner": "PostPhaseLReviewEvidence.tsx",
+      "runtime_evidence": "fail-closed source logic",
+      "remaining_limitation": "approved preview pending"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "runAt": "2026-07-15T13:34:28.027Z",
+  "input": "db:notice_sources",
+  "sourceMode": "db",
+  "totals": {
+    "sourceCount": 1,
+    "crawledCount": 5,
+    "matchedCount": 0,
+    "newCount": 0,
+    "knownCount": 0,
+    "lookbackDays": 3650,
+    "allowUndated": false,
+    "sourceConcurrency": 1,
+    "ignoreSeen": true,
+    "maxItemsPerSource": 5,
+    "maxPagesPerSource": 2,
+    "sourceLevelFilterCount": "all",
+    "collegeFilterCount": "all"
+  },
+  "perSource": [
+    {
+      "sourceId": "yonsei_060",
+      "universitySlug": "yonsei",
+      "universityId": "3",
+      "collegeId": "53",
+      "departmentId": "",
+      "sourceLevel": "college",
+      "collegeName": "언더우드국제대학",
+      "sourceName": "연세대 언더우드국제대학",
+      "adapterStrategy": "yonsei_uic",
+      "crawledCount": 5,
+      "matchedCount": 0,
+      "newCount": 0
+    }
+  ],
+  "newNotices": []
+}

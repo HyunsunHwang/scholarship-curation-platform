@@ -6,6 +6,8 @@ import {
   type AdminCrawlerReviewFilter,
 } from "@/lib/admin/crawler-review-diagnostics";
 import { getLlmReviewAssistanceReport } from "@/lib/admin/llm-review-assistance";
+import { getPostPhaseLOperationsSnapshot } from "@/lib/post-phase-l/admin-review";
+import { createClient } from "@/lib/supabase/server";
 
 const FILTERS: Array<{ key: AdminCrawlerReviewFilter; label: string }> = [
   { key: "all", label: "All" },
@@ -36,6 +38,8 @@ export default async function AdminCrawlerReviewPage({
   const filter = parseAdminCrawlerReviewFilter((await searchParams)?.filter);
   const report = getAdminCrawlerReviewDiagnostics();
   const llmAssistance = getLlmReviewAssistanceReport();
+  const supabase = await createClient();
+  const lOperations = await getPostPhaseLOperationsSnapshot(supabase);
   const diagnostics = filterAdminCrawlerReviewDiagnostics(report.diagnostics, filter);
   const cards = [
     ["Total diagnostics", report.metrics.diagnostic_item_count],
@@ -90,6 +94,51 @@ export default async function AdminCrawlerReviewPage({
           <div><dt className="text-xs font-medium text-violet-700">Public exposure change</dt><dd>{llmAssistance.metrics.public_exposure_change_count}</dd></div>
         </dl>
       </section>
+
+      {lOperations.mode !== "inactive" ? (
+        <section className="border-y border-gray-300 bg-white py-5" aria-label="Post-Phase L crawler runs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-semibold uppercase text-gray-500">Post-Phase L operations</p>
+              <h2 className="mt-1 text-base font-semibold text-gray-900">Normalized graph run evidence</h2>
+            </div>
+            <span className={`rounded-md px-2 py-1 text-xs font-semibold ${lOperations.mode === "db-backed" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+              {lOperations.mode}
+            </span>
+          </div>
+          {lOperations.mode === "db-backed" ? (
+            <div className="mt-4 overflow-x-auto border-y border-gray-200">
+              <table className="min-w-[760px] divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-500">
+                  <tr><th className="px-3 py-2">Run</th><th className="px-3 py-2">Mode</th><th className="px-3 py-2">Status</th><th className="px-3 py-2">Sources</th><th className="px-3 py-2">Started</th></tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {lOperations.runs.map((run) => (
+                    <tr key={run.id}>
+                      <td className="px-3 py-2 font-mono text-xs text-gray-700">{run.id}</td>
+                      <td className="px-3 py-2">{run.execution_mode}</td>
+                      <td className="px-3 py-2">{run.status}</td>
+                      <td className="px-3 py-2">{run.source_count}</td>
+                      <td className="px-3 py-2 text-xs text-gray-600">{run.started_at}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-red-700">L graph schema evidence is unavailable. Live status is not inferred.</p>
+          )}
+          {lOperations.mode === "db-backed" ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {lOperations.sourceResults.slice(0, 12).map((result) => (
+                <span key={result.id} className={`rounded-md px-2 py-1 text-xs font-medium ${statusClass(result.result_status)}`}>
+                  {result.source_id}: {result.result_status} ({result.matched_count})
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       <section>
         <div className="flex flex-wrap gap-2" aria-label="Diagnostic filters">

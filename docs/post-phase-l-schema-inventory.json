@@ -1,0 +1,425 @@
+{
+  "generated_at": "2026-07-15T09:10:00Z",
+  "source": "Supabase MCP read-only inventory",
+  "project": {
+    "id": "synwudnxdkybwihwmtak",
+    "name": "scholorship-curation-platform",
+    "region": "ap-northeast-2",
+    "status": "ACTIVE_HEALTHY",
+    "postgres": "17.6.1.104",
+    "note": "Org exposes only this ACTIVE_HEALTHY project. Treat as live/shared DB until a dedicated non-prod target is designated. No passwords or keys included."
+  },
+  "branches": [
+    {
+      "name": "main",
+      "project_ref": "synwudnxdkybwihwmtak",
+      "is_default": true,
+      "status": "FUNCTIONS_DEPLOYED"
+    },
+    {
+      "name": "schema-redesign",
+      "project_ref": "ibsodkyhertkmnxxvagv",
+      "is_default": false,
+      "status": "MIGRATIONS_FAILED",
+      "note": "Not suitable for Post-Phase L rehearsal"
+    }
+  ],
+  "migrations_applied_in_order": [
+    {"version": "20260424084111", "name": "add_qual_university_and_indexes"},
+    {"version": "20260424084157", "name": "update_matching_function_optimized_v2"},
+    {"version": "20260425022313", "name": "patch_profiles_ksaf_columns"},
+    {"version": "20260425030150", "name": "ksaf_combined_01_02"},
+    {"version": "20260425031203", "name": "ksaf_03_seed_ksaf"},
+    {"version": "20260426081417", "name": "rollback_01_drop_ksaf_schema"},
+    {"version": "20260426081448", "name": "rollback_02_missing_enums"},
+    {"version": "20260426081504", "name": "rollback_03_old_profiles"},
+    {"version": "20260426081524", "name": "rollback_04_old_scholarships"},
+    {"version": "20260426081600", "name": "rollback_05_old_rpc"},
+    {"version": "20260426082246", "name": "rollback_06_old_seed"},
+    {"version": "20260426095356", "name": "add_new_scholarships_batch_1"},
+    {"version": "20260426095708", "name": "add_new_scholarships_batch_2"},
+    {"version": "20260426100042", "name": "add_new_scholarships_batch_3"},
+    {"version": "20260426100555", "name": "add_new_scholarships_batch_4"},
+    {"version": "20260426100616", "name": "add_new_scholarships_batch_5"},
+    {"version": "20260426101818", "name": "fix_matching_rpc_college_join"},
+    {"version": "20260426101848", "name": "fix_qual_major_data"},
+    {"version": "20260426103410", "name": "fix_ku_scholarships_qual_university"},
+    {"version": "20260426120707", "name": "create_scholarship_posters_bucket"},
+    {"version": "20260426125220", "name": "add_admin_scholarship_rls_policies"},
+    {"version": "20260428020345", "name": "create_site_settings_table"},
+    {"version": "20260429051349", "name": "add_original_notice_fields_to_scholarships"},
+    {"version": "20260429052719", "name": "add_original_notice_image_urls_to_scholarships"},
+    {"version": "20260430015623", "name": "fix_total_scrap_count_rpc"},
+    {"version": "20260504033227", "name": "sync_auth_users_from_onboarding_profile"},
+    {"version": "20260504033830", "name": "fix_profile_to_auth_sync_phone_and_name_preserve"},
+    {"version": "20260504033913", "name": "fix_phone_regex_for_postgres_sync"},
+    {"version": "20260504033938", "name": "fix_postgres_phone_pattern_digits"},
+    {"version": "20260504034013", "name": "avoid_duplicate_phone_unique_conflict_in_trigger"},
+    {"version": "20260602072224", "name": "add_scholarship_type"},
+    {"version": "20260603120540", "name": "create_crawled_notices_staging"},
+    {"version": "20260603120600", "name": "harden_crawled_notices_trigger_fn"},
+    {"version": "20260616082343", "name": "add_parent_cohabitation_to_profiles"},
+    {"version": "20260616083017", "name": "add_last_semester_earned_credits_to_profiles"},
+    {"version": "20260616102322", "name": "normalize_enrollment_status_and_derived_matching"},
+    {"version": "20260616111512", "name": "add_admission_type_to_profiles"},
+    {"version": "20260616111953", "name": "add_scholarship_admission_type_filter"},
+    {"version": "20260617051047", "name": "add_new_onboarding_fields_to_matching"},
+    {"version": "20260619072133", "name": "remove_saeteomin_special_info"},
+    {"version": "20260619072504", "name": "add_disabled_special_info_self_family_enum"},
+    {"version": "20260619072513", "name": "split_disabled_special_info_self_family"},
+    {"version": "20260619072816", "name": "add_special_info_industrial_accident_family"},
+    {"version": "20260708121814", "name": "create_scholarship_selection_stages"},
+    {"version": "20260708121855", "name": "drop_legacy_scholarship_selection_stage_columns"},
+    {"version": "20260709065452", "name": "create_notice_sources"},
+    {"version": "20260709065708", "name": "harden_notice_sources_updated_at_fn"},
+    {"version": "20260709073631", "name": "add_crawled_notices_image_urls"},
+    {"version": "20260709080304", "name": "add_foreign_worker_parent_occupation"},
+    {"version": "20260710060757", "name": "add_profiles_interest_categories"},
+    {"version": "20260710065306", "name": "create_contests_tables"},
+    {"version": "20260710072138", "name": "contest_document_files_and_storage"},
+    {"version": "20260712080516", "name": "contests_content_kind"},
+    {"version": "20260712105334", "name": "crawled_contests_content_kind"},
+    {"version": "20260713050854", "name": "contest_engagement_tracking"},
+    {"version": "20260713051220", "name": "contest_view_count_bigint_args"},
+    {"version": "20260713090723", "name": "add_profile_spec_items"}
+  ],
+  "public_tables": [
+    {"name": "analytics_daily_kpi", "rls_enabled": true, "approx_rows": 5},
+    {"name": "analytics_events", "rls_enabled": true, "approx_rows": 74397},
+    {"name": "analytics_retention_daily", "rls_enabled": true, "approx_rows": 4},
+    {"name": "analytics_scholarship_daily_kpi", "rls_enabled": true, "approx_rows": 104},
+    {"name": "analytics_search_term_daily", "rls_enabled": true, "approx_rows": 55},
+    {"name": "bookmarks", "rls_enabled": true, "approx_rows": 192},
+    {"name": "contest_bookmarks", "rls_enabled": true, "approx_rows": 0},
+    {"name": "contest_selection_stages", "rls_enabled": true, "approx_rows": 17},
+    {"name": "contests", "rls_enabled": true, "approx_rows": 2131},
+    {"name": "crawled_contests", "rls_enabled": true, "approx_rows": 305},
+    {"name": "crawled_notices", "rls_enabled": true, "approx_rows": 1225},
+    {"name": "notice_sources", "rls_enabled": true, "approx_rows": 557},
+    {"name": "org_signup_requests", "rls_enabled": true, "approx_rows": 1},
+    {"name": "org_unit_aliases", "rls_enabled": true, "approx_rows": 13},
+    {"name": "org_units", "rls_enabled": true, "approx_rows": 1140},
+    {"name": "profile_spec_items", "rls_enabled": true, "approx_rows": 1},
+    {"name": "profiles", "rls_enabled": true, "approx_rows": 2154},
+    {"name": "scholarship_selection_stages", "rls_enabled": true, "approx_rows": 316},
+    {"name": "scholarship_target_units", "rls_enabled": true, "approx_rows": 0},
+    {"name": "scholarships", "rls_enabled": true, "approx_rows": 189},
+    {"name": "site_settings", "rls_enabled": true, "approx_rows": 1},
+    {"name": "universities", "rls_enabled": true, "approx_rows": 13},
+    {"name": "university_colleges", "rls_enabled": true, "approx_rows": 200},
+    {"name": "university_departments", "rls_enabled": true, "approx_rows": 915}
+  ],
+  "public_views": [],
+  "site_settings": {
+    "exists_in_catalog": true,
+    "is_base_table": true,
+    "recognized_by_schema_cache": true,
+    "row_count": 1,
+    "columns": [
+      {"name": "id", "type": "smallint", "nullable": false, "default": "1"},
+      {"name": "header_logo_url", "type": "text", "nullable": true, "default": null},
+      {"name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()"}
+    ],
+    "constraints": [
+      "PRIMARY KEY (id)",
+      "CHECK (id = 1) -- singleton"
+    ]
+  },
+  "review_publish_state_machines": {
+    "crawled_notices.status": {
+      "allowed": ["new", "promoted", "rejected"],
+      "counts": {"new": 1221, "rejected": 3, "promoted": 1}
+    },
+    "scholarships_public_projection": {
+      "keys": ["is_verified", "list_on_home"],
+      "counts": [
+        {"is_verified": true, "list_on_home": false, "cnt": 31},
+        {"is_verified": true, "list_on_home": true, "cnt": 158}
+      ],
+      "note": "Public SELECT policy requires is_verified = true. No unverified scholarships currently."
+    }
+  },
+  "dependency_graph_notes": [
+    "notice_sources.org_unit_id → org_units.id (ON DELETE SET NULL)",
+    "notice_sources.source_id UNIQUE; crawler source_key maps 1:1 to this text key",
+    "crawled_notices.source_id is free text (no FK to notice_sources)",
+    "crawled_notices.notice_url UNIQUE (dedup key)",
+    "crawled_notices.scholarship_id → scholarships.id (ON DELETE SET NULL)",
+    "crawled_notices.reviewed_by → auth.users.id (ON DELETE SET NULL)",
+    "scholarship_selection_stages.scholarship_id → scholarships.id (ON DELETE CASCADE)",
+    "Public scholarship visibility: scholarships.is_verified; stages visible when parent scholarship is verified"
+  ],
+  "tables": {
+    "notice_sources": {
+      "rls_enabled": true,
+      "approx_rows": 557,
+      "columns": [
+        {"name": "id", "type": "bigint", "nullable": false, "identity": "ALWAYS", "default": null},
+        {"name": "source_id", "type": "text", "nullable": false},
+        {"name": "university_slug", "type": "text", "nullable": false},
+        {"name": "org_unit_id", "type": "bigint", "nullable": true},
+        {"name": "source_level", "type": "notice_source_level", "nullable": false, "default": "'department'::notice_source_level"},
+        {"name": "source_name", "type": "text", "nullable": false},
+        {"name": "college_name", "type": "text", "nullable": true},
+        {"name": "department_name", "type": "text", "nullable": true},
+        {"name": "list_url", "type": "text", "nullable": false},
+        {"name": "base_url", "type": "text", "nullable": true},
+        {"name": "list_item_selector", "type": "text", "nullable": true},
+        {"name": "link_selector", "type": "text", "nullable": true},
+        {"name": "title_selector", "type": "text", "nullable": true},
+        {"name": "date_selector", "type": "text", "nullable": true},
+        {"name": "detail_content_selector", "type": "text", "nullable": true},
+        {"name": "detail_date_selector", "type": "text", "nullable": true},
+        {"name": "notice_url_pattern", "type": "text", "nullable": true},
+        {"name": "keywords", "type": "text", "nullable": true},
+        {"name": "adapter", "type": "text", "nullable": true},
+        {"name": "enabled", "type": "boolean", "nullable": false, "default": "true"},
+        {"name": "university_id", "type": "bigint", "nullable": true},
+        {"name": "college_id", "type": "bigint", "nullable": true},
+        {"name": "department_id", "type": "bigint", "nullable": true},
+        {"name": "notes", "type": "text", "nullable": true},
+        {"name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()"}
+      ],
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "UNIQUE (source_id)",
+        "FOREIGN KEY (org_unit_id) REFERENCES org_units(id) ON DELETE SET NULL",
+        "CHECK (list_url ~* '^https?://')",
+        "CHECK (university_slug ~ '^[a-z0-9_]+$')"
+      ],
+      "indexes": [
+        "notice_sources_pkey UNIQUE (id)",
+        "notice_sources_source_id_key UNIQUE (source_id)",
+        "notice_sources_enabled_slug_idx (enabled, university_slug)",
+        "notice_sources_org_unit_id_idx (org_unit_id)",
+        "notice_sources_university_slug_idx (university_slug)"
+      ],
+      "rls_policies": [
+        {"name": "notice_sources_select_public", "cmd": "SELECT", "roles": ["anon", "authenticated"], "qual": "true"},
+        {"name": "notice_sources_insert_admin", "cmd": "INSERT", "roles": ["authenticated"], "with_check": "is_admin()"},
+        {"name": "notice_sources_update_admin", "cmd": "UPDATE", "roles": ["authenticated"], "qual": "is_admin()", "with_check": "is_admin()"},
+        {"name": "notice_sources_delete_admin", "cmd": "DELETE", "roles": ["authenticated"], "qual": "is_admin()"}
+      ],
+      "triggers": [
+        {"name": "trg_notice_sources_updated_at", "timing": "BEFORE UPDATE", "fn": "set_notice_sources_updated_at()"}
+      ]
+    },
+    "crawled_notices": {
+      "rls_enabled": true,
+      "approx_rows": 1225,
+      "columns": [
+        {"name": "id", "type": "bigint", "nullable": false, "identity": "ALWAYS"},
+        {"name": "source_group", "type": "text", "nullable": false, "default": "'unknown'::text"},
+        {"name": "source_id", "type": "text", "nullable": false, "default": "''::text"},
+        {"name": "source_name", "type": "text", "nullable": false, "default": "''::text"},
+        {"name": "title", "type": "text", "nullable": false},
+        {"name": "notice_url", "type": "text", "nullable": false},
+        {"name": "notice_posted_at", "type": "date", "nullable": true},
+        {"name": "raw_date_text", "type": "text", "nullable": true},
+        {"name": "body", "type": "text", "nullable": true},
+        {"name": "scholarship_type", "type": "text", "nullable": false, "default": "'on_campus'::text"},
+        {"name": "status", "type": "text", "nullable": false, "default": "'new'::text"},
+        {"name": "scholarship_id", "type": "bigint", "nullable": true},
+        {"name": "extracted_draft", "type": "jsonb", "nullable": true},
+        {"name": "reviewed_at", "type": "timestamptz", "nullable": true},
+        {"name": "reviewed_by", "type": "uuid", "nullable": true},
+        {"name": "review_note", "type": "text", "nullable": true},
+        {"name": "run_at", "type": "timestamptz", "nullable": true},
+        {"name": "first_seen_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "last_seen_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "image_urls", "type": "text[]", "nullable": true}
+      ],
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "UNIQUE (notice_url)",
+        "FOREIGN KEY (scholarship_id) REFERENCES scholarships(id) ON DELETE SET NULL",
+        "FOREIGN KEY (reviewed_by) REFERENCES auth.users(id) ON DELETE SET NULL",
+        "CHECK (status = ANY (ARRAY['new','promoted','rejected']))",
+        "CHECK (scholarship_type = ANY (ARRAY['on_campus','off_campus']))"
+      ],
+      "indexes": [
+        "crawled_notices_pkey UNIQUE (id)",
+        "crawled_notices_notice_url_key UNIQUE (notice_url)",
+        "crawled_notices_source_group_idx (source_group)",
+        "crawled_notices_status_idx (status, first_seen_at DESC)"
+      ],
+      "rls_policies": [
+        {"name": "crawled_notices_select_admin", "cmd": "SELECT", "roles": ["authenticated"], "qual": "is_admin()"},
+        {"name": "crawled_notices_insert_admin", "cmd": "INSERT", "roles": ["authenticated"], "with_check": "is_admin()"},
+        {"name": "crawled_notices_update_admin", "cmd": "UPDATE", "roles": ["authenticated"], "qual": "is_admin()", "with_check": "is_admin()"},
+        {"name": "crawled_notices_delete_admin", "cmd": "DELETE", "roles": ["authenticated"], "qual": "is_admin()"}
+      ],
+      "triggers": [
+        {"name": "trg_crawled_notices_updated_at", "timing": "BEFORE UPDATE", "fn": "set_crawled_notices_updated_at()"}
+      ]
+    },
+    "scholarships": {
+      "rls_enabled": true,
+      "approx_rows": 189,
+      "id_strategy": "sequence nextval('scholarships_id_seq') — not identity",
+      "key_columns_for_phase_l": [
+        "id", "name", "organization", "institution_type", "scholarship_type",
+        "is_verified", "list_on_home", "apply_url", "homepage_url",
+        "original_notice_text", "original_notice_image_url", "original_notice_image_urls",
+        "created_at", "updated_at"
+      ],
+      "constraints_selected": [
+        "PRIMARY KEY (id)",
+        "CHECK (scholarship_type IN ('on_campus','off_campus'))",
+        "several qual_* CHECKs for admission/special_info/parent_cohabitation/credits"
+      ],
+      "indexes_selected": [
+        "scholarships_pkey UNIQUE (id)",
+        "idx_scholarships_home_listing (is_verified, list_on_home, apply_end_date, is_recommended DESC, recommended_sort_order)",
+        "idx_scholarships_verified_deadline (is_verified, apply_end_date)",
+        "idx_scholarships_admin_created_at (created_at DESC, id DESC)",
+        "GIN indexes on qual_university, qual_major, qual_region, qual_special_info, qual_enrollment_status, qual_field_codes"
+      ],
+      "rls_policies": [
+        {"name": "scholarships_public_read", "cmd": "SELECT", "roles": ["public"], "qual": "is_verified = true"},
+        {"name": "Admin users can read all scholarships", "cmd": "SELECT", "roles": ["authenticated"], "qual": "is_admin()"},
+        {"name": "Admin users can insert scholarships", "cmd": "INSERT", "roles": ["authenticated"], "with_check": "is_admin()"},
+        {"name": "Admin users can update scholarships", "cmd": "UPDATE", "roles": ["authenticated"], "qual": "is_admin()", "with_check": "is_admin()"},
+        {"name": "Admin users can delete scholarships", "cmd": "DELETE", "roles": ["authenticated"], "qual": "is_admin()"}
+      ],
+      "triggers": [
+        {"name": "trg_scholarships_updated_at", "timing": "BEFORE UPDATE", "fn": "set_updated_at()"}
+      ]
+    },
+    "scholarship_selection_stages": {
+      "rls_enabled": true,
+      "approx_rows": 316,
+      "columns": [
+        {"name": "id", "type": "bigint", "nullable": false, "identity": "ALWAYS"},
+        {"name": "scholarship_id", "type": "bigint", "nullable": false},
+        {"name": "stage_order", "type": "smallint", "nullable": false},
+        {"name": "title", "type": "text", "nullable": false},
+        {"name": "phase", "type": "text", "nullable": false, "default": "'selection'::text"},
+        {"name": "schedule_date", "type": "date", "nullable": true},
+        {"name": "schedule_text", "type": "text", "nullable": true},
+        {"name": "note", "type": "text", "nullable": true},
+        {"name": "created_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"name": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()"}
+      ],
+      "constraints": [
+        "PRIMARY KEY (id)",
+        "UNIQUE (scholarship_id, stage_order)",
+        "FOREIGN KEY (scholarship_id) REFERENCES scholarships(id) ON DELETE CASCADE",
+        "CHECK (phase IN ('selection','post_acceptance'))",
+        "CHECK (stage_order > 0)",
+        "CHECK (btrim(title) <> '')"
+      ],
+      "indexes": [
+        "scholarship_selection_stages_pkey UNIQUE (id)",
+        "scholarship_selection_stages_scholarship_id_stage_order_key UNIQUE (scholarship_id, stage_order)",
+        "scholarship_selection_stages_scholarship_id_idx (scholarship_id)"
+      ],
+      "rls_policies": [
+        {"name": "scholarship_selection_stages_select_public", "cmd": "SELECT", "roles": ["public"], "qual": "EXISTS (SELECT 1 FROM scholarships s WHERE s.id = scholarship_id AND s.is_verified = true)"},
+        {"name": "scholarship_selection_stages_admin_select", "cmd": "SELECT", "roles": ["public"], "qual": "is_admin()"},
+        {"name": "scholarship_selection_stages_admin_insert", "cmd": "INSERT", "roles": ["public"], "with_check": "is_admin()"},
+        {"name": "scholarship_selection_stages_admin_update", "cmd": "UPDATE", "roles": ["public"], "qual": "is_admin()", "with_check": "is_admin()"},
+        {"name": "scholarship_selection_stages_admin_delete", "cmd": "DELETE", "roles": ["public"], "qual": "is_admin()"}
+      ],
+      "triggers": [
+        {"name": "trg_scholarship_selection_stages_updated_at", "timing": "BEFORE UPDATE", "fn": "set_updated_at()"}
+      ]
+    }
+  },
+  "related_functions": [
+    {"name": "is_admin()", "security_definer": true, "summary": "profiles.role = 'admin' for auth.uid()"},
+    {"name": "set_crawled_notices_updated_at()", "security_definer": false},
+    {"name": "set_notice_sources_updated_at()", "security_definer": false},
+    {"name": "set_updated_at()", "security_definer": false},
+    {"name": "get_matched_scholarships(uuid)", "security_definer": true},
+    {"name": "get_public_home_scholarships_page(int,int)", "security_definer": false},
+    {"name": "get_scholarship_scrap_counts(integer[])", "security_definer": true},
+    {"name": "increment_scholarship_view_count(integer)", "security_definer": true},
+    {"name": "org_units_set_path()", "security_definer": false},
+    {"name": "org_units_repath_descendants()", "security_definer": false}
+  ],
+  "enums_relevant": {
+    "notice_source_level": ["university", "college", "department"],
+    "org_unit_type": ["university", "college", "division", "department"],
+    "support_category": ["등록금", "생활비", "학업장려금", "기자재", "해외연수비", "기타"],
+    "other_profile_matching_enums_present": [
+      "enrollment_status_type", "gender_type", "marital_status_type", "military_status_type",
+      "nationality_type", "parent_occupation_type", "school_category_type", "school_location_type",
+      "special_info_type"
+    ]
+  },
+  "pilot_sources": [
+    {
+      "source_key": "cau_001",
+      "canonical_source_id": "cau_001",
+      "notice_sources_pk": 1,
+      "source_name": "중앙대 경영학부",
+      "organization_or_unit": {
+        "university_slug": "cau",
+        "source_level": "department",
+        "college_name": "경영경제대학",
+        "department_name": "경영학부",
+        "org_unit_id": 719,
+        "org_unit_name": "경영학부",
+        "org_unit_type": "department"
+      },
+      "enabled": true,
+      "adapter": null,
+      "existing_crawled_notices": {"new": 4}
+    },
+    {
+      "source_key": "cau_002",
+      "canonical_source_id": "cau_002",
+      "notice_sources_pk": 2,
+      "source_name": "중앙대 경제학부",
+      "organization_or_unit": {
+        "university_slug": "cau",
+        "source_level": "department",
+        "college_name": "경영경제대학",
+        "department_name": "경제학부",
+        "org_unit_id": 720,
+        "org_unit_name": "경제학부",
+        "org_unit_type": "department"
+      },
+      "enabled": true,
+      "adapter": null,
+      "existing_crawled_notices": {"new": 2}
+    },
+    {
+      "source_key": "yonsei_060",
+      "canonical_source_id": "yonsei_060",
+      "notice_sources_pk": 547,
+      "source_name": "연세대 언더우드국제대학",
+      "organization_or_unit": {
+        "university_slug": "yonsei",
+        "source_level": "college",
+        "college_name": "언더우드국제대학",
+        "department_name": null,
+        "org_unit_id": 46,
+        "org_unit_name": "언더우드국제대학",
+        "org_unit_type": "college",
+        "legacy_university_id": 3,
+        "legacy_college_id": 53
+      },
+      "enabled": true,
+      "adapter": null,
+      "existing_crawled_notices": {"new": 33}
+    }
+  ],
+  "governance_status": {
+    "non_production_environment": "NOT_DESIGNATED",
+    "allowed_operations_scope": "PENDING_TEAM_CONFIRMATION",
+    "migration_release_owner": "NOT_DESIGNATED",
+    "backup_export_owner": "NOT_DESIGNATED",
+    "staging_rehearsal_approval_process": "NOT_DESIGNATED",
+    "production_actions_approved": false,
+    "notes": [
+      "Only one ACTIVE_HEALTHY Supabase project is linked; it contains live-scale data (profiles ~2154, analytics_events ~74k).",
+      "Post-Phase L additive work must not target this project until a dedicated non-prod target is named.",
+      "This inventory session used read-only MCP queries only; no migrations or writes were applied."
+    ]
+  }
+}

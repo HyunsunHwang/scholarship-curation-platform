@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-07-15T13:39:45.655Z",
+  "stage": "approved_bounded_rollback",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "production_ref_detected": false,
+  "result": {
+    "run_id": "182a3356-b7df-53d2-83d8-68a1c1e80b13",
+    "deleted_legacy_rows": 1,
+    "deleted_graph_notices": 1,
+    "unrelated_table_change_count": 0
+  }
+}

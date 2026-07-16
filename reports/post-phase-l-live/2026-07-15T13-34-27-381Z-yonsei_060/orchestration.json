@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-07-15T13:34:31.047Z",
+  "stage": "approved_bounded_pilot_orchestration",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "l_project_remote_read_performed": true,
+  "l_project_remote_write_performed": true,
+  "source_keys": [
+    "yonsei_060"
+  ],
+  "source_count": 1,
+  "max_items_per_source": 5,
+  "max_pages_per_source": 2,
+  "lookback_days": 3650,
+  "crawler_totals": {
+    "sourceCount": 1,
+    "crawledCount": 5,
+    "matchedCount": 0,
+    "newCount": 0,
+    "knownCount": 0,
+    "lookbackDays": 3650,
+    "allowUndated": false,
+    "sourceConcurrency": 1,
+    "ignoreSeen": true,
+    "maxItemsPerSource": 5,
+    "maxPagesPerSource": 2,
+    "sourceLevelFilterCount": "all",
+    "collegeFilterCount": "all"
+  },
+  "per_source": [
+    {
+      "sourceId": "yonsei_060",
+      "universitySlug": "yonsei",
+      "universityId": "3",
+      "collegeId": "53",
+      "departmentId": "",
+      "sourceLevel": "college",
+      "collegeName": "언더우드국제대학",
+      "sourceName": "연세대 언더우드국제대학",
+      "adapterStrategy": "yonsei_uic",
+      "crawledCount": 5,
+      "matchedCount": 0,
+      "newCount": 0
+    }
+  ],
+  "graph_counts": {
+    "ingestion_crawl_runs": 1,
+    "ingestion_source_run_results": 1,
+    "ingestion_notices": 0,
+    "ingestion_notice_url_aliases": 0,
+    "ingestion_notice_occurrences": 0,
+    "ingestion_notice_revisions": 0,
+    "ingestion_notice_assets": 0,
+    "review_items": 0,
+    "crawled_notices_compatibility": 0
+  },
+  "run_id": "83597ef0-f377-5a16-afaa-456171a88e2f",
+  "external_llm_call_count": 0,
+  "automatic_public_publish_count": 0,
+  "environment_values_printed": false
+}

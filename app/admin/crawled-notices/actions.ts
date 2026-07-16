@@ -9,6 +9,8 @@ import {
   formatOriginalNoticeText,
   type NoticeDraft,
 } from "@/lib/notice-extraction";
+import { applyPostPhaseLReviewDecision } from "@/lib/post-phase-l/review-actions";
+import { isPostPhaseLEnvironment } from "@/lib/post-phase-l/runtime";
 
 function normalizeRejectTag(reviewNote?: string) {
   const note = (reviewNote ?? "").trim();
@@ -88,6 +90,11 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
   }
 
   const payload = buildScholarshipPayload(formData);
+  const lEnvironment = isPostPhaseLEnvironment();
+  if (lEnvironment) {
+    payload.is_verified = false;
+    payload.list_on_home = false;
+  }
 
   const { data: inserted, error } = await supabase
     .from("scholarships")
@@ -114,16 +121,35 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
     }
   }
 
-  const { error: markError } = await supabase
-    .from("crawled_notices")
-    .update({
-      status: "promoted",
-      scholarship_id: inserted?.id ?? null,
-      reviewed_at: new Date().toISOString(),
-      reviewed_by: user?.id ?? null,
-    })
-    .eq("id", noticeId);
-  if (markError) return { error: markError.message };
+  if (!inserted?.id) return { error: "장학금 레코드 ID를 확인할 수 없습니다." };
+
+  const lDecision = await applyPostPhaseLReviewDecision({
+    supabase,
+    noticeId,
+    decision: "approve",
+    reason:
+      String(formData.get("review_note") ?? "").trim() ||
+      "Approved through the existing admin review form.",
+    scholarshipId: inserted.id,
+  });
+  if (lDecision.handled) {
+    if (lDecision.error) {
+      await supabase.from("scholarships").delete().eq("id", inserted.id);
+      return { error: `Append-only review event 저장 실패: ${lDecision.error}` };
+    }
+  } else {
+
+    const { error: markError } = await supabase
+      .from("crawled_notices")
+      .update({
+        status: "promoted",
+        scholarship_id: inserted.id,
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: user?.id ?? null,
+      })
+      .eq("id", noticeId);
+    if (markError) return { error: markError.message };
+  }
 
   revalidatePath("/admin/crawled-notices");
   revalidatePath("/admin/review");
@@ -140,6 +166,9 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
 export async function generateNoticeDraft(
   noticeId: number
 ): Promise<{ error?: string; success?: true }> {
+  if (isPostPhaseLEnvironment()) {
+    return { error: "Post-Phase L 환경에서는 외부 LLM 호출이 비활성화되어 있습니다." };
+  }
   const { supabase, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
@@ -222,6 +251,9 @@ export async function generateNoticeDraft(
 export async function formatNoticeBody(
   noticeId: number
 ): Promise<{ error?: string; success?: true }> {
+  if (isPostPhaseLEnvironment()) {
+    return { error: "Post-Phase L 환경에서는 외부 LLM 호출이 비활성화되어 있습니다." };
+  }
   const { supabase, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
 
@@ -275,13 +307,27 @@ export async function rejectNotice(
     return { error: "검수 대기 중인 공고만 거절할 수 있습니다." };
   }
 
+  const taggedNote = normalizeRejectTag(reviewNote).taggedNote;
+  const lDecision = await applyPostPhaseLReviewDecision({
+    supabase,
+    noticeId,
+    decision: "reject",
+    reason: taggedNote,
+  });
+  if (lDecision.handled) {
+    if (lDecision.error) return { error: lDecision.error };
+    revalidatePath("/admin/crawled-notices");
+    revalidatePath("/admin/review");
+    return { success: true };
+  }
+
   const { error } = await supabase
     .from("crawled_notices")
     .update({
       status: "rejected",
       reviewed_at: new Date().toISOString(),
       reviewed_by: user?.id ?? null,
-      review_note: normalizeRejectTag(reviewNote).taggedNote,
+      review_note: taggedNote,
     })
     .eq("id", noticeId);
   if (error) return { error: error.message };
@@ -308,6 +354,19 @@ export async function restoreNotice(
   if (reviewRowError) return { error: reviewRowError.message };
   if (reviewRow.status !== "rejected" || reviewRow.scholarship_id) {
     return { error: "거절된 공고만 검수 대기로 복원할 수 있습니다." };
+  }
+
+  const lDecision = await applyPostPhaseLReviewDecision({
+    supabase,
+    noticeId,
+    decision: "reopen",
+    reason: "Reopened through the existing admin review queue.",
+  });
+  if (lDecision.handled) {
+    if (lDecision.error) return { error: lDecision.error };
+    revalidatePath("/admin/crawled-notices");
+    revalidatePath("/admin/review");
+    return { success: true };
   }
 
   const { error } = await supabase

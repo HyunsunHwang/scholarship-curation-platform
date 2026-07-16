@@ -12,6 +12,12 @@ import ScholarshipForm, {
 import GenerateDraftButton from "@/app/admin/crawled-notices/GenerateDraftButton";
 import FormatNoticeBodyButton from "@/app/admin/crawled-notices/FormatNoticeBodyButton";
 import { promoteNotice } from "@/app/admin/crawled-notices/actions";
+import {
+  getPostPhaseLReviewEvidence,
+  type LegacyNoticeSnapshot,
+} from "@/lib/post-phase-l/admin-review";
+import { isPostPhaseLEnvironment } from "@/lib/post-phase-l/runtime";
+import PostPhaseLReviewEvidence from "./PostPhaseLReviewEvidence";
 
 export const maxDuration = 60;
 
@@ -121,6 +127,11 @@ export default async function ReviewScholarshipNoticePage({
     .single();
 
   if (!notice) notFound();
+  const lEnvironment = isPostPhaseLEnvironment();
+  const lEvidence = await getPostPhaseLReviewEvidence(
+    supabase,
+    notice as LegacyNoticeSnapshot,
+  );
 
   if (notice.status !== "new") {
     return (
@@ -151,6 +162,9 @@ export default async function ReviewScholarshipNoticePage({
             </Link>
           ) : null}
         </section>
+        <div className="mt-6">
+          <PostPhaseLReviewEvidence evidence={lEvidence} />
+        </div>
       </div>
     );
   }
@@ -204,9 +218,9 @@ export default async function ReviewScholarshipNoticePage({
           <div><dt className="font-medium text-gray-500">첨부 메타데이터</dt><dd>{notice.image_urls?.length ?? 0}건</dd></div>
         </dl>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <GenerateDraftButton noticeId={notice.id} />
-          <FormatNoticeBodyButton noticeId={notice.id} />
-          {notice.extracted_draft && (
+          {!lEnvironment ? <GenerateDraftButton noticeId={notice.id} /> : null}
+          {!lEnvironment ? <FormatNoticeBodyButton noticeId={notice.id} /> : null}
+          {!lEnvironment && notice.extracted_draft && (
             <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700">
               AI 초안 적용됨
             </span>
@@ -224,12 +238,21 @@ export default async function ReviewScholarshipNoticePage({
         )}
       </div>
 
+      <PostPhaseLReviewEvidence evidence={lEvidence} />
+
       <section className="mb-6 border-y border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950" aria-label="현재 검토 lifecycle">
-        <p className="font-semibold">현재 compatibility lifecycle</p>
-        <p className="mt-1 leading-6 text-amber-900">
-          이 공고 등록은 기존 DB 기반 `crawled_notices` lifecycle을 사용하고 legacy `scholarships` 레코드를
-          만듭니다. append-only review event를 만들거나 crawler public projection을 활성화하지는 않습니다.
-        </p>
+        <p className="font-semibold">{lEnvironment ? "L append-only review lifecycle" : "현재 compatibility lifecycle"}</p>
+        {lEnvironment ? (
+          <p className="mt-1 leading-6 text-amber-900">
+            검토 결정은 immutable event로 추가된 뒤 L 전용 compatibility 상태에 반영됩니다. 생성되는
+            scholarship은 검증·홈 노출이 꺼진 상태로 유지됩니다.
+          </p>
+        ) : (
+          <p className="mt-1 leading-6 text-amber-900">
+            이 공고 등록은 기존 DB 기반 `crawled_notices` lifecycle을 사용하고 legacy `scholarships` 레코드를
+            만듭니다. append-only review event를 만들거나 crawler public projection을 활성화하지는 않습니다.
+          </p>
+        )}
       </section>
 
       <ScholarshipForm

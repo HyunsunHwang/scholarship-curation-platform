@@ -1,0 +1,38 @@
+{
+  "runAt": "2026-07-15T13:34:08.675Z",
+  "input": "db:notice_sources",
+  "sourceMode": "db",
+  "totals": {
+    "sourceCount": 1,
+    "crawledCount": 0,
+    "matchedCount": 0,
+    "newCount": 0,
+    "knownCount": 0,
+    "lookbackDays": 3650,
+    "allowUndated": false,
+    "sourceConcurrency": 1,
+    "ignoreSeen": true,
+    "maxItemsPerSource": 5,
+    "maxPagesPerSource": 2,
+    "sourceLevelFilterCount": "all",
+    "collegeFilterCount": "all"
+  },
+  "perSource": [
+    {
+      "sourceId": "cau_002",
+      "universitySlug": "cau",
+      "universityId": "9",
+      "collegeId": "136",
+      "departmentId": "509",
+      "sourceLevel": "department",
+      "collegeName": "경영경제대학",
+      "sourceName": "중앙대 경제학부",
+      "adapterStrategy": "generic_html",
+      "crawledCount": 0,
+      "matchedCount": 0,
+      "newCount": 0,
+      "error": "fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE: unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca)"
+    }
+  ],
+  "newNotices": []
+}
