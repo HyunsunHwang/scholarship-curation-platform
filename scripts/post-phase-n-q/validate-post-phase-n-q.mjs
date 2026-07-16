@@ -130,6 +130,17 @@ const ownerGates = readJson("reports/post-phase-n-q/owner-gates.json");
 const riskRegister = readJson("reports/post-phase-n-q/risk-register.json");
 const focusedTests = readJson("reports/post-phase-n-q/focused-tests.json");
 const cau012 = readJson("reports/post-phase-n-q/cau-012-owner-packet.json");
+const productionRunnerFocusedResult = focusedTests.results.find(
+  (result) => result.name === "N production fingerprint runner",
+);
+let productionRunnerFocusedEvidence = {};
+try {
+  productionRunnerFocusedEvidence = JSON.parse(
+    productionRunnerFocusedResult?.output ?? "{}",
+  );
+} catch {
+  productionRunnerFocusedEvidence = {};
+}
 
 addCheck(
   "starting_state_gate",
@@ -696,6 +707,16 @@ const validProductionEvidence = {
     row_body_dumped: false,
   },
 };
+const staleCleanupCallIndex = productionRunnerSource.indexOf(
+  "removeStaleEvidence();",
+);
+const productionGateCallIndex = productionRunnerSource.indexOf(
+  "const guard = assertProductionReadGate(env);",
+);
+const staleEvidenceCleanupPrecedesGate =
+  staleCleanupCallIndex >= 0 &&
+  productionGateCallIndex >= 0 &&
+  staleCleanupCallIndex < productionGateCallIndex;
 addCheck(
   "production_fingerprint_evidence_contract",
   EVIDENCE_KINDS.has(PRODUCTION_READ_ONLY_EVIDENCE_KIND) &&
@@ -713,6 +734,11 @@ addCheck(
     productionRunnerSource.includes(
       "production-fingerprint-execution-receipt.json",
     ) &&
+    staleEvidenceCleanupPrecedesGate &&
+    productionRunnerFocusedEvidence.stale_evidence_gate_failure_tested ===
+      true &&
+    productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
+      true &&
     productionRunnerContractSource.includes(
       "validateProductionFingerprintDocument",
     ) &&
@@ -731,6 +757,14 @@ addCheck(
     ),
     valid_production_evidence_recognized:
       isProductionReadOnlyEvidence(validProductionEvidence),
+    stale_evidence_cleanup_precedes_gate:
+      staleEvidenceCleanupPrecedesGate,
+    stale_evidence_gate_failure_tested:
+      productionRunnerFocusedEvidence.stale_evidence_gate_failure_tested ===
+      true,
+    execute_not_called_on_gate_failure:
+      productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
+      true,
     filename_heuristic_absent:
       !/productionPath\.includes\(\s*["']\.synthetic\.["']\s*\)/u.test(
         diffRunnerSource,

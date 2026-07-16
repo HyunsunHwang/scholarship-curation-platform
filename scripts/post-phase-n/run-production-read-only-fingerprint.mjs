@@ -102,11 +102,11 @@ export function runProductionFingerprint({
   env = process.env,
   execute = executePsql,
 } = {}) {
+  removeStaleEvidence();
   const guard = assertProductionReadGate(env);
   if (!fs.existsSync(SQL_PATH)) {
     throw new Error("Production fingerprint SQL package is missing");
   }
-  removeStaleEvidence();
 
   const baseOutput = execute(["--file", SQL_PATH], env);
   const baseFingerprint = parseFingerprintJson(baseOutput);

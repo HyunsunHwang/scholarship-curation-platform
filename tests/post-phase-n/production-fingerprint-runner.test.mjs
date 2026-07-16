@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import path from "node:path";
 import {
   diffFingerprints,
   FINGERPRINT_SCHEMA_VERSION,
@@ -18,7 +19,10 @@ import {
   inspectProductionReadGate,
   PRODUCTION_READ_CONFIRMATION,
 } from "../../lib/post-phase-n-q/safety.mjs";
-import { buildPsqlEnvironment } from "../../scripts/post-phase-n/run-production-read-only-fingerprint.mjs";
+import {
+  buildPsqlEnvironment,
+  runProductionFingerprint,
+} from "../../scripts/post-phase-n/run-production-read-only-fingerprint.mjs";
 
 const PRODUCTION_REF = "synwudnxdkybwihwmtak";
 
@@ -116,6 +120,43 @@ assert.equal(
 assert.equal(childEnvironment.SUPABASE_SERVICE_ROLE_KEY, undefined);
 assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_ANON_KEY, undefined);
 assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_URL, undefined);
+
+const staleEvidencePaths = [
+  path.join(
+    process.cwd(),
+    "reports/post-phase-n-q/production-fingerprint-owner-output.json",
+  ),
+  path.join(
+    process.cwd(),
+    "reports/post-phase-n-q/production-fingerprint-execution-receipt.json",
+  ),
+];
+let gateFailureExecuteCallCount = 0;
+try {
+  for (const evidencePath of staleEvidencePaths) {
+    fs.mkdirSync(path.dirname(evidencePath), { recursive: true });
+    fs.writeFileSync(evidencePath, '{"stale":true}\n', "utf8");
+  }
+  assert.throws(
+    () =>
+      runProductionFingerprint({
+        env: {},
+        execute: () => {
+          gateFailureExecuteCallCount += 1;
+          throw new Error("execute must not run when the production gate fails");
+        },
+      }),
+    /production read gate blocked/iu,
+  );
+  for (const evidencePath of staleEvidencePaths) {
+    assert.equal(fs.existsSync(evidencePath), false);
+  }
+  assert.equal(gateFailureExecuteCallCount, 0);
+} finally {
+  for (const evidencePath of staleEvidencePaths) {
+    if (fs.existsSync(evidencePath)) fs.unlinkSync(evidencePath);
+  }
+}
 
 assert.throws(
   () => parseFingerprintJson("{not-json"),
@@ -357,6 +398,9 @@ console.log(
       missing_optional_relation_passed: true,
       optional_unavailable_recorded: true,
       valid_production_evidence_passed: true,
+      stale_evidence_gate_failure_tested: true,
+      execute_not_called_on_gate_failure:
+        gateFailureExecuteCallCount === 0,
       production_access_performed: false,
     },
     null,

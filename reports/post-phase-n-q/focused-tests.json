@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T10:27:42.613Z",
+  "generated_at": "2026-07-16T10:38:35.450Z",
   "contract_version": "post-phase-n-q-focused-tests/v1",
   "test_command_count": 12,
   "passed_count": 12,
@@ -18,7 +18,7 @@
       "command": "node tests/post-phase-n/production-fingerprint-runner.test.mjs",
       "exit_code": 0,
       "passed": true,
-      "output": "{\n  \"passed\": true,\n  \"production_gate_failures_tested\": 4,\n  \"malformed_json_fail_closed\": true,\n  \"evidence_kind_validation_tested\": true,\n  \"read_only_safety_failures_tested\": 4,\n  \"missing_optional_relation_passed\": true,\n  \"optional_unavailable_recorded\": true,\n  \"valid_production_evidence_passed\": true,\n  \"production_access_performed\": false\n}",
+      "output": "{\n  \"passed\": true,\n  \"production_gate_failures_tested\": 4,\n  \"malformed_json_fail_closed\": true,\n  \"evidence_kind_validation_tested\": true,\n  \"read_only_safety_failures_tested\": 4,\n  \"missing_optional_relation_passed\": true,\n  \"optional_unavailable_recorded\": true,\n  \"valid_production_evidence_passed\": true,\n  \"stale_evidence_gate_failure_tested\": true,\n  \"execute_not_called_on_gate_failure\": true,\n  \"production_access_performed\": false\n}",
       "error": ""
     },
     {
