@@ -4,7 +4,7 @@
   "starting_commit": "664651fa6e0b28f01f6635ecb3887bd53bbb35a3",
   "final_commit": "the feat/post-phase-n commit containing this report",
   "main_commit_integrated": "8323cafe16a02d33a1485a6962b25967032a11cc",
-  "ahead_by_after_sync": 7,
+  "ahead_by_after_sync": 6,
   "behind_by_after_sync": 0,
   "merge_conflicts": 0,
   "gate_status_reconciliation": "PASS",
