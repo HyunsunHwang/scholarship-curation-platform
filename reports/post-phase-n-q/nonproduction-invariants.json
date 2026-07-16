@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-07-16T08:47:30.201Z",
+  "contract_version": "post-phase-q-nonproduction-invariants/v1",
+  "evidence_kind": "database_nonproduction",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "active_public_scholarship_count": 0,
+  "public_row_without_effective_approve_count": 0,
+  "rejected_or_withdrawn_public_leakage_count": 0,
+  "duplicate_projection_count": 0,
+  "review_backlog_count": 6,
+  "review_event_count": 16,
+  "review_event_mutation_count": 0,
+  "automatic_public_publish_count": 0,
+  "alerts": [
+    {
+      "code": "PUBLIC_WITHOUT_EFFECTIVE_APPROVE",
+      "severity": "critical",
+      "count": 0,
+      "target_ids": [],
+      "message": "Public rows must have an effective approve decision."
+    },
+    {
+      "code": "REJECTED_OR_WITHDRAWN_PUBLIC",
+      "severity": "critical",
+      "count": 0,
+      "target_ids": [],
+      "message": "Rejected or withdrawn review state must not remain public."
+    },
+    {
+      "code": "REVIEW_BACKLOG_THRESHOLD",
+      "severity": "info",
+      "count": 0,
+      "target_ids": [],
+      "message": "Review backlog threshold is 50 items."
+    }
+  ],
+  "production_access_performed": false,
+  "production_write_performed": false,
+  "database_write_performed": false,
+  "guard": {
+    "safe": true,
+    "errors": [],
+    "target_project_ref_match": true,
+    "target_url_ref_match": true,
+    "production_ref_detected": false,
+    "secrets_printed": false
+  },
+  "passed": true
+}

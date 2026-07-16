@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "evidence_kind": "static_repository",
+  "branch": "feat/post-phase-n",
+  "starting_head": "8323cafe16a02d33a1485a6962b25967032a11cc",
+  "origin_main_head": "8323cafe16a02d33a1485a6962b25967032a11cc",
+  "merge_base": "8323cafe16a02d33a1485a6962b25967032a11cc",
+  "ahead": 0,
+  "behind": 0,
+  "worktree_clean": true,
+  "post_phase_m_semantic_commit_ancestor": true,
+  "post_phase_m_main_merge_ancestor": true,
+  "env_local_present": true,
+  "env_local_ignored": true,
+  "env_local_tracked": false,
+  "env_local_staged": false,
+  "approved_nonproduction_ref_match": true,
+  "forbidden_production_ref_detected": false,
+  "production_access_performed": false,
+  "git_diff_check_passed": true,
+  "status": "PASS",
+  "limitations": [
+    "The environment file was checked by booleans only; no value was printed.",
+    "This report records the gate before Post-Phase N-Q implementation changes."
+  ]
+}

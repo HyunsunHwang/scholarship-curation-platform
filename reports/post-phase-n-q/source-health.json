@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-07-16T07:46:54.802Z",
+  "contract_version": "post-phase-p-source-health/v1",
+  "evidence_kind": "live_public",
+  "sources": [
+    {
+      "source_key": "cau_001",
+      "status": "SUCCESS",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 1,
+      "body_usable_rate": 1,
+      "attachment_download_success_rate": null,
+      "new_item_count": 3,
+      "consecutive_zero_match_count": 0,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 1,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_002",
+      "status": "ZERO_MATCH_OBSERVED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 0.3333333333333333,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 1,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_003",
+      "status": "SUCCESS",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 1,
+      "body_usable_rate": 1,
+      "attachment_download_success_rate": null,
+      "new_item_count": 3,
+      "consecutive_zero_match_count": 0,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 1,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_007",
+      "status": "SUCCESS",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 1,
+      "body_usable_rate": 1,
+      "attachment_download_success_rate": null,
+      "new_item_count": 3,
+      "consecutive_zero_match_count": 0,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 1,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_008",
+      "status": "ZERO_MATCH_OBSERVED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 3,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "yonsei_060",
+      "status": "SUCCESS",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0.3333333333333333,
+      "body_usable_rate": 1,
+      "attachment_download_success_rate": 0.3333333333333333,
+      "new_item_count": 2,
+      "consecutive_zero_match_count": 0,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 2,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_004",
+      "status": "SELECTOR_CHANGED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 1,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_006",
+      "status": "SELECTOR_CHANGED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 1,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_010",
+      "status": "ZERO_MATCH_OBSERVED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 1,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    },
+    {
+      "source_key": "cau_011",
+      "status": "ZERO_MATCH_OBSERVED",
+      "last_success_at": "2026-07-16T07:45:51.138Z",
+      "list_request_success_rate": 1,
+      "detail_attribution_success_rate": 0,
+      "body_usable_rate": null,
+      "attachment_download_success_rate": null,
+      "new_item_count": 0,
+      "consecutive_zero_match_count": 1,
+      "collection_latency_ms": null,
+      "collection_latency_unavailable_reason": "The crawler report does not retain per-source start and finish timestamps.",
+      "review_queue_count": 0,
+      "review_distribution": {
+        "scholarship_true_positive": 0,
+        "contextual_only": 0,
+        "false_positive": 0,
+        "insufficient_evidence": 0
+      },
+      "public_projection_count": 0
+    }
+  ],
+  "status_counts": {
+    "SUCCESS": 4,
+    "ZERO_MATCH_OBSERVED": 4,
+    "TRANSPORT_BLOCKED": 0,
+    "TLS_BLOCKED": 0,
+    "SELECTOR_CHANGED": 2,
+    "DETAIL_ATTRIBUTION_FAILED": 0,
+    "BODY_UNUSABLE": 0,
+    "ATTACHMENT_BLOCKED": 0,
+    "PARSER_UNAVAILABLE": 0
+  },
+  "production_access_performed": false,
+  "passed": true
+}

@@ -76,23 +76,8 @@ const REQUEST_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 // Linux CI often prefers broken IPv6 for .ac.kr hosts; force IPv4 by default.
 const FORCE_IPV4 = process.env.CRAWL_FORCE_IPV4 !== "false";
-const INSECURE_TLS_HOSTS = new Set(
-  String(process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS ?? "")
-    .split(/[,\s|]+/)
-    .map((item) => cleanText(item).toLowerCase())
-    .filter(Boolean),
-);
 const DEFAULT_NOTICE_URL_PATTERN =
   /(mode=view|sMode=VIEW_FORM|iBrdContNo=|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
-const INSECURE_TLS_DISPATCHER =
-  INSECURE_TLS_HOSTS.size > 0
-    ? new UndiciAgent({
-        connect: {
-          rejectUnauthorized: false,
-          ...(FORCE_IPV4 ? { family: 4 } : {}),
-        },
-      })
-    : null;
 const DEFAULT_DISPATCHER = FORCE_IPV4
   ? new UndiciAgent({
       connect: {
@@ -256,18 +241,7 @@ function decodeHtmlBuffer(buffer, headerCharset) {
 }
 
 export async function fetchHtmlWithMetadata(url) {
-  let parsedUrl = null;
-  try {
-    parsedUrl = new URL(url);
-  } catch {
-    parsedUrl = null;
-  }
-  const shouldAllowInsecureTls =
-    parsedUrl &&
-    INSECURE_TLS_HOSTS.has(parsedUrl.hostname.toLowerCase());
-  const dispatcher = shouldAllowInsecureTls
-    ? INSECURE_TLS_DISPATCHER
-    : DEFAULT_DISPATCHER;
+  const dispatcher = DEFAULT_DISPATCHER;
 
   let lastError = null;
   for (let attempt = 0; attempt <= REQUEST_RETRY_COUNT; attempt += 1) {
@@ -509,7 +483,30 @@ async function mapLimit(items, limit, mapper) {
   return results;
 }
 
-function parseNoticeDate(rawText) {
+const ENGLISH_MONTHS = new Map(
+  [
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec",
+  ].map((month, index) => [month, index + 1]),
+);
+
+function validUtcDate(year, month, day) {
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+    return null;
+  }
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    Number.isNaN(parsed.getTime()) ||
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  return parsed;
+}
+
+export function parseNoticeDate(rawText) {
   const text = cleanText(rawText);
   if (!text) return null;
 
@@ -527,13 +524,24 @@ function parseNoticeDate(rawText) {
     const month = Number(match[2]);
     const day = Number(match[3]);
     if (year < 100) year += 2000;
-    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
-      continue;
-    }
-
-    const parsed = new Date(Date.UTC(year, month - 1, day));
-    if (Number.isNaN(parsed.getTime())) continue;
+    const parsed = validUtcDate(year, month, day);
+    if (!parsed) continue;
     return parsed;
+  }
+
+  const englishPatterns = [
+    /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2}),?\s+(\d{4})\b/i,
+    /\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*,?\s+(\d{4})\b/i,
+  ];
+  for (const [index, pattern] of englishPatterns.entries()) {
+    const match = text.match(pattern);
+    if (!match) continue;
+    const monthText = index === 0 ? match[1] : match[2];
+    const day = Number(index === 0 ? match[2] : match[1]);
+    const year = Number(match[3]);
+    const month = ENGLISH_MONTHS.get(monthText.slice(0, 3).toLowerCase());
+    const parsed = validUtcDate(year, month, day);
+    if (parsed) return parsed;
   }
 
   return null;
@@ -938,9 +946,7 @@ async function run() {
   console.log(
     `college_name_filter=${COLLEGE_NAME_ALLOWLIST.size > 0 ? [...COLLEGE_NAME_ALLOWLIST].join("|") : "all"}`,
   );
-  console.log(
-    `insecure_tls_hosts=${INSECURE_TLS_HOSTS.size > 0 ? [...INSECURE_TLS_HOSTS].join("|") : "none"}`,
-  );
+  console.log("tls_verification=required");
   console.log(`json=${jsonPath}`);
   console.log(`csv=${csvPath}`);
   console.log(`state=${resolvedStatePath}`);

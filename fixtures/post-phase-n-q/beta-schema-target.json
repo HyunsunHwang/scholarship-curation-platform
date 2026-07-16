@@ -1,0 +1,22 @@
+{
+  "contract_version": "post-phase-n-beta-schema-target/v1",
+  "evidence_kind": "design_only",
+  "beta_required_objects": [
+    "table:public.ingestion_crawl_runs",
+    "table:public.ingestion_source_run_results",
+    "table:public.ingestion_notices",
+    "table:public.ingestion_notice_url_aliases",
+    "table:public.ingestion_notice_occurrences",
+    "table:public.ingestion_notice_revisions",
+    "table:public.ingestion_notice_assets",
+    "table:public.review_items",
+    "table:public.review_decision_events",
+    "table:public.review_effective_decisions",
+    "table:public.review_evidence_references"
+  ],
+  "deferred_objects": [],
+  "remove_or_replace_objects": [],
+  "owner_decision_objects": [
+    "table:public.legacy_production_only"
+  ]
+}

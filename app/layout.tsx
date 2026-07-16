@@ -8,8 +8,7 @@ import "./globals.css";
 
 /** Geist는 한글 글리프가 없어 Safari에서 폴백·렌더링이 거칠어질 수 있음 → 한글 포함 Noto Sans KR을 본문 폰트로 사용 */
 const notoSansKr = Noto_Sans_KR({
-  // next/font 생성 타입에 korean이 누락되어 있음(실제 Google Fonts는 지원).
-  subsets: ["latin", "korean"] as ("latin")[],
+  subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-noto-sans-kr",
   display: "swap",

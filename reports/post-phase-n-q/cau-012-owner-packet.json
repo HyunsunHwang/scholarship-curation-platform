@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "contract_version": "post-phase-p-cau-012-owner-packet/v1",
+  "evidence_kind": "owner_pending",
+  "gate": "OWNER_GATE_P_CAU_012_INVENTORY",
+  "proposed_source_key": "cau_012",
+  "official_organization": "중앙대학교",
+  "official_unit": null,
+  "official_board": null,
+  "list_url": null,
+  "identity_evidence": [
+    "No exact cau_012 row exists in data/notice-sources.csv.",
+    "No exact cau_012 row exists in data/notice-sources-cau.csv.",
+    "Historical F-2/F-3/H/M reports preserve this as missing identity evidence, not source absence."
+  ],
+  "existing_canonical_source_relationship": "unknown",
+  "duplicate_alias_analysis": {
+    "performed_against_exact_inventory": true,
+    "candidate_url_available": false,
+    "duplicate_or_alias_conclusion": "NEEDS_MORE_EVIDENCE"
+  },
+  "recommendation": "NEEDS_MORE_EVIDENCE",
+  "allowed_decisions": [
+    "MAP_TO_EXISTING_SOURCE",
+    "ADD_AS_NEW_CANONICAL_SOURCE",
+    "REJECT_AS_NON_SOURCE",
+    "NEEDS_MORE_EVIDENCE"
+  ],
+  "automatic_source_create_count": 0,
+  "crawl_performed": false,
+  "production_access_performed": false
+}

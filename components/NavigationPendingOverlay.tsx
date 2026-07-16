@@ -17,9 +17,11 @@ export default function NavigationPendingOverlay({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const routeKey = `${pathname}?${searchParams.toString()}`;
-  const [pending, setPending] = useState(false);
+  const query = searchParams.toString();
+  const routeKey = `${pathname}${query ? `?${query}` : ""}`;
+  const [pendingTarget, setPendingTarget] = useState<string | null>(null);
   const delayTimerRef = useRef<number | null>(null);
+  const fallbackTimerRef = useRef<number | null>(null);
 
   function clearDelayTimer() {
     if (delayTimerRef.current != null) {
@@ -28,16 +30,12 @@ export default function NavigationPendingOverlay({
     }
   }
 
-  useEffect(() => {
-    clearDelayTimer();
-    setPending(false);
-  }, [routeKey]);
-
-  useEffect(() => {
-    if (!pending) return;
-    const timer = window.setTimeout(() => setPending(false), 2500);
-    return () => window.clearTimeout(timer);
-  }, [pending]);
+  function clearFallbackTimer() {
+    if (fallbackTimerRef.current != null) {
+      window.clearTimeout(fallbackTimerRef.current);
+      fallbackTimerRef.current = null;
+    }
+  }
 
   useEffect(() => {
     function handleCaptureClick(event: MouseEvent) {
@@ -80,8 +78,13 @@ export default function NavigationPendingOverlay({
       if (nextPathSearch === currentPathSearch) return;
 
       clearDelayTimer();
+      clearFallbackTimer();
       delayTimerRef.current = window.setTimeout(() => {
-        setPending(true);
+        setPendingTarget(nextPathSearch);
+        fallbackTimerRef.current = window.setTimeout(() => {
+          setPendingTarget(null);
+          fallbackTimerRef.current = null;
+        }, 2500);
       }, OVERLAY_DELAY_MS);
     }
 
@@ -89,8 +92,11 @@ export default function NavigationPendingOverlay({
     return () => {
       document.removeEventListener("click", handleCaptureClick, true);
       clearDelayTimer();
+      clearFallbackTimer();
     };
   }, []);
+
+  const pending = pendingTarget !== null && pendingTarget !== routeKey;
 
   return (
     <>

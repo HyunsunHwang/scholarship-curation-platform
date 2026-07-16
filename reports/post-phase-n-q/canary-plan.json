@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "contract_version": "post-phase-n-canary-plan/v1",
+  "evidence_kind": "design_only",
+  "status": "OWNER_PENDING",
+  "source_keys": ["cau_001", "yonsei_060"],
+  "excluded_sources": [
+    {"source_key":"cau_002","reason":"TLS remediated, but bounded zero-match remains unresolved"},
+    {"source_key":"cau_004","reason":"selector or scope defect"},
+    {"source_key":"cau_006","reason":"selector or scope defect"},
+    {"source_key":"cau_008","reason":"bounded zero-match"},
+    {"source_key":"cau_012","reason":"canonical identity owner pending"}
+  ],
+  "expected_maximum_run_count": 2,
+  "expected_maximum_notice_count": 4,
+  "expected_maximum_public_projection_count": 2,
+  "canary_duration_hours": 2,
+  "manual_reviewer": "OWNER_PENDING",
+  "operator": "OWNER_PENDING",
+  "rollback_authority": "고지석",
+  "stop_conditions": [
+    "public row without effective approve",
+    "reject or withdraw remains visible",
+    "duplicate notice or projection",
+    "source attribution failure",
+    "unexpected selector drift",
+    "unrelated row change",
+    "error rate above 0 for projection"
+  ],
+  "success_conditions": [
+    "all projected rows have effective approve",
+    "manual reviewer confirms source and semantic relevance",
+    "list search numeric detail and saved flow agree",
+    "rollback hides all canary rows",
+    "invariant report passes"
+  ],
+  "production_canary_write_authorized": false
+}

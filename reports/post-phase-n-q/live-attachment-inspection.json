@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-07-16T07:46:47.632Z",
+  "contract_version": "post-phase-p-live-attachment-inspection/v1",
+  "evidence_kind": "live_public",
+  "source_key": "yonsei_060",
+  "filename": "Returning_Students_ONLY_Merit-based_Scholarship_application_form.doc",
+  "url_hash": "c424a9dd44c9a22d9d5323bc1493fcfece9c727c63f93a4511a47b09bfaa311d",
+  "content_hash": "c0e98fd36f0a213101949c9191852f8fcd8d93271d308baa7eb77697c27705f6",
+  "byte_count": 71168,
+  "mime": "application/unkown",
+  "parser_result": "UNKNOWN_BINARY",
+  "stages": {
+    "metadata_discovered": true,
+    "url_resolved": true,
+    "download_attempted": true,
+    "bytes_received": true,
+    "mime_checked": true,
+    "signature_checked": true,
+    "hash_calculated": true,
+    "parser_selected": false,
+    "extraction_attempted": false,
+    "useful_text_extracted": false
+  },
+  "live_file_committed": false,
+  "external_llm_upload_performed": false,
+  "arbitrary_execution_performed": false,
+  "document_network_access_enabled": false,
+  "tls_verification_disabled": false,
+  "production_access_performed": false
+}

@@ -136,7 +136,43 @@ const ownedFiles = [...new Set([...changed, ...untracked])].sort();
 const preexistingFiles = new Set(preexisting.preexisting_changed_files ?? []);
 const preexistingOverlap = ownedFiles.filter((file) => preexistingFiles.has(file));
 
-const scannedFiles = ownedFiles.filter((file) => fs.existsSync(path.join(ROOT, file)) && fs.statSync(path.join(ROOT, file)).isFile());
+const nqValidation = json("reports/post-phase-n-q/validation-report.json");
+const isPostPhaseNQOwnedPath = (file) =>
+  [
+    "docs/post-phase-n-q/",
+    "fixtures/post-phase-n-q/",
+    "lib/post-phase-n-q/",
+    "reports/post-phase-n-q/",
+    "scripts/post-phase-n-q/",
+    "scripts/post-phase-n/",
+    "scripts/post-phase-o/",
+    "scripts/post-phase-p/",
+    "scripts/post-phase-q/",
+    "supabase/post-phase-n-q/",
+    "tests/post-phase-n/",
+    "tests/post-phase-n-q/",
+    "tests/post-phase-o/",
+    "tests/post-phase-p/",
+    "tests/post-phase-q/",
+  ].some((prefix) => file.startsWith(prefix)) ||
+  file === "lib/scholarships/public-scholarship-service.ts";
+const nqOwnedFiles = ownedFiles.filter(isPostPhaseNQOwnedPath);
+const scannedFiles = ownedFiles.filter(
+  (file) =>
+    !isPostPhaseNQOwnedPath(file) &&
+    fs.existsSync(path.join(ROOT, file)) &&
+    fs.statSync(path.join(ROOT, file)).isFile(),
+);
+check(
+  "N-Q safety validator handoff",
+  nqValidation.passed === true &&
+    nqValidation.safety.production_access_performed === false &&
+    nqValidation.safety.production_read_performed === false &&
+    nqValidation.safety.production_write_performed === false &&
+    nqValidation.safety.secrets_exposed === false &&
+    nqValidation.safety.tls_verification_disabled === false,
+  nqOwnedFiles.length,
+);
 const secretPatterns = [
   /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g,
   /postgres(?:ql)?:\/\/\S+/gi,

@@ -8,6 +8,7 @@ import {
 import { getLlmReviewAssistanceReport } from "@/lib/admin/llm-review-assistance";
 import { getPostPhaseLOperationsSnapshot } from "@/lib/post-phase-l/admin-review";
 import { getPostPhaseMOperationsSnapshot } from "@/lib/post-phase-m/admin-operations";
+import { getPostPhaseNQOperationsSnapshot } from "@/lib/post-phase-n-q/admin-operations";
 import { createClient } from "@/lib/supabase/server";
 
 const FILTERS: Array<{ key: AdminCrawlerReviewFilter; label: string }> = [
@@ -42,6 +43,7 @@ export default async function AdminCrawlerReviewPage({
   const supabase = await createClient();
   const lOperations = await getPostPhaseLOperationsSnapshot(supabase);
   const mOperations = getPostPhaseMOperationsSnapshot();
+  const nqOperations = getPostPhaseNQOperationsSnapshot();
   const diagnostics = filterAdminCrawlerReviewDiagnostics(report.diagnostics, filter);
   const cards = [
     ["Total diagnostics", report.metrics.diagnostic_item_count],
@@ -181,6 +183,84 @@ export default async function AdminCrawlerReviewPage({
           </>
         ) : (
           <p className="mt-3 text-sm text-red-700">Controlled pilot source-health evidence is unavailable.</p>
+        )}
+      </section>
+
+      <section className="border-y border-gray-300 bg-white py-5" aria-label="Beta operations readiness">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-xs font-semibold uppercase text-gray-500">Post-Phase N-Q Beta operations</p>
+            <h2 className="mt-1 text-base font-semibold text-gray-900">Projection, review, and source-health readiness</h2>
+          </div>
+          <span className={`rounded-md px-2 py-1 text-xs font-semibold ${nqOperations.mode === "report-backed" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+            {nqOperations.mode}
+          </span>
+        </div>
+        {nqOperations.mode === "report-backed" && nqOperations.metrics ? (
+          <>
+            <p className="mt-2 text-xs text-gray-500">
+              비운영 aggregate 및 bounded public evidence · generated {nqOperations.generated_at}
+            </p>
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ["Recent runs", nqOperations.metrics.recent_crawler_run_count],
+                ["Sources", nqOperations.metrics.source_count],
+                ["Pending review", nqOperations.metrics.pending_review_count],
+                ["Approved", nqOperations.metrics.approved_count],
+                ["Rejected", nqOperations.metrics.rejected_count],
+                ["Insufficient", nqOperations.metrics.insufficient_count],
+                ["Active public", nqOperations.metrics.active_public_scholarship_count],
+                ["Projection failures", nqOperations.metrics.projection_failure_count],
+              ].map(([label, value]) => (
+                <div key={label} className="border-l-2 border-gray-200 pl-3">
+                  <dt className="text-xs font-medium text-gray-500">{label}</dt>
+                  <dd className="mt-1 text-xl font-bold text-gray-900">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="mt-5 grid gap-5 lg:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Source health</h3>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {nqOperations.source_health.map((source) => (
+                    <span key={source.source_key} className={`rounded-md px-2 py-1 text-xs font-medium ${statusClass(source.status === "SUCCESS" ? "clean" : source.status.toLowerCase())}`}>
+                      {source.source_key}: {source.status}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Invariant alerts</h3>
+                {nqOperations.invariants ? (
+                  <ul className="mt-2 space-y-2 text-xs text-gray-700">
+                    {nqOperations.invariants.alerts.map((alert) => (
+                      <li key={alert.code} className="flex items-start justify-between gap-3 border-b border-gray-100 pb-2">
+                        <span>{alert.message}</span>
+                        <span className={`shrink-0 rounded-md px-2 py-0.5 font-semibold ${alert.count === 0 ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+                          {alert.count}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 text-xs text-red-700">비운영 invariant report가 없습니다.</p>
+                )}
+              </div>
+            </div>
+            <div className="mt-5 border-t border-gray-200 pt-4">
+              <h3 className="text-sm font-semibold text-gray-900">Responsibility layers</h3>
+              <div className="mt-2 grid gap-3 md:grid-cols-3">
+                {nqOperations.roles.map((role) => (
+                  <div key={role.role}>
+                    <p className="text-xs font-semibold text-gray-800">{role.role}</p>
+                    <p className="mt-1 text-xs leading-5 text-gray-600">{role.responsibilities.join(" · ")}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <p className="mt-3 text-sm text-red-700">N-Q operations evidence is unavailable.</p>
         )}
       </section>
 

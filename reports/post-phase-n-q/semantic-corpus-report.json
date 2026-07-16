@@ -1,0 +1,464 @@
+{
+  "generated_at": "2026-07-16T07:36:42.299Z",
+  "contract_version": "post-phase-p-semantic-corpus-report/v1",
+  "evidence_kind": "fixture",
+  "corpus_label_caveat": "analyst_curated_provisional labels are not independent human ground truth.",
+  "fixture_metrics": {
+    "item_count": 24,
+    "true_positive": 10,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 14,
+    "precision": 1,
+    "recall": 1,
+    "arithmetic_consistent": true
+  },
+  "live_metrics": {
+    "item_count": 6,
+    "true_positive": 2,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 4,
+    "precision": 1,
+    "recall": 1,
+    "arithmetic_consistent": true
+  },
+  "combined_metrics": {
+    "item_count": 30,
+    "true_positive": 12,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 18,
+    "precision": 1,
+    "recall": 1,
+    "arithmetic_consistent": true
+  },
+  "per_class_count": {
+    "scholarship_true_positive": 10,
+    "contextual_only": 3,
+    "false_positive": 5,
+    "insufficient_evidence": 6
+  },
+  "hard_negative_automatic_public_projection_count": 0,
+  "insufficient_evidence_automatic_approval_count": 0,
+  "target_precision": 0.9,
+  "target_recall": 0.85,
+  "threshold_passed": true,
+  "fixture_items": [
+    {
+      "id": "p01",
+      "title": "2026학년도 장학생 선발 및 장학금 신청 안내",
+      "body": "신청 자격을 충족한 학생에게 등록금 지원 혜택을 지급합니다.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "TUITION_SUPPORT",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p02",
+      "title": "국가근로장학생 모집 안내",
+      "body": "근로 장학금 신청 기간과 지원 자격을 안내합니다.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "APPLICATION_CONTEXT",
+        "RECRUITMENT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p03",
+      "title": "생활비 장학금 신청 공고",
+      "body": "생활비 지원을 희망하는 학생은 신청서를 제출하세요.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "APPLICATION_CONTEXT"
+      ]
+    },
+    {
+      "id": "p04",
+      "title": "등록금 감면 장학생 모집",
+      "body": "등록금 감면 지원 대상과 신청 절차를 확인하세요.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "TUITION_SUPPORT",
+        "APPLICATION_CONTEXT",
+        "RECRUITMENT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p05",
+      "title": "Foundation scholarship application",
+      "body": "Application eligibility and tuition support benefits are described here.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "TUITION_SUPPORT",
+        "APPLICATION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p06",
+      "title": "학자금 지원 신청 안내",
+      "body": "학자금 지원 대상자는 신청 기간 내 서류를 제출해야 합니다.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "FINANCIAL_SUPPORT",
+        "APPLICATION_CONTEXT"
+      ]
+    },
+    {
+      "id": "p07",
+      "title": "교외 장학재단 추천 장학생 선발",
+      "body": "추천서와 장학금 신청 서류를 제출하세요.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT"
+      ]
+    },
+    {
+      "id": "p08",
+      "title": "성적우수 장학생 신청",
+      "body": "장학생 선발 기준과 장학금 지급 혜택을 안내합니다.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p09",
+      "title": "외부장학 추천 신청 방법",
+      "body": "장학재단 추천서 신청 절차와 수혜 조건입니다.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "existing_human_review",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "FOUNDATION_TERM",
+        "APPLICATION_CONTEXT",
+        "SELECTION_CONTEXT",
+        "BENEFIT_CONTEXT"
+      ]
+    },
+    {
+      "id": "p10",
+      "title": "Tuition waiver recruitment",
+      "body": "Scholarship application and eligibility for tuition waiver.",
+      "expected": "scholarship_true_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "reason_codes": [
+        "POSITIVE_SUPPORT_AND_OPPORTUNITY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "TUITION_SUPPORT",
+        "APPLICATION_CONTEXT",
+        "RECRUITMENT_CONTEXT"
+      ]
+    },
+    {
+      "id": "n01",
+      "title": "2026학년도 등록금 납부 안내",
+      "body": "가상계좌와 분할 납부 일정을 확인하세요.",
+      "expected": "false_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ]
+    },
+    {
+      "id": "n02",
+      "title": "등록금 납부 보이스피싱 주의",
+      "body": "금융기관 계좌 송금과 피싱 피해를 주의하세요.",
+      "expected": "false_positive",
+      "label_provenance": "existing_human_review",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ]
+    },
+    {
+      "id": "n03",
+      "title": "학생 계좌 등록 안내",
+      "body": "환불 계좌를 등록하고 금융기관 정보를 확인하세요.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    },
+    {
+      "id": "n04",
+      "title": "학사 행정 일정 안내",
+      "body": "수강신청 및 학사 일정을 확인하세요.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "fixture_expected",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    },
+    {
+      "id": "n05",
+      "title": "외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "body": "불법 환전, 가상계좌, 송금 및 등록금 납부 보안 안내",
+      "expected": "false_positive",
+      "label_provenance": "existing_human_review",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "PAYMENT_SECURITY_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ]
+    },
+    {
+      "id": "n06",
+      "title": "장학생 선발 결과 발표",
+      "body": "최종 선정 결과와 명단을 확인하세요.",
+      "expected": "contextual_only",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "contextual_only",
+      "approval_allowed": false,
+      "reason_codes": [
+        "RESULT_NOTICE_WITHOUT_OPEN_OPPORTUNITY",
+        "RESULT_ONLY_CONTEXT",
+        "SCHOLARSHIP_TERM",
+        "SELECTION_CONTEXT"
+      ]
+    },
+    {
+      "id": "n07",
+      "title": "장학증서 발급 안내",
+      "body": "기존 장학생의 증서 발급 일정을 안내합니다.",
+      "expected": "contextual_only",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "contextual_only",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXT_WITHOUT_VERIFIED_SCHOLARSHIP_OPPORTUNITY",
+        "SCHOLARSHIP_TERM"
+      ]
+    },
+    {
+      "id": "n08",
+      "title": "등록금 환불 일정",
+      "body": "납부 취소와 환불 계좌 이체 일정을 안내합니다.",
+      "expected": "false_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT",
+        "ACCOUNT_TRANSFER_CONTEXT",
+        "CAUTION_NOTICE_CONTEXT"
+      ]
+    },
+    {
+      "id": "n09",
+      "title": "장학제도 설명회",
+      "body": "교내 제도 소개 행사 장소와 시간을 안내합니다.",
+      "expected": "contextual_only",
+      "label_provenance": "analyst_curated_provisional",
+      "predicted": "contextual_only",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXT_WITHOUT_VERIFIED_SCHOLARSHIP_OPPORTUNITY",
+        "SCHOLARSHIP_TERM"
+      ]
+    },
+    {
+      "id": "n10",
+      "title": "등록금 분할 납부 신청",
+      "body": "고지서 확인 후 분할 납입 절차를 진행하세요.",
+      "expected": "false_positive",
+      "label_provenance": "fixture_expected",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "reason_codes": [
+        "CONTEXTUAL_KEYWORD_WITH_PAYMENT_OR_SECURITY_CONTEXT",
+        "TUITION_CONTEXT_ONLY",
+        "PAYMENT_ADMIN_CONTEXT"
+      ]
+    },
+    {
+      "id": "i01",
+      "title": "학과 행사 안내",
+      "body": "행사 장소와 시간을 안내합니다.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "fixture_expected",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    },
+    {
+      "id": "i02",
+      "title": "학생회 공지",
+      "body": "이번 주 회의 안건을 확인하세요.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "fixture_expected",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    },
+    {
+      "id": "i03",
+      "title": "교육과정 개편",
+      "body": "전공 교과목 변경 사항입니다.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "fixture_expected",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    },
+    {
+      "id": "i04",
+      "title": "시설 이용 안내",
+      "body": "건물 출입 시간과 이용 규칙입니다.",
+      "expected": "insufficient_evidence",
+      "label_provenance": "fixture_expected",
+      "predicted": "insufficient_evidence",
+      "approval_allowed": false,
+      "reason_codes": [
+        "NO_SCHOLARSHIP_RELEVANCE_EVIDENCE"
+      ]
+    }
+  ],
+  "live_items": [
+    {
+      "id": "post-phase-m-cycle-1:cau_001:[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "source_key": "cau_001",
+      "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "expected": "scholarship_true_positive",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    },
+    {
+      "id": "post-phase-m-cycle-1:cau_003:외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "source_key": "cau_003",
+      "title": "외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "expected": "false_positive",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    },
+    {
+      "id": "post-phase-m-cycle-1:cau_007:[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "source_key": "cau_007",
+      "title": "[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "expected": "false_positive",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    },
+    {
+      "id": "post-phase-m-cycle-2:cau_001:[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "source_key": "cau_001",
+      "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "expected": "scholarship_true_positive",
+      "predicted": "scholarship_true_positive",
+      "approval_allowed": true,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    },
+    {
+      "id": "post-phase-m-cycle-2:cau_003:외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "source_key": "cau_003",
+      "title": "외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "expected": "false_positive",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    },
+    {
+      "id": "post-phase-m-cycle-2:cau_007:[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "source_key": "cau_007",
+      "title": "[학생] 외국인 유학생 등록금 납부 관련 유의사항 안내",
+      "expected": "false_positive",
+      "predicted": "false_positive",
+      "approval_allowed": false,
+      "label_provenance": "existing_human_review",
+      "evidence_kind": "live_public"
+    }
+  ],
+  "production_detector_modified": false,
+  "automatic_public_publish_count": 0
+}
