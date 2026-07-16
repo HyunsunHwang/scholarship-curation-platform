@@ -1,14 +1,12 @@
 {
-  "generated_at": "2026-07-16T17:45:24.927Z",
+  "generated_at": "2026-07-16T17:46:43.972Z",
   "contract_version": "post-phase-n-q-validator/v1",
-  "status": "HOLD",
-  "passed": false,
+  "status": "PASS",
+  "passed": true,
   "check_count": 26,
-  "passed_check_count": 25,
-  "failed_check_count": 1,
-  "failed_checks": [
-    "remote_git_merge_readiness"
-  ],
+  "passed_check_count": 26,
+  "failed_check_count": 0,
+  "failed_checks": [],
   "checks": [
     {
       "name": "starting_state_gate",
@@ -42,15 +40,15 @@
     },
     {
       "name": "remote_git_merge_readiness",
-      "passed": false,
+      "passed": true,
       "evidence": {
         "live": {
           "fetch_succeeded": true,
           "fetched_origin_main_sha": "8323cafe16a02d33a1485a6962b25967032a11cc",
-          "evaluated_head_sha": "8ba8920467d859db35c11d49219908c0965dd033",
+          "evaluated_head_sha": "d2d941705be51f7669593282d58d636d0c0e66d7",
           "merge_base_sha": "8323cafe16a02d33a1485a6962b25967032a11cc",
           "origin_main_is_ancestor": true,
-          "ahead_by": 10,
+          "ahead_by": 11,
           "behind_by": 0,
           "unresolved_conflict_count": 0,
           "worktree_clean": false,
@@ -59,7 +57,7 @@
         },
         "report_snapshot_matches_live": true,
         "merge_readiness": {
-          "pr_creation_readiness": "HOLD",
+          "pr_creation_readiness": "PASS",
           "branch_up_to_date_with_main": "PASS",
           "direct_fast_forward_merge_readiness": "PASS"
         }
@@ -368,8 +366,8 @@
     "secrets_exposed": false
   },
   "final_gates": {
-    "integrated_engineering_package": "HOLD",
-    "production_investigation_package": "HOLD",
+    "integrated_engineering_package": "PASS",
+    "production_investigation_package": "PASS",
     "production_fingerprint": "PASS_OWNER_READ_ONLY",
     "migration_readiness": "HOLD",
     "rollback_readiness": "PASS_NONPRODUCTION",
@@ -392,5 +390,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 3
+  "changed_file_count": 2
 }
