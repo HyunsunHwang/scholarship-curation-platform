@@ -6,6 +6,7 @@ import {
 } from "@/lib/public-data";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import {
+  buildForYouCurated,
   buildInterestRails,
   buildTop10,
   HOME_RAIL_ITEM_LIMIT,
@@ -13,9 +14,9 @@ import {
 } from "@/lib/home-rails";
 import {
   fetchCollaborativeCards,
-  fetchHomeMatchedScholarships,
   fetchRecentBrowseCards,
 } from "@/lib/home-rails-server";
+import { getBookmarkedScholarships } from "@/lib/user-bookmarks";
 import { getActiveRankVariant } from "@/lib/home-ranking-weights";
 
 export type HomeRailApiResponse = {
@@ -105,29 +106,30 @@ export async function GET(request: Request) {
   }
 
   if (rail === "for_you") {
-    const [{ data: profile }, recent, { keys: cfKeys }] = await Promise.all([
+    const [
+      { data: profile },
+      recent,
+      { keys: cfKeys },
+      bookmarks,
+      scholarships,
+      contests,
+    ] = await Promise.all([
       supabase
         .from("profiles")
-        .select("interest_categories, is_onboarded")
+        .select("interest_categories")
         .eq("id", user.id)
         .single(),
       fetchRecentBrowseCards(supabase),
       fetchCollaborativeCards(supabase, HOME_RAIL_ITEM_LIMIT),
+      getBookmarkedScholarships(supabase, user.id),
+      getCachedHomeScholarships(),
+      getCachedHomeContests(),
     ]);
 
-    if (!profile?.is_onboarded) {
-      return NextResponse.json(
-        {
-          rail: "for_you",
-          items: [],
-          meta: { rankVariant, cached: false },
-        } satisfies HomeRailApiResponse,
-        { headers: { "Cache-Control": "private, max-age=60" } }
-      );
-    }
-
-    const items = await fetchHomeMatchedScholarships(supabase, user.id, {
-      interests: profile.interest_categories,
+    const catalog = catalogFromHome(scholarships, contests);
+    const items = buildForYouCurated(catalog, {
+      interests: profile?.interest_categories,
+      savedItems: bookmarks,
       recentViews: recent,
       collaborativeKeys: cfKeys,
     });

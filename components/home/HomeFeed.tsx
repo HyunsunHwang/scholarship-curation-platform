@@ -244,10 +244,10 @@ export default function HomeFeed({
           {showBrowseRails && isLoggedIn && !isOnboarded ? (
             <div className="mb-5 rounded-2xl border border-brand/20 bg-cream px-4 py-3.5 sm:mb-6 sm:px-5">
               <p className="text-sm font-bold text-ink">
-                프로필을 완성하면 맞춤 공고가 홈에 나타나요
+                관심사를 등록하면 추천이 더 정확해져요
               </p>
               <p className="mt-0.5 text-xs text-ink/55">
-                학교·전공·관심사를 등록하면 자격에 맞는 장학금을 바로 추천합니다.
+                학교·전공·관심사를 채우면 취향에 맞는 공고를 더 잘 골라 드립니다.
               </p>
               <Link
                 href="/onboarding"
@@ -270,7 +270,7 @@ export default function HomeFeed({
                       ? "에디터 추천"
                       : "인기 공고"
                 }
-                showMatchedCta={forYou.length > 0}
+                showMatchedCta={false}
               />
             </div>
           ) : null}
@@ -280,8 +280,8 @@ export default function HomeFeed({
               <HomeSectionTitle
                 id="for-you-heading"
                 title={forYouTitle}
-                href="/matched"
-                subtitle="프로필 자격 조건에 맞는 장학금"
+                href={browseHref({ kind: "all", sort: "scraps" })}
+                subtitle="회원님을 위한 엄선"
               />
               <HorizontalShelf
                 label={forYouTitle}
@@ -302,6 +302,25 @@ export default function HomeFeed({
               bookmarkedKeys={bookmarkedKeys}
               serverRecent={serverRecent}
             />
+          ) : null}
+
+          {showBrowseRails && top10.length > 0 ? (
+            <section
+              aria-labelledby="top10-heading"
+              className="mt-8 sm:mt-10"
+            >
+              <HomeSectionTitle
+                id="top10-heading"
+                title="오늘 TOP 10"
+                href={browseHref({
+                  kind: browseKind,
+                  section: "trending",
+                  sort: "scraps",
+                })}
+                subtitle="스크랩·조회가 많은 공고"
+              />
+              <Top10Shelf items={top10} isBookmarked={isBookmarked} />
+            </section>
           ) : null}
 
           {showBrowseRails && urgentBookmarks.length > 0 ? (
@@ -358,33 +377,6 @@ export default function HomeFeed({
               rail={collaborativeRail}
               isBookmarked={isBookmarked}
             />
-          ) : null}
-
-          {showBrowseRails && top10.length > 0 ? (
-            <section
-              aria-labelledby="top10-heading"
-              className="mt-8 sm:mt-10"
-            >
-              <HomeSectionTitle
-                id="top10-heading"
-                title="오늘 TOP 10"
-                href={browseHref({
-                  kind: browseKind,
-                  section: "trending",
-                  sort: "scraps",
-                })}
-                subtitle="스크랩·조회가 많은 공고"
-              />
-              <Top10Shelf
-                items={top10}
-                renderCard={(scholarship) => (
-                  <ShelfCard
-                    scholarship={scholarship}
-                    bookmarked={isBookmarked(scholarship)}
-                  />
-                )}
-              />
-            </section>
           ) : null}
 
           {showBrowseRails ? (

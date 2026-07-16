@@ -118,47 +118,120 @@ function recentAffinityScore(
   return score;
 }
 
+/** 저장한 공고와의 콘텐츠 유사도 (기관·관심사·계열) */
+export function similarToSavedScore(
+  item: CardScholarship,
+  saved: CardScholarship[]
+): number {
+  if (saved.length === 0) return 0;
+  let score = 0;
+  const kind = item.content_kind ?? "scholarship";
+  for (const s of saved.slice(0, 12)) {
+    if ((s.content_kind ?? "scholarship") === kind) score += 0.25;
+    if (
+      s.organization &&
+      item.organization &&
+      s.organization === item.organization
+    ) {
+      score += 1.6;
+    }
+    const sInterests = new Set(s.interest_categories ?? []);
+    for (const ic of item.interest_categories ?? []) {
+      if (sInterests.has(ic)) score += 1.1;
+    }
+    const sFields = new Set(s.qual_field_codes ?? []);
+    for (const f of item.qual_field_codes ?? []) {
+      if (sFields.has(f)) score += 0.9;
+    }
+  }
+  return score;
+}
+
+/** 스크랩·조회 기반 인기 (로그 감쇠) */
+export function popularityScore(item: CardScholarship): number {
+  const scraps = item.scrap_count ?? 0;
+  const views = item.view_count ?? 0;
+  return Math.log1p(scraps) * 3 + Math.log1p(views);
+}
+
 function forYouScore(
   item: CardScholarship,
   interests: InterestCategoryId[],
+  saved: CardScholarship[],
   recent: CardScholarship[],
   cfKeys: ReadonlySet<string>,
   weights: ForYouWeights
 ): number {
   return (
+    interestOverlapScore(item, interests) * weights.interest +
+    similarToSavedScore(item, saved) * weights.similarSaved +
+    popularityScore(item) * weights.popularity +
     (item.is_recommended ? weights.recommended : 0) +
     deadlineUrgencyScore(item.apply_end_date) * weights.deadline +
-    interestOverlapScore(item, interests) * weights.interest +
     recentAffinityScore(item, recent) * weights.recent +
-    (item.scrap_count ?? 0) * weights.scrap +
-    (item.view_count ?? 0) * weights.view +
     (cfKeys.has(cardItemKey(item)) ? weights.collaborative : 0)
   );
 }
 
 /**
- * Phase B/C For You 소프트 랭킹:
- * 자격 후보 유지 + 관심사·최근 본·CF 가산 (가중치는 HOME_RANK_VARIANT).
+ * 회원님을 위한 엄선 랭킹:
+ * L1 관심사 + 저장 유사 + 인기 (+ 소량 에디토리얼/CF).
  */
 export function softRankForYou(
   items: CardScholarship[],
   options: {
     interests?: readonly string[] | null;
+    savedItems?: CardScholarship[];
     recentViews?: CardScholarship[];
     collaborativeKeys?: ReadonlySet<string>;
     weights?: ForYouWeights;
   } = {}
 ): CardScholarship[] {
   const interests = normalizeInterestCategories(options.interests);
+  const saved = options.savedItems ?? [];
   const recent = options.recentViews ?? [];
   const cfKeys = options.collaborativeKeys ?? new Set<string>();
   const weights = options.weights ?? getForYouWeights();
 
   return [...items].sort(
     (a, b) =>
-      forYouScore(b, interests, recent, cfKeys, weights) -
-      forYouScore(a, interests, recent, cfKeys, weights)
+      forYouScore(b, interests, saved, recent, cfKeys, weights) -
+      forYouScore(a, interests, saved, recent, cfKeys, weights)
   );
+}
+
+/**
+ * 홈 카탈로그에서 For You 선반 생성 (자격 hard filter 없음).
+ */
+export function buildForYouCurated(
+  catalog: CardScholarship[],
+  options: {
+    interests?: readonly string[] | null;
+    savedItems?: CardScholarship[];
+    recentViews?: CardScholarship[];
+    collaborativeKeys?: ReadonlySet<string>;
+    excludeKeys?: ReadonlySet<string>;
+  } = {}
+): CardScholarship[] {
+  const saved = options.savedItems ?? [];
+  const savedKeys = new Set(saved.map(cardItemKey));
+  const exclude = options.excludeKeys ?? new Set<string>();
+
+  const candidates = catalog.filter((item) => {
+    const key = cardItemKey(item);
+    if (exclude.has(key) || savedKeys.has(key)) return false;
+    if (isScholarshipExpired(item.apply_end_date)) return false;
+    return true;
+  });
+
+  const ranked = softRankForYou(candidates, {
+    interests: options.interests,
+    savedItems: saved,
+    recentViews: options.recentViews,
+    collaborativeKeys: options.collaborativeKeys,
+  });
+
+  return applyOrgDiversity(ranked).slice(0, HOME_FOR_YOU_LIMIT);
 }
 
 /** 기관 다양성: 동일 organization 상한 */

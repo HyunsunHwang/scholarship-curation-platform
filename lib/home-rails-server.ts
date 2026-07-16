@@ -58,6 +58,7 @@ export async function fetchHomeMatchedScholarships(
   userId: string,
   options: {
     interests?: readonly string[] | null;
+    savedItems?: CardScholarship[];
     recentViews?: CardScholarship[];
     collaborativeKeys?: ReadonlySet<string>;
   } = {}
@@ -84,12 +85,14 @@ export async function fetchHomeMatchedScholarships(
 
   const hasSoftSignals =
     Boolean(options.interests?.length) ||
+    Boolean(options.savedItems?.length) ||
     Boolean(options.recentViews?.length) ||
     Boolean(options.collaborativeKeys?.size);
 
   const ranked = hasSoftSignals
     ? softRankForYou(cards, {
         interests: options.interests,
+        savedItems: options.savedItems,
         recentViews: options.recentViews,
         collaborativeKeys: options.collaborativeKeys,
         weights: getForYouWeights(),

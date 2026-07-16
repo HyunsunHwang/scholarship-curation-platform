@@ -52,14 +52,13 @@ const institutionGradient: Record<string, string> = {
   기타: "from-stone-300 to-stone-500",
 };
 
-function formatDeadline(dateStr: string): string {
-  if (isAlwaysOpenRecruitment(dateStr)) return "상시모집";
+/** 카드 뱃지용: D-n / 오늘 / 상시 / 마감 */
+function formatDeadlineBadge(dateStr: string): string {
+  if (isAlwaysOpenRecruitment(dateStr)) return "상시";
   const days = daysUntilApplyDeadlineKorea(dateStr);
-  if (days < 0) return "마감됨";
-  if (days === 0) return "오늘 마감";
-  if (days <= 7) return `D-${days} · 마감 임박`;
-  const [, m, d] = dateStr.split("-");
-  return `${parseInt(m)}월 ${parseInt(d)}일 마감`;
+  if (days < 0) return "마감";
+  if (days === 0) return "오늘";
+  return `D-${days}`;
 }
 
 function deadlineColor(dateStr: string): string {
@@ -82,7 +81,7 @@ export default function ScholarshipCard({
     institutionGradient[scholarship.institution_type] ?? "from-stone-300 to-stone-500";
 
   const color = deadlineColor(scholarship.apply_end_date);
-  const deadlineLabel = formatDeadline(scholarship.apply_end_date);
+  const deadlineBadge = formatDeadlineBadge(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const supportAmount = formatCardSupportLine({
     contentKind: scholarship.content_kind,
@@ -103,6 +102,7 @@ export default function ScholarshipCard({
         : kind === "activity"
           ? "대외활동"
           : "장학금";
+  const kindBadgeLabel = `${deadlineBadge} · ${kindLabel}`;
   const kindBadgeClass =
     kind === "contest"
       ? "border-sky-600 text-sky-700"
@@ -138,10 +138,10 @@ export default function ScholarshipCard({
         )}
 
         <span
-          className={`absolute left-2 top-2 z-10 inline-flex items-center rounded-sm border bg-white/95 px-1.5 py-[3px] text-[10px] font-semibold leading-none shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
-          aria-label={kindLabel}
+          className={`absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-2.5rem)] items-center truncate rounded-sm border bg-white/95 px-1.5 py-[3px] text-[10px] font-semibold leading-none shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:max-w-[calc(100%-3rem)] sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
+          aria-label={kindBadgeLabel}
         >
-          {kindLabel}
+          {kindBadgeLabel}
         </span>
 
         <div className="absolute bottom-2 left-2 max-w-[78%] sm:bottom-3 sm:left-3 sm:max-w-[70%]">
@@ -181,11 +181,8 @@ export default function ScholarshipCard({
             {displayName}
           </p>
         </div>
-        <p className={`mt-0.5 text-[11px] font-medium sm:text-xs ${color}`}>
-          {deadlineLabel}
-        </p>
         <p
-          className="mt-1 truncate text-xs font-bold text-ink sm:text-sm"
+          className={`mt-0.5 truncate text-[11px] font-medium sm:text-xs ${color}`}
           title={supportAmount}
         >
           {supportAmount}

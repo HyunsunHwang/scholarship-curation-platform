@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
+import BrowseTopRankHero from "@/components/browse/BrowseTopRankHero";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
 import {
   BROWSE_SORT_OPTIONS,
@@ -23,6 +24,7 @@ type BrowseFeedProps = {
   sort: BrowseSort;
   section: BrowseSection;
   bookmarkedKeys: string[];
+  topRank?: CardScholarship[];
 };
 
 export default function BrowseFeed({
@@ -34,11 +36,13 @@ export default function BrowseFeed({
   sort,
   section,
   bookmarkedKeys,
+  topRank = [],
 }: BrowseFeedProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const bookmarkedSet = new Set(bookmarkedKeys);
   const title = browsePageTitle(kind, section);
+  const showTopRank = page <= 1 && topRank.length >= 5;
 
   function goTo(opts: {
     sort?: BrowseSort;
@@ -57,24 +61,31 @@ export default function BrowseFeed({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+    <div className="w-full">
+      {showTopRank ? (
+        <BrowseTopRankHero title={title} items={topRank} />
+      ) : null}
+
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
       <div className="mb-6 flex flex-col gap-4 sm:mb-8">
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/browse"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink/55 transition-colors hover:text-ink"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            탐색
-          </Link>
-        </div>
+        {!showTopRank ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/browse"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-ink/55 transition-colors hover:text-ink"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              탐색
+            </Link>
+          </div>
+        ) : null}
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
-              {title}
+              {showTopRank ? "전체 목록" : title}
             </h1>
             <p className="mt-1.5 text-sm text-ink/50">
               총{" "}
@@ -170,6 +181,7 @@ export default function BrowseFeed({
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

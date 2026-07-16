@@ -7,12 +7,11 @@ import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-d
 import { createClient } from "@/lib/supabase/server";
 import { getBookmarkedScholarships, getBookmarkedCardKeys } from "@/lib/user-bookmarks";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
-import { filterUrgentBookmarks } from "@/lib/home-rails";
+import { buildForYouCurated, filterUrgentBookmarks } from "@/lib/home-rails";
 import { assemblePersonalizedRails } from "@/lib/home-rails-assemble";
 import {
   fetchCollaborativeCards,
   fetchHomeCampusScholarships,
-  fetchHomeMatchedScholarships,
   fetchRecentBrowseCards,
 } from "@/lib/home-rails-server";
 
@@ -103,20 +102,20 @@ export default async function Home({
       address: profileResult.data?.address,
     };
 
+    // For You: 자격 hard filter 없이 L1 관심사 + 저장 유사 + 인기
+    forYou = buildForYouCurated(homeFeedItems, {
+      interests,
+      savedItems: bookmarks,
+      recentViews: serverRecent,
+      collaborativeKeys: cfResult.keys,
+    });
+
     if (isOnboarded) {
-      const [matched, campusItems] = await Promise.all([
-        fetchHomeMatchedScholarships(authSupabase, user.id, {
-          interests,
-          recentViews: serverRecent,
-          collaborativeKeys: cfResult.keys,
-        }),
-        fetchHomeCampusScholarships(
-          authSupabase,
-          user.id,
-          profileSignals.schoolName
-        ),
-      ]);
-      forYou = matched;
+      const campusItems = await fetchHomeCampusScholarships(
+        authSupabase,
+        user.id,
+        profileSignals.schoolName
+      );
 
       const assembled = assemblePersonalizedRails({
         catalog: homeFeedItems,
@@ -133,7 +132,7 @@ export default async function Home({
     } else if (interests?.length) {
       interestRails = assemblePersonalizedRails({
         catalog: homeFeedItems,
-        forYou: [],
+        forYou,
         interests,
         profile: profileSignals,
         campusItems: [],

@@ -7,6 +7,7 @@ import {
   BROWSE_PAGE_SIZE,
   fetchBrowseExploreTiles,
   fetchBrowsePage,
+  fetchBrowseTopRank,
   parseBrowseParams,
 } from "@/lib/browse-data";
 import { createClient } from "@/lib/supabase/server";
@@ -58,18 +59,23 @@ export default async function BrowsePage({
     );
   }
 
-  const [{ items, totalCount, totalPages }, bookmarkedKeys] = await Promise.all([
-    fetchBrowsePage({
-      kind,
-      sort,
-      section,
-      page,
-      pageSize: BROWSE_PAGE_SIZE,
-    }),
-    user
-      ? getBookmarkedCardKeys(authSupabase, user.id)
-      : Promise.resolve([] as string[]),
-  ]);
+  const [{ items, totalCount, totalPages }, bookmarkedKeys, topRank] =
+    await Promise.all([
+      fetchBrowsePage({
+        kind,
+        sort,
+        section,
+        page,
+        pageSize: BROWSE_PAGE_SIZE,
+      }),
+      user
+        ? getBookmarkedCardKeys(authSupabase, user.id)
+        : Promise.resolve([] as string[]),
+      // 1페이지에서만 배너용 TOP 10 조회
+      page <= 1
+        ? fetchBrowseTopRank({ kind, section })
+        : Promise.resolve([] as CardScholarship[]),
+    ]);
 
   const safePage = Math.min(page, totalPages);
 
@@ -94,6 +100,7 @@ export default async function BrowsePage({
           sort={sort}
           section={section}
           bookmarkedKeys={bookmarkedKeys}
+          topRank={topRank}
         />
       </main>
     </div>

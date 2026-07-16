@@ -783,3 +783,19 @@ export function browsePageTitle(kind: BrowseKind, section: BrowseSection): strin
   if (section === "trending") return `인기 상승 · ${kindLabel}`;
   return kindLabel;
 }
+
+/** 탐색 목록 상단 순위 배너용 — 스크랩·조회 기준 TOP 10 */
+export async function fetchBrowseTopRank(opts: {
+  kind: BrowseKind;
+  section: BrowseSection;
+}): Promise<CardScholarship[]> {
+  const isCareer = isCareerSection(opts.section);
+  const { items } = await fetchBrowsePage({
+    kind: opts.kind,
+    sort: "scraps",
+    section: isCareer ? opts.section : "trending",
+    page: 1,
+    pageSize: 10,
+  });
+  return items.slice(0, 10);
+}
