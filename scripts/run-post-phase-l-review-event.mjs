@@ -85,7 +85,7 @@ async function bootstrapEphemeralAdmin({ serviceClient, targetRef }) {
   return { email, password, userId };
 }
 
-async function resolveLegacyNotice(serviceClient, runId) {
+async function resolveLegacyNotice(serviceClient, runId, sourceKey = "") {
   const occurrences = await queryRows(
     serviceClient
       .from("ingestion_notice_occurrences")
@@ -102,7 +102,9 @@ async function resolveLegacyNotice(serviceClient, runId) {
       .in("id", noticeIds),
     "notice readback",
   );
-  const linked = notices.find((row) => row.legacy_crawled_notice_id != null);
+  const linked = notices.find(
+    (row) => row.legacy_crawled_notice_id != null && (!sourceKey || row.source_id === sourceKey),
+  );
   if (!linked) throw new Error(`run ${runId} has no linked compatibility notice`);
   const legacyRows = await queryRows(
     serviceClient
@@ -211,6 +213,7 @@ async function readReviewEvidence(serviceClient, legacyId) {
 }
 
 async function main() {
+  const workflowStartedAt = Date.now();
   const args = parseArgs(process.argv.slice(2));
   if (args.apply !== true) {
     throw new Error("Post-Phase L review event execution requires the explicit --apply flag");
@@ -240,10 +243,15 @@ async function main() {
     throw new Error(`Post-Phase L environment assertion failed: ${environmentError.message}`);
   }
 
-  const { legacy } = await resolveLegacyNotice(serviceClient, runId);
+  const sourceKey = typeof args.source === "string" ? args.source : "";
+  const { legacy } = await resolveLegacyNotice(serviceClient, runId, sourceKey);
+  const previewStartedAt = Date.now();
   const scholarshipId = decision === "approve"
     ? await createHiddenScholarship(serviceClient, legacy)
     : null;
+  const previewGenerationDurationMs = decision === "approve"
+    ? Date.now() - previewStartedAt
+    : 0;
   const admin = await bootstrapEphemeralAdmin({
     serviceClient,
     targetRef: guard.target_project_ref,
@@ -257,7 +265,8 @@ async function main() {
   });
   if (signInError) throw new Error(`ephemeral admin sign-in failed: ${signInError.message}`);
 
-  const eventKey = `runtime:${runId}:${decision}:v1`;
+  const eventKey = `runtime:${runId}:${legacy.source_id}:${decision}:v1`;
+  const rpcStartedAt = Date.now();
   const { data: rpcResult, error: rpcError } = await userClient.rpc(
     "post_phase_l_apply_legacy_review_decision",
     {
@@ -268,7 +277,14 @@ async function main() {
       p_scholarship_id: scholarshipId,
     },
   );
-  if (rpcError) throw new Error(`review event RPC failed: ${rpcError.message}`);
+  const reviewRpcDurationMs = Date.now() - rpcStartedAt;
+  if (rpcError) {
+    const { error: cleanupError } = await serviceClient.auth.admin.deleteUser(admin.userId);
+    if (cleanupError) {
+      throw new Error(`review event RPC failed: ${rpcError.message}; ephemeral admin cleanup failed`);
+    }
+    throw new Error(`review event RPC failed: ${rpcError.message}`);
+  }
 
   const evidence = await readReviewEvidence(serviceClient, legacy.id);
   const effectiveMatchesLatest =
@@ -302,6 +318,7 @@ async function main() {
     environment_values_printed: false,
     credential_values_printed: false,
     run_id: runId,
+    source_key: legacy.source_id,
     legacy_notice_id: legacy.id,
     decision,
     hidden_scholarship_preview_row_created: scholarshipId !== null,
@@ -319,6 +336,11 @@ async function main() {
     external_llm_persistence_added: false,
     ephemeral_admin_created: true,
     ephemeral_admin_user_id_present: Boolean(admin.userId),
+    ephemeral_admin_cleanup_status: "retained_as_immutable_review_event_actor",
+    latency_kind: "system_workflow_latency",
+    review_rpc_duration_ms: reviewRpcDurationMs,
+    preview_generation_duration_ms: previewGenerationDurationMs,
+    total_review_workflow_duration_ms: Date.now() - workflowStartedAt,
     passed:
       evidence.events.length >= 1 &&
       effectiveMatchesLatest &&

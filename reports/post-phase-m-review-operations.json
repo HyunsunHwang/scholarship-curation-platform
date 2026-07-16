@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-07-16T04:01:48.650Z",
+  "contract_version": "post-phase-m-review-operations/v1",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "reviewed_source_keys": [
+    "cau_003",
+    "cau_007"
+  ],
+  "decisions": [
+    {
+      "source_key": "cau_003",
+      "decision": "needs_review",
+      "append_only_review_event_count": 1,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": null,
+      "preview_generation_duration_ms": null,
+      "total_review_workflow_duration_ms": null
+    },
+    {
+      "source_key": "cau_003",
+      "decision": "approve",
+      "append_only_review_event_count": 2,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": null,
+      "preview_generation_duration_ms": null,
+      "total_review_workflow_duration_ms": null
+    },
+    {
+      "source_key": "cau_007",
+      "decision": "needs_review",
+      "append_only_review_event_count": 1,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": 81,
+      "preview_generation_duration_ms": 0,
+      "total_review_workflow_duration_ms": 1306
+    },
+    {
+      "source_key": "cau_007",
+      "decision": "approve",
+      "append_only_review_event_count": 2,
+      "effective_decision_match": true,
+      "controlled_projection_preview_enabled": true,
+      "review_rpc_duration_ms": 70,
+      "preview_generation_duration_ms": 40,
+      "total_review_workflow_duration_ms": 992
+    }
+  ],
+  "approved_source_count": 2,
+  "append_only_review_event_count": 6,
+  "effective_approve_source_count": 2,
+  "controlled_projection_preview_count": 2,
+  "review_event_update_rejected": true,
+  "review_event_delete_rejected": true,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "latency_kind": "system_workflow_latency",
+  "passed": true
+}

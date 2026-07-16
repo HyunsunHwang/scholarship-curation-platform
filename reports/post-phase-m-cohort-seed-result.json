@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-07-16T02:41:02.513Z",
+  "stage": "post_phase_m_cohort_seed_apply",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "target_project_ref_match": true,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "non_production_remote_read_performed": true,
+  "non_production_remote_write_performed": true,
+  "exact_source_resolution_passed": true,
+  "fuzzy_source_match_count": 0,
+  "automatic_source_create_count": 0,
+  "inventory_only_risk": {
+    "source_key": "cau_012",
+    "source_inventory_status": "absent",
+    "source_absence_proven": false,
+    "automatic_source_create_count": 0,
+    "matches": []
+  },
+  "operation": {
+    "inserted_source_count": 3,
+    "existing_source_count": 3,
+    "conflicting_source_count": 0,
+    "skipped_source_count": 0,
+    "inserted_org_unit_count": 3,
+    "existing_org_unit_count": 0,
+    "source_results": [
+      {
+        "source_key": "cau_001",
+        "status": "existing_preserved"
+      },
+      {
+        "source_key": "cau_002",
+        "status": "existing_preserved"
+      },
+      {
+        "source_key": "yonsei_060",
+        "status": "existing_preserved"
+      },
+      {
+        "source_key": "cau_003",
+        "status": "inserted_exact",
+        "org_unit_status": "inserted"
+      },
+      {
+        "source_key": "cau_007",
+        "status": "inserted_exact",
+        "org_unit_status": "inserted"
+      },
+      {
+        "source_key": "cau_008",
+        "status": "inserted_exact",
+        "org_unit_status": "inserted"
+      }
+    ],
+    "inserted_source_keys": [
+      "cau_003",
+      "cau_007",
+      "cau_008"
+    ],
+    "inserted_org_unit_ids": [
+      721,
+      722,
+      723
+    ]
+  },
+  "passed": true
+}

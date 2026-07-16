@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import HomeFeed from "./HomeFeed";
 import LibrarySidebar from "./LibrarySidebar";
 
 const LIBRARY_LEFT_KEY = "janghakssam:library-left-open";
+const LIBRARY_LEFT_CHANGED_EVENT = "janghakssam:library-left-changed";
 
 function readLibraryLeftOpen(): boolean {
   if (typeof window === "undefined") return true;
@@ -18,6 +19,17 @@ function readLibraryLeftOpen(): boolean {
   }
 }
 
+function subscribeLibraryLeftOpen(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener(LIBRARY_LEFT_CHANGED_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(LIBRARY_LEFT_CHANGED_EVENT, callback);
+  };
+}
+
+const subscribeToBrowserMount = () => () => {};
+
 export default function SpotifyHomeShell({
   scholarships,
   bookmarkedKeys,
@@ -29,28 +41,31 @@ export default function SpotifyHomeShell({
   bookmarkedScholarships?: CardScholarship[];
   isLoggedIn: boolean;
 }) {
-  const [leftOpen, setLeftOpen] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
+  const leftOpen = useSyncExternalStore(
+    subscribeLibraryLeftOpen,
+    readLibraryLeftOpen,
+    () => true,
+  );
+  const hydrated = useSyncExternalStore(
+    subscribeToBrowserMount,
+    () => true,
+    () => false,
+  );
 
-  useEffect(() => {
-    setLeftOpen(readLibraryLeftOpen());
-    setHydrated(true);
-  }, []);
+  function setLibraryLeftOpen(next: boolean) {
+    try {
+      window.localStorage.setItem(LIBRARY_LEFT_KEY, next ? "1" : "0");
+      window.dispatchEvent(new Event(LIBRARY_LEFT_CHANGED_EVENT));
+    } catch {
+      // ignore
+    }
+  }
 
   useEffect(() => {
     const open = () => setLibraryLeftOpen(true);
     window.addEventListener("janghakssam:open-library", open);
     return () => window.removeEventListener("janghakssam:open-library", open);
   }, []);
-
-  function setLibraryLeftOpen(next: boolean) {
-    setLeftOpen(next);
-    try {
-      window.localStorage.setItem(LIBRARY_LEFT_KEY, next ? "1" : "0");
-    } catch {
-      // ignore
-    }
-  }
 
   return (
     <div className="w-full pb-10 pt-4 sm:pt-5">

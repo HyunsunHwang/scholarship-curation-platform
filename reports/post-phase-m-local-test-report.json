@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-07-16T04:52:40.582Z",
+  "contract_version": "post-phase-m-local-tests/v1",
+  "test_count": 12,
+  "passed_count": 12,
+  "failed_count": 0,
+  "results": [
+    {
+      "name": "exact six-source cohort",
+      "passed": true,
+      "evidence": [
+        "cau_001",
+        "cau_002",
+        "yonsei_060",
+        "cau_003",
+        "cau_007",
+        "cau_008"
+      ]
+    },
+    {
+      "name": "no fuzzy source matching",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "cau_012 remains inventory-only",
+      "passed": true,
+      "evidence": {
+        "source_key": "cau_012",
+        "source_inventory_status": "absent",
+        "source_absence_proven": false,
+        "automatic_source_create_count": 0,
+        "matches": []
+      }
+    },
+    {
+      "name": "bounded cycle limits",
+      "passed": true,
+      "evidence": [
+        {
+          "max_items_per_source": 30,
+          "max_pages_per_source": 5,
+          "source_concurrency": 1,
+          "lookback_days": 730
+        },
+        {
+          "max_items_per_source": 30,
+          "max_pages_per_source": 5,
+          "source_concurrency": 1,
+          "lookback_days": 730
+        }
+      ]
+    },
+    {
+      "name": "positive control is repeatable",
+      "passed": true,
+      "evidence": "cau_001"
+    },
+    {
+      "name": "expansion live attribution",
+      "passed": true,
+      "evidence": [
+        "cau_003",
+        "cau_007"
+      ]
+    },
+    {
+      "name": "transport is not zero-match",
+      "passed": true,
+      "evidence": "cau_002"
+    },
+    {
+      "name": "zero-match does not infer absence",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "cycle duplicate invariants",
+      "passed": true,
+      "evidence": "all duplicate counts zero"
+    },
+    {
+      "name": "review events are immutable",
+      "passed": true,
+      "evidence": "update/delete rejected"
+    },
+    {
+      "name": "bounded rollback and reapply",
+      "passed": true,
+      "evidence": "bcd8f876-dbb3-567d-a99e-e7771bd0b176"
+    },
+    {
+      "name": "public exposure fails closed",
+      "passed": true,
+      "evidence": "zero leakage and automatic publish"
+    }
+  ],
+  "passed": true
+}

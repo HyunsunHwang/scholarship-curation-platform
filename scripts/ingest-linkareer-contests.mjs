@@ -361,7 +361,8 @@ async function upsertContest(row) {
 
   if (existing?.id) {
     // 기존 행 업데이트 시 플랫폼 조회수를 크롤 값으로 덮어쓰지 않음
-    const { view_count: _seedViewCount, ...updateRow } = row;
+    const updateRow = { ...row };
+    delete updateRow.view_count;
     const { data, error } = await supabase
       .from("contests")
       .update(updateRow)

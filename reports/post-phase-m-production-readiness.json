@@ -1,0 +1,130 @@
+{
+  "generated_at": "2026-07-16T04:12:39.957Z",
+  "contract_version": "post-phase-m-production-readiness/v1",
+  "non_production_controlled_pilot_status": "PASS",
+  "cohort_expansion_decision": "GO",
+  "production_rollout_decision": "HOLD",
+  "production_rollout_authorized": false,
+  "production_migration_executed": false,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "prerequisites": [
+    {
+      "name": "production schema migration review",
+      "passed": false,
+      "evidence": "No production migration review was authorized."
+    },
+    {
+      "name": "production backup/export evidence",
+      "passed": false,
+      "evidence": "No production access was authorized."
+    },
+    {
+      "name": "production schema fingerprint",
+      "passed": false,
+      "evidence": "No production read was authorized."
+    },
+    {
+      "name": "RLS review",
+      "passed": false,
+      "evidence": "L policies are non-production evidence only."
+    },
+    {
+      "name": "source seed reconciliation",
+      "passed": false,
+      "evidence": "Only the authorized L project was reconciled."
+    },
+    {
+      "name": "backfill plan",
+      "passed": false,
+      "evidence": "No production backfill plan has been approved."
+    },
+    {
+      "name": "canary cohort",
+      "passed": false,
+      "evidence": "The M cohort is a non-production operating cohort."
+    },
+    {
+      "name": "rollback authority",
+      "passed": false,
+      "evidence": "Production rollback authority is not granted."
+    },
+    {
+      "name": "monitoring and alerting",
+      "passed": false,
+      "evidence": "Repository evidence exists, but production alert delivery is not configured."
+    },
+    {
+      "name": "operator ownership",
+      "passed": false,
+      "evidence": "Production release and incident roles require explicit designation."
+    },
+    {
+      "name": "incident response",
+      "passed": false,
+      "evidence": "The M runbook is non-production only."
+    },
+    {
+      "name": "public projection reconciliation",
+      "passed": false,
+      "evidence": "Preview rows remain hidden and production parity is unproven."
+    },
+    {
+      "name": "numeric route preservation",
+      "passed": true,
+      "evidence": "L and M fail-closed preview evidence preserves hidden numeric routes."
+    },
+    {
+      "name": "security and secrets",
+      "passed": true,
+      "evidence": "No secret is committed or printed by the M workflow."
+    },
+    {
+      "name": "cost and capacity",
+      "passed": false,
+      "evidence": "Two bounded cycles do not establish production capacity."
+    },
+    {
+      "name": "source parser and attachment risks",
+      "passed": false,
+      "evidence": "cau_002 transport, cau_008 zero-match, and attachment extraction remain unresolved."
+    },
+    {
+      "name": "full lint and build health",
+      "passed": false,
+      "evidence": "Six explicitly baselined React lifecycle lint errors remain."
+    },
+    {
+      "name": "external LLM governance",
+      "passed": false,
+      "evidence": "Provider evaluation and persistence remain prohibited and unevaluated."
+    }
+  ],
+  "blocker_count": 16,
+  "exact_blockers": [
+    "production schema migration review",
+    "production backup/export evidence",
+    "production schema fingerprint",
+    "RLS review",
+    "source seed reconciliation",
+    "backfill plan",
+    "canary cohort",
+    "rollback authority",
+    "monitoring and alerting",
+    "operator ownership",
+    "incident response",
+    "public projection reconciliation",
+    "cost and capacity",
+    "source parser and attachment risks",
+    "full lint and build health",
+    "external LLM governance"
+  ],
+  "next_phase_prerequisites": [
+    "Authorize read-only production inventory and independently fingerprint the schema.",
+    "Approve migration, backup/export, source reconciliation, canary, rollback, and backfill plans with named owners.",
+    "Review RLS and public projection reconciliation against the production fingerprint.",
+    "Resolve or formally accept transport, zero-match, attachment, monitoring, capacity, and frontend lifecycle risks."
+  ],
+  "passed": true
+}

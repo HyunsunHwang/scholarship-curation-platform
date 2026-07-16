@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-16T04:01:48.650Z",
+  "contract_version": "post-phase-m-controlled-cohort-result/v1",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "control_source_keys": [
+    "cau_001",
+    "cau_002",
+    "yonsei_060"
+  ],
+  "expansion_source_keys": [
+    "cau_003",
+    "cau_007",
+    "cau_008"
+  ],
+  "inventory_only_risk_source_key": "cau_012",
+  "exact_source_resolution_passed": true,
+  "seeded_source_count": 6,
+  "successful_expansion_source_keys": [
+    "cau_003",
+    "cau_007"
+  ],
+  "expansion_decision": "GO",
+  "control_behavior_preserved": true,
+  "cau_002_status": "blocked_transport",
+  "cau_008_status": "zero_match_observed",
+  "yonsei_060_status": "zero_match_observed",
+  "cau_012_source_absence_proven": false,
+  "fuzzy_source_match_count": 0,
+  "automatic_source_create_count": 0,
+  "public_leakage_count": 0,
+  "passed": true
+}

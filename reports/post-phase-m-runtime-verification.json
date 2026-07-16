@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-07-16T04:01:48.650Z",
+  "contract_version": "post-phase-m-runtime-verification/v1",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "cycle_count": 2,
+  "cycle_ids": [
+    "post-phase-m-cycle-1",
+    "post-phase-m-cycle-2"
+  ],
+  "both_cycles_passed": true,
+  "deterministic_replay_passed": true,
+  "rollback_rehearsed": true,
+  "reapply_passed": true,
+  "post_reapply_replay_match": true,
+  "unrelated_table_change_count": 0,
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_alias_count": 0,
+  "public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "external_llm_call_count": 0,
+  "expansion_decision": "GO",
+  "production_migration_readiness": "HOLD",
+  "passed": true
+}

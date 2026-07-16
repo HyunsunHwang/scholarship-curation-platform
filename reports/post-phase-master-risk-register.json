@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-14T00:00:00.000Z",
+  "generated_at": "2026-07-16T04:12:39.957Z",
   "contract_version": "post-phase-master-risk-register/v2",
-  "scope": "Post-Phase K product convergence, truthful product state, and Phase L integration scope",
+  "scope": "Post-Phase K through M product convergence, non-production integration, controlled pilot operations, and production readiness",
   "all_project_risks_resolved": false,
   "blocking_risk_count": 0,
   "unassigned_resolution_phase_count": 0,
@@ -33,10 +33,10 @@
       "description": "cau_003 still requires duplicate-evidence review before it can be exposed.",
       "h_scope": "in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only.",
-      "evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only.",
+      "resolution_evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established an exact cau_003 list-to-detail path and append-only needs_review then approve events in non-production; automatic publication remained disabled.",
+      "evidence": "H fixture evidence exercises the existing detail and attachment extractor. The bounded live closure confirmed that cau_003's current generic list candidates are not verified notice-detail mappings without source-specific configuration; duplicate evidence remains review-only. Post-Phase M: M established an exact cau_003 list-to-detail path and append-only needs_review then approve events in non-production; automatic publication remained disabled.",
       "deferral_reason": "Mitigation preserves review-only handling, but no persisted reviewer decision lifecycle exists yet.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Implement and rehearse append-only duplicate review decisions",
       "owner": "Review governance",
       "success_criteria": "A reviewer can compare duplicate evidence and record an explicit decision."
@@ -50,12 +50,13 @@
       "h_scope": "defer_to_j",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "cau_012 is absent from the committed source inventory; bounded crawl evidence cannot establish canonical identity.",
-      "evidence": "Post-Phase H bounded coverage evidence records cau_012 as absent from the committed source inventory and preserves that this is not source-absence evidence.",
+      "evidence": "Post-Phase H bounded coverage evidence records cau_012 as absent from the committed source inventory and preserves that this is not source-absence evidence. Post-Phase M: M found no exact cau_012 inventory row, did not create the source, and retained source_absence_proven=false.",
       "deferral_reason": "cau_012 is absent from the committed source inventory; bounded crawl evidence cannot establish canonical identity.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Source identity inventory alignment and bounded coverage evidence",
       "owner": "Schema and source inventory owner",
-      "success_criteria": "Bounded source coverage evidence is captured with an explicit result classification."
+      "success_criteria": "Bounded source coverage evidence is captured with an explicit result classification.",
+      "resolution_evidence": "Post-Phase H bounded coverage evidence records cau_012 as absent from the committed source inventory and preserves that this is not source-absence evidence. Post-Phase M: M found no exact cau_012 inventory row, did not create the source, and retained source_absence_proven=false."
     },
     {
       "id": "RISK-CAU008-INCOMPLETE-BATCH",
@@ -66,12 +67,13 @@
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "The bounded live closure reached the configured list endpoint but source-specific list-to-notice mapping is absent, so attachment candidates cannot be credited as notice attachments. Download and attachment content interpretation remain out of scope.",
-      "evidence": "Post-Phase H bounded live closure reached the configured list endpoint but did not establish attributable notice attachments because source-specific list-to-notice mapping is absent.",
+      "evidence": "Post-Phase H bounded live closure reached the configured list endpoint but did not establish attributable notice attachments because source-specific list-to-notice mapping is absent. Post-Phase M: M corrected cau_008 board extraction and observed 30 bounded list items in both cycles with zero scholarship matches; this is not absence evidence.",
       "deferral_reason": "The bounded live closure reached the configured list endpoint but source-specific list-to-notice mapping is absent, so attachment candidates cannot be credited as notice attachments. Download and attachment content interpretation remain out of scope.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Source-specific list-to-detail mapping, attachment/parser convergence, and bounded source recheck",
       "owner": "Parser quality owner",
-      "success_criteria": "A source-specific notice mapping and bounded recheck produce attributable attachment metadata, or a documented exception resolves the incomplete-batch state."
+      "success_criteria": "A source-specific notice mapping and bounded recheck produce attributable attachment metadata, or a documented exception resolves the incomplete-batch state.",
+      "resolution_evidence": "Post-Phase H bounded live closure reached the configured list endpoint but did not establish attributable notice attachments because source-specific list-to-notice mapping is absent. Post-Phase M: M corrected cau_008 board extraction and observed 30 bounded list items in both cycles with zero scholarship matches; this is not absence evidence."
     },
     {
       "id": "RISK-ATTACHMENT-PARSING",
@@ -82,12 +84,13 @@
       "h_scope": "defer_to_i",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "H performs metadata-only evidence and does not download or interpret complex attachment content.",
-      "evidence": "Post-Phase H validation records metadata-only attachment evidence and explicitly excludes attachment download and complex-content interpretation.",
+      "evidence": "Post-Phase H validation records metadata-only attachment evidence and explicitly excludes attachment download and complex-content interpretation. Post-Phase M: M attributable notices had body evidence but no asset metadata; complex attachment parsing remains unproven.",
       "deferral_reason": "H performs metadata-only evidence and does not download or interpret complex attachment content.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Attachment/parser convergence with deterministic extraction evidence and bounded source recheck",
       "owner": "Parser quality owner",
-      "success_criteria": "Complex attachment cases have deterministic extraction evidence and explicit review handling."
+      "success_criteria": "Complex attachment cases have deterministic extraction evidence and explicit review handling.",
+      "resolution_evidence": "Post-Phase H validation records metadata-only attachment evidence and explicitly excludes attachment download and complex-content interpretation. Post-Phase M: M attributable notices had body evidence but no asset metadata; complex attachment parsing remains unproven."
     },
     {
       "id": "RISK-CAU007-ZERO-MATCH",
@@ -98,12 +101,13 @@
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "The bounded live closure reached HTTP 200 responses, but the current generic anchor candidates are not verified notice-detail mappings because source-specific mapping configuration is absent.",
-      "evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings.",
+      "evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific extraction and obtained one attributable live match in both bounded cycles, then completed append-only review and preview.",
       "deferral_reason": "The bounded live closure reached HTTP 200 responses, but the current generic anchor candidates are not verified notice-detail mappings because source-specific mapping configuration is absent.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Source-specific list-to-detail mapping, readable-body and encoding verification, and bounded source recheck",
       "owner": "Coverage evidence owner",
-      "success_criteria": "A bounded source-specific mapping recheck records attributable notice-body evidence without turning zero match into absence."
+      "success_criteria": "A bounded source-specific mapping recheck records attributable notice-body evidence without turning zero match into absence.",
+      "resolution_evidence": "Post-Phase H bounded live closure reached HTTP 200 responses but records that generic anchor candidates are not verified notice-detail mappings. Post-Phase M: M remediated cau_007 source-specific extraction and obtained one attributable live match in both bounded cycles, then completed append-only review and preview."
     },
     {
       "id": "RISK-CONTEXTUAL-KEYWORD",
@@ -113,10 +117,10 @@
       "description": "Contextual keyword detection can still miss or overclassify scholarship notices.",
       "h_scope": "in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged.",
-      "evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged.",
+      "resolution_evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M retained exact source-specific list/detail parsing and rejected generic-anchor attribution; two expansion sources produced repeatable attributable matches.",
+      "evidence": "H classifies bounded candidates as contextual_only or insufficient_evidence and leaves the production detector unchanged. Post-Phase M: M retained exact source-specific list/detail parsing and rejected generic-anchor attribution; two expansion sources produced repeatable attributable matches.",
       "deferral_reason": "The bounded corpus is a mitigation evidence set, not a completed precision and recall resolution for future sources.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Bounded contextual keyword detector corpus recheck",
       "owner": "Crawler evidence owner",
       "success_criteria": "A bounded corpus has measured contextual keyword precision and recall review evidence."
@@ -129,10 +133,10 @@
       "description": "The available fixture subset is not nationwide scholarship coverage.",
       "h_scope": "partially_in_scope_h",
       "blocking_for_next_phase": false,
-      "resolution_evidence": "H records a four-source bounded fixture comparison and a live closure. cau_002 failed closed on local TLS certificate verification, while three generic list mappings remain unverified; the non-completeness limitation is preserved.",
-      "evidence": "H records a four-source bounded fixture comparison and a live closure. cau_002 failed closed on local TLS certificate verification, while three generic list mappings remain unverified; the non-completeness limitation is preserved.",
+      "resolution_evidence": "H records a four-source bounded fixture comparison and a live closure. cau_002 failed closed on local TLS certificate verification, while three generic list mappings remain unverified; the non-completeness limitation is preserved. Post-Phase M: M expanded from three to six controlled sources, while explicitly preserving blocked and zero-match outcomes without absence inference.",
+      "evidence": "H records a four-source bounded fixture comparison and a live closure. cau_002 failed closed on local TLS certificate verification, while three generic list mappings remain unverified; the non-completeness limitation is preserved. Post-Phase M: M expanded from three to six controlled sources, while explicitly preserving blocked and zero-match outcomes without absence inference.",
       "deferral_reason": "The accepted bounded-coverage boundary prevents overclaiming but does not establish nationwide source coverage.",
-      "next_resolution_phase": "Post-Phase J follow-up - Engine Convergence",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Bounded source coverage expansion and observation-window recheck",
       "owner": "Coverage evidence owner",
       "success_criteria": "Coverage claims are tied to a published bounded source inventory and observation window."
@@ -159,12 +163,13 @@
       "description": "Review decisions are read-only diagnostics and are not persisted.",
       "blocking_for_next_phase": false,
       "status": "mitigated",
-      "evidence": "Post-Phase J defines append-only review decision events, evidence references, effective-decision projection, compatibility boundaries, and rollback design; implementation remains separately gated.",
+      "evidence": "Post-Phase J defines append-only review decision events, evidence references, effective-decision projection, compatibility boundaries, and rollback design; implementation remains separately gated. Post-Phase M: M exercised needs_review and approve as append-only events for two expansion sources and verified update/delete rejection in the authorized non-production project.",
       "deferral_reason": "The design is complete but no target inventory, migration, persistence implementation, or rehearsal is authorized.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Implement and rehearse the approved review event and effective projection model",
       "owner": "Schema and review governance owner",
-      "success_criteria": "An approved schema and auditable review-decision lifecycle are implemented and reviewed."
+      "success_criteria": "An approved schema and auditable review-decision lifecycle are implemented and reviewed.",
+      "resolution_evidence": "Post-Phase J defines append-only review decision events, evidence references, effective-decision projection, compatibility boundaries, and rollback design; implementation remains separately gated. Post-Phase M: M exercised needs_review and approve as append-only events for two expansion sources and verified update/delete rejection in the authorized non-production project."
     },
     {
       "id": "RISK-SCHEMA-ALIGNMENT",
@@ -173,12 +178,13 @@
       "description": "The normalized graph has not been approved or migrated into the production schema.",
       "blocking_for_next_phase": false,
       "status": "mitigated",
-      "evidence": "Post-Phase J provides the additive graph schema proposal, consumer compatibility matrix, migration gates, backfill plan, and rollback design.",
+      "evidence": "Post-Phase J provides the additive graph schema proposal, consumer compatibility matrix, migration gates, backfill plan, and rollback design. Post-Phase M: L schema rollback/reapply passed and M reused that schema for two cycles, but no production schema fingerprint or migration review exists.",
       "deferral_reason": "Target schema inventory, final SQL, RLS review, and non-production rehearsal remain absent.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Approve target-aligned graph migration SQL and non-production rehearsal",
       "owner": "Schema owner",
-      "success_criteria": "A schema proposal is approved with compatibility, rollback, and migration plans."
+      "success_criteria": "A schema proposal is approved with compatibility, rollback, and migration plans.",
+      "resolution_evidence": "Post-Phase J provides the additive graph schema proposal, consumer compatibility matrix, migration gates, backfill plan, and rollback design. Post-Phase M: L schema rollback/reapply passed and M reused that schema for two cycles, but no production schema fingerprint or migration review exists."
     },
     {
       "id": "RISK-GUARDED-PRODUCTION-APPLY",
@@ -187,12 +193,13 @@
       "description": "No production apply path is approved or implemented.",
       "blocking_for_next_phase": false,
       "status": "mitigated",
-      "evidence": "Post-Phase J defines explicit allowlist, confirmation, plan/apply separation, fingerprint, audit, stop, rollback, and reconciliation gates.",
+      "evidence": "Post-Phase J defines explicit allowlist, confirmation, plan/apply separation, fingerprint, audit, stop, rollback, and reconciliation gates. Post-Phase M: M performed no production read/write and records production rollout HOLD; production apply authority remains absent.",
       "deferral_reason": "No executable apply path, target inventory, rehearsal, or production authorization exists.",
-      "next_resolution_phase": "Post-Phase J follow-up - Production Operations",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Implement and rehearse guarded apply controls in non-production",
       "owner": "Production operations owner",
-      "success_criteria": "A separately approved guarded apply design passes dry-run, audit, and rollback review."
+      "success_criteria": "A separately approved guarded apply design passes dry-run, audit, and rollback review.",
+      "resolution_evidence": "Post-Phase J defines explicit allowlist, confirmation, plan/apply separation, fingerprint, audit, stop, rollback, and reconciliation gates. Post-Phase M: M performed no production read/write and records production rollout HOLD; production apply authority remains absent."
     },
     {
       "id": "RISK-SITE-SETTINGS-SCHEMA-CACHE",
@@ -204,7 +211,7 @@
       "why_not_resolved_now": "H does not inspect or migrate the target environment schema.",
       "evidence": "Post-Phase G build verification observed the public.site_settings schema-cache warning without inspecting the target environment.",
       "deferral_reason": "H does not inspect or migrate the target environment schema.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Collect sanitized schema-cache evidence and prepare target-aligned remediation",
       "owner": "Schema owner",
       "success_criteria": "Confirm whether site_settings exists in the target environment schema; if needed, prepare a migration and compatibility plan."
@@ -217,12 +224,13 @@
       "description": "Deterministic replay validates evidence and policy contracts but not external model quality, prompt robustness, outage behavior, cost, latency, or version drift.",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "No provider credential or live call is used in the bounded prototype; automatic decisions and persistence remain prohibited.",
-      "evidence": "Post-Phase I deterministic replay validates the evidence and policy contract with zero external provider calls and no persistence.",
+      "evidence": "Post-Phase I deterministic replay validates the evidence and policy contract with zero external provider calls and no persistence. Post-Phase M: M made zero external LLM calls and added no LLM persistence; provider governance remains unevaluated.",
       "deferral_reason": "No provider credential or live call is used in the bounded prototype; automatic decisions and persistence remain prohibited.",
-      "next_resolution_phase": "Post-Phase J follow-up - AI Governance",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Provider audit, privacy, cost, and production-readiness evaluation",
       "owner": "AI governance owner",
-      "success_criteria": "A separately approved provider evaluation records quality, citation correctness, prompt-injection resistance, outage fallback, privacy, latency, and cost evidence without enabling automatic approval."
+      "success_criteria": "A separately approved provider evaluation records quality, citation correctness, prompt-injection resistance, outage fallback, privacy, latency, and cost evidence without enabling automatic approval.",
+      "resolution_evidence": "Post-Phase I deterministic replay validates the evidence and policy contract with zero external provider calls and no persistence. Post-Phase M: M made zero external LLM calls and added no LLM persistence; provider governance remains unevaluated."
     },
     {
       "id": "RISK-MAIN-LINT-BASELINE",
@@ -233,12 +241,13 @@
       "h_scope": "invalid_or_duplicate_risk",
       "blocking_for_next_phase": false,
       "why_not_resolved_now": "K does not widen product convergence into unrelated application-wide lint remediation; all K-changed TypeScript files pass direct ESLint.",
-      "evidence": "K full lint reports eleven errors and five warnings outside the changed-file set, while focused K ESLint passes with zero findings.",
+      "evidence": "K full lint reports eleven errors and five warnings outside the changed-file set, while focused K ESLint passes with zero findings. Post-Phase M: M reproduced 11 errors and 5 warnings, removed seven deterministic errors and all warnings, and explicitly baselined four react-hooks/set-state-in-effect findings with no M-introduced finding.",
       "deferral_reason": "K does not widen product convergence into unrelated application-wide lint remediation; all K-changed TypeScript files pass direct ESLint.",
-      "next_resolution_phase": "Post-Phase L - Platform Maintenance",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Main repository lint baseline remediation",
       "owner": "Frontend platform owner",
-      "success_criteria": "Main ESLint errors are remediated or explicitly baselined without introducing new errors in later phase changes."
+      "success_criteria": "Main ESLint errors are remediated or explicitly baselined without introducing new errors in later phase changes.",
+      "resolution_evidence": "K full lint reports eleven errors and five warnings outside the changed-file set, while focused K ESLint passes with zero findings. Post-Phase M: M reproduced 11 errors and 5 warnings, removed seven deterministic errors and all warnings, and explicitly baselined four react-hooks/set-state-in-effect findings with no M-introduced finding."
     },
     {
       "id": "RISK-TARGET-SCHEMA-INVENTORY",
@@ -250,7 +259,7 @@
       "evidence": "Post-Phase J repository inventory explicitly distinguishes committed migrations, generated types, runtime expectations, and unknown target state.",
       "deferral_reason": "J prohibits production/staging database access and requests sanitized metadata from an authorized operator.",
       "why_not_resolved_now": "J prohibits production/staging database access and requests sanitized metadata from an authorized operator.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "J-M0 sanitized target schema inventory gate",
       "owner": "Schema owner",
       "success_criteria": "A redacted target inventory and stable schema fingerprint satisfy J-M0."
@@ -265,7 +274,7 @@
       "evidence": "Post-Phase J inventory records notice_sources migration evidence alongside generated-type-only crawled_notices, scholarships, and site_settings expectations.",
       "deferral_reason": "Only target migration history and schema metadata can resolve the divergence.",
       "why_not_resolved_now": "Only target migration history and schema metadata can resolve the divergence.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Compare J-M0 inventory with committed migration history before SQL review",
       "owner": "Schema owner",
       "success_criteria": "Every target dependency is classified as already present, additive, or explicitly out of scope."
@@ -280,7 +289,7 @@
       "evidence": "Post-Phase J backfill plan defines exact mapping, review, ambiguity, missing-source, missing-evidence, and legacy-public-only classes.",
       "deferral_reason": "No backfill inventory or human-reviewed exception set is authorized in J.",
       "why_not_resolved_now": "No backfill inventory or human-reviewed exception set is authorized in J.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "J-M3 bounded backfill dry-run and exception review",
       "owner": "Data migration owner",
       "success_criteria": "Dry-run has deterministic class counts and zero unresolved records proposed for apply."
@@ -295,7 +304,7 @@
       "evidence": "notice_sources has committed RLS policies, while target policies for other required tables remain unknown.",
       "deferral_reason": "J does not access target policy metadata or implement policies.",
       "why_not_resolved_now": "J does not access target policy metadata or implement policies.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "J-M0 policy inventory and additive RLS review",
       "owner": "Security and schema owner",
       "success_criteria": "Authorized policy review proves least-privilege graph/admin/public paths in non-production."
@@ -307,13 +316,14 @@
       "severity": "high",
       "description": "Effective approved review states may not map one-to-one to existing scholarship rows without duplicate or route regression.",
       "blocking_for_next_phase": false,
-      "evidence": "Post-Phase J preserves scholarships numeric IDs and defines a future projection mapping with unique and reconciliation constraints.",
+      "evidence": "Post-Phase J preserves scholarships numeric IDs and defines a future projection mapping with unique and reconciliation constraints. Post-Phase M: M created only hidden preview rows and verified public leakage and automatic publish counts remained zero.",
       "deferral_reason": "No projection implementation, backfill, or public reconciliation rehearsal is authorized.",
       "why_not_resolved_now": "No projection implementation, backfill, or public reconciliation rehearsal is authorized.",
-      "next_resolution_phase": "Post-Phase J follow-up - Migration Implementation",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "J-M5 public projection integration rehearsal",
       "owner": "Public product and data owners",
-      "success_criteria": "A non-production replay preserves every existing public ID and emits no duplicate projection."
+      "success_criteria": "A non-production replay preserves every existing public ID and emits no duplicate projection.",
+      "resolution_evidence": "Post-Phase J preserves scholarships numeric IDs and defines a future projection mapping with unique and reconciliation constraints. Post-Phase M: M created only hidden preview rows and verified public leakage and automatic publish counts remained zero."
     },
     {
       "id": "RISK-REPORT-PROTOTYPE-OVERCLAIM",
@@ -322,12 +332,13 @@
       "severity": "high",
       "description": "Report-backed G public data can be mistaken for live crawler output or a DB-backed public projection.",
       "blocking_for_next_phase": false,
-      "evidence": "K adds public snapshot status, fail-closed scope, hidden-item count, and attachment verification limits to the existing list and detail routes.",
+      "evidence": "K adds public snapshot status, fail-closed scope, hidden-item count, and attachment verification limits to the existing list and detail routes. Post-Phase M: M reports distinguish live attributable, blocked transport, zero-match observation, hidden preview, and production HOLD states.",
       "deferral_reason": "The UI is now truthful, but a controlled DB-backed public projection does not exist yet.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Controlled public projection preview and report-to-projection parity reconciliation",
       "owner": "Public product and data owners",
-      "success_criteria": "A non-production controlled projection reconciles the selected cohort without blocked, unresolved, or report-only leakage."
+      "success_criteria": "A non-production controlled projection reconciles the selected cohort without blocked, unresolved, or report-only leakage.",
+      "resolution_evidence": "K adds public snapshot status, fail-closed scope, hidden-item count, and attachment verification limits to the existing list and detail routes. Post-Phase M: M reports distinguish live attributable, blocked transport, zero-match observation, hidden preview, and production HOLD states."
     },
     {
       "id": "RISK-LEGACY-REVIEW-MUTATION",
@@ -336,12 +347,13 @@
       "severity": "high",
       "description": "The DB-backed crawled_notices lifecycle is mutable legacy compatibility behavior, not an append-only review-decision history.",
       "blocking_for_next_phase": false,
-      "evidence": "K labels the compatibility lifecycle in the queue/detail UI, blocks direct re-promotion in route and server actions, and permits restore only for rejected unlinked rows.",
+      "evidence": "K labels the compatibility lifecycle in the queue/detail UI, blocks direct re-promotion in route and server actions, and permits restore only for rejected unlinked rows. Post-Phase M: M reconciled mutable compatibility content without changing legacy review status or reviewer metadata; canonical review decisions remained append-only.",
       "deferral_reason": "Append-only events and an effective-decision projection require authorized target inventory and additive implementation.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Implement review events, parity comparison, and compatibility projection in non-production",
       "owner": "Review governance owner",
-      "success_criteria": "Reviewers can inspect immutable decision history and the legacy queue remains compatible until approved cutover."
+      "success_criteria": "Reviewers can inspect immutable decision history and the legacy queue remains compatible until approved cutover.",
+      "resolution_evidence": "K labels the compatibility lifecycle in the queue/detail UI, blocks direct re-promotion in route and server actions, and permits restore only for rejected unlinked rows. Post-Phase M: M reconciled mutable compatibility content without changing legacy review status or reviewer metadata; canonical review decisions remained append-only."
     },
     {
       "id": "RISK-SOURCE-IDENTITY-OWNERSHIP",
@@ -350,12 +362,13 @@
       "severity": "high",
       "description": "Duplicate capability ownership, source_id/source_key confusion, or fuzzy source matching could cause incorrect source attribution.",
       "blocking_for_next_phase": false,
-      "evidence": "K fixes a one-owner convergence decision for each critical capability and records exact source resolution as a port decision.",
+      "evidence": "K fixes a one-owner convergence decision for each critical capability and records exact source resolution as a port decision. Post-Phase M: All six M source keys exact-matched canonical source_id; fuzzy matching and automatic source creation stayed zero.",
       "deferral_reason": "The target source inventory and integrated resolver implementation are not authorized in K.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Port exact source resolution and enforce one canonical owner per integrated capability",
       "owner": "Schema and source inventory owner",
-      "success_criteria": "Selected cohort records resolve source_key only through exact mapping to notice_sources.source_id, with zero fuzzy or automatic-creation paths."
+      "success_criteria": "Selected cohort records resolve source_key only through exact mapping to notice_sources.source_id, with zero fuzzy or automatic-creation paths.",
+      "resolution_evidence": "K fixes a one-owner convergence decision for each critical capability and records exact source resolution as a port decision. Post-Phase M: All six M source keys exact-matched canonical source_id; fuzzy matching and automatic source creation stayed zero."
     },
     {
       "id": "RISK-EVIDENCE-FRESHNESS-LEAKAGE",
@@ -364,12 +377,13 @@
       "severity": "high",
       "description": "Stale reports, missing body/attachment evidence, zero matches, or source failures could be presented as successful ingestion or public availability.",
       "blocking_for_next_phase": false,
-      "evidence": "K makes report-backed diagnostics read-only, exposes evidence availability in review, and preserves fail-closed public filtering.",
+      "evidence": "K makes report-backed diagnostics read-only, exposes evidence availability in review, and preserves fail-closed public filtering. Post-Phase M: Two dated cycle artifacts and runtime readbacks preserve source outcomes; public leakage stayed zero.",
       "deferral_reason": "Integrated live run evidence and source-health persistence are Phase L work.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Run-evidence integration, source-health visibility, and controlled projection reconciliation",
       "owner": "Crawler evidence owner",
-      "success_criteria": "Every pilot result has attributable body/asset/run state or an explicit blocked/unavailable state with no public leakage."
+      "success_criteria": "Every pilot result has attributable body/asset/run state or an explicit blocked/unavailable state with no public leakage.",
+      "resolution_evidence": "K makes report-backed diagnostics read-only, exposes evidence availability in review, and preserves fail-closed public filtering. Post-Phase M: Two dated cycle artifacts and runtime readbacks preserve source outcomes; public leakage stayed zero."
     },
     {
       "id": "RISK-PERSONAL-ENGINE-PORT-DIVERGENCE",
@@ -378,12 +392,13 @@
       "severity": "high",
       "description": "Selective personal-engine ports can diverge from main consumers, route compatibility, or the canonical source contract.",
       "blocking_for_next_phase": false,
-      "evidence": "K records reuse/port/merge decisions and target code boundaries instead of copying the personal repository wholesale.",
+      "evidence": "K records reuse/port/merge decisions and target code boundaries instead of copying the personal repository wholesale. Post-Phase M: M ported only three source-specific extraction capabilities and proved them through the integrated L graph path.",
       "deferral_reason": "The selected contracts require integrated implementation and cohort replay before equivalence can be proven.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Implement the fixed convergence matrix in main and reconcile graph-to-legacy behavior",
       "owner": "Integration owner",
-      "success_criteria": "Selected cohort replay proves source, review, public-route, and rollback compatibility for every ported or merged capability."
+      "success_criteria": "Selected cohort replay proves source, review, public-route, and rollback compatibility for every ported or merged capability.",
+      "resolution_evidence": "K records reuse/port/merge decisions and target code boundaries instead of copying the personal repository wholesale. Post-Phase M: M ported only three source-specific extraction capabilities and proved them through the integrated L graph path."
     },
     {
       "id": "RISK-PILOT-COHORT-OVERFITTING",
@@ -392,12 +407,13 @@
       "severity": "medium",
       "description": "A three-source pilot can prove an integration path but cannot establish broad source coverage or parser completeness.",
       "blocking_for_next_phase": false,
-      "evidence": "K selects cau_001, cau_002, and yonsei_060 for distinct normal, no-assets/blocked, and source-specific adapter conditions.",
+      "evidence": "K selects cau_001, cau_002, and yonsei_060 for distinct normal, no-assets/blocked, and source-specific adapter conditions. Post-Phase M: M executed two identical six-source bounded cycles. cau_003 and cau_007 were attributable in both cycles; cau_002 remained transport-blocked and cau_008/yonsei_060 remained zero-match observations.",
       "deferral_reason": "The pilot is intentionally bounded to preserve speed and a coherent Phase L integration surface.",
-      "next_resolution_phase": "Post-Phase M - Controlled Pilot",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Expand the operating cohort against measured coverage, unresolved, retry, and review-latency thresholds",
       "owner": "Service operations owner",
-      "success_criteria": "A measured operating cohort expands only after defined source-health and review thresholds are met."
+      "success_criteria": "A measured operating cohort expands only after defined source-health and review thresholds are met.",
+      "resolution_evidence": "K selects cau_001, cau_002, and yonsei_060 for distinct normal, no-assets/blocked, and source-specific adapter conditions. Post-Phase M: M executed two identical six-source bounded cycles. cau_003 and cau_007 were attributable in both cycles; cau_002 remained transport-blocked and cau_008/yonsei_060 remained zero-match observations."
     },
     {
       "id": "RISK-IMPLEMENTATION-AUTHORITY-AND-BROWSER-ENVIRONMENT",
@@ -406,13 +422,62 @@
       "severity": "medium",
       "description": "Target-schema authority, authenticated admin browser evidence, and non-production environment access can be unavailable during local convergence work.",
       "blocking_for_next_phase": false,
-      "evidence": "K preserves a local read-only public walkthrough and records that L implementation must obtain authorized target inventory and environment authority.",
+      "evidence": "K preserves a local read-only public walkthrough and records that L implementation must obtain authorized target inventory and environment authority. Post-Phase M: M used only the authorized L project and requires a real authenticated browser artifact before final validation.",
       "deferral_reason": "K does not request credentials, access production data, or perform migration work.",
       "why_not_resolved_now": "K does not request credentials, access production data, or perform migration work.",
-      "next_resolution_phase": "Post-Phase L - Service Core Integration",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
       "next_work_unit": "Obtain sanitized target inventory, authorized non-production access, and authenticated reviewer walkthrough evidence",
       "owner": "Schema and environment authority",
-      "success_criteria": "Authorized non-production evidence covers the selected cohort review path without exposing credentials or performing production actions."
+      "success_criteria": "Authorized non-production evidence covers the selected cohort review path without exposing credentials or performing production actions.",
+      "resolution_evidence": "K preserves a local read-only public walkthrough and records that L implementation must obtain authorized target inventory and environment authority. Post-Phase M: M used only the authorized L project and requires a real authenticated browser artifact before final validation."
+    },
+    {
+      "id": "RISK-CAU002-TLS-TRANSPORT",
+      "status": "deferred",
+      "origin_phase": "M",
+      "severity": "high",
+      "description": "cau_002 cannot establish live evidence because certificate verification blocks transport.",
+      "blocking_for_next_phase": false,
+      "evidence": "Both M cycles classified cau_002 as blocked_transport with no notice or public item.",
+      "why_not_resolved_now": "Disabling TLS verification is not an acceptable remediation and the remote certificate chain is outside repository authority.",
+      "owner": "Crawler transport owner",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
+      "next_work_unit": "Establish a trusted CA path or source-approved transport alternative and run a bounded attributable recheck.",
+      "success_criteria": "A bounded run reaches the exact source over verified TLS and records an explicit attributable or zero-match result.",
+      "deferral_reason": "Disabling TLS verification is not an acceptable remediation and the remote certificate chain is outside repository authority.",
+      "resolution_evidence": "Both M cycles classified cau_002 as blocked_transport with no notice or public item."
+    },
+    {
+      "id": "RISK-PRODUCTION-SCHEMA-PARITY",
+      "status": "deferred",
+      "origin_phase": "M",
+      "severity": "critical",
+      "description": "Non-production L/M success does not prove production schema, RLS, migration, seed, or public projection parity.",
+      "blocking_for_next_phase": false,
+      "evidence": "M production readiness records no production authorization, read, write, fingerprint, migration, backup, or canary evidence.",
+      "why_not_resolved_now": "Production access and migration authority were explicitly outside M scope.",
+      "owner": "Production release owner",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
+      "next_work_unit": "Perform an authorized read-only inventory, approve release/rollback plans, and rehearse a production-shaped canary outside production.",
+      "success_criteria": "Named owners approve fingerprint, migration, RLS, backup, backfill, canary, monitoring, and rollback evidence before a separate apply gate.",
+      "deferral_reason": "Production access and migration authority were explicitly outside M scope.",
+      "resolution_evidence": "M production readiness records no production authorization, read, write, fingerprint, migration, backup, or canary evidence."
+    },
+    {
+      "id": "RISK-RUN-ROLLBACK-REVIEW-FK",
+      "status": "mitigated",
+      "origin_phase": "M",
+      "severity": "medium",
+      "description": "A run containing reviewed revisions cannot use the generic bounded rollback path because review_items retains the current revision FK.",
+      "blocking_for_next_phase": false,
+      "evidence": "The cycle-2 rollback probe aborted transactionally; M then rehearsed and deterministically reapplied an independent live-derived zero-match run without unrelated changes.",
+      "why_not_resolved_now": "Deleting reviewed evidence conflicts with append-only review preservation and requires an explicit archival/rollback policy.",
+      "owner": "Review and ingestion schema owner",
+      "next_resolution_phase": "Post-Phase N - Production Readiness and Controlled Expansion",
+      "next_work_unit": "Define reviewed-run rollback as logical supersession or archival and add a focused rehearsal.",
+      "success_criteria": "A reviewed-run recovery procedure preserves immutable events and reaches deterministic state without FK failure or unrelated mutation.",
+      "deferral_reason": "Deleting reviewed evidence conflicts with append-only review preservation and requires an explicit archival/rollback policy.",
+      "resolution_evidence": "The cycle-2 rollback probe aborted transactionally; M then rehearsed and deterministically reapplied an independent live-derived zero-match run without unrelated changes."
     }
   ]
 }

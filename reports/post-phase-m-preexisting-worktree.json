@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-07-16T02:30:00.000Z",
+  "contract_version": "post-phase-m-preexisting-worktree/v1",
+  "branch": "feat/post-phase-m",
+  "head": "da478fc7ecf66fbb7e673214c63d22d87bcb3fbe",
+  "origin_main": "da478fc7ecf66fbb7e673214c63d22d87bcb3fbe",
+  "worktree_clean_at_start": true,
+  "post_phase_l_merge_ancestor": true,
+  "post_phase_l_final_commit_ancestor": true,
+  "preexisting_changed_files": [],
+  "preexisting_file_count": 0,
+  "production_ref_detected": false,
+  "production_read_performed": false,
+  "production_write_performed": false
+}

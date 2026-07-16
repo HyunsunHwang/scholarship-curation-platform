@@ -1083,7 +1083,9 @@ export async function extractScholarshipDraft(input: {
       maxTokens: 8192,
     });
 
-  let { content, error: callError } = await runExtract(userPrompt);
+  const initialExtraction = await runExtract(userPrompt);
+  let content = initialExtraction.content;
+  const callError = initialExtraction.error;
   if (callError) return { error: callError, resolvedBody: normalizedBody, imageUrls };
   if (!content) {
     return {
@@ -1586,7 +1588,7 @@ export async function extractContestDraft(input: {
       maxTokens: 4096,
     });
 
-  let { content, error: callError } = await runExtract(userPrompt);
+  const { content, error: callError } = await runExtract(userPrompt);
   if (callError) return { error: callError };
   if (!content) return { error: "LLM 응답 본문이 비어 있습니다." };
 

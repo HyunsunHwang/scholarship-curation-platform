@@ -231,12 +231,45 @@ async function applyGraphPlan(supabase, plan) {
       return row;
     },
   );
-  attempted.crawled_notices_compatibility = await upsertRows(
+  const compatibilityUrls = compatibilityRows.map((row) => row.notice_url);
+  const existingCompatibility = compatibilityUrls.length === 0
+    ? []
+    : await (async () => {
+        const { data, error } = await supabase
+          .from("crawled_notices")
+          .select("id,notice_url")
+          .in("notice_url", compatibilityUrls);
+        if (error) throw new Error(`Compatibility reconciliation read failed: ${error.message}`);
+        return data ?? [];
+      })();
+  const existingCompatibilityUrls = new Set(existingCompatibility.map((row) => row.notice_url));
+  const newCompatibilityRows = compatibilityRows.filter(
+    (row) => !existingCompatibilityUrls.has(row.notice_url),
+  );
+  await upsertRows(
     supabase,
     "crawled_notices",
-    compatibilityRows,
+    newCompatibilityRows,
     { onConflict: "notice_url", ignoreDuplicates: true },
   );
+  const mutableCompatibilityFields = [
+    "source_group", "source_id", "source_name", "title", "notice_posted_at",
+    "raw_date_text", "body", "image_urls", "scholarship_type", "run_at",
+  ];
+  for (const row of compatibilityRows.filter((item) => existingCompatibilityUrls.has(item.notice_url))) {
+    const patch = Object.fromEntries(
+      mutableCompatibilityFields.map((field) => [field, row[field]]),
+    );
+    const { error } = await supabase
+      .from("crawled_notices")
+      .update(patch)
+      .eq("notice_url", row.notice_url);
+    if (error) throw new Error(`Compatibility reconciliation update failed: ${error.message}`);
+  }
+  attempted.crawled_notices_compatibility = compatibilityRows.length;
+  attempted.crawled_notices_compatibility_inserted = newCompatibilityRows.length;
+  attempted.crawled_notices_compatibility_reconciled =
+    compatibilityRows.length - newCompatibilityRows.length;
 
   const compatibilityByUrl = new Map(
     tables.crawled_notices_compatibility.map((row) => [row.notice_url, row.graph_notice_id]),
