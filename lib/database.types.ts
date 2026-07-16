@@ -800,6 +800,39 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["crawled_contests"]["Insert"]>;
         Relationships: [];
       };
+
+      browse_events: {
+        Row: {
+          id: number;
+          occurred_at: string;
+          user_id: string;
+          content_kind: "scholarship" | "contest" | "education" | "activity";
+          content_id: number;
+          name: string;
+          organization: string;
+          poster_image_url: string | null;
+          apply_end_date: string | null;
+          dwell_ms: number | null;
+          page_path: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          occurred_at?: string;
+          user_id: string;
+          content_kind: "scholarship" | "contest" | "education" | "activity";
+          content_id: number;
+          name?: string;
+          organization?: string;
+          poster_image_url?: string | null;
+          apply_end_date?: string | null;
+          dwell_ms?: number | null;
+          page_path?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["browse_events"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -808,6 +841,39 @@ export interface Database {
       get_matched_scholarships: {
         Args: { p_user_id: string };
         Returns: Database["public"]["Tables"]["scholarships"]["Row"][];
+      };
+      track_browse_event: {
+        Args: {
+          p_content_kind: string;
+          p_content_id: number;
+          p_name?: string;
+          p_organization?: string;
+          p_poster_image_url?: string | null;
+          p_apply_end_date?: string | null;
+          p_dwell_ms?: number | null;
+          p_page_path?: string | null;
+        };
+        Returns: undefined;
+      };
+      get_recent_browse_events: {
+        Args: { p_limit?: number };
+        Returns: Database["public"]["Tables"]["browse_events"]["Row"][];
+      };
+      get_collaborative_scholarship_ids: {
+        Args: { p_limit?: number };
+        Returns: {
+          scholarship_id: number;
+          score: number;
+          source: string;
+        }[];
+      };
+      get_collaborative_contest_ids: {
+        Args: { p_limit?: number };
+        Returns: {
+          contest_id: number;
+          score: number;
+          source: string;
+        }[];
       };
       get_scholarship_scrap_counts: {
         Args: { p_scholarship_ids: number[] };

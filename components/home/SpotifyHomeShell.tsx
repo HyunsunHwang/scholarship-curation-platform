@@ -1,130 +1,52 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import type { HomeRail } from "@/lib/home-rails";
 import HomeFeed from "./HomeFeed";
-import LibrarySidebar from "./LibrarySidebar";
-
-const LIBRARY_LEFT_KEY = "janghakssam:library-left-open";
-const LIBRARY_LEFT_CHANGED_EVENT = "janghakssam:library-left-changed";
-
-function readLibraryLeftOpen(): boolean {
-  if (typeof window === "undefined") return true;
-  try {
-    const raw = window.localStorage.getItem(LIBRARY_LEFT_KEY);
-    if (raw === null) return true;
-    return raw === "1";
-  } catch {
-    return true;
-  }
-}
-
-function subscribeLibraryLeftOpen(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener(LIBRARY_LEFT_CHANGED_EVENT, callback);
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener(LIBRARY_LEFT_CHANGED_EVENT, callback);
-  };
-}
-
-const subscribeToBrowserMount = () => () => {};
 
 export default function SpotifyHomeShell({
   scholarships,
   bookmarkedKeys,
-  bookmarkedScholarships = [],
+  forYou = [],
+  urgentBookmarks = [],
+  serverRecent = [],
+  interestRails = [],
+  campusRail = null,
+  regionRail = null,
+  collaborativeRail = null,
+  userName = null,
   isLoggedIn,
+  isOnboarded = false,
 }: {
   scholarships: CardScholarship[];
   bookmarkedKeys: string[];
-  bookmarkedScholarships?: CardScholarship[];
+  forYou?: CardScholarship[];
+  urgentBookmarks?: CardScholarship[];
+  serverRecent?: CardScholarship[];
+  interestRails?: HomeRail[];
+  campusRail?: HomeRail | null;
+  regionRail?: HomeRail | null;
+  collaborativeRail?: HomeRail | null;
+  userName?: string | null;
   isLoggedIn: boolean;
+  isOnboarded?: boolean;
 }) {
-  const leftOpen = useSyncExternalStore(
-    subscribeLibraryLeftOpen,
-    readLibraryLeftOpen,
-    () => true,
-  );
-  const hydrated = useSyncExternalStore(
-    subscribeToBrowserMount,
-    () => true,
-    () => false,
-  );
-
-  function setLibraryLeftOpen(next: boolean) {
-    try {
-      window.localStorage.setItem(LIBRARY_LEFT_KEY, next ? "1" : "0");
-      window.dispatchEvent(new Event(LIBRARY_LEFT_CHANGED_EVENT));
-    } catch {
-      // ignore
-    }
-  }
-
-  useEffect(() => {
-    const open = () => setLibraryLeftOpen(true);
-    window.addEventListener("janghakssam:open-library", open);
-    return () => window.removeEventListener("janghakssam:open-library", open);
-  }, []);
-
   return (
-    <div className="w-full pb-10 pt-4 sm:pt-5">
-      <div className="flex items-start gap-3 xl:gap-4 lg:pl-2 xl:pl-3">
-        {/* 데스크톱만: 왼쪽 라이브러리 (접기/펼치기) — 모바일에서는 숨김 */}
-        <div
-          className={`sticky top-18 hidden shrink-0 self-start transition-[width] duration-200 lg:block ${
-            leftOpen
-              ? "h-[calc(100dvh-5.5rem)] w-[240px] xl:w-[260px]"
-              : "h-auto w-14"
-          }`}
-        >
-          {leftOpen ? (
-            <LibrarySidebar
-              isLoggedIn={isLoggedIn}
-              bookmarkedScholarships={bookmarkedScholarships}
-              variant="sidebar"
-              onCollapse={() => setLibraryLeftOpen(false)}
-            />
-          ) : (
-            <div className="flex flex-col items-center gap-2 rounded-2xl border border-gray-200/80 bg-white py-3">
-              <button
-                type="button"
-                onClick={() => setLibraryLeftOpen(true)}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-beige hover:text-ink"
-                aria-label="내 라이브러리를 왼쪽에 열기"
-                title="내 라이브러리 열기"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.75}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-              </button>
-              {hydrated ? (
-                <span
-                  className="text-[10px] font-semibold tracking-wide text-ink/45"
-                  style={{ writingMode: "vertical-rl" }}
-                >
-                  내 라이브러리
-                </span>
-              ) : null}
-            </div>
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1 px-4 sm:px-6 lg:pr-8 lg:pl-1 xl:pr-10">
-          <HomeFeed scholarships={scholarships} bookmarkedKeys={bookmarkedKeys} />
-        </div>
-      </div>
+    <div className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
+      <HomeFeed
+        scholarships={scholarships}
+        bookmarkedKeys={bookmarkedKeys}
+        forYou={forYou}
+        urgentBookmarks={urgentBookmarks}
+        serverRecent={serverRecent}
+        interestRails={interestRails}
+        campusRail={campusRail}
+        regionRail={regionRail}
+        collaborativeRail={collaborativeRail}
+        userName={userName}
+        isLoggedIn={isLoggedIn}
+        isOnboarded={isOnboarded}
+      />
     </div>
   );
 }

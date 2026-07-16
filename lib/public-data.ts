@@ -145,7 +145,7 @@ export const getCachedHomeScholarships = unstable_cache(
       supabase
         .from("scholarships")
         .select(
-          "id, name, organization, qual_university, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
+          "id, name, organization, qual_university, qual_field_codes, qual_region, qual_school_location, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement"
         )
         .eq("is_verified", true)
         .eq("list_on_home", true)
@@ -182,7 +182,7 @@ export const getCachedHomeScholarships = unstable_cache(
       scrap_count: scrapCounts.get(scholarship.id) ?? 0,
     }));
   },
-  ["home-scholarships-v3"],
+  ["home-scholarships-v4"],
   { revalidate: 5 * 60 }
 );
 
@@ -193,7 +193,7 @@ export const getCachedHomeContests = unstable_cache(
     const { data, error } = await supabase
       .from("contests")
       .select(
-        "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
+        "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
@@ -235,9 +235,10 @@ export const getCachedHomeContests = unstable_cache(
         | "contest"
         | "education"
         | "activity",
+      interest_categories: contest.interest_categories ?? null,
     }));
   },
-  ["home-contests-v7"],
+  ["home-contests-v8"],
   { revalidate: 60 }
 );
 

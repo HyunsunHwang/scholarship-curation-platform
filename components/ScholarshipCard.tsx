@@ -31,6 +31,13 @@ export type CardScholarship = {
   is_advertisement?: boolean;
   /** 홈 카테고리 필터용. 기본 scholarship */
   content_kind?: "scholarship" | "contest" | "education" | "activity";
+  /** 공모전·교육·대외활동 관심 태그 (interestCategories) */
+  interest_categories?: string[] | null;
+  /** 장학금 계열 코드 (인문|사회|교육|공학|자연|의약|예체능) */
+  qual_field_codes?: string[] | null;
+  qual_university?: string[] | null;
+  qual_region?: string[] | null;
+  qual_school_location?: string[] | null;
 };
 
 const institutionGradient: Record<string, string> = {
