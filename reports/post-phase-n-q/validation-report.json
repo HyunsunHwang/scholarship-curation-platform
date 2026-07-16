@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-16T16:05:52.950Z",
+  "generated_at": "2026-07-16T17:04:34.825Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
-  "check_count": 23,
-  "passed_check_count": 23,
+  "check_count": 24,
+  "passed_check_count": 24,
   "failed_check_count": 0,
   "failed_checks": [],
   "checks": [
@@ -62,6 +62,21 @@
         "status": "CONDITIONAL_ON_PRODUCTION_FINGERPRINT",
         "difference_count": 3,
         "classification_total": 3
+      }
+    },
+    {
+      "name": "owner_evidence_acceptance_and_scoped_diff",
+      "passed": true,
+      "evidence": {
+        "owner_evidence_passed": true,
+        "tracked_owner_evidence_file_count": 0,
+        "canonical_hash_matches_legacy": false,
+        "scoped_migration_readiness": "HOLD",
+        "scoped_blocker_count": 16,
+        "beta_required_table_count": 11,
+        "scoped_coverage_kind_count": 10,
+        "locale_independent_canonical_hash": true,
+        "legacy_hash_difference_recorded": true
       }
     },
     {
@@ -232,16 +247,16 @@
       "name": "focused_tests_evidence",
       "passed": true,
       "evidence": {
-        "passed_count": 12,
-        "test_command_count": 12
+        "passed_count": 13,
+        "test_command_count": 13
       }
     },
     {
       "name": "production_readiness_documents",
       "passed": true,
       "evidence": {
-        "required_count": 14,
-        "present_count": 14
+        "required_count": 15,
+        "present_count": 15
       }
     },
     {
@@ -263,6 +278,7 @@
         "stale_evidence_cleanup_precedes_gate": true,
         "stale_evidence_gate_failure_tested": true,
         "execute_not_called_on_gate_failure": true,
+        "owner_evidence_preserved_if_present": true,
         "direct_url_project_ref_tested": true,
         "session_pooler_project_ref_tested": true,
         "session_pooler_negative_security_case_count": 5,
@@ -316,8 +332,8 @@
   "final_gates": {
     "integrated_engineering_package": "PASS",
     "production_investigation_package": "PASS",
-    "production_fingerprint": "OWNER_PENDING",
-    "migration_readiness": "CONDITIONAL",
+    "production_fingerprint": "PASS_OWNER_READ_ONLY",
+    "migration_readiness": "HOLD",
     "rollback_readiness": "PASS_NONPRODUCTION",
     "review_to_public_projection": "PASS_NONPRODUCTION",
     "controlled_data_quality_cohort": "HOLD",
@@ -337,5 +353,5 @@
     "NOT_AUTHORIZED": 1,
     "NOT_STARTED": 1
   },
-  "changed_file_count": 6
+  "changed_file_count": 19
 }

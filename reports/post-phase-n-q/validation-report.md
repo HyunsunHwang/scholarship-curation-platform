@@ -1,7 +1,7 @@
 # Post-Phase N-Q Validation Report
 
 - Status: **PASS**
-- Checks: 23/23
+- Checks: 24/24
 - Production access: false
 - Production write: false
 - Automatic public publish: false
@@ -12,6 +12,7 @@
 - PASS: `existing_main_implementation_reused`
 - PASS: `nonproduction_fingerprint`
 - PASS: `schema_diff_arithmetic_and_evidence`
+- PASS: `owner_evidence_acceptance_and_scoped_diff`
 - PASS: `migration_and_canary_not_authorized`
 - PASS: `source_cohort_bound`
 - PASS: `live_fixture_and_zero_match_separation`
@@ -36,8 +37,8 @@
 
 - `integrated_engineering_package`: PASS
 - `production_investigation_package`: PASS
-- `production_fingerprint`: OWNER_PENDING
-- `migration_readiness`: CONDITIONAL
+- `production_fingerprint`: PASS_OWNER_READ_ONLY
+- `migration_readiness`: HOLD
 - `rollback_readiness`: PASS_NONPRODUCTION
 - `review_to_public_projection`: PASS_NONPRODUCTION
 - `controlled_data_quality_cohort`: HOLD

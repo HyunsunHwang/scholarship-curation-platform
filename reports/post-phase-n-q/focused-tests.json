@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-16T16:05:44.513Z",
+  "generated_at": "2026-07-16T17:04:32.738Z",
   "contract_version": "post-phase-n-q-focused-tests/v1",
-  "test_command_count": 12,
-  "passed_count": 12,
+  "test_command_count": 13,
+  "passed_count": 13,
   "failed_count": 0,
   "results": [
     {
@@ -18,7 +18,15 @@
       "command": "node tests/post-phase-n/production-fingerprint-runner.test.mjs",
       "exit_code": 0,
       "passed": true,
-      "output": "{\n  \"passed\": true,\n  \"production_gate_failures_tested\": 4,\n  \"malformed_json_fail_closed\": true,\n  \"evidence_kind_validation_tested\": true,\n  \"read_only_safety_failures_tested\": 4,\n  \"missing_optional_relation_passed\": true,\n  \"optional_unavailable_recorded\": true,\n  \"valid_production_evidence_passed\": true,\n  \"stale_evidence_gate_failure_tested\": true,\n  \"execute_not_called_on_gate_failure\": true,\n  \"direct_url_project_ref_tested\": true,\n  \"session_pooler_project_ref_tested\": true,\n  \"session_pooler_negative_security_case_count\": 5,\n  \"session_pooler_credential_redaction_tested\": true,\n  \"direct_libpq_decomposition_tested\": true,\n  \"session_pooler_libpq_decomposition_tested\": true,\n  \"pgdatabase_is_database_name\": true,\n  \"psql_arguments_secret_free\": true,\n  \"encoded_credentials_decoded\": true,\n  \"sslmode_mapping_tested\": true,\n  \"connection_validation_failure_count\": 7,\n  \"connection_validation_execute_not_called\": true,\n  \"project_ref_mismatch_execute_not_called\": true,\n  \"production_execute_called\": false,\n  \"production_access_performed\": false\n}",
+      "output": "{\n  \"passed\": true,\n  \"production_gate_failures_tested\": 4,\n  \"malformed_json_fail_closed\": true,\n  \"evidence_kind_validation_tested\": true,\n  \"read_only_safety_failures_tested\": 4,\n  \"missing_optional_relation_passed\": true,\n  \"optional_unavailable_recorded\": true,\n  \"valid_production_evidence_passed\": true,\n  \"stale_evidence_gate_failure_tested\": true,\n  \"execute_not_called_on_gate_failure\": true,\n  \"direct_url_project_ref_tested\": true,\n  \"session_pooler_project_ref_tested\": true,\n  \"session_pooler_negative_security_case_count\": 5,\n  \"session_pooler_credential_redaction_tested\": true,\n  \"direct_libpq_decomposition_tested\": true,\n  \"session_pooler_libpq_decomposition_tested\": true,\n  \"pgdatabase_is_database_name\": true,\n  \"psql_arguments_secret_free\": true,\n  \"encoded_credentials_decoded\": true,\n  \"sslmode_mapping_tested\": true,\n  \"connection_validation_failure_count\": 7,\n  \"connection_validation_execute_not_called\": true,\n  \"project_ref_mismatch_execute_not_called\": true,\n  \"owner_evidence_preserved_if_present\": true,\n  \"production_execute_called\": false,\n  \"production_access_performed\": false\n}",
+      "error": ""
+    },
+    {
+      "name": "N owner evidence and scoped diff",
+      "command": "node tests/post-phase-n/owner-evidence-and-scoped-diff.test.mjs",
+      "exit_code": 0,
+      "passed": true,
+      "output": "{\n  \"passed\": true,\n  \"locale_independent_canonical_hash\": true,\n  \"array_and_object_ordering_deterministic\": true,\n  \"owner_evidence_fixture_validated\": true,\n  \"legacy_hash_difference_recorded\": true,\n  \"optional_aggregate_enabled_spec\": true,\n  \"managed_schema_exclusion_tested\": true,\n  \"insufficient_evidence_not_overclassified\": true,\n  \"beta_required_table_matrix_count\": 11,\n  \"production_access_performed\": false,\n  \"production_execute_called\": false,\n  \"production_write_performed\": false\n}",
       "error": ""
     },
     {

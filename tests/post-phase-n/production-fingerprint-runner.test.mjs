@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   diffFingerprints,
@@ -335,7 +337,16 @@ for (const testCase of invalidConnectionCases) {
   );
 }
 
-const staleEvidencePaths = [
+function snapshotExistingEvidence(file) {
+  if (!fs.existsSync(file)) return null;
+  const contents = fs.readFileSync(file);
+  return {
+    byte_count: contents.length,
+    sha256: crypto.createHash("sha256").update(contents).digest("hex"),
+  };
+}
+
+const ownerEvidencePaths = [
   path.join(
     process.cwd(),
     "reports/post-phase-n-q/production-fingerprint-owner-output.json",
@@ -345,9 +356,23 @@ const staleEvidencePaths = [
     "reports/post-phase-n-q/production-fingerprint-execution-receipt.json",
   ),
 ];
+const ownerEvidenceBefore = ownerEvidencePaths.map(snapshotExistingEvidence);
+const temporaryEvidenceDirectory = fs.mkdtempSync(
+  path.join(os.tmpdir(), "post-phase-n-fingerprint-runner-"),
+);
+const staleEvidencePaths = {
+  outputPath: path.join(
+    temporaryEvidenceDirectory,
+    "production-fingerprint-owner-output.json",
+  ),
+  receiptPath: path.join(
+    temporaryEvidenceDirectory,
+    "production-fingerprint-execution-receipt.json",
+  ),
+};
 let gateFailureExecuteCallCount = 0;
 try {
-  for (const evidencePath of staleEvidencePaths) {
+  for (const evidencePath of Object.values(staleEvidencePaths)) {
     fs.mkdirSync(path.dirname(evidencePath), { recursive: true });
     fs.writeFileSync(evidencePath, '{"stale":true}\n', "utf8");
   }
@@ -359,17 +384,16 @@ try {
           gateFailureExecuteCallCount += 1;
           throw new Error("execute must not run when the production gate fails");
         },
+        evidencePaths: staleEvidencePaths,
       }),
     /production read gate blocked/iu,
   );
-  for (const evidencePath of staleEvidencePaths) {
+  for (const evidencePath of Object.values(staleEvidencePaths)) {
     assert.equal(fs.existsSync(evidencePath), false);
   }
   assert.equal(gateFailureExecuteCallCount, 0);
 } finally {
-  for (const evidencePath of staleEvidencePaths) {
-    if (fs.existsSync(evidencePath)) fs.unlinkSync(evidencePath);
-  }
+  fs.rmSync(temporaryEvidenceDirectory, { recursive: true, force: true });
 }
 
 let connectionFailureExecuteCallCount = 0;
@@ -389,6 +413,7 @@ assert.throws(
         connectionFailureExecuteCallCount += 1;
         throw new Error("execute must not run for invalid connection input");
       },
+      evidencePaths: staleEvidencePaths,
     }),
   /password is missing/iu,
 );
@@ -409,6 +434,7 @@ assert.throws(
         projectRefMismatchExecuteCallCount += 1;
         throw new Error("execute must not run for project ref mismatch");
       },
+      evidencePaths: staleEvidencePaths,
     }),
   /production_database_url_ref_mismatch/iu,
 );
@@ -680,6 +706,7 @@ const testEvidence = {
     connectionFailureExecuteCallCount === 0,
   project_ref_mismatch_execute_not_called:
     projectRefMismatchExecuteCallCount === 0,
+  owner_evidence_preserved_if_present: true,
   production_execute_called:
     gateFailureExecuteCallCount +
       connectionFailureExecuteCallCount +
@@ -693,5 +720,9 @@ assert.equal(serializedTestEvidence.includes(DIRECT_DATABASE_URL), false);
 assert.equal(
   serializedTestEvidence.includes(SESSION_POOLER_DATABASE_URL),
   false,
+);
+assert.deepEqual(
+  ownerEvidencePaths.map(snapshotExistingEvidence),
+  ownerEvidenceBefore,
 );
 console.log(serializedTestEvidence);

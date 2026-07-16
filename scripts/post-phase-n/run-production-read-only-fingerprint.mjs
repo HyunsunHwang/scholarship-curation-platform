@@ -163,8 +163,17 @@ function executePsql(args, childEnv, timeout = 120_000) {
   return String(result.stdout).trim();
 }
 
-function removeStaleEvidence() {
-  for (const file of [OUTPUT_PATH, RECEIPT_PATH]) {
+function resolveEvidencePaths(evidencePaths = {}) {
+  const outputPath = evidencePaths.outputPath ?? OUTPUT_PATH;
+  const receiptPath = evidencePaths.receiptPath ?? RECEIPT_PATH;
+  if (!path.isAbsolute(outputPath) || !path.isAbsolute(receiptPath)) {
+    throw new Error("Production fingerprint evidence paths must be absolute");
+  }
+  return { outputPath, receiptPath };
+}
+
+function removeStaleEvidence(evidencePaths) {
+  for (const file of [evidencePaths.outputPath, evidencePaths.receiptPath]) {
     if (fs.existsSync(file)) fs.unlinkSync(file);
   }
 }
@@ -177,8 +186,10 @@ function writeJson(file, value) {
 export function runProductionFingerprint({
   env = process.env,
   execute = executePsql,
+  evidencePaths,
 } = {}) {
-  removeStaleEvidence();
+  const resolvedEvidencePaths = resolveEvidencePaths(evidencePaths);
+  removeStaleEvidence(resolvedEvidencePaths);
   const guard = assertProductionReadGate(env);
   if (!fs.existsSync(SQL_PATH)) {
     throw new Error("Production fingerprint SQL package is missing");
@@ -208,12 +219,16 @@ export function runProductionFingerprint({
     fingerprint: validation.normalized,
     outputByteCount: Buffer.byteLength(serialized, "utf8"),
   });
-  writeJson(OUTPUT_PATH, validation.normalized);
-  writeJson(RECEIPT_PATH, receipt);
+  writeJson(resolvedEvidencePaths.outputPath, validation.normalized);
+  writeJson(resolvedEvidencePaths.receiptPath, receipt);
   return {
     receipt,
-    output_path: path.relative(ROOT, OUTPUT_PATH).replaceAll("\\", "/"),
-    receipt_path: path.relative(ROOT, RECEIPT_PATH).replaceAll("\\", "/"),
+    output_path: path
+      .relative(ROOT, resolvedEvidencePaths.outputPath)
+      .replaceAll("\\", "/"),
+    receipt_path: path
+      .relative(ROOT, resolvedEvidencePaths.receiptPath)
+      .replaceAll("\\", "/"),
   };
 }
 

@@ -9,6 +9,10 @@ const commands = [
     "N production fingerprint runner",
     "tests/post-phase-n/production-fingerprint-runner.test.mjs",
   ],
+  [
+    "N owner evidence and scoped diff",
+    "tests/post-phase-n/owner-evidence-and-scoped-diff.test.mjs",
+  ],
   ["N migration plan", "tests/post-phase-n/migration-plan.test.mjs"],
   ["O projection", "tests/post-phase-o/projection.test.mjs"],
   ["O public contract", "tests/post-phase-o/public-contract.test.mjs"],

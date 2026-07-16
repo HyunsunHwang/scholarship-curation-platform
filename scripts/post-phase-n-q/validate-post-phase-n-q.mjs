@@ -7,6 +7,7 @@ import {
   isProductionReadOnlyEvidence,
   PRODUCTION_READ_ONLY_EVIDENCE_KIND,
 } from "../../lib/post-phase-n-q/fingerprint.mjs";
+import { PRODUCTION_PROJECT_REF } from "../../lib/post-phase-n-q/safety.mjs";
 
 const ROOT = process.cwd();
 const REPORT_ROOT = path.join(ROOT, "reports", "post-phase-n-q");
@@ -103,6 +104,12 @@ const fingerprint = readJson(
   "reports/post-phase-n-q/nonproduction-fingerprint.json",
 );
 const schemaDiff = readJson("reports/post-phase-n-q/schema-diff.json");
+const ownerEvidenceValidation = readJson(
+  "reports/post-phase-n-q/owner-evidence-validation-summary.json",
+);
+const scopedMigrationReadiness = readJson(
+  "reports/post-phase-n-q/scoped-migration-readiness-summary.json",
+);
 const migrationPlan = readJson("reports/post-phase-n-q/migration-plan.json");
 const canaryPlan = readJson("reports/post-phase-n-q/canary-plan.json");
 const cohort = readJson("reports/post-phase-n-q/beta-source-cohort.json");
@@ -142,6 +149,17 @@ try {
   );
 } catch {
   productionRunnerFocusedEvidence = {};
+}
+const ownerScopedFocusedResult = focusedTests.results.find(
+  (result) => result.name === "N owner evidence and scoped diff",
+);
+let ownerScopedFocusedEvidence = {};
+try {
+  ownerScopedFocusedEvidence = JSON.parse(
+    ownerScopedFocusedResult?.output ?? "{}",
+  );
+} catch {
+  ownerScopedFocusedEvidence = {};
 }
 
 addCheck(
@@ -215,6 +233,97 @@ addCheck(
     status: schemaDiff.status,
     difference_count: schemaDiff.difference_count,
     classification_total: sum(Object.values(schemaDiff.classification_counts)),
+  },
+);
+
+const scopedClassificationTotal = sum(
+  Object.values(scopedMigrationReadiness.classification_counts),
+);
+const scopedCoverageKinds = new Set(
+  scopedMigrationReadiness.evidence_coverage_matrix.map(
+    (entry) => entry.object_kind,
+  ),
+);
+const ownerEvidenceSummaryText = JSON.stringify(ownerEvidenceValidation);
+const scopedSummaryText = JSON.stringify(scopedMigrationReadiness);
+const trackedOwnerEvidenceFiles = [
+  "reports/post-phase-n-q/production-fingerprint-owner-output.json",
+  "reports/post-phase-n-q/production-fingerprint-execution-receipt.json",
+].filter((file) => gitLines(["ls-files", "--", file]).includes(file));
+addCheck(
+  "owner_evidence_acceptance_and_scoped_diff",
+  ownerEvidenceValidation.passed === true &&
+    ownerEvidenceValidation.schema_version === "post-phase-n-fingerprint/v1" &&
+    ownerEvidenceValidation.evidence_kind ===
+      PRODUCTION_READ_ONLY_EVIDENCE_KIND &&
+    ownerEvidenceValidation.environment === "production" &&
+    ownerEvidenceValidation.output_byte_count_match === true &&
+    ownerEvidenceValidation.legacy_hash_consistent === true &&
+    ownerEvidenceValidation.receipt_safety_passed === true &&
+    ownerEvidenceValidation.row_body_absence_contract === true &&
+    ownerEvidenceValidation.obvious_credential_pattern_count === 0 &&
+    ownerEvidenceValidation.canonical_hash_algorithm ===
+      "sha256/stable-json-codepoint-v1" &&
+    ownerScopedFocusedEvidence.locale_independent_canonical_hash === true &&
+    ownerScopedFocusedEvidence.array_and_object_ordering_deterministic ===
+      true &&
+    ownerScopedFocusedEvidence.legacy_hash_difference_recorded === true &&
+    ownerScopedFocusedEvidence.optional_aggregate_enabled_spec === true &&
+    ownerScopedFocusedEvidence.managed_schema_exclusion_tested === true &&
+    ownerScopedFocusedEvidence.insufficient_evidence_not_overclassified ===
+      true &&
+    ownerScopedFocusedEvidence.beta_required_table_matrix_count === 11 &&
+    ownerScopedFocusedEvidence.production_execute_called === false &&
+    trackedOwnerEvidenceFiles.length === 0 &&
+    scopedMigrationReadiness.scope?.schema === "public" &&
+    scopedMigrationReadiness.scope?.excluded_object_count > 0 &&
+    scopedMigrationReadiness.scope?.exclusion_reason &&
+    ["CONDITIONAL", "HOLD"].includes(
+      scopedMigrationReadiness.migration_readiness,
+    ) &&
+    scopedMigrationReadiness.classification_arithmetic_consistent === true &&
+    scopedClassificationTotal ===
+      scopedMigrationReadiness.comparable_difference_count &&
+    [
+      "tables",
+      "columns",
+      "indexes",
+      "constraints",
+      "policies",
+      "grants",
+      "functions",
+      "triggers",
+      "views",
+      "materialized_views",
+    ].every((kind) => scopedCoverageKinds.has(kind)) &&
+    scopedMigrationReadiness.beta_required_table_status.length === 11 &&
+    scopedMigrationReadiness.beta_required_table_status.every(
+      (entry) =>
+        entry.target_classification === "REQUIRED_FOR_BETA" &&
+        typeof entry.present_in_production === "boolean" &&
+        typeof entry.present_in_nonproduction === "boolean" &&
+        typeof entry.migration_required === "boolean" &&
+        entry.evidence_level &&
+        entry.blocker_status,
+    ) &&
+    !/postgres(?:ql)?:\/\//iu.test(ownerEvidenceSummaryText) &&
+    !/postgres(?:ql)?:\/\//iu.test(scopedSummaryText) &&
+    !ownerEvidenceSummaryText.includes(PRODUCTION_PROJECT_REF) &&
+    !scopedSummaryText.includes(PRODUCTION_PROJECT_REF),
+  {
+    owner_evidence_passed: ownerEvidenceValidation.passed,
+    tracked_owner_evidence_file_count: trackedOwnerEvidenceFiles.length,
+    canonical_hash_matches_legacy:
+      ownerEvidenceValidation.canonical_hash_matches_legacy === true,
+    scoped_migration_readiness: scopedMigrationReadiness.migration_readiness,
+    scoped_blocker_count: scopedMigrationReadiness.blocker_count,
+    beta_required_table_count:
+      scopedMigrationReadiness.beta_required_table_status.length,
+    scoped_coverage_kind_count: scopedCoverageKinds.size,
+    locale_independent_canonical_hash:
+      ownerScopedFocusedEvidence.locale_independent_canonical_hash === true,
+    legacy_hash_difference_recorded:
+      ownerScopedFocusedEvidence.legacy_hash_difference_recorded === true,
   },
 );
 
@@ -611,6 +720,7 @@ const requiredDocs = [
   "beta-operations-runbook.md",
   "incident-response-plan.md",
   "owner-gates.md",
+  "owner-evidence-and-scoped-diff.md",
   "beta-go-hold-checklist.md",
 ];
 addCheck(
@@ -717,7 +827,7 @@ const validProductionEvidence = {
   },
 };
 const staleCleanupCallIndex = productionRunnerSource.indexOf(
-  "removeStaleEvidence();",
+  "removeStaleEvidence(resolvedEvidencePaths);",
 );
 const productionGateCallIndex = productionRunnerSource.indexOf(
   "const guard = assertProductionReadGate(env);",
@@ -757,6 +867,8 @@ addCheck(
     productionRunnerFocusedEvidence.stale_evidence_gate_failure_tested ===
       true &&
     productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
+      true &&
+    productionRunnerFocusedEvidence.owner_evidence_preserved_if_present ===
       true &&
     productionRunnerFocusedEvidence.direct_url_project_ref_tested === true &&
     productionRunnerFocusedEvidence.session_pooler_project_ref_tested ===
@@ -833,6 +945,9 @@ addCheck(
       true,
     execute_not_called_on_gate_failure:
       productionRunnerFocusedEvidence.execute_not_called_on_gate_failure ===
+      true,
+    owner_evidence_preserved_if_present:
+      productionRunnerFocusedEvidence.owner_evidence_preserved_if_present ===
       true,
     direct_url_project_ref_tested:
       productionRunnerFocusedEvidence.direct_url_project_ref_tested === true,
@@ -1014,8 +1129,10 @@ const report = {
   final_gates: {
     integrated_engineering_package: passed ? "PASS" : "HOLD",
     production_investigation_package: passed ? "PASS" : "HOLD",
-    production_fingerprint: "OWNER_PENDING",
-    migration_readiness: "CONDITIONAL",
+    production_fingerprint: ownerEvidenceValidation.passed
+      ? "PASS_OWNER_READ_ONLY"
+      : "OWNER_PENDING",
+    migration_readiness: scopedMigrationReadiness.migration_readiness,
     rollback_readiness: "PASS_NONPRODUCTION",
     review_to_public_projection: "PASS_NONPRODUCTION",
     controlled_data_quality_cohort: "HOLD",
