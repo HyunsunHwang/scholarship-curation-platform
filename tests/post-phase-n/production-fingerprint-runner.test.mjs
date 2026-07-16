@@ -21,6 +21,7 @@ import {
   PRODUCTION_READ_CONFIRMATION,
 } from "../../lib/post-phase-n-q/safety.mjs";
 import {
+  buildPsqlArguments,
   buildPsqlEnvironment,
   runProductionFingerprint,
 } from "../../scripts/post-phase-n/run-production-read-only-fingerprint.mjs";
@@ -33,11 +34,15 @@ function fixtureDatabaseUrl({
   username,
   hostname,
   port = "5432",
+  password = "fixture-password",
+  database = "postgres",
+  sslmode = "",
 }) {
-  const url = new URL(`${protocol}//${hostname}/postgres`);
+  const url = new URL(`${protocol}//${hostname}/${database}`);
   url.username = username;
-  url.password = "fixture-password";
+  url.password = password;
   url.port = port;
+  if (sslmode) url.searchParams.set("sslmode", sslmode);
   return url.href;
 }
 
@@ -201,17 +206,134 @@ for (const databaseUrl of invalidSessionPoolerUrls) {
 const childEnvironment = buildPsqlEnvironment({
   ...validGateEnvironment,
   PATH: "test-path",
+  PGSSLMODE: "verify-full",
+  PGPASSWORD: "parent-password-must-not-forward",
   SUPABASE_SERVICE_ROLE_KEY: "must-not-be-forwarded",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "must-not-be-forwarded",
   NEXT_PUBLIC_SUPABASE_URL: "https://nonproduction.example",
 });
+assert.equal(childEnvironment.PGHOST, `db.${PRODUCTION_REF}.supabase.co`);
+assert.equal(childEnvironment.PGPORT, "5432");
+assert.equal(childEnvironment.PGUSER, "postgres");
+assert.equal(childEnvironment.PGPASSWORD, "fixture-password");
+assert.equal(childEnvironment.PGDATABASE, "postgres");
+assert.equal(childEnvironment.PGSSLMODE, "verify-full");
 assert.equal(
-  childEnvironment.PGDATABASE,
-  validGateEnvironment.POST_PHASE_N_PRODUCTION_DATABASE_URL,
+  childEnvironment.PGDATABASE.includes("postgresql:"),
+  false,
+);
+assert.equal(
+  childEnvironment.POST_PHASE_N_PRODUCTION_DATABASE_URL,
+  undefined,
 );
 assert.equal(childEnvironment.SUPABASE_SERVICE_ROLE_KEY, undefined);
 assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_ANON_KEY, undefined);
 assert.equal(childEnvironment.NEXT_PUBLIC_SUPABASE_URL, undefined);
+
+const sessionPoolerChildEnvironment = buildPsqlEnvironment({
+  ...validSessionPoolerEnvironment,
+  POST_PHASE_N_PRODUCTION_DATABASE_URL: fixtureDatabaseUrl({
+    username: `postgres.${PRODUCTION_REF}`,
+    hostname: SESSION_POOLER_HOST,
+    sslmode: "require",
+  }),
+  PGSSLMODE: "verify-full",
+});
+assert.deepEqual(
+  {
+    host: sessionPoolerChildEnvironment.PGHOST,
+    port: sessionPoolerChildEnvironment.PGPORT,
+    user: sessionPoolerChildEnvironment.PGUSER,
+    password: sessionPoolerChildEnvironment.PGPASSWORD,
+    database: sessionPoolerChildEnvironment.PGDATABASE,
+    sslmode: sessionPoolerChildEnvironment.PGSSLMODE,
+  },
+  {
+    host: SESSION_POOLER_HOST,
+    port: "5432",
+    user: `postgres.${PRODUCTION_REF}`,
+    password: "fixture-password",
+    database: "postgres",
+    sslmode: "require",
+  },
+);
+
+const encodedUsername = "encoded user";
+const encodedPassword = "fixture password/+";
+const encodedChildEnvironment = buildPsqlEnvironment({
+  POST_PHASE_N_PRODUCTION_DATABASE_URL: fixtureDatabaseUrl({
+    username: encodedUsername,
+    password: encodedPassword,
+    hostname: `db.${PRODUCTION_REF}.supabase.co`,
+  }),
+});
+assert.equal(encodedChildEnvironment.PGUSER, encodedUsername);
+assert.equal(encodedChildEnvironment.PGPASSWORD, encodedPassword);
+
+const psqlArguments = buildPsqlArguments(["--file", "fixture.sql"]);
+const serializedPsqlArguments = JSON.stringify(psqlArguments);
+assert.equal(psqlArguments.includes("--dbname"), false);
+assert.equal(serializedPsqlArguments.includes(DIRECT_DATABASE_URL), false);
+assert.equal(serializedPsqlArguments.includes("fixture-password"), false);
+
+const invalidConnectionCases = [
+  {
+    url: "not-a-connection-url",
+    error: /connection URL is invalid/iu,
+  },
+  {
+    url: fixtureDatabaseUrl({
+      protocol: "https:",
+      username: "postgres",
+      hostname: `db.${PRODUCTION_REF}.supabase.co`,
+    }),
+    error: /protocol is unsupported/iu,
+  },
+  {
+    url: "postgres:///postgres",
+    error: /hostname is missing|connection URL is invalid/iu,
+  },
+  {
+    url: fixtureDatabaseUrl({
+      username: "",
+      hostname: `db.${PRODUCTION_REF}.supabase.co`,
+    }),
+    error: /username is missing/iu,
+  },
+  {
+    url: fixtureDatabaseUrl({
+      username: "postgres",
+      password: "",
+      hostname: `db.${PRODUCTION_REF}.supabase.co`,
+    }),
+    error: /password is missing/iu,
+  },
+  {
+    url: fixtureDatabaseUrl({
+      username: "postgres",
+      hostname: `db.${PRODUCTION_REF}.supabase.co`,
+      database: "",
+    }),
+    error: /database name is missing/iu,
+  },
+  {
+    url: fixtureDatabaseUrl({
+      username: "postgres",
+      hostname: `db.${PRODUCTION_REF}.supabase.co`,
+      sslmode: "unsafe-mode",
+    }),
+    error: /sslmode is unsupported/iu,
+  },
+];
+for (const testCase of invalidConnectionCases) {
+  assert.throws(
+    () =>
+      buildPsqlEnvironment({
+        POST_PHASE_N_PRODUCTION_DATABASE_URL: testCase.url,
+      }),
+    testCase.error,
+  );
+}
 
 const staleEvidencePaths = [
   path.join(
@@ -249,6 +371,48 @@ try {
     if (fs.existsSync(evidencePath)) fs.unlinkSync(evidencePath);
   }
 }
+
+let connectionFailureExecuteCallCount = 0;
+const directUrlWithoutPassword = fixtureDatabaseUrl({
+  username: "postgres",
+  password: "",
+  hostname: `db.${PRODUCTION_REF}.supabase.co`,
+});
+assert.throws(
+  () =>
+    runProductionFingerprint({
+      env: {
+        ...validGateEnvironment,
+        POST_PHASE_N_PRODUCTION_DATABASE_URL: directUrlWithoutPassword,
+      },
+      execute: () => {
+        connectionFailureExecuteCallCount += 1;
+        throw new Error("execute must not run for invalid connection input");
+      },
+    }),
+  /password is missing/iu,
+);
+assert.equal(connectionFailureExecuteCallCount, 0);
+
+let projectRefMismatchExecuteCallCount = 0;
+assert.throws(
+  () =>
+    runProductionFingerprint({
+      env: {
+        ...validGateEnvironment,
+        POST_PHASE_N_PRODUCTION_DATABASE_URL: fixtureDatabaseUrl({
+          username: `postgres.${NONPRODUCTION_REF}`,
+          hostname: SESSION_POOLER_HOST,
+        }),
+      },
+      execute: () => {
+        projectRefMismatchExecuteCallCount += 1;
+        throw new Error("execute must not run for project ref mismatch");
+      },
+    }),
+  /production_database_url_ref_mismatch/iu,
+);
+assert.equal(projectRefMismatchExecuteCallCount, 0);
 
 assert.throws(
   () => parseFingerprintJson("{not-json"),
@@ -430,6 +594,10 @@ assert.equal(
   JSON.stringify(receipt).includes(SESSION_POOLER_DATABASE_URL),
   false,
 );
+assert.equal(
+  JSON.stringify(receipt).includes("fixture-password"),
+  false,
+);
 
 const sql = fs.readFileSync(
   "supabase/post-phase-n-q/001_production_read_only_fingerprint.sql",
@@ -482,30 +650,48 @@ assert.doesNotMatch(
   runnerSources,
   /console\.log\([^)]*POST_PHASE_N_PRODUCTION_DATABASE_URL/s,
 );
+assert.doesNotMatch(runnerSources, /--dbname/);
 
-console.log(
-  JSON.stringify(
-    {
-      passed: true,
-      production_gate_failures_tested: 4,
-      malformed_json_fail_closed: true,
-      evidence_kind_validation_tested: true,
-      read_only_safety_failures_tested: 4,
-      missing_optional_relation_passed: true,
-      optional_unavailable_recorded: true,
-      valid_production_evidence_passed: true,
-      stale_evidence_gate_failure_tested: true,
-      execute_not_called_on_gate_failure:
-        gateFailureExecuteCallCount === 0,
-      direct_url_project_ref_tested: true,
-      session_pooler_project_ref_tested: true,
-      session_pooler_negative_security_case_count:
-        invalidSessionPoolerUrls.length,
-      session_pooler_credential_redaction_tested: true,
-      production_execute_called: gateFailureExecuteCallCount > 0,
-      production_access_performed: false,
-    },
-    null,
-    2,
-  ),
+const testEvidence = {
+  passed: true,
+  production_gate_failures_tested: 4,
+  malformed_json_fail_closed: true,
+  evidence_kind_validation_tested: true,
+  read_only_safety_failures_tested: 4,
+  missing_optional_relation_passed: true,
+  optional_unavailable_recorded: true,
+  valid_production_evidence_passed: true,
+  stale_evidence_gate_failure_tested: true,
+  execute_not_called_on_gate_failure:
+    gateFailureExecuteCallCount === 0,
+  direct_url_project_ref_tested: true,
+  session_pooler_project_ref_tested: true,
+  session_pooler_negative_security_case_count:
+    invalidSessionPoolerUrls.length,
+  session_pooler_credential_redaction_tested: true,
+  direct_libpq_decomposition_tested: true,
+  session_pooler_libpq_decomposition_tested: true,
+  pgdatabase_is_database_name: childEnvironment.PGDATABASE === "postgres",
+  psql_arguments_secret_free: true,
+  encoded_credentials_decoded: true,
+  sslmode_mapping_tested: true,
+  connection_validation_failure_count: invalidConnectionCases.length,
+  connection_validation_execute_not_called:
+    connectionFailureExecuteCallCount === 0,
+  project_ref_mismatch_execute_not_called:
+    projectRefMismatchExecuteCallCount === 0,
+  production_execute_called:
+    gateFailureExecuteCallCount +
+      connectionFailureExecuteCallCount +
+      projectRefMismatchExecuteCallCount >
+    0,
+  production_access_performed: false,
+};
+const serializedTestEvidence = JSON.stringify(testEvidence, null, 2);
+assert.equal(serializedTestEvidence.includes("fixture-password"), false);
+assert.equal(serializedTestEvidence.includes(DIRECT_DATABASE_URL), false);
+assert.equal(
+  serializedTestEvidence.includes(SESSION_POOLER_DATABASE_URL),
+  false,
 );
+console.log(serializedTestEvidence);

@@ -133,10 +133,12 @@ const cau012 = readJson("reports/post-phase-n-q/cau-012-owner-packet.json");
 const productionRunnerFocusedResult = focusedTests.results.find(
   (result) => result.name === "N production fingerprint runner",
 );
+const productionRunnerFocusedOutput =
+  productionRunnerFocusedResult?.output ?? "";
 let productionRunnerFocusedEvidence = {};
 try {
   productionRunnerFocusedEvidence = JSON.parse(
-    productionRunnerFocusedResult?.output ?? "{}",
+    productionRunnerFocusedOutput || "{}",
   );
 } catch {
   productionRunnerFocusedEvidence = {};
@@ -724,6 +726,16 @@ const staleEvidenceCleanupPrecedesGate =
   staleCleanupCallIndex >= 0 &&
   productionGateCallIndex >= 0 &&
   staleCleanupCallIndex < productionGateCallIndex;
+const connectionValidationCallIndex = productionRunnerSource.indexOf(
+  "const psqlEnvironment = buildPsqlEnvironment(env);",
+);
+const baseExecuteCallIndex = productionRunnerSource.indexOf(
+  'const baseOutput = execute(["--file", SQL_PATH], psqlEnvironment);',
+);
+const connectionValidationPrecedesExecute =
+  connectionValidationCallIndex >= 0 &&
+  baseExecuteCallIndex >= 0 &&
+  connectionValidationCallIndex < baseExecuteCallIndex;
 addCheck(
   "production_fingerprint_evidence_contract",
   EVIDENCE_KINDS.has(PRODUCTION_READ_ONLY_EVIDENCE_KIND) &&
@@ -753,10 +765,46 @@ addCheck(
       5 &&
     productionRunnerFocusedEvidence.session_pooler_credential_redaction_tested ===
       true &&
+    productionRunnerFocusedEvidence.direct_libpq_decomposition_tested ===
+      true &&
+    productionRunnerFocusedEvidence.session_pooler_libpq_decomposition_tested ===
+      true &&
+    productionRunnerFocusedEvidence.pgdatabase_is_database_name === true &&
+    productionRunnerFocusedEvidence.psql_arguments_secret_free === true &&
+    productionRunnerFocusedEvidence.encoded_credentials_decoded === true &&
+    productionRunnerFocusedEvidence.sslmode_mapping_tested === true &&
+    productionRunnerFocusedEvidence.connection_validation_failure_count >=
+      7 &&
+    productionRunnerFocusedEvidence.connection_validation_execute_not_called ===
+      true &&
+    productionRunnerFocusedEvidence.project_ref_mismatch_execute_not_called ===
+      true &&
+    connectionValidationPrecedesExecute &&
     productionRunnerFocusedEvidence.production_execute_called === false &&
+    !productionRunnerFocusedOutput.includes("fixture-password") &&
+    !productionRunnerFocusedOutput.includes("postgres://") &&
+    !productionRunnerFocusedOutput.includes("postgresql://") &&
+    productionRunnerSource.includes("childEnv.PGHOST = connection.host") &&
+    productionRunnerSource.includes("childEnv.PGPORT = connection.port") &&
+    productionRunnerSource.includes(
+      "childEnv.PGUSER = connection.username",
+    ) &&
+    productionRunnerSource.includes(
+      "childEnv.PGPASSWORD = connection.password",
+    ) &&
+    productionRunnerSource.includes(
+      "childEnv.PGDATABASE = connection.database",
+    ) &&
+    !productionRunnerSource.includes(
+      "childEnv.PGDATABASE = env.POST_PHASE_N_PRODUCTION_DATABASE_URL",
+    ) &&
+    !productionRunnerSource.includes('"--dbname"') &&
     productionRunbookSource.includes("Direct connection") &&
     productionRunbookSource.includes("Shared Session pooler") &&
     productionRunbookSource.includes("IPv4-only") &&
+    productionRunbookSource.includes("Windows `psql`") &&
+    productionRunbookSource.includes("discrete libpq") &&
+    productionRunbookSource.includes("PGPASSWORD") &&
     productionRunbookSource.includes("hostname") &&
     productionRunbookSource.includes("username") &&
     productionRunbookSource.includes("OWNER_PENDING") &&
@@ -797,12 +845,48 @@ addCheck(
     session_pooler_credential_redaction_tested:
       productionRunnerFocusedEvidence.session_pooler_credential_redaction_tested ===
       true,
+    direct_libpq_decomposition_tested:
+      productionRunnerFocusedEvidence.direct_libpq_decomposition_tested ===
+      true,
+    session_pooler_libpq_decomposition_tested:
+      productionRunnerFocusedEvidence.session_pooler_libpq_decomposition_tested ===
+      true,
+    pgdatabase_is_database_name:
+      productionRunnerFocusedEvidence.pgdatabase_is_database_name === true,
+    psql_arguments_secret_free:
+      productionRunnerFocusedEvidence.psql_arguments_secret_free === true,
+    encoded_credentials_decoded:
+      productionRunnerFocusedEvidence.encoded_credentials_decoded === true,
+    sslmode_mapping_tested:
+      productionRunnerFocusedEvidence.sslmode_mapping_tested === true,
+    connection_validation_failure_count:
+      productionRunnerFocusedEvidence.connection_validation_failure_count ??
+      0,
+    connection_validation_execute_not_called:
+      productionRunnerFocusedEvidence.connection_validation_execute_not_called ===
+      true,
+    project_ref_mismatch_execute_not_called:
+      productionRunnerFocusedEvidence.project_ref_mismatch_execute_not_called ===
+      true,
+    connection_validation_precedes_execute:
+      connectionValidationPrecedesExecute,
+    focused_report_credentials_absent:
+      !productionRunnerFocusedOutput.includes("fixture-password") &&
+      !productionRunnerFocusedOutput.includes("postgres://") &&
+      !productionRunnerFocusedOutput.includes("postgresql://"),
     production_execute_called:
       productionRunnerFocusedEvidence.production_execute_called === true,
+    connection_url_not_assigned_to_pgdatabase:
+      !productionRunnerSource.includes(
+        "childEnv.PGDATABASE = env.POST_PHASE_N_PRODUCTION_DATABASE_URL",
+      ),
+    command_line_database_url_absent:
+      !productionRunnerSource.includes('"--dbname"'),
     owner_runbook_connection_modes_documented:
       productionRunbookSource.includes("Direct connection") &&
       productionRunbookSource.includes("Shared Session pooler") &&
-      productionRunbookSource.includes("IPv4-only"),
+      productionRunbookSource.includes("IPv4-only") &&
+      productionRunbookSource.includes("discrete libpq"),
     filename_heuristic_absent:
       !/productionPath\.includes\(\s*["']\.synthetic\.["']\s*\)/u.test(
         diffRunnerSource,

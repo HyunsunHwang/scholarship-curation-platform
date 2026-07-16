@@ -31,6 +31,70 @@ function loadEnvironment() {
   if (fs.existsSync(envPath)) process.loadEnvFile(envPath);
 }
 
+const ALLOWED_SSL_MODES = new Set([
+  "disable",
+  "allow",
+  "prefer",
+  "require",
+  "verify-ca",
+  "verify-full",
+]);
+
+function parseProductionDatabaseUrl(value) {
+  let url;
+  try {
+    url = new URL(String(value ?? "").trim());
+  } catch {
+    throw new Error("Production database connection URL is invalid");
+  }
+  if (url.protocol !== "postgres:" && url.protocol !== "postgresql:") {
+    throw new Error("Production database connection protocol is unsupported");
+  }
+  if (!url.hostname) {
+    throw new Error("Production database connection hostname is missing");
+  }
+
+  let username;
+  let password;
+  let database;
+  try {
+    username = decodeURIComponent(url.username);
+    password = decodeURIComponent(url.password);
+    const pathnameParts = url.pathname.split("/").filter(Boolean);
+    database =
+      pathnameParts.length === 1
+        ? decodeURIComponent(pathnameParts[0])
+        : "";
+  } catch {
+    throw new Error("Production database connection URL encoding is invalid");
+  }
+  if (!username) {
+    throw new Error("Production database connection username is missing");
+  }
+  if (!password) {
+    throw new Error("Production database connection password is missing");
+  }
+  if (!database) {
+    throw new Error("Production database connection database name is missing");
+  }
+
+  const sslModes = url.searchParams.getAll("sslmode");
+  if (
+    sslModes.length > 1 ||
+    (sslModes.length === 1 && !ALLOWED_SSL_MODES.has(sslModes[0]))
+  ) {
+    throw new Error("Production database connection sslmode is unsupported");
+  }
+  return {
+    host: url.hostname,
+    port: url.port || "5432",
+    username,
+    password,
+    database,
+    sslmode: sslModes[0] ?? "",
+  };
+}
+
 export function buildPsqlEnvironment(env) {
   const childEnv = {};
   for (const name of [
@@ -54,25 +118,37 @@ export function buildPsqlEnvironment(env) {
   ]) {
     if (env[name] !== undefined) childEnv[name] = env[name];
   }
-  childEnv.PGDATABASE = env.POST_PHASE_N_PRODUCTION_DATABASE_URL;
+  const connection = parseProductionDatabaseUrl(
+    env.POST_PHASE_N_PRODUCTION_DATABASE_URL,
+  );
+  childEnv.PGHOST = connection.host;
+  childEnv.PGPORT = connection.port;
+  childEnv.PGUSER = connection.username;
+  childEnv.PGPASSWORD = connection.password;
+  childEnv.PGDATABASE = connection.database;
+  if (connection.sslmode) childEnv.PGSSLMODE = connection.sslmode;
   childEnv.PGCONNECT_TIMEOUT = "10";
   return childEnv;
 }
 
-function executePsql(args, env, timeout = 120_000) {
+export function buildPsqlArguments(args) {
+  return [
+    "--no-psqlrc",
+    "--quiet",
+    "--tuples-only",
+    "--no-align",
+    "--set=ON_ERROR_STOP=1",
+    ...args,
+  ];
+}
+
+function executePsql(args, childEnv, timeout = 120_000) {
   const result = spawnSync(
     "psql",
-    [
-      "--no-psqlrc",
-      "--quiet",
-      "--tuples-only",
-      "--no-align",
-      "--set=ON_ERROR_STOP=1",
-      ...args,
-    ],
+    buildPsqlArguments(args),
     {
       cwd: ROOT,
-      env: buildPsqlEnvironment(env),
+      env: childEnv,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
       timeout,
@@ -107,12 +183,16 @@ export function runProductionFingerprint({
   if (!fs.existsSync(SQL_PATH)) {
     throw new Error("Production fingerprint SQL package is missing");
   }
+  const psqlEnvironment = buildPsqlEnvironment(env);
 
-  const baseOutput = execute(["--file", SQL_PATH], env);
+  const baseOutput = execute(["--file", SQL_PATH], psqlEnvironment);
   const baseFingerprint = parseFingerprintJson(baseOutput);
   const enrichedFingerprint = enrichOptionalCatalogEvidence(
     baseFingerprint,
-    (query) => parseJsonValue(execute(["--command", query], env, 45_000)),
+    (query) =>
+      parseJsonValue(
+        execute(["--command", query], psqlEnvironment, 45_000),
+      ),
   );
   const validation =
     validateProductionFingerprintDocument(enrichedFingerprint);

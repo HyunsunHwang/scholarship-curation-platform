@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T11:29:15.616Z",
+  "generated_at": "2026-07-16T16:05:52.950Z",
   "contract_version": "post-phase-n-q-validator/v1",
   "status": "PASS",
   "passed": true,
@@ -267,7 +267,20 @@
         "session_pooler_project_ref_tested": true,
         "session_pooler_negative_security_case_count": 5,
         "session_pooler_credential_redaction_tested": true,
+        "direct_libpq_decomposition_tested": true,
+        "session_pooler_libpq_decomposition_tested": true,
+        "pgdatabase_is_database_name": true,
+        "psql_arguments_secret_free": true,
+        "encoded_credentials_decoded": true,
+        "sslmode_mapping_tested": true,
+        "connection_validation_failure_count": 7,
+        "connection_validation_execute_not_called": true,
+        "project_ref_mismatch_execute_not_called": true,
+        "connection_validation_precedes_execute": true,
+        "focused_report_credentials_absent": true,
         "production_execute_called": false,
+        "connection_url_not_assigned_to_pgdatabase": true,
+        "command_line_database_url_absent": true,
         "owner_runbook_connection_modes_documented": true,
         "filename_heuristic_absent": true
       }
