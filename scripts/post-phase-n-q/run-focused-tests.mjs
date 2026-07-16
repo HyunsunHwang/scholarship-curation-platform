@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const commands = [
+  ["N git readiness", "tests/post-phase-n/git-readiness.test.mjs"],
   ["N fingerprint", "tests/post-phase-n/fingerprint.test.mjs"],
   [
     "N production fingerprint runner",
