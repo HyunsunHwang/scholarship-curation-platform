@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "evidence_kind": "static_repository",
+  "status": "PASS",
+  "rule": "Extend existing main/K-M capabilities before adding a parallel implementation.",
+  "items": [
+    {
+      "capability": "public scholarship list, search, and filters",
+      "existing_files": [
+        "app/scholarships/page.tsx",
+        "lib/scholarships/public-scholarship-read-model.ts"
+      ],
+      "disposition": "extend_contract",
+      "reason": "The user flow already exists; only the DB-backed projection boundary is missing."
+    },
+    {
+      "capability": "numeric scholarship detail and original source link",
+      "existing_files": [
+        "app/scholarships/[id]/page.tsx"
+      ],
+      "disposition": "reuse_and_regression_test",
+      "reason": "Numeric verified scholarship detail already reads the public product table."
+    },
+    {
+      "capability": "saved scholarships and recent library",
+      "existing_files": [
+        "app/library/page.tsx",
+        "app/library/saved/page.tsx",
+        "app/library/recent/page.tsx",
+        "lib/user-bookmarks.ts",
+        "lib/recent-views.ts"
+      ],
+      "disposition": "reuse_and_fix_hydration",
+      "reason": "Storage and bookmark behavior exists; no second saved-item system is needed."
+    },
+    {
+      "capability": "normalized ingestion graph and append-only review",
+      "existing_files": [
+        "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql",
+        "lib/post-phase-l/normalized-graph.mjs",
+        "lib/post-phase-l/admin-review.ts"
+      ],
+      "disposition": "reuse",
+      "reason": "Identity, occurrence, revision, review event, and effective decision semantics are established."
+    },
+    {
+      "capability": "legacy compatibility lifecycle",
+      "existing_files": [
+        "app/admin/review/page.tsx",
+        "app/admin/crawled-notices/actions.ts",
+        "supabase/post-phase-l/002_post_phase_l_normalized_graph.sql"
+      ],
+      "disposition": "preserve_as_compatibility",
+      "reason": "crawled_notices remains a transition compatibility surface and is not replaced in N-Q."
+    },
+    {
+      "capability": "crawler and source health diagnostics",
+      "existing_files": [
+        "app/admin/crawler-review/page.tsx",
+        "lib/post-phase-m/admin-operations.ts",
+        "reports/post-phase-m-source-health.json"
+      ],
+      "disposition": "extend_dashboard",
+      "reason": "The existing read-only diagnostics page is the correct operations UI host."
+    },
+    {
+      "capability": "semantic scholarship relevance",
+      "existing_files": [
+        "lib/post-phase-m/scholarship-relevance.mjs",
+        "reports/post-phase-m-semantic-reevaluation.json"
+      ],
+      "disposition": "reuse_and_expand_corpus",
+      "reason": "A tested classifier exists; N-Q adds broader evidence instead of a replacement classifier."
+    },
+    {
+      "capability": "admin authentication and RLS",
+      "existing_files": [
+        "lib/require-admin.ts",
+        "app/admin/layout.tsx",
+        "supabase/post-phase-l/001_post_phase_l_compatibility_baseline.sql"
+      ],
+      "disposition": "document_responsibility_layers",
+      "reason": "The current schema exposes user/admin, so Reviewer, Operator, and Owner are responsibility assignments until production fingerprint and owner approval."
+    },
+    {
+      "capability": "review-to-public projector",
+      "existing_files": [
+        "lib/post-phase-l/admin-review.ts"
+      ],
+      "disposition": "new_bounded_component",
+      "reason": "Only a hidden preview exists; an explicit idempotent non-production projector is the missing product boundary."
+    },
+    {
+      "capability": "production fingerprint and deterministic schema diff",
+      "existing_files": [
+        "docs/post-phase-l-schema-inventory.json",
+        "reports/post-phase-l-schema-manifest.json"
+      ],
+      "disposition": "new_owner_gated_component",
+      "reason": "Historical sanitized evidence exists, but no current owner-gated production fingerprint or machine diff exists."
+    }
+  ],
+  "parallel_system_count": 0,
+  "production_access_performed": false
+}

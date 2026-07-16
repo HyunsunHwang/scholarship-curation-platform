@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "evidence_kind": "fixture",
+  "run": {
+    "idempotency_key": "post-phase-nq-integrated-rehearsal-v1",
+    "execution_mode": "fixture",
+    "runner_version": "post-phase-nq-integrated/v1",
+    "status": "succeeded",
+    "started_at": "2026-07-16T00:00:00.000Z",
+    "finished_at": "2026-07-16T00:00:00.000Z",
+    "metadata": {
+      "bounded": true,
+      "source_allowlist": [
+        "cau_001"
+      ],
+      "max_items_per_source": 1,
+      "max_pages_per_source": 1,
+      "external_llm_call_count": 0
+    }
+  },
+  "source_results": [
+    {
+      "source_key": "cau_001",
+      "source_id": "cau_001",
+      "source_name": "Post-Phase N-Q integrated rehearsal",
+      "result_status": "success",
+      "observed_count": 1,
+      "matched_count": 1,
+      "retry_count": 0,
+      "error_code": null,
+      "error_message": null,
+      "evidence": {
+        "fixture": true,
+        "live_evidence": false
+      },
+      "notices": [
+        {
+          "title": "[FIXTURE] Post-Phase N-Q 장학금 신청 및 등록금 지원",
+          "original_url": "https://biz.cau.ac.kr/post-phase-nq/integrated-rehearsal-v1",
+          "canonical_url": "https://biz.cau.ac.kr/post-phase-nq/integrated-rehearsal-v1",
+          "notice_posted_at": "2026-07-16",
+          "raw_date_text": "2026.07.16",
+          "body": "비운영 통합 리허설 fixture입니다. 장학금 신청 자격, 선발 절차, 등록금 지원 내용을 검증합니다.",
+          "image_urls": [],
+          "attachment_metadata": [],
+          "body_quality_status": "text_sufficient",
+          "parser_version": "post-phase-nq-integrated/v1",
+          "provenance": {
+            "data_backing": "fixture",
+            "live_evidence": false,
+            "source_key": "cau_001"
+          }
+        }
+      ]
+    }
+  ]
+}

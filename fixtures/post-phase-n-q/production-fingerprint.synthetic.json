@@ -1,0 +1,635 @@
+{
+  "aggregates": {
+    "row_counts": [],
+    "state_distributions": []
+  },
+  "completeness": {
+    "production_parity_claimed": false,
+    "runtime_presence_and_counts": "database_nonproduction",
+    "schema_metadata": "static_repository_manifest"
+  },
+  "evidence": {
+    "bounded_scope": "diff-engine test only",
+    "command": "node scripts/post-phase-n/build-synthetic-production-fixture.mjs",
+    "environment": "synthetic_production_fixture",
+    "evidence_kind": "synthetic",
+    "limitations": [
+      "It exists only to exercise deterministic diff classification.",
+      "This fixture is not production evidence."
+    ],
+    "report_path": "fixtures/post-phase-n-q/production-fingerprint.synthetic.json"
+  },
+  "generated_at": "2026-07-16T00:00:00.000Z",
+  "objects": {
+    "columns": [],
+    "constraints": [],
+    "functions": [
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.get_scholarship_scrap_counts",
+        "name": "get_scholarship_scrap_counts",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.increment_scholarship_view_count",
+        "name": "increment_scholarship_view_count",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.is_admin",
+        "name": "is_admin",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_apply_legacy_review_decision",
+        "name": "post_phase_l_apply_legacy_review_decision",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_assert_environment",
+        "name": "post_phase_l_assert_environment",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_assign_revision_ordinal",
+        "name": "post_phase_l_assign_revision_ordinal",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_block_environment_guard_mutation",
+        "name": "post_phase_l_block_environment_guard_mutation",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_block_immutable_change",
+        "name": "post_phase_l_block_immutable_change",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_handle_new_auth_user",
+        "name": "post_phase_l_handle_new_auth_user",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_preserve_alias_replay_metadata",
+        "name": "post_phase_l_preserve_alias_replay_metadata",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_preserve_notice_replay_metadata",
+        "name": "post_phase_l_preserve_notice_replay_metadata",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_preserve_review_state_on_ingest",
+        "name": "post_phase_l_preserve_review_state_on_ingest",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_rollback_run",
+        "name": "post_phase_l_rollback_run",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.post_phase_l_sync_effective_decision",
+        "name": "post_phase_l_sync_effective_decision",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "function:public.set_updated_at",
+        "name": "set_updated_at",
+        "schema": "public"
+      }
+    ],
+    "grants": [],
+    "indexes": [
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.crawled_notices_source_group_idx",
+        "name": "crawled_notices_source_group_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.crawled_notices_status_idx",
+        "name": "crawled_notices_status_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notice_assets_notice_idx",
+        "name": "ingestion_notice_assets_notice_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notice_occurrences_notice_observed_idx",
+        "name": "ingestion_notice_occurrences_notice_observed_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notice_occurrences_run_source_idx",
+        "name": "ingestion_notice_occurrences_run_source_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notice_revisions_notice_created_idx",
+        "name": "ingestion_notice_revisions_notice_created_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notice_url_aliases_notice_idx",
+        "name": "ingestion_notice_url_aliases_notice_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notices_source_external_id_idx",
+        "name": "ingestion_notices_source_external_id_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_notices_source_last_seen_idx",
+        "name": "ingestion_notices_source_last_seen_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_source_run_results_source_created_idx",
+        "name": "ingestion_source_run_results_source_created_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.ingestion_source_run_results_status_idx",
+        "name": "ingestion_source_run_results_status_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.notice_sources_enabled_slug_idx",
+        "name": "notice_sources_enabled_slug_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.notice_sources_org_unit_id_idx",
+        "name": "notice_sources_org_unit_id_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.notice_sources_university_slug_idx",
+        "name": "notice_sources_university_slug_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.org_units_parent_id_idx",
+        "name": "org_units_parent_id_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.review_decision_events_item_created_idx",
+        "name": "review_decision_events_item_created_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.review_effective_decisions_decision_idx",
+        "name": "review_effective_decisions_decision_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.scholarship_selection_stages_scholarship_id_idx",
+        "name": "scholarship_selection_stages_scholarship_id_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.scholarships_admin_created_at_idx",
+        "name": "scholarships_admin_created_at_idx",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "index:public.scholarships_verified_deadline_idx",
+        "name": "scholarships_verified_deadline_idx",
+        "schema": "public"
+      }
+    ],
+    "materialized_views": [],
+    "policies": [
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.bookmarks_owner_all",
+        "name": "bookmarks_owner_all",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.crawled_contests_admin_select",
+        "name": "crawled_contests_admin_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.crawled_notices_admin_all",
+        "name": "crawled_notices_admin_all",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.notice_sources_delete_admin",
+        "name": "notice_sources_delete_admin",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.notice_sources_insert_admin",
+        "name": "notice_sources_insert_admin",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.notice_sources_select_public",
+        "name": "notice_sources_select_public",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.notice_sources_update_admin",
+        "name": "notice_sources_update_admin",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.org_units_public_select",
+        "name": "org_units_public_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.post_phase_l_environment_guard_select",
+        "name": "post_phase_l_environment_guard_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.profiles_self_or_admin_select",
+        "name": "profiles_self_or_admin_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.profiles_self_or_admin_update",
+        "name": "profiles_self_or_admin_update",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.scholarship_selection_stages_admin_all",
+        "name": "scholarship_selection_stages_admin_all",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.scholarship_selection_stages_public_select",
+        "name": "scholarship_selection_stages_public_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.scholarships_admin_all",
+        "name": "scholarships_admin_all",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.scholarships_public_read",
+        "name": "scholarships_public_read",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.site_settings_admin_update",
+        "name": "site_settings_admin_update",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.site_settings_public_select",
+        "name": "site_settings_public_select",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "policy:public.universities_public_select",
+        "name": "universities_public_select",
+        "schema": "public"
+      }
+    ],
+    "schemas": [],
+    "tables": [
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.bookmarks",
+        "name": "bookmarks",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.crawled_contests",
+        "name": "crawled_contests",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.crawled_notices",
+        "name": "crawled_notices",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_crawl_runs",
+        "name": "ingestion_crawl_runs",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_notice_occurrences",
+        "name": "ingestion_notice_occurrences",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_notice_revisions",
+        "name": "ingestion_notice_revisions",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_notice_url_aliases",
+        "name": "ingestion_notice_url_aliases",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_notices",
+        "name": "ingestion_notices",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_source_run_results",
+        "name": "ingestion_source_run_results",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.notice_sources",
+        "name": "notice_sources",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.org_units",
+        "name": "org_units",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.post_phase_l_environment_guard",
+        "name": "post_phase_l_environment_guard",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.profiles",
+        "name": "profiles",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.review_decision_events",
+        "name": "review_decision_events",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.review_effective_decisions",
+        "name": "review_effective_decisions",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.review_evidence_references",
+        "name": "review_evidence_references",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.review_items",
+        "name": "review_items",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.scholarship_selection_stages",
+        "name": "scholarship_selection_stages",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.scholarships",
+        "name": "scholarships",
+        "rls_enabled": false,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.site_settings",
+        "name": "site_settings",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.universities",
+        "name": "universities",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      {
+        "definition_source": "synthetic_fixture",
+        "key": "table:public.legacy_production_only",
+        "name": "legacy_production_only",
+        "rls_enabled": true,
+        "schema": "public"
+      }
+    ],
+    "triggers": [
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_crawl_runs_immutable",
+        "name": "ingestion_crawl_runs_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notice_aliases_preserve_replay_metadata",
+        "name": "ingestion_notice_aliases_preserve_replay_metadata",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notice_assets_immutable",
+        "name": "ingestion_notice_assets_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notice_occurrences_immutable",
+        "name": "ingestion_notice_occurrences_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notice_revisions_assign_ordinal",
+        "name": "ingestion_notice_revisions_assign_ordinal",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notice_revisions_immutable",
+        "name": "ingestion_notice_revisions_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_notices_preserve_replay_metadata",
+        "name": "ingestion_notices_preserve_replay_metadata",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.ingestion_source_run_results_immutable",
+        "name": "ingestion_source_run_results_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.post_phase_l_auth_user_profile",
+        "name": "post_phase_l_auth_user_profile",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.post_phase_l_environment_guard_immutable",
+        "name": "post_phase_l_environment_guard_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.review_decision_events_effective_projection",
+        "name": "review_decision_events_effective_projection",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.review_decision_events_immutable",
+        "name": "review_decision_events_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.review_evidence_references_immutable",
+        "name": "review_evidence_references_immutable",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.review_items_preserve_state_on_ingest",
+        "name": "review_items_preserve_state_on_ingest",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.trg_crawled_notices_updated_at",
+        "name": "trg_crawled_notices_updated_at",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.trg_notice_sources_updated_at",
+        "name": "trg_notice_sources_updated_at",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.trg_scholarship_selection_stages_updated_at",
+        "name": "trg_scholarship_selection_stages_updated_at",
+        "schema": "public"
+      },
+      {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "trigger:public.trg_scholarships_updated_at",
+        "name": "trg_scholarships_updated_at",
+        "schema": "public"
+      }
+    ],
+    "views": []
+  },
+  "project": {
+    "automatic_public_publish_enabled": false,
+    "environment_kind": "synthetic",
+    "guard_verified": false,
+    "project_ref": "synthetic-production"
+  },
+  "safety": {
+    "production_access_performed": false,
+    "production_read_performed": false,
+    "production_write_performed": false,
+    "synthetic_fixture": true
+  },
+  "schema_version": "post-phase-n-fingerprint/v1",
+  "fingerprint_sha256": "e45eacb8b85ee8b7eecbbb6828ba7e82ae110b200f540e8d99244f9d3cce5ab6"
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-16T08:45:00.000Z",
+  "environment": {
+    "project_ref": "hrayfvdggbhfmmzfblly",
+    "environment_kind": "non_production",
+    "application_url": "http://localhost:3210",
+    "production_read_performed": false,
+    "production_write_performed": false
+  },
+  "status": "PASS",
+  "browser_walkthrough_complete": true,
+  "authenticated_admin_layout_reached": true,
+  "temporary_projection_visible_during_walkthrough": true,
+  "temporary_projection_cleanup_required": false,
+  "temporary_projection_cleanup_completed": true,
+  "temporary_test_admin_cleanup_completed": true,
+  "checks": {
+    "public_list_database_projection_visible": true,
+    "public_search_found_projected_scholarship": true,
+    "numeric_detail_route_loaded": true,
+    "authenticated_library_loaded": true,
+    "authenticated_saved_library_loaded": true,
+    "admin_review_queue_loaded": true,
+    "admin_graph_review_detail_loaded": true,
+    "admin_crawler_diagnostics_loaded": true,
+    "graph_and_legacy_evidence_visible": true,
+    "append_only_event_history_visible": true,
+    "effective_decision_visible": true,
+    "controlled_projection_preview_visible": true,
+    "preview_only_state_visible": true,
+    "blocked_and_unresolved_source_state_visible": true,
+    "desktop_checked": true,
+    "mobile_390_checked": true,
+    "incoherent_horizontal_overflow_count": 0,
+    "blocking_console_error_count": 0,
+    "nonblocking_local_analytics_warning_count": 1
+  },
+  "routes": [
+    "/scholarships",
+    "/scholarships/6",
+    "/library",
+    "/library/saved",
+    "/admin/review",
+    "/admin/review/scholarships/15",
+    "/admin/crawler-review"
+  ],
+  "screenshots": [
+    "reports/post-phase-n-q/browser/public-list-desktop.png",
+    "reports/post-phase-n-q/browser/public-list-mobile-390.png",
+    "reports/post-phase-n-q/browser/numeric-detail-desktop.png",
+    "reports/post-phase-n-q/browser/numeric-detail-mobile-390.png",
+    "reports/post-phase-n-q/browser/library-saved.png",
+    "reports/post-phase-n-q/browser/admin-review-queue.png",
+    "reports/post-phase-n-q/browser/admin-graph-review-detail.png",
+    "reports/post-phase-n-q/browser/admin-crawler-review-desktop.png",
+    "reports/post-phase-n-q/browser/admin-crawler-review-mobile-390.png"
+  ],
+  "notes": [
+    "The final walkthrough used a successful production build with the database-backed public read model enabled only for the non-production project.",
+    "Wide admin tables remain intentionally horizontally scrollable at 390px; no text or control overlap was observed.",
+    "The only console warning was the expected unavailable local Vercel Web Analytics script and did not affect application behavior.",
+    "The temporary projected row was hidden and the temporary test administrator credentials file was deleted after this evidence was recorded."
+  ]
+}

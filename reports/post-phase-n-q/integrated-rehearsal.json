@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-07-16T07:58:01.985Z",
+  "contract_version": "post-phase-n-q-integrated-rehearsal/v1",
+  "evidence_kind": "database_nonproduction",
+  "target_project_ref": "hrayfvdggbhfmmzfblly",
+  "input_evidence_kind": "fixture",
+  "fixture_reported_as_live": false,
+  "graph_ingest_passed": true,
+  "run_id": "893b0a80-074d-5d80-b288-9969421934bf",
+  "notice_id": "edad666d-1c96-5bfc-a1fe-4c9d75324654",
+  "occurrence_count": 1,
+  "revision_id": "bac298bc-aa24-5cab-9947-2f7385617728",
+  "legacy_compatibility_notice_id": 15,
+  "review_item_id": "e40268ce-03bb-5691-b30d-3d4ca7bc26d5",
+  "scholarship_id": 6,
+  "approve_e2e_passed": true,
+  "approved_surface": {
+    "list_visible": true,
+    "search_visible": true,
+    "detail_visible": true
+  },
+  "reject_e2e_passed": true,
+  "rejected_surface": {
+    "list_visible": false,
+    "search_visible": false,
+    "detail_visible": false
+  },
+  "logical_recovery_passed": true,
+  "recovery_surface": {
+    "list_visible": true,
+    "search_visible": true,
+    "detail_visible": true
+  },
+  "deterministic_reapply_passed": true,
+  "final_containment_passed": true,
+  "final_surface": {
+    "list_visible": false,
+    "search_visible": false,
+    "detail_visible": false
+  },
+  "review_event_count": 5,
+  "initial_review_event_hash": "556672505373da5223a79856743969cc9d916c8153bbbba4b4c9ad9bfd2aca94",
+  "initial_review_events_preserved": true,
+  "review_event_mutation_count": 0,
+  "duplicate_notice_count": 0,
+  "duplicate_occurrence_count": 0,
+  "duplicate_projection_count": 0,
+  "unrelated_row_change_count": 0,
+  "public_row_without_effective_approve_count": 0,
+  "rejected_public_leakage_count": 0,
+  "withdrawn_public_leakage_count": 0,
+  "automatic_public_publish_count": 0,
+  "production_access_performed": false,
+  "production_read_performed": false,
+  "production_write_performed": false,
+  "external_llm_call_count": 0,
+  "ephemeral_admin_created": true,
+  "ephemeral_admin_credentials_printed": false,
+  "audit": {
+    "audit_id": "fa8ef63a405ff1a0695cc7d9df037406101e133ea39cf12b3b2de311065c2472",
+    "actor": "37b95f65-881f-4e14-ab6f-d3a88922aa02",
+    "role": "Operator",
+    "action": "integrated_rehearsal",
+    "target": "e40268ce-03bb-5691-b30d-3d4ca7bc26d5",
+    "timestamp": "2026-07-16T07:58:01.985Z",
+    "reason": "Post-Phase N-Q non-production end-to-end verification",
+    "result": "completed",
+    "correlation_id": "fc59d732-7e9f-4485-a3a5-175f30daa0f6",
+    "metadata": {
+      "run_id": "893b0a80-074d-5d80-b288-9969421934bf",
+      "scholarship_id": 6,
+      "credential": "[REDACTED]"
+    }
+  },
+  "guard": {
+    "safe": true,
+    "errors": [],
+    "target_project_ref_match": true,
+    "target_url_ref_match": true,
+    "production_ref_detected": false,
+    "secrets_printed": false
+  },
+  "passed": true
+}

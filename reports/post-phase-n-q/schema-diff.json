@@ -1,0 +1,64 @@
+{
+  "schema_version": "post-phase-n-schema-diff/v1",
+  "generated_at": "2026-07-16T10:20:01.407Z",
+  "evidence_kind": "synthetic",
+  "production_fingerprint_available": false,
+  "status": "CONDITIONAL_ON_PRODUCTION_FINGERPRINT",
+  "production_fingerprint_sha256": "e45eacb8b85ee8b7eecbbb6828ba7e82ae110b200f540e8d99244f9d3cce5ab6",
+  "nonproduction_fingerprint_sha256": "f1e433987d278fbbf4c186e0434491582a3d0eb1308a63f2345b33749c4b1d5d",
+  "difference_count": 3,
+  "classification_counts": {
+    "REQUIRED_FOR_BETA": 1,
+    "COMPATIBILITY_REQUIRED": 1,
+    "DEFER_AFTER_BETA": 0,
+    "REMOVE_OR_REPLACE": 0,
+    "OWNER_DECISION_REQUIRED": 1,
+    "UNEXPECTED_PRODUCTION_ONLY": 0,
+    "UNEXPECTED_NONPRODUCTION_ONLY": 0
+  },
+  "arithmetic_consistent": true,
+  "differences": [
+    {
+      "key": "table:public.ingestion_notice_assets",
+      "classification": "REQUIRED_FOR_BETA",
+      "production": null,
+      "nonproduction": {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.ingestion_notice_assets",
+        "name": "ingestion_notice_assets",
+        "rls_enabled": true,
+        "schema": "public"
+      }
+    },
+    {
+      "key": "table:public.legacy_production_only",
+      "classification": "OWNER_DECISION_REQUIRED",
+      "production": {
+        "definition_source": "synthetic_fixture",
+        "key": "table:public.legacy_production_only",
+        "name": "legacy_production_only",
+        "rls_enabled": true,
+        "schema": "public"
+      },
+      "nonproduction": null
+    },
+    {
+      "key": "table:public.scholarships",
+      "classification": "COMPATIBILITY_REQUIRED",
+      "production": {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.scholarships",
+        "name": "scholarships",
+        "rls_enabled": false,
+        "schema": "public"
+      },
+      "nonproduction": {
+        "definition_source": "reports/post-phase-l-schema-manifest.json",
+        "key": "table:public.scholarships",
+        "name": "scholarships",
+        "rls_enabled": true,
+        "schema": "public"
+      }
+    }
+  ]
+}

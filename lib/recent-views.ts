@@ -13,6 +13,9 @@ export type RecentViewItem = {
 export const RECENT_VIEWS_STORAGE_KEY = "janghakssam:recent-views";
 export const RECENT_VIEWS_CHANGED_EVENT = "janghakssam:recent-views-changed";
 const MAX_RECENT_VIEWS = 24;
+const EMPTY_RECENT_VIEWS: RecentViewItem[] = [];
+let cachedRaw: string | null = null;
+let cachedRecentViews: RecentViewItem[] = EMPTY_RECENT_VIEWS;
 
 function canUseStorage(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -21,14 +24,37 @@ function canUseStorage(): boolean {
 export function readRecentViews(): RecentViewItem[] {
   if (!canUseStorage()) return [];
   try {
-    const raw = window.localStorage.getItem(RECENT_VIEWS_STORAGE_KEY);
-    if (!raw) return [];
+    const raw = window.localStorage.getItem(RECENT_VIEWS_STORAGE_KEY) ?? "";
+    if (raw === cachedRaw) return cachedRecentViews;
+    cachedRaw = raw;
+    if (!raw) {
+      cachedRecentViews = EMPTY_RECENT_VIEWS;
+      return cachedRecentViews;
+    }
     const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isRecentViewItem).slice(0, MAX_RECENT_VIEWS);
+    cachedRecentViews = Array.isArray(parsed)
+      ? parsed.filter(isRecentViewItem).slice(0, MAX_RECENT_VIEWS)
+      : EMPTY_RECENT_VIEWS;
+    return cachedRecentViews;
   } catch {
-    return [];
+    cachedRecentViews = EMPTY_RECENT_VIEWS;
+    return cachedRecentViews;
   }
+}
+
+export function getRecentViewsServerSnapshot(): RecentViewItem[] {
+  return EMPTY_RECENT_VIEWS;
+}
+
+export function subscribeRecentViews(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+  const sync = () => onStoreChange();
+  window.addEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
+  window.addEventListener("storage", sync);
+  return () => {
+    window.removeEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
+    window.removeEventListener("storage", sync);
+  };
 }
 
 function isRecentViewItem(value: unknown): value is RecentViewItem {

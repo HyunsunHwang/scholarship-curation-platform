@@ -71,15 +71,16 @@ export type PublicScholarship = {
 };
 
 export type PublicScholarshipReadModelStatus = {
-  dataBacking: "report-backed";
-  serviceState: "prototype-only";
+  dataBacking: "report-backed" | "database-backed";
+  serviceState: "prototype-only" | "controlled-beta" | "degraded";
   generatedAt: string;
-  sourceReport: string;
+  sourceReport: string | null;
   inputCandidateCount: number;
   publicItemCount: number;
   hiddenItemCount: number;
   exposurePolicy: "fail-closed";
   attachmentsVerified: false;
+  limitations?: string[];
 };
 
 export type ExposureDecision = {

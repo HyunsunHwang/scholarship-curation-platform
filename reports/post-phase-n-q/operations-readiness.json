@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-07-16T08:48:04.652Z",
+  "contract_version": "post-phase-q-operations-readiness/v1",
+  "evidence_kind": "database_nonproduction",
+  "roles": [
+    {
+      "role": "Reviewer",
+      "responsibilities": [
+        "Review candidates",
+        "Record approve, reject, or insufficient evidence decisions"
+      ]
+    },
+    {
+      "role": "Operator",
+      "responsibilities": [
+        "Monitor crawler and source health",
+        "Run guarded non-production projector",
+        "Contain incidents and request canary stop"
+      ]
+    },
+    {
+      "role": "Owner",
+      "responsibilities": [
+        "Authorize production read, migration, canary, rollback, and inventory decisions"
+      ]
+    }
+  ],
+  "authorization_model": "Current user/admin RLS is preserved. Reviewer and Operator are responsibility assignments within admin until production fingerprint and owner-approved least-privilege schema changes.",
+  "audit_model": {
+    "append_only_review_events_reused": true,
+    "projector_and_operator_evidence": "machine-readable repository reports",
+    "persistent_cross_operation_audit_table": "CONDITIONAL_ON_PRODUCTION_FINGERPRINT",
+    "sample_records": [
+      {
+        "audit_id": "e5fbeea75c5d5ce6c8f8ff347804f450f082c45d79f4ac281b586ca37ef9b440",
+        "actor": "post-phase-n-q-validator",
+        "role": "System",
+        "action": "invariant_check",
+        "target": "approved_nonproduction",
+        "timestamp": "2026-07-16T08:48:04.652Z",
+        "reason": "Beta operations readiness verification",
+        "result": "pass",
+        "correlation_id": "7e368367-ca84-4f05-900d-9e538c9f3871",
+        "metadata": {
+          "report_path": "reports/post-phase-n-q/nonproduction-invariants.json",
+          "secrets": "[REDACTED]"
+        }
+      }
+    ]
+  },
+  "metrics": {
+    "recent_crawler_run_count": 10,
+    "source_count": 10,
+    "new_candidate_count": 6,
+    "pending_review_count": 3,
+    "approved_count": 6,
+    "rejected_count": 5,
+    "insufficient_count": 6,
+    "active_public_scholarship_count": 0,
+    "projection_failure_count": 0,
+    "recent_incident_count": 6
+  },
+  "recent_incidents": [
+    {
+      "source_key": "cau_002",
+      "status": "ZERO_MATCH_OBSERVED",
+      "severity": "info"
+    },
+    {
+      "source_key": "cau_008",
+      "status": "ZERO_MATCH_OBSERVED",
+      "severity": "info"
+    },
+    {
+      "source_key": "cau_004",
+      "status": "SELECTOR_CHANGED",
+      "severity": "warning"
+    },
+    {
+      "source_key": "cau_006",
+      "status": "SELECTOR_CHANGED",
+      "severity": "warning"
+    },
+    {
+      "source_key": "cau_010",
+      "status": "ZERO_MATCH_OBSERVED",
+      "severity": "info"
+    },
+    {
+      "source_key": "cau_011",
+      "status": "ZERO_MATCH_OBSERVED",
+      "severity": "info"
+    }
+  ],
+  "empty_state_copy": "데이터가 없으면 0건과 마지막 검증 시각을 표시하며 fixture를 production 현황으로 표시하지 않습니다.",
+  "production_access_performed": false,
+  "production_write_performed": false,
+  "external_alert_service_connected": false,
+  "notification_integration_point": "Consume reports/post-phase-n-q/nonproduction-invariants.json in an owner-approved alert sink.",
+  "passed": true
+}

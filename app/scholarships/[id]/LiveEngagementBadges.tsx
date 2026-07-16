@@ -19,7 +19,7 @@ type ViewEventDetail = {
  * 서버에서 받은 초기 조회/스크랩 수를 보여주고,
  * 같은 탭 내 북마크·조회수 이벤트만 반영한다. (폴링 없음)
  */
-export default function LiveEngagementBadges({
+function LiveEngagementBadgesState({
   scholarshipId,
   initialViewCount,
   initialScrapCount,
@@ -30,11 +30,6 @@ export default function LiveEngagementBadges({
 }) {
   const [viewCount, setViewCount] = useState(initialViewCount);
   const [scrapCount, setScrapCount] = useState(initialScrapCount);
-
-  useEffect(() => {
-    setViewCount(initialViewCount);
-    setScrapCount(initialScrapCount);
-  }, [scholarshipId, initialViewCount, initialScrapCount]);
 
   useEffect(() => {
     const onBookmarkToggled = (event: Event) => {
@@ -78,5 +73,18 @@ export default function LiveEngagementBadges({
         스크랩 {scrapCount.toLocaleString()}
       </span>
     </div>
+  );
+}
+
+export default function LiveEngagementBadges(props: {
+  scholarshipId: number;
+  initialViewCount: number;
+  initialScrapCount: number;
+}) {
+  return (
+    <LiveEngagementBadgesState
+      key={`${props.scholarshipId}:${props.initialViewCount}:${props.initialScrapCount}`}
+      {...props}
+    />
   );
 }

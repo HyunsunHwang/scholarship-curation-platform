@@ -1,0 +1,200 @@
+{
+  "contract_version": "post-phase-n-scoped-migration-readiness/v1",
+  "scope": {
+    "schema": "public",
+    "excluded_schema_count": 9,
+    "excluded_object_count": 1128,
+    "excluded_counts_by_schema": {
+      "realtime": 77,
+      "auth": 609,
+      "storage": 239,
+      "supabase_migrations": 19,
+      "extensions": 139,
+      "vault": 40,
+      "private": 2,
+      "graphql_public": 2,
+      "graphql": 1
+    },
+    "exclusion_reason": "Supabase-managed schemas are outside scoped migration readiness."
+  },
+  "evidence_coverage_matrix": [
+    {
+      "object_kind": "tables",
+      "status": "comparable",
+      "production_object_count": 25,
+      "nonproduction_object_count": 22
+    },
+    {
+      "object_kind": "columns",
+      "status": "production_only_evidence",
+      "production_object_count": 352,
+      "nonproduction_object_count": 0
+    },
+    {
+      "object_kind": "indexes",
+      "status": "comparable",
+      "production_object_count": 87,
+      "nonproduction_object_count": 20
+    },
+    {
+      "object_kind": "constraints",
+      "status": "production_only_evidence",
+      "production_object_count": 99,
+      "nonproduction_object_count": 0
+    },
+    {
+      "object_kind": "policies",
+      "status": "comparable",
+      "production_object_count": 62,
+      "nonproduction_object_count": 18
+    },
+    {
+      "object_kind": "grants",
+      "status": "production_only_evidence",
+      "production_object_count": 700,
+      "nonproduction_object_count": 0
+    },
+    {
+      "object_kind": "functions",
+      "status": "comparable",
+      "production_object_count": 23,
+      "nonproduction_object_count": 15
+    },
+    {
+      "object_kind": "triggers",
+      "status": "comparable",
+      "production_object_count": 12,
+      "nonproduction_object_count": 18
+    },
+    {
+      "object_kind": "views",
+      "status": "insufficient_evidence",
+      "production_object_count": 0,
+      "nonproduction_object_count": 0
+    },
+    {
+      "object_kind": "materialized_views",
+      "status": "insufficient_evidence",
+      "production_object_count": 0,
+      "nonproduction_object_count": 0
+    }
+  ],
+  "classification_counts": {
+    "REQUIRED_FOR_BETA": 11,
+    "COMPATIBILITY_REQUIRED": 12,
+    "DEFER_AFTER_BETA": 0,
+    "REMOVE_OR_REPLACE": 0,
+    "OWNER_DECISION_REQUIRED": 0,
+    "UNEXPECTED_PRODUCTION_ONLY": 198,
+    "UNEXPECTED_NONPRODUCTION_ONLY": 70
+  },
+  "classification_arithmetic_consistent": true,
+  "comparable_difference_count": 291,
+  "beta_required_table_status": [
+    {
+      "table": "ingestion_crawl_runs",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_source_run_results",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_notices",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_notice_url_aliases",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_notice_occurrences",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_notice_revisions",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "ingestion_notice_assets",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "review_items",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "review_decision_events",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "review_effective_decisions",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    },
+    {
+      "table": "review_evidence_references",
+      "present_in_production": false,
+      "present_in_nonproduction": true,
+      "target_classification": "REQUIRED_FOR_BETA",
+      "migration_required": true,
+      "evidence_level": "nonproduction_only_evidence",
+      "blocker_status": "production_presence_unverified_or_missing"
+    }
+  ],
+  "blocker_count": 16,
+  "migration_readiness": "HOLD",
+  "known_limitations": [
+    "Columns, constraints, and grants remain insufficiently evidenced in non-production.",
+    "Managed Supabase schemas are excluded from migration readiness classification."
+  ]
+}

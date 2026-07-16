@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import {
   contentKindHref,
   contentKindLabel,
@@ -14,8 +14,8 @@ import {
 } from "@/lib/scholarship-dates";
 import {
   readRecentViews,
-  RECENT_VIEWS_CHANGED_EVENT,
-  type RecentViewItem,
+  getRecentViewsServerSnapshot,
+  subscribeRecentViews,
 } from "@/lib/recent-views";
 
 function deadlineShort(dateStr: string): string {
@@ -29,33 +29,11 @@ function deadlineShort(dateStr: string): string {
 }
 
 export default function LibraryRecentList() {
-  const [items, setItems] = useState<RecentViewItem[]>([]);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    const sync = () => setItems(readRecentViews());
-    sync();
-    setHydrated(true);
-    window.addEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
-  if (!hydrated) {
-    return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
-        <div className="h-8 w-40 animate-pulse rounded bg-gray-200" />
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="aspect-2/3 animate-pulse rounded-xl bg-gray-100" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const items = useSyncExternalStore(
+    subscribeRecentViews,
+    readRecentViews,
+    getRecentViewsServerSnapshot,
+  );
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10">

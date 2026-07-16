@@ -1,0 +1,369 @@
+{
+  "generated_at": "2026-07-16T18:02:39.632Z",
+  "contract_version": "post-phase-n-q-validator/v1",
+  "status": "PASS",
+  "passed": true,
+  "check_count": 25,
+  "passed_check_count": 25,
+  "failed_check_count": 0,
+  "failed_checks": [],
+  "checks": [
+    {
+      "name": "starting_state_gate",
+      "passed": true,
+      "evidence": {
+        "generated_at": "2026-07-16T00:00:00.000Z",
+        "evidence_kind": "static_repository",
+        "branch": "feat/post-phase-n",
+        "starting_head": "8323cafe16a02d33a1485a6962b25967032a11cc",
+        "origin_main_head": "8323cafe16a02d33a1485a6962b25967032a11cc",
+        "merge_base": "8323cafe16a02d33a1485a6962b25967032a11cc",
+        "ahead": 0,
+        "behind": 0,
+        "worktree_clean": true,
+        "post_phase_m_semantic_commit_ancestor": true,
+        "post_phase_m_main_merge_ancestor": true,
+        "env_local_present": true,
+        "env_local_ignored": true,
+        "env_local_tracked": false,
+        "env_local_staged": false,
+        "approved_nonproduction_ref_match": true,
+        "forbidden_production_ref_detected": false,
+        "production_access_performed": false,
+        "git_diff_check_passed": true,
+        "status": "PASS",
+        "limitations": [
+          "The environment file was checked by booleans only; no value was printed.",
+          "This report records the gate before Post-Phase N-Q implementation changes."
+        ]
+      }
+    },
+    {
+      "name": "existing_main_implementation_reused",
+      "passed": true,
+      "evidence": {
+        "item_count": 10,
+        "parallel_system_count": 0
+      }
+    },
+    {
+      "name": "nonproduction_fingerprint",
+      "passed": true,
+      "evidence": {
+        "table_count": 22,
+        "reachable_table_count": 22,
+        "production_parity_claimed": false
+      }
+    },
+    {
+      "name": "schema_diff_arithmetic_and_evidence",
+      "passed": true,
+      "evidence": {
+        "status": "CONDITIONAL_ON_PRODUCTION_FINGERPRINT",
+        "difference_count": 3,
+        "classification_total": 3
+      }
+    },
+    {
+      "name": "owner_evidence_acceptance_and_scoped_diff",
+      "passed": true,
+      "evidence": {
+        "owner_evidence_passed": true,
+        "tracked_owner_evidence_file_count": 0,
+        "canonical_hash_matches_legacy": false,
+        "scoped_migration_readiness": "HOLD",
+        "scoped_blocker_count": 16,
+        "beta_required_table_count": 11,
+        "scoped_coverage_kind_count": 10,
+        "locale_independent_canonical_hash": true,
+        "legacy_hash_difference_recorded": true
+      }
+    },
+    {
+      "name": "migration_and_canary_not_authorized",
+      "passed": true,
+      "evidence": {
+        "migration_stage_count": 7,
+        "canary_status": "OWNER_PENDING"
+      }
+    },
+    {
+      "name": "source_cohort_bound",
+      "passed": true,
+      "evidence": {
+        "source_count": 10,
+        "max_pages_per_source": 5,
+        "max_items_per_source": 30
+      }
+    },
+    {
+      "name": "live_fixture_and_zero_match_separation",
+      "passed": true,
+      "evidence": {
+        "live_source_count": 10,
+        "live_true_positive_source_count": 2,
+        "bounded_zero_match_source_count": 4,
+        "zero_match_wording_passed": true
+      }
+    },
+    {
+      "name": "semantic_confusion_matrix",
+      "passed": true,
+      "evidence": {
+        "fixture": {
+          "item_count": 24,
+          "true_positive": 10,
+          "false_positive": 0,
+          "false_negative": 0,
+          "true_negative": 14,
+          "precision": 1,
+          "recall": 1
+        },
+        "live": {
+          "item_count": 6,
+          "true_positive": 2,
+          "false_positive": 0,
+          "false_negative": 0,
+          "true_negative": 4,
+          "precision": 1,
+          "recall": 1
+        },
+        "combined": {
+          "item_count": 30,
+          "true_positive": 12,
+          "false_positive": 0,
+          "false_negative": 0,
+          "true_negative": 18,
+          "precision": 1,
+          "recall": 1
+        },
+        "hard_negative_automatic_public_projection_count": 0,
+        "insufficient_evidence_automatic_approval_count": 0
+      }
+    },
+    {
+      "name": "attachment_stage_separation",
+      "passed": true,
+      "evidence": {
+        "parser_result": "UNKNOWN_BINARY",
+        "byte_count": 71168,
+        "stages": {
+          "metadata_discovered": true,
+          "url_resolved": true,
+          "download_attempted": true,
+          "bytes_received": true,
+          "mime_checked": true,
+          "signature_checked": true,
+          "hash_calculated": true,
+          "parser_selected": false,
+          "extraction_attempted": false,
+          "useful_text_extracted": false
+        }
+      }
+    },
+    {
+      "name": "cau_012_fail_closed",
+      "passed": true,
+      "evidence": {
+        "recommendation": "NEEDS_MORE_EVIDENCE",
+        "owner_decision": {
+          "decision": "NEEDS_MORE_EVIDENCE",
+          "canary_inclusion": false,
+          "reason": "official unit, official board, and exact list URL are not verified"
+        },
+        "automatic_source_create_count": 0
+      }
+    },
+    {
+      "name": "integrated_nonproduction_rehearsal",
+      "passed": true,
+      "evidence": {
+        "review_event_count": 5,
+        "duplicate_projection_count": 0,
+        "review_event_mutation_count": 0,
+        "unrelated_row_change_count": 0
+      }
+    },
+    {
+      "name": "final_nonproduction_invariants",
+      "passed": true,
+      "evidence": {
+        "active_public_scholarship_count": 0,
+        "public_row_without_effective_approve_count": 0,
+        "rejected_or_withdrawn_public_leakage_count": 0
+      }
+    },
+    {
+      "name": "authenticated_browser_walkthrough",
+      "passed": true,
+      "evidence": {
+        "route_count": 7,
+        "screenshot_count": 9,
+        "screenshot_evidence_passed": true,
+        "final_mode": "hide",
+        "final_visible": false
+      }
+    },
+    {
+      "name": "operations_readiness",
+      "passed": true,
+      "evidence": {
+        "roles": [
+          "Reviewer",
+          "Operator",
+          "Owner"
+        ],
+        "metrics": {
+          "recent_crawler_run_count": 10,
+          "source_count": 10,
+          "new_candidate_count": 6,
+          "pending_review_count": 3,
+          "approved_count": 6,
+          "rejected_count": 5,
+          "insufficient_count": 6,
+          "active_public_scholarship_count": 0,
+          "projection_failure_count": 0,
+          "recent_incident_count": 6
+        }
+      }
+    },
+    {
+      "name": "owner_gate_package",
+      "passed": true,
+      "evidence": {
+        "required_gate_count": 8,
+        "present_gate_count": 8
+      }
+    },
+    {
+      "name": "owner_gate_status_reconciliation",
+      "passed": true,
+      "evidence": {
+        "fingerprint_gate": "PASS_OWNER_READ_ONLY",
+        "migration_gate": "NOT_AUTHORIZED",
+        "canary_write_gate": "NOT_AUTHORIZED",
+        "canary_rollout": "HOLD",
+        "public_beta_gate": "HOLD"
+      }
+    },
+    {
+      "name": "risk_register",
+      "passed": true,
+      "evidence": {
+        "risk_count": 27,
+        "unique_risk_count": 27
+      }
+    },
+    {
+      "name": "focused_tests_evidence",
+      "passed": true,
+      "evidence": {
+        "passed_count": 13,
+        "test_command_count": 13
+      }
+    },
+    {
+      "name": "production_readiness_documents",
+      "passed": true,
+      "evidence": {
+        "required_count": 15,
+        "present_count": 15
+      }
+    },
+    {
+      "name": "production_fingerprint_sql_read_only",
+      "passed": true,
+      "evidence": {
+        "begins_read_only": true,
+        "contains_rollback": true,
+        "catalog_source_count": 11,
+        "forbidden_schema_assumption_count": 0
+      }
+    },
+    {
+      "name": "production_fingerprint_evidence_contract",
+      "passed": true,
+      "evidence": {
+        "evidence_kind_registered": true,
+        "valid_production_evidence_recognized": true,
+        "stale_evidence_cleanup_precedes_gate": true,
+        "stale_evidence_gate_failure_tested": true,
+        "execute_not_called_on_gate_failure": true,
+        "owner_evidence_preserved_if_present": true,
+        "direct_url_project_ref_tested": true,
+        "session_pooler_project_ref_tested": true,
+        "session_pooler_negative_security_case_count": 5,
+        "session_pooler_credential_redaction_tested": true,
+        "direct_libpq_decomposition_tested": true,
+        "session_pooler_libpq_decomposition_tested": true,
+        "pgdatabase_is_database_name": true,
+        "psql_arguments_secret_free": true,
+        "encoded_credentials_decoded": true,
+        "sslmode_mapping_tested": true,
+        "connection_validation_failure_count": 7,
+        "connection_validation_execute_not_called": true,
+        "project_ref_mismatch_execute_not_called": true,
+        "connection_validation_precedes_execute": true,
+        "focused_report_credentials_absent": true,
+        "production_execute_called": false,
+        "connection_url_not_assigned_to_pgdatabase": true,
+        "command_line_database_url_absent": true,
+        "owner_runbook_connection_modes_documented": true,
+        "filename_heuristic_absent": true
+      }
+    },
+    {
+      "name": "tls_unsafe_bypass_absent",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "forbidden_repository_surfaces_unchanged",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "tracked_secret_material_absent",
+      "passed": true,
+      "evidence": []
+    }
+  ],
+  "safety": {
+    "production_access_performed": false,
+    "production_read_performed": false,
+    "production_write_performed": false,
+    "production_migration_performed": false,
+    "production_backup_performed": false,
+    "production_canary_write_performed": false,
+    "automatic_public_publish_performed": false,
+    "external_llm_call_performed": false,
+    "tls_verification_disabled": false,
+    "secrets_exposed": false
+  },
+  "final_gates": {
+    "integrated_engineering_package": "PASS",
+    "production_investigation_package": "PASS",
+    "production_fingerprint": "PASS_OWNER_READ_ONLY",
+    "migration_readiness": "HOLD",
+    "rollback_readiness": "PASS_NONPRODUCTION",
+    "review_to_public_projection": "PASS_NONPRODUCTION",
+    "controlled_data_quality_cohort": "HOLD",
+    "operations_readiness": "PASS_MINIMUM",
+    "core_ux_readiness": "PASS",
+    "production_migration": "NOT_AUTHORIZED",
+    "canary_write": "NOT_AUTHORIZED",
+    "canary_rollout": "HOLD",
+    "public_beta": "HOLD"
+  },
+  "risk_status_counts": {
+    "RESOLVED": 0,
+    "MITIGATED": 10,
+    "OBSERVED": 4,
+    "OWNER_PENDING": 9,
+    "EXTERNAL_HOLD": 0,
+    "ENGINEERING_HOLD": 2,
+    "NOT_AUTHORIZED": 1,
+    "NOT_STARTED": 1
+  },
+  "changed_file_count": 20
+}

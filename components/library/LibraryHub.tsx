@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import LibraryCollectionCard from "@/components/library/LibraryCollectionCard";
 import {
   readRecentViews,
-  RECENT_VIEWS_CHANGED_EVENT,
+  getRecentViewsServerSnapshot,
+  subscribeRecentViews,
   type RecentViewItem,
 } from "@/lib/recent-views";
 
@@ -30,20 +31,11 @@ export default function LibraryHub({
   isLoggedIn: boolean;
   savedItems: CardScholarship[];
 }) {
-  const [recentViews, setRecentViews] = useState<RecentViewItem[]>([]);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    const sync = () => setRecentViews(readRecentViews());
-    sync();
-    setHydrated(true);
-    window.addEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+  const recentViews = useSyncExternalStore(
+    subscribeRecentViews,
+    readRecentViews,
+    getRecentViewsServerSnapshot,
+  );
 
   const recentCovers = recentViews
     .map((item) => item.poster_image_url)
@@ -62,7 +54,7 @@ export default function LibraryHub({
         <LibraryCollectionCard
           href="/library/recent"
           title="최근 조회"
-          subtitle={hydrated ? recentSubtitle(recentViews) : "…"}
+          subtitle={recentSubtitle(recentViews)}
           cover={{ type: "collage", urls: recentCovers }}
         />
 

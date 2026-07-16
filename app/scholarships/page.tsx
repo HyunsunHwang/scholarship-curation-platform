@@ -3,10 +3,8 @@ import Link from "next/link";
 import { PublicScholarshipCard } from "@/components/public-scholarships/PublicScholarshipCard";
 import { PublicScholarshipDataStatus } from "@/components/public-scholarships/PublicScholarshipDataStatus";
 import {
-  filterPublicScholarships,
-  getPublicScholarshipFilterOptions,
-  getPublicScholarshipReadModelStatus,
-} from "@/lib/scholarships/public-scholarship-read-model";
+  getPublicScholarshipPageModel,
+} from "@/lib/scholarships/public-scholarship-service";
 
 type ScholarshipSearchParams = Promise<{
   q?: string;
@@ -20,15 +18,24 @@ export default async function PublicScholarshipsPage({
   searchParams: ScholarshipSearchParams;
 }) {
   const params = await searchParams;
-  const { organizations, categories } = getPublicScholarshipFilterOptions();
+  const initialModel = await getPublicScholarshipPageModel({
+    query: params.q,
+    organization: params.organization,
+    category: params.category,
+  });
+  const { organizations, categories } = initialModel;
   const organization = organizations.includes(params.organization ?? "") ? params.organization : undefined;
   const category = categories.includes(params.category ?? "") ? params.category : undefined;
-  const readModelStatus = getPublicScholarshipReadModelStatus();
-  const scholarships = filterPublicScholarships({
-    query: params.q,
-    organization,
-    category,
-  });
+  const model =
+    organization === params.organization && category === params.category
+      ? initialModel
+      : await getPublicScholarshipPageModel({
+          query: params.q,
+          organization,
+          category,
+        });
+  const readModelStatus = model.status;
+  const scholarships = model.scholarships;
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f8fafc] px-4 py-10 text-ink sm:px-6">
