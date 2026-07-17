@@ -189,9 +189,6 @@ export default function HomeFeed({
                     sort: "deadline",
                     list: browseKind === "all",
                   })}
-                  subtitle={
-                    isSearching ? undefined : `총 ${searchShelfItems.length}개`
-                  }
                 />
                 <HorizontalShelf
                   label={isSearching ? "검색 결과" : "전체 공고"}

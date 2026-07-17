@@ -38,7 +38,6 @@ export default function HomePersonalizationUrgentBlocks({
         id="urgent-bookmarks-heading"
         title="저장한 공고 · 마감 임박"
         href="/library/saved"
-        subtitle="14일 안에 마감되는 찜한 공고"
       />
       <HorizontalShelf
         label="저장한 공고 · 마감 임박"

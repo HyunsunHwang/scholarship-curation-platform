@@ -70,14 +70,8 @@ function formatDeadlineBadge(dateStr: string): string {
   return `D-${days}`;
 }
 
-function deadlineColor(dateStr: string): string {
-  if (isAlwaysOpenRecruitment(dateStr)) return "text-brand";
-  const days = daysUntilApplyDeadlineKorea(dateStr);
-  if (days < 0) return "text-ink/40";
-  if (days <= 7) return "text-brand";
-  if (days <= 30) return "text-[#e07030]";
-  return "text-ink/50";
-}
+/** 목록 카드 하단 지원혜택 — 마감일과 무관하게 동일 톤 */
+const SUPPORT_LINE_COLOR = "text-[#e07030]";
 
 function ScholarshipCard({
   scholarship,
@@ -89,7 +83,6 @@ function ScholarshipCard({
   const gradient =
     institutionGradient[scholarship.institution_type] ?? "from-stone-300 to-stone-500";
 
-  const color = deadlineColor(scholarship.apply_end_date);
   const deadlineBadge = formatDeadlineBadge(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
   const supportAmount = resolveCardSupportLine({
@@ -199,7 +192,7 @@ function ScholarshipCard({
           </p>
         </div>
         <p
-          className={`mt-0.5 truncate text-[11px] font-medium sm:text-xs ${color}`}
+          className={`mt-0.5 truncate text-[11px] font-medium sm:text-xs ${SUPPORT_LINE_COLOR}`}
           title={supportAmount}
         >
           {supportAmount}

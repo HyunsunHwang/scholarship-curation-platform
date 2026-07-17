@@ -68,9 +68,15 @@ function MainNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   const profileHref = isLoggedIn ? "/mypage" : "/auth";
   const profileActive =
     pathname.startsWith("/mypage") || pathname.startsWith("/auth");
+  const libraryActive = pathname.startsWith("/library");
 
   const items = [
     ...MAIN_NAV,
+    {
+      href: "/library",
+      label: "라이브러리",
+      match: () => libraryActive,
+    },
     {
       href: profileHref,
       label: "프로필",
@@ -104,29 +110,80 @@ function MainNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   );
 }
 
-function HeaderSearch({ className }: { className?: string }) {
+function HeaderSearch() {
   const { query, setQuery } = useHomeSearchQuery();
   const navigateHomeSearch = useNavigateHomeSearch();
+  const [expanded, setExpanded] = useState(() => query.trim().length > 0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (query.trim().length > 0) setExpanded(true);
+  }, [query]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    inputRef.current?.focus();
+
+    const onPointer = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) {
+        if (!query.trim()) setExpanded(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (!query.trim()) {
+          setExpanded(false);
+          inputRef.current?.blur();
+        } else {
+          setQuery("");
+        }
+      }
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [expanded, query, setQuery]);
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-beige hover:text-ink"
+        aria-label="검색 열기"
+        title="검색"
+      >
+        <SearchIcon className="h-5 w-5" />
+      </button>
+    );
+  }
 
   return (
-    <form
-      className={`flex min-w-0 items-center gap-2 rounded-full border border-transparent bg-gray-100 px-3 py-2 transition-colors focus-within:border-gray-200 focus-within:bg-white focus-within:shadow-sm ${className ?? ""}`}
-      onSubmit={(e) => {
-        e.preventDefault();
-        navigateHomeSearch();
-      }}
-    >
-      <SearchIcon className="h-4 w-4 shrink-0 text-ink/40" />
-      <input
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="어떤 공고를 찾고 계신가요?"
-        className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink/40 outline-none"
-        autoComplete="off"
-        aria-label="공고 검색"
-      />
-    </form>
+    <div ref={wrapRef} className="min-w-0">
+      <form
+        className="flex w-[min(72vw,18rem)] items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 shadow-sm transition-[width] duration-200 sm:w-64 md:w-72"
+        onSubmit={(e) => {
+          e.preventDefault();
+          navigateHomeSearch();
+        }}
+      >
+        <SearchIcon className="h-4 w-4 shrink-0 text-ink/40" />
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="어떤 공고를 찾고 계신가요?"
+          className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink/40 outline-none"
+          autoComplete="off"
+          aria-label="공고 검색"
+        />
+      </form>
+    </div>
   );
 }
 
@@ -374,7 +431,7 @@ export default function AirbnbHeader({
           </div>
 
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
-            <HeaderSearch className="w-full max-w-42 sm:max-w-md md:max-w-lg" />
+            <HeaderSearch />
             <UserActions
               isLoggedIn={isLoggedIn}
               isAdmin={isAdmin}

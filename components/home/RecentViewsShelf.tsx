@@ -101,19 +101,12 @@ export default function RecentViewsShelf({
 
   if (items.length === 0) return null;
 
-  const hasServer = serverRecent.length > 0;
-
   return (
     <section aria-labelledby="continue-watching-heading" className="mt-8 sm:mt-10">
       <HomeSectionTitle
         id="continue-watching-heading"
         title="이어서 보기"
         href="/library/recent"
-        subtitle={
-          hasServer
-            ? "여러 기기에서 이어 본 공고"
-            : "최근 본 공고를 이어서 살펴보세요"
-        }
       />
       <HorizontalShelf
         label="이어서 보기"

@@ -35,7 +35,6 @@ function PersonalizedRailSection({ rail }: { rail: HomeRail }) {
         id={`${rail.key}-heading`}
         title={rail.title}
         href={rail.href}
-        subtitle={rail.subtitle}
       />
       <HorizontalShelf
         label={rail.title}
