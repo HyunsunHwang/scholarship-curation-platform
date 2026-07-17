@@ -3,7 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   DEFAULT_CRAWLER_RETRY_COUNT,
+  DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
   DEFAULT_CRAWLER_TIMEOUT_MS,
+  MAX_CRAWLER_RETRY_BACKOFF_MS,
   buildCrawlerRunSummary,
   deterministicCrawlerProjection,
   runBoundedCrawlerSource,
@@ -11,6 +13,7 @@ import {
   sanitizeCrawlerError,
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/common-runner.mjs";
+import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
 import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
 
 function source(sourceId) {
@@ -85,6 +88,16 @@ function sequenceFetcher(sequenceByUrl) {
   }, { calls });
 }
 
+function recordingBackoffClock() {
+  const delays = [];
+  return {
+    delays,
+    async sleep(ms) {
+      delays.push(ms);
+    },
+  };
+}
+
 function runSource(target, fetchHtml, options = {}) {
   return runBoundedCrawlerSource({
     source: target,
@@ -95,6 +108,7 @@ function runSource(target, fetchHtml, options = {}) {
     fetchDetails: false,
     timeoutMs: options.timeoutMs ?? 30,
     retryCount: options.retryCount ?? 1,
+    retryBackoffMs: options.retryBackoffMs ?? 0,
     clock: options.clock,
   });
 }
@@ -117,6 +131,7 @@ function runMany(targets, fetchHtml, options = {}) {
       fetchDetails: false,
       timeoutMs: options.timeoutMs ?? 30,
       retryCount: options.retryCount ?? 1,
+      retryBackoffMs: options.retryBackoffMs ?? 0,
       clock: options.clock,
     },
   });
@@ -137,6 +152,8 @@ async function test(name, fn) {
 await test("default timeout and retry are bounded", () => {
   assert.equal(DEFAULT_CRAWLER_TIMEOUT_MS, 25_000);
   assert.equal(DEFAULT_CRAWLER_RETRY_COUNT, 1);
+  assert.equal(DEFAULT_CRAWLER_RETRY_BACKOFF_MS, 1_000);
+  assert.equal(MAX_CRAWLER_RETRY_BACKOFF_MS, 30_000);
 });
 
 await test("healthy source succeeds in one attempt", async () => {
@@ -147,24 +164,30 @@ await test("healthy source succeeds in one attempt", async () => {
 });
 
 await test("transient network failure recovers on second attempt", async () => {
+  const clock = recordingBackoffClock();
   const fetcher = sequenceFetcher({ [sourceA.listUrl]: [networkError(), jsonItems("fixture_a")] });
-  const result = await runSource(sourceA, fetcher);
+  const result = await runSource(sourceA, fetcher, { retryBackoffMs: 100, clock });
   assert.equal(result.result_status, "success");
   assert.equal(result.total_attempt_count, 2);
   assert.equal(result.recovered_after_retry, true);
   assert.deepEqual(result.attempt_history.map((attempt) => attempt.status), ["network_error", "success"]);
+  assert.deepEqual(clock.delays, [100]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
 });
 
 await test("timeout recovers on retry", async () => {
   const active = { count: 0 };
+  const clock = recordingBackoffClock();
   const fetcher = sequenceFetcher({
     [sourceA.listUrl]: [abortableHang(active), jsonItems("fixture_a")],
   });
-  const result = await runSource(sourceA, fetcher, { timeoutMs: 10 });
+  const result = await runSource(sourceA, fetcher, { timeoutMs: 10, retryBackoffMs: 100, clock });
   assert.equal(result.result_status, "success");
   assert.equal(result.recovered_after_retry, true);
   assert.equal(result.attempt_history[0].timeout, true);
   assert.equal(active.count, 0);
+  assert.deepEqual(clock.delays, [100]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
 });
 
 await test("two timeouts exhaust retry", async () => {
@@ -208,11 +231,64 @@ await test("non-transient HTTP 4xx is not retried", async () => {
 });
 
 await test("transient HTTP 503 is retried", async () => {
+  const clock = recordingBackoffClock();
   const error = Object.assign(new Error("HTTP 503"), { httpStatus: 503 });
   const fetcher = sequenceFetcher({ [sourceA.listUrl]: [error, jsonItems("fixture_a")] });
-  const result = await runSource(sourceA, fetcher);
+  const result = await runSource(sourceA, fetcher, { retryBackoffMs: 100, clock });
   assert.equal(result.result_status, "success");
   assert.equal(result.total_attempt_count, 2);
+  assert.deepEqual(clock.delays, [100]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
+});
+
+await test("transient HTTP 429 applies backoff then succeeds", async () => {
+  const clock = recordingBackoffClock();
+  const error = Object.assign(new Error("HTTP 429"), { httpStatus: 429 });
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [error, jsonItems("fixture_a")] }),
+    { retryBackoffMs: 100, clock },
+  );
+  assert.equal(result.recovered_after_retry, true);
+  assert.deepEqual(clock.delays, [100]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
+});
+
+await test("three attempts use linear retry backoff", async () => {
+  const clock = recordingBackoffClock();
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [networkError(), networkError(), jsonItems("fixture_a")] }),
+    { retryCount: 2, retryBackoffMs: 100, clock },
+  );
+  assert.equal(result.total_attempt_count, 3);
+  assert.equal(result.recovered_after_retry, true);
+  assert.deepEqual(clock.delays, [100, 200]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 200, 0]);
+  assert.equal(result.total_retry_delay_ms, 300);
+});
+
+await test("exhausted final attempt has no additional delay", async () => {
+  const clock = recordingBackoffClock();
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [networkError(), networkError()] }),
+    { retryCount: 1, retryBackoffMs: 50, clock },
+  );
+  assert.equal(result.retry_exhausted, true);
+  assert.deepEqual(clock.delays, [50]);
+  assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [50, 0]);
+});
+
+await test("retry backoff is clamped to the maximum", async () => {
+  const clock = recordingBackoffClock();
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [networkError(), jsonItems("fixture_a")] }),
+    { retryBackoffMs: Number.MAX_SAFE_INTEGER, clock },
+  );
+  assert.equal(result.retry_backoff_ms, MAX_CRAWLER_RETRY_BACKOFF_MS);
+  assert.deepEqual(clock.delays, [MAX_CRAWLER_RETRY_BACKOFF_MS]);
 });
 
 await test("zero-match remains an observation state", async () => {
@@ -279,6 +355,22 @@ await test("volatile-free projection is deterministic", async () => {
   );
 });
 
+await test("deterministic projection retains configured retry delays", async () => {
+  const execute = async () => {
+    const clock = recordingBackoffClock();
+    return runMany(
+      [sourceA],
+      sequenceFetcher({ [sourceA.listUrl]: [networkError(), jsonItems("fixture_a")] }),
+      { runId: "retry-delay-projection", retryBackoffMs: 100, clock },
+    );
+  };
+  const first = deterministicCrawlerProjection(await execute());
+  const second = deterministicCrawlerProjection(await execute());
+  assert.deepEqual(first, second);
+  assert.equal(first.source_results[0].retry_backoff_ms, 100);
+  assert.deepEqual(first.source_results[0].attempt_history.map((row) => row.retry_delay_ms), [100, 0]);
+});
+
 await test("secret-like error content is redacted", async () => {
   const secret = "super-secret-value";
   const result = await runSource(sourceA, async () => {
@@ -329,6 +421,48 @@ await test("detail-level failure is explicit partial result", async () => {
   assert.equal(result.result_status, "partial");
   assert.equal(result.total_attempt_count, 1);
   assert.equal(result.notices[0].detailResultStatus, "network_error");
+  assert.equal(result.attempt_history[0].retry_delay_ms, 0);
+});
+
+await test("non-retryable outcomes never apply backoff", async () => {
+  const clock = recordingBackoffClock();
+  const http404 = Object.assign(new Error("HTTP 404"), { httpStatus: 404 });
+  const parserStrategy = { ...strategy, parseList: () => { throw new Error("bad list"); } };
+  const detailStrategy = {
+    ...strategy,
+    parseDetail: () => ({}),
+    normalizeNotice: ({ sourceId, item, detail }) => ({ ...item, ...detail, source_id: sourceId }),
+  };
+  const cases = [
+    await runSource(sourceA, async () => { throw http404; }, { retryBackoffMs: 100, clock }),
+    await runBoundedCrawlerSource({
+      source: sourceA, inventoryRows, strategy: parserStrategy,
+      fetchHtml: async () => jsonItems("fixture_a"), fetchDetails: false,
+      retryBackoffMs: 100, clock,
+    }),
+    await runSource({ ...sourceA, listUrl: "invalid" }, async () => "[]", { retryBackoffMs: 100, clock }),
+    await runBoundedCrawlerSource({
+      source: sourceA, inventoryRows: [], strategy,
+      fetchHtml: async () => "[]", fetchDetails: false,
+      retryBackoffMs: 100, clock,
+    }),
+    await runBoundedCrawlerSource({
+      source: sourceA, inventoryRows, strategy: detailStrategy,
+      fetchHtml: async (url) => {
+        if (url === sourceA.listUrl) return jsonItems("fixture_a");
+        throw networkError("detail unavailable");
+      },
+      fetchDetails: true, retryBackoffMs: 100, clock,
+    }),
+    await runSource(sourceA, async () => "[]", { retryBackoffMs: 100, clock }),
+  ];
+  assert.deepEqual(cases.map((result) => result.result_status), [
+    "http_error", "parser_error", "configuration_error",
+    "source_resolution_error", "partial", "empty_observed",
+  ]);
+  assert.equal(cases.every((result) => result.total_attempt_count === 1), true);
+  assert.equal(cases.every((result) => result.attempt_history[0].retry_delay_ms === 0), true);
+  assert.deepEqual(clock.delays, []);
 });
 
 await test("timeout timer and request are cleaned up", async () => {
@@ -358,6 +492,59 @@ await test("timeout timer and request are cleaned up", async () => {
   assert.equal(activeTimers.size, 0);
 });
 
+await test("backoff timer is cleaned up after retry", async () => {
+  const activeTimers = new Set();
+  const clock = {
+    setTimeout(fn, ms) {
+      const timer = setTimeout(() => {
+        activeTimers.delete(timer);
+        fn();
+      }, ms);
+      activeTimers.add(timer);
+      return timer;
+    },
+    clearTimeout(timer) {
+      clearTimeout(timer);
+      activeTimers.delete(timer);
+    },
+  };
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [networkError(), jsonItems("fixture_a")] }),
+    { retryBackoffMs: 1, clock },
+  );
+  assert.equal(result.result_status, "success");
+  assert.equal(activeTimers.size, 0);
+});
+
+await test("committed diff safety helper detects scoped changes", () => {
+  const cleanTreeCommitted = classifyEnginePhase2EvidencePaths({
+    committedPaths: ["app/admin/page.tsx", "supabase/migrations/001.sql"],
+    workingTreePaths: [],
+    trackedPaths: [],
+  });
+  assert.equal(cleanTreeCommitted.admin_ui_changed, true);
+  assert.equal(cleanTreeCommitted.migration_files_changed, true);
+  assert.equal(cleanTreeCommitted.committed_diff_safety_check_valid, false);
+
+  const currentScope = classifyEnginePhase2EvidencePaths({
+    committedPaths: ["lib/crawler-engine/common-runner.mjs", "scripts/test-engine-phase-2-resilience-observability.mjs"],
+    workingTreePaths: [],
+    trackedPaths: ["reports/engine-phase-2-baseline.json"],
+  });
+  assert.equal(currentScope.committed_diff_safety_check_valid, true);
+
+  const trackedRaw = classifyEnginePhase2EvidencePaths({
+    committedPaths: [], workingTreePaths: [], trackedPaths: [".tmp/live/result.json"],
+  });
+  assert.equal(trackedRaw.raw_live_artifact_tracked, true);
+
+  const untrackedRaw = classifyEnginePhase2EvidencePaths({
+    committedPaths: [], workingTreePaths: [".tmp/live/result.json"], trackedPaths: [],
+  });
+  assert.equal(untrackedRaw.raw_live_artifact_tracked, false);
+});
+
 await test("recovered and exhausted retry counts are exact", async () => {
   const active = { count: 0 };
   const result = await runMany([sourceA, sourceB], sequenceFetcher({
@@ -375,6 +562,10 @@ await test("run summary arithmetic validates", () => {
   assert.equal(
     isolatedRun.run_summary.total_observed_item_count,
     isolatedRun.run_summary.source_results.reduce((sum, row) => sum + row.item_count, 0),
+  );
+  assert.equal(
+    isolatedRun.run_summary.total_retry_delay_ms,
+    isolatedRun.run_summary.source_results.reduce((sum, row) => sum + row.total_retry_delay_ms, 0),
   );
 });
 
@@ -396,7 +587,13 @@ const report = {
   deterministic_rerun_match: validations.find((row) => row.name === "volatile-free projection is deterministic")?.passed === true,
   source_isolation_valid: validations.find((row) => row.name === "attempt histories remain source-isolated")?.passed === true,
   retry_validation_passed: validations.filter((row) => /retry|transient|timeout recovers/.test(row.name)).every((row) => row.passed),
-  timeout_cleanup_valid: validations.find((row) => row.name === "timeout timer and request are cleaned up")?.passed === true,
+  backoff_validation_passed: validations.filter((row) => /backoff|additional delay/.test(row.name)).every((row) => row.passed),
+  non_retryable_no_backoff_valid: validations.find((row) => row.name === "non-retryable outcomes never apply backoff")?.passed === true,
+  linear_backoff_sequence_valid: validations.find((row) => row.name === "three attempts use linear retry backoff")?.passed === true,
+  evidence_diff_self_test_valid: validations.find((row) => row.name === "committed diff safety helper detects scoped changes")?.passed === true,
+  timeout_cleanup_valid: validations
+    .filter((row) => row.name === "timeout timer and request are cleaned up" || row.name === "backoff timer is cleaned up after retry")
+    .every((row) => row.passed),
   arithmetic_validation_passed: validations.find((row) => row.name === "run summary arithmetic validates")?.passed === true,
   normalized_graph_compatible: validations.find((row) => row.name === "Phase 1 normalized graph compatibility remains")?.passed === true,
   database_read: false,

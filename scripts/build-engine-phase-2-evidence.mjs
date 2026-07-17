@@ -2,7 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { validateCrawlerRunSummary } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
+  validateCrawlerRunSummary,
+} from "../lib/crawler-engine/common-runner.mjs";
+import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -15,40 +19,68 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(root, filePath), "utf8"));
 }
 
-function gitChangedPaths() {
+function gitOutput(args, failureMessage) {
   const safeRoot = root.replaceAll("\\", "/");
   const result = spawnSync(
     "git",
-    ["-c", `safe.directory=${safeRoot}`, "status", "--porcelain"],
+    ["-c", `safe.directory=${safeRoot}`, ...args],
     { cwd: root, encoding: "utf8" },
   );
-  if (result.status !== 0) throw new Error("Unable to inspect changed paths for evidence safety.");
-  return result.stdout
-    .split(/\r?\n/)
-    .filter(Boolean)
-    .map((line) => line.slice(3).trim().replaceAll("\\", "/"));
+  if (result.status !== 0) throw new Error(failureMessage);
+  return result.stdout;
+}
+
+function lines(value) {
+  return value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+}
+
+function committedChangedPaths(baseSha) {
+  return lines(gitOutput(
+    ["diff", "--name-only", `${baseSha}...HEAD`],
+    "Unable to inspect the committed Phase 2 diff for evidence safety.",
+  ));
+}
+
+function workingTreeChangedPaths() {
+  const statusLines = gitOutput(
+    ["status", "--porcelain"],
+    "Unable to inspect working-tree paths for evidence safety.",
+  ).split(/\r?\n/).filter(Boolean);
+  return statusLines
+    .flatMap((line) => line.slice(3).trim().split(" -> "))
+    .map((file) => file.replaceAll("\\", "/"));
+}
+
+function trackedPaths() {
+  return lines(gitOutput(
+    ["ls-files"],
+    "Unable to inspect tracked paths for evidence safety.",
+  ));
 }
 
 function isTracked(filePath) {
   const relative = path.relative(root, path.resolve(root, filePath)).replaceAll("\\", "/");
-  const safeRoot = root.replaceAll("\\", "/");
-  return spawnSync(
-    "git",
-    ["-c", `safe.directory=${safeRoot}`, "ls-files", "--error-unmatch", "--", relative],
-    { cwd: root, encoding: "utf8" },
-  ).status === 0;
+  return trackedPaths().includes(relative);
 }
 
 const fixturePath = arg("fixture", ".tmp/engine-phase-2/fixture-validation.json");
 const livePath = arg("live", ".tmp/engine-phase-2/live/scholarship-notices-latest.json");
 const outputPath = arg("output", "reports/engine-phase-2-baseline.json");
+const baseSha = arg("base-sha", "60187fa59983dca758010f905c371e57b40909bc");
 const fixture = readJson(fixturePath);
 const live = readJson(livePath);
 const liveSummary = live.boundedExecution?.summary;
 const arithmetic = validateCrawlerRunSummary(liveSummary);
-const changedPaths = gitChangedPaths();
-const adminUiChanged = changedPaths.some((file) => file.startsWith("app/") || file.startsWith("components/"));
-const migrationChanged = changedPaths.some((file) => file.startsWith("supabase/") || /migration/i.test(file));
+const committedPaths = committedChangedPaths(baseSha);
+const workingPaths = workingTreeChangedPaths();
+const allTrackedPaths = trackedPaths();
+const pathSafety = classifyEnginePhase2EvidencePaths({
+  committedPaths,
+  workingTreePaths: workingPaths,
+  trackedPaths: allTrackedPaths,
+});
+const adminUiChanged = pathSafety.admin_ui_changed;
+const migrationChanged = pathSafety.migration_files_changed;
 const rawLiveArtifactCommitted = isTracked(livePath);
 const sourceResults = Array.isArray(liveSummary?.source_results) ? liveSummary.source_results : [];
 const safety = live.safety ?? {};
@@ -59,7 +91,8 @@ const liveValid =
   safety.databaseReadPerformed === false &&
   safety.databaseWritePerformed === false &&
   safety.productionAccessPerformed === false;
-const nonGoalsPreserved = !adminUiChanged && !migrationChanged;
+const nonGoalsPreserved = pathSafety.committed_diff_safety_check_valid &&
+  !adminUiChanged && !migrationChanged && !pathSafety.api_cron_queue_worker_changed;
 const overallResult = fixturePassed && liveValid && !rawLiveArtifactCommitted && nonGoalsPreserved
   ? "PASS"
   : "HOLD";
@@ -76,7 +109,9 @@ const report = {
   retry_configuration: {
     default_retry_count: 1,
     maximum_attempt_count_default: 2,
+    default_retry_backoff_ms: DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
     live_retry_count: Number(live.totals?.retryCount),
+    live_retry_backoff_ms: Number(live.totals?.retryBackoffMs),
   },
   fixture_validation: {
     source_count: 2,
@@ -86,6 +121,10 @@ const report = {
     deterministic_rerun_match: fixture.deterministic_rerun_match,
     multi_source_isolation_valid: fixture.source_isolation_valid,
     retry_validation_passed: fixture.retry_validation_passed,
+    backoff_validation_passed: fixture.backoff_validation_passed,
+    non_retryable_no_backoff_valid: fixture.non_retryable_no_backoff_valid,
+    linear_backoff_sequence_valid: fixture.linear_backoff_sequence_valid,
+    evidence_diff_self_test_valid: fixture.evidence_diff_self_test_valid,
     timeout_cleanup_valid: fixture.timeout_cleanup_valid,
     arithmetic_validation_passed: fixture.arithmetic_validation_passed,
     normalized_graph_compatible: fixture.normalized_graph_compatible,
@@ -96,12 +135,14 @@ const report = {
     max_items_per_source: Number(live.totals?.maxItemsPerSource),
     timeout_ms: Number(live.totals?.timeoutMs),
     retry_count: Number(live.totals?.retryCount),
+    retry_backoff_ms: Number(live.totals?.retryBackoffMs),
     source_results: sourceResults,
     observed_item_count: Number(liveSummary.total_observed_item_count),
     timeout_source_count: Number(liveSummary.timeout_source_count),
     retried_source_count: Number(liveSummary.retried_source_count),
     recovered_after_retry_count: Number(liveSummary.recovered_after_retry_count),
     exhausted_retry_count: Number(liveSummary.exhausted_retry_count),
+    total_retry_delay_ms: Number(liveSummary.total_retry_delay_ms),
     source_error_count: Number(liveSummary.failed_source_count),
     detail_error_count: (live.observedItems ?? []).filter((item) => Boolean(item.detailFetchError)).length,
     partial_source_count: Number(liveSummary.partial_source_count),
@@ -117,7 +158,13 @@ const report = {
     migration_performed: false,
     migration_files_changed: migrationChanged,
     raw_live_artifact_committed: rawLiveArtifactCommitted,
-    api_cron_queue_added: changedPaths.some((file) => /(^|\/)(api|cron|queue|worker)(\/|\.)/i.test(file)),
+    api_cron_queue_added: pathSafety.api_cron_queue_worker_changed,
+    sensitive_file_changed: pathSafety.sensitive_file_changed,
+    absolute_local_path_changed: pathSafety.absolute_local_path_changed,
+    committed_diff_safety_check_valid: pathSafety.committed_diff_safety_check_valid,
+    committed_diff_base_sha: baseSha,
+    committed_diff_path_count: committedPaths.length,
+    working_tree_path_count: workingPaths.length,
   },
   non_goals_preserved: nonGoalsPreserved,
   raw_live_artifact_path_committed: null,

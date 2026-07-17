@@ -17,6 +17,7 @@ import { loadSources } from "../lib/notice-sources-loader.mjs";
 import {
   buildCrawlerRunSummary,
   classifyCrawlerFailure,
+  normalizeRetryBackoffMs,
   runBoundedCrawlerSource,
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
@@ -41,7 +42,7 @@ const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 25_000);
 const REQUEST_RETRY_COUNT = Math.max(0, Math.min(3, Number(process.env.CRAWL_RETRY_COUNT ?? 1)));
 const REQUEST_RETRY_BACKOFF_MS = Math.max(
   200,
-  Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000),
+  normalizeRetryBackoffMs(Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000)),
 );
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
@@ -682,7 +683,10 @@ async function run() {
             started_at: sourceStartedAt,
             finished_at: finishedAt,
             error_summary: "",
+            retry_delay_ms: 0,
           }],
+          retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+          total_retry_delay_ms: 0,
           retried: false,
           recovered_after_retry: false,
           retry_exhausted: false,
@@ -703,6 +707,7 @@ async function run() {
           fetchDetails: DETAIL_FETCH_ENABLED,
           timeoutMs: REQUEST_TIMEOUT_MS,
           retryCount: REQUEST_RETRY_COUNT,
+          retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
           beforeDetail: async () => {
             // Preserve the existing small pacing between detail requests.
             await new Promise((resolve) => setTimeout(resolve, 250));
@@ -804,7 +809,10 @@ async function run() {
           started_at: sourceStartedAt,
           finished_at: finishedAt,
           error_summary: errorSummary,
+          retry_delay_ms: 0,
         }],
+        retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+        total_retry_delay_ms: 0,
         retried: false,
         recovered_after_retry: false,
         retry_exhausted: false,
@@ -935,6 +943,7 @@ async function run() {
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
       timeoutMs: REQUEST_TIMEOUT_MS,
       retryCount: REQUEST_RETRY_COUNT,
+      retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
       sourceLevelFilterCount:
         SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
       collegeFilterCount:
