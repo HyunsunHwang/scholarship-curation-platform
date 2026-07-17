@@ -569,22 +569,24 @@ async function promoteQueue(
 
     // Demoted rows: re-publish existing contest with unified URLs (avoid duplicates)
     if (item.demoted && item.oldContestId) {
-      const updatePayload: Record<string, unknown> = {
+      const updatePayload: Database["public"]["Tables"]["contests"]["Update"] = {
         apply_url: applyUrl,
         homepage_url: homepageUrl,
         is_verified: true,
         list_on_home: true,
+        ...(noticeText ? { original_notice_text: noticeText } : {}),
+        ...(benefitLabels.length ? { benefits: benefitLabels } : {}),
+        ...(extracted?.draft.announcement_date
+          ? { announcement_date: extracted.draft.announcement_date }
+          : {}),
+        ...(extracted?.draft.contact
+          ? { contact: extracted.draft.contact }
+          : {}),
+        ...(extracted?.draft.note ? { note: extracted.draft.note } : {}),
+        ...(extracted?.draft.apply_method
+          ? { apply_method: extracted.draft.apply_method }
+          : {}),
       };
-      if (noticeText) updatePayload.original_notice_text = noticeText;
-      if (benefitLabels.length) updatePayload.benefits = benefitLabels;
-      if (extracted?.draft.announcement_date) {
-        updatePayload.announcement_date = extracted.draft.announcement_date;
-      }
-      if (extracted?.draft.contact) updatePayload.contact = extracted.draft.contact;
-      if (extracted?.draft.note) updatePayload.note = extracted.draft.note;
-      if (extracted?.draft.apply_method) {
-        updatePayload.apply_method = extracted.draft.apply_method;
-      }
 
       const { error: updError } = await supabase
         .from("contests")
