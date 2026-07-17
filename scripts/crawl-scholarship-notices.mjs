@@ -22,6 +22,7 @@ import {
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
+import { createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
   createCrawlerDocumentRuntime,
   isDocumentParsingEnabled,
@@ -49,6 +50,14 @@ const REQUEST_RETRY_BACKOFF_MS = Math.max(
   200,
   normalizeRetryBackoffMs(Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000)),
 );
+const REQUEST_RETRY_MAX_DELAY_MS = Math.max(
+  REQUEST_RETRY_BACKOFF_MS,
+  Math.min(30_000, Number(process.env.CRAWL_RETRY_MAX_DELAY_MS ?? 30_000)),
+);
+const REQUEST_RETRY_JITTER_RATIO = Math.min(
+  1,
+  Math.max(0, Number(process.env.CRAWL_RETRY_JITTER_RATIO ?? 0.1)),
+);
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const DOCUMENT_PARSING_ENABLED = isDocumentParsingEnabled(process.env.CRAWL_DOCUMENT_PARSING_ENABLED);
 const DOCUMENT_CACHE_DIRECTORY = process.env.CRAWL_DOCUMENT_CACHE_DIRECTORY ?? ".tmp/engine-phase-3/cache";
@@ -64,6 +73,10 @@ const MAX_PAGES_PER_SOURCE = Math.max(
   Math.min(5, Number(process.env.CRAWL_MAX_PAGES_PER_SOURCE ?? 1)),
 );
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
+const DETAIL_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_DETAIL_CONCURRENCY ?? 2)));
+const HOST_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_HOST_CONCURRENCY ?? 2)));
+const SOURCE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.CRAWL_SOURCE_MIN_INTERVAL_MS ?? 250));
+const HOST_MIN_INTERVAL_MS = Math.max(0, Number(process.env.CRAWL_HOST_MIN_INTERVAL_MS ?? 250));
 const IGNORE_SEEN = process.env.CRAWL_IGNORE_SEEN === "true";
 const FALLBACK_CHARSET = process.env.CRAWL_FALLBACK_CHARSET ?? "utf-8";
 const SOURCE_ID_PREFIX = cleanText(process.env.CRAWL_SOURCE_ID_PREFIX ?? "").toLowerCase();
@@ -318,6 +331,7 @@ export async function fetchUrlWithMetadata(url, options = {}) {
         const error = new Error(`HTTP ${response.status}`);
         error.httpStatus = response.status;
         error.finalUrl = response.url || url;
+        error.retryAfter = response.headers.get("retry-after");
         throw error;
       }
       const bytes = options.readBody === false ? Buffer.alloc(0) : await readResponseBytesBounded(response, maxBytes);
@@ -395,11 +409,22 @@ export async function fetchCrawlerAsset(asset, context = {}) {
 }
 
 export function createAuthoritativeDocumentRuntime(options = {}) {
+  const requestLimiter = options.requestLimiter ?? null;
+  const wrapAssetTransport = (transport) => async (asset, context = {}) => {
+    const permit = requestLimiter
+      ? await requestLimiter.acquire({
+          url: asset.url,
+          sourceKey: context.source?.sourceKey ?? context.source?.sourceId,
+          signal: context.signal,
+        })
+      : null;
+    try { return await transport(asset, context); } finally { permit?.release(); }
+  };
   return createCrawlerDocumentRuntime({
     enabled: options.enabled ?? DOCUMENT_PARSING_ENABLED,
     cacheDirectory: options.cacheDirectory ?? DOCUMENT_CACHE_DIRECTORY,
-    inspectAsset: options.inspectAsset ?? inspectCrawlerAsset,
-    fetchAsset: options.fetchAsset ?? fetchCrawlerAsset,
+    inspectAsset: wrapAssetTransport(options.inspectAsset ?? inspectCrawlerAsset),
+    fetchAsset: wrapAssetTransport(options.fetchAsset ?? fetchCrawlerAsset),
     ocrAdapter: options.ocrAdapter,
     hwpBinaryAdapter: options.hwpBinaryAdapter,
     parserOptions: options.parserOptions ?? {
@@ -747,7 +772,12 @@ async function run() {
   const stats = [];
   const genericHtmlStrategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
   const inventoryRows = configuredSources.map((source) => ({ source_id: source.sourceId }));
-  const documentRuntime = createAuthoritativeDocumentRuntime();
+  const requestLimiter = createCrawlerRateLimiter({
+    minimumSourceIntervalMs: SOURCE_MIN_INTERVAL_MS,
+    minimumHostIntervalMs: HOST_MIN_INTERVAL_MS,
+    maximumHostConcurrency: HOST_CONCURRENCY,
+  });
+  const documentRuntime = createAuthoritativeDocumentRuntime({ requestLimiter });
 
   const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
     const sourceStartedAt = new Date().toISOString();
@@ -770,8 +800,8 @@ async function run() {
         );
         detailItems = listItems;
         if (documentRuntime.enabled) {
-          detailItems = await Promise.all(detailItems.map((notice) =>
-            documentRuntime.processNoticeDocuments({ source, notice })));
+          detailItems = await mapLimit(detailItems, DETAIL_CONCURRENCY, (notice) =>
+            documentRuntime.processNoticeDocuments({ source, notice }));
         }
         const finishedAt = new Date().toISOString();
         const durationMs = Math.max(0, Date.now() - sourceStartedMs);
@@ -821,10 +851,10 @@ async function run() {
           timeoutMs: REQUEST_TIMEOUT_MS,
           retryCount: REQUEST_RETRY_COUNT,
           retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
-          beforeDetail: async () => {
-            // Preserve the existing small pacing between detail requests.
-            await new Promise((resolve) => setTimeout(resolve, 250));
-          },
+          maximumRetryDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
+          retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+          detailConcurrency: DETAIL_CONCURRENCY,
+          requestLimiter,
           processNoticeDocuments: documentRuntime.processNoticeDocuments,
         });
         executionResult = commonResult;
@@ -1052,6 +1082,10 @@ async function run() {
       lookbackDays: LOOKBACK_DAYS,
       allowUndated: ALLOW_UNDATED,
       sourceConcurrency: SOURCE_CONCURRENCY,
+      detailConcurrency: DETAIL_CONCURRENCY,
+      hostConcurrency: HOST_CONCURRENCY,
+      sourceMinimumIntervalMs: SOURCE_MIN_INTERVAL_MS,
+      hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
       ignoreSeen: IGNORE_SEEN,
       maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
@@ -1060,6 +1094,8 @@ async function run() {
       timeoutMs: REQUEST_TIMEOUT_MS,
       retryCount: REQUEST_RETRY_COUNT,
       retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
+      retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
+      retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
       sourceLevelFilterCount:
         SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
       collegeFilterCount:
