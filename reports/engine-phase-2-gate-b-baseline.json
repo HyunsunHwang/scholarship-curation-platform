@@ -3,7 +3,7 @@
   "official_gate": "Engine Phase 2 Completion — Gate B",
   "official_task": "Checkpoint, Resume, Graceful Cancellation, and Recovery",
   "result": "PASS",
-  "generated_at": "2026-07-17T12:06:03.885Z",
+  "generated_at": "2026-07-17T12:12:17.931Z",
   "inputs": {
     "fixture_result": ".tmp/engine-phase-2-gate-b/fixture-results.json",
     "live_result": ".tmp/engine-phase-2-gate-b/live-summary.json"
@@ -137,7 +137,7 @@
       "document_count": 1,
       "error_count": 0,
       "recovery": {
-        "checkpoint_path": "C:\\Users\\82108\\Documents\\Codex\\2026-07-17\\hyunsunhwang-scholarship-curation-platform-post-phase\\work\\ep2-gate-b\\.tmp\\engine-phase-2-gate-b\\live\\checkpoint.json",
+        "checkpoint_path": ".tmp/engine-phase-2-gate-b/live/checkpoint.json",
         "checkpoint_saved": true,
         "checkpoint_save_error": null,
         "resumed": false,
@@ -157,7 +157,7 @@
       "document_count": 2,
       "error_count": 0,
       "recovery": {
-        "checkpoint_path": "C:\\Users\\82108\\Documents\\Codex\\2026-07-17\\hyunsunhwang-scholarship-curation-platform-post-phase\\work\\ep2-gate-b\\.tmp\\engine-phase-2-gate-b\\live\\checkpoint.json",
+        "checkpoint_path": ".tmp/engine-phase-2-gate-b/live/checkpoint.json",
         "checkpoint_saved": true,
         "checkpoint_save_error": null,
         "resumed": true,

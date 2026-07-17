@@ -38,6 +38,13 @@ const liveValid = live.invariants?.interrupted_cancelled === true &&
   live.invariants?.resumed_skipped_source_count >= 1 &&
   live.invariants?.duplicate_identity_count === 0;
 const result = allFixturePassed && liveValid ? "PASS" : "FAIL";
+const sanitizeLivePass = (pass = {}) => ({
+  ...pass,
+  recovery: pass.recovery ? {
+    ...pass.recovery,
+    checkpoint_path: ".tmp/engine-phase-2-gate-b/live/checkpoint.json",
+  } : null,
+});
 
 const report = {
   official_phase: "Engine Phase 2 — 반복 수집 안정성",
@@ -92,8 +99,8 @@ const report = {
     source_keys: live.source_keys,
     bounds: live.bounds,
     runtime_path: live.runtime_path,
-    interrupted: live.interrupted,
-    resumed: live.resumed,
+    interrupted: sanitizeLivePass(live.interrupted),
+    resumed: sanitizeLivePass(live.resumed),
     invariants: live.invariants,
   },
   safety: {

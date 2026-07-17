@@ -10,6 +10,7 @@ const report = JSON.parse(fs.readFileSync(path.join(root, "reports/engine-phase-
 const checkpointSource = fs.readFileSync(path.join(root, "lib/crawler-engine/checkpoint.mjs"), "utf8");
 const commonRunnerSource = fs.readFileSync(path.join(root, "lib/crawler-engine/common-runner.mjs"), "utf8");
 const cliSource = fs.readFileSync(path.join(root, "scripts/crawl-scholarship-notices.mjs"), "utf8");
+const serializedReport = JSON.stringify(report);
 const checks = [];
 const check = (name, condition) => {
   checks.push({ name, passed: Boolean(condition) });
@@ -63,6 +64,7 @@ check("bounded settle grace timer cleanup", settleTimer.dangling_settle_timer_co
 check("Phase 3 cache reused", cache.cache_hit_on_resume === true);
 check("checkpoint excludes full document text", cache.checkpoint_contains_full_document_text === false && !checkpointSource.includes("normalized_text:"));
 check("checkpoint excludes raw document bytes", cache.checkpoint_contains_raw_document_bytes === false && !checkpointSource.includes("raw_bytes:"));
+check("tracked report excludes absolute local paths", !/[A-Za-z]:[\\/]/.test(serializedReport) && !serializedReport.includes(root));
 check("live bounded source count", live.bounds?.source_count > 0 && live.bounds.source_count <= 2 && live.bounds.notice_limit_per_source === 1);
 check("live common runner and Gate A limiter", live.runtime_path?.common_runner_used === true && live.runtime_path?.gate_a_limiter_reused === true);
 check("live cancellation checkpoint", live.invariants?.interrupted_cancelled === true && live.invariants?.cancellation_checkpoint_saved === true);
