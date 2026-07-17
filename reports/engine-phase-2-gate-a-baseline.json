@@ -1,0 +1,392 @@
+{
+  "phase": "Engine Phase 2 Completion — Gate A",
+  "phase_key": "engine-phase-2-gate-a",
+  "generated_at": "2026-07-17T11:06:29.548Z",
+  "base_sha": "d8a7d6263d4b610343e86c3c579622afeecd62af",
+  "overall_result": "PASS",
+  "reused_foundation": {
+    "common_runner": "lib/crawler-engine/common-runner.mjs",
+    "previous_phase_2_timeout_retry_attempt_history": true,
+    "phase_3_document_hook_and_cache": true,
+    "normalized_graph_compatibility": true,
+    "parallel_runner_created": false
+  },
+  "retry_policy": {
+    "retryable_categories": [
+      "network_error",
+      "timeout",
+      "http_408",
+      "http_429",
+      "http_5xx"
+    ],
+    "non_retryable_categories": [
+      "configuration_error",
+      "source_resolution_error",
+      "unsupported",
+      "parser_invariant",
+      "http_401",
+      "http_403",
+      "other_http_4xx",
+      "cancellation"
+    ],
+    "retry_after_delta_supported": true,
+    "retry_after_http_date_supported": true,
+    "exponential_sequence_ms": [
+      100,
+      200,
+      400,
+      0
+    ],
+    "deterministic_jitter_bounds_ms": [
+      800,
+      1200
+    ],
+    "maximum_delay_enforced": true,
+    "injected_clock_sleep_random": true,
+    "abort_additional_retry_count": 0
+  },
+  "rate_limiting": {
+    "source_minimum_interval_valid": true,
+    "host_minimum_interval_valid": true,
+    "observed_source_interval_ms": 80,
+    "observed_host_interval_ms": 100,
+    "maximum_observed_host_concurrency": 2,
+    "cancellable_wait": true
+  },
+  "concurrency": {
+    "maximum_observed_source_concurrency": 2,
+    "maximum_observed_detail_concurrency": 2,
+    "host_cap_precedence_maximum": 1,
+    "source_fault_isolation": true,
+    "detail_fault_isolation": true,
+    "scheduling_stops_on_abort": true
+  },
+  "cancellation_delay_seam": {
+    "abortable_delay": true,
+    "cleared_timer_count": 1,
+    "additional_retry_count_after_abort": 0,
+    "full_sigint_sigterm_lifecycle_implemented": false
+  },
+  "fixture_validation": {
+    "phase": "engine-phase-2-gate-a",
+    "scenario_count": 40,
+    "passed_count": 40,
+    "failed_count": 0,
+    "deterministic_rerun_match": true,
+    "measurements": {
+      "retry_after_delta_delay_ms": 5000,
+      "retry_after_date_delay_ms": 5000,
+      "exponential_delay_sequence_ms": [
+        100,
+        200,
+        400,
+        0
+      ],
+      "deterministic_jitter_bounds_ms": [
+        800,
+        1200
+      ],
+      "additional_retry_count_after_abort": 0,
+      "cleared_delay_timer_count": 1,
+      "observed_host_interval_ms": 100,
+      "observed_source_interval_ms": 80,
+      "maximum_observed_host_concurrency": 2,
+      "maximum_observed_source_concurrency": 2,
+      "maximum_observed_detail_concurrency": 2,
+      "host_cap_precedence_maximum": 1,
+      "successful_sources_after_peer_failure": 2,
+      "successful_details_after_peer_failure": 2,
+      "phase3_enabled_document_count": 1
+    },
+    "scenario_results": [
+      {
+        "name": "Retry-After delta seconds parses",
+        "passed": true
+      },
+      {
+        "name": "Retry-After HTTP date parses",
+        "passed": true
+      },
+      {
+        "name": "past Retry-After date becomes zero",
+        "passed": true
+      },
+      {
+        "name": "malformed Retry-After is ignored",
+        "passed": true
+      },
+      {
+        "name": "negative Retry-After is ignored",
+        "passed": true
+      },
+      {
+        "name": "Retry-After delta controls attempt delay",
+        "passed": true
+      },
+      {
+        "name": "Retry-After date controls attempt delay",
+        "passed": true
+      },
+      {
+        "name": "malformed Retry-After falls back to exponential",
+        "passed": true
+      },
+      {
+        "name": "Retry-After obeys maximum delay cap",
+        "passed": true
+      },
+      {
+        "name": "bounded exponential sequence is deterministic",
+        "passed": true
+      },
+      {
+        "name": "deterministic jitter uses injected random",
+        "passed": true
+      },
+      {
+        "name": "Retry-After and jitter select the greater bounded delay",
+        "passed": true
+      },
+      {
+        "name": "transient network failure recovers",
+        "passed": true
+      },
+      {
+        "name": "HTTP 408 is retryable",
+        "passed": true
+      },
+      {
+        "name": "HTTP 429 is retryable",
+        "passed": true
+      },
+      {
+        "name": "HTTP 5xx is retryable",
+        "passed": true
+      },
+      {
+        "name": "HTTP 401 and 403 are not retryable",
+        "passed": true
+      },
+      {
+        "name": "retry exhaustion is explicit",
+        "passed": true
+      },
+      {
+        "name": "non-retryable error runs once",
+        "passed": true
+      },
+      {
+        "name": "cancellation during retry delay schedules no next attempt",
+        "passed": true
+      },
+      {
+        "name": "abortable delay clears its timer",
+        "passed": true
+      },
+      {
+        "name": "pre-aborted delay creates no timer",
+        "passed": true
+      },
+      {
+        "name": "same host observes minimum interval",
+        "passed": true
+      },
+      {
+        "name": "same source observes minimum interval across hosts",
+        "passed": true
+      },
+      {
+        "name": "different hosts can progress independently",
+        "passed": true
+      },
+      {
+        "name": "host concurrency cap is enforced",
+        "passed": true
+      },
+      {
+        "name": "queued rate-limit wait is cancellable",
+        "passed": true
+      },
+      {
+        "name": "source concurrency one is sequential",
+        "passed": true
+      },
+      {
+        "name": "source concurrency N is bounded",
+        "passed": true
+      },
+      {
+        "name": "detail concurrency one is sequential",
+        "passed": true
+      },
+      {
+        "name": "detail concurrency N is bounded",
+        "passed": true
+      },
+      {
+        "name": "host cap takes precedence over detail concurrency",
+        "passed": true
+      },
+      {
+        "name": "one source failure does not stop other sources",
+        "passed": true
+      },
+      {
+        "name": "one detail failure does not stop sibling details",
+        "passed": true
+      },
+      {
+        "name": "cancellation stops new bounded-map scheduling",
+        "passed": true
+      },
+      {
+        "name": "document parsing disabled preserves legacy result",
+        "passed": true
+      },
+      {
+        "name": "document parsing enabled remains compatible",
+        "passed": true
+      },
+      {
+        "name": "run summary arithmetic remains valid",
+        "passed": true
+      },
+      {
+        "name": "deterministic fixture rerun matches",
+        "passed": true
+      },
+      {
+        "name": "summary builder retains fault isolation counts",
+        "passed": true
+      }
+    ],
+    "generated_at": "2026-07-17T11:01:46.542Z"
+  },
+  "bounded_live_dry_run": {
+    "phase": "Engine Phase 2 Completion — Gate A",
+    "mode": "bounded_public_http_read_only",
+    "generated_at": "2026-07-17T10:44:45.227Z",
+    "source_keys": [
+      "korea_002",
+      "yonsei_001"
+    ],
+    "bounds": {
+      "source_count": 2,
+      "notice_limit_per_source": 1,
+      "source_concurrency": 2,
+      "detail_concurrency": 2,
+      "host_concurrency": 1,
+      "source_minimum_interval_ms": 150,
+      "host_minimum_interval_ms": 200,
+      "retry_count": 1,
+      "timeout_ms": 25000
+    },
+    "runtime_path": {
+      "common_runner_used": true,
+      "shared_rate_limiter_used": true,
+      "parallel_runner_created": false,
+      "checkpoint_or_resume_used": false
+    },
+    "document_parsing_disabled": {
+      "source_results": [
+        {
+          "source_key": "korea_002",
+          "final_status": "success",
+          "notice_count": 1,
+          "attempt_count": 1,
+          "failed_item_count": 0,
+          "cancelled_item_count": 0,
+          "document_count": 0,
+          "error_summary": ""
+        },
+        {
+          "source_key": "yonsei_001",
+          "final_status": "success",
+          "notice_count": 1,
+          "attempt_count": 1,
+          "failed_item_count": 0,
+          "cancelled_item_count": 0,
+          "document_count": 0,
+          "error_summary": ""
+        }
+      ],
+      "overall_status": "succeeded",
+      "notice_count": 2,
+      "document_count": 0,
+      "error_count": 0,
+      "maximum_observed_host_concurrency": 1,
+      "rate_limit_request_count": 4,
+      "cancelled_wait_count": 0
+    },
+    "document_parsing_enabled": {
+      "source_results": [
+        {
+          "source_key": "korea_002",
+          "final_status": "success",
+          "notice_count": 1,
+          "attempt_count": 1,
+          "failed_item_count": 0,
+          "cancelled_item_count": 0,
+          "document_count": 1,
+          "error_summary": ""
+        },
+        {
+          "source_key": "yonsei_001",
+          "final_status": "success",
+          "notice_count": 1,
+          "attempt_count": 1,
+          "failed_item_count": 0,
+          "cancelled_item_count": 0,
+          "document_count": 2,
+          "error_summary": ""
+        }
+      ],
+      "overall_status": "succeeded",
+      "notice_count": 2,
+      "document_count": 3,
+      "error_count": 0,
+      "maximum_observed_host_concurrency": 1,
+      "rate_limit_request_count": 6,
+      "cancelled_wait_count": 0
+    },
+    "safety": {
+      "database_read_performed": false,
+      "database_write_performed": false,
+      "production_access_performed": false,
+      "migration_performed": false,
+      "external_llm_call_count": 0,
+      "raw_binary_written_to_disk": false,
+      "checkpoint_written": false
+    }
+  },
+  "gate_b_deferred_scope": [
+    "versioned atomic checkpoint",
+    "resume and resume idempotency",
+    "SIGINT/SIGTERM graceful lifecycle",
+    "cancellation checkpoint",
+    "interrupted-run recovery equivalence"
+  ],
+  "safety": {
+    "database_read_performed": false,
+    "database_write_performed": false,
+    "production_access_performed": false,
+    "migration_performed": false,
+    "external_llm_call_count": 0,
+    "raw_binary_written_to_disk": false,
+    "checkpoint_written": false,
+    "admin_ui_changed": false,
+    "migration_files_changed": false,
+    "api_cron_queue_worker_changed": false,
+    "sensitive_file_changed": false,
+    "raw_cache_tmp_artifact_tracked": false,
+    "raw_tracked_paths": [],
+    "changed_path_count": 11,
+    "safety_valid": true
+  },
+  "non_goals_preserved": true,
+  "unresolved_risks": [
+    "The limiter is process-local and does not coordinate distributed crawler replicas.",
+    "The bounded live sample validates two public sources only and is not nationwide coverage evidence.",
+    "Full graceful shutdown, checkpoints, resume, and recovery idempotency remain explicitly deferred to Gate B."
+  ]
+}
