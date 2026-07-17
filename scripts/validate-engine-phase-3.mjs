@@ -1,0 +1,92 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const report = JSON.parse(fs.readFileSync(path.resolve(root, process.argv[2] ?? "reports/engine-phase-3-baseline.json"), "utf8"));
+const checks = [];
+const check = (name, passed) => checks.push({ name, passed: Boolean(passed) });
+const scenarioPassed = (name) => report.fixture_validation?.scenario_results?.find((entry) => entry.name === name)?.passed === true;
+
+check("official remediation identity", report.phase === "Engine Phase 3 — End-to-End Integration Remediation");
+check("computed overall result", report.overall_result === "PASS");
+check("fixture minimum", report.fixture_validation?.scenario_count >= 80);
+check("fixture all pass", report.fixture_validation?.failed_count === 0 && report.fixture_validation?.passed_count === report.fixture_validation?.scenario_count);
+
+check("authoritative integration scenario passed", scenarioPassed("authoritative crawl runtime executes the common-runner document hook"));
+check("default-disabled compatibility scenario passed", scenarioPassed("document parsing runtime is strict opt-in and disabled by default"));
+check("persistent fresh-registry cache scenario passed", scenarioPassed("persistent parser cache survives a fresh runtime registry"));
+check("bounded asset transport scenario passed", scenarioPassed("authoritative asset transport enforces the byte bound"));
+check("asset transport metadata scenario passed", scenarioPassed("authoritative asset transport returns validators and final metadata"));
+check("OCR skipped-page scenario passed", scenarioPassed("PDF OCR page limit is enforced"));
+check("OCR complete accounting scenario passed", scenarioPassed("PDF OCR accounts for every eligible page when all are handled"));
+check("OCR mixed-page accounting scenario passed", scenarioPassed("PDF OCR eligibility excludes sufficient embedded-text pages"));
+check("OCR unavailable accounting scenario passed", scenarioPassed("PDF without OCR accounts for skipped eligible pages"));
+check("OCR timeout partial preservation scenario passed", scenarioPassed("PDF OCR timeout preserves successful page text without clean success"));
+check("normalized graph handoff scenario passed", scenarioPassed("normalized graph carries compact Engine Phase 3 payload without changing identity"));
+check("compact payload exclusion scenario passed", scenarioPassed("document evidence handoff is compact and excludes extracted content"));
+check("attachment compact fingerprint scenario passed", scenarioPassed("PDF attachment fingerprint is linked compactly without raw bytes"));
+check("legacy adapter preservation scenario passed", scenarioPassed("legacy pilot adapter preserves Engine Phase 3 normalized payload"));
+
+const evidence = report.remediation_evidence;
+check("authoritative crawl path computed valid", evidence?.authoritative_crawl_path_wired === true);
+check("document parsing defaults disabled", evidence?.document_parsing_default_enabled === false && report.architecture?.default_enabled === false);
+check("document parsing opt-in computed valid", evidence?.document_parsing_opt_in_valid === true);
+check("OCR page accounting computed valid", evidence?.ocr_page_accounting_valid === true);
+check("OCR skipped-page review computed valid", evidence?.ocr_skipped_page_manual_review_valid === true);
+check("normalized graph handoff computed valid", evidence?.normalized_graph_handoff_valid === true);
+check("adapter handoff computed valid", evidence?.phase3_payload_preserved_by_adapter === true);
+check("raw bytes excluded from graph payload", evidence?.raw_bytes_in_graph_payload === false);
+
+const live = report.bounded_live_dry_run;
+check("live common runner runtime evidence", live?.runtime_path?.common_runner_used === true && live?.runtime_path?.generic_html_strategy_used === true);
+check("live standalone crawler absent", live?.runtime_path?.standalone_list_or_detail_parser_used === false);
+check("live document processor enabled", live?.runtime_path?.document_processor_enabled === true);
+check("live source bound", live?.totals?.source_count === 2);
+check("live notice bound", live?.first_run?.source_results?.every((source) => source.final_status === "success" && source.notice_count >= 1 && source.notice_count <= live.bounds.notice_limit_per_source));
+check("live HTML document evidence", live?.totals?.html_document_count >= live?.totals?.notice_count && live?.totals?.notice_count >= 2);
+check("live PDF bound", live?.totals?.pdf_document_count <= live?.bounds?.pdf_document_limit);
+check("live OCR bound", live?.totals?.ocr_invocation_count <= live?.bounds?.ocr_document_limit);
+check("live first-run persistent misses", live?.first_run?.cache_miss_count >= live?.totals?.html_document_count);
+check("live replay uses new registry", live?.runtime_path?.persistent_file_cache_used === true && live?.replay_run?.parser_invocation_count === 0);
+check("live persistent replay hits", live?.replay_run?.cache_hit_count >= live?.totals?.html_document_count && live?.replay_run?.document_count === live?.first_run?.document_count);
+check("computed live evidence valid", evidence?.live_common_runner_used === true && evidence?.persistent_cache_replay_valid === true);
+
+check("HTML structured blocks", report.capabilities?.html_structured_blocks === true);
+check("HTML tables", report.capabilities?.html_table_structure === true);
+check("PDF embedded text", report.capabilities?.pdf_embedded_text === true);
+check("PDF OCR fallback", report.capabilities?.pdf_scanned_page_ocr_fallback === true);
+check("PDF selective mixed OCR", report.capabilities?.pdf_mixed_page_selective_ocr === true);
+check("shared image OCR", report.capabilities?.shared_image_ocr_adapter === true);
+check("HWPX extraction", report.capabilities?.hwpx_xml_extraction === true);
+check("HWP binary capability is truthful", report.capabilities?.hwp_binary_capability_detection === true && report.capabilities?.hwp_binary_builtin_extraction === false);
+check("byte fingerprint", report.capabilities?.byte_fingerprint === "sha256");
+check("text fingerprint", report.capabilities?.normalized_text_fingerprint === "sha256");
+check("positive cache", report.capabilities?.deterministic_positive_cache === true);
+check("negative cache", report.capabilities?.deterministic_negative_cache === true);
+check("parser version invalidation", report.capabilities?.parser_version_invalidation === true);
+check("corrupt cache recovery", report.capabilities?.corrupt_cache_reparse === true);
+
+check("database read zero", report.safety?.database_read_performed === false);
+check("database write zero", report.safety?.database_write_performed === false);
+check("production access zero", report.safety?.production_access_performed === false);
+check("external LLM zero", report.safety?.external_llm_call_count === 0);
+check("raw binary disk write zero", report.safety?.raw_binary_written_to_disk === false);
+check("admin UI unchanged", report.safety?.admin_ui_changed === false);
+check("migrations unchanged", report.safety?.migration_files_changed === false);
+check("migration not performed", report.safety?.migration_performed === false);
+check("API cron queue worker unchanged", report.safety?.api_cron_queue_worker_changed === false);
+check("sensitive files unchanged", report.safety?.sensitive_file_changed === false);
+check("absolute paths absent", report.safety?.absolute_local_path_changed === false);
+check("raw binary and tmp artifacts untracked", report.safety?.raw_binary_or_tmp_artifact_tracked === false && report.safety?.raw_tracked_paths?.length === 0);
+check("no parallel crawler", report.architecture?.parallel_crawler_created === false);
+check("no parallel identity", report.architecture?.parallel_identity_model_created === false);
+check("no Phase 5 duplicate decision", report.architecture?.duplicate_or_lifecycle_decision_added === false);
+check("non-goals preserved", report.non_goals_preserved === true);
+check("risks are explicit", report.unresolved_risks?.length >= 3);
+
+for (const entry of checks) console.log(`${entry.passed ? "PASS" : "FAIL"} ${entry.name}`);
+const failed = checks.filter((entry) => !entry.passed);
+console.log(`ENGINE PHASE 3 REMEDIATION: ${failed.length === 0 ? "PASS" : "HOLD"}`);
+console.log(`checks=${checks.length - failed.length}/${checks.length}`);
+if (failed.length > 0) process.exitCode = 1;

@@ -22,6 +22,11 @@ import {
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
+import {
+  createCrawlerDocumentRuntime,
+  isDocumentParsingEnabled,
+  summarizeNoticeDocumentEvidence,
+} from "../lib/crawler-engine/document-parsing/index.mjs";
 
 const DEFAULT_KEYWORDS = [
   "장학",
@@ -45,6 +50,12 @@ const REQUEST_RETRY_BACKOFF_MS = Math.max(
   normalizeRetryBackoffMs(Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000)),
 );
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
+const DOCUMENT_PARSING_ENABLED = isDocumentParsingEnabled(process.env.CRAWL_DOCUMENT_PARSING_ENABLED);
+const DOCUMENT_CACHE_DIRECTORY = process.env.CRAWL_DOCUMENT_CACHE_DIRECTORY ?? ".tmp/engine-phase-3/cache";
+const DOCUMENT_MAX_BYTES = Math.max(1, Number(process.env.CRAWL_DOCUMENT_MAX_BYTES ?? 20_000_000));
+const DOCUMENT_MAX_PAGES = Math.max(1, Number(process.env.CRAWL_DOCUMENT_MAX_PAGES ?? 20));
+const DOCUMENT_MAX_OCR_PAGES = Math.max(0, Number(process.env.CRAWL_DOCUMENT_MAX_OCR_PAGES ?? 3));
+const DOCUMENT_OCR_TIMEOUT_MS = Math.max(1, Number(process.env.CRAWL_DOCUMENT_OCR_TIMEOUT_MS ?? 20_000));
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
@@ -247,12 +258,44 @@ function decodeHtmlBuffer(buffer, headerCharset) {
   return new TextDecoder("utf-8").decode(buffer);
 }
 
-export async function fetchHtmlWithMetadata(url, options = {}) {
-  const dispatcher = DEFAULT_DISPATCHER;
+async function readResponseBytesBounded(response, maxBytes) {
+  const declared = Number(response.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > maxBytes) {
+    await response.body?.cancel();
+    const error = new Error("Response content length exceeds the configured byte limit.");
+    error.code = "bounded_limit_exceeded";
+    throw error;
+  }
+  if (!response.body) return Buffer.alloc(0);
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel();
+        const error = new Error("Response body exceeds the configured byte limit.");
+        error.code = "bounded_limit_exceeded";
+        throw error;
+      }
+      chunks.push(Buffer.from(value));
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return Buffer.concat(chunks, total);
+}
 
+export async function fetchUrlWithMetadata(url, options = {}) {
+  const dispatcher = DEFAULT_DISPATCHER;
   let lastError = null;
   const retryCount = Math.max(0, Math.min(3, Number(options.retryCount ?? REQUEST_RETRY_COUNT)));
   const timeoutMs = Math.max(1, Number(options.timeoutMs ?? REQUEST_TIMEOUT_MS));
+  const maxBytes = Math.max(1, Number(options.maxBytes ?? DOCUMENT_MAX_BYTES));
+  const method = options.method ?? "GET";
   for (let attempt = 0; attempt <= retryCount; attempt += 1) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -261,11 +304,13 @@ export async function fetchHtmlWithMetadata(url, options = {}) {
       : controller.signal;
     try {
       const response = await fetch(url, {
+        method,
         signal,
         dispatcher: dispatcher ?? undefined,
+        redirect: "follow",
         headers: {
           "user-agent": REQUEST_USER_AGENT,
-          accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          accept: options.accept ?? "*/*",
           "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
         },
       });
@@ -275,13 +320,15 @@ export async function fetchHtmlWithMetadata(url, options = {}) {
         error.finalUrl = response.url || url;
         throw error;
       }
-      const headerCharset = detectCharsetFromHeaders(response.headers.get("content-type") ?? "");
-      const bytes = new Uint8Array(await response.arrayBuffer());
+      const bytes = options.readBody === false ? Buffer.alloc(0) : await readResponseBytesBounded(response, maxBytes);
       return {
-        html: decodeHtmlBuffer(bytes, headerCharset),
+        bytes,
         httpStatus: response.status,
         finalUrl: response.url || url,
         contentType: response.headers.get("content-type") ?? "",
+        etag: response.headers.get("etag"),
+        lastModified: response.headers.get("last-modified"),
+        contentLength: Number(response.headers.get("content-length")) || null,
         retryCount: attempt,
       };
     } catch (error) {
@@ -299,8 +346,69 @@ export async function fetchHtmlWithMetadata(url, options = {}) {
   throw lastError ?? new Error("fetch failed");
 }
 
+export async function fetchHtmlWithMetadata(url, options = {}) {
+  const response = await fetchUrlWithMetadata(url, {
+    ...options,
+    accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    maxBytes: options.maxBytes ?? DOCUMENT_MAX_BYTES,
+  });
+  const headerCharset = detectCharsetFromHeaders(response.contentType);
+  return { ...response, html: decodeHtmlBuffer(response.bytes, headerCharset) };
+}
+
 export async function fetchHtml(url, options = {}) {
   return (await fetchHtmlWithMetadata(url, options)).html;
+}
+
+export async function inspectCrawlerAsset(asset, context = {}) {
+  const response = await fetchUrlWithMetadata(asset.url, {
+    method: "HEAD",
+    readBody: false,
+    retryCount: 0,
+    timeoutMs: context.timeoutMs ?? REQUEST_TIMEOUT_MS,
+    maxBytes: context.maxBytes ?? DOCUMENT_MAX_BYTES,
+  });
+  return {
+    finalUrl: response.finalUrl,
+    mimeType: response.contentType.split(";")[0],
+    etag: response.etag,
+    lastModified: response.lastModified,
+    contentLength: response.contentLength,
+  };
+}
+
+export async function fetchCrawlerAsset(asset, context = {}) {
+  const response = await fetchUrlWithMetadata(asset.url, {
+    method: "GET",
+    retryCount: 0,
+    timeoutMs: context.timeoutMs ?? REQUEST_TIMEOUT_MS,
+    maxBytes: context.maxBytes ?? DOCUMENT_MAX_BYTES,
+  });
+  return {
+    bytes: response.bytes,
+    finalUrl: response.finalUrl,
+    mimeType: response.contentType.split(";")[0],
+    etag: response.etag,
+    lastModified: response.lastModified,
+    contentLength: response.contentLength,
+  };
+}
+
+export function createAuthoritativeDocumentRuntime(options = {}) {
+  return createCrawlerDocumentRuntime({
+    enabled: options.enabled ?? DOCUMENT_PARSING_ENABLED,
+    cacheDirectory: options.cacheDirectory ?? DOCUMENT_CACHE_DIRECTORY,
+    inspectAsset: options.inspectAsset ?? inspectCrawlerAsset,
+    fetchAsset: options.fetchAsset ?? fetchCrawlerAsset,
+    ocrAdapter: options.ocrAdapter,
+    hwpBinaryAdapter: options.hwpBinaryAdapter,
+    parserOptions: options.parserOptions ?? {
+      maxBytes: DOCUMENT_MAX_BYTES,
+      maxPages: DOCUMENT_MAX_PAGES,
+      maxOcrPages: DOCUMENT_MAX_OCR_PAGES,
+      ocrTimeoutMs: DOCUMENT_OCR_TIMEOUT_MS,
+    },
+  });
 }
 
 export function extractFromList(source, html) {
@@ -639,6 +747,7 @@ async function run() {
   const stats = [];
   const genericHtmlStrategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
   const inventoryRows = configuredSources.map((source) => ({ source_id: source.sourceId }));
+  const documentRuntime = createAuthoritativeDocumentRuntime();
 
   const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
     const sourceStartedAt = new Date().toISOString();
@@ -660,6 +769,10 @@ async function run() {
           MAX_ITEMS_PER_SOURCE,
         );
         detailItems = listItems;
+        if (documentRuntime.enabled) {
+          detailItems = await Promise.all(detailItems.map((notice) =>
+            documentRuntime.processNoticeDocuments({ source, notice })));
+        }
         const finishedAt = new Date().toISOString();
         const durationMs = Math.max(0, Date.now() - sourceStartedMs);
         const resultStatus = detailItems.length > 0 ? "success" : "empty_observed";
@@ -712,6 +825,7 @@ async function run() {
             // Preserve the existing small pacing between detail requests.
             await new Promise((resolve) => setTimeout(resolve, 250));
           },
+          processNoticeDocuments: documentRuntime.processNoticeDocuments,
         });
         executionResult = commonResult;
         if (!["success", "empty_observed", "partial"].includes(commonResult.result_status)) {
@@ -941,6 +1055,8 @@ async function run() {
       ignoreSeen: IGNORE_SEEN,
       maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
+      documentParsingEnabled: documentRuntime.enabled,
+      documentCacheDirectory: documentRuntime.enabled ? ".tmp/engine-phase-3/cache" : null,
       timeoutMs: REQUEST_TIMEOUT_MS,
       retryCount: REQUEST_RETRY_COUNT,
       retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
@@ -965,6 +1081,7 @@ async function run() {
       detailFetchError: item.detailFetchError ?? "",
       contentExcerpt: cleanText(item.content ?? "").slice(0, 500),
       qualitySignals: item.qualitySignals ?? null,
+      documentEvidence: documentRuntime.enabled ? summarizeNoticeDocumentEvidence(item) : null,
       matched: allMatched.some(
         (matchedItem) =>
           matchedItem.sourceId === item.sourceId && matchedItem.noticeUrl === item.noticeUrl,
