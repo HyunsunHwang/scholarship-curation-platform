@@ -1,0 +1,54 @@
+{
+  "phase": "Engine Phase 1",
+  "generated_at": "2026-07-17T02:39:59.203Z",
+  "scope": "common_crawler_first_implementation",
+  "production_access_performed": false,
+  "database_read_performed": false,
+  "database_write_performed": false,
+  "external_llm_call_count": 0,
+  "architecture": {
+    "authoritative_entrypoint": "scripts/crawl-scholarship-notices.mjs",
+    "common_runner": "lib/crawler-engine/common-runner.mjs",
+    "shared_strategy": "generic_html",
+    "source_identity": "source_key_exactly_resolved_to_notice_sources.source_id",
+    "normalized_output": "post-phase-l normalized crawler graph compatible",
+    "parallel_engine_created": false,
+    "parallel_identity_model_created": false,
+    "parallel_ingest_path_created": false
+  },
+  "fixture_validation": {
+    "source_keys": ["ewha_010", "uos_002"],
+    "shared_strategy_count": 1,
+    "source_config_count": 2,
+    "tests_passed": 15,
+    "tests_total": 15,
+    "normalized_graph_notice_count": 2,
+    "deterministic_rerun": true,
+    "legacy_parser_parity": true
+  },
+  "bounded_live_dry_run": {
+    "mode": "public_http_read_only",
+    "source_keys": ["ewha_010", "ewha_015"],
+    "source_limit": 2,
+    "item_limit_per_source": 1,
+    "page_limit_per_source": 1,
+    "detail_fetch_enabled": true,
+    "observed_count": 2,
+    "matched_count": 0,
+    "source_errors": 0,
+    "detail_errors": 0,
+    "database_write_count": 0,
+    "production_access_count": 0
+  },
+  "result_status_contract": [
+    "success",
+    "empty_observed",
+    "network_error",
+    "http_error",
+    "parser_error",
+    "configuration_error",
+    "source_resolution_error",
+    "unsupported"
+  ],
+  "phase_2_features_added": []
+}

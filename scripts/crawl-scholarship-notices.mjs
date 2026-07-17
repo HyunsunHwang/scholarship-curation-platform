@@ -11,10 +11,11 @@ import {
 } from "../lib/crawler-adapters/index.mjs";
 import {
   attachmentMetadataToCsvCell,
-  extractDetailFromCheerio,
   imageUrlsToCsvCell,
 } from "../lib/notice-body-extraction.mjs";
 import { loadSources } from "../lib/notice-sources-loader.mjs";
+import { runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs";
+import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 
 const DEFAULT_KEYWORDS = [
   "장학",
@@ -554,37 +555,6 @@ function isWithinLookback(parsedDate, days) {
   return parsedDate >= minDate && parsedDate <= now;
 }
 
-async function enrichDetail(source, item) {
-  if (!DETAIL_FETCH_ENABLED) return item;
-
-  try {
-    const detailHtml = await fetchHtml(item.noticeUrl);
-    const $detail = loadHtml(detailHtml);
-    $detail("script, style, nav, footer, header, aside, noscript").remove();
-    const { content, imageUrls, attachmentMetadata, qualitySignals } = extractDetailFromCheerio($detail, {
-      baseUrl: item.noticeUrl || source.baseUrl || source.listUrl,
-      sourceId: source.sourceId,
-      detailContentSelector: source.detailContentSelector,
-    });
-    const detailDate = source.detailDateSelector
-      ? cleanText($detail(source.detailDateSelector).first().text())
-      : "";
-    return {
-      ...item,
-      content,
-      imageUrls,
-      attachmentMetadata,
-      qualitySignals,
-      detailDate,
-    };
-  } catch (error) {
-    return {
-      ...item,
-      detailFetchError: formatFetchError(error),
-    };
-  }
-}
-
 function loadState(filePath) {
   const resolved = path.resolve(filePath);
   if (!fs.existsSync(resolved)) return { seen: {} };
@@ -655,6 +625,8 @@ async function run() {
   const allMatched = [];
   const allNew = [];
   const stats = [];
+  const genericHtmlStrategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
+  const inventoryRows = configuredSources.map((source) => ({ source_id: source.sourceId }));
 
   const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
     try {
@@ -674,29 +646,26 @@ async function run() {
         );
         detailItems = listItems;
       } else {
-        const pageItems = [];
-        const seenNoticeUrls = new Set();
-        for (const listUrl of buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE)) {
-          const listHtml = await fetchHtml(listUrl);
-          const pageSource = { ...source, listUrl };
-          for (const item of extractFromList(pageSource, listHtml)) {
-            if (seenNoticeUrls.has(item.noticeUrl)) continue;
-            seenNoticeUrls.add(item.noticeUrl);
-            pageItems.push(item);
-            if (pageItems.length >= MAX_ITEMS_PER_SOURCE) break;
-          }
-          if (pageItems.length >= MAX_ITEMS_PER_SOURCE) break;
-        }
-        listItems = trimItems(pageItems, MAX_ITEMS_PER_SOURCE);
-        if (DETAIL_FETCH_ENABLED) {
-          for (const item of listItems) {
-            // Small pacing to reduce load on university websites.
+        const commonResult = await runCommonCrawlerSource({
+          source,
+          inventoryRows,
+          strategy: genericHtmlStrategy,
+          fetchHtml,
+          listUrls: buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE),
+          maxItems: MAX_ITEMS_PER_SOURCE,
+          fetchDetails: DETAIL_FETCH_ENABLED,
+          beforeDetail: async () => {
+            // Preserve the existing small pacing between detail requests.
             await new Promise((resolve) => setTimeout(resolve, 250));
-            detailItems.push(await enrichDetail(source, item));
-          }
-        } else {
-          detailItems.push(...listItems);
+          },
+        });
+        if (!["success", "empty_observed"].includes(commonResult.result_status)) {
+          const error = new Error(commonResult.error_message || commonResult.result_status);
+          error.crawlerStatus = commonResult.result_status;
+          throw error;
         }
+        listItems = commonResult.notices;
+        detailItems = commonResult.notices;
       }
       detailItems = detailItems.map((item) => ({
         ...item,
