@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   CRAWLER_RESULT_STATUSES,
+  deterministicCrawlerProjection,
   runCommonCrawler,
   runCommonCrawlerSource,
 } from "../lib/crawler-engine/common-runner.mjs";
@@ -63,7 +64,7 @@ async function test(name, fn) {
 
 await test("failure status contract is complete", () => {
   assert.deepEqual(CRAWLER_RESULT_STATUSES, [
-    "success", "empty_observed", "network_error", "http_error", "parser_error",
+    "success", "empty_observed", "partial", "timeout", "network_error", "http_error", "parser_error",
     "configuration_error", "source_resolution_error", "unsupported",
   ]);
 });
@@ -120,7 +121,10 @@ await test("output feeds the authoritative normalized graph", () => {
 });
 
 await test("fixture rerun is deterministic", async () => {
-  assert.deepEqual(await execute(), result);
+  assert.deepEqual(
+    deterministicCrawlerProjection(await execute()),
+    deterministicCrawlerProjection(result),
+  );
 });
 
 await test("legacy parser parity is preserved", () => {

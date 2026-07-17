@@ -1,0 +1,112 @@
+{
+  "phase": "engine-phase-2",
+  "generated_at": "2026-07-17T04:54:42.461Z",
+  "overall_result": "PASS",
+  "implementation_scope": "bounded timeout, retry, attempt history, source isolation, and run observability on the Phase 1 common runner",
+  "timeout_configuration": {
+    "default_ms": 25000,
+    "live_ms": 25000
+  },
+  "retry_configuration": {
+    "default_retry_count": 1,
+    "maximum_attempt_count_default": 2,
+    "default_retry_backoff_ms": 1000,
+    "live_retry_count": 1,
+    "live_retry_backoff_ms": 1000
+  },
+  "fixture_validation": {
+    "source_count": 2,
+    "scenario_count": 32,
+    "passed_count": 32,
+    "failed_count": 0,
+    "deterministic_rerun_match": true,
+    "multi_source_isolation_valid": true,
+    "retry_validation_passed": true,
+    "backoff_validation_passed": true,
+    "non_retryable_no_backoff_valid": true,
+    "linear_backoff_sequence_valid": true,
+    "evidence_diff_self_test_valid": true,
+    "timeout_cleanup_valid": true,
+    "arithmetic_validation_passed": true,
+    "normalized_graph_compatible": true
+  },
+  "live_dry_run": {
+    "mode": "bounded_public_http_read_only",
+    "source_count": 2,
+    "max_items_per_source": 3,
+    "timeout_ms": 25000,
+    "retry_count": 1,
+    "retry_backoff_ms": 1000,
+    "source_results": [
+      {
+        "source_key": "ewha_010",
+        "source_id": "ewha_010",
+        "strategy": "generic_html",
+        "final_status": "success",
+        "item_count": 3,
+        "attempt_count": 1,
+        "duration_ms": 1463,
+        "reason_code": "success",
+        "timeout": false,
+        "retried": false,
+        "recovered_after_retry": false,
+        "retry_exhausted": false,
+        "retry_backoff_ms": 1000,
+        "total_retry_delay_ms": 0
+      },
+      {
+        "source_key": "ewha_015",
+        "source_id": "ewha_015",
+        "strategy": "generic_html",
+        "final_status": "success",
+        "item_count": 3,
+        "attempt_count": 1,
+        "duration_ms": 1760,
+        "reason_code": "success",
+        "timeout": false,
+        "retried": false,
+        "recovered_after_retry": false,
+        "retry_exhausted": false,
+        "retry_backoff_ms": 1000,
+        "total_retry_delay_ms": 0
+      }
+    ],
+    "observed_item_count": 6,
+    "timeout_source_count": 0,
+    "retried_source_count": 0,
+    "recovered_after_retry_count": 0,
+    "exhausted_retry_count": 0,
+    "total_retry_delay_ms": 0,
+    "source_error_count": 0,
+    "detail_error_count": 0,
+    "partial_source_count": 0,
+    "overall_run_status": "succeeded",
+    "arithmetic_validation": {
+      "valid": true,
+      "errors": []
+    }
+  },
+  "safety": {
+    "database_read_performed": false,
+    "database_write_performed": false,
+    "production_access_performed": false,
+    "external_llm_call_count": 0,
+    "admin_ui_changed": false,
+    "migration_performed": false,
+    "migration_files_changed": false,
+    "raw_live_artifact_committed": false,
+    "api_cron_queue_added": false,
+    "sensitive_file_changed": false,
+    "absolute_local_path_changed": false,
+    "committed_diff_safety_check_valid": true,
+    "committed_diff_base_sha": "60187fa59983dca758010f905c371e57b40909bc",
+    "committed_diff_path_count": 9,
+    "working_tree_path_count": 9
+  },
+  "non_goals_preserved": true,
+  "raw_live_artifact_path_committed": null,
+  "unresolved_risks": [
+    "Bounded live evidence is a point-in-time observation and does not prove full-site coverage.",
+    "Exceptional source-specific adapters retain their pre-existing transport behavior until individually migrated to the common strategy contract."
+  ]
+}

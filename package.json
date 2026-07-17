@@ -30,6 +30,8 @@
     "crawl:notices": "node scripts/crawl-scholarship-notices.mjs",
     "crawl:notices:db": "node scripts/crawl-scholarship-notices.mjs db",
     "test:engine-phase-1": "node scripts/test-engine-phase-1-common-crawler.mjs",
+    "test:engine-phase-2": "node scripts/test-engine-phase-2-resilience-observability.mjs",
+    "validate:engine-phase-2": "node scripts/validate-engine-phase-2.mjs",
     "poc:kosaf": "node scripts/poc-kosaf-public-search.mjs",
     "diagnose:sources": "node scripts/diagnose-notice-sources.mjs",
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
