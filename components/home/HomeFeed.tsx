@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, type ReactNode } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
   CONTENT_CATEGORIES,
@@ -11,18 +10,13 @@ import {
 import { browseHref, type BrowseKind } from "@/lib/browse-data";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
-import {
-  buildTop10,
-  pickHomeHero,
-  type HomeRail,
-} from "@/lib/home-rails";
+import { buildTop10, pickHomeHero } from "@/lib/home-rails";
 import { useHomeSearchFilters } from "./HomeSearchContext";
+import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
 import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
 import HomeHero from "./HomeHero";
 import Top10Shelf from "./Top10Shelf";
-import RecentViewsShelf from "./RecentViewsShelf";
-import { cardBookmarkKey } from "@/lib/bookmark-keys";
 
 const KIND_SHELF_LIMIT = 12;
 
@@ -67,86 +61,37 @@ function sortByDeadline(list: CardScholarship[]) {
 
 const ShelfCard = memo(function ShelfCard({
   scholarship,
-  bookmarked,
 }: {
   scholarship: CardScholarship;
-  bookmarked: boolean;
 }) {
+  const isBookmarked = useHomeBookmarkChecker();
   return (
     <ScholarshipCard
       scholarship={scholarship}
-      initialBookmarked={bookmarked}
+      initialBookmarked={isBookmarked(scholarship)}
     />
   );
 });
 
-function PersonalizedRailSection({
-  rail,
-  isBookmarked,
-}: {
-  rail: HomeRail;
-  isBookmarked: (s: CardScholarship) => boolean;
-}) {
-  return (
-    <section
-      aria-labelledby={`${rail.key}-heading`}
-      className="mt-8 sm:mt-10"
-    >
-      <HomeSectionTitle
-        id={`${rail.key}-heading`}
-        title={rail.title}
-        href={rail.href}
-        subtitle={rail.subtitle}
-      />
-      <HorizontalShelf
-        label={rail.title}
-        items={rail.items}
-        getKey={(s) => `${rail.key}-${itemKey(s)}`}
-        renderItem={(scholarship) => (
-          <ShelfCard
-            scholarship={scholarship}
-            bookmarked={isBookmarked(scholarship)}
-          />
-        )}
-      />
-    </section>
-  );
-}
-
 export default function HomeFeed({
   scholarships,
-  bookmarkedKeys = [],
-  forYou = [],
-  urgentBookmarks = [],
-  serverRecent = [],
-  interestRails = [],
-  campusRail = null,
-  regionRail = null,
-  collaborativeRail = null,
-  userName = null,
   isLoggedIn = false,
-  isOnboarded = false,
+  afterHero = null,
+  afterTop10 = null,
 }: {
   scholarships: CardScholarship[];
-  bookmarkedKeys?: string[];
-  forYou?: CardScholarship[];
-  urgentBookmarks?: CardScholarship[];
-  serverRecent?: CardScholarship[];
-  interestRails?: HomeRail[];
-  campusRail?: HomeRail | null;
-  regionRail?: HomeRail | null;
-  collaborativeRail?: HomeRail | null;
-  userName?: string | null;
   isLoggedIn?: boolean;
-  isOnboarded?: boolean;
+  /** 로그인 개인화(For You·이어서 보기) — Suspense 슬롯 */
+  afterHero?: ReactNode;
+  /** 마감임박·관심/교내/CF 레일 — Suspense 슬롯 */
+  afterTop10?: ReactNode;
 }) {
-  // query 컨텍스트와 분리 — 타이핑 중에는 deferredQuery가 바뀔 때만 피드 리렌더
   const {
     deferredQuery: deferredSearch,
     category,
     setCategory,
   } = useHomeSearchFilters();
-  const bookmarkedSet = useMemo(() => new Set(bookmarkedKeys), [bookmarkedKeys]);
+  const isBookmarked = useHomeBookmarkChecker();
   const isSearching = deferredSearch.trim().length > 0;
 
   const filtered = useMemo(() => {
@@ -160,15 +105,14 @@ export default function HomeFeed({
 
   const hero = useMemo(() => {
     if (!showBrowseRails) return null;
-    return pickHomeHero({ forYou, catalog: scholarships });
-  }, [showBrowseRails, forYou, scholarships]);
+    return pickHomeHero({ forYou: [], catalog: scholarships });
+  }, [showBrowseRails, scholarships]);
 
   const top10Exclude = useMemo(() => {
     const keys = new Set<string>();
     if (hero) keys.add(itemKey(hero));
-    for (const s of forYou.slice(0, 4)) keys.add(itemKey(s));
     return keys;
-  }, [hero, forYou]);
+  }, [hero]);
 
   const top10 = useMemo(() => {
     if (!showBrowseRails) return [];
@@ -197,18 +141,12 @@ export default function HomeFeed({
   const emptyCategory = !categoryHasData(category);
   const categoryLabel =
     CONTENT_CATEGORIES.find((c) => c.key === category)?.label ?? "";
-
   const browseKind: BrowseKind = category === "all" ? "all" : category;
 
-  const isBookmarked = useCallback(
-    (scholarship: CardScholarship) =>
-      bookmarkedSet.has(cardBookmarkKey(scholarship)),
-    [bookmarkedSet]
+  const top10IsBookmarked = useCallback(
+    (scholarship: CardScholarship) => isBookmarked(scholarship),
+    [isBookmarked]
   );
-
-  const forYouTitle = userName
-    ? `${userName}님을 위해 엄선한 공고`
-    : "회원님을 위해 엄선한 공고";
 
   return (
     <div className="w-full">
@@ -228,7 +166,7 @@ export default function HomeFeed({
             장학금 보기
           </button>
         </div>
-      ) : filtered.length === 0 && !showBrowseRails && forYou.length === 0 ? (
+      ) : filtered.length === 0 && !showBrowseRails ? (
         <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
           <p className="text-lg font-semibold text-ink">
             {isSearching ? "검색 결과가 없습니다" : "등록된 공고가 없습니다"}
@@ -241,69 +179,20 @@ export default function HomeFeed({
         </div>
       ) : (
         <>
-          {showBrowseRails && isLoggedIn && !isOnboarded ? (
-            <div className="mb-5 rounded-2xl border border-brand/20 bg-cream px-4 py-3.5 sm:mb-6 sm:px-5">
-              <p className="text-sm font-bold text-ink">
-                관심사를 등록하면 추천이 더 정확해져요
-              </p>
-              <p className="mt-0.5 text-xs text-ink/55">
-                학교·전공·관심사를 채우면 취향에 맞는 공고를 더 잘 골라 드립니다.
-              </p>
-              <Link
-                href="/onboarding"
-                className="mt-2.5 inline-flex rounded-full bg-brand px-4 py-1.5 text-xs font-bold text-white hover:bg-brand/85"
-              >
-                온보딩 이어하기
-              </Link>
-            </div>
-          ) : null}
-
           {showBrowseRails && hero ? (
             <div className="mb-8 sm:mb-10">
               <HomeHero
                 scholarship={hero}
                 bookmarked={isBookmarked(hero)}
                 eyebrow={
-                  forYou.length > 0
-                    ? "오늘의 추천"
-                    : hero.is_recommended
-                      ? "에디터 추천"
-                      : "인기 공고"
+                  hero.is_recommended ? "에디터 추천" : "인기 공고"
                 }
                 showMatchedCta={false}
               />
             </div>
           ) : null}
 
-          {showBrowseRails && forYou.length > 0 ? (
-            <section aria-labelledby="for-you-heading">
-              <HomeSectionTitle
-                id="for-you-heading"
-                title={forYouTitle}
-                href={browseHref({ kind: "all", sort: "scraps" })}
-                subtitle="회원님을 위한 엄선"
-              />
-              <HorizontalShelf
-                label={forYouTitle}
-                items={forYou}
-                getKey={(s) => `foryou-${itemKey(s)}`}
-                renderItem={(scholarship) => (
-                  <ShelfCard
-                    scholarship={scholarship}
-                    bookmarked={isBookmarked(scholarship)}
-                  />
-                )}
-              />
-            </section>
-          ) : null}
-
-          {showBrowseRails ? (
-            <RecentViewsShelf
-              bookmarkedKeys={bookmarkedKeys}
-              serverRecent={serverRecent}
-              catalog={scholarships}
-            />
-          ) : null}
+          {showBrowseRails && isLoggedIn ? afterHero : null}
 
           {showBrowseRails && top10.length > 0 ? (
             <section
@@ -320,65 +209,11 @@ export default function HomeFeed({
                 })}
                 subtitle="스크랩·조회가 많은 공고"
               />
-              <Top10Shelf items={top10} isBookmarked={isBookmarked} />
+              <Top10Shelf items={top10} isBookmarked={top10IsBookmarked} />
             </section>
           ) : null}
 
-          {showBrowseRails && urgentBookmarks.length > 0 ? (
-            <section
-              aria-labelledby="urgent-bookmarks-heading"
-              className="mt-8 sm:mt-10"
-            >
-              <HomeSectionTitle
-                id="urgent-bookmarks-heading"
-                title="저장한 공고 · 마감 임박"
-                href="/library/saved"
-                subtitle="14일 안에 마감되는 찜한 공고"
-              />
-              <HorizontalShelf
-                label="저장한 공고 · 마감 임박"
-                items={urgentBookmarks}
-                getKey={(s) => `urgent-${itemKey(s)}`}
-                renderItem={(scholarship) => (
-                  <ShelfCard
-                    scholarship={scholarship}
-                    bookmarked={isBookmarked(scholarship)}
-                  />
-                )}
-              />
-            </section>
-          ) : null}
-
-          {showBrowseRails
-            ? interestRails.map((rail) => (
-                <PersonalizedRailSection
-                  key={rail.key}
-                  rail={rail}
-                  isBookmarked={isBookmarked}
-                />
-              ))
-            : null}
-
-          {showBrowseRails && campusRail ? (
-            <PersonalizedRailSection
-              rail={campusRail}
-              isBookmarked={isBookmarked}
-            />
-          ) : null}
-
-          {showBrowseRails && regionRail ? (
-            <PersonalizedRailSection
-              rail={regionRail}
-              isBookmarked={isBookmarked}
-            />
-          ) : null}
-
-          {showBrowseRails && collaborativeRail ? (
-            <PersonalizedRailSection
-              rail={collaborativeRail}
-              isBookmarked={isBookmarked}
-            />
-          ) : null}
+          {showBrowseRails && isLoggedIn ? afterTop10 : null}
 
           {showBrowseRails ? (
             kindShelves.map((shelf) => (
@@ -398,10 +233,7 @@ export default function HomeFeed({
                   items={shelf.items}
                   getKey={(s) => itemKey(s)}
                   renderItem={(scholarship) => (
-                    <ShelfCard
-                      scholarship={scholarship}
-                      bookmarked={isBookmarked(scholarship)}
-                    />
+                    <ShelfCard scholarship={scholarship} />
                   )}
                 />
               </section>
@@ -425,9 +257,7 @@ export default function HomeFeed({
                   list: browseKind === "all",
                 })}
                 subtitle={
-                  isSearching
-                    ? undefined
-                    : `총 ${searchShelfItems.length}개`
+                  isSearching ? undefined : `총 ${searchShelfItems.length}개`
                 }
               />
               <HorizontalShelf
@@ -435,10 +265,7 @@ export default function HomeFeed({
                 items={searchShelfItems}
                 getKey={(s) => itemKey(s)}
                 renderItem={(scholarship) => (
-                  <ShelfCard
-                    scholarship={scholarship}
-                    bookmarked={isBookmarked(scholarship)}
-                  />
+                  <ShelfCard scholarship={scholarship} />
                 )}
               />
             </section>

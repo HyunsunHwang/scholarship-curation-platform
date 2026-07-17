@@ -134,10 +134,10 @@ export function getHeaderLogoSrc(
   return `${base}${sep}v=${encodeURIComponent(siteSettings.updated_at)}`;
 }
 
-/** 홈 피드 초기 로드 상한 — 전체 카탈로그를 한 번에 실지 않음 */
-const HOME_SCHOLARSHIP_LIMIT = 72;
-/** 공모전·교육·대외활동 홈 미리보기 (종류별 선반용) */
-const HOME_CONTEST_LIMIT = 120;
+/** 홈 피드 초기 로드 상한 — 선반당 노출(~12) + 여유 */
+const HOME_SCHOLARSHIP_LIMIT = 24;
+/** 공모전·교육·대외활동 종류별 홈 미리보기 */
+const HOME_CONTEST_PER_KIND = 24;
 
 export const getCachedHomeScholarships = unstable_cache(
   async () => {
@@ -184,7 +184,7 @@ export const getCachedHomeScholarships = unstable_cache(
       scrap_count: scrapCounts.get(scholarship.id) ?? 0,
     }));
   },
-  ["home-scholarships-v4"],
+  ["home-scholarships-v5"],
   { revalidate: 5 * 60 }
 );
 
@@ -192,25 +192,34 @@ export const getCachedHomeContests = unstable_cache(
   async () => {
     const supabase = createPublicSupabaseClient();
     const today = todayKoreaYYYYMMDD();
-    const { data, error } = await supabase
-      .from("contests")
-      .select(
-        "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
-      )
-      .eq("is_verified", true)
-      .eq("list_on_home", true)
-      .gte("apply_end_date", today)
-      .order("is_recommended", { ascending: false })
-      .order("recommended_sort_order", { ascending: true, nullsFirst: false })
-      .order("apply_end_date", { ascending: true })
-      .limit(HOME_CONTEST_LIMIT);
+    const kinds = ["contest", "education", "activity"] as const;
 
-    if (error) {
-      console.error("Failed to load cached home contests", error);
-      return [];
+    const kindResults = await Promise.all(
+      kinds.map((kind) =>
+        supabase
+          .from("contests")
+          .select(
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+          )
+          .eq("is_verified", true)
+          .eq("list_on_home", true)
+          .eq("content_kind", kind)
+          .gte("apply_end_date", today)
+          .order("is_recommended", { ascending: false })
+          .order("recommended_sort_order", { ascending: true, nullsFirst: false })
+          .order("apply_end_date", { ascending: true })
+          .limit(HOME_CONTEST_PER_KIND)
+      )
+    );
+
+    for (const result of kindResults) {
+      if (result.error) {
+        console.error("Failed to load cached home contests", result.error);
+        return [];
+      }
     }
 
-    const rows = data ?? [];
+    const rows = kindResults.flatMap((result) => result.data ?? []);
     const noticeIds = contestIdsNeedingNotice(rows);
     const noticeById = new Map<number, string | null>();
     if (noticeIds.length > 0) {
@@ -266,7 +275,7 @@ export const getCachedHomeContests = unstable_cache(
       };
     });
   },
-  ["home-contests-v13"],
+  ["home-contests-v14"],
   { revalidate: 60 }
 );
 

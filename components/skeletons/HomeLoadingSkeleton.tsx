@@ -1,5 +1,23 @@
 import { Skeleton } from "./skeleton";
 
+/** 홈 개인화 선반(이어서 보기 등) 자리 표시용 — 공개 쉘은 이미 그려진 뒤 */
+export function HomePersonalizationShelfFallback() {
+  return (
+    <div className="mt-2 mb-6" aria-busy="true" aria-label="추천 불러오는 중">
+      <Skeleton className="mb-4 h-7 w-40" />
+      <div className="flex gap-3 overflow-hidden sm:gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="w-[138px] shrink-0 space-y-2 sm:w-44">
+            <Skeleton className="aspect-2/3 w-full rounded-xl" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** 홈 피드 영역만 — 실카드/그림자 없이 pulse 블록으로 전환 깜빡임을 줄인다 */
 export function HomeFeedLoadingFallback() {
   return (

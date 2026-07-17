@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import type { HomeRail } from "@/lib/home-rails";
@@ -8,34 +9,75 @@ import {
   fetchHomeCampusScholarships,
   fetchRecentBrowseCards,
 } from "@/lib/home-rails-server";
-import type { NavUserContext } from "@/lib/nav-user-context";
 import { getCachedHomeProfileBundle } from "@/lib/home-profile-bundle";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeBookmarks } from "@/lib/user-bookmarks";
 
-export type HomePersonalization = {
-  nav: NavUserContext;
+export type HomePersonalizationPrimary = {
   bookmarkedKeys: string[];
   urgentBookmarks: CardScholarship[];
   forYou: CardScholarship[];
   serverRecent: CardScholarship[];
-  interestRails: HomeRail[];
-  campusRail: HomeRail | null;
-  regionRail: HomeRail | null;
-  collaborativeRail: HomeRail | null;
   userName: string | null;
   isOnboarded: boolean;
 };
 
+export type HomePersonalizationRails = {
+  interestRails: HomeRail[];
+  campusRail: HomeRail | null;
+  regionRail: HomeRail | null;
+  collaborativeRail: HomeRail | null;
+};
+
+const loadBookmarksCached = cache(async (userId: string) => {
+  const supabase = await createClient();
+  return getHomeBookmarks(supabase, userId);
+});
+
+const loadRecentBrowseCached = cache(async () => {
+  const supabase = await createClient();
+  return fetchRecentBrowseCards(supabase);
+});
+
 /**
- * 로그인 홈 개인화 데이터를 한 번에 로드한다.
- * - 프로필/긴급 북마크는 getCachedHomeProfileBundle으로 nav와 공유
- * - campus는 프로필 resolve 후 시작하되, 북마크/CF/recent와 병렬
+ * 빠른 개인화 — 북마크·최근본·추천(CF 키 없이).
+ * 이어서 보기 / For You / 마감임박을 먼저 스트리밍한다.
  */
-export async function loadHomePersonalization(
+export async function loadHomePersonalizationPrimary(
   user: User,
   catalog: CardScholarship[]
-): Promise<HomePersonalization> {
+): Promise<HomePersonalizationPrimary> {
+  const [bookmarks, bundle, recent] = await Promise.all([
+    loadBookmarksCached(user.id),
+    getCachedHomeProfileBundle(user.id),
+    loadRecentBrowseCached(),
+  ]);
+
+  const profile = bundle.profile;
+  const forYou = buildForYouCurated(catalog, {
+    interests: profile?.interest_categories ?? null,
+    savedItems: bookmarks.cards,
+    recentViews: recent,
+    collaborativeKeys: new Set(),
+  });
+
+  return {
+    bookmarkedKeys: bookmarks.keys,
+    urgentBookmarks: filterUrgentBookmarks(bookmarks.cards),
+    forYou,
+    serverRecent: recent,
+    userName: profile?.name ?? null,
+    isOnboarded: Boolean(profile?.is_onboarded),
+  };
+}
+
+/**
+ * 느린 개인화 — CF·교내·관심사 레일.
+ */
+export async function loadHomePersonalizationRails(
+  user: User,
+  catalog: CardScholarship[]
+): Promise<HomePersonalizationRails> {
   const supabase = await createClient();
   const bundlePromise = getCachedHomeProfileBundle(user.id);
 
@@ -49,23 +91,26 @@ export async function loadHomePersonalization(
     );
   })();
 
-  const [bookmarks, bundle, recent, cfResult, campusItems] = await Promise.all([
-    getHomeBookmarks(supabase, user.id),
+  const [bundle, cfResult, campusItems, bookmarks, recent] = await Promise.all([
     bundlePromise,
-    fetchRecentBrowseCards(supabase),
     fetchCollaborativeCards(supabase),
     campusPromise,
+    loadBookmarksCached(user.id),
+    loadRecentBrowseCached(),
   ]);
 
   const profile = bundle.profile;
   const isOnboarded = Boolean(profile?.is_onboarded);
-  const userName = profile?.name ?? null;
   const interests = profile?.interest_categories ?? null;
-  const profileSignals = {
-    schoolName: profile?.school_name,
-    schoolLocation: profile?.school_location,
-    address: profile?.address,
-  };
+
+  if (!isOnboarded && !interests?.length) {
+    return {
+      interestRails: [],
+      campusRail: null,
+      regionRail: null,
+      collaborativeRail: null,
+    };
+  }
 
   const forYou = buildForYouCurated(catalog, {
     interests,
@@ -74,43 +119,23 @@ export async function loadHomePersonalization(
     collaborativeKeys: cfResult.keys,
   });
 
-  let interestRails: HomeRail[] = [];
-  let campusRail: HomeRail | null = null;
-  let regionRail: HomeRail | null = null;
-  let collaborativeRail: HomeRail | null = null;
-
-  if (isOnboarded || interests?.length) {
-    const assembled = assemblePersonalizedRails({
-      catalog,
-      forYou,
-      interests,
-      profile: profileSignals,
-      campusItems: isOnboarded ? campusItems : [],
-      collaborativeItems: cfResult.items,
-    });
-    interestRails = assembled.interestRails;
-    if (isOnboarded) {
-      campusRail = assembled.campusRail;
-      regionRail = assembled.regionRail;
-      collaborativeRail = assembled.collaborativeRail;
-    }
-  }
+  const assembled = assemblePersonalizedRails({
+    catalog,
+    forYou,
+    interests,
+    profile: {
+      schoolName: profile?.school_name,
+      schoolLocation: profile?.school_location,
+      address: profile?.address,
+    },
+    campusItems: isOnboarded ? campusItems : [],
+    collaborativeItems: cfResult.items,
+  });
 
   return {
-    nav: {
-      role: profile?.role ?? null,
-      name: userName,
-      urgentBookmarkCount: bundle.urgentBookmarkCount,
-    },
-    bookmarkedKeys: bookmarks.keys,
-    urgentBookmarks: filterUrgentBookmarks(bookmarks.cards),
-    forYou,
-    serverRecent: recent,
-    interestRails,
-    campusRail,
-    regionRail,
-    collaborativeRail,
-    userName,
-    isOnboarded,
+    interestRails: assembled.interestRails,
+    campusRail: isOnboarded ? assembled.campusRail : null,
+    regionRail: isOnboarded ? assembled.regionRail : null,
+    collaborativeRail: isOnboarded ? assembled.collaborativeRail : null,
   };
 }
