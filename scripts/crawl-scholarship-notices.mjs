@@ -14,7 +14,12 @@ import {
   imageUrlsToCsvCell,
 } from "../lib/notice-body-extraction.mjs";
 import { loadSources } from "../lib/notice-sources-loader.mjs";
-import { runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  buildCrawlerRunSummary,
+  classifyCrawlerFailure,
+  runBoundedCrawlerSource,
+  sanitizeCrawlerError,
+} from "../lib/crawler-engine/common-runner.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 
 const DEFAULT_KEYWORDS = [
@@ -32,8 +37,8 @@ const INPUT_ARG = process.argv[2] ?? "db";
 const OUTPUT_DIR = process.argv[3] ?? "exports/notices";
 const STATE_FILE_PATH =
   process.argv[4] ?? ".crawler/scholarship-notice-state.json";
-const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 15_000);
-const REQUEST_RETRY_COUNT = Math.max(0, Number(process.env.CRAWL_RETRY_COUNT ?? 2));
+const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 25_000);
+const REQUEST_RETRY_COUNT = Math.max(0, Math.min(3, Number(process.env.CRAWL_RETRY_COUNT ?? 1)));
 const REQUEST_RETRY_BACKOFF_MS = Math.max(
   200,
   Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000),
@@ -241,16 +246,21 @@ function decodeHtmlBuffer(buffer, headerCharset) {
   return new TextDecoder("utf-8").decode(buffer);
 }
 
-export async function fetchHtmlWithMetadata(url) {
+export async function fetchHtmlWithMetadata(url, options = {}) {
   const dispatcher = DEFAULT_DISPATCHER;
 
   let lastError = null;
-  for (let attempt = 0; attempt <= REQUEST_RETRY_COUNT; attempt += 1) {
+  const retryCount = Math.max(0, Math.min(3, Number(options.retryCount ?? REQUEST_RETRY_COUNT)));
+  const timeoutMs = Math.max(1, Number(options.timeoutMs ?? REQUEST_TIMEOUT_MS));
+  for (let attempt = 0; attempt <= retryCount; attempt += 1) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    const signal = options.signal
+      ? AbortSignal.any([controller.signal, options.signal])
+      : controller.signal;
     try {
       const response = await fetch(url, {
-        signal: controller.signal,
+        signal,
         dispatcher: dispatcher ?? undefined,
         headers: {
           "user-agent": REQUEST_USER_AGENT,
@@ -275,7 +285,8 @@ export async function fetchHtmlWithMetadata(url) {
       };
     } catch (error) {
       lastError = error;
-      if (attempt < REQUEST_RETRY_COUNT) {
+      if (options.signal?.aborted) break;
+      if (attempt < retryCount) {
         const waitMs = REQUEST_RETRY_BACKOFF_MS * (attempt + 1);
         await new Promise((resolve) => setTimeout(resolve, waitMs));
         continue;
@@ -287,8 +298,8 @@ export async function fetchHtmlWithMetadata(url) {
   throw lastError ?? new Error("fetch failed");
 }
 
-export async function fetchHtml(url) {
-  return (await fetchHtmlWithMetadata(url)).html;
+export async function fetchHtml(url, options = {}) {
+  return (await fetchHtmlWithMetadata(url, options)).html;
 }
 
 export function extractFromList(source, html) {
@@ -629,6 +640,9 @@ async function run() {
   const inventoryRows = configuredSources.map((source) => ({ source_id: source.sourceId }));
 
   const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
+    const sourceStartedAt = new Date().toISOString();
+    const sourceStartedMs = Date.now();
+    let executionResult = null;
     try {
       const listAdapter = getListAdapter(source.adapter);
       let listItems;
@@ -645,8 +659,41 @@ async function run() {
           MAX_ITEMS_PER_SOURCE,
         );
         detailItems = listItems;
+        const finishedAt = new Date().toISOString();
+        const durationMs = Math.max(0, Date.now() - sourceStartedMs);
+        const resultStatus = detailItems.length > 0 ? "success" : "empty_observed";
+        executionResult = {
+          source_key: source.sourceId,
+          source_id: source.sourceId,
+          source_name: source.sourceName,
+          strategy: getSourceAdapterStrategy(source),
+          result_status: resultStatus,
+          observed_count: detailItems.length,
+          notices: detailItems,
+          total_attempt_count: 1,
+          attempt_history: [{
+            sequence: 1,
+            status: resultStatus,
+            retryable: false,
+            duration_ms: durationMs,
+            reason_code: resultStatus,
+            timeout: false,
+            item_count: detailItems.length,
+            started_at: sourceStartedAt,
+            finished_at: finishedAt,
+            error_summary: "",
+          }],
+          retried: false,
+          recovered_after_retry: false,
+          retry_exhausted: false,
+          duration_ms: durationMs,
+          started_at: sourceStartedAt,
+          finished_at: finishedAt,
+          final_reason_code: resultStatus,
+          final_error_summary: "",
+        };
       } else {
-        const commonResult = await runCommonCrawlerSource({
+        const commonResult = await runBoundedCrawlerSource({
           source,
           inventoryRows,
           strategy: genericHtmlStrategy,
@@ -654,15 +701,30 @@ async function run() {
           listUrls: buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE),
           maxItems: MAX_ITEMS_PER_SOURCE,
           fetchDetails: DETAIL_FETCH_ENABLED,
+          timeoutMs: REQUEST_TIMEOUT_MS,
+          retryCount: REQUEST_RETRY_COUNT,
           beforeDetail: async () => {
             // Preserve the existing small pacing between detail requests.
             await new Promise((resolve) => setTimeout(resolve, 250));
           },
         });
-        if (!["success", "empty_observed"].includes(commonResult.result_status)) {
-          const error = new Error(commonResult.error_message || commonResult.result_status);
-          error.crawlerStatus = commonResult.result_status;
-          throw error;
+        executionResult = commonResult;
+        if (!["success", "empty_observed", "partial"].includes(commonResult.result_status)) {
+          return {
+            sourceId: source.sourceId,
+            universitySlug: source.universitySlug,
+            universityId: source.universityId,
+            collegeId: source.collegeId,
+            departmentId: source.departmentId,
+            sourceLevel: source.sourceLevel,
+            collegeName: source.collegeName,
+            sourceName: source.sourceName,
+            adapterStrategy: getSourceAdapterStrategy(source),
+            error: commonResult.final_error_summary || commonResult.result_status,
+            detailItems: [],
+            matched: [],
+            executionResult,
+          };
         }
         listItems = commonResult.notices;
         detailItems = commonResult.notices;
@@ -715,8 +777,43 @@ async function run() {
         detailItems,
         matched,
         error: "",
+        executionResult,
       };
     } catch (error) {
+      const status = classifyCrawlerFailure(error, "network_error");
+      const finishedAt = new Date().toISOString();
+      const durationMs = Math.max(0, Date.now() - sourceStartedMs);
+      const errorSummary = sanitizeCrawlerError(error);
+      executionResult ??= {
+        source_key: source.sourceId,
+        source_id: source.sourceId,
+        source_name: source.sourceName,
+        strategy: getSourceAdapterStrategy(source),
+        result_status: status,
+        observed_count: 0,
+        notices: [],
+        total_attempt_count: 1,
+        attempt_history: [{
+          sequence: 1,
+          status,
+          retryable: false,
+          duration_ms: durationMs,
+          reason_code: status,
+          timeout: status === "timeout",
+          item_count: 0,
+          started_at: sourceStartedAt,
+          finished_at: finishedAt,
+          error_summary: errorSummary,
+        }],
+        retried: false,
+        recovered_after_retry: false,
+        retry_exhausted: false,
+        duration_ms: durationMs,
+        started_at: sourceStartedAt,
+        finished_at: finishedAt,
+        final_reason_code: status,
+        final_error_summary: errorSummary,
+      };
       return {
         sourceId: source.sourceId,
         universitySlug: source.universitySlug,
@@ -727,9 +824,10 @@ async function run() {
         collegeName: source.collegeName,
         sourceName: source.sourceName,
         adapterStrategy: getSourceAdapterStrategy(source),
-        error: formatFetchError(error),
+        error: errorSummary || formatFetchError(error),
         detailItems: [],
         matched: [],
+        executionResult,
       };
     }
   });
@@ -750,6 +848,10 @@ async function run() {
         matchedCount: 0,
         newCount: 0,
         error: result.error,
+        finalStatus: result.executionResult?.result_status ?? "network_error",
+        attemptCount: result.executionResult?.total_attempt_count ?? 1,
+        durationMs: result.executionResult?.duration_ms ?? 0,
+        reasonCode: result.executionResult?.final_reason_code ?? "network_error",
       });
       console.log(`source=${result.sourceId} error=${result.error}`);
       continue;
@@ -780,6 +882,10 @@ async function run() {
       crawledCount: result.detailItems.length,
       matchedCount: result.matched.length,
       newCount: newlyDiscovered.length,
+      finalStatus: result.executionResult?.result_status ?? "success",
+      attemptCount: result.executionResult?.total_attempt_count ?? 1,
+      durationMs: result.executionResult?.duration_ms ?? 0,
+      reasonCode: result.executionResult?.final_reason_code ?? "success",
     });
     console.log(
       `source=${result.sourceId} crawled=${result.detailItems.length} matched=${result.matched.length} new=${newlyDiscovered.length}`,
@@ -791,11 +897,30 @@ async function run() {
   const resolvedStatePath = path.resolve(STATE_FILE_PATH);
   fs.mkdirSync(resolvedOutputDir, { recursive: true });
   fs.mkdirSync(path.dirname(resolvedStatePath), { recursive: true });
+  const runFinishedAt = new Date().toISOString();
+  const executionResults = processed.map((result) => result.executionResult);
+  const executionSummary = buildCrawlerRunSummary(executionResults, {
+    run_id: `crawl-notices-${RUN_AT}`,
+    runner_version: "engine-phase-2-common-runner-v1",
+    started_at: RUN_AT,
+    finished_at: runFinishedAt,
+  });
+  const sourceExecutionEvidence = executionResults.map((result) => {
+    const evidence = { ...result };
+    delete evidence.notices;
+    return evidence;
+  });
 
   const report = {
     runAt: RUN_AT,
     input: loaded.inputLabel,
     sourceMode: loaded.mode,
+    safety: {
+      databaseReadPerformed: loaded.mode === "db",
+      databaseWritePerformed: false,
+      productionAccessPerformed: false,
+      externalLlmCallCount: 0,
+    },
     totals: {
       sourceCount: sources.length,
       crawledCount: crawled.length,
@@ -808,10 +933,16 @@ async function run() {
       ignoreSeen: IGNORE_SEEN,
       maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
+      timeoutMs: REQUEST_TIMEOUT_MS,
+      retryCount: REQUEST_RETRY_COUNT,
       sourceLevelFilterCount:
         SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
       collegeFilterCount:
         COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
+    },
+    boundedExecution: {
+      summary: executionSummary,
+      sources: sourceExecutionEvidence,
     },
     perSource: stats,
     observedItems: crawled.map((item) => ({
