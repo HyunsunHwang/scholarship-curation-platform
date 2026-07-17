@@ -20,14 +20,12 @@ export default function SpotifyHomeShell({
   return (
     <AnnouncementModalProvider>
       <HomeBookmarkProvider>
-        <div className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
-          <HomeFeed
-            scholarships={scholarships}
-            isLoggedIn={isLoggedIn}
-            afterHero={afterHero}
-            afterTop10={afterTop10}
-          />
-        </div>
+        <HomeFeed
+          scholarships={scholarships}
+          isLoggedIn={isLoggedIn}
+          afterHero={afterHero}
+          afterTop10={afterTop10}
+        />
       </HomeBookmarkProvider>
     </AnnouncementModalProvider>
   );

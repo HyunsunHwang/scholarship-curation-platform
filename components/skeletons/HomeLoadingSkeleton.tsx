@@ -21,31 +21,37 @@ export function HomePersonalizationShelfFallback() {
 /** 홈 피드 영역만 — 실카드/그림자 없이 pulse 블록으로 전환 깜빡임을 줄인다 */
 export function HomeFeedLoadingFallback() {
   return (
-    <div
-      className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10"
-      aria-busy="true"
-      aria-label="홈 불러오는 중"
-    >
-      <Skeleton className="mb-6 h-48 w-full rounded-2xl sm:h-56 sm:rounded-3xl" />
-      <Skeleton className="mb-4 h-7 w-44" />
-      <div className="flex gap-3 overflow-hidden sm:gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="w-[138px] shrink-0 space-y-2 sm:w-44">
-            <Skeleton className="aspect-2/3 w-full rounded-xl" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-3 w-2/3" />
+    <div className="w-full" aria-busy="true" aria-label="홈 불러오는 중">
+      <div className="relative mb-6 min-h-[280px] sm:mb-8 sm:min-h-[320px] lg:min-h-[360px]">
+        <Skeleton className="absolute inset-0 rounded-none" />
+        <div className="relative mx-auto flex h-full min-h-[280px] max-w-6xl flex-col justify-end px-4 pb-5 pt-12 sm:min-h-[320px] sm:px-6 sm:pb-6 md:px-10 lg:min-h-[360px]">
+          <div className="mb-4 ml-auto w-full max-w-[min(100%,calc(5*92px+4*0.625rem))] space-y-2 sm:max-w-[calc(5*108px+4*0.75rem)]">
+            <Skeleton className="ml-auto h-6 w-28 rounded-full" />
+            <Skeleton className="ml-auto h-8 w-40" />
+            <Skeleton className="ml-auto h-4 w-48" />
           </div>
-        ))}
+          <div className="ml-auto flex w-full max-w-[min(100%,calc(5*92px+4*0.625rem))] gap-2.5 overflow-hidden sm:max-w-[calc(5*108px+4*0.75rem)] sm:gap-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="w-[92px] shrink-0 space-y-1.5 sm:w-[108px]">
+                <Skeleton className="aspect-2/3 w-full rounded-lg" />
+                <Skeleton className="h-3 w-full" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <Skeleton className="mb-4 mt-10 h-7 w-36" />
-      <div className="flex gap-3 overflow-hidden sm:gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="w-[138px] shrink-0 space-y-2 sm:w-44">
-            <Skeleton className="aspect-2/3 w-full rounded-xl" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-3 w-2/3" />
-          </div>
-        ))}
+
+      <div className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
+        <Skeleton className="mb-4 h-7 w-36" />
+        <div className="flex gap-3 overflow-hidden sm:gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="w-[138px] shrink-0 space-y-2 sm:w-44">
+              <Skeleton className="aspect-2/3 w-full rounded-xl" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

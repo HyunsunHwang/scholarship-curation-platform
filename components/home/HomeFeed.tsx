@@ -1,7 +1,8 @@
 "use client";
 
-import { memo, useCallback, useMemo, type ReactNode } from "react";
+import { memo, useMemo, type ReactNode } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
+import BrowseTopRankHero from "@/components/browse/BrowseTopRankHero";
 import {
   CONTENT_CATEGORIES,
   LIBRARY_CATEGORY_FILTERS,
@@ -10,15 +11,14 @@ import {
 import { browseHref, type BrowseKind } from "@/lib/browse-data";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
-import { buildTop10, pickHomeHero } from "@/lib/home-rails";
+import { buildTop10 } from "@/lib/home-rails";
 import { useHomeSearchFilters } from "./HomeSearchContext";
 import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
 import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
-import HomeHero from "./HomeHero";
-import Top10Shelf from "./Top10Shelf";
 
 const KIND_SHELF_LIMIT = 12;
+const HOME_RANK_HERO_BG = "/images/home-rank-hero.jpg";
 
 function itemKey(item: CardScholarship) {
   return `${item.content_kind ?? "scholarship"}-${item.id}`;
@@ -91,7 +91,6 @@ export default function HomeFeed({
     category,
     setCategory,
   } = useHomeSearchFilters();
-  const isBookmarked = useHomeBookmarkChecker();
   const isSearching = deferredSearch.trim().length > 0;
 
   const filtered = useMemo(() => {
@@ -103,21 +102,10 @@ export default function HomeFeed({
 
   const showBrowseRails = !isSearching && category === "all";
 
-  const hero = useMemo(() => {
-    if (!showBrowseRails) return null;
-    return pickHomeHero({ forYou: [], catalog: scholarships });
-  }, [showBrowseRails, scholarships]);
-
-  const top10Exclude = useMemo(() => {
-    const keys = new Set<string>();
-    if (hero) keys.add(itemKey(hero));
-    return keys;
-  }, [hero]);
-
   const top10 = useMemo(() => {
     if (!showBrowseRails) return [];
-    return buildTop10(filtered, top10Exclude);
-  }, [showBrowseRails, filtered, top10Exclude]);
+    return buildTop10(filtered);
+  }, [showBrowseRails, filtered]);
 
   const kindShelves = useMemo(() => {
     if (!showBrowseRails) return [];
@@ -142,136 +130,121 @@ export default function HomeFeed({
   const categoryLabel =
     CONTENT_CATEGORIES.find((c) => c.key === category)?.label ?? "";
   const browseKind: BrowseKind = category === "all" ? "all" : category;
-
-  const top10IsBookmarked = useCallback(
-    (scholarship: CardScholarship) => isBookmarked(scholarship),
-    [isBookmarked]
-  );
+  const showTopRankHero = showBrowseRails && top10.length >= 5;
 
   return (
     <div className="w-full">
-      {emptyCategory ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
-          <p className="text-lg font-semibold text-ink">
-            {categoryLabel} 공고는 준비 중이에요
-          </p>
-          <p className="text-sm text-ink/50">
-            곧 다양한 {categoryLabel} 정보를 만나보실 수 있어요.
-          </p>
-          <button
-            type="button"
-            onClick={() => setCategory("scholarship")}
-            className="mt-3 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85"
-          >
-            장학금 보기
-          </button>
-        </div>
-      ) : filtered.length === 0 && !showBrowseRails ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
-          <p className="text-lg font-semibold text-ink">
-            {isSearching ? "검색 결과가 없습니다" : "등록된 공고가 없습니다"}
-          </p>
-          <p className="text-sm text-ink/50">
-            {isSearching
-              ? "다른 검색어로 시도해 보세요."
-              : "관리자 패널에서 장학금을 추가해보세요."}
-          </p>
-        </div>
-      ) : (
-        <>
-          {showBrowseRails && hero ? (
-            <div className="mb-8 sm:mb-10">
-              <HomeHero
-                scholarship={hero}
-                bookmarked={isBookmarked(hero)}
-                eyebrow={
-                  hero.is_recommended ? "에디터 추천" : "인기 공고"
-                }
-                showMatchedCta={false}
-              />
-            </div>
-          ) : null}
+      {showTopRankHero ? (
+        <BrowseTopRankHero
+          title="오늘 TOP 10"
+          items={top10}
+          backgroundSrc={HOME_RANK_HERO_BG}
+          backHref={null}
+          badge="TODAY TOP 10"
+          subtitle="스크랩·조회가 많은 공고"
+          headingId="home-top10-heading"
+          imageClassName="object-cover object-[12%_78%] sm:object-[14%_72%] lg:object-[16%_68%]"
+          washRightClassName="bg-linear-to-r from-transparent via-white/10 to-white/82"
+          washUpClassName="bg-linear-to-t from-white/55 via-white/15 to-transparent"
+        />
+      ) : null}
 
-          {showBrowseRails && isLoggedIn ? afterHero : null}
-
-          {showBrowseRails && top10.length > 0 ? (
-            <section
-              aria-labelledby="top10-heading"
-              className="mt-8 sm:mt-10"
+      <div
+        className={`w-full px-4 pb-10 sm:px-6 lg:px-10 ${
+          showTopRankHero ? "pt-1 sm:pt-2" : "pt-4 sm:pt-5"
+        }`}
+      >
+        {emptyCategory ? (
+          <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
+            <p className="text-lg font-semibold text-ink">
+              {categoryLabel} 공고는 준비 중이에요
+            </p>
+            <p className="text-sm text-ink/50">
+              곧 다양한 {categoryLabel} 정보를 만나보실 수 있어요.
+            </p>
+            <button
+              type="button"
+              onClick={() => setCategory("scholarship")}
+              className="mt-3 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85"
             >
-              <HomeSectionTitle
-                id="top10-heading"
-                title="오늘 TOP 10"
-                href={browseHref({
-                  kind: browseKind,
-                  section: "trending",
-                  sort: "scraps",
-                })}
-                subtitle="스크랩·조회가 많은 공고"
-              />
-              <Top10Shelf items={top10} isBookmarked={top10IsBookmarked} />
-            </section>
-          ) : null}
+              장학금 보기
+            </button>
+          </div>
+        ) : filtered.length === 0 && !showBrowseRails ? (
+          <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
+            <p className="text-lg font-semibold text-ink">
+              {isSearching ? "검색 결과가 없습니다" : "등록된 공고가 없습니다"}
+            </p>
+            <p className="text-sm text-ink/50">
+              {isSearching
+                ? "다른 검색어로 시도해 보세요."
+                : "관리자 패널에서 장학금을 추가해보세요."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {showBrowseRails && isLoggedIn ? afterHero : null}
 
-          {showBrowseRails && isLoggedIn ? afterTop10 : null}
+            {showBrowseRails && isLoggedIn ? afterTop10 : null}
 
-          {showBrowseRails ? (
-            kindShelves.map((shelf) => (
+            {showBrowseRails ? (
+              kindShelves.map((shelf) => (
+                <section
+                  key={shelf.key}
+                  aria-labelledby={`kind-${shelf.key}-heading`}
+                  className="mt-8 sm:mt-10 first:mt-0"
+                >
+                  <HomeSectionTitle
+                    id={`kind-${shelf.key}-heading`}
+                    title={shelf.label}
+                    href={browseHref({ kind: shelf.key, sort: "deadline" })}
+                    subtitle={`${shelf.items.length}개 미리보기`}
+                  />
+                  <HorizontalShelf
+                    label={shelf.label}
+                    items={shelf.items}
+                    getKey={(s) => itemKey(s)}
+                    renderItem={(scholarship) => (
+                      <ShelfCard scholarship={scholarship} />
+                    )}
+                  />
+                </section>
+              ))
+            ) : (
               <section
-                key={shelf.key}
-                aria-labelledby={`kind-${shelf.key}-heading`}
-                className="mt-8 sm:mt-10"
+                id="all-announcements"
+                aria-labelledby="all-heading"
+                className="scroll-mt-4"
               >
                 <HomeSectionTitle
-                  id={`kind-${shelf.key}-heading`}
-                  title={shelf.label}
-                  href={browseHref({ kind: shelf.key, sort: "deadline" })}
-                  subtitle={`${shelf.items.length}개 미리보기`}
+                  id="all-heading"
+                  title={
+                    isSearching
+                      ? "검색 결과"
+                      : `${categoryLabel === "홈" ? "전체" : categoryLabel} 공고`
+                  }
+                  href={browseHref({
+                    kind: browseKind,
+                    sort: "deadline",
+                    list: browseKind === "all",
+                  })}
+                  subtitle={
+                    isSearching ? undefined : `총 ${searchShelfItems.length}개`
+                  }
                 />
                 <HorizontalShelf
-                  label={shelf.label}
-                  items={shelf.items}
+                  label={isSearching ? "검색 결과" : "전체 공고"}
+                  items={searchShelfItems}
                   getKey={(s) => itemKey(s)}
                   renderItem={(scholarship) => (
                     <ShelfCard scholarship={scholarship} />
                   )}
                 />
               </section>
-            ))
-          ) : (
-            <section
-              id="all-announcements"
-              aria-labelledby="all-heading"
-              className="scroll-mt-4"
-            >
-              <HomeSectionTitle
-                id="all-heading"
-                title={
-                  isSearching
-                    ? "검색 결과"
-                    : `${categoryLabel === "홈" ? "전체" : categoryLabel} 공고`
-                }
-                href={browseHref({
-                  kind: browseKind,
-                  sort: "deadline",
-                  list: browseKind === "all",
-                })}
-                subtitle={
-                  isSearching ? undefined : `총 ${searchShelfItems.length}개`
-                }
-              />
-              <HorizontalShelf
-                label={isSearching ? "검색 결과" : "전체 공고"}
-                items={searchShelfItems}
-                getKey={(s) => itemKey(s)}
-                renderItem={(scholarship) => (
-                  <ShelfCard scholarship={scholarship} />
-                )}
-              />
-            </section>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

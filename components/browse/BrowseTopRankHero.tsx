@@ -8,7 +8,7 @@ import { useAnnouncementLinkClick } from "@/components/announcement/Announcement
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { contentKindHref } from "@/lib/content-categories";
 
-const HERO_BG = "/images/browse-rank-hero.png";
+const DEFAULT_HERO_BG = "/images/browse-rank-hero.png";
 
 /** 뷰포트에 보이는 카드 수 · 화살표 한 번에 이동량 */
 const PAGE_SIZE = 5;
@@ -16,6 +16,20 @@ const PAGE_SIZE = 5;
 type BrowseTopRankHeroProps = {
   title: string;
   items: CardScholarship[];
+  /** 기본: 탐색용 배경. 홈은 home-rank-hero 등 */
+  backgroundSrc?: string;
+  /** 미지정 시 /browse 로 돌아가는 탐색 링크. null 이면 숨김 */
+  backHref?: string | null;
+  backLabel?: string;
+  badge?: string;
+  subtitle?: string;
+  headingId?: string;
+  /** next/image object-* 클래스. 피사체 위치에 맞게 오버라이드 */
+  imageClassName?: string;
+  /** 좌→우 화이트 워시 강도 */
+  washRightClassName?: string;
+  /** 하→상 화이트 워시 강도 */
+  washUpClassName?: string;
 };
 
 function RankCardLink({
@@ -89,6 +103,15 @@ function RankCardLink({
 export default function BrowseTopRankHero({
   title,
   items,
+  backgroundSrc = DEFAULT_HERO_BG,
+  backHref = "/browse",
+  backLabel = "탐색",
+  badge = "TODAY TOP 10",
+  subtitle = "스크랩·조회가 많은 공고 순위",
+  headingId = "browse-top-rank-heading",
+  imageClassName = "object-cover object-[18%_center] sm:object-[22%_center]",
+  washRightClassName = "bg-linear-to-r from-transparent via-white/20 to-white/88",
+  washUpClassName = "bg-linear-to-t from-white via-white/45 to-transparent",
 }: BrowseTopRankHeroProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
@@ -134,50 +157,52 @@ export default function BrowseTopRankHero({
 
   return (
     <section
-      aria-labelledby="browse-top-rank-heading"
+      aria-labelledby={headingId}
       className="relative mb-6 sm:mb-8"
     >
       <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[360px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           <Image
-            src={HERO_BG}
+            src={backgroundSrc}
             alt=""
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[18%_center] sm:object-[22%_center]"
+            className={imageClassName}
           />
-          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-white/88" />
-          <div className="absolute inset-0 bg-linear-to-t from-white via-white/45 to-transparent" />
+          <div className={`absolute inset-0 ${washRightClassName}`} />
+          <div className={`absolute inset-0 ${washUpClassName}`} />
         </div>
 
         <div className="relative mx-auto flex h-full min-h-[280px] max-w-6xl flex-col justify-end px-4 pb-5 pt-12 sm:min-h-[320px] sm:px-6 sm:pb-6 sm:pt-14 md:px-10 lg:min-h-[360px]">
-          <Link
-            href="/browse"
-            className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/75 px-3 py-1.5 text-sm font-medium text-ink/70 shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-ink sm:left-6 sm:top-5"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            탐색
-          </Link>
+          {backHref ? (
+            <Link
+              href={backHref}
+              className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/75 px-3 py-1.5 text-sm font-medium text-ink/70 shadow-sm backdrop-blur-sm transition hover:bg-white hover:text-ink sm:left-6 sm:top-5"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              {backLabel}
+            </Link>
+          ) : null}
 
           <div className="mb-4 ml-auto w-full max-w-[min(100%,calc(5*92px+4*0.625rem))] text-right sm:mb-5 sm:max-w-[calc(5*108px+4*0.75rem)] md:max-w-[calc(5*118px+4*0.75rem)]">
             <p className="inline-flex items-center justify-end gap-2 rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-emerald-800 shadow-sm backdrop-blur-sm sm:text-xs">
-              TODAY TOP 10
+              {badge}
               <span
                 aria-hidden
                 className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-600"
               />
             </p>
             <h2
-              id="browse-top-rank-heading"
+              id={headingId}
               className="mt-2 text-2xl font-extrabold tracking-tight text-ink drop-shadow-[0_1px_0_rgba(255,255,255,0.9)] sm:text-3xl"
             >
               {title}
             </h2>
             <p className="mt-1.5 text-sm font-medium text-ink/70">
-              스크랩·조회가 많은 공고 순위
+              {subtitle}
             </p>
           </div>
 
