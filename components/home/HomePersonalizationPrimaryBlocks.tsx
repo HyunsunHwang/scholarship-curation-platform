@@ -76,7 +76,6 @@ export default function HomePersonalizationPrimaryBlocks({
             id="for-you-heading"
             title={forYouTitle}
             href={browseHref({ kind: "all", sort: "scraps" })}
-            subtitle="회원님을 위한 엄선"
           />
           <HorizontalShelf
             label={forYouTitle}

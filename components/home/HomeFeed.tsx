@@ -5,7 +5,6 @@ import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipC
 import BrowseTopRankHero from "@/components/browse/BrowseTopRankHero";
 import {
   CONTENT_CATEGORIES,
-  LIBRARY_CATEGORY_FILTERS,
   categoryHasData,
 } from "@/lib/content-categories";
 import { browseHref, type BrowseKind } from "@/lib/browse-data";
@@ -17,7 +16,6 @@ import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
 import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
 
-const KIND_SHELF_LIMIT = 12;
 const HOME_RANK_HERO_BG = "/images/home-rank-hero.jpg";
 
 function itemKey(item: CardScholarship) {
@@ -107,20 +105,6 @@ export default function HomeFeed({
     return buildTop10(filtered);
   }, [showBrowseRails, filtered]);
 
-  const kindShelves = useMemo(() => {
-    if (!showBrowseRails) return [];
-    return LIBRARY_CATEGORY_FILTERS.map((tab) => {
-      const items = sortByDeadline(
-        scholarships.filter(
-          (s) =>
-            (s.content_kind ?? "scholarship") === tab.key &&
-            matchesSearch(s.name, s.organization, deferredSearch)
-        )
-      ).slice(0, KIND_SHELF_LIMIT);
-      return { ...tab, items };
-    }).filter((shelf) => shelf.items.length > 0);
-  }, [showBrowseRails, scholarships, deferredSearch]);
-
   const searchShelfItems = useMemo(() => {
     if (showBrowseRails) return [];
     return sortByDeadline(filtered);
@@ -141,7 +125,7 @@ export default function HomeFeed({
           backgroundSrc={HOME_RANK_HERO_BG}
           backHref={null}
           badge="TODAY TOP 10"
-          subtitle="스크랩·조회가 많은 공고"
+          subtitle={null}
           headingId="home-top10-heading"
           imageClassName="object-cover object-[12%_78%] sm:object-[14%_72%] lg:object-[16%_68%]"
           washRightClassName="bg-linear-to-r from-transparent via-white/10 to-white/82"
@@ -187,30 +171,7 @@ export default function HomeFeed({
 
             {showBrowseRails && isLoggedIn ? afterTop10 : null}
 
-            {showBrowseRails ? (
-              kindShelves.map((shelf) => (
-                <section
-                  key={shelf.key}
-                  aria-labelledby={`kind-${shelf.key}-heading`}
-                  className="mt-8 sm:mt-10 first:mt-0"
-                >
-                  <HomeSectionTitle
-                    id={`kind-${shelf.key}-heading`}
-                    title={shelf.label}
-                    href={browseHref({ kind: shelf.key, sort: "deadline" })}
-                    subtitle={`${shelf.items.length}개 미리보기`}
-                  />
-                  <HorizontalShelf
-                    label={shelf.label}
-                    items={shelf.items}
-                    getKey={(s) => itemKey(s)}
-                    renderItem={(scholarship) => (
-                      <ShelfCard scholarship={scholarship} />
-                    )}
-                  />
-                </section>
-              ))
-            ) : (
+            {!showBrowseRails ? (
               <section
                 id="all-announcements"
                 aria-labelledby="all-heading"
@@ -241,7 +202,7 @@ export default function HomeFeed({
                   )}
                 />
               </section>
-            )}
+            ) : null}
           </>
         )}
       </div>

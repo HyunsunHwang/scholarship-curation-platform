@@ -22,7 +22,7 @@ type BrowseTopRankHeroProps = {
   backHref?: string | null;
   backLabel?: string;
   badge?: string;
-  subtitle?: string;
+  subtitle?: string | null;
   headingId?: string;
   /** next/image object-* 클래스. 피사체 위치에 맞게 오버라이드 */
   imageClassName?: string;
@@ -201,9 +201,11 @@ export default function BrowseTopRankHero({
             >
               {title}
             </h2>
-            <p className="mt-1.5 text-sm font-medium text-ink/70">
-              {subtitle}
-            </p>
+            {subtitle ? (
+              <p className="mt-1.5 text-sm font-medium text-ink/70">
+                {subtitle}
+              </p>
+            ) : null}
           </div>
 
           <div className="group/rank relative ml-auto w-full max-w-[min(100%,calc(5*92px+4*0.625rem))] sm:max-w-[calc(5*108px+4*0.75rem)] md:max-w-[calc(5*118px+4*0.75rem)]">
