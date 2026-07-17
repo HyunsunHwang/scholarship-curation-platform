@@ -360,12 +360,10 @@ async function upsertContest(row) {
   if (findErr) throw new Error(`lookup: ${findErr.message}`);
 
   if (existing?.id) {
-    // 기존 행 업데이트 시 플랫폼 조회수를 크롤 값으로 덮어쓰지 않음
-    const updateRow = { ...row };
-    delete updateRow.view_count;
+    // 조회수·스크랩은 Linkareer 값을 반영 (engagement sync와 동일 정책)
     const { data, error } = await supabase
       .from("contests")
-      .update(updateRow)
+      .update(row)
       .eq("id", existing.id)
       .select("id, name, document_files")
       .single();
@@ -614,6 +612,14 @@ async function ingestOne(item, index, total, contentKind) {
       : null;
   if (seedView != null) {
     row.view_count = seedView;
+  }
+
+  const seedScrap =
+    item.scrap_count != null && Number.isFinite(Number(item.scrap_count))
+      ? Math.max(0, Math.floor(Number(item.scrap_count)))
+      : null;
+  if (seedScrap != null) {
+    row.scrap_count = seedScrap;
   }
 
   if (!row.apply_url) {

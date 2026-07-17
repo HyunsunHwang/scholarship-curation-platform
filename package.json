@@ -54,6 +54,7 @@
     "crawl:linkareer-education": "node scripts/crawl-linkareer-contests.mjs --kind education",
     "crawl:linkareer-activity": "node scripts/crawl-linkareer-contests.mjs --kind activity",
     "crawl:linkareer:daily": "node scripts/run-linkareer-daily.mjs",
+    "sync:linkareer-engagement": "node scripts/sync-linkareer-engagement.mjs",
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs",

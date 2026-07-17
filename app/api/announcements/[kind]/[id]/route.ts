@@ -18,7 +18,7 @@ import {
   resolveContestBenefits,
   resolveScholarshipBenefits,
 } from "@/lib/benefit-categories";
-import { getContestScrapCounts } from "@/lib/contest-scrap-counts";
+import { getContestScrapCounts, effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
 import {
   getScholarshipQualMatch,
@@ -126,7 +126,10 @@ async function fetchContestPayload(
     posterImageUrl: contest.poster_image_url,
     applyUrl: contest.apply_url,
     viewCount: contest.view_count ?? 0,
-    scrapCount: scrapMap.get(id) ?? 0,
+    scrapCount: effectiveContestScrapCount(
+      contest.scrap_count,
+      scrapMap.get(id) ?? 0
+    ),
     initialBookmarked: !!bookmarkResult,
     interestLabels,
     benefits,

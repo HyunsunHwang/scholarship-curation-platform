@@ -15,6 +15,14 @@ function toCountMap(rows: ScrapCountRow[] | null | undefined) {
   return counts;
 }
 
+/** Ranking scrap = max(Linkareer/stored scrap_count, platform bookmarks) */
+export function effectiveContestScrapCount(
+  storedScrapCount: number | null | undefined,
+  bookmarkScrapCount: number
+): number {
+  return Math.max(Number(storedScrapCount) || 0, Number(bookmarkScrapCount) || 0);
+}
+
 async function fallbackScrapCounts(
   supabase: SupabaseServerClient,
   contestIds: number[]

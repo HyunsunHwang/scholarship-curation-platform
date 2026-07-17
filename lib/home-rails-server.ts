@@ -6,6 +6,10 @@ import {
   todayKoreaYYYYMMDD,
 } from "@/lib/scholarship-dates";
 import { getScholarshipScrapCounts } from "@/lib/scholarship-scrap-counts";
+import {
+  effectiveContestScrapCount,
+  getContestScrapCounts,
+} from "@/lib/contest-scrap-counts";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
 import { getCachedUniversityNames } from "@/lib/public-data";
 import {
@@ -23,7 +27,7 @@ import {
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
-/** 홈 레일/교내 카드용 — select("*") 대신 필요한 컬럼만 */
+/** ? ??/?? ??? ? select("*") ?? ??? ??? */
 const HOME_SCHOLARSHIP_CARD_SELECT =
   "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement, qual_field_codes, qual_university, qual_region, qual_school_location";
 
@@ -121,7 +125,7 @@ type CfContestRow = {
   source: string;
 };
 
-/** item-item CF + 학교 코호트 폴백 */
+/** item-item CF + ?? ??? ?? */
 export async function fetchCollaborativeCards(
   supabase: SupabaseServerClient,
   limit = HOME_RAIL_ITEM_LIMIT
@@ -145,7 +149,8 @@ export async function fetchCollaborativeCards(
   const schIds = schScores.map((r) => r.scholarship_id);
   const contestIds = contestScores.map((r) => r.contest_id);
 
-  const [schRowsResult, contestRowsResult, scrapCounts] = await Promise.all([
+  const [schRowsResult, contestRowsResult, scrapCounts, contestScrapCounts] =
+    await Promise.all([
     schIds.length > 0
       ? supabase
           .from("scholarships")
@@ -156,11 +161,12 @@ export async function fetchCollaborativeCards(
       ? supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
           )
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
     getScholarshipScrapCounts(supabase, schIds),
+    getContestScrapCounts(supabase, contestIds),
   ]);
 
   const schCards = mapScholarshipRows(
@@ -210,7 +216,7 @@ export async function fetchCollaborativeCards(
         id: c.id,
         name: c.name,
         organization: c.organization,
-        institution_type: c.organization_type || "기타",
+        institution_type: c.organization_type || "??",
         support_types: [] as string[],
         support_amount_text: c.support_amount_text,
         benefits: c.benefits ?? null,
@@ -221,6 +227,10 @@ export async function fetchCollaborativeCards(
         poster_image_url: c.poster_image_url ?? null,
         created_at: c.created_at,
         view_count: c.view_count,
+        scrap_count: effectiveContestScrapCount(
+          c.scrap_count,
+          contestScrapCounts.get(c.id) ?? 0
+        ),
         content_kind: kind,
         is_recommended: c.is_recommended,
         recommended_sort_order: c.recommended_sort_order,
@@ -231,7 +241,7 @@ export async function fetchCollaborativeCards(
       (a, b) => (contestScoreMap.get(b.id) ?? 0) - (contestScoreMap.get(a.id) ?? 0)
     );
 
-  // 장학금 CF를 앞에, 공모전 CF를 뒤에 섞되 상한 유지
+  // ??? CF? ??, ??? CF? ?? ?? ?? ??
   const merged = [...schCards, ...contestCards].slice(0, limit);
   return {
     items: merged,
@@ -239,7 +249,7 @@ export async function fetchCollaborativeCards(
   };
 }
 
-/** 교내 전용 공고 — matched에서 campus + 대학명 직접 조회 보강 */
+/** ?? ?? ?? ? matched?? campus + ??? ?? ?? ?? */
 export async function fetchHomeCampusScholarships(
   supabase: SupabaseServerClient,
   userId: string,
@@ -304,7 +314,7 @@ type BrowseEventRow = {
 };
 
 const RECENT_CONTEST_CARD_SELECT =
-  "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories";
+  "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories";
 
 export async function fetchRecentBrowseCards(
   supabase: SupabaseServerClient,
@@ -331,7 +341,7 @@ export async function fetchRecentBrowseCards(
     .filter((row) => row.content_kind !== "scholarship")
     .map((row) => row.content_id);
 
-  const [schResult, contestResult] = await Promise.all([
+  const [schResult, contestResult, contestScrapCounts] = await Promise.all([
     schIds.length > 0
       ? supabase
           .from("scholarships")
@@ -344,6 +354,7 @@ export async function fetchRecentBrowseCards(
           .select(RECENT_CONTEST_CARD_SELECT)
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
+    getContestScrapCounts(supabase, contestIds),
   ]);
 
   const contestRows = contestResult.data ?? [];
@@ -405,7 +416,7 @@ export async function fetchRecentBrowseCards(
           id: c.id,
           name: c.name,
           organization: c.organization,
-          institution_type: c.organization_type || "기타",
+          institution_type: c.organization_type || "??",
           support_types: [],
           support_amount_text: c.support_amount_text,
           benefits: c.benefits ?? null,
@@ -416,6 +427,10 @@ export async function fetchRecentBrowseCards(
           poster_image_url: c.poster_image_url ?? null,
           created_at: c.created_at,
           view_count: c.view_count,
+          scrap_count: effectiveContestScrapCount(
+            c.scrap_count,
+            contestScrapCounts.get(c.id) ?? 0
+          ),
           content_kind: kind,
           is_recommended: c.is_recommended,
           recommended_sort_order: c.recommended_sort_order,

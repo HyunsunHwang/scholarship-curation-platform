@@ -693,6 +693,8 @@ export interface Database {
           external_id: string | null;
           source_url: string | null;
           view_count: number;
+          /** Ranking scrap signal (e.g. Linkareer scrapCount) */
+          scrap_count: number;
           is_verified: boolean;
           list_on_home: boolean;
           is_recommended: boolean;
@@ -703,12 +705,12 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["contests"]["Row"],
-          "id" | "created_at" | "updated_at" | "view_count" | "document_files" | "content_kind"
+          "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind"
         > &
           Partial<
             Pick<
               Database["public"]["Tables"]["contests"]["Row"],
-              "id" | "created_at" | "updated_at" | "view_count" | "document_files" | "content_kind"
+              "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind"
             >
           >;
         Update: Partial<Database["public"]["Tables"]["contests"]["Insert"]>;

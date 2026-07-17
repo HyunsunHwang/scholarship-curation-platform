@@ -82,6 +82,7 @@ export const CONTEST_DETAIL_SELECT = [
   "note",
   "poster_image_url",
   "view_count",
+  "scrap_count",
   "interest_categories",
   "is_verified",
 ].join(", ");

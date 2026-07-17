@@ -1,6 +1,7 @@
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { buildContestCardSupportFields, contestIdsNeedingNotice } from "@/lib/support-amount";
 import type { ContentCategoryKey } from "@/lib/content-categories";
+import { effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
@@ -351,12 +352,13 @@ function mapContestRow(
     poster_image_url: string | null;
     created_at: string;
     view_count: number | null;
+    scrap_count?: number | null;
     is_recommended: boolean;
     recommended_sort_order: number | null;
     content_kind: string | null;
   },
   today: string,
-  scrapCount = 0,
+  bookmarkScrapCount = 0,
   noticeText: string | null = null
 ): CardScholarship {
   const kind = (contest.content_kind ?? "contest") as
@@ -386,7 +388,10 @@ function mapContestRow(
     poster_image_url: contest.poster_image_url,
     created_at: contest.created_at,
     view_count: contest.view_count,
-    scrap_count: scrapCount,
+    scrap_count: effectiveContestScrapCount(
+      contest.scrap_count,
+      bookmarkScrapCount
+    ),
     is_recommended: contest.is_recommended,
     recommended_sort_order: contest.recommended_sort_order,
     is_advertisement: false,
@@ -432,7 +437,7 @@ async function fetchContestPage(opts: {
   let query = supabase
     .from("contests")
     .select(
-      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind",
       { count: "exact" }
     )
     .eq("is_verified", true)
@@ -684,7 +689,7 @@ async function fetchCareerBrowsePage(opts: {
   const contestQuery = supabase
     .from("contests")
     .select(
-      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind",
       { count: "exact" }
     )
     .eq("is_verified", true)

@@ -25,7 +25,7 @@ import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
 import { CONTEST_DETAIL_SELECT } from "@/lib/detail-select";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
-import { getContestScrapCounts } from "@/lib/contest-scrap-counts";
+import { getContestScrapCounts, effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 
 const ScholarshipTabs = dynamic(
   () => import("@/app/scholarships/[id]/ScholarshipTabs"),
@@ -133,7 +133,10 @@ export default async function OpportunityDetailPage({
   if (contestResult.error || !contestResult.data) notFound();
 
   const contest = contestResult.data as unknown as Contest;
-  const scrapCount = scrapCountByContest.get(contestId) ?? 0;
+  const scrapCount = effectiveContestScrapCount(
+    contest.scrap_count,
+    scrapCountByContest.get(contestId) ?? 0
+  );
 
   const [bookmarkResult, navContext] = await Promise.all([
     user
@@ -256,7 +259,7 @@ export default async function OpportunityDetailPage({
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.5 3.75-.75.75a4.5 4.5 0 0 0-6.364 0l-.75-.75a5.625 5.625 0 0 0-7.955 7.955l7.159 7.159a1.125 1.125 0 0 0 1.59 0l7.159-7.159A5.625 5.625 0 0 0 16.5 3.75Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
                     {scrapCount.toLocaleString()}
                   </span>

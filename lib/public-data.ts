@@ -7,6 +7,7 @@ import {
   buildContestCardSupportFields,
   contestIdsNeedingNotice,
 } from "@/lib/support-amount";
+import { effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 type SiteSettingsLogoRow = Pick<
   Database["public"]["Tables"]["site_settings"]["Row"],
   "header_logo_url" | "updated_at"
@@ -199,7 +200,7 @@ export const getCachedHomeContests = unstable_cache(
         supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
           )
           .eq("is_verified", true)
           .eq("list_on_home", true)
@@ -266,7 +267,10 @@ export const getCachedHomeContests = unstable_cache(
         poster_image_url: contest.poster_image_url,
         created_at: contest.created_at,
         view_count: contest.view_count,
-        scrap_count: scrapCounts.get(contest.id) ?? 0,
+        scrap_count: effectiveContestScrapCount(
+          contest.scrap_count,
+          scrapCounts.get(contest.id) ?? 0
+        ),
         is_recommended: contest.is_recommended,
         recommended_sort_order: contest.recommended_sort_order,
         is_advertisement: false,
@@ -275,7 +279,7 @@ export const getCachedHomeContests = unstable_cache(
       };
     });
   },
-  ["home-contests-v14"],
+  ["home-contests-v15"],
   { revalidate: 60 }
 );
 
