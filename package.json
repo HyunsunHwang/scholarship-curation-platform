@@ -29,6 +29,7 @@
     "tune:yonsei-notices": "node scripts/tune-notice-sources.mjs data/notice-sources-yonsei.csv data/notice-sources-yonsei.csv yonsei_",
     "crawl:notices": "node scripts/crawl-scholarship-notices.mjs",
     "crawl:notices:db": "node scripts/crawl-scholarship-notices.mjs db",
+    "test:engine-phase-1": "node scripts/test-engine-phase-1-common-crawler.mjs",
     "poc:kosaf": "node scripts/poc-kosaf-public-search.mjs",
     "diagnose:sources": "node scripts/diagnose-notice-sources.mjs",
     "clean:notices": "node scripts/clean-crawled-notices.mjs",
