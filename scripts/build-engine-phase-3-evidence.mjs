@@ -39,54 +39,100 @@ const forbidden = {
 };
 const rawTracked = trackedPaths.filter((file) => changedPaths.includes(file) && /(^|\/)(\.tmp|tmp)(\/|$)|\.(pdf|hwp|hwpx|png|jpe?g|tiff?)$/i.test(file));
 const allForbiddenEmpty = Object.values(forbidden).every((files) => files.length === 0);
-const fixturePass = fixture.scenario_count >= 45 && fixture.failed_count === 0 && fixture.passed_count === fixture.scenario_count;
-const livePass = live.totals.source_count >= 2 &&
-  live.totals.source_count <= 5 &&
-  live.source_results.every((source) => source.status === "success" && source.notice_count >= 1 && source.notice_count <= live.bounds.notice_limit_per_source) &&
-  live.totals.pdf_document_count <= live.bounds.pdf_document_limit &&
-  live.totals.ocr_document_count <= live.bounds.ocr_document_limit &&
-  live.safety.database_read_performed === false &&
-  live.safety.database_write_performed === false &&
-  live.safety.production_access_performed === false &&
-  live.safety.external_llm_call_count === 0 &&
-  live.safety.raw_document_written_to_disk === false;
+const fixturePass = fixture.scenario_count >= 80 && fixture.failed_count === 0 && fixture.passed_count === fixture.scenario_count;
+
+const authoritativeScenario = scenarioPassed("authoritative crawl runtime executes the common-runner document hook");
+const defaultDisabledScenario = scenarioPassed("document parsing runtime is strict opt-in and disabled by default");
+const persistentCacheScenario = scenarioPassed("persistent parser cache survives a fresh runtime registry");
+const ocrAccountingScenario = scenarioPassed("PDF OCR page limit is enforced") &&
+  scenarioPassed("PDF OCR accounts for every eligible page when all are handled") &&
+  scenarioPassed("PDF OCR eligibility excludes sufficient embedded-text pages") &&
+  scenarioPassed("PDF without OCR accounts for skipped eligible pages");
+const ocrReviewScenario = scenarioPassed("PDF OCR page limit is enforced") &&
+  scenarioPassed("PDF OCR timeout preserves successful page text without clean success");
+const graphScenario = scenarioPassed("normalized graph carries compact Engine Phase 3 payload without changing identity") &&
+  scenarioPassed("document evidence handoff is compact and excludes extracted content") &&
+  scenarioPassed("PDF attachment fingerprint is linked compactly without raw bytes");
+const adapterScenario = scenarioPassed("legacy pilot adapter preserves Engine Phase 3 normalized payload");
+
+const liveCommonRunner = live.runtime_path?.common_runner_used === true &&
+  live.runtime_path?.generic_html_strategy_used === true &&
+  live.runtime_path?.document_processor_enabled === true &&
+  live.runtime_path?.standalone_list_or_detail_parser_used === false;
+const firstSources = live.first_run?.source_results ?? [];
+const replaySources = live.replay_run?.source_results ?? [];
+const liveNoticeBound = firstSources.length === live.totals?.source_count && firstSources.every((source) =>
+  source.final_status === "success" && source.notice_count >= 1 && source.notice_count <= live.bounds?.notice_limit_per_source);
+const persistentReplay = live.runtime_path?.persistent_file_cache_used === true &&
+  live.first_run?.document_count > 0 &&
+  live.first_run?.cache_miss_count >= live.totals?.html_document_count &&
+  live.replay_run?.document_count === live.first_run?.document_count &&
+  live.replay_run?.cache_hit_count >= live.totals?.html_document_count &&
+  live.replay_run?.parser_invocation_count === 0 &&
+  replaySources.length === firstSources.length;
+const liveSafety = live.safety?.database_read_performed === false &&
+  live.safety?.database_write_performed === false &&
+  live.safety?.production_access_performed === false &&
+  live.safety?.external_llm_call_count === 0 &&
+  live.safety?.raw_binary_written_to_disk === false;
+const livePass = live.totals?.source_count === 2 && liveNoticeBound && liveCommonRunner && persistentReplay &&
+  live.totals?.pdf_document_count <= live.bounds?.pdf_document_limit &&
+  live.totals?.ocr_invocation_count <= live.bounds?.ocr_document_limit && liveSafety;
 const safetyPass = allForbiddenEmpty && rawTracked.length === 0;
 
+const remediationEvidence = {
+  authoritative_crawl_path_wired: authoritativeScenario,
+  document_parsing_default_enabled: defaultDisabledScenario ? false : null,
+  document_parsing_opt_in_valid: authoritativeScenario && defaultDisabledScenario,
+  live_common_runner_used: liveCommonRunner,
+  persistent_cache_replay_valid: persistentCacheScenario && persistentReplay,
+  ocr_page_accounting_valid: ocrAccountingScenario,
+  ocr_skipped_page_manual_review_valid: ocrReviewScenario,
+  normalized_graph_handoff_valid: graphScenario,
+  phase3_payload_preserved_by_adapter: adapterScenario,
+  raw_bytes_in_graph_payload: graphScenario ? false : null,
+};
+const remediationPass = remediationEvidence.authoritative_crawl_path_wired === true &&
+  remediationEvidence.document_parsing_default_enabled === false &&
+  remediationEvidence.document_parsing_opt_in_valid === true &&
+  remediationEvidence.live_common_runner_used === true &&
+  remediationEvidence.persistent_cache_replay_valid === true &&
+  remediationEvidence.ocr_page_accounting_valid === true &&
+  remediationEvidence.ocr_skipped_page_manual_review_valid === true &&
+  remediationEvidence.normalized_graph_handoff_valid === true &&
+  remediationEvidence.phase3_payload_preserved_by_adapter === true &&
+  remediationEvidence.raw_bytes_in_graph_payload === false;
+
 const report = {
-  phase: "Engine Phase 3 — HTML/PDF/HWP/이미지 파싱",
-  phase_key: "engine-phase-3",
+  phase: "Engine Phase 3 — End-to-End Integration Remediation",
+  phase_key: "engine-phase-3-remediation",
   generated_at: new Date().toISOString(),
   base_sha: baseSha,
-  overall_result: fixturePass && livePass && safetyPass ? "PASS" : "HOLD",
-  implementation_scope: "Phase 1/2 common-runner document parsing hook, structured HTML, PDF text/OCR fallback, shared image OCR, HWP/HWPX capability handling, quality states, and deterministic cache",
+  overall_result: fixturePass && livePass && safetyPass && remediationPass ? "PASS" : "HOLD",
+  implementation_scope: "Opt-in authoritative crawler wiring, bounded attachment transport, persistent cache replay, conservative PDF OCR accounting, and compact normalized graph handoff",
+  remediation_evidence: remediationEvidence,
+  evidence_scenarios: {
+    authoritative_path: "authoritative crawl runtime executes the common-runner document hook",
+    default_disabled: "document parsing runtime is strict opt-in and disabled by default",
+    persistent_cache: "persistent parser cache survives a fresh runtime registry",
+    ocr_skipped_pages: "PDF OCR page limit is enforced",
+    normalized_graph: "normalized graph carries compact Engine Phase 3 payload without changing identity",
+    adapter_preservation: "legacy pilot adapter preserves Engine Phase 3 normalized payload",
+  },
   architecture: {
     authoritative_crawler_runner: "lib/crawler-engine/common-runner.mjs",
+    authoritative_crawl_script: "scripts/crawl-scholarship-notices.mjs",
     optional_document_hook: "processNoticeDocuments",
+    opt_in_variable: "CRAWL_DOCUMENT_PARSING_ENABLED",
+    default_enabled: false,
+    persistent_cache_directory: ".tmp/engine-phase-3/cache/",
     document_contract: "engine-phase-3-document-result/v1",
+    normalized_payload_path: "ingestion_notice_revisions.normalized_payload.engine_phase_3",
     parallel_crawler_created: false,
     parallel_identity_model_created: false,
     duplicate_or_lifecycle_decision_added: false,
   },
   supported_document_formats: ["html", "pdf", "image", "hwp", "hwpx"],
-  parser_registry_summary: {
-    registry_present: true,
-    capability_detection: true,
-    parser_override_injection: true,
-    notice_processor_integration: true,
-  },
-  ocr_capability_summary: {
-    shared_adapter: true,
-    direct_image_and_pdf_page_reuse: true,
-    default_runtime_mode: "explicit_unavailable_until_adapter_selected",
-    optional_engine: "tesseract.js",
-  },
-  hwp_capability_summary: {
-    hwp_signature_detection: true,
-    hwpx_package_detection: true,
-    hwpx_xml_extraction: true,
-    binary_hwp_adapter_injection: true,
-    binary_hwp_builtin_parser: false,
-  },
   capabilities: {
     html_structured_blocks: scenarioPassed("HTML headings and paragraphs preserve source order"),
     html_table_structure: scenarioPassed("HTML rowspan and colspan metadata are retained"),
@@ -104,24 +150,13 @@ const report = {
     parser_version_invalidation: scenarioPassed("cache key changes with parser version"),
     corrupt_cache_reparse: scenarioPassed("corrupt file cache is ignored and replaced"),
   },
-  fixture_validation_matrix: {
-    deterministic_rerun: fixture.deterministic_rerun_match === true,
-    html_table_structure: scenarioPassed("HTML rowspan and colspan metadata are retained"),
-    pdf_text_extraction: scenarioPassed("PDF embedded text is extracted"),
-    scanned_pdf_ocr_reuse: scenarioPassed("scanned PDF uses shared OCR fallback"),
-    image_ocr: scenarioPassed("high-confidence image OCR succeeds"),
-    hwp_only_manual_review: scenarioPassed("HWP-only primary notice requires manual review"),
-    cache_hit: scenarioPassed("registry positive cache avoids reparsing"),
-    negative_cache: scenarioPassed("registry deterministic negative cache avoids retry"),
-    parser_version_invalidation: scenarioPassed("cache key changes with parser version"),
-    byte_fingerprint: scenarioPassed("byte fingerprint is deterministic"),
-    normalized_text_fingerprint: scenarioPassed("same bytes produce same evidence fingerprints"),
-  },
   fixture_validation: fixture,
   bounded_live_dry_run: {
     mode: live.mode,
+    runtime_path: live.runtime_path,
     bounds: live.bounds,
-    source_results: live.source_results,
+    first_run: live.first_run,
+    replay_run: live.replay_run,
     totals: live.totals,
   },
   safety: {
@@ -139,9 +174,9 @@ const report = {
   },
   non_goals_preserved: safetyPass,
   unresolved_risks: [
-    "Binary HWP extraction requires an injected deployment capability; HWP-only primary notices fail closed to manual review when it is unavailable.",
-    "The bounded live sample observed HTML notices but no PDF, HWP/HWPX, or image attachment, so those formats are supported by synthetic/minimized fixture evidence rather than this point-in-time live sample.",
-    "Tesseract language data availability depends on deployment packaging or network configuration; OCR failures remain explicit and are not cached as deterministic failures.",
+    "Binary HWP extraction still requires an injected deployment adapter; unavailable HWP-only primary documents remain manual-review items.",
+    "Tesseract language-data availability depends on deployment packaging; OCR failures and timeouts remain explicit and are not reported as clean success.",
+    "The bounded live sample may contain HTML only; PDF, HWP/HWPX, image, and OCR behavior is therefore additionally covered by minimized fixture evidence.",
   ],
 };
 
@@ -149,6 +184,6 @@ fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
 console.log(`engine_phase_3_result=${report.overall_result}`);
 console.log(`fixture_tests=${fixture.passed_count}/${fixture.scenario_count}`);
-console.log(`live_sources=${live.totals.successful_source_count}/${live.totals.source_count}`);
+console.log(`live_sources=${firstSources.filter((source) => source.final_status === "success").length}/${live.totals.source_count}`);
 console.log(`report=${outputPath}`);
 if (report.overall_result !== "PASS") process.exitCode = 1;

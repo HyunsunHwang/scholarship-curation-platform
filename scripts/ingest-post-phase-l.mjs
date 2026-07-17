@@ -96,6 +96,7 @@ export function normalizePilotInput(input) {
           image_urls: notice.imageUrls ?? [],
           attachment_metadata: notice.attachmentMetadata ?? [],
           body_quality_status: notice.bodyQualityStatus,
+          normalized_payload: notice.normalized_payload ?? {},
           parser_version: "main-runner",
           provenance: {
             source_key: row.sourceId,

@@ -1,83 +1,70 @@
-# Engine Phase 3 — HTML/PDF/HWP/이미지 파싱
+# Engine Phase 3 — 문서 파싱과 End-to-End 연결
 
-## 목표와 경계
+## 범위
 
-Engine Phase 3는 Phase 1/2 공통 크롤러가 수집한 공지 본문과 첨부 문서를 하나의 결과 계약으로 파싱한다. 공통 러너의 `processNoticeDocuments` 선택 훅을 사용하므로, 훅을 전달하지 않는 기존 실행은 변경되지 않는다. 별도 크롤러, 별도 source identity, 별도 ingest 경로는 만들지 않았다.
+Engine Phase 3는 Phase 1/2 공통 크롤러가 수집한 공지 본문과 첨부 문서를 하나의 문서 결과 계약으로 파싱한다. 이번 remediation은 기존 파서 기반을 다시 만들지 않고 실제 `crawl:notices` 실행 경로, persistent cache, OCR bounded 판정, Post-Phase L 정규화 그래프까지 연결한다.
 
-이 단계의 산출물은 byte/text fingerprint와 추출 품질 증거다. 동일 공지 판정, lifecycle 결정, 자동 병합은 Phase 5 책임이므로 여기서 수행하지 않는다.
+이 단계는 중복 공지 판정이나 lifecycle 결정을 수행하지 않는다. byte/text fingerprint는 Phase 5가 사용할 증거일 뿐이며 semantic duplicate, cross-source merge, changed-content, moved-URL 판정은 Phase 5 책임이다.
 
-## 공통 결과 계약
+## authoritative crawler 연결
 
-모든 결과는 `engine-phase-3-document-result/v1`을 사용하며 다음 정보를 포함한다.
+`npm run crawl:notices`가 실행하는 `scripts/crawl-scholarship-notices.mjs`가 authoritative 경로다. Phase 3는 다음 환경변수로만 활성화된다.
 
-- source 및 notice identity reference
-- 감지 형식과 MIME
-- byte 크기 및 SHA-256
-- parser/OCR 이름과 버전
-- 추출 방식 및 상태
-- 원문 순서가 있는 structured blocks
-- 정규화 텍스트 및 SHA-256
-- cache hit/reparse 정보
-- 품질 상태, 수동 검토 여부, 제한된 오류 요약
+```text
+CRAWL_DOCUMENT_PARSING_ENABLED=true
+```
 
-`byte_sha256`은 입력 파일 동일성 증거이며 `normalized_text_sha256`은 추출·정규화 결과의 동일성 증거다. 둘 다 Phase 5가 판단에 사용할 수 있는 evidence일 뿐, 이 단계에서 중복 판정을 뜻하지 않는다.
+기본값은 `false`다. 비활성 상태에서는 registry와 processor를 만들지 않고 Phase 1/2 결과 shape를 유지하며, 첨부 다운로드나 OCR도 실행하지 않는다. 활성 상태에서는 다음을 수행한다.
 
-## 형식별 처리
+- `.tmp/engine-phase-3/cache/` persistent file cache 생성
+- parser registry 및 `createNoticeDocumentProcessor()` 생성
+- 공통 러너의 `processNoticeDocuments` hook에 processor 전달
+- notice에 `document_extraction_results`와 compact `document_quality_summary` 추가
+- local JSON의 `observedItems.documentEvidence`에 count/status/fingerprint/cache 요약 추가
 
-### HTML
+전체 extracted text는 실행 summary에 중복 복사하지 않는다. full document result는 기존 notice local output에만 남는다.
 
-본문 selector가 있으면 우선 적용하고, 없으면 `main`, `article`, `[role=main]`, `body` 순서로 선택한다. navigation/header/footer/form과 일반적인 breadcrumb/pagination 노이즈를 제거한다. heading, paragraph, list, blockquote, table, image reference를 원문 순서대로 보존한다.
+## 첨부 transport
 
-표는 caption, header, row, cell 좌표, `rowspan`, `colspan`을 함께 남긴다.
+첨부 PDF/HWP/HWPX/image transport는 기존 crawler의 User-Agent, IPv4 dispatcher, timeout, retry, redirect, 오류 정제 관례를 재사용한다. GET body는 설정된 최대 byte 수를 넘으면 중단되며 raw binary는 disk에 저장하지 않고 `Buffer`로 parser에 전달한다.
 
-### PDF
+`inspectAsset`은 가능한 경우 HEAD로 ETag, Last-Modified, Content-Length, Content-Type을 관찰한다. HEAD 실패는 notice 전체 실패가 아니며 GET과 byte-hash cache로 진행한다. URL이 같다는 이유만으로 다운로드를 생략하지 않는다. 안정적인 ETag 또는 Last-Modified+Content-Length가 있을 때만 preflight cache를 사용한다. 첨부 하나의 실패는 `download_failed`와 manual review로 기록하고 source 전체를 parser error로 만들지 않는다.
 
-PDF.js로 embedded text를 페이지 단위로 추출한다. 텍스트가 기준보다 짧은 페이지만 canvas로 렌더링하여 공유 image OCR adapter에 전달한다. 따라서 mixed PDF에서 텍스트가 충분한 페이지를 다시 OCR하지 않는다.
+## 공통 결과 계약과 graph handoff
 
-byte/page/OCR page 제한을 초과하면 `bounded_limit_exceeded`로 닫힌다. 암호화·보호 문서, 손상 문서, OCR 도구 부재도 명시적 상태와 수동 검토 사유로 남는다.
+문서 결과는 `engine-phase-3-document-result/v1` 계약을 사용한다. parser가 만든 결과에는 format/MIME, byte와 normalized-text SHA-256, parser/OCR 버전, extraction/quality/manual-review 상태, structured block, cache 증거가 포함된다.
 
-### 이미지 OCR
+Post-Phase L 그래프에는 다음 compact 경로만 전달한다.
 
-이미지와 PDF fallback은 같은 OCR adapter 계약을 사용한다. 기본 registry는 네트워크나 언어 데이터 준비를 암묵적으로 가정하지 않는 unavailable adapter를 사용한다. 배포 환경에서 준비된 adapter를 주입하거나 `createTesseractImageOcrAdapter`를 명시적으로 선택할 수 있다.
+```text
+ingestion_notice_revisions.normalized_payload.engine_phase_3
+```
 
-OCR 실패는 transient parser failure로 처리되어 deterministic negative cache에 저장되지 않는다.
+기존 `normalized_payload`는 merge하여 보존한다. compact document evidence에는 fingerprint, format, parser, status, quality, manual-review, OCR page count, cache status를 담되 `extracted_text`, normalized full text, raw bytes, error stack은 넣지 않는다. `normalizePilotInput()`의 legacy `perSource/newNotices` 경로도 같은 payload를 보존한다. 새 table, graph, notice identity 모델은 만들지 않는다.
 
-### HWP/HWPX
+## PDF OCR bounded 판정
 
-HWP는 OLE signature, HWPX는 ZIP package 내부의 `mimetype`과 `Contents/section*.xml` 구조로 판별한다. 일반 ZIP을 HWPX로 오인하지 않는다.
+PDF parser는 다음 수치를 별도로 기록한다.
 
-HWPX는 XML section text를 추출한다. binary HWP는 deployment adapter capability가 주입된 경우에만 추출한다. parser가 없을 때 신청서·증빙 양식은 `tool_unavailable`, 공지 본문을 HWP에만 담은 경우는 `hwp_only_primary_document`로 분리해 수동 검토한다.
+- `ocr_eligible_page_count`: embedded text가 기준보다 부족해 OCR 후보가 된 페이지 수
+- `ocr_processed_page_count`: shared OCR adapter가 실제 실행된 페이지 수(성공·실패·timeout 포함)
+- `ocr_skipped_page_count`: 후보지만 bounded policy 또는 tool unavailable로 실행하지 못한 페이지 수
 
-## 품질 상태
+항상 `eligible = processed + skipped`를 만족한다. embedded text가 충분한 페이지는 eligible에 포함하지 않는다.
 
-주요 상태는 다음과 같다.
+`ocr_skipped_page_count > 0`이면 일부 OCR text와 content block은 보존하되 clean `ocr_succeeded`로 보고하지 않는다. max OCR page 제한이면 `bounded_limit_exceeded`와 `max_ocr_pages_exceeded`/`unprocessed_scanned_pages`를 기록한다. OCR tool unavailable 또는 timeout도 각각 명시적인 실패·manual-review 상태가 되며 이미 성공한 다른 페이지의 text는 버리지 않는다.
 
-- `text_sufficient`
-- `text_short_needs_review`
-- `table_structure_preserved`
-- `image_only_detected`
-- `ocr_succeeded`
-- `ocr_low_quality`
-- `hwp_only_primary_document`
-- `tool_unavailable`
-- `parser_failed`
-- `encrypted_or_protected`
-- `bounded_limit_exceeded`
+## 파서와 cache
 
-텍스트 길이, replacement character, 기호 비율, OCR confidence, block/table/image 수를 품질 지표로 사용한다. 충분하지 않은 결과를 성공으로 승격하지 않는다.
+- HTML: heading, paragraph, list, table, image/attachment reference와 source order 보존
+- PDF: PDF.js embedded text, 부족한 페이지만 shared image OCR
+- Image: PDF fallback과 같은 OCR adapter 계약 사용
+- HWPX: package 구조 검증 후 XML section text 추출
+- Binary HWP: injected deployment adapter가 있을 때만 추출; 없으면 명시적 manual review
 
-## 캐시
+parser cache key는 byte SHA-256, parser/OCR 이름과 버전, normalization 버전, bounded option으로 계산한다. 성공 결과 및 결정적인 capability 실패만 cache하며 download/parser/OCR transient failure는 negative cache하지 않는다. 손상된 JSON cache entry는 무시하고 reparse한다.
 
-asset preflight는 URL만으로 재사용하지 않는다. ETag가 있거나 Last-Modified와 Content-Length가 함께 있는 경우에만 기존 evidence를 재사용해 다운로드를 생략한다. validator가 없거나 바뀌면 다시 다운로드한 뒤 byte SHA-256으로 확인한다.
-
-parser cache key는 byte SHA-256, parser 이름/버전, OCR engine 이름/버전, normalization 버전, bounded options로 계산한다.
-
-- 성공 결과는 positive cache에 저장한다.
-- `tool_unavailable`, `unsupported_format`, `encrypted_or_protected`처럼 같은 capability와 bytes에서 결정적인 실패만 negative cache에 저장한다.
-- download/parser/OCR 실패는 transient일 수 있어 negative cache에 저장하지 않는다.
-- JSON cache entry가 손상되면 무시하고 재파싱한 뒤 `corrupt_cache_entry`와 reparse 사유를 남긴다.
-
-repository file cache는 `.tmp/` 아래에서만 사용하고 `.gitignore`로 추적을 차단한다.
+live dry-run은 첫 registry를 폐기한 다음 같은 cache directory를 사용하는 새 registry/process로 replay하여 `hit_success`와 parser invocation 0을 검증한다. 같은 in-memory registry에서 두 번 호출해 만든 hit는 persistent replay 증거로 인정하지 않는다.
 
 ## 검증
 
@@ -88,15 +75,14 @@ npm run evidence:engine-phase-3
 npm run validate:engine-phase-3
 ```
 
-Fixture suite는 73개 시나리오를 사용하며 PDF와 HWPX를 실행 중 메모리에서 생성한다. raw PDF/HWP/HWPX/image fixture는 Git에 저장하지 않는다.
+focused suite는 authoritative opt-in 실행, default-disabled 호환성, persistent cache 재사용, OCR eligible/processed/skipped 산술과 partial-text 보존, compact graph handoff, legacy adapter 보존을 실제 실행 시나리오로 검증한다. fixture PDF/HWPX는 실행 중 메모리에서 생성하며 raw PDF/HWP/HWPX/image fixture를 Git에 저장하지 않는다.
 
-bounded live dry-run은 등록된 공개 소스 2개에서 각 1개 공지만 읽는다. PDF 최대 2개, OCR 문서 최대 2개, PDF 최대 5페이지로 제한한다. 현재 관찰에서는 두 소스 모두 HTML 공지 1건씩 추출했으며 첨부 PDF/HWP/image가 표본에 없어 live OCR 호출은 0이었다.
+bounded live dry-run은 `korea_002`, `yonsei_001` 두 공개 source를 generic strategy와 공통 러너로 source당 공지 1건만 읽는다. timeout 25초, retry 1회, PDF 최대 2개, OCR 대상 최대 2개, PDF 최대 5페이지다. live 표본에 PDF/HWP/image가 없더라도 그것만으로 HOLD하지 않고 해당 형식은 fixture 증거와 함께 판단한다.
 
-## 알려진 한계
+## 남은 위험
 
-- binary HWP 본문 추출은 주입된 deployment capability가 필요하다.
-- bounded live 관찰은 전체 소스와 모든 문서 형식의 운영 품질을 증명하지 않는다.
-- Tesseract 언어 데이터는 배포 시 로컬 패키징 또는 허용된 다운로드 구성이 필요하다.
-- PDF 표의 시각적 셀 구조 복원은 이 단계 범위가 아니며 페이지 텍스트 순서를 보존한다.
+- binary HWP 본문 추출은 배포 환경에 주입되는 adapter가 필요하다.
+- Tesseract 언어 데이터 가용성은 배포 packaging에 의존한다.
+- bounded live 표본은 시점에 따라 HTML만 포함할 수 있어 모든 문서 형식의 live 품질을 대표하지 않는다.
 
-DB read/write, production 접근, migration, UI, API/cron/queue/worker, 외부 LLM 호출은 수행하거나 추가하지 않았다.
+DB read/write, production 접근, migration, UI, API/cron/queue/worker, 외부 LLM 호출은 이 단계에서 수행하거나 추가하지 않는다.

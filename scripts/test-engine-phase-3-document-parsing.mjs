@@ -11,6 +11,7 @@ import {
   createDocumentParseCache,
   createDocumentParserRegistry,
   createImageOcrAdapter,
+  createCrawlerDocumentRuntime,
   createNoticeDocumentProcessor,
   detectDocumentFormat,
   detectHwpFormat,
@@ -21,10 +22,16 @@ import {
   parseImageDocument,
   parsePdfDocument,
   isEncryptedPdfError,
+  isDocumentParsingEnabled,
   sha256Bytes,
+  summarizeNoticeDocumentEvidence,
   shouldCacheDocumentResult,
 } from "../lib/crawler-engine/document-parsing/index.mjs";
-import { runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs";
+import { runBoundedCrawlerSource, runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs";
+import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
+import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
+import { createAuthoritativeDocumentRuntime, fetchUrlWithMetadata } from "./crawl-scholarship-notices.mjs";
+import { normalizePilotInput } from "./ingest-post-phase-l.mjs";
 
 const tests = [];
 function test(name, operation) { tests.push({ name, operation }); }
@@ -163,6 +170,52 @@ test("PDF OCR page limit is enforced", async () => {
   const fixture = successfulOcr();
   const result = await parsePdfDocument({ bytes: await textPdf(["", ""]) }, { ocrAdapter: fixture.adapter, maxOcrPages: 1 });
   assert.equal(result.ocr_invocation_count, 1);
+  assert.equal(result.ocr_eligible_page_count, 2);
+  assert.equal(result.ocr_processed_page_count, 1);
+  assert.equal(result.ocr_skipped_page_count, 1);
+  assert.equal(result.extraction_status, "bounded_limit_exceeded");
+  assert.equal(result.manual_review_required, true);
+  assert.notEqual(result.quality_status, "ocr_succeeded");
+  assert.match(result.normalized_text, /Synthetic OCR/);
+});
+test("PDF OCR accounts for every eligible page when all are handled", async () => {
+  const result = await parsePdfDocument({ bytes: await textPdf(["", ""]) }, { ocrAdapter: successfulOcr().adapter, maxOcrPages: 2 });
+  assert.equal(result.ocr_eligible_page_count, 2);
+  assert.equal(result.ocr_processed_page_count, 2);
+  assert.equal(result.ocr_skipped_page_count, 0);
+  assert.equal(result.ocr_eligible_page_count, result.ocr_processed_page_count + result.ocr_skipped_page_count);
+});
+test("PDF OCR eligibility excludes sufficient embedded-text pages", async () => {
+  const result = await parsePdfDocument({ bytes: await textPdf(["Embedded scholarship notice text sufficiently long to remain readable without OCR fallback.", ""]) }, { ocrAdapter: successfulOcr().adapter, maxOcrPages: 1 });
+  assert.equal(result.ocr_eligible_page_count, 1);
+  assert.equal(result.ocr_processed_page_count, 1);
+  assert.equal(result.ocr_skipped_page_count, 0);
+});
+test("PDF without OCR accounts for skipped eligible pages", async () => {
+  const result = await parsePdfDocument({ bytes: await textPdf(["", ""]) });
+  assert.equal(result.ocr_eligible_page_count, 2);
+  assert.equal(result.ocr_processed_page_count, 0);
+  assert.equal(result.ocr_skipped_page_count, 2);
+  assert.equal(result.extraction_status, "tool_unavailable");
+  assert.equal(result.manual_review_required, true);
+});
+test("PDF OCR timeout preserves successful page text without clean success", async () => {
+  let callCount = 0;
+  const adapter = createImageOcrAdapter({
+    engineName: "fixture-sequential-ocr",
+    engineVersion: "1",
+    async recognize() {
+      callCount += 1;
+      if (callCount === 1) return { text: "Retained scholarship OCR text from the first successfully processed page.", confidence: 90 };
+      return new Promise(() => {});
+    },
+  });
+  const result = await parsePdfDocument({ bytes: await textPdf(["", ""]) }, { ocrAdapter: adapter, maxOcrPages: 2, ocrTimeoutMs: 5 });
+  assert.equal(result.ocr_eligible_page_count, 2);
+  assert.equal(result.ocr_processed_page_count, 2);
+  assert.equal(result.ocr_skipped_page_count, 0);
+  assert.equal(result.extraction_status, "parser_failed");
+  assert.match(result.normalized_text, /Retained scholarship OCR text/);
 });
 test("PDF total page limit is enforced", async () => assert.equal((await parsePdfDocument({ bytes: await textPdf(["a", "b"]) }, { maxPages: 1 })).extraction_status, "bounded_limit_exceeded"));
 test("PDF byte limit is enforced", async () => assert.equal((await parsePdfDocument({ bytes: await textPdf(["a"]) }, { maxBytes: 5 })).extraction_status, "bounded_limit_exceeded"));
@@ -319,6 +372,143 @@ test("common runner remains unchanged without document hook", async () => {
   const strategy = { name: "fixture", parseList: () => [{ noticeUrl: "https://example.invalid/n" }], normalizeNotice: ({ item }) => ({ ...item, marker: "legacy" }) };
   const result = await runCommonCrawlerSource({ source: { sourceId: "fixture", sourceName: "Fixture", listUrl: "https://example.invalid/list" }, inventoryRows: [{ source_id: "fixture" }], strategy, fetchHtml: async () => "fixture", fetchDetails: false });
   assert.equal(result.notices[0].marker, "legacy"); assert.equal("document_extraction_results" in result.notices[0], false);
+});
+test("document parsing runtime is strict opt-in and disabled by default", async () => {
+  assert.equal(isDocumentParsingEnabled(undefined), false);
+  assert.equal(isDocumentParsingEnabled("1"), false);
+  assert.equal(isDocumentParsingEnabled("true"), true);
+  const runtime = createCrawlerDocumentRuntime();
+  assert.equal(runtime.enabled, false);
+  assert.equal(runtime.registry, null);
+  assert.equal(runtime.processNoticeDocuments, null);
+  const result = await runCommonCrawlerSource({
+    source: { sourceId: "fixture", sourceName: "Fixture", listUrl: "https://example.invalid/list" },
+    inventoryRows: [{ source_id: "fixture" }],
+    strategy: { parseList: () => [{ noticeUrl: "https://example.invalid/n" }], normalizeNotice: ({ item }) => ({ ...item, marker: "legacy" }) },
+    fetchHtml: async () => "fixture",
+    fetchDetails: false,
+    processNoticeDocuments: runtime.processNoticeDocuments,
+  });
+  assert.equal(result.notices[0].marker, "legacy");
+  assert.equal("document_extraction_results" in result.notices[0], false);
+});
+test("authoritative crawl runtime executes the common-runner document hook", async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "engine-phase-3-authoritative-"));
+  try {
+    const runtime = createAuthoritativeDocumentRuntime({ enabled: true, cacheDirectory: directory, inspectAsset: null, fetchAsset: null });
+    const strategy = createGenericHtmlStrategy({ parseListHtml: () => [{ title: "Notice", noticeUrl: "https://example.invalid/n" }] });
+    const result = await runCommonCrawlerSource({
+      source: { sourceId: "fixture", sourceName: "Fixture", listUrl: "https://example.invalid/list" },
+      inventoryRows: [{ source_id: "fixture" }],
+      strategy,
+      fetchHtml: async (url) => url.endsWith("/list") ? "<a>list</a>" : longHtml,
+      processNoticeDocuments: runtime.processNoticeDocuments,
+    });
+    const notice = result.notices[0];
+    assert.equal(result.result_status, "success");
+    assert.equal(notice.document_extraction_results.length, 1);
+    assert.equal(notice.document_quality_summary.document_count, 1);
+    assert.equal(notice.normalized_payload.engine_phase_3.document_count, 1);
+    assert.equal(runtime.registry.parserInvocationCount, 1);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+test("persistent parser cache survives a fresh runtime registry", async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "engine-phase-3-persistent-"));
+  const request = { source: { sourceId: "fixture" }, detailHtml: longHtml, notice: { source_id: "fixture", noticeUrl: "https://example.invalid/n", body: "Readable notice body" } };
+  try {
+    const firstRuntime = createCrawlerDocumentRuntime({ enabled: true, cacheDirectory: directory });
+    const first = await firstRuntime.processNoticeDocuments(request);
+    const replayRuntime = createCrawlerDocumentRuntime({ enabled: true, cacheDirectory: directory });
+    const replay = await replayRuntime.processNoticeDocuments(request);
+    assert.equal(first.document_extraction_results[0].cache_status, "miss");
+    assert.equal(replay.document_extraction_results[0].cache_status, "hit_success");
+    assert.equal(replayRuntime.registry.parserInvocationCount, 0);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+test("authoritative asset transport enforces the byte bound", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(Buffer.alloc(6), { status: 200, headers: { "content-length": "6", "content-type": "application/pdf" } });
+  try {
+    await assert.rejects(
+      fetchUrlWithMetadata("https://example.invalid/a.pdf", { maxBytes: 5, retryCount: 0, timeoutMs: 100 }),
+      (error) => error?.code === "bounded_limit_exceeded",
+    );
+  } finally { globalThis.fetch = originalFetch; }
+});
+test("authoritative asset transport returns validators and final metadata", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => {
+    const response = new Response(Buffer.from("fixture"), { status: 200, headers: { etag: "fixture-v1", "last-modified": "Thu, 17 Jul 2026 00:00:00 GMT", "content-length": "7", "content-type": "text/plain" } });
+    Object.defineProperty(response, "url", { value: "https://example.invalid/final.txt" });
+    return response;
+  };
+  try {
+    const result = await fetchUrlWithMetadata("https://example.invalid/a.txt", { maxBytes: 10, retryCount: 0, timeoutMs: 100 });
+    assert.equal(result.finalUrl, "https://example.invalid/final.txt");
+    assert.equal(result.etag, "fixture-v1");
+    assert.equal(result.contentLength, 7);
+    assert.equal(result.bytes.toString(), "fixture");
+  } finally { globalThis.fetch = originalFetch; }
+});
+test("document evidence handoff is compact and excludes extracted content", async () => {
+  const processor = createNoticeDocumentProcessor({ registry: createDocumentParserRegistry() });
+  const notice = await processor({ source: { sourceId: "fixture" }, detailHtml: longHtml, notice: { source_id: "fixture", noticeUrl: "https://example.invalid/n", body: "Readable notice body", normalized_payload: { existing: true } } });
+  const payload = notice.normalized_payload.engine_phase_3;
+  const serialized = JSON.stringify(payload);
+  assert.equal(notice.normalized_payload.existing, true);
+  assert.equal(payload.document_count, 1);
+  assert.match(payload.documents[0].byte_sha256, /^[a-f0-9]{64}$/);
+  assert.equal("extracted_text" in payload.documents[0], false);
+  assert.equal("normalized_text" in payload.documents[0], false);
+  assert.doesNotMatch(serialized, /Synthetic Scholarship Notice/);
+  assert.equal(summarizeNoticeDocumentEvidence(notice).document_count, 1);
+});
+test("normalized graph carries compact Engine Phase 3 payload without changing identity", async () => {
+  const runtime = createCrawlerDocumentRuntime({ enabled: true });
+  const strategy = createGenericHtmlStrategy({ parseListHtml: () => [{ title: "Notice", noticeUrl: "https://example.invalid/n" }] });
+  const result = await runBoundedCrawlerSource({
+    source: { sourceId: "fixture", sourceName: "Fixture", listUrl: "https://example.invalid/list" },
+    inventoryRows: [{ source_id: "fixture" }],
+    strategy,
+    fetchHtml: async (url) => url.endsWith("/list") ? "<a>list</a>" : longHtml,
+    processNoticeDocuments: runtime.processNoticeDocuments,
+    retryCount: 0,
+  });
+  const input = {
+    generated_at: "2026-07-17T00:00:00.000Z",
+    run: { idempotency_key: "engine-phase-3-graph", execution_mode: "fixture" },
+    source_results: [result],
+  };
+  const plan = buildNormalizedGraphPlan(input, { generatedAt: input.generated_at });
+  const revision = plan.tables.ingestion_notice_revisions[0];
+  const graphNotice = plan.tables.ingestion_notices[0];
+  assert.equal(graphNotice.canonical_url, "https://example.invalid/n");
+  assert.equal(revision.normalized_payload.engine_phase_3.contract_version, "engine-phase-3-document-result/v1");
+  assert.equal(revision.normalized_payload.engine_phase_3.documents[0].detected_format, "html");
+  assert.equal("extracted_text" in revision.normalized_payload.engine_phase_3.documents[0], false);
+  assert.deepEqual(Object.keys(plan.tables).sort(), ["crawled_notices_compatibility", "ingestion_crawl_runs", "ingestion_notice_assets", "ingestion_notice_occurrences", "ingestion_notice_revisions", "ingestion_notice_url_aliases", "ingestion_notices", "ingestion_source_run_results", "review_items"].sort());
+});
+test("PDF attachment fingerprint is linked compactly without raw bytes", async () => {
+  const bytes = await textPdf(["Synthetic PDF attachment scholarship eligibility and deadline evidence."]);
+  const processor = createNoticeDocumentProcessor({
+    registry: createDocumentParserRegistry(),
+    fetchAsset: async () => ({ bytes, finalUrl: "https://example.invalid/a.pdf", mimeType: "application/pdf" }),
+  });
+  const notice = await processor({ source: { sourceId: "fixture" }, notice: { source_id: "fixture", noticeUrl: "https://example.invalid/n", body: "Readable body", attachment_metadata: [{ url: "https://example.invalid/a.pdf", filename: "a.pdf" }] } });
+  const attachment = notice.normalized_payload.engine_phase_3.documents.find((document) => document.detected_format === "pdf");
+  assert.equal(attachment.original_url, "https://example.invalid/a.pdf");
+  assert.match(attachment.byte_sha256, /^[a-f0-9]{64}$/);
+  assert.equal("bytes" in attachment, false);
+  assert.equal("extracted_text" in attachment, false);
+});
+test("legacy pilot adapter preserves Engine Phase 3 normalized payload", () => {
+  const phase3 = { contract_version: "engine-phase-3-document-result/v1", document_count: 1, documents: [] };
+  const normalized = normalizePilotInput({
+    runAt: "2026-07-17T00:00:00.000Z",
+    perSource: [{ sourceId: "fixture", sourceName: "Fixture", crawledCount: 1, matchedCount: 1 }],
+    newNotices: [{ sourceId: "fixture", title: "Notice", noticeUrl: "https://example.invalid/n", content: "Body", normalized_payload: { engine_phase_3: phase3 } }],
+  });
+  assert.deepEqual(normalized.source_results[0].notices[0].normalized_payload.engine_phase_3, phase3);
 });
 
 let passed = 0;
