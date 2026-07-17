@@ -13,6 +13,10 @@ import { buildContinueWatching } from "@/lib/home-rails";
 import HomeSectionTitle from "./HomeSectionTitle";
 import HorizontalShelf from "./HorizontalShelf";
 
+function itemKey(item: Pick<CardScholarship, "id" | "content_kind">) {
+  return `${item.content_kind ?? "scholarship"}-${item.id}`;
+}
+
 function toCard(item: RecentViewItem): CardScholarship {
   return {
     id: item.id,
@@ -27,16 +31,43 @@ function toCard(item: RecentViewItem): CardScholarship {
   };
 }
 
+/** 홈 카탈로그에 있으면 지원혜택 문구를 붙여 이어서 보기 폴백을 없앤다 */
+function enrichWithCatalog(
+  card: CardScholarship,
+  catalogByKey: Map<string, CardScholarship>
+): CardScholarship {
+  const hit = catalogByKey.get(itemKey(card));
+  if (!hit) return card;
+  return {
+    ...card,
+    support_amount_text: hit.support_amount_text ?? card.support_amount_text,
+    benefits: hit.benefits ?? card.benefits,
+    benefit_note: hit.benefit_note ?? card.benefit_note,
+    benefit_notice_text: hit.benefit_notice_text ?? card.benefit_notice_text,
+    card_support_line: hit.card_support_line ?? card.card_support_line,
+    support_types: hit.support_types?.length ? hit.support_types : card.support_types,
+    institution_type: hit.institution_type || card.institution_type,
+  };
+}
+
 export default function RecentViewsShelf({
   bookmarkedKeys = [],
   serverRecent = [],
+  catalog = [],
 }: {
   bookmarkedKeys?: string[];
   /** 서버 browse_events (로그인) — localStorage와 병합 */
   serverRecent?: CardScholarship[];
+  /** 홈 카탈로그 — local 최근본 혜택 보강용 */
+  catalog?: CardScholarship[];
 }) {
   const [localRecent, setLocalRecent] = useState<CardScholarship[]>([]);
   const bookmarkedSet = useMemo(() => new Set(bookmarkedKeys), [bookmarkedKeys]);
+  const catalogByKey = useMemo(() => {
+    const map = new Map<string, CardScholarship>();
+    for (const item of catalog) map.set(itemKey(item), item);
+    return map;
+  }, [catalog]);
 
   useEffect(() => {
     function sync() {
@@ -58,10 +89,14 @@ export default function RecentViewsShelf({
   const items = useMemo(
     () =>
       buildContinueWatching({
-        serverRecent,
-        localRecent,
+        serverRecent: serverRecent.map((card) =>
+          enrichWithCatalog(card, catalogByKey)
+        ),
+        localRecent: localRecent.map((card) =>
+          enrichWithCatalog(card, catalogByKey)
+        ),
       }),
-    [serverRecent, localRecent]
+    [serverRecent, localRecent, catalogByKey]
   );
 
   if (items.length === 0) return null;

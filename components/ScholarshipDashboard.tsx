@@ -98,6 +98,7 @@ export default function ScholarshipDashboard({
   heading = "전체 장학금",
   showScopeTabs = false,
   totalScholarshipCount,
+  scopeCounts,
   initialScope = "all",
 }: {
   scholarships: CardScholarship[];
@@ -105,6 +106,12 @@ export default function ScholarshipDashboard({
   heading?: string;
   showScopeTabs?: boolean;
   totalScholarshipCount?: number;
+  /** 서버에서 계산한 전체 scope 카운트 (hydrate 상한과 무관) */
+  scopeCounts?: {
+    all: number;
+    campus: number;
+    external: number;
+  };
   /** /matched?scope=campus|external 등 URL 초기 탭 */
   initialScope?: ScopeFilter;
 }) {
@@ -118,19 +125,27 @@ export default function ScholarshipDashboard({
 
   const scopeTabs = useMemo(
     () => [
-      { key: "all" as const, label: "전체 장학금", count: scholarships.length },
+      {
+        key: "all" as const,
+        label: "전체 장학금",
+        count: scopeCounts?.all ?? scholarships.length,
+      },
       {
         key: "campus" as const,
         label: "교내 장학금",
-        count: scholarships.filter((s) => s.scope === "campus").length,
+        count:
+          scopeCounts?.campus ??
+          scholarships.filter((s) => s.scope === "campus").length,
       },
       {
         key: "external" as const,
         label: "교외 장학금",
-        count: scholarships.filter((s) => s.scope === "external").length,
+        count:
+          scopeCounts?.external ??
+          scholarships.filter((s) => s.scope === "external").length,
       },
     ],
-    [scholarships]
+    [scholarships, scopeCounts]
   );
 
   const filtered = useMemo(() => {

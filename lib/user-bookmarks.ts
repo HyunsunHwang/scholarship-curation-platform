@@ -2,8 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import { isScholarshipExpired } from "@/lib/scholarship-dates";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
-import { clipNoticeForCard } from "@/lib/support-amount";
-
+import { buildContestCardSupportFields, contestIdsNeedingNotice } from "@/lib/support-amount";
 export { cardBookmarkKey } from "@/lib/bookmark-keys";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
@@ -37,25 +36,36 @@ export async function getBookmarkedCardKeys(
   supabase: SupabaseServerClient,
   userId: string
 ): Promise<string[]> {
-  const [scholarshipIds, contestIds] = await Promise.all([
-    getBookmarkedScholarshipIds(supabase, userId),
-    getBookmarkedContestIds(supabase, userId),
-  ]);
-  return [
-    ...scholarshipIds.map((id) => cardBookmarkKey({ id, content_kind: "scholarship" })),
-    ...contestIds.map((id) => cardBookmarkKey({ id, content_kind: "contest" })),
-  ];
+  const { keys } = await getHomeBookmarks(supabase, userId);
+  return keys;
 }
 
-/** 홈 라이브러리용 — 북마크 공고 카드 데이터 (최신 담은 순, 마감 제외) */
-export async function getBookmarkedScholarships(
+export type HomeBookmarkState = {
+  /** 마감 제외된 북마크 카드 (최신 담은 순) */
+  cards: CardScholarship[];
+  /** 전체 북마크 키 (마감 포함 — 카드 initialBookmarked용) */
+  keys: string[];
+};
+
+/**
+ * 홈용 북마크를 한 번에 조회한다.
+ * 카드·키를 각각 부르면 bookmarks 테이블을 두 번 치므로 합친다.
+ */
+export async function getHomeBookmarks(
   supabase: SupabaseServerClient,
   userId: string
-): Promise<CardScholarship[]> {
+): Promise<HomeBookmarkState> {
   const [scholarshipIds, contestIds] = await Promise.all([
     getBookmarkedScholarshipIds(supabase, userId),
     getBookmarkedContestIds(supabase, userId),
   ]);
+
+  const keys = [
+    ...scholarshipIds.map((id) =>
+      cardBookmarkKey({ id, content_kind: "scholarship" })
+    ),
+    ...contestIds.map((id) => cardBookmarkKey({ id, content_kind: "contest" })),
+  ];
 
   const [scholarshipRowsResult, contestRowsResult] = await Promise.all([
     scholarshipIds.length > 0
@@ -70,7 +80,7 @@ export async function getBookmarkedScholarships(
       ? supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind"
           )
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
@@ -79,7 +89,19 @@ export async function getBookmarkedScholarships(
   const scholarshipMap = new Map(
     (scholarshipRowsResult.data ?? []).map((s) => [s.id, s])
   );
-  const contestMap = new Map((contestRowsResult.data ?? []).map((c) => [c.id, c]));
+  const contestRows = contestRowsResult.data ?? [];
+  const noticeIds = contestIdsNeedingNotice(contestRows);
+  const noticeById = new Map<number, string | null>();
+  if (noticeIds.length > 0) {
+    const { data: noticeRows } = await supabase
+      .from("contests")
+      .select("id, original_notice_text")
+      .in("id", noticeIds);
+    for (const row of noticeRows ?? []) {
+      noticeById.set(row.id, row.original_notice_text);
+    }
+  }
+  const contestMap = new Map(contestRows.map((c) => [c.id, c]));
 
   const scholarshipCards = scholarshipIds.flatMap((id) => {
     const s = scholarshipMap.get(id);
@@ -110,6 +132,18 @@ export async function getBookmarkedScholarships(
     if (!c) return [];
     const endDate = c.apply_end_date ?? "2099-12-31";
     if (isScholarshipExpired(endDate)) return [];
+    const kind = (c.content_kind ?? "contest") as
+      | "contest"
+      | "education"
+      | "activity";
+    const supportFields = buildContestCardSupportFields({
+      name: c.name,
+      contentKind: kind,
+      supportAmountText: c.support_amount_text,
+      benefits: c.benefits,
+      additionalNote: c.note,
+      originalNoticeText: noticeById.get(c.id) ?? null,
+    });
     return [
       {
         id: c.id,
@@ -120,15 +154,13 @@ export async function getBookmarkedScholarships(
         support_amount_text: c.support_amount_text,
         benefits: c.benefits ?? null,
         benefit_note: c.note ?? null,
-        benefit_notice_text: clipNoticeForCard(c.original_notice_text),
+        benefit_notice_text: supportFields.benefit_notice_text,
+        card_support_line: supportFields.card_support_line,
         apply_end_date: endDate,
         poster_image_url: c.poster_image_url ?? null,
         created_at: c.created_at,
         view_count: c.view_count,
-        content_kind: (c.content_kind ?? "contest") as
-          | "contest"
-          | "education"
-          | "activity",
+        content_kind: kind,
         is_recommended: c.is_recommended,
         recommended_sort_order: c.recommended_sort_order,
         is_advertisement: false,
@@ -137,5 +169,17 @@ export async function getBookmarkedScholarships(
   });
 
   // 장학금·공모전 각각 최신 담은 순 유지, 공모전을 앞에 두어 혼합 피드에서 보이기 쉽게
-  return [...contestCards, ...scholarshipCards];
+  return {
+    cards: [...contestCards, ...scholarshipCards],
+    keys,
+  };
+}
+
+/** 홈 라이브러리용 — 북마크 공고 카드 데이터 (최신 담은 순, 마감 제외) */
+export async function getBookmarkedScholarships(
+  supabase: SupabaseServerClient,
+  userId: string
+): Promise<CardScholarship[]> {
+  const { cards } = await getHomeBookmarks(supabase, userId);
+  return cards;
 }

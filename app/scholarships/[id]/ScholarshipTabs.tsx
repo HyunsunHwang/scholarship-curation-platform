@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   daysUntilApplyDeadlineKorea,
@@ -965,6 +966,19 @@ function OriginalNoticeText({ text }: { text: string }) {
   );
 }
 
+function canOptimizeRemoteImage(src: string): boolean {
+  try {
+    const host = new URL(src).hostname;
+    return (
+      host.endsWith("supabase.co") ||
+      host.endsWith("linkareer.com") ||
+      host === "api.linkareer.com"
+    );
+  } catch {
+    return false;
+  }
+}
+
 function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   const imageUrls = Array.from(
     new Set([...(s.original_notice_image_urls ?? []), s.original_notice_image_url].filter(Boolean) as string[])
@@ -976,12 +990,16 @@ function OriginalNoticeSection({ s }: { s: ScholarshipDetail }) {
   return (
     <div className="space-y-6">
       {imageUrls.map((imageUrl, i) => (
-        <div key={imageUrl} className="overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div key={imageUrl} className="relative w-full overflow-hidden">
+          <Image
             src={imageUrl}
             alt={`${s.name} 원문 공고문 ${i + 1}`}
-            className="w-full object-contain"
+            width={1200}
+            height={1600}
+            sizes="(max-width: 768px) 100vw, 800px"
+            className="h-auto w-full object-contain"
+            loading="lazy"
+            unoptimized={!canOptimizeRemoteImage(imageUrl)}
           />
         </div>
       ))}
@@ -1074,7 +1092,7 @@ export default function ScholarshipTabs({
     <>
       {preScheduleSlot}
       {isAdvertisement ? (
-        <section className="py-7 first:pt-0">
+        <section className="py-6">
           {sectionTitle("요구 역량", "briefcase")}
           <AdSkillsSection s={s} />
         </section>
@@ -1082,7 +1100,7 @@ export default function ScholarshipTabs({
         !hideQualificationSections && (
           <>
             {autoCheck.kind !== "none" && (
-              <section className="py-7 first:pt-0">
+              <section className="py-6">
                 {sectionTitle(
                   "내 프로필로 확인된 자격",
                   "profile",
@@ -1096,7 +1114,7 @@ export default function ScholarshipTabs({
               </section>
             )}
             {manualCheckItems.length > 0 && (
-              <section className="py-7 first:pt-0">
+              <section className="py-6">
                 {sectionTitle("지원 전 직접 확인하세요", "search")}
                 <ManualCheckSection items={manualCheckItems} />
               </section>
@@ -1108,7 +1126,7 @@ export default function ScholarshipTabs({
   );
 
   const schedule = (
-    <section className="py-7 first:pt-0">
+    <section className="py-6">
       {sectionTitle("주요 일정", "calendar")}
       <ScheduleSection s={s} selectionStages={selectionStages} />
     </section>
@@ -1171,14 +1189,14 @@ export default function ScholarshipTabs({
   }
 
   if (layout === "netflix") {
-    // 상세 페이지: 왼쪽(넓게) 혜택·자격 / 오른쪽(좁게) 주요일정
+    // 상세 페이지: 모바일은 단일 border-t 흐름, md+는 좌(혜택·자격) / 우(일정)
     return (
-      <div className="mt-8 w-full overflow-x-hidden">
+      <div className="mt-6 w-full overflow-x-hidden border-t border-gray-100">
         <div className="grid grid-cols-1 items-start gap-0 md:grid-cols-[minmax(0,1fr)_minmax(0,240px)] md:gap-8 md:divide-x md:divide-gray-100">
           <div className="min-w-0 divide-y divide-gray-100 md:pr-8">
             {preSchedule}
           </div>
-          <div className="min-w-0 divide-y divide-gray-100 border-t border-gray-100 md:border-t-0 md:pl-6">
+          <div className="min-w-0 border-t border-gray-100 md:border-t-0 md:pl-6">
             {schedule}
           </div>
         </div>

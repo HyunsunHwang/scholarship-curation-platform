@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
   CONTENT_CATEGORIES,
@@ -16,7 +16,7 @@ import {
   pickHomeHero,
   type HomeRail,
 } from "@/lib/home-rails";
-import { useHomeSearch } from "./HomeSearchContext";
+import { useHomeSearchFilters } from "./HomeSearchContext";
 import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
 import HomeHero from "./HomeHero";
@@ -24,7 +24,7 @@ import Top10Shelf from "./Top10Shelf";
 import RecentViewsShelf from "./RecentViewsShelf";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
 
-const KIND_SHELF_LIMIT = 16;
+const KIND_SHELF_LIMIT = 12;
 
 function itemKey(item: CardScholarship) {
   return `${item.content_kind ?? "scholarship"}-${item.id}`;
@@ -65,7 +65,7 @@ function sortByDeadline(list: CardScholarship[]) {
   });
 }
 
-function ShelfCard({
+const ShelfCard = memo(function ShelfCard({
   scholarship,
   bookmarked,
 }: {
@@ -78,7 +78,7 @@ function ShelfCard({
       initialBookmarked={bookmarked}
     />
   );
-}
+});
 
 function PersonalizedRailSection({
   rail,
@@ -140,13 +140,14 @@ export default function HomeFeed({
   isLoggedIn?: boolean;
   isOnboarded?: boolean;
 }) {
+  // query 컨텍스트와 분리 — 타이핑 중에는 deferredQuery가 바뀔 때만 피드 리렌더
   const {
-    query: searchQuery,
     deferredQuery: deferredSearch,
     category,
     setCategory,
-  } = useHomeSearch();
+  } = useHomeSearchFilters();
   const bookmarkedSet = useMemo(() => new Set(bookmarkedKeys), [bookmarkedKeys]);
+  const isSearching = deferredSearch.trim().length > 0;
 
   const filtered = useMemo(() => {
     const byCategory = filterByCategory(scholarships, category);
@@ -155,7 +156,6 @@ export default function HomeFeed({
     );
   }, [scholarships, category, deferredSearch]);
 
-  const isSearching = deferredSearch.trim().length > 0;
   const showBrowseRails = !isSearching && category === "all";
 
   const hero = useMemo(() => {
@@ -200,9 +200,11 @@ export default function HomeFeed({
 
   const browseKind: BrowseKind = category === "all" ? "all" : category;
 
-  function isBookmarked(scholarship: CardScholarship) {
-    return bookmarkedSet.has(cardBookmarkKey(scholarship));
-  }
+  const isBookmarked = useCallback(
+    (scholarship: CardScholarship) =>
+      bookmarkedSet.has(cardBookmarkKey(scholarship)),
+    [bookmarkedSet]
+  );
 
   const forYouTitle = userName
     ? `${userName}님을 위해 엄선한 공고`
@@ -229,12 +231,10 @@ export default function HomeFeed({
       ) : filtered.length === 0 && !showBrowseRails && forYou.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
           <p className="text-lg font-semibold text-ink">
-            {searchQuery.trim()
-              ? "검색 결과가 없습니다"
-              : "등록된 공고가 없습니다"}
+            {isSearching ? "검색 결과가 없습니다" : "등록된 공고가 없습니다"}
           </p>
           <p className="text-sm text-ink/50">
-            {searchQuery.trim()
+            {isSearching
               ? "다른 검색어로 시도해 보세요."
               : "관리자 패널에서 장학금을 추가해보세요."}
           </p>
@@ -301,6 +301,7 @@ export default function HomeFeed({
             <RecentViewsShelf
               bookmarkedKeys={bookmarkedKeys}
               serverRecent={serverRecent}
+              catalog={scholarships}
             />
           ) : null}
 

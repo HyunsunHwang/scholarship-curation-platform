@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import BrandLogo from "@/components/BrandLogo";
 import { logout } from "@/app/auth/actions";
-import { useHomeSearch } from "./HomeSearchContext";
+import { useHomeSearchQuery } from "./HomeSearchContext";
 import MobileBottomNav from "./MobileBottomNav";
 
 type AirbnbHeaderProps = {
@@ -54,7 +54,7 @@ function SearchIcon({ className }: { className?: string }) {
 function useNavigateHomeSearch() {
   const pathname = usePathname();
   const router = useRouter();
-  const { query } = useHomeSearch();
+  const { query } = useHomeSearchQuery();
 
   return () => {
     if (pathname === "/") return;
@@ -105,7 +105,7 @@ function MainNav({ isLoggedIn }: { isLoggedIn: boolean }) {
 }
 
 function HeaderSearch({ className }: { className?: string }) {
-  const { query, setQuery } = useHomeSearch();
+  const { query, setQuery } = useHomeSearchQuery();
   const navigateHomeSearch = useNavigateHomeSearch();
 
   return (

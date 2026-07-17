@@ -79,7 +79,7 @@ export default function LibraryRecentList() {
                       alt=""
                       fill
                       sizes="(max-width: 640px) 45vw, 20vw"
-                      className="object-cover transition duration-200 group-hover:scale-[1.03]"
+                      className="object-cover transition-opacity duration-200 group-hover:opacity-90"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-brand/10 text-2xl font-bold text-brand">

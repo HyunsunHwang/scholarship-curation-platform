@@ -1,5 +1,5 @@
 import type { CardScholarship } from "@/components/ScholarshipCard";
-import { clipNoticeForCard } from "@/lib/support-amount";
+import { buildContestCardSupportFields, contestIdsNeedingNotice } from "@/lib/support-amount";
 import type { ContentCategoryKey } from "@/lib/content-categories";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
@@ -356,8 +356,21 @@ function mapContestRow(
     content_kind: string | null;
   },
   today: string,
-  scrapCount = 0
+  scrapCount = 0,
+  noticeText: string | null = null
 ): CardScholarship {
+  const kind = (contest.content_kind ?? "contest") as
+    | "contest"
+    | "education"
+    | "activity";
+  const supportFields = buildContestCardSupportFields({
+    name: contest.name,
+    contentKind: kind,
+    supportAmountText: contest.support_amount_text,
+    benefits: contest.benefits,
+    additionalNote: contest.note,
+    originalNoticeText: noticeText ?? contest.original_notice_text ?? null,
+  });
   return {
     id: contest.id,
     name: contest.name,
@@ -367,7 +380,8 @@ function mapContestRow(
     support_amount_text: contest.support_amount_text,
     benefits: contest.benefits ?? null,
     benefit_note: contest.note ?? null,
-    benefit_notice_text: clipNoticeForCard(contest.original_notice_text),
+    benefit_notice_text: supportFields.benefit_notice_text,
+    card_support_line: supportFields.card_support_line,
     apply_end_date: contest.apply_end_date ?? today,
     poster_image_url: contest.poster_image_url,
     created_at: contest.created_at,
@@ -376,11 +390,30 @@ function mapContestRow(
     is_recommended: contest.is_recommended,
     recommended_sort_order: contest.recommended_sort_order,
     is_advertisement: false,
-    content_kind: (contest.content_kind ?? "contest") as
-      | "contest"
-      | "education"
-      | "activity",
+    content_kind: kind,
   };
+}
+
+async function loadContestNoticesById(
+  rows: ReadonlyArray<{
+    id: number;
+    support_amount_text?: string | null;
+    benefits?: string[] | null;
+    note?: string | null;
+  }>
+): Promise<Map<number, string | null>> {
+  const noticeById = new Map<number, string | null>();
+  const noticeIds = contestIdsNeedingNotice(rows);
+  if (noticeIds.length === 0) return noticeById;
+  const supabase = createPublicSupabaseClient();
+  const { data } = await supabase
+    .from("contests")
+    .select("id, original_notice_text")
+    .in("id", noticeIds);
+  for (const row of data ?? []) {
+    noticeById.set(row.id, row.original_notice_text);
+  }
+  return noticeById;
 }
 
 async function fetchContestPage(opts: {
@@ -399,7 +432,7 @@ async function fetchContestPage(opts: {
   let query = supabase
     .from("contests")
     .select(
-      "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
       { count: "exact" }
     )
     .eq("is_verified", true)
@@ -427,9 +460,18 @@ async function fetchContestPage(opts: {
     return { items: [], totalCount: 0, hasMore: false };
   }
 
-  const scrapCounts = await contestScrapCountMap((data ?? []).map((row) => row.id));
-  let items = (data ?? []).map((row) =>
-    mapContestRow(row, today, scrapCounts.get(row.id) ?? 0)
+  const rows = data ?? [];
+  const [scrapCounts, noticeById] = await Promise.all([
+    contestScrapCountMap(rows.map((row) => row.id)),
+    loadContestNoticesById(rows),
+  ]);
+  let items = rows.map((row) =>
+    mapContestRow(
+      row,
+      today,
+      scrapCounts.get(row.id) ?? 0,
+      noticeById.get(row.id) ?? null
+    )
   );
 
   if (opts.sort === "scraps" || opts.section === "trending") {
@@ -642,7 +684,7 @@ async function fetchCareerBrowsePage(opts: {
   const contestQuery = supabase
     .from("contests")
     .select(
-      "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
+      "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind",
       { count: "exact" }
     )
     .eq("is_verified", true)
@@ -661,9 +703,17 @@ async function fetchCareerBrowsePage(opts: {
   }
 
   const contestRows = contestData ?? [];
-  const scrapCounts = await contestScrapCountMap(contestRows.map((row) => row.id));
+  const [scrapCounts, noticeById] = await Promise.all([
+    contestScrapCountMap(contestRows.map((row) => row.id)),
+    loadContestNoticesById(contestRows),
+  ]);
   let items = contestRows.map((row) =>
-    mapContestRow(row, today, scrapCounts.get(row.id) ?? 0)
+    mapContestRow(
+      row,
+      today,
+      scrapCounts.get(row.id) ?? 0,
+      noticeById.get(row.id) ?? null
+    )
   );
 
   let totalCount = contestCount ?? items.length;

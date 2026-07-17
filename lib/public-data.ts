@@ -3,8 +3,10 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
-import { clipNoticeForCard } from "@/lib/support-amount";
-
+import {
+  buildContestCardSupportFields,
+  contestIdsNeedingNotice,
+} from "@/lib/support-amount";
 type SiteSettingsLogoRow = Pick<
   Database["public"]["Tables"]["site_settings"]["Row"],
   "header_logo_url" | "updated_at"
@@ -193,7 +195,7 @@ export const getCachedHomeContests = unstable_cache(
     const { data, error } = await supabase
       .from("contests")
       .select(
-        "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+        "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
       )
       .eq("is_verified", true)
       .eq("list_on_home", true)
@@ -208,37 +210,63 @@ export const getCachedHomeContests = unstable_cache(
       return [];
     }
 
+    const rows = data ?? [];
+    const noticeIds = contestIdsNeedingNotice(rows);
+    const noticeById = new Map<number, string | null>();
+    if (noticeIds.length > 0) {
+      const { data: noticeRows } = await supabase
+        .from("contests")
+        .select("id, original_notice_text")
+        .in("id", noticeIds);
+      for (const row of noticeRows ?? []) {
+        noticeById.set(row.id, row.original_notice_text);
+      }
+    }
+
     const scrapCounts = await getPublicContestScrapCountMap(
       supabase,
-      (data ?? []).map((contest) => contest.id)
+      rows.map((contest) => contest.id)
     );
 
-    return (data ?? []).map((contest) => ({
-      id: contest.id,
-      name: contest.name,
-      organization: contest.organization,
-      institution_type: contest.organization_type || "기타",
-      support_types: [] as string[],
-      support_amount_text: contest.support_amount_text,
-      benefits: contest.benefits ?? null,
-      benefit_note: contest.note ?? null,
-      benefit_notice_text: clipNoticeForCard(contest.original_notice_text),
-      apply_end_date: contest.apply_end_date ?? today,
-      poster_image_url: contest.poster_image_url,
-      created_at: contest.created_at,
-      view_count: contest.view_count,
-      scrap_count: scrapCounts.get(contest.id) ?? 0,
-      is_recommended: contest.is_recommended,
-      recommended_sort_order: contest.recommended_sort_order,
-      is_advertisement: false,
-      content_kind: (contest.content_kind ?? "contest") as
+    return rows.map((contest) => {
+      const kind = (contest.content_kind ?? "contest") as
         | "contest"
         | "education"
-        | "activity",
-      interest_categories: contest.interest_categories ?? null,
-    }));
+        | "activity";
+      const supportFields = buildContestCardSupportFields({
+        name: contest.name,
+        contentKind: kind,
+        supportAmountText: contest.support_amount_text,
+        benefits: contest.benefits,
+        additionalNote: contest.note,
+        originalNoticeText: noticeById.get(contest.id) ?? null,
+      });
+
+      return {
+        id: contest.id,
+        name: contest.name,
+        organization: contest.organization,
+        institution_type: contest.organization_type || "기타",
+        support_types: [] as string[],
+        support_amount_text: contest.support_amount_text,
+        benefits: contest.benefits ?? null,
+        benefit_note: contest.note ?? null,
+        benefit_notice_text: supportFields.benefit_notice_text,
+        card_support_line: supportFields.card_support_line,
+        apply_end_date: contest.apply_end_date ?? today,
+        poster_image_url: contest.poster_image_url,
+        created_at: contest.created_at,
+        view_count: contest.view_count,
+        scrap_count: scrapCounts.get(contest.id) ?? 0,
+        is_recommended: contest.is_recommended,
+        recommended_sort_order: contest.recommended_sort_order,
+        is_advertisement: false,
+        content_kind: kind,
+        interest_categories: contest.interest_categories ?? null,
+      };
+    });
   },
-  ["home-contests-v8"],
+  ["home-contests-v13"],
   { revalidate: 60 }
 );
 

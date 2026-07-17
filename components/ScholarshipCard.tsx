@@ -1,12 +1,13 @@
 "use client";
 
+import { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import CardBookmarkButton from "@/components/CardBookmarkButton";
 import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
-import { formatCardSupportLine } from "@/lib/support-amount";
+import { resolveCardSupportLine } from "@/lib/support-amount";
 import { contentKindHref } from "@/lib/content-categories";
 
 export type CardScholarship = {
@@ -22,6 +23,11 @@ export type CardScholarship = {
   benefit_note?: string | null;
   /** 목록 키워드 보강용 원문 스니펫 */
   benefit_notice_text?: string | null;
+  /**
+   * 서버에서 원문 전체 기준으로 미리 계산한 카드 하단 문구.
+   * (짧은 스니펫만으로는 총상금이 누락되는 경우 방지)
+   */
+  card_support_line?: string | null;
   apply_end_date: string;
   poster_image_url?: string | null;
   created_at: string;
@@ -73,7 +79,7 @@ function deadlineColor(dateStr: string): string {
   return "text-ink/50";
 }
 
-export default function ScholarshipCard({
+function ScholarshipCard({
   scholarship,
   initialBookmarked = false,
 }: {
@@ -86,12 +92,14 @@ export default function ScholarshipCard({
   const color = deadlineColor(scholarship.apply_end_date);
   const deadlineBadge = formatDeadlineBadge(scholarship.apply_end_date);
   const displayName = cleanScholarshipName(scholarship.name);
-  const supportAmount = formatCardSupportLine({
+  const supportAmount = resolveCardSupportLine({
     contentKind: scholarship.content_kind,
     supportAmountText: scholarship.support_amount_text,
     benefits: scholarship.benefits,
     additionalNote: scholarship.benefit_note,
     noticeText: scholarship.benefit_notice_text,
+    name: scholarship.name,
+    cardSupportLine: scholarship.card_support_line,
   });
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
   const kind = scholarship.content_kind ?? "scholarship";
@@ -130,27 +138,27 @@ export default function ScholarshipCard({
             fill
             sizes="(max-width: 639px) 138px, (max-width: 767px) 156px, (max-width: 1023px) 172px, 188px"
             loading="lazy"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-opacity duration-200 group-hover:opacity-90"
           />
         ) : (
           <div
-            className={`h-full w-full bg-linear-to-br ${gradient} flex items-end p-4 transition-transform duration-300 group-hover:scale-105`}
+            className={`flex h-full w-full items-end bg-linear-to-br p-4 ${gradient} transition-opacity duration-200 group-hover:opacity-90`}
           >
-            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
+            <span className="inline-flex items-center rounded-full border border-white/40 bg-black/45 px-2.5 py-0.5 text-xs font-semibold text-white">
               {scholarship.institution_type}
             </span>
           </div>
         )}
 
         <span
-          className={`absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-2.5rem)] items-center truncate rounded-sm border bg-white/95 px-1.5 py-[3px] text-[10px] font-semibold leading-none shadow-sm backdrop-blur-sm sm:left-3 sm:top-3 sm:max-w-[calc(100%-3rem)] sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
+          className={`absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-2.5rem)] items-center truncate rounded-sm border bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none sm:left-3 sm:top-3 sm:max-w-[calc(100%-3rem)] sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
           aria-label={kindBadgeLabel}
         >
           {kindBadgeLabel}
         </span>
 
         <div className="absolute bottom-2 left-2 max-w-[78%] sm:bottom-3 sm:left-3 sm:max-w-[70%]">
-          <span className="inline-block max-w-full truncate rounded-full bg-black/40 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm sm:px-2.5 sm:text-xs">
+          <span className="inline-block max-w-full truncate rounded-full bg-black/55 px-1.5 py-0.5 text-[10px] font-medium text-white sm:px-2.5 sm:text-xs">
             {scholarship.organization}
           </span>
         </div>
@@ -200,3 +208,5 @@ export default function ScholarshipCard({
     </div>
   );
 }
+
+export default memo(ScholarshipCard);

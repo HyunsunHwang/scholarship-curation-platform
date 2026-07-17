@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/server";
+import { getCachedHomeProfileBundle } from "@/lib/home-profile-bundle";
 
 export type NavUserContext = {
   role: string | null;
@@ -8,8 +8,8 @@ export type NavUserContext = {
 };
 
 /**
- * Navbar / SpotifyTopNav가 각각 getUser·프로필·긴급 북마크를
- * 다시 치지 않도록 페이지에서 한 번만 조회해 넘긴다.
+ * Navbar / SpotifyTopNav용 컨텍스트.
+ * 홈에서는 getCachedHomeProfileBundle과 요청 단위로 공유된다.
  */
 export async function resolveNavUserContext(
   user: User | null | undefined
@@ -18,20 +18,13 @@ export async function resolveNavUserContext(
     return { role: null, name: null, urgentBookmarkCount: 0 };
   }
 
-  const supabase = await createClient();
-  const [profileResult, urgentCountResult] = await Promise.all([
-    supabase.from("profiles").select("role, name").eq("id", user.id).single(),
-    supabase.rpc("get_urgent_bookmark_count", {
-      p_user_id: user.id,
-      p_deadline_days: 6,
-    }),
-  ]);
+  const { profile, urgentBookmarkCount } = await getCachedHomeProfileBundle(
+    user.id
+  );
 
   return {
-    role: profileResult.data?.role ?? null,
-    name: profileResult.data?.name ?? null,
-    urgentBookmarkCount: urgentCountResult.error
-      ? 0
-      : Number(urgentCountResult.data ?? 0),
+    role: profile?.role ?? null,
+    name: profile?.name ?? null,
+    urgentBookmarkCount,
   };
 }

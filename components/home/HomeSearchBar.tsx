@@ -1,9 +1,9 @@
 "use client";
 
-import { useHomeSearch } from "./HomeSearchContext";
+import { useHomeSearchQuery } from "./HomeSearchContext";
 
 export default function HomeSearchBar() {
-  const { query, setQuery } = useHomeSearch();
+  const { query, setQuery } = useHomeSearchQuery();
 
   return (
     <div className="relative w-full">

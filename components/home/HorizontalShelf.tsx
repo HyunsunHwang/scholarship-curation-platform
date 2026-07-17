@@ -16,27 +16,37 @@ function getShelfMetrics(viewportWidth: number) {
   return { itemWidth: 138, gap: 12 };
 }
 
+/** 첫 페인트 DOM 부담 — 스크롤/다음 버튼 시 추가 마운트 */
+export const HOME_SHELF_INITIAL_VISIBLE = 12;
+const HOME_SHELF_LOAD_MORE = 8;
+
 type HorizontalShelfProps<T> = {
   items: T[];
   label: string;
   getKey: (item: T, index: number) => string;
   renderItem: (item: T, index: number) => ReactNode;
+  /** 초기 마운트 카드 수 (기본 12) */
+  initialVisible?: number;
 };
 
 /**
  * 가로 선반.
- * 가상화 없이 전체 카드를 렌더링해 스크롤 중 포스터 크기 흔들림을 막고,
- * scroll-snap + stride 단위 이동으로 카드가 중간에 잘리지 않게 한다.
+ * 초기에는 일부 카드만 마운트하고, 끝 근처 스크롤·다음 버튼에서 확장한다.
+ * (전체 가상화는 포스터 크기 흔들림 이슈로 피함)
  */
 export default function HorizontalShelf<T>({
   items,
   label,
   getKey,
   renderItem,
+  initialVisible = HOME_SHELF_INITIAL_VISIBLE,
 }: HorizontalShelfProps<T>) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(() =>
+    Math.min(initialVisible, items.length)
+  );
   const [metrics, setMetrics] = useState(() =>
     typeof window === "undefined"
       ? { itemWidth: 188, gap: 16 }
@@ -44,14 +54,34 @@ export default function HorizontalShelf<T>({
   );
 
   const stride = metrics.itemWidth + metrics.gap;
+  const visibleItems = items.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(Math.min(initialVisible, items.length));
+  }, [items, initialVisible]);
+
+  const expandIfNeeded = useCallback(() => {
+    setVisibleCount((current) => {
+      if (current >= items.length) return current;
+      return Math.min(current + HOME_SHELF_LOAD_MORE, items.length);
+    });
+  }, [items.length]);
 
   const updateArrows = useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
     const maxScroll = el.scrollWidth - el.clientWidth;
     setCanPrev(el.scrollLeft > 2);
-    setCanNext(el.scrollLeft < maxScroll - 2);
-  }, []);
+    setCanNext(el.scrollLeft < maxScroll - 2 || visibleCount < items.length);
+
+    // 끝에서 약 2카드 남으면 추가 마운트
+    if (
+      visibleCount < items.length &&
+      el.scrollLeft + el.clientWidth >= el.scrollWidth - stride * 2
+    ) {
+      expandIfNeeded();
+    }
+  }, [expandIfNeeded, items.length, stride, visibleCount]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -73,11 +103,15 @@ export default function HorizontalShelf<T>({
       ro.disconnect();
       window.removeEventListener("resize", sync);
     };
-  }, [updateArrows, items.length]);
+  }, [updateArrows, visibleItems.length]);
 
   function scrollByDir(dir: -1 | 1) {
     const el = scrollerRef.current;
     if (!el || stride <= 0) return;
+
+    if (dir === 1 && visibleCount < items.length) {
+      expandIfNeeded();
+    }
 
     // 화면에 보이는 카드 수만큼 이동하되, 항상 카드 시작점에 스냅
     const page = Math.max(1, Math.floor((el.clientWidth + metrics.gap) / stride));
@@ -160,7 +194,7 @@ export default function HorizontalShelf<T>({
             paddingRight: 2,
           }}
         >
-          {items.map((item, index) => (
+          {visibleItems.map((item, index) => (
             <div
               key={getKey(item, index)}
               role="listitem"

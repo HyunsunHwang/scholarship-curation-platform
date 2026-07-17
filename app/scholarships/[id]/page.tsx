@@ -269,7 +269,7 @@ export default async function ScholarshipDetailPage({
                   selectionStages={selectionStages ?? []}
                   autoCheck={autoCheck}
                   layout="netflix"
-                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} />}
+                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} divided={false} />}
                 />
 
                 {!isAdvertisement && scholarship.contact && (

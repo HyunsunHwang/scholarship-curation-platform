@@ -45,29 +45,29 @@ function BenefitIcon({
 }
 
 /**
- * 에어비앤비 amenities 스타일: 아이콘 + 짧은 키워드 2열 그리드
+ * 에어비앤비 amenities 스타일: 아이콘 + 짧은 키워드 2열 그리드.
+ * 혜택이 없으면 렌더하지 않는다.
+ * 구분선은 부모(상세 레이아웃)가 담당 — 여기서 border를 또 긋지 않아 모바일 균형을 맞춘다.
  */
 export default function BenefitHighlights({
   benefits,
-  emptyLabel = "안내된 혜택 정보가 없습니다.",
-  /** false면 상단 구분선·큰 여백 없이 바로 이어서 표시 */
   divided = true,
 }: {
   benefits: BenefitHighlight[];
+  /** @deprecated 빈 혜택일 때 더 이상 표시하지 않음 — 호출부 호환용 */
   emptyLabel?: string;
+  /**
+   * true: 단독 사용 시 상단 구분선 포함.
+   * false: 상세 netflix 레이아웃처럼 부모가 구분선을 그릴 때 (권장).
+   */
   divided?: boolean;
 }) {
-  const spacing = divided
-    ? "mt-6 border-t border-gray-100 pt-6"
-    : "mt-3 pt-0";
+  if (benefits.length === 0) return null;
 
-  if (benefits.length === 0) {
-    return (
-      <div className={spacing}>
-        <p className="text-sm text-ink/45">{emptyLabel}</p>
-      </div>
-    );
-  }
+  // 위·아래 동일 패딩 — mt/pt 비대칭으로 구분선이 한쪽으로 붙지 않게
+  const spacing = divided
+    ? "border-t border-gray-100 py-6"
+    : "py-6";
 
   return (
     <ul className={`${spacing} grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-8`}>

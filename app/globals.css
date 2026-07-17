@@ -153,4 +153,12 @@
     /* optimizeLegibility는 일부 WebKit+CJK 조합에서 윤곽이 어색해질 수 있음 */
     text-rendering: auto;
   }
+
+  /* Noto KR은 400/700만 로드 — medium/semibold를 합성 글꼴 없이 고정 */
+  .font-medium {
+    font-weight: 400;
+  }
+  .font-semibold {
+    font-weight: 700;
+  }
 }

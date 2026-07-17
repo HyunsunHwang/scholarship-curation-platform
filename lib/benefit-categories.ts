@@ -238,15 +238,19 @@ export function hasMeaningfulPrizeAmount(text?: string | null): boolean {
   return Number.isFinite(n) && n > 0;
 }
 
-/** 지원 규모/혜택에 쓸 "총상금 N" 표기 */
+/**
+ * 상세·목록 혜택에 쓸 "총상금 N" 표기.
+ * 금액만 있으면 접두어를 붙이고, 이미 "총상금"이 있으면 한 번만 남긴다.
+ * (\b는 한글에서 동작하지 않아 쓰면 총상금이 중복됨)
+ */
 export function formatTotalPrizeLabel(amountText: string): string {
   const raw = amountText.trim().replace(/\s+/g, " ");
   if (!raw) return raw;
-  if (/^총\s*상금\b/.test(raw)) {
-    return raw.replace(/^총\s*상금\s*/u, "총상금 ").trim();
-  }
-  const stripped = raw.replace(/^상금\s*/u, "").trim() || raw;
-  return `총상금 ${stripped}`;
+  const body = raw
+    .replace(/^(?:총\s*상금\s*)+/u, "")
+    .replace(/^(?:상금\s*)+/u, "")
+    .trim();
+  return `총상금 ${body || raw}`;
 }
 
 /** 혜택 문자열에 금액이 포함된 상금 표기인지 (예: "총상금 2300만원", "상금 500만원") */
@@ -257,7 +261,26 @@ function prizeAmountLabelFromText(text: string): string | null {
   if (!hasMeaningfulPrizeAmount(t)) return null;
   // 단순 "상금"만 있거나 숫자가 상금과 무관하면 제외 — 금액 단위가 보이거나 총상금 문구일 때
   if (!/(총\s*상금|\d[\d,]*(?:\.\d+)?\s*만\s*원|\d+\s*만\b)/.test(t)) return null;
+  // 긴 원문 코퍼스면 문구만 뽑아 라벨로 쓴다
+  const extracted = extractPrizeAmountPhrase(t);
+  if (extracted) return formatTotalPrizeLabel(extracted);
   return formatTotalPrizeLabel(t);
+}
+
+/** 원문/시상 섹션에서 "총 상금 700만원" 같은 금액 문구만 추출 */
+function extractPrizeAmountPhrase(text: string): string | null {
+  const patterns = [
+    /총\s*상금\s*[:：]?\s*([\d,]+(?:\.\d+)?\s*만\s*원)/,
+    /(?:시상금|포상금)\s*[:：]?\s*([\d,]+(?:\.\d+)?\s*만\s*원)/,
+    /상금\s*[:：]\s*([\d,]+(?:\.\d+)?\s*만\s*원)/,
+  ];
+  for (const re of patterns) {
+    const m = text.match(re);
+    if (m?.[1] && hasMeaningfulPrizeAmount(m[1])) {
+      return m[1].replace(/\s+/g, "");
+    }
+  }
+  return null;
 }
 
 function normalizeBenefitKey(raw: string): string {
@@ -450,6 +473,14 @@ export function resolveContestBenefits(opts: {
     : null;
 
   const fromNotice = extractBenefitCorpusFromNotice(opts.noticeText);
+  if (!prizeAmountLabel && fromNotice?.corpus) {
+    const fromCorpus = extractPrizeAmountPhrase(fromNotice.corpus);
+    if (fromCorpus) prizeAmountLabel = formatTotalPrizeLabel(fromCorpus);
+  }
+  if (!prizeAmountLabel && opts.noticeText?.trim()) {
+    const fromFull = extractPrizeAmountPhrase(opts.noticeText);
+    if (fromFull) prizeAmountLabel = formatTotalPrizeLabel(fromFull);
+  }
   if (fromNotice) {
     for (const id of mapNoticeCorpusToIds(fromNotice.corpus)) {
       pushUnique(out, id);

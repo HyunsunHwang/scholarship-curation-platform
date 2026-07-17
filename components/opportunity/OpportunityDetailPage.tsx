@@ -268,7 +268,7 @@ export default async function OpportunityDetailPage({
                   autoCheck={autoCheck}
                   hideQualificationSections
                   layout="netflix"
-                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} />}
+                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} divided={false} />}
                 />
 
                 {contest.contact && (

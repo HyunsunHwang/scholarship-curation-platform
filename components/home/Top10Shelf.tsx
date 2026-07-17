@@ -13,7 +13,7 @@ import type { CardScholarship } from "@/components/ScholarshipCard";
 import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
-import { formatCardSupportLine } from "@/lib/support-amount";
+import { resolveCardSupportLine } from "@/lib/support-amount";
 import { contentKindHref } from "@/lib/content-categories";
 
 function getMetrics(viewportWidth: number) {
@@ -89,12 +89,14 @@ const institutionGradient: Record<string, string> = {
 
 function getTop10CardModel(scholarship: CardScholarship) {
   const displayName = cleanScholarshipName(scholarship.name);
-  const supportAmount = formatCardSupportLine({
+  const supportAmount = resolveCardSupportLine({
     contentKind: scholarship.content_kind,
     supportAmountText: scholarship.support_amount_text,
     benefits: scholarship.benefits,
     additionalNote: scholarship.benefit_note,
     noticeText: scholarship.benefit_notice_text,
+    name: scholarship.name,
+    cardSupportLine: scholarship.card_support_line,
   });
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
   const kind = scholarship.content_kind ?? "scholarship";
@@ -139,7 +141,7 @@ function Top10Poster({
     <Link
       href={href}
       onClick={onAnnouncementClick}
-      className="group relative block h-full w-full overflow-hidden rounded-xl shadow-md ring-1 ring-black/5 sm:rounded-2xl"
+      className="group relative block h-full w-full overflow-hidden rounded-xl ring-1 ring-black/5 sm:rounded-2xl"
     >
       {scholarship.poster_image_url ? (
         <Image
@@ -148,13 +150,13 @@ function Top10Poster({
           fill
           sizes="(max-width: 639px) 110px, (max-width: 767px) 120px, (max-width: 1023px) 132px, 144px"
           loading="lazy"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-opacity duration-200 group-hover:opacity-90"
         />
       ) : (
         <div
           className={`flex h-full w-full items-end bg-linear-to-br p-3 ${gradient}`}
         >
-          <span className="inline-flex items-center rounded-full border border-white/30 bg-white/20 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+          <span className="inline-flex items-center rounded-full border border-white/40 bg-black/45 px-2 py-0.5 text-[10px] font-semibold text-white">
             {scholarship.institution_type}
           </span>
         </div>
@@ -163,7 +165,7 @@ function Top10Poster({
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-black/25" />
 
       <span
-        className={`absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-2.25rem)] items-center truncate rounded-sm border bg-black/55 px-1.5 py-[3px] text-[10px] font-semibold leading-none text-white shadow-sm backdrop-blur-sm sm:left-2 sm:top-2 ${badgeClass}`}
+        className={`absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-2.25rem)] items-center truncate rounded-sm border bg-black/70 px-1.5 py-[3px] text-[10px] font-semibold leading-none text-white sm:left-2 sm:top-2 ${badgeClass}`}
         aria-label={kindBadgeLabel}
       >
         {kindBadgeLabel}

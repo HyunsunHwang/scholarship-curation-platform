@@ -11,7 +11,7 @@ import {
   isAlwaysOpenRecruitment,
 } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
-import { formatCardSupportLine } from "@/lib/support-amount";
+import { resolveCardSupportLine } from "@/lib/support-amount";
 
 function deadlineLabel(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "상시모집";
@@ -40,12 +40,14 @@ export default function HomeHero({
   const onAnnouncementClick = useAnnouncementLinkClick(kind, scholarship.id);
   const isContestLike =
     kind === "contest" || kind === "education" || kind === "activity";
-  const supportAmount = formatCardSupportLine({
+  const supportAmount = resolveCardSupportLine({
     contentKind: scholarship.content_kind,
     supportAmountText: scholarship.support_amount_text,
     benefits: scholarship.benefits,
     additionalNote: scholarship.benefit_note,
     noticeText: scholarship.benefit_notice_text,
+    name: scholarship.name,
+    cardSupportLine: scholarship.card_support_line,
   });
 
   return (

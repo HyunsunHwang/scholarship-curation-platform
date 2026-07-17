@@ -15,10 +15,17 @@ import {
   rankForYou,
   softRankForYou,
 } from "@/lib/home-rails";
-import { clipNoticeForCard } from "@/lib/support-amount";
 import { getForYouWeights } from "@/lib/home-ranking-weights";
+import {
+  buildContestCardSupportFields,
+  contestIdsNeedingNotice,
+} from "@/lib/support-amount";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+
+/** 홈 레일/교내 카드용 — select("*") 대신 필요한 컬럼만 */
+const HOME_SCHOLARSHIP_CARD_SELECT =
+  "id, name, organization, institution_type, support_types, support_amount_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, is_advertisement, qual_field_codes, qual_university, qual_region, qual_school_location";
 
 function mapScholarshipRows(
   rows: Database["public"]["Tables"]["scholarships"]["Row"][],
@@ -140,13 +147,16 @@ export async function fetchCollaborativeCards(
 
   const [schRowsResult, contestRowsResult, scrapCounts] = await Promise.all([
     schIds.length > 0
-      ? supabase.from("scholarships").select("*").in("id", schIds)
+      ? supabase
+          .from("scholarships")
+          .select(HOME_SCHOLARSHIP_CARD_SELECT)
+          .in("id", schIds)
       : Promise.resolve({ data: [] as Database["public"]["Tables"]["scholarships"]["Row"][] }),
     contestIds.length > 0
       ? supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, original_notice_text, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
           )
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
@@ -165,33 +175,58 @@ export async function fetchCollaborativeCards(
     (a, b) => (schScoreMap.get(b.id) ?? 0) - (schScoreMap.get(a.id) ?? 0)
   );
 
+  const contestRows = contestRowsResult.data ?? [];
+  const noticeIds = contestIdsNeedingNotice(contestRows);
+  const noticeById = new Map<number, string | null>();
+  if (noticeIds.length > 0) {
+    const { data: noticeRows } = await supabase
+      .from("contests")
+      .select("id, original_notice_text")
+      .in("id", noticeIds);
+    for (const row of noticeRows ?? []) {
+      noticeById.set(row.id, row.original_notice_text);
+    }
+  }
+
   const contestScoreMap = new Map(
     contestScores.map((r) => [r.contest_id, r.score])
   );
-  const contestCards: CardScholarship[] = (contestRowsResult.data ?? [])
+  const contestCards: CardScholarship[] = contestRows
     .filter((c) => c.apply_end_date && !isScholarshipExpired(c.apply_end_date))
-    .map((c) => ({
-      id: c.id,
-      name: c.name,
-      organization: c.organization,
-      institution_type: c.organization_type || "기타",
-      support_types: [] as string[],
-      support_amount_text: c.support_amount_text,
-      benefits: c.benefits ?? null,
-      benefit_note: c.note ?? null,
-      benefit_notice_text: clipNoticeForCard(c.original_notice_text),
-      apply_end_date: c.apply_end_date ?? "2099-12-31",
-      poster_image_url: c.poster_image_url ?? null,
-      created_at: c.created_at,
-      view_count: c.view_count,
-      content_kind: (c.content_kind ?? "contest") as
+    .map((c) => {
+      const kind = (c.content_kind ?? "contest") as
         | "contest"
         | "education"
-        | "activity",
-      is_recommended: c.is_recommended,
-      recommended_sort_order: c.recommended_sort_order,
-      interest_categories: c.interest_categories ?? null,
-    }))
+        | "activity";
+      const supportFields = buildContestCardSupportFields({
+        name: c.name,
+        contentKind: kind,
+        supportAmountText: c.support_amount_text,
+        benefits: c.benefits,
+        additionalNote: c.note,
+        originalNoticeText: noticeById.get(c.id) ?? null,
+      });
+      return {
+        id: c.id,
+        name: c.name,
+        organization: c.organization,
+        institution_type: c.organization_type || "기타",
+        support_types: [] as string[],
+        support_amount_text: c.support_amount_text,
+        benefits: c.benefits ?? null,
+        benefit_note: c.note ?? null,
+        benefit_notice_text: supportFields.benefit_notice_text,
+        card_support_line: supportFields.card_support_line,
+        apply_end_date: c.apply_end_date ?? "2099-12-31",
+        poster_image_url: c.poster_image_url ?? null,
+        created_at: c.created_at,
+        view_count: c.view_count,
+        content_kind: kind,
+        is_recommended: c.is_recommended,
+        recommended_sort_order: c.recommended_sort_order,
+        interest_categories: c.interest_categories ?? null,
+      };
+    })
     .sort(
       (a, b) => (contestScoreMap.get(b.id) ?? 0) - (contestScoreMap.get(a.id) ?? 0)
     );
@@ -229,7 +264,7 @@ export async function fetchHomeCampusScholarships(
   if (school && campusRows.length < HOME_RAIL_ITEM_LIMIT) {
     const { data: byUniversity } = await supabase
       .from("scholarships")
-      .select("*")
+      .select(HOME_SCHOLARSHIP_CARD_SELECT)
       .eq("is_verified", true)
       .gte("apply_end_date", today)
       .contains("qual_university", [school])
@@ -238,7 +273,9 @@ export async function fetchHomeCampusScholarships(
     const existing = new Set(campusRows.map((r) => r.id));
     for (const row of byUniversity ?? []) {
       if (existing.has(row.id)) continue;
-      campusRows.push(row);
+      campusRows.push(
+        row as Database["public"]["Tables"]["scholarships"]["Row"]
+      );
       existing.add(row.id);
     }
   }
@@ -266,6 +303,9 @@ type BrowseEventRow = {
   occurred_at: string;
 };
 
+const RECENT_CONTEST_CARD_SELECT =
+  "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, is_recommended, recommended_sort_order, content_kind, interest_categories";
+
 export async function fetchRecentBrowseCards(
   supabase: SupabaseServerClient,
   limit = 24
@@ -279,21 +319,119 @@ export async function fetchRecentBrowseCards(
     return [];
   }
 
-  const rows = data as BrowseEventRow[];
-  return rows
-    .filter((row) => row.apply_end_date && !isScholarshipExpired(row.apply_end_date))
-    .map(
-      (row) =>
-        ({
-          id: row.content_id,
-          name: row.name,
-          organization: row.organization,
-          institution_type: "기타",
+  const rows = (data as BrowseEventRow[]).filter(
+    (row) => row.apply_end_date && !isScholarshipExpired(row.apply_end_date)
+  );
+  if (rows.length === 0) return [];
+
+  const schIds = rows
+    .filter((row) => row.content_kind === "scholarship")
+    .map((row) => row.content_id);
+  const contestIds = rows
+    .filter((row) => row.content_kind !== "scholarship")
+    .map((row) => row.content_id);
+
+  const [schResult, contestResult] = await Promise.all([
+    schIds.length > 0
+      ? supabase
+          .from("scholarships")
+          .select(HOME_SCHOLARSHIP_CARD_SELECT)
+          .in("id", schIds)
+      : Promise.resolve({ data: [] as const }),
+    contestIds.length > 0
+      ? supabase
+          .from("contests")
+          .select(RECENT_CONTEST_CARD_SELECT)
+          .in("id", contestIds)
+      : Promise.resolve({ data: [] as const }),
+  ]);
+
+  const contestRows = contestResult.data ?? [];
+  const noticeIds = contestIdsNeedingNotice(contestRows);
+  const noticeById = new Map<number, string | null>();
+  if (noticeIds.length > 0) {
+    const { data: noticeRows } = await supabase
+      .from("contests")
+      .select("id, original_notice_text")
+      .in("id", noticeIds);
+    for (const row of noticeRows ?? []) {
+      noticeById.set(row.id, row.original_notice_text);
+    }
+  }
+
+  const schById = new Map<number, CardScholarship>(
+    (schResult.data ?? []).map((row) => [
+      row.id,
+      {
+        id: row.id,
+        name: row.name,
+        organization: row.organization,
+        institution_type: row.institution_type as string,
+        support_types: (row.support_types as string[]) ?? [],
+        support_amount_text: row.support_amount_text,
+        apply_end_date: row.apply_end_date,
+        poster_image_url: row.poster_image_url ?? null,
+        created_at: row.created_at,
+        view_count: row.view_count,
+        content_kind: "scholarship" as const,
+        is_recommended: row.is_recommended,
+        recommended_sort_order: row.recommended_sort_order,
+        is_advertisement: row.is_advertisement,
+        qual_field_codes: row.qual_field_codes ?? null,
+        qual_university: row.qual_university ?? null,
+        qual_region: row.qual_region ?? null,
+        qual_school_location: row.qual_school_location ?? null,
+      },
+    ])
+  );
+
+  const contestById = new Map<number, CardScholarship>(
+    contestRows.map((c) => {
+      const kind = (c.content_kind ?? "contest") as
+        | "contest"
+        | "education"
+        | "activity";
+      const supportFields = buildContestCardSupportFields({
+        name: c.name,
+        contentKind: kind,
+        supportAmountText: c.support_amount_text,
+        benefits: c.benefits,
+        additionalNote: c.note,
+        originalNoticeText: noticeById.get(c.id) ?? null,
+      });
+      return [
+        c.id,
+        {
+          id: c.id,
+          name: c.name,
+          organization: c.organization,
+          institution_type: c.organization_type || "기타",
           support_types: [],
-          apply_end_date: row.apply_end_date ?? "2099-12-31",
-          poster_image_url: row.poster_image_url,
-          created_at: row.occurred_at,
-          content_kind: row.content_kind,
-        }) satisfies CardScholarship
-    );
+          support_amount_text: c.support_amount_text,
+          benefits: c.benefits ?? null,
+          benefit_note: c.note ?? null,
+          benefit_notice_text: supportFields.benefit_notice_text,
+          card_support_line: supportFields.card_support_line,
+          apply_end_date: c.apply_end_date ?? "2099-12-31",
+          poster_image_url: c.poster_image_url ?? null,
+          created_at: c.created_at,
+          view_count: c.view_count,
+          content_kind: kind,
+          is_recommended: c.is_recommended,
+          recommended_sort_order: c.recommended_sort_order,
+          interest_categories: c.interest_categories ?? null,
+        },
+      ];
+    })
+  );
+
+  const out: CardScholarship[] = [];
+  for (const row of rows) {
+    const hit =
+      row.content_kind === "scholarship"
+        ? schById.get(row.content_id)
+        : contestById.get(row.content_id);
+    if (hit) out.push(hit);
+  }
+  return out;
 }
