@@ -22,7 +22,13 @@ import {
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
-import { createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
+import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
+import {
+  buildCrawlerWorkItemKey,
+  createCrawlerCheckpointSession,
+  installCrawlerSignalHandlers,
+  parseCrawlerCheckpointArguments,
+} from "../lib/crawler-engine/checkpoint.mjs";
 import {
   createCrawlerDocumentRuntime,
   isDocumentParsingEnabled,
@@ -40,10 +46,14 @@ const DEFAULT_KEYWORDS = [
 ];
 
 // Input: "db:ewha" (preferred) or legacy CSV path like data/notice-sources-cau.csv
-const INPUT_ARG = process.argv[2] ?? "db";
-const OUTPUT_DIR = process.argv[3] ?? "exports/notices";
+const IS_MAIN = Boolean(process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url));
+const CLI_ARGUMENTS = IS_MAIN
+  ? parseCrawlerCheckpointArguments(process.argv.slice(2))
+  : parseCrawlerCheckpointArguments([]);
+const INPUT_ARG = CLI_ARGUMENTS.positional[0] ?? "db";
+const OUTPUT_DIR = CLI_ARGUMENTS.positional[1] ?? "exports/notices";
 const STATE_FILE_PATH =
-  process.argv[4] ?? ".crawler/scholarship-notice-state.json";
+  CLI_ARGUMENTS.positional[2] ?? ".crawler/scholarship-notice-state.json";
 const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 25_000);
 const REQUEST_RETRY_COUNT = Math.max(0, Math.min(3, Number(process.env.CRAWL_RETRY_COUNT ?? 1)));
 const REQUEST_RETRY_BACKOFF_MS = Math.max(
@@ -611,22 +621,8 @@ function trimItems(items, maxItems) {
   return items.slice(0, maxItems);
 }
 
-async function mapLimit(items, limit, mapper) {
-  const results = new Array(items.length);
-  let nextIndex = 0;
-
-  async function worker() {
-    while (true) {
-      const current = nextIndex;
-      nextIndex += 1;
-      if (current >= items.length) return;
-      results[current] = await mapper(items[current], current);
-    }
-  }
-
-  const workerCount = Math.max(1, Math.min(limit, items.length));
-  await Promise.all(Array.from({ length: workerCount }, () => worker()));
-  return results;
+async function mapLimit(items, limit, mapper, options = {}) {
+  return boundedMap(items, limit, mapper, options);
 }
 
 const ENGLISH_MONTHS = new Map(
@@ -729,7 +725,7 @@ function formatKstDate(date = new Date()) {
     .replace(/-/g, "");
 }
 
-async function run() {
+async function run({ signal } = {}) {
   const loaded = await loadSources(INPUT_ARG);
   const configuredSources = loaded.sources;
   console.log(`source_input=${loaded.inputLabel} mode=${loaded.mode} loaded=${configuredSources.length}`);
@@ -778,8 +774,35 @@ async function run() {
     maximumHostConcurrency: HOST_CONCURRENCY,
   });
   const documentRuntime = createAuthoritativeDocumentRuntime({ requestLimiter });
+  const checkpointSession = await createCrawlerCheckpointSession({
+    checkpointPath: CLI_ARGUMENTS.checkpoint_path,
+    resume: CLI_ARGUMENTS.resume,
+    runIdentity: CLI_ARGUMENTS.run_identity ?? (CLI_ARGUMENTS.resume ? undefined : `crawl-notices-${RUN_AT}`),
+    sourceKeys: sources.map((source) => source.sourceId),
+    configuration: {
+      runner_contract_version: "engine-phase-2-common-runner-v1",
+      source_concurrency: SOURCE_CONCURRENCY,
+      detail_concurrency: DETAIL_CONCURRENCY,
+      retry_count: REQUEST_RETRY_COUNT,
+      retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+      retry_maximum_delay_ms: REQUEST_RETRY_MAX_DELAY_MS,
+      retry_jitter_ratio: REQUEST_RETRY_JITTER_RATIO,
+      timeout_ms: REQUEST_TIMEOUT_MS,
+      source_minimum_interval_ms: SOURCE_MIN_INTERVAL_MS,
+      host_minimum_interval_ms: HOST_MIN_INTERVAL_MS,
+      host_concurrency: HOST_CONCURRENCY,
+      fetch_details: DETAIL_FETCH_ENABLED,
+      document_parsing_enabled: documentRuntime.enabled,
+      maximum_items_per_source: MAX_ITEMS_PER_SOURCE,
+      maximum_pages_per_source: MAX_PAGES_PER_SOURCE,
+      lookback_days: LOOKBACK_DAYS,
+      allow_undated: ALLOW_UNDATED,
+      ignore_seen: IGNORE_SEEN,
+    },
+  });
+  const pendingSources = sources.filter((source) => !checkpointSession?.shouldSkipSource(source.sourceId));
 
-  const processed = await mapLimit(sources, SOURCE_CONCURRENCY, async (source) => {
+  const processSource = async (source) => {
     const sourceStartedAt = new Date().toISOString();
     const sourceStartedMs = Date.now();
     let executionResult = null;
@@ -798,10 +821,18 @@ async function run() {
           }),
           MAX_ITEMS_PER_SOURCE,
         );
-        detailItems = listItems;
+        detailItems = listItems.filter((notice) => {
+          const workItemKey = buildCrawlerWorkItemKey(source.sourceId, notice);
+          return !checkpointSession?.shouldSkipWorkItem(workItemKey);
+        });
         if (documentRuntime.enabled) {
-          detailItems = await mapLimit(detailItems, DETAIL_CONCURRENCY, (notice) =>
-            documentRuntime.processNoticeDocuments({ source, notice }));
+          detailItems = await mapLimit(detailItems, DETAIL_CONCURRENCY, async (notice) => {
+            const processedNotice = await documentRuntime.processNoticeDocuments({ source, notice, signal });
+            const workItemKey = buildCrawlerWorkItemKey(source.sourceId, processedNotice);
+            await checkpointSession?.recordWorkItem({ sourceKey: source.sourceId, workItemKey });
+            return processedNotice;
+          }, { signal, settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms });
+          detailItems = detailItems.filter((notice) => !notice?.__bounded_map_abandoned && !notice?.__bounded_map_error);
         }
         const finishedAt = new Date().toISOString();
         const durationMs = Math.max(0, Date.now() - sourceStartedMs);
@@ -855,7 +886,13 @@ async function run() {
           retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
           detailConcurrency: DETAIL_CONCURRENCY,
           requestLimiter,
+          completedWorkItemKeys: checkpointSession?.snapshot().completed_work_item_keys ?? [],
+          onWorkItemSettled: checkpointSession
+            ? (item) => checkpointSession.recordWorkItem(item)
+            : null,
           processNoticeDocuments: documentRuntime.processNoticeDocuments,
+          settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms,
+          signal,
         });
         executionResult = commonResult;
         if (!["success", "empty_observed", "partial"].includes(commonResult.result_status)) {
@@ -982,6 +1019,35 @@ async function run() {
         executionResult,
       };
     }
+  };
+  const rawProcessed = await mapLimit(pendingSources, SOURCE_CONCURRENCY, async (source) => {
+    const result = await processSource(source);
+    await checkpointSession?.recordSourceResult(result.executionResult);
+    return result;
+  }, {
+    signal,
+    settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms,
+  });
+  const processed = rawProcessed.map((result) => {
+    if (!result?.__bounded_map_abandoned) return result;
+    const source = pendingSources[result.index];
+    return {
+      sourceId: source.sourceId,
+      sourceName: source.sourceName,
+      adapterStrategy: getSourceAdapterStrategy(source),
+      error: "crawler_settle_timeout",
+      detailItems: [],
+      matched: [],
+      executionResult: {
+        source_key: source.sourceId,
+        source_id: source.sourceId,
+        result_status: "partial",
+        cancelled: true,
+        observed_count: 0,
+        notices: [],
+        final_reason_code: "crawler_settle_timeout",
+      },
+    };
   });
 
   for (const result of processed) {
@@ -1062,6 +1128,19 @@ async function run() {
     delete evidence.notices;
     return evidence;
   });
+  const cancelled = signal?.aborted === true;
+  const cancellationReason = cancelled ? cleanText(signal.reason) || "crawler_cancelled" : null;
+  const checkpointCancellation = cancelled && checkpointSession
+    ? await checkpointSession.markCancelled(
+        cancellationReason,
+        pendingSources
+          .filter((source) => !checkpointSession.shouldSkipSource(source.sourceId))
+          .map((source) => ({ source_key: source.sourceId, reason_code: cancellationReason })),
+      )
+    : null;
+  if (!cancelled && checkpointSession) await checkpointSession.markCompleted();
+  await checkpointSession?.flush();
+  const checkpointSnapshot = checkpointSession?.snapshot() ?? null;
 
   const report = {
     runAt: RUN_AT,
@@ -1105,6 +1184,20 @@ async function run() {
       summary: executionSummary,
       sources: sourceExecutionEvidence,
     },
+    recovery: checkpointSession ? {
+      status: checkpointSnapshot.status,
+      cancelled,
+      cancellationReason,
+      checkpointPath: checkpointSession.checkpoint_path,
+      checkpointSaved: checkpointCancellation?.checkpoint_saved ?? true,
+      checkpointSaveError: checkpointCancellation?.checkpoint_save_error ?? null,
+      resumed: checkpointSession.resumed,
+      runIdentity: checkpointSession.run_identity,
+      completedSourceCount: checkpointSnapshot.completed_source_keys.length,
+      completedWorkItemCount: checkpointSnapshot.completed_work_item_keys.length,
+      skippedSourceCount: sources.length - pendingSources.length,
+      pendingSourceCount: Math.max(0, sources.length - checkpointSnapshot.completed_source_keys.length),
+    } : null,
     perSource: stats,
     observedItems: crawled.map((item) => ({
       sourceId: item.sourceId,
@@ -1212,19 +1305,34 @@ async function run() {
   console.log(`json=${jsonPath}`);
   console.log(`csv=${csvPath}`);
   console.log(`state=${resolvedStatePath}`);
+  if (checkpointSession) {
+    console.log(`checkpoint=${checkpointSession.checkpoint_path}`);
+    console.log(`checkpoint_status=${checkpointSnapshot.status}`);
+    console.log(`resume=${checkpointSession.resumed}`);
+  }
+  return { cancelled, report };
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  run()
-    .then(() => {
+if (IS_MAIN) {
+  const controller = new AbortController();
+  const signalHandlers = installCrawlerSignalHandlers({
+    controller,
+    onSecondSignal: ({ second_signal: secondSignal }) => {
+      console.error(`crawler_force_exit_requested=${secondSignal}`);
+    },
+  });
+  run({ signal: controller.signal })
+    .then((result) => {
       // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
       // the event loop alive well after all work is done, especially on
       // Windows. Force an explicit exit once results are written so the
       // process (and any CI job wrapping it) doesn't hang.
-      process.exit(0);
+      signalHandlers.dispose();
+      process.exit(result.cancelled ? 130 : 0);
     })
     .catch((error) => {
       console.error(error);
+      signalHandlers.dispose();
       process.exit(1);
     });
 }

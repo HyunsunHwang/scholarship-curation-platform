@@ -1,0 +1,206 @@
+{
+  "official_phase": "Engine Phase 2 — 반복 수집 안정성",
+  "official_gate": "Engine Phase 2 Completion — Gate B",
+  "official_task": "Checkpoint, Resume, Graceful Cancellation, and Recovery",
+  "result": "PASS",
+  "generated_at": "2026-07-17T12:06:03.885Z",
+  "inputs": {
+    "fixture_result": ".tmp/engine-phase-2-gate-b/fixture-results.json",
+    "live_result": ".tmp/engine-phase-2-gate-b/live-summary.json"
+  },
+  "checkpoint_schema_version": 1,
+  "checkpoint_schema_versioned": true,
+  "checkpoint_atomic_write_verified": true,
+  "checkpoint_temp_write_then_rename": true,
+  "checkpoint_existing_file_preserved_on_failure": true,
+  "configuration_fingerprint_verified": true,
+  "source_set_fingerprint_verified": true,
+  "checkpoint_corrupt_fail_closed": true,
+  "checkpoint_incompatible_fail_closed": true,
+  "resume_explicit_opt_in": true,
+  "completed_source_skip_verified": true,
+  "completed_work_item_skip_verified": true,
+  "resume_duplicate_identity_count": 0,
+  "resume_reexecuted_completed_source_count": 0,
+  "resume_reexecuted_completed_work_item_count": 0,
+  "external_abort_signal_verified": true,
+  "sigint_graceful_cancellation_verified": true,
+  "sigterm_graceful_cancellation_verified": true,
+  "scheduling_stopped_after_cancellation": true,
+  "retry_sleep_cancelled": true,
+  "rate_limit_sleep_cancelled": true,
+  "inflight_bounded_settle_verified": true,
+  "cancellation_checkpoint_saved": true,
+  "cancelled_result_explicit": true,
+  "dangling_timer_count": 0,
+  "dangling_signal_listener_count": 0,
+  "uninterrupted_vs_resumed_identity_match": true,
+  "uninterrupted_vs_resumed_core_structure_match": true,
+  "resume_second_execution_new_result_count": 0,
+  "phase_3_parser_cache_separation_verified": true,
+  "phase_3_cache_reuse_on_resume_verified": true,
+  "checkpoint_contains_raw_document_bytes": false,
+  "checkpoint_contains_full_document_text": false,
+  "fixture": {
+    "test_count": 15,
+    "passed_count": 15,
+    "failed_count": 0,
+    "validations": [
+      {
+        "name": "checkpoint schema is versioned and deterministic",
+        "passed": true
+      },
+      {
+        "name": "resume is explicit opt-in and existing checkpoint is protected",
+        "passed": true
+      },
+      {
+        "name": "atomic write uses temp rename and preserves existing checkpoint on failure",
+        "passed": true
+      },
+      {
+        "name": "configuration and source fingerprints are deterministic and scoped",
+        "passed": true
+      },
+      {
+        "name": "corrupt and incompatible checkpoints fail closed before scheduling",
+        "passed": true
+      },
+      {
+        "name": "completed source is skipped before scheduling",
+        "passed": true
+      },
+      {
+        "name": "completed work item is skipped before detail and parser scheduling",
+        "passed": true
+      },
+      {
+        "name": "external cancellation saves progress and resumed run is equivalent",
+        "passed": true
+      },
+      {
+        "name": "bounded settle returns abandoned evidence without unlimited wait",
+        "passed": true
+      },
+      {
+        "name": "cancelled checkpoint rejects late completion callbacks",
+        "passed": true
+      },
+      {
+        "name": "bounded settle clears losing grace timers",
+        "passed": true
+      },
+      {
+        "name": "retry and rate-limit delays remain cancellable",
+        "passed": true
+      },
+      {
+        "name": "SIGINT and SIGTERM handlers are deterministic and cleaned up",
+        "passed": true
+      },
+      {
+        "name": "Phase 3 parser cache stays separate and reusable",
+        "passed": true
+      },
+      {
+        "name": "checkpoint validation rejects malformed completed identity",
+        "passed": true
+      }
+    ]
+  },
+  "live": {
+    "source_keys": [
+      "korea_002",
+      "yonsei_001"
+    ],
+    "bounds": {
+      "source_count": 2,
+      "notice_limit_per_source": 1,
+      "source_concurrency": 1,
+      "detail_concurrency": 1,
+      "host_concurrency": 1,
+      "retry_count": 0,
+      "timeout_ms": 25000
+    },
+    "runtime_path": {
+      "common_runner_used": true,
+      "gate_a_limiter_reused": true,
+      "external_abort_controller_used": true,
+      "checkpoint_local_file_used": true,
+      "explicit_resume_used": true,
+      "parallel_runner_created": false
+    },
+    "interrupted": {
+      "status": "cancelled",
+      "source_count": 1,
+      "notice_count": 1,
+      "document_count": 1,
+      "error_count": 0,
+      "recovery": {
+        "checkpoint_path": "C:\\Users\\82108\\Documents\\Codex\\2026-07-17\\hyunsunhwang-scholarship-curation-platform-post-phase\\work\\ep2-gate-b\\.tmp\\engine-phase-2-gate-b\\live\\checkpoint.json",
+        "checkpoint_saved": true,
+        "checkpoint_save_error": null,
+        "resumed": false,
+        "run_identity": "engine-phase-2-gate-b-live",
+        "completed_source_count": 1,
+        "completed_work_item_count": 1,
+        "pending_source_count": 1,
+        "skipped_source_count": 0,
+        "status": "cancelled"
+      },
+      "errors": []
+    },
+    "resumed": {
+      "status": "succeeded",
+      "source_count": 1,
+      "notice_count": 1,
+      "document_count": 2,
+      "error_count": 0,
+      "recovery": {
+        "checkpoint_path": "C:\\Users\\82108\\Documents\\Codex\\2026-07-17\\hyunsunhwang-scholarship-curation-platform-post-phase\\work\\ep2-gate-b\\.tmp\\engine-phase-2-gate-b\\live\\checkpoint.json",
+        "checkpoint_saved": true,
+        "checkpoint_save_error": null,
+        "resumed": true,
+        "run_identity": "engine-phase-2-gate-b-live",
+        "completed_source_count": 2,
+        "completed_work_item_count": 2,
+        "pending_source_count": 0,
+        "skipped_source_count": 1,
+        "status": "completed"
+      },
+      "errors": []
+    },
+    "invariants": {
+      "interrupted_cancelled": true,
+      "cancellation_checkpoint_saved": true,
+      "final_checkpoint_completed": true,
+      "completed_source_count": 2,
+      "completed_work_item_count": 2,
+      "resumed_skipped_source_count": 1,
+      "duplicate_identity_count": 0
+    }
+  },
+  "safety": {
+    "database_accessed": false,
+    "database_written": false,
+    "production_accessed": false,
+    "external_llm_called": false,
+    "migration_created_or_executed": false,
+    "production_scheduler_added": false,
+    "queue_or_worker_added": false,
+    "full_613_source_run": false
+  },
+  "architecture": {
+    "gate_a_reimplemented": false,
+    "parallel_runner_added": false,
+    "second_source_identity_added": false,
+    "second_normalized_graph_added": false,
+    "database_checkpoint_added": false,
+    "phase_3_cache_is_checkpoint": false
+  },
+  "limitations": [
+    "Local single-process checkpoint only.",
+    "Concurrent processes must not share one checkpoint path.",
+    "No distributed coordination or database-backed durability."
+  ]
+}
