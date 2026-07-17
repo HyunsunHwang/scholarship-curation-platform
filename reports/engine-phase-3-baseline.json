@@ -1,0 +1,467 @@
+{
+  "phase": "Engine Phase 3 — HTML/PDF/HWP/이미지 파싱",
+  "phase_key": "engine-phase-3",
+  "generated_at": "2026-07-17T06:44:09.883Z",
+  "base_sha": "e21c408b80be3c5416f53018cdbcd5e7f7a3cbc9",
+  "overall_result": "PASS",
+  "implementation_scope": "Phase 1/2 common-runner document parsing hook, structured HTML, PDF text/OCR fallback, shared image OCR, HWP/HWPX capability handling, quality states, and deterministic cache",
+  "architecture": {
+    "authoritative_crawler_runner": "lib/crawler-engine/common-runner.mjs",
+    "optional_document_hook": "processNoticeDocuments",
+    "document_contract": "engine-phase-3-document-result/v1",
+    "parallel_crawler_created": false,
+    "parallel_identity_model_created": false,
+    "duplicate_or_lifecycle_decision_added": false
+  },
+  "supported_document_formats": [
+    "html",
+    "pdf",
+    "image",
+    "hwp",
+    "hwpx"
+  ],
+  "parser_registry_summary": {
+    "registry_present": true,
+    "capability_detection": true,
+    "parser_override_injection": true,
+    "notice_processor_integration": true
+  },
+  "ocr_capability_summary": {
+    "shared_adapter": true,
+    "direct_image_and_pdf_page_reuse": true,
+    "default_runtime_mode": "explicit_unavailable_until_adapter_selected",
+    "optional_engine": "tesseract.js"
+  },
+  "hwp_capability_summary": {
+    "hwp_signature_detection": true,
+    "hwpx_package_detection": true,
+    "hwpx_xml_extraction": true,
+    "binary_hwp_adapter_injection": true,
+    "binary_hwp_builtin_parser": false
+  },
+  "capabilities": {
+    "html_structured_blocks": true,
+    "html_table_structure": true,
+    "pdf_embedded_text": true,
+    "pdf_scanned_page_ocr_fallback": true,
+    "pdf_mixed_page_selective_ocr": true,
+    "shared_image_ocr_adapter": true,
+    "hwpx_xml_extraction": true,
+    "hwp_binary_capability_detection": true,
+    "hwp_binary_builtin_extraction": false,
+    "byte_fingerprint": "sha256",
+    "normalized_text_fingerprint": "sha256",
+    "deterministic_positive_cache": true,
+    "deterministic_negative_cache": true,
+    "parser_version_invalidation": true,
+    "corrupt_cache_reparse": true
+  },
+  "fixture_validation_matrix": {
+    "deterministic_rerun": true,
+    "html_table_structure": true,
+    "pdf_text_extraction": true,
+    "scanned_pdf_ocr_reuse": true,
+    "image_ocr": true,
+    "hwp_only_manual_review": true,
+    "cache_hit": true,
+    "negative_cache": true,
+    "parser_version_invalidation": true,
+    "byte_fingerprint": true,
+    "normalized_text_fingerprint": true
+  },
+  "fixture_validation": {
+    "phase": "engine-phase-3",
+    "scenario_count": 73,
+    "passed_count": 73,
+    "failed_count": 0,
+    "deterministic_rerun_match": true,
+    "scenario_results": [
+      {
+        "name": "contract exposes required quality states",
+        "passed": true
+      },
+      {
+        "name": "text normalization is deterministic",
+        "passed": true
+      },
+      {
+        "name": "byte fingerprint is deterministic",
+        "passed": true
+      },
+      {
+        "name": "byte fingerprint changes with bytes",
+        "passed": true
+      },
+      {
+        "name": "cache key is deterministic",
+        "passed": true
+      },
+      {
+        "name": "cache key changes with parser version",
+        "passed": true
+      },
+      {
+        "name": "cache key changes with OCR version",
+        "passed": true
+      },
+      {
+        "name": "HTML format is detected by content",
+        "passed": true
+      },
+      {
+        "name": "PDF format is detected by signature",
+        "passed": true
+      },
+      {
+        "name": "image format is detected by MIME",
+        "passed": true
+      },
+      {
+        "name": "unknown ZIP is not HWPX",
+        "passed": true
+      },
+      {
+        "name": "HWPX is detected by package structure",
+        "passed": true
+      },
+      {
+        "name": "binary HWP is detected by OLE signature",
+        "passed": true
+      },
+      {
+        "name": "HTML headings and paragraphs preserve source order",
+        "passed": true
+      },
+      {
+        "name": "HTML navigation noise is removed",
+        "passed": true
+      },
+      {
+        "name": "HTML lists remain structured",
+        "passed": true
+      },
+      {
+        "name": "HTML table headers are retained",
+        "passed": true
+      },
+      {
+        "name": "HTML table cell coordinates are retained",
+        "passed": true
+      },
+      {
+        "name": "HTML image references are retained",
+        "passed": true
+      },
+      {
+        "name": "HTML line breaks are retained in text projection",
+        "passed": true
+      },
+      {
+        "name": "HTML nested attachment references are retained",
+        "passed": true
+      },
+      {
+        "name": "HTML rowspan and colspan metadata are retained",
+        "passed": true
+      },
+      {
+        "name": "image-only HTML is explicit",
+        "passed": true
+      },
+      {
+        "name": "HTML table produces preserved quality state",
+        "passed": true
+      },
+      {
+        "name": "short HTML requires review",
+        "passed": true
+      },
+      {
+        "name": "image OCR adapter returns extracted text",
+        "passed": true
+      },
+      {
+        "name": "image OCR invokes shared adapter once",
+        "passed": true
+      },
+      {
+        "name": "high-confidence image OCR succeeds",
+        "passed": true
+      },
+      {
+        "name": "low-confidence image OCR is flagged",
+        "passed": true
+      },
+      {
+        "name": "unavailable image OCR is explicit",
+        "passed": true
+      },
+      {
+        "name": "image byte limit is enforced",
+        "passed": true
+      },
+      {
+        "name": "OCR failure is sanitized and reviewable",
+        "passed": true
+      },
+      {
+        "name": "OCR timeout is explicit",
+        "passed": true
+      },
+      {
+        "name": "PDF embedded text is extracted",
+        "passed": true
+      },
+      {
+        "name": "PDF page count is recorded",
+        "passed": true
+      },
+      {
+        "name": "PDF page blocks preserve order",
+        "passed": true
+      },
+      {
+        "name": "scanned PDF uses shared OCR fallback",
+        "passed": true
+      },
+      {
+        "name": "mixed PDF OCRs only insufficient page",
+        "passed": true
+      },
+      {
+        "name": "PDF OCR page limit is enforced",
+        "passed": true
+      },
+      {
+        "name": "PDF total page limit is enforced",
+        "passed": true
+      },
+      {
+        "name": "PDF byte limit is enforced",
+        "passed": true
+      },
+      {
+        "name": "corrupt PDF fails closed",
+        "passed": true
+      },
+      {
+        "name": "encrypted PDF error classification is explicit",
+        "passed": true
+      },
+      {
+        "name": "scanned PDF without OCR reports unavailable",
+        "passed": true
+      },
+      {
+        "name": "HWP application form role is classified",
+        "passed": true
+      },
+      {
+        "name": "HWP supporting form role is classified",
+        "passed": true
+      },
+      {
+        "name": "HWP-only primary notice requires manual review",
+        "passed": true
+      },
+      {
+        "name": "binary HWP tool absence is explicit for forms",
+        "passed": true
+      },
+      {
+        "name": "HWPX XML text is extracted",
+        "passed": true
+      },
+      {
+        "name": "HWPX sections remain structured",
+        "passed": true
+      },
+      {
+        "name": "available binary HWP adapter is used",
+        "passed": true
+      },
+      {
+        "name": "malformed HWPX fails closed",
+        "passed": true
+      },
+      {
+        "name": "HWP byte limit is enforced",
+        "passed": true
+      },
+      {
+        "name": "registry positive cache avoids reparsing",
+        "passed": true
+      },
+      {
+        "name": "registry deterministic negative cache avoids retry",
+        "passed": true
+      },
+      {
+        "name": "parser failures are not cached",
+        "passed": true
+      },
+      {
+        "name": "cache option changes force a reparse",
+        "passed": true
+      },
+      {
+        "name": "corrupt file cache is ignored and replaced",
+        "passed": true
+      },
+      {
+        "name": "unsupported format is negative-cache eligible",
+        "passed": true
+      },
+      {
+        "name": "download failures are not cache eligible",
+        "passed": true
+      },
+      {
+        "name": "source reference contributes to document id",
+        "passed": true
+      },
+      {
+        "name": "same bytes produce same evidence fingerprints",
+        "passed": true
+      },
+      {
+        "name": "fixture rerun is structurally deterministic",
+        "passed": true
+      },
+      {
+        "name": "quality detects replacement characters",
+        "passed": true
+      },
+      {
+        "name": "notice processor preserves attachment metadata",
+        "passed": true
+      },
+      {
+        "name": "notice processor parses fetched attachment",
+        "passed": true
+      },
+      {
+        "name": "notice processor makes download failure reviewable",
+        "passed": true
+      },
+      {
+        "name": "readable attachment becomes primary content when body is short",
+        "passed": true
+      },
+      {
+        "name": "stable asset validators avoid repeated download",
+        "passed": true
+      },
+      {
+        "name": "changed asset validator forces a new download",
+        "passed": true
+      },
+      {
+        "name": "asset without validators is downloaded before byte-cache reuse",
+        "passed": true
+      },
+      {
+        "name": "common runner invokes optional document hook",
+        "passed": true
+      },
+      {
+        "name": "common runner remains unchanged without document hook",
+        "passed": true
+      }
+    ],
+    "generated_at": "2026-07-17T06:44:08.838Z"
+  },
+  "bounded_live_dry_run": {
+    "mode": "bounded_public_http_read_only",
+    "bounds": {
+      "source_limit": 2,
+      "notice_limit_per_source": 1,
+      "pdf_document_limit": 2,
+      "ocr_document_limit": 2,
+      "pdf_page_limit": 5,
+      "timeout_ms": 25000
+    },
+    "source_results": [
+      {
+        "source_key": "korea_002",
+        "status": "success",
+        "notice_count": 1,
+        "documents": [
+          {
+            "notice_ordinal": 1,
+            "format": "html",
+            "extraction_status": "text_sufficient",
+            "quality_status": "text_sufficient",
+            "manual_review_required": false,
+            "byte_sha256": "2426fda941994ebf3f9decde7257e3cbf370af83349c68aff85fba90116b00db",
+            "normalized_text_sha256": "1fe044ff8b1c14af6b49d3027e2efe9b3d30e59063c36eba27287fa684104d84",
+            "normalized_text_length": 905,
+            "table_count": 0,
+            "cache_status": "miss",
+            "cached_replay_status": "hit_success"
+          }
+        ],
+        "errors": []
+      },
+      {
+        "source_key": "yonsei_001",
+        "status": "success",
+        "notice_count": 1,
+        "documents": [
+          {
+            "notice_ordinal": 1,
+            "format": "html",
+            "extraction_status": "text_sufficient",
+            "quality_status": "text_sufficient",
+            "manual_review_required": false,
+            "byte_sha256": "02074a0df302908f149da85eac761cf4863b9f86f35dd85fa6ad1cb9d643f85b",
+            "normalized_text_sha256": "1433111469d8fe25edd0c16982d97a36911277549fa93a7a9cb23bea236668da",
+            "normalized_text_length": 253,
+            "table_count": 0,
+            "cache_status": "miss",
+            "cached_replay_status": "hit_success"
+          }
+        ],
+        "errors": []
+      }
+    ],
+    "totals": {
+      "source_count": 2,
+      "successful_source_count": 2,
+      "failed_source_count": 0,
+      "observed_notice_count": 2,
+      "observed_document_count": 2,
+      "html_document_count": 2,
+      "image_document_count": 0,
+      "hwp_document_count": 0,
+      "pdf_document_count": 0,
+      "ocr_document_count": 0,
+      "cache_hit_count": 2,
+      "cache_miss_count": 2,
+      "manual_review_count": 0
+    }
+  },
+  "safety": {
+    "database_read_performed": false,
+    "database_write_performed": false,
+    "production_access_performed": false,
+    "external_llm_call_count": 0,
+    "raw_document_written_to_disk": false,
+    "migration_performed": false,
+    "admin_ui_changed": false,
+    "migration_files_changed": false,
+    "api_cron_queue_worker_changed": false,
+    "sensitive_file_changed": false,
+    "absolute_local_path_changed": false,
+    "raw_binary_or_tmp_artifact_tracked": false,
+    "raw_tracked_paths": [],
+    "changed_path_count": 19,
+    "safety_valid": true
+  },
+  "non_goals_preserved": true,
+  "unresolved_risks": [
+    "Binary HWP extraction requires an injected deployment capability; HWP-only primary notices fail closed to manual review when it is unavailable.",
+    "The bounded live sample observed HTML notices but no PDF, HWP/HWPX, or image attachment, so those formats are supported by synthetic/minimized fixture evidence rather than this point-in-time live sample.",
+    "Tesseract language data availability depends on deployment packaging or network configuration; OCR failures remain explicit and are not cached as deterministic failures."
+  ]
+}
