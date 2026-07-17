@@ -1,6 +1,10 @@
 /**
- * 1) 검수큐(crawled_contests status=new) LLM 정리·일정추출 후 contests로 승격
- * 2) 홈페이지가 링커리어인 라이브 공고를 검수큐로 보내고 공개 해제
+ * 1) 검수큐(crawled_contests status=new) 승격 규칙:
+ *    - homepage/apply 둘 다 링커리어 → 큐에 유지
+ *    - 둘 중 링커리어가 아닌 URL이 있으면 그 URL로 통일 후 공개
+ *    - 링커리어 URL이 없으면 LLM 양식 정리 후 공개
+ *    - demote로 내려온 건은 기존 contests를 URL 통일 후 재공개 (중복 insert 방지)
+ * 2) 홈페이지가 링커리어인 라이브 공고를 검수큐로 보내고 공개 해제 (--demote-only / --all)
  *
  * Usage:
  *   npx tsx scripts/promote-queue-and-demote-linkareer.ts --demote-only
@@ -64,6 +68,81 @@ function normalizeSupabaseUrl(raw: string): string {
 function isLinkareerUrl(url: string | null | undefined): boolean {
   if (!url) return false;
   return /linkareer\.com/i.test(url);
+}
+
+/** Prefer http(s) official links over mailto/email-looking values when unifying. */
+function looksLikeHttpUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url.trim());
+}
+
+type UrlResolveResult =
+  | { action: "skip_both_linkareer" }
+  | { action: "skip_no_usable" }
+  | {
+      action: "promote";
+      applyUrl: string;
+      homepageUrl: string | null;
+      /** true when at least one side was Linkareer and we unified onto the other */
+      unifiedFromNonLinkareer: boolean;
+      /** true when neither side was Linkareer */
+      noLinkareer: boolean;
+    };
+
+/**
+ * homepage/apply Linkareer rules:
+ * - both Linkareer → leave in queue
+ * - one non-Linkareer → unify both fields to that URL and promote
+ * - neither Linkareer → keep as-is (fill missing apply from homepage if needed)
+ */
+function resolvePublishUrls(
+  applyUrl: string | null,
+  homepageUrl: string | null
+): UrlResolveResult {
+  const applyLk = isLinkareerUrl(applyUrl);
+  const homeLk = isLinkareerUrl(homepageUrl);
+  const applyOk = Boolean(applyUrl && !applyLk);
+  const homeOk = Boolean(homepageUrl && !homeLk);
+
+  if (applyLk && homeLk) return { action: "skip_both_linkareer" };
+
+  if (applyLk || homeLk) {
+    const candidates = [
+      ...(applyOk && applyUrl ? [applyUrl] : []),
+      ...(homeOk && homepageUrl ? [homepageUrl] : []),
+    ];
+    if (candidates.length === 0) return { action: "skip_no_usable" };
+    const official =
+      candidates.find(looksLikeHttpUrl) ?? candidates[0]!;
+    return {
+      action: "promote",
+      applyUrl: official,
+      homepageUrl: official,
+      unifiedFromNonLinkareer: true,
+      noLinkareer: false,
+    };
+  }
+
+  // neither is Linkareer (including nulls)
+  const apply = applyOk && applyUrl ? applyUrl : homeOk && homepageUrl ? homepageUrl : null;
+  if (!apply) return { action: "skip_no_usable" };
+  return {
+    action: "promote",
+    applyUrl: apply,
+    homepageUrl: homeOk && homepageUrl ? homepageUrl : applyOk && applyUrl ? applyUrl : null,
+    unifiedFromNonLinkareer: false,
+    noLinkareer: true,
+  };
+}
+
+function isDemotedQueueRow(row: {
+  review_note?: string | null;
+  extracted_draft?: Record<string, unknown> | null;
+}): boolean {
+  const draft = asRecord(row.extracted_draft);
+  return (
+    String(row.review_note ?? "").includes("[demoted]") ||
+    asString(draft.demote_reason) === "homepage_url_linkareer"
+  );
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -151,6 +230,7 @@ type QueueRow = {
   extracted_draft: Record<string, unknown> | null;
   status: string;
   contest_id: number | null;
+  review_note: string | null;
 };
 
 async function demoteLinkareerHomepage(
@@ -310,7 +390,7 @@ async function promoteQueue(
     onlyIds?: Set<number> | null;
   }
 ) {
-  console.log("\n=== Promote review queue with LLM → live contests ===");
+  console.log("\n=== Promote review queue (Linkareer URL rules + LLM) → live contests ===");
 
   const delayMs = Number.parseInt(process.env.PROMOTE_DELAY_MS ?? process.env.REFORMAT_DELAY_MS ?? "800", 10);
   const pageSize = 200;
@@ -320,7 +400,7 @@ async function promoteQueue(
     let q = supabase
       .from("crawled_contests")
       .select(
-        "id, title, body, content_kind, source_name, source_group, source_id, notice_url, poster_image_url, image_urls, document_files, extracted_draft, status, contest_id"
+        "id, title, body, content_kind, source_name, source_group, source_id, notice_url, poster_image_url, image_urls, document_files, extracted_draft, status, contest_id, review_note"
       )
       .eq("status", "new")
       .is("contest_id", null)
@@ -334,66 +414,88 @@ async function promoteQueue(
     if (data.length < pageSize) break;
   }
 
-  let candidates = rows.filter((r) => {
-    if (opts.onlyIds?.size && !opts.onlyIds.has(r.id)) return false;
-    const draft = asRecord(r.extracted_draft);
-    if (asString(draft.demote_reason) === "homepage_url_linkareer") return false;
-    const body = (r.body ?? asString(draft.original_notice_text) ?? "").trim();
-    return body.length > 20;
-  });
+  type Eligible = {
+    row: QueueRow;
+    urls: Extract<UrlResolveResult, { action: "promote" }>;
+    demoted: boolean;
+    oldContestId: number | null;
+  };
 
-  // demote로 들어온 건은 자동 승격하지 않음
-  const idList = candidates.map((c) => c.id);
-  if (idList.length > 0) {
-    const demotedIds = new Set<number>();
-    for (let i = 0; i < idList.length; i += 200) {
-      const chunk = idList.slice(i, i + 200);
-      const { data } = await supabase
-        .from("crawled_contests")
-        .select("id, review_note, extracted_draft")
-        .in("id", chunk);
-      for (const row of data ?? []) {
-        const draft = asRecord(row.extracted_draft);
-        if (
-          String(row.review_note ?? "").includes("[demoted]") ||
-          asString(draft.demote_reason) === "homepage_url_linkareer"
-        ) {
-          demotedIds.add(row.id);
-        }
-      }
+  const eligible: Eligible[] = [];
+  let skipBothLk = 0;
+  let skipNoUsable = 0;
+
+  for (const row of rows) {
+    if (opts.onlyIds?.size && !opts.onlyIds.has(row.id)) continue;
+    const draft = asRecord(row.extracted_draft);
+    const resolved = resolvePublishUrls(
+      asString(draft.apply_url),
+      asString(draft.homepage_url)
+    );
+    if (resolved.action === "skip_both_linkareer") {
+      skipBothLk += 1;
+      continue;
     }
-    candidates = candidates.filter((c) => !demotedIds.has(c.id));
+    if (resolved.action === "skip_no_usable") {
+      // last resort: notice_url if it is not Linkareer
+      const notice = asString(row.notice_url);
+      if (notice && !isLinkareerUrl(notice)) {
+        eligible.push({
+          row,
+          urls: {
+            action: "promote",
+            applyUrl: notice,
+            homepageUrl: notice,
+            unifiedFromNonLinkareer: false,
+            noLinkareer: true,
+          },
+          demoted: isDemotedQueueRow(row),
+          oldContestId: asInt(draft.demoted_from_contest_id),
+        });
+      } else {
+        skipNoUsable += 1;
+      }
+      continue;
+    }
+
+    eligible.push({
+      row,
+      urls: resolved,
+      demoted: isDemotedQueueRow(row),
+      oldContestId: asInt(draft.demoted_from_contest_id),
+    });
   }
 
-  const targets = opts.limit ? candidates.slice(0, opts.limit) : candidates;
+  const targets = opts.limit ? eligible.slice(0, opts.limit) : eligible;
   console.log(
-    `queue_new_scanned=${rows.length} eligible=${candidates.length} processing=${targets.length} dryRun=${opts.dryRun} delayMs=${delayMs}`
+    `queue_new_scanned=${rows.length} eligible=${eligible.length} processing=${targets.length} skip_both_lk=${skipBothLk} skip_no_usable=${skipNoUsable} dryRun=${opts.dryRun} delayMs=${delayMs}`
   );
 
   let promoted = 0;
+  let republished = 0;
   let skipped = 0;
   let failed = 0;
 
-  for (const row of targets) {
+  for (const item of targets) {
+    const { row, urls } = item;
     const draft = asRecord(row.extracted_draft);
     const contentKind = parseKind(row.content_kind ?? draft.content_kind);
     const title = asString(draft.name) ?? row.title ?? "공고";
     const body = (row.body ?? asString(draft.original_notice_text) ?? "").trim();
     const organization =
       asString(draft.organization) ?? row.source_name ?? "미상";
+    const needLlm = urls.noLinkareer && !item.demoted;
 
     process.stdout.write(
-      `[promote] #${row.id} ${contentKind} ${title.slice(0, 36)}… `
+      `[promote] #${row.id} ${contentKind} ${item.demoted ? "republish" : "insert"} ${
+        urls.unifiedFromNonLinkareer ? "unify" : urls.noLinkareer ? "clean" : "ok"
+      } ${title.slice(0, 32)}… `
     );
 
-    if (!body) {
-      console.log("skip-no-body");
-      skipped += 1;
-      continue;
-    }
-
     if (opts.dryRun) {
-      console.log("dry-run");
+      console.log(
+        `dry-run apply=${urls.applyUrl.slice(0, 48)} home=${(urls.homepageUrl ?? "").slice(0, 48)} llm=${needLlm}`
+      );
       continue;
     }
 
@@ -402,26 +504,34 @@ async function promoteQueue(
     let extracted: Awaited<ReturnType<typeof formatAndExtractContestNotice>> | null =
       null;
 
-    try {
-      extracted = await formatAndExtractContestNotice({
-        title,
-        body,
-        contentKind,
-        organization,
-      });
-      noticeText = extracted.noticeText.trim() || body;
-      stages = extracted.draft.stages ?? [];
-    } catch (err) {
-      console.log(`llm-fail: ${err instanceof Error ? err.message : String(err)}`);
-      failed += 1;
-      if (delayMs > 0) await sleep(delayMs);
-      continue;
+    if (needLlm) {
+      if (!body || body.length < 20) {
+        // Fall through to insert without LLM when crawl body is missing
+        noticeText = asString(draft.original_notice_text) ?? "";
+        process.stdout.write("(no-body-skip-llm) ");
+      } else {
+        try {
+          extracted = await formatAndExtractContestNotice({
+            title,
+            body,
+            contentKind,
+            organization,
+          });
+          noticeText = extracted.noticeText.trim() || body;
+          stages = extracted.draft.stages ?? [];
+        } catch (err) {
+          console.log(`llm-fail: ${err instanceof Error ? err.message : String(err)}`);
+          failed += 1;
+          if (delayMs > 0) await sleep(delayMs);
+          continue;
+        }
+      }
     }
 
     const crawledPrize = asString(draft.support_amount_text);
     const supportAmountText = crawledPrize;
     const benefitLabels = contestBenefitStorageLabels({
-      noticeText,
+      noticeText: noticeText || title,
       benefits: asStringArray(draft.benefits),
       supportAmountText,
       additionalNote: extracted?.draft.note ?? asString(draft.note),
@@ -429,24 +539,118 @@ async function promoteQueue(
       name: title,
     });
 
-    let homepageUrl = asString(draft.homepage_url);
-    if (isLinkareerUrl(homepageUrl)) homepageUrl = null;
-
-    let applyUrl =
-      asString(draft.apply_url) ??
-      row.notice_url ??
-      "";
-    if (!applyUrl) {
-      console.log("skip-no-apply-url");
-      skipped += 1;
-      if (delayMs > 0) await sleep(delayMs);
-      continue;
-    }
+    const applyUrl = urls.applyUrl;
+    const homepageUrl = urls.homepageUrl;
 
     const imageUrls =
       row.image_urls?.length
         ? row.image_urls
         : asStringArray(draft.original_notice_image_urls);
+
+    const nextDraft = {
+      ...draft,
+      ...(noticeText ? { original_notice_text: noticeText } : {}),
+      ...(stages.length
+        ? {
+            stages: stages.map((s) => ({
+              title: s.title,
+              phase: s.phase,
+              schedule_text: s.schedule_text,
+              note: s.note,
+            })),
+          }
+        : {}),
+      ...(supportAmountText ? { support_amount_text: supportAmountText } : {}),
+      ...(benefitLabels.length ? { benefits: benefitLabels } : {}),
+      homepage_url: homepageUrl,
+      apply_url: applyUrl,
+      demote_reason: null,
+    };
+
+    // Demoted rows: re-publish existing contest with unified URLs (avoid duplicates)
+    if (item.demoted && item.oldContestId) {
+      const updatePayload: Record<string, unknown> = {
+        apply_url: applyUrl,
+        homepage_url: homepageUrl,
+        is_verified: true,
+        list_on_home: true,
+      };
+      if (noticeText) updatePayload.original_notice_text = noticeText;
+      if (benefitLabels.length) updatePayload.benefits = benefitLabels;
+      if (extracted?.draft.announcement_date) {
+        updatePayload.announcement_date = extracted.draft.announcement_date;
+      }
+      if (extracted?.draft.contact) updatePayload.contact = extracted.draft.contact;
+      if (extracted?.draft.note) updatePayload.note = extracted.draft.note;
+      if (extracted?.draft.apply_method) {
+        updatePayload.apply_method = extracted.draft.apply_method;
+      }
+
+      const { error: updError } = await supabase
+        .from("contests")
+        .update(updatePayload)
+        .eq("id", item.oldContestId);
+
+      if (updError) {
+        console.log(`republish-fail: ${updError.message}`);
+        failed += 1;
+        if (delayMs > 0) await sleep(delayMs);
+        continue;
+      }
+
+      const { error: markError } = await supabase
+        .from("crawled_contests")
+        .update({
+          status: "promoted",
+          contest_id: item.oldContestId,
+          ...(noticeText ? { body: noticeText } : {}),
+          extracted_draft: nextDraft,
+          reviewed_at: new Date().toISOString(),
+          review_note: urls.unifiedFromNonLinkareer
+            ? `[auto-republished] unified non-Linkareer URL (contest_id=${item.oldContestId})`
+            : `[auto-republished] non-Linkareer URLs (contest_id=${item.oldContestId})`,
+        })
+        .eq("id", row.id);
+
+      if (markError) {
+        console.log(`mark-fail: ${markError.message} (contest=${item.oldContestId})`);
+        failed += 1;
+      } else {
+        republished += 1;
+        console.log(`ok republish contest=${item.oldContestId}`);
+      }
+
+      if (needLlm && delayMs > 0) await sleep(delayMs);
+      continue;
+    }
+
+    // Fresh queue rows: insert new live contest
+    const hasBody = Boolean(body && body.length >= 20);
+
+    if (hasBody && !needLlm && !extracted) {
+      // Mixed Linkareer case on fresh row: still run LLM format once for notice quality
+      try {
+        extracted = await formatAndExtractContestNotice({
+          title,
+          body,
+          contentKind,
+          organization,
+        });
+        noticeText = extracted.noticeText.trim() || body;
+        stages = extracted.draft.stages ?? [];
+      } catch (err) {
+        console.log(`llm-fail: ${err instanceof Error ? err.message : String(err)}`);
+        failed += 1;
+        if (delayMs > 0) await sleep(delayMs);
+        continue;
+      }
+    }
+
+    if (!hasBody) {
+      // No crawl body — still publish with unified URLs; notice text stays empty
+      noticeText = asString(draft.original_notice_text) ?? "";
+      process.stdout.write("(no-body) ");
+    }
 
     const payload = {
       name: title,
@@ -540,8 +744,8 @@ async function promoteQueue(
       }
     }
 
-    const nextDraft = {
-      ...draft,
+    const markDraft = {
+      ...nextDraft,
       original_notice_text: noticeText,
       stages: stages.map((s) => ({
         title: s.title,
@@ -549,10 +753,6 @@ async function promoteQueue(
         schedule_text: s.schedule_text,
         note: s.note,
       })),
-      ...(supportAmountText ? { support_amount_text: supportAmountText } : {}),
-      ...(benefitLabels.length ? { benefits: benefitLabels } : {}),
-      homepage_url: homepageUrl,
-      apply_url: applyUrl,
     };
 
     const { error: markError } = await supabase
@@ -561,9 +761,11 @@ async function promoteQueue(
         status: "promoted",
         contest_id: inserted?.id ?? null,
         body: noticeText,
-        extracted_draft: nextDraft,
+        extracted_draft: markDraft,
         reviewed_at: new Date().toISOString(),
-        review_note: "[auto-promoted] LLM format+extract",
+        review_note: urls.unifiedFromNonLinkareer
+          ? "[auto-promoted] unified non-Linkareer URL + LLM"
+          : "[auto-promoted] LLM format+extract",
       })
       .eq("id", row.id);
 
@@ -579,7 +781,7 @@ async function promoteQueue(
   }
 
   console.log(
-    `[promote] done promoted=${promoted} skipped=${skipped} failed=${failed}`
+    `[promote] done inserted=${promoted} republished=${republished} skipped=${skipped} failed=${failed} left_both_lk=${skipBothLk}`
   );
 }
 
@@ -607,6 +809,8 @@ async function main() {
   // Snapshot queue ids before demote so --all promotes only pre-existing queue items
   let onlyIds: Set<number> | null = null;
   if (opts.all || opts.promoteOnly) {
+    // LLM is required for fresh (non-demoted) promotes; demoted republish can run without it,
+    // but keep the guard so mixed/fresh batches never silently skip formatting.
     if (!process.env.LLM_API_KEY) {
       console.error("LLM_API_KEY required for promote");
       process.exit(1);
