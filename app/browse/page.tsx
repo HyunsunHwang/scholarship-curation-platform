@@ -25,12 +25,16 @@ export default async function BrowsePage({
     return Array.isArray(v) ? v[0] : v;
   };
 
-  const { kind, sort, section, page, list } = parseBrowseParams({
+  const { kind, sort, section, page, list, facets } = parseBrowseParams({
     kind: pick("kind"),
     sort: pick("sort"),
     section: pick("section"),
     page: pick("page"),
     list: pick("list"),
+    interest: pick("interest"),
+    benefit: pick("benefit"),
+    org: pick("org"),
+    q: pick("q"),
   });
 
   const authSupabase = await createClient();
@@ -67,13 +71,14 @@ export default async function BrowsePage({
         section,
         page,
         pageSize: BROWSE_PAGE_SIZE,
+        facets,
       }),
       user
         ? getBookmarkedCardKeys(authSupabase, user.id)
         : Promise.resolve([] as string[]),
       // 1페이지에서만 배너용 TOP 10 조회
       page <= 1
-        ? fetchBrowseTopRank({ kind, section })
+        ? fetchBrowseTopRank({ kind, section, facets })
         : Promise.resolve([] as CardScholarship[]),
     ]);
 
@@ -99,6 +104,7 @@ export default async function BrowsePage({
           kind={kind}
           sort={sort}
           section={section}
+          facets={facets}
           bookmarkedKeys={bookmarkedKeys}
           topRank={topRank}
         />

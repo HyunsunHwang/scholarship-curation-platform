@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import AnnouncementModalProvider from "@/components/announcement/AnnouncementModalProvider";
 import BrowseTopRankHero from "@/components/browse/BrowseTopRankHero";
+import BrowseFacetBar from "@/components/browse/BrowseFacetBar";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
 import {
   BROWSE_SORT_OPTIONS,
@@ -15,6 +16,10 @@ import {
   type BrowseSection,
   type BrowseSort,
 } from "@/lib/browse-data";
+import {
+  EMPTY_BROWSE_FACETS,
+  type BrowseFacetFilters,
+} from "@/lib/browse-facets";
 
 type BrowseFeedProps = {
   items: CardScholarship[];
@@ -24,6 +29,7 @@ type BrowseFeedProps = {
   kind: BrowseKind;
   sort: BrowseSort;
   section: BrowseSection;
+  facets?: BrowseFacetFilters;
   bookmarkedKeys: string[];
   topRank?: CardScholarship[];
 };
@@ -36,6 +42,7 @@ export default function BrowseFeed({
   kind,
   sort,
   section,
+  facets = EMPTY_BROWSE_FACETS,
   bookmarkedKeys,
   topRank = [],
 }: BrowseFeedProps) {
@@ -56,6 +63,7 @@ export default function BrowseFeed({
           section,
           sort: opts.sort ?? sort,
           page: opts.page ?? 1,
+          facets,
         })
       );
     });
@@ -129,17 +137,24 @@ export default function BrowseFeed({
             </div>
           </div>
         </div>
+
+        <BrowseFacetBar
+          kind={kind}
+          sort={sort}
+          section={section}
+          facets={facets}
+        />
       </div>
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <p className="text-lg font-semibold text-ink">표시할 공고가 없습니다</p>
-          <p className="mt-1 text-sm text-ink/50">다른 정렬이나 카테고리를 선택해 보세요.</p>
+          <p className="mt-1 text-sm text-ink/50">다른 필터나 정렬을 선택해 보세요.</p>
           <Link
-            href="/"
+            href={browseHref({ kind, section, sort, list: true })}
             className="mt-4 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85"
           >
-            홈으로 돌아가기
+            필터 초기화
           </Link>
         </div>
       ) : (

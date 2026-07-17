@@ -5,6 +5,20 @@ import { effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 import { createPublicSupabaseClient } from "@/lib/public-data";
 import { todayKoreaYYYYMMDD } from "@/lib/scholarship-dates";
 import { isUniversitySpecificScholarship } from "@/lib/scholarship-university";
+import {
+  CONTEST_ORG_TYPES,
+  EMPTY_BROWSE_FACETS,
+  SCHOLARSHIP_ORG_TYPES,
+  browseFacetsToSearchParams,
+  escapeIlike,
+  fieldCodesForInterestIds,
+  hasBrowseFacets,
+  parseBrowseFacets,
+  rawBenefitTagsForIds,
+  supportTypesForBenefitIds,
+  type BrowseFacetFilters,
+} from "@/lib/browse-facets";
+import { applyContestStudentAudienceFilter } from "@/lib/contest-audience";
 
 export type BrowseSort = "latest" | "deadline" | "views" | "scraps";
 export type BrowseKind = Exclude<ContentCategoryKey, "all"> | "all";
@@ -86,22 +100,34 @@ export function parseBrowseParams(searchParams: {
   section?: string;
   page?: string;
   list?: string;
+  interest?: string;
+  benefit?: string;
+  org?: string;
+  q?: string;
 }) {
   const page = Math.max(1, Number.parseInt(searchParams.page ?? "1", 10) || 1);
   const kind = parseBrowseKind(searchParams.kind);
   const section = parseBrowseSection(searchParams.section);
+  const facets = parseBrowseFacets({
+    interest: searchParams.interest,
+    benefit: searchParams.benefit,
+    org: searchParams.org,
+    q: searchParams.q,
+  });
   const list =
     searchParams.list === "1" ||
     searchParams.list === "true" ||
     kind !== "all" ||
     section === "trending" ||
     isCareerSection(section) ||
-    page > 1;
+    page > 1 ||
+    hasBrowseFacets(facets);
   return {
     kind,
     sort: parseBrowseSort(searchParams.sort),
     section,
     page,
+    facets,
     /** false면 탐색 허브(카테고리 그리드), true면 목록 */
     list,
   };
@@ -114,6 +140,7 @@ export function browseHref(opts: {
   page?: number;
   /** 전체 목록 — 탐색 허브를 건너뛰고 리스트로 */
   list?: boolean;
+  facets?: BrowseFacetFilters;
 }): string {
   const params = new URLSearchParams();
   if (opts.kind && opts.kind !== "all") params.set("kind", opts.kind);
@@ -126,16 +153,82 @@ export function browseHref(opts: {
     params.set("section", opts.section);
   }
   if (opts.page && opts.page > 1) params.set("page", String(opts.page));
+  const facetParams = browseFacetsToSearchParams(
+    opts.facets ?? EMPTY_BROWSE_FACETS
+  );
+  for (const [key, value] of Object.entries(facetParams)) {
+    params.set(key, value);
+  }
   if (
     opts.list &&
     (!opts.kind || opts.kind === "all") &&
     opts.section !== "trending" &&
-    !isCareerSection(opts.section ?? "all")
+    !isCareerSection(opts.section ?? "all") &&
+    !hasBrowseFacets(opts.facets ?? EMPTY_BROWSE_FACETS)
   ) {
     params.set("list", "1");
   }
   const q = params.toString();
   return q ? `/browse?${q}` : "/browse";
+}
+
+function applyContestFacetFilters(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: any,
+  facets: BrowseFacetFilters
+) {
+  if (facets.interests.length) {
+    query = query.overlaps("interest_categories", facets.interests);
+  }
+  if (facets.benefits.length) {
+    const tags = rawBenefitTagsForIds(facets.benefits);
+    if (tags.length) query = query.overlaps("benefits", tags);
+  }
+  const orgs = facets.orgs.filter((o) =>
+    (CONTEST_ORG_TYPES as readonly string[]).includes(o)
+  );
+  if (orgs.length === 1) {
+    query = query.eq("organization_type", orgs[0]);
+  } else if (orgs.length > 1) {
+    query = query.in("organization_type", orgs);
+  }
+  if (facets.q) {
+    const safe = escapeIlike(facets.q);
+    query = query.or(
+      `name.ilike.%${safe}%,organization.ilike.%${safe}%`
+    );
+  }
+  return query;
+}
+
+function applyScholarshipFacetFilters(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: any,
+  facets: BrowseFacetFilters
+) {
+  const fieldCodes = fieldCodesForInterestIds(facets.interests);
+  if (fieldCodes.length) {
+    query = query.overlaps("qual_field_codes", fieldCodes);
+  }
+  const supportTypes = supportTypesForBenefitIds(facets.benefits);
+  if (supportTypes.length) {
+    query = query.overlaps("support_types", supportTypes);
+  }
+  const orgs = facets.orgs.filter((o) =>
+    (SCHOLARSHIP_ORG_TYPES as readonly string[]).includes(o)
+  );
+  if (orgs.length === 1) {
+    query = query.eq("institution_type", orgs[0]);
+  } else if (orgs.length > 1) {
+    query = query.in("institution_type", orgs);
+  }
+  if (facets.q) {
+    const safe = escapeIlike(facets.q);
+    query = query.or(
+      `name.ilike.%${safe}%,organization.ilike.%${safe}%`
+    );
+  }
+  return query;
 }
 
 /** 탐색 허브 카테고리 타일 */
@@ -211,6 +304,7 @@ async function fetchOnePoster(opts: {
     if (opts.benefitTags?.length) {
       query = query.overlaps("benefits", opts.benefitTags);
     }
+    query = applyContestStudentAudienceFilter(query);
     const { data } = await query;
     return data?.[0]?.poster_image_url ?? null;
   }
@@ -427,12 +521,14 @@ async function fetchContestPage(opts: {
   section: BrowseSection;
   page: number;
   pageSize: number;
+  facets?: BrowseFacetFilters;
 }): Promise<{ items: CardScholarship[]; totalCount: number; hasMore: boolean }> {
   const supabase = createPublicSupabaseClient();
   const today = todayKoreaYYYYMMDD();
   const from = (opts.page - 1) * opts.pageSize;
   const to = from + opts.pageSize - 1;
   const order = contestOrderColumn(opts.sort);
+  const facets = opts.facets ?? EMPTY_BROWSE_FACETS;
 
   let query = supabase
     .from("contests")
@@ -448,6 +544,9 @@ async function fetchContestPage(opts: {
   if (isCareerSection(opts.section)) {
     query = query.overlaps("benefits", careerBenefitTags(opts.section));
   }
+
+  query = applyContestStudentAudienceFilter(query);
+  query = applyContestFacetFilters(query, facets);
 
   if (opts.section === "trending") {
     query = query
@@ -500,12 +599,14 @@ async function fetchScholarshipPage(opts: {
   section: BrowseSection;
   page: number;
   pageSize: number;
+  facets?: BrowseFacetFilters;
 }): Promise<{ items: CardScholarship[]; totalCount: number; hasMore: boolean }> {
   const supabase = createPublicSupabaseClient();
   const today = todayKoreaYYYYMMDD();
   const from = (opts.page - 1) * opts.pageSize;
   const to = from + opts.pageSize - 1;
   const order = scholarshipOrderColumn(opts.sort);
+  const facets = opts.facets ?? EMPTY_BROWSE_FACETS;
 
   // 교내 전용 필터를 위해 여유분 조회 후 슬라이스
   const overscan = 3;
@@ -529,6 +630,9 @@ async function fetchScholarshipPage(opts: {
   if (opts.section === "hiring") {
     query = query.eq("is_advertisement", true);
   }
+
+  // 참여대상은 contests 전용 — 장학금 목록에서는 무시
+  query = applyScholarshipFacetFilters(query, facets);
 
   if (opts.section === "trending") {
     query = query
@@ -599,8 +703,10 @@ async function fetchAllKindsPage(opts: {
   section: BrowseSection;
   page: number;
   pageSize: number;
+  facets?: BrowseFacetFilters;
 }): Promise<{ items: CardScholarship[]; totalCount: number; hasMore: boolean }> {
   const half = Math.max(8, Math.ceil(opts.pageSize / 2));
+  const facets = opts.facets ?? EMPTY_BROWSE_FACETS;
   const [contestRes, eduRes, actRes, scholRes] = await Promise.all([
     fetchContestPage({
       kind: "contest",
@@ -608,6 +714,7 @@ async function fetchAllKindsPage(opts: {
       section: opts.section,
       page: opts.page,
       pageSize: half,
+      facets,
     }),
     fetchContestPage({
       kind: "education",
@@ -615,6 +722,7 @@ async function fetchAllKindsPage(opts: {
       section: opts.section,
       page: opts.page,
       pageSize: half,
+      facets,
     }),
     fetchContestPage({
       kind: "activity",
@@ -622,12 +730,14 @@ async function fetchAllKindsPage(opts: {
       section: opts.section,
       page: opts.page,
       pageSize: half,
+      facets,
     }),
     fetchScholarshipPage({
       sort: opts.sort,
       section: opts.section,
       page: opts.page,
       pageSize: half,
+      facets,
     }),
   ]);
 
@@ -678,6 +788,7 @@ async function fetchCareerBrowsePage(opts: {
   sort: BrowseSort;
   page: number;
   pageSize: number;
+  facets?: BrowseFacetFilters;
 }): Promise<{ items: CardScholarship[]; totalCount: number; hasMore: boolean }> {
   const supabase = createPublicSupabaseClient();
   const today = todayKoreaYYYYMMDD();
@@ -685,8 +796,9 @@ async function fetchCareerBrowsePage(opts: {
   const to = from + opts.pageSize - 1;
   const order = contestOrderColumn(opts.sort);
   const tags = careerBenefitTags(opts.career);
+  const facets = opts.facets ?? EMPTY_BROWSE_FACETS;
 
-  const contestQuery = supabase
+  let contestQuery = supabase
     .from("contests")
     .select(
       "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind",
@@ -695,7 +807,12 @@ async function fetchCareerBrowsePage(opts: {
     .eq("is_verified", true)
     .eq("list_on_home", true)
     .gte("apply_end_date", today)
-    .overlaps("benefits", tags)
+    .overlaps("benefits", tags);
+
+  contestQuery = applyContestStudentAudienceFilter(contestQuery);
+  contestQuery = applyContestFacetFilters(contestQuery, facets);
+
+  contestQuery = contestQuery
     .order(order.column, { ascending: order.ascending, nullsFirst: false })
     .order("id", { ascending: false })
     .range(from, to);
@@ -730,6 +847,7 @@ async function fetchCareerBrowsePage(opts: {
       section: "hiring",
       page: opts.page,
       pageSize: opts.pageSize,
+      facets,
     });
     items = [...items, ...schol.items];
     totalCount += schol.totalCount;
@@ -757,6 +875,7 @@ export async function fetchBrowsePage(opts: {
   section: BrowseSection;
   page: number;
   pageSize?: number;
+  facets?: BrowseFacetFilters;
 }): Promise<{
   items: CardScholarship[];
   totalCount: number;
@@ -767,6 +886,7 @@ export async function fetchBrowsePage(opts: {
 }> {
   const pageSize = opts.pageSize ?? BROWSE_PAGE_SIZE;
   const page = Math.max(1, opts.page);
+  const facets = opts.facets ?? EMPTY_BROWSE_FACETS;
 
   const withPages = (result: {
     items: CardScholarship[];
@@ -784,6 +904,7 @@ export async function fetchBrowsePage(opts: {
         sort: opts.sort,
         page,
         pageSize,
+        facets,
       })
     );
   }
@@ -795,6 +916,7 @@ export async function fetchBrowsePage(opts: {
         section: opts.section,
         page,
         pageSize,
+        facets,
       })
     );
   }
@@ -807,6 +929,7 @@ export async function fetchBrowsePage(opts: {
         section: opts.section,
         page,
         pageSize,
+        facets,
       })
     );
   }
@@ -817,6 +940,7 @@ export async function fetchBrowsePage(opts: {
       section: opts.section,
       page,
       pageSize,
+      facets,
     })
   );
 }
@@ -843,6 +967,7 @@ export function browsePageTitle(kind: BrowseKind, section: BrowseSection): strin
 export async function fetchBrowseTopRank(opts: {
   kind: BrowseKind;
   section: BrowseSection;
+  facets?: BrowseFacetFilters;
 }): Promise<CardScholarship[]> {
   const isCareer = isCareerSection(opts.section);
   const { items } = await fetchBrowsePage({
@@ -851,6 +976,7 @@ export async function fetchBrowseTopRank(opts: {
     section: isCareer ? opts.section : "trending",
     page: 1,
     pageSize: 10,
+    facets: opts.facets,
   });
   return items.slice(0, 10);
 }

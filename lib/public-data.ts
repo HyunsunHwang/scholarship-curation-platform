@@ -8,6 +8,7 @@ import {
   contestIdsNeedingNotice,
 } from "@/lib/support-amount";
 import { effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
+import { applyContestStudentAudienceFilter } from "@/lib/contest-audience";
 type SiteSettingsLogoRow = Pick<
   Database["public"]["Tables"]["site_settings"]["Row"],
   "header_logo_url" | "updated_at"
@@ -196,8 +197,8 @@ export const getCachedHomeContests = unstable_cache(
     const kinds = ["contest", "education", "activity"] as const;
 
     const kindResults = await Promise.all(
-      kinds.map((kind) =>
-        supabase
+      kinds.map((kind) => {
+        let query = supabase
           .from("contests")
           .select(
             "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
@@ -205,12 +206,14 @@ export const getCachedHomeContests = unstable_cache(
           .eq("is_verified", true)
           .eq("list_on_home", true)
           .eq("content_kind", kind)
-          .gte("apply_end_date", today)
+          .gte("apply_end_date", today);
+        query = applyContestStudentAudienceFilter(query);
+        return query
           .order("is_recommended", { ascending: false })
           .order("recommended_sort_order", { ascending: true, nullsFirst: false })
           .order("apply_end_date", { ascending: true })
-          .limit(HOME_CONTEST_PER_KIND)
-      )
+          .limit(HOME_CONTEST_PER_KIND);
+      })
     );
 
     for (const result of kindResults) {
