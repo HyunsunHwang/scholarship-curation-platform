@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
+import AnnouncementModalProvider from "@/components/announcement/AnnouncementModalProvider";
 import BrowseTopRankHero from "@/components/browse/BrowseTopRankHero";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
 import {
@@ -61,6 +62,7 @@ export default function BrowseFeed({
   }
 
   return (
+    <AnnouncementModalProvider>
     <div className="w-full">
       {showTopRank ? (
         <BrowseTopRankHero title={title} items={topRank} />
@@ -183,5 +185,6 @@ export default function BrowseFeed({
       )}
       </div>
     </div>
+    </AnnouncementModalProvider>
   );
 }

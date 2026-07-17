@@ -238,7 +238,7 @@ export default async function ScholarshipDetailPage({
                   {!isAdvertisement && scholarship.organization ? ` · ${scholarship.organization}` : null}
                 </p>
 
-                <h1 className="wrap-break-word mt-2 text-[1.65rem] font-extrabold leading-snug tracking-tight text-ink sm:text-[2rem]">
+                <h1 className="mt-2 break-keep text-[1.65rem] font-extrabold leading-snug tracking-tight text-ink sm:text-[2rem]">
                   {displayName}
                 </h1>
 
@@ -258,8 +258,6 @@ export default async function ScholarshipDetailPage({
                   </span>
                 </div>
 
-                <BenefitHighlights benefits={benefitHighlights} />
-
                 {isAdvertisement && scholarship.ad_job_role && (
                   <div className="mt-6 border-t border-gray-100 pt-6 text-sm text-ink/80">
                     <span className="font-semibold text-ink">모집 직무</span> {scholarship.ad_job_role}
@@ -270,6 +268,8 @@ export default async function ScholarshipDetailPage({
                   scholarship={scholarship}
                   selectionStages={selectionStages ?? []}
                   autoCheck={autoCheck}
+                  layout="netflix"
+                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} />}
                 />
 
                 {!isAdvertisement && scholarship.contact && (

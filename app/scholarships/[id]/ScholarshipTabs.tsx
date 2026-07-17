@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   daysUntilApplyDeadlineKorea,
@@ -450,7 +450,6 @@ function ScheduleTimelineItem({
   const showDeadlineBadge =
     !alwaysOpen && daysLeft >= 0 && (isDeadlineMilestone || isDeadlineStage);
   const isUrgent = showDeadlineBadge && daysLeft <= 7;
-  const note = row.kind === "stage" ? row.note : null;
 
   return (
     <div className="relative flex min-w-0 gap-4 pb-6 last:pb-0">
@@ -489,15 +488,6 @@ function ScheduleTimelineItem({
         >
           {row.label}
         </p>
-        {note && (
-          <p
-            className={`mt-0.5 wrap-break-word text-xs leading-relaxed ${
-              isSelection ? "text-ink/45" : "text-ink/35"
-            }`}
-          >
-            {note}
-          </p>
-        )}
       </div>
     </div>
   );
@@ -511,8 +501,94 @@ function ScheduleAfterAcceptanceDivider() {
     </div>
   );
 }
+
+function ScheduleExpandToggle({
+  expanded,
+  hiddenCount,
+  onToggle,
+}: {
+  expanded: boolean;
+  hiddenCount: number;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="relative flex min-w-0 items-center gap-4 pt-1">
+      <span
+        className="relative z-10 mt-0.5 flex h-[11px] w-[11px] shrink-0 items-center justify-center rounded-full border border-dashed border-ink/25 bg-white"
+        aria-hidden
+      >
+        <span className="h-1 w-1 rounded-full bg-ink/25" />
+      </span>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="inline-flex items-center gap-1 rounded-full border border-ink/10 bg-[#f7f5f2] px-2.5 py-1 text-[11px] font-semibold tracking-tight text-ink/55 transition-colors hover:border-ink/20 hover:bg-[#efece7] hover:text-ink/75"
+        aria-expanded={expanded}
+      >
+        {expanded ? "일정 접기" : `이후 일정 ${hiddenCount}개 더보기`}
+        <svg
+          className={`h-3 w-3 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.25}
+          aria-hidden
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+type ScheduleTimelineEntry =
+  | { type: "item"; key: string; row: SortableScheduleRow; phase: TimelinePhase }
+  | { type: "divider"; key: string };
+
+function isDeadlineScheduleRow(row: SortableScheduleRow): boolean {
+  if (row.kind === "milestone" && row.milestoneKind === "end") return true;
+  return row.kind === "stage" && /접수\s*마감|모집\s*마감|신청\s*마감/.test(row.label);
+}
+
+function buildScheduleTimelineEntries(
+  selection: SortableScheduleRow[],
+  postAcceptance: SortableScheduleRow[],
+): ScheduleTimelineEntry[] {
+  const entries: ScheduleTimelineEntry[] = selection.map((row) => ({
+    type: "item",
+    key: row.key,
+    row,
+    phase: "selection",
+  }));
+  if (postAcceptance.length > 0) {
+    entries.push({ type: "divider", key: "after-acceptance-divider" });
+    for (const row of postAcceptance) {
+      entries.push({
+        type: "item",
+        key: row.key,
+        row,
+        phase: "postAcceptance",
+      });
+    }
+  }
+  return entries;
+}
+
+/** 접수 마감 항목 인덱스. 없으면 -1 */
+function findDeadlineCutoffIndex(entries: ScheduleTimelineEntry[]): number {
+  let cutoff = -1;
+  for (let i = 0; i < entries.length; i += 1) {
+    const entry = entries[i];
+    if (entry.type === "item" && isDeadlineScheduleRow(entry.row)) {
+      cutoff = i;
+    }
+  }
+  return cutoff;
+}
+
 // ── 주요 일정 (전 항목 날짜순 정렬 + 번호 통일) ─────────────────────────
 function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selectionStages: SelectionStageDetail[] }) {
+  const [scheduleExpanded, setScheduleExpanded] = useState(false);
   const alwaysOpen = isAlwaysOpenRecruitment(s.apply_end_date);
 
   const daysLeft = daysUntilApplyDeadlineKorea(s.apply_end_date);
@@ -602,31 +678,44 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
   }
 
   const { selection, postAcceptance } = partitionScheduleRows(deduped);
-  const hasPostAcceptance = postAcceptance.length > 0;
+  const entries = buildScheduleTimelineEntries(selection, postAcceptance);
+  const deadlineCutoff = findDeadlineCutoffIndex(entries);
+  const hasMoreAfterDeadline =
+    deadlineCutoff >= 0 && deadlineCutoff < entries.length - 1;
+  const hiddenCount = hasMoreAfterDeadline
+    ? entries
+        .slice(deadlineCutoff + 1)
+        .filter((entry) => entry.type === "item").length
+    : 0;
+  const visibleEntries =
+    scheduleExpanded || !hasMoreAfterDeadline
+      ? entries
+      : entries.slice(0, deadlineCutoff + 1);
 
   return (
     <div className="relative">
       <span className="absolute left-[5px] top-2 bottom-2 w-px bg-gray-200" />
       <div>
-        {selection.map((row) => (
-          <ScheduleTimelineItem
-            key={row.key}
-            row={row}
-            phase="selection"
-            daysLeft={daysLeft}
-            alwaysOpen={alwaysOpen}
+        {visibleEntries.map((entry) =>
+          entry.type === "divider" ? (
+            <ScheduleAfterAcceptanceDivider key={entry.key} />
+          ) : (
+            <ScheduleTimelineItem
+              key={entry.key}
+              row={entry.row}
+              phase={entry.phase}
+              daysLeft={daysLeft}
+              alwaysOpen={alwaysOpen}
+            />
+          ),
+        )}
+        {hasMoreAfterDeadline && (
+          <ScheduleExpandToggle
+            expanded={scheduleExpanded}
+            hiddenCount={hiddenCount}
+            onToggle={() => setScheduleExpanded((prev) => !prev)}
           />
-        ))}
-        {hasPostAcceptance && <ScheduleAfterAcceptanceDivider />}
-        {postAcceptance.map((row) => (
-          <ScheduleTimelineItem
-            key={row.key}
-            row={row}
-            phase="postAcceptance"
-            daysLeft={daysLeft}
-            alwaysOpen={alwaysOpen}
-          />
-        ))}
+        )}
       </div>
     </div>
   );
@@ -948,12 +1037,21 @@ export default function ScholarshipTabs({
   selectionStages,
   autoCheck,
   hideQualificationSections = false,
+  layout = "netflix",
+  preScheduleSlot = null,
 }: {
   scholarship: ScholarshipDetail;
   selectionStages: SelectionStageDetail[];
   autoCheck: AutoCheckState;
   /** 공모전 등: 프로필 자격·직접 확인 섹션 숨김 */
   hideQualificationSections?: boolean;
+  /**
+   * netflix: 일정 이전 | 일정 | 원문 이후를 2열+전체폭
+   * scheduleOnly / preOnly / postOnly: 모달 등에서 열을 직접 조립할 때
+   */
+  layout?: "stack" | "netflix" | "scheduleOnly" | "preOnly" | "postOnly";
+  /** 일정 이전 열 상단(혜택 하이라이트 등) */
+  preScheduleSlot?: ReactNode;
 }) {
   const s = scholarship;
   const isAdvertisement = s.is_advertisement === true;
@@ -972,8 +1070,9 @@ export default function ScholarshipTabs({
     </div>
   );
 
-  return (
-    <div className="mt-8 w-full divide-y divide-gray-100 overflow-x-hidden">
+  const preSchedule = (
+    <>
+      {preScheduleSlot}
       {isAdvertisement ? (
         <section className="py-7 first:pt-0">
           {sectionTitle("요구 역량", "briefcase")}
@@ -1005,12 +1104,18 @@ export default function ScholarshipTabs({
           </>
         )
       )}
+    </>
+  );
 
-      <section className="py-7 first:pt-0">
-        {sectionTitle("주요 일정", "calendar")}
-        <ScheduleSection s={s} selectionStages={selectionStages} />
-      </section>
+  const schedule = (
+    <section className="py-7 first:pt-0">
+      {sectionTitle("주요 일정", "calendar")}
+      <ScheduleSection s={s} selectionStages={selectionStages} />
+    </section>
+  );
 
+  const postSchedule = (
+    <>
       {isAdvertisement ? (
         <section className="py-7">
           {sectionTitle("소재지", "mapPin")}
@@ -1044,6 +1149,51 @@ export default function ScholarshipTabs({
           </section>
         </>
       )}
+    </>
+  );
+
+  if (layout === "scheduleOnly") {
+    return <div className="w-full overflow-x-hidden">{schedule}</div>;
+  }
+  if (layout === "preOnly") {
+    return (
+      <div className="w-full divide-y divide-gray-100 overflow-x-hidden">
+        {preSchedule}
+      </div>
+    );
+  }
+  if (layout === "postOnly") {
+    return (
+      <div className="mt-6 w-full divide-y divide-gray-100 overflow-x-hidden border-t border-gray-100">
+        {postSchedule}
+      </div>
+    );
+  }
+
+  if (layout === "netflix") {
+    // 상세 페이지: 왼쪽(넓게) 혜택·자격 / 오른쪽(좁게) 주요일정
+    return (
+      <div className="mt-8 w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 items-start gap-0 md:grid-cols-[minmax(0,1fr)_minmax(0,240px)] md:gap-8 md:divide-x md:divide-gray-100">
+          <div className="min-w-0 divide-y divide-gray-100 md:pr-8">
+            {preSchedule}
+          </div>
+          <div className="min-w-0 divide-y divide-gray-100 border-t border-gray-100 md:border-t-0 md:pl-6">
+            {schedule}
+          </div>
+        </div>
+        <div className="divide-y divide-gray-100 border-t border-gray-100">
+          {postSchedule}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 w-full divide-y divide-gray-100 overflow-x-hidden">
+      {preSchedule}
+      {schedule}
+      {postSchedule}
     </div>
   );
 }

@@ -58,7 +58,8 @@
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs",
     "reformat:notices": "npx --yes tsx scripts/reformat-open-notice-texts.ts",
-    "reformat:contests": "npx --yes tsx scripts/reformat-contest-notice-texts.ts"
+    "reformat:contests": "npx --yes tsx scripts/reformat-contest-notice-texts.ts",
+    "queue:promote-and-demote-linkareer": "npx --yes tsx scripts/promote-queue-and-demote-linkareer.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

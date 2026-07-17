@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { contentKindHref } from "@/lib/content-categories";
 
@@ -16,6 +17,70 @@ type BrowseTopRankHeroProps = {
   title: string;
   items: CardScholarship[];
 };
+
+function RankCardLink({
+  item,
+  rank,
+}: {
+  item: CardScholarship;
+  rank: number;
+}) {
+  const name = cleanScholarshipName(item.name);
+  const href = contentKindHref(item.content_kind, item.id);
+  const kind = item.content_kind ?? "scholarship";
+  const onAnnouncementClick = useAnnouncementLinkClick(kind, item.id);
+
+  return (
+    <Link
+      href={href}
+      onClick={onAnnouncementClick}
+      role="listitem"
+      data-rank-card
+      className="group w-[92px] shrink-0 snap-start sm:w-[108px] md:w-[118px]"
+    >
+      <div className="relative aspect-2/3 overflow-hidden rounded-lg shadow-md ring-1 ring-black/8 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
+        {item.poster_image_url ? (
+          <Image
+            src={item.poster_image_url}
+            alt={name}
+            fill
+            sizes="118px"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-end bg-linear-to-br from-stone-300 to-stone-500 p-2">
+            <span className="text-[10px] font-semibold text-white/90">
+              {item.organization}
+            </span>
+          </div>
+        )}
+
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/75 via-black/25 to-transparent"
+        />
+
+        <span
+          aria-hidden
+          className="absolute bottom-0 left-1 z-10 select-none text-[42px] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:bottom-0.5 sm:left-1.5 sm:text-[48px]"
+          style={{
+            WebkitTextStroke: "1px rgba(0,0,0,0.15)",
+            paintOrder: "stroke fill",
+          }}
+        >
+          {rank}
+        </span>
+      </div>
+
+      <p
+        className="mt-1.5 line-clamp-2 text-[11px] font-semibold leading-snug text-ink group-hover:text-brand sm:text-xs"
+        title={name}
+      >
+        {name}
+      </p>
+    </Link>
+  );
+}
 
 /**
  * 탐색 카테고리 선택 시 상단 시네마틱 TOP 10.
@@ -177,62 +242,13 @@ export default function BrowseTopRankHero({
               aria-label={`${title} TOP 10`}
               className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] sm:gap-3 [&::-webkit-scrollbar]:hidden"
             >
-              {items.map((item, index) => {
-                const rank = index + 1;
-                const name = cleanScholarshipName(item.name);
-                const href = contentKindHref(item.content_kind, item.id);
-
-                return (
-                  <Link
-                    key={`${item.content_kind ?? "scholarship"}-${item.id}`}
-                    href={href}
-                    role="listitem"
-                    data-rank-card
-                    className="group w-[92px] shrink-0 snap-start sm:w-[108px] md:w-[118px]"
-                  >
-                    <div className="relative aspect-2/3 overflow-hidden rounded-lg shadow-md ring-1 ring-black/8 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
-                      {item.poster_image_url ? (
-                        <Image
-                          src={item.poster_image_url}
-                          alt={name}
-                          fill
-                          sizes="118px"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-end bg-linear-to-br from-stone-300 to-stone-500 p-2">
-                          <span className="text-[10px] font-semibold text-white/90">
-                            {item.organization}
-                          </span>
-                        </div>
-                      )}
-
-                      <div
-                        aria-hidden
-                        className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/75 via-black/25 to-transparent"
-                      />
-
-                      <span
-                        aria-hidden
-                        className="absolute bottom-0 left-1 z-10 select-none text-[42px] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:bottom-0.5 sm:left-1.5 sm:text-[48px]"
-                        style={{
-                          WebkitTextStroke: "1px rgba(0,0,0,0.15)",
-                          paintOrder: "stroke fill",
-                        }}
-                      >
-                        {rank}
-                      </span>
-                    </div>
-
-                    <p
-                      className="mt-1.5 truncate text-[11px] font-semibold leading-snug text-ink group-hover:text-brand sm:text-xs"
-                      title={name}
-                    >
-                      {name}
-                    </p>
-                  </Link>
-                );
-              })}
+              {items.map((item, index) => (
+                <RankCardLink
+                  key={`${item.content_kind ?? "scholarship"}-${item.id}`}
+                  item={item}
+                  rank={index + 1}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import type { CardScholarship } from "@/components/ScholarshipCard";
 import CardBookmarkButton from "@/components/CardBookmarkButton";
+import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { contentKindHref, contentKindLabel } from "@/lib/content-categories";
 import {
   daysUntilApplyDeadlineKorea,
@@ -34,6 +37,7 @@ export default function HomeHero({
   const displayName = cleanScholarshipName(scholarship.name);
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
   const kind = scholarship.content_kind ?? "scholarship";
+  const onAnnouncementClick = useAnnouncementLinkClick(kind, scholarship.id);
   const isContestLike =
     kind === "contest" || kind === "education" || kind === "activity";
   const supportAmount = formatCardSupportLine({
@@ -103,6 +107,7 @@ export default function HomeHero({
           <div className="flex flex-wrap items-center gap-2.5">
             <Link
               href={href}
+              onClick={onAnnouncementClick}
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold text-ink transition hover:bg-cream active:scale-[0.98]"
             >
               <svg

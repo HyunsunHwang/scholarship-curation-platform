@@ -8,13 +8,11 @@ import { createPublicSupabaseClient } from "@/lib/public-data";
 import BookmarkApplyButtons from "@/app/scholarships/[id]/BookmarkApplyButtons";
 import ScholarshipDetailHero from "@/app/scholarships/[id]/ScholarshipDetailHero";
 import ScholarshipPoster from "@/app/scholarships/[id]/ScholarshipPoster";
-import type {
-  ScholarshipDetail,
-  SelectionStageDetail,
-} from "@/app/scholarships/[id]/ScholarshipTabs";
+import type { SelectionStageDetail } from "@/app/scholarships/[id]/ScholarshipTabs";
 import { contentKindLabel } from "@/lib/content-categories";
 import { resolveContestBenefits } from "@/lib/benefit-categories";
 import BenefitHighlights from "@/components/BenefitHighlights";
+import { contestToScholarshipDetail } from "@/lib/announcement-detail";
 import RecentViewTracker from "@/components/RecentViewTracker";
 import ContestViewCountIncrementer from "@/components/opportunity/ContestViewCountIncrementer";
 import LiveEngagementBadges from "@/app/scholarships/[id]/LiveEngagementBadges";
@@ -98,59 +96,6 @@ function ContactChannelIcon({ icon }: { icon: ContactChannel["icon"] }) {
   );
 }
 
-function contestToScholarshipDetail(contest: Contest): ScholarshipDetail {
-  return {
-    id: contest.id,
-    name: contest.name,
-    organization: contest.organization,
-    institution_type: contest.organization_type || "기타",
-    apply_url: contest.apply_url,
-    homepage_url: contest.homepage_url,
-    support_types: [],
-    apply_start_date: contest.apply_start_date,
-    apply_end_date: contest.apply_end_date || "2099-12-31",
-    selection_count: contest.selection_count,
-    announcement_date: contest.announcement_date,
-    can_overlap: null,
-    qual_gpa_min: null,
-    qual_gpa_last_semester_min: null,
-    qual_last_semester_earned_credits_min: null,
-    qual_income_level_max: null,
-    qual_income_level_min: null,
-    qual_household_size_max: null,
-    qual_gender: null,
-    qual_age_min: null,
-    qual_age_max: null,
-    qual_region: null,
-    qual_major: null,
-    qual_special_info: null,
-    qual_extra_requirements: null,
-    qual_parent_occupation: null,
-    qual_military_status: null,
-    qual_nationality: null,
-    qual_admission_type: null,
-    qual_parent_cohabitation: null,
-    qual_parent_region: null,
-    qual_university: null,
-    qual_enrollment_status: null,
-    qual_school_location: null,
-    qual_school_category: null,
-    qual_academic_year: null,
-    apply_method: contest.apply_method,
-    required_documents: contest.required_documents,
-    document_files: contest.document_files ?? [],
-    contact: contest.contact,
-    selection_note: contest.selection_note,
-    original_notice_image_url: contest.original_notice_image_url,
-    original_notice_image_urls: contest.original_notice_image_urls,
-    original_notice_text: contest.original_notice_text,
-    note: contest.note,
-    is_advertisement: false,
-    ad_job_role: null,
-    ad_required_skills: null,
-    ad_location: null,
-  };
-}
 
 export default async function OpportunityDetailPage({
   params,
@@ -297,7 +242,7 @@ export default async function OpportunityDetailPage({
                   {contest.organization ? ` · ${contest.organization}` : null}
                 </p>
 
-                <h1 className="wrap-break-word mt-2 text-[1.65rem] font-extrabold leading-snug tracking-tight text-ink sm:text-[2rem]">
+                <h1 className="mt-2 break-keep text-[1.65rem] font-extrabold leading-snug tracking-tight text-ink sm:text-[2rem]">
                   {displayName}
                 </h1>
 
@@ -317,13 +262,13 @@ export default async function OpportunityDetailPage({
                   </span>
                 </div>
 
-                <BenefitHighlights benefits={benefitHighlights} />
-
                 <ScholarshipTabs
                   scholarship={detail}
                   selectionStages={stages}
                   autoCheck={autoCheck}
                   hideQualificationSections
+                  layout="netflix"
+                  preScheduleSlot={<BenefitHighlights benefits={benefitHighlights} />}
                 />
 
                 {contest.contact && (

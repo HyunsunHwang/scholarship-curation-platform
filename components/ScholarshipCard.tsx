@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import CardBookmarkButton from "@/components/CardBookmarkButton";
+import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { formatCardSupportLine } from "@/lib/support-amount";
@@ -92,6 +95,7 @@ export default function ScholarshipCard({
   });
   const href = contentKindHref(scholarship.content_kind, scholarship.id);
   const kind = scholarship.content_kind ?? "scholarship";
+  const onAnnouncementClick = useAnnouncementLinkClick(kind, scholarship.id);
   const isContestLike =
     kind === "contest" || kind === "education" || kind === "activity";
   const kindLabel =
@@ -116,6 +120,7 @@ export default function ScholarshipCard({
     <div className="group flex flex-col">
       <Link
         href={href}
+        onClick={onAnnouncementClick}
         className="relative block aspect-2/3 w-full overflow-hidden rounded-xl sm:rounded-2xl"
       >
         {scholarship.poster_image_url ? (
@@ -157,7 +162,11 @@ export default function ScholarshipCard({
         />
       </Link>
 
-      <Link href={href} className="mt-2 flex flex-col gap-0.5 sm:mt-3">
+      <Link
+        href={href}
+        onClick={onAnnouncementClick}
+        className="mt-2 flex flex-col gap-0.5 sm:mt-3"
+      >
         <div className="flex min-w-0 items-start gap-1.5 sm:gap-2">
           {kind === "scholarship" &&
             (scholarship.is_advertisement || scholarship.is_recommended) && (

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import AnnouncementModalProvider from "@/components/announcement/AnnouncementModalProvider";
 import type { HomeRail } from "@/lib/home-rails";
 import HomeFeed from "./HomeFeed";
 
@@ -32,21 +33,23 @@ export default function SpotifyHomeShell({
   isOnboarded?: boolean;
 }) {
   return (
-    <div className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
-      <HomeFeed
-        scholarships={scholarships}
-        bookmarkedKeys={bookmarkedKeys}
-        forYou={forYou}
-        urgentBookmarks={urgentBookmarks}
-        serverRecent={serverRecent}
-        interestRails={interestRails}
-        campusRail={campusRail}
-        regionRail={regionRail}
-        collaborativeRail={collaborativeRail}
-        userName={userName}
-        isLoggedIn={isLoggedIn}
-        isOnboarded={isOnboarded}
-      />
-    </div>
+    <AnnouncementModalProvider>
+      <div className="w-full px-4 pb-10 pt-4 sm:px-6 sm:pt-5 lg:px-10">
+        <HomeFeed
+          scholarships={scholarships}
+          bookmarkedKeys={bookmarkedKeys}
+          forYou={forYou}
+          urgentBookmarks={urgentBookmarks}
+          serverRecent={serverRecent}
+          interestRails={interestRails}
+          campusRail={campusRail}
+          regionRail={regionRail}
+          collaborativeRail={collaborativeRail}
+          userName={userName}
+          isLoggedIn={isLoggedIn}
+          isOnboarded={isOnboarded}
+        />
+      </div>
+    </AnnouncementModalProvider>
   );
 }

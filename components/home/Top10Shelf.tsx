@@ -10,6 +10,7 @@ import {
 } from "react";
 import CardBookmarkButton from "@/components/CardBookmarkButton";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import { useAnnouncementLinkClick } from "@/components/announcement/AnnouncementModalProvider";
 import { daysUntilApplyDeadlineKorea, isAlwaysOpenRecruitment } from "@/lib/scholarship-dates";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { formatCardSupportLine } from "@/lib/support-amount";
@@ -131,11 +132,14 @@ function Top10Poster({
     badgeClass,
     gradient,
   } = getTop10CardModel(scholarship);
+  const kind = scholarship.content_kind ?? "scholarship";
+  const onAnnouncementClick = useAnnouncementLinkClick(kind, scholarship.id);
 
   return (
     <Link
       href={href}
-        className="group relative block h-full w-full overflow-hidden rounded-xl shadow-md ring-1 ring-black/5 sm:rounded-2xl"
+      onClick={onAnnouncementClick}
+      className="group relative block h-full w-full overflow-hidden rounded-xl shadow-md ring-1 ring-black/5 sm:rounded-2xl"
     >
       {scholarship.poster_image_url ? (
         <Image
@@ -187,9 +191,11 @@ function Top10Poster({
 
 function Top10Meta({ scholarship }: { scholarship: CardScholarship }) {
   const { displayName, href } = getTop10CardModel(scholarship);
+  const kind = scholarship.content_kind ?? "scholarship";
+  const onAnnouncementClick = useAnnouncementLinkClick(kind, scholarship.id);
 
   return (
-    <Link href={href} className="group block min-w-0">
+    <Link href={href} onClick={onAnnouncementClick} className="group block min-w-0">
       <p
         className="truncate text-xs font-semibold leading-snug text-ink transition-colors group-hover:text-brand sm:text-sm"
         title={displayName}

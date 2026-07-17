@@ -50,20 +50,27 @@ function BenefitIcon({
 export default function BenefitHighlights({
   benefits,
   emptyLabel = "안내된 혜택 정보가 없습니다.",
+  /** false면 상단 구분선·큰 여백 없이 바로 이어서 표시 */
+  divided = true,
 }: {
   benefits: BenefitHighlight[];
   emptyLabel?: string;
+  divided?: boolean;
 }) {
+  const spacing = divided
+    ? "mt-6 border-t border-gray-100 pt-6"
+    : "mt-3 pt-0";
+
   if (benefits.length === 0) {
     return (
-      <div className="mt-6 border-t border-gray-100 pt-6">
+      <div className={spacing}>
         <p className="text-sm text-ink/45">{emptyLabel}</p>
       </div>
     );
   }
 
   return (
-    <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-gray-100 pt-6 sm:gap-x-8">
+    <ul className={`${spacing} grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-8`}>
       {benefits.map((b) => (
         <li key={`${b.id}-${b.label}`} className="flex min-w-0 items-center gap-3">
           <BenefitIcon id={b.id} accent={b.accent} />
