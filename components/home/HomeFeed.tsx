@@ -16,8 +16,6 @@ import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
 import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
 
-const HOME_RANK_HERO_BG = "/images/home-rank-hero.jpg";
-
 function itemKey(item: CardScholarship) {
   return `${item.content_kind ?? "scholarship"}-${item.id}`;
 }
@@ -73,15 +71,13 @@ const ShelfCard = memo(function ShelfCard({
 
 export default function HomeFeed({
   scholarships,
-  isLoggedIn = false,
   afterHero = null,
   afterTop10 = null,
 }: {
   scholarships: CardScholarship[];
-  isLoggedIn?: boolean;
-  /** 로그인 개인화(For You·이어서 보기) — Suspense 슬롯 */
+  /** 로그인: For You·이어서 보기 / 비로그인: 진단 티저 — Suspense 슬롯 */
   afterHero?: ReactNode;
-  /** 마감임박·관심/교내/CF 레일 — Suspense 슬롯 */
+  /** 로그인: 마감임박·관심/교내/CF 레일 / 비로그인: 로드맵 레일 — Suspense 슬롯 */
   afterTop10?: ReactNode;
 }) {
   const {
@@ -122,14 +118,10 @@ export default function HomeFeed({
         <BrowseTopRankHero
           title="오늘 TOP 10"
           items={top10}
-          backgroundSrc={HOME_RANK_HERO_BG}
           backHref={null}
           badge="TODAY TOP 10"
           subtitle={null}
           headingId="home-top10-heading"
-          imageClassName="object-cover object-[12%_78%] sm:object-[14%_72%] lg:object-[16%_68%]"
-          washRightClassName="bg-linear-to-r from-transparent via-white/10 to-white/82"
-          washUpClassName="bg-linear-to-t from-white/55 via-white/15 to-transparent"
         />
       ) : null}
 
@@ -167,9 +159,9 @@ export default function HomeFeed({
           </div>
         ) : (
           <>
-            {showBrowseRails && isLoggedIn ? afterHero : null}
+            {showBrowseRails ? afterHero : null}
 
-            {showBrowseRails && isLoggedIn ? afterTop10 : null}
+            {showBrowseRails ? afterTop10 : null}
 
             {!showBrowseRails ? (
               <section

@@ -8,12 +8,10 @@ import HomeFeed from "./HomeFeed";
 
 export default function SpotifyHomeShell({
   scholarships,
-  isLoggedIn,
   afterHero = null,
   afterTop10 = null,
 }: {
   scholarships: CardScholarship[];
-  isLoggedIn: boolean;
   afterHero?: ReactNode;
   afterTop10?: ReactNode;
 }) {
@@ -22,7 +20,6 @@ export default function SpotifyHomeShell({
       <HomeBookmarkProvider>
         <HomeFeed
           scholarships={scholarships}
-          isLoggedIn={isLoggedIn}
           afterHero={afterHero}
           afterTop10={afterTop10}
         />

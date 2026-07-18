@@ -16,7 +16,7 @@ const PAGE_SIZE = 5;
 type BrowseTopRankHeroProps = {
   title: string;
   items: CardScholarship[];
-  /** 기본: 탐색용 배경. 홈은 home-rank-hero 등 */
+  /** 기본: browse-rank-hero(고양이). 홈·탐색 공통 */
   backgroundSrc?: string;
   /** 미지정 시 /browse 로 돌아가는 탐색 링크. null 이면 숨김 */
   backHref?: string | null;
@@ -158,7 +158,7 @@ export default function BrowseTopRankHero({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative mb-6 sm:mb-8"
+      className="relative mb-3 sm:mb-4"
     >
       <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[360px]">
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
