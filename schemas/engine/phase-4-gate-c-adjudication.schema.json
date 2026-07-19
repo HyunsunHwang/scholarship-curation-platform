@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation-platform.local/schemas/engine/phase-4-gate-c-adjudication.schema.json",
+  "title": "Engine Phase 4 Gate C independent gold adjudication decisions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source_fixture_version", "source_case_manifest_hash", "adjudication_status", "independent_reviewer_required", "cases"],
+  "properties": {
+    "schema_version": { "const": "engine-phase-4-gate-c-adjudication/v1" },
+    "source_fixture_version": { "const": "engine-phase-4-representative-public-gold/v1" },
+    "source_case_manifest_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "adjudication_status": { "enum": ["pending_independent_review", "in_review", "completed"] },
+    "independent_reviewer_required": { "const": true },
+    "cases": { "type": "array", "minItems": 24, "maxItems": 24, "items": { "$ref": "#/$defs/caseDecision" } }
+  },
+  "$defs": {
+    "reviewerRole": {
+      "enum": ["independent_human_reviewer", "second_independent_human_reviewer", "adjudication_lead"]
+    },
+    "candidateGold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "normalized_value", "evidence_ids"],
+      "properties": {
+        "status": { "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] },
+        "normalized_value": {},
+        "evidence_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "adjudicatedGold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "normalized_value", "evidence_ids"],
+      "properties": {
+        "status": { "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] },
+        "normalized_value": {},
+        "evidence_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "correctedGold": {
+      "allOf": [
+        { "$ref": "#/$defs/adjudicatedGold" },
+        { "type": "object", "properties": { "evidence_ids": { "type": "array", "minItems": 1 } } }
+      ]
+    },
+    "unresolvedGold": {
+      "allOf": [
+        { "$ref": "#/$defs/adjudicatedGold" },
+        {
+          "type": "object",
+          "properties": {
+            "status": { "enum": ["unknown", "ambiguous", "conflicting"] },
+            "normalized_value": { "type": "null" }
+          }
+        }
+      ]
+    },
+    "fieldDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_name", "priority", "decision", "candidate_gold", "candidate_gold_sha256", "adjudicated_gold", "review_reason", "reviewer_role", "reviewed_at"],
+      "properties": {
+        "field_name": { "type": "string", "minLength": 1 },
+        "priority": { "enum": ["P0", "P1", "P2"] },
+        "decision": { "enum": ["pending", "approved", "corrected", "unresolved", "not_reviewed"] },
+        "candidate_gold": { "$ref": "#/$defs/candidateGold" },
+        "candidate_gold_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "adjudicated_gold": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/adjudicatedGold" }] },
+        "review_reason": { "type": ["string", "null"] },
+        "reviewer_role": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/reviewerRole" }] },
+        "reviewed_at": { "anyOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] }
+      },
+      "allOf": [
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["pending", "not_reviewed"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_gold": { "type": "null" }, "reviewer_role": { "type": "null" }, "reviewed_at": { "type": "null" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "const": "approved" } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_gold": { "type": "null" }, "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "const": "corrected" } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_gold": { "$ref": "#/$defs/correctedGold" }, "review_reason": { "type": "string", "minLength": 1 }, "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "const": "unresolved" } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_gold": { "$ref": "#/$defs/unresolvedGold" }, "review_reason": { "type": "string", "minLength": 1 }, "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        }
+      ]
+    },
+    "partialDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_name", "priority", "decision", "candidate_partial_policy", "adjudicated_partial_gold", "review_reason", "reviewer_role", "reviewed_at"],
+      "properties": {
+        "field_name": { "type": "string", "minLength": 1 },
+        "priority": { "const": "P1" },
+        "decision": { "enum": ["pending_independent_review", "approved", "corrected", "unresolved", "not_adjudicable_with_current_evidence"] },
+        "candidate_partial_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy", "threshold"],
+          "properties": {
+            "policy": { "enum": ["set_precision_recall/v1", "range_boundary_and_bounded_overlap/v1", "condition_set_and_boolean_structure/v1"] },
+            "threshold": { "type": "null" }
+          }
+        },
+        "adjudicated_partial_gold": {},
+        "review_reason": { "type": ["string", "null"] },
+        "reviewer_role": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/reviewerRole" }] },
+        "reviewed_at": { "anyOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] }
+      },
+      "allOf": [
+        {
+          "if": { "type": "object", "properties": { "decision": { "const": "pending_independent_review" } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_partial_gold": { "type": "null" }, "reviewer_role": { "type": "null" }, "reviewed_at": { "type": "null" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["approved", "corrected", "unresolved", "not_adjudicable_with_current_evidence"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["approved", "corrected"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_partial_gold": { "anyOf": [{ "type": "object" }, { "type": "array" }] } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["corrected", "unresolved", "not_adjudicable_with_current_evidence"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "review_reason": { "type": "string", "minLength": 1 } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["unresolved", "not_adjudicable_with_current_evidence"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_partial_gold": { "type": "null" } } }
+        }
+      ]
+    },
+    "relationDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation_id", "group_id", "priority", "decision", "candidate_relation", "adjudicated_relation", "review_reason", "reviewer_role", "reviewed_at"],
+      "properties": {
+        "relation_id": { "type": "string", "minLength": 1 },
+        "group_id": { "type": "string", "pattern": "^rg_" },
+        "priority": { "const": "P0" },
+        "decision": { "enum": ["pending", "approved", "corrected", "unresolved", "not_reviewed"] },
+        "candidate_relation": { "type": "object" },
+        "adjudicated_relation": { "type": ["object", "null"] },
+        "review_reason": { "type": ["string", "null"] },
+        "reviewer_role": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/reviewerRole" }] },
+        "reviewed_at": { "anyOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] }
+      },
+      "allOf": [
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["pending", "not_reviewed"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "adjudicated_relation": { "type": "null" }, "reviewer_role": { "type": "null" }, "reviewed_at": { "type": "null" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["approved", "corrected", "unresolved"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["corrected", "unresolved"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "review_reason": { "type": "string", "minLength": 1 }, "adjudicated_relation": { "type": "object" } } }
+        }
+      ]
+    },
+    "reviewIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reason", "disposition"],
+      "properties": {
+        "kind": { "const": "suspected_candidate_gold_problem" },
+        "reason": { "type": "string", "minLength": 1 },
+        "disposition": { "const": "requires_independent_decision" }
+      }
+    },
+    "caseDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "source_capture_hash", "case_priority", "decision", "review_reason", "reviewer_role", "reviewed_at", "suggested_review_issues", "fields", "partial_decisions", "relation_decisions"],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^p4c_[a-z0-9_]+$" },
+        "source_capture_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "case_priority": { "const": "P0" },
+        "decision": { "enum": ["pending_independent_review", "in_review", "approved", "corrected", "unresolved", "excluded_for_provenance_failure"] },
+        "review_reason": { "type": ["string", "null"] },
+        "reviewer_role": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/reviewerRole" }] },
+        "reviewed_at": { "anyOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }] },
+        "suggested_review_issues": { "type": "array", "items": { "$ref": "#/$defs/reviewIssue" } },
+        "fields": { "type": "array", "minItems": 15, "maxItems": 15, "items": { "$ref": "#/$defs/fieldDecision" } },
+        "partial_decisions": { "type": "array", "items": { "$ref": "#/$defs/partialDecision" } },
+        "relation_decisions": { "type": "array", "items": { "$ref": "#/$defs/relationDecision" } }
+      },
+      "allOf": [
+        {
+          "if": { "type": "object", "properties": { "decision": { "const": "pending_independent_review" } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "reviewer_role": { "type": "null" }, "reviewed_at": { "type": "null" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["approved", "corrected", "unresolved", "excluded_for_provenance_failure"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "reviewer_role": { "$ref": "#/$defs/reviewerRole" }, "reviewed_at": { "type": "string", "format": "date-time" } } }
+        },
+        {
+          "if": { "type": "object", "properties": { "decision": { "enum": ["unresolved", "excluded_for_provenance_failure"] } }, "required": ["decision"] },
+          "then": { "type": "object", "properties": { "review_reason": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    }
+  }
+}

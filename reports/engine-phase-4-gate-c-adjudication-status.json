@@ -1,0 +1,306 @@
+{
+  "phase": "ENGINE_PHASE_4",
+  "gate": "GATE_C",
+  "task": "independent-gold-adjudication-preparation",
+  "schema_version": "engine-phase-4-gate-c-adjudication/v1",
+  "total_cases": 24,
+  "pending_cases": 24,
+  "in_review_cases": 0,
+  "approved_cases": 0,
+  "corrected_cases": 0,
+  "unresolved_cases": 0,
+  "excluded_cases": 0,
+  "reviewed_case_count": 0,
+  "total_fields": 360,
+  "pending_fields": 360,
+  "approved_fields": 0,
+  "corrected_fields": 0,
+  "unresolved_fields": 0,
+  "total_relation_items": 10,
+  "pending_relation_items": 10,
+  "total_partial_items": 35,
+  "p0_pending": 134,
+  "p1_pending": 154,
+  "p2_pending": 117,
+  "phase_3_remediation_candidates": [
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "document_text",
+      "reason": "authoritative_source_text_missing"
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "field_name": "document_text",
+      "reason": "authoritative_hwp_parse_missing"
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "field_name": "document_text",
+      "reason": "authoritative_ocr_missing"
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "document_text",
+      "reason": "authoritative_hwp_parse_missing"
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "field_name": "document_text",
+      "reason": "authoritative_hwpx_parse_missing"
+    }
+  ],
+  "phase_4c_semantic_candidates": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "eligibility",
+      "reason": "complex_eligibility"
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "application_start",
+      "reason": "unlabeled_date_role"
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "application_deadline",
+      "reason": "unlabeled_date_role"
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "recruitment_cycle_label",
+      "reason": "cycle_evidence_missing"
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "amount",
+      "reason": "tiered_amount_table"
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "application_start",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "application_deadline",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "field_name": "required_documents",
+      "reason": "required_document_taxonomy"
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "application_start",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "application_deadline",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "application_method",
+      "reason": "application_method_taxonomy"
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "field_name": "required_documents",
+      "reason": "required_document_taxonomy"
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "field_name": "eligibility",
+      "reason": "complex_eligibility"
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "eligibility",
+      "reason": "complex_eligibility"
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "amount",
+      "reason": "multiple_benefit_conflict"
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "eligibility",
+      "reason": "complex_eligibility"
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "application_start",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "application_deadline",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_019_uic_legacy",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "amount",
+      "reason": "multiple_benefit_conflict"
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "amount",
+      "reason": "tiered_amount_table"
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "application_start",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "application_deadline",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "required_documents",
+      "reason": "required_document_taxonomy"
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "application_start",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "application_deadline",
+      "reason": "multiple_date_conflict"
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "provider",
+      "reason": "provider_program_separation"
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "scholarship_program_name",
+      "reason": "provider_program_separation"
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "scholarship_program_name",
+      "reason": "program_identity_insufficient"
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "recruitment_cycle_label",
+      "reason": "cycle_evidence_missing"
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "document_kind",
+      "reason": "deterministic_classification_mismatch"
+    }
+  ],
+  "partial_gold_pending": 35,
+  "schema_valid": true,
+  "packet_complete": true,
+  "independent_review_complete": false,
+  "adjudicated_gold_ready": false,
+  "phase5_ready": false,
+  "production_ready": false
+}
