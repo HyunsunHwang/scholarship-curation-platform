@@ -14,7 +14,10 @@ import {
   createSchemaValidators,
   validateCanonicalRecord,
 } from "../lib/engine-phase-4/contracts.mjs";
-import { evaluateDeterministicBaseline } from "./evaluate-engine-phase-4-deterministic-baseline.mjs";
+import {
+  evaluatedRatio,
+  evaluateDeterministicBaseline,
+} from "./evaluate-engine-phase-4-deterministic-baseline.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const checks = [];
@@ -78,6 +81,35 @@ check("risky review recall is 100%", evaluation.acceptance.risky_review_required
 check("deterministic rerun matches", evaluation.acceptance.deterministic_rerun_match === true);
 check("identity pair metrics are not falsely scored", evaluation.metrics.identity_candidate_pair_precision.status === "not_evaluated" && evaluation.metrics.identity_candidate_pair_recall.status === "not_evaluated");
 check("material change metric is not falsely scored", evaluation.metrics.material_change_classification_accuracy.status === "not_evaluated");
+const emptyRatio = evaluatedRatio(0, 0, "Validator empty-denominator probe.");
+check("empty denominator is not scored as 100 percent", emptyRatio.value === null && emptyRatio.value !== 1);
+check("empty denominator is explicitly not evaluated", emptyRatio.status === "not_evaluated" && emptyRatio.sample_count === 0 && emptyRatio.reason.length > 0);
+check("normalized exact match has real samples", evaluation.metrics.normalized_exact_match.status === "evaluated" && evaluation.metrics.normalized_exact_match.sample_count === 2);
+check("normalized partial match is not an exact scalar copy", typeof evaluation.metrics.normalized_partial_match === "object"
+  && JSON.stringify(evaluation.metrics.normalized_partial_match) !== JSON.stringify(evaluation.metrics.normalized_exact_match));
+check("normalized partial match is honestly not evaluated", evaluation.metrics.normalized_partial_match.status === "not_evaluated"
+  && evaluation.metrics.normalized_partial_match.value === null
+  && evaluation.metrics.normalized_partial_match.sample_count === 0
+  && evaluation.metrics.normalized_partial_match.reason === "No predeclared partial-overlap gold annotations exist in Gate B fixtures.");
+const requiredSliceNames = ["by_field", "by_source_type", "by_document_kind", "by_value_status", "by_extractor_kind", "by_fixture_version"];
+check("all required evaluation slices exist", requiredSliceNames.every((name) => evaluation.slices?.[name] && typeof evaluation.slices[name] === "object"));
+check("evaluated slices have positive samples", requiredSliceNames.every((name) =>
+  Object.values(evaluation.slices[name]).every((slice) => slice.status !== "evaluated" || slice.sample_count > 0)));
+check("empty slices have no fake 100 percent", requiredSliceNames.every((name) =>
+  Object.values(evaluation.slices[name]).every((slice) => slice.status !== "not_evaluated"
+    || (slice.sample_count === 0 && slice.value !== 1 && typeof slice.reason === "string" && slice.reason.length > 0))));
+check("deterministic and model extractor slices are distinct", evaluation.slices.by_extractor_kind.deterministic.status === "evaluated"
+  && evaluation.slices.by_extractor_kind.deterministic.sample_count === deterministicBaselineCases.length
+  && evaluation.slices.by_extractor_kind.model.status === "not_evaluated"
+  && evaluation.slices.by_extractor_kind.model.sample_count === 0);
+check("fixture version slice is explicit", Object.keys(evaluation.slices.by_fixture_version).length === 1
+  && evaluation.slices.by_fixture_version[FIXED_EXTRACTION_CONTEXT.evaluationFixtureVersion]?.sample_count === deterministicBaselineCases.length);
+check("source type coverage distinguishes empty gold slices", evaluation.slices.by_source_type.hwp_text.status === "not_evaluated"
+  && evaluation.slices.by_source_type.ocr_text.status === "not_evaluated"
+  && evaluation.slices.by_source_type.html_text.status === "evaluated");
+check("document kind coverage distinguishes absent fixtures", evaluation.slices.by_document_kind.information_session.status === "not_evaluated"
+  && evaluation.slices.by_document_kind.general_guidance.status === "not_evaluated"
+  && evaluation.slices.by_document_kind.correction_notice.status === "not_evaluated");
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const scripts = packageJson.scripts ?? {};
@@ -94,6 +126,9 @@ const docsText = fs.readFileSync(path.join(root, "docs/engine/engine-phase-4-gat
 check("capability matrix documents supported and unsupported patterns", /Capability matrix/u.test(docsText) && /Unsupported patterns/u.test(docsText));
 check("Phase 4C candidate areas are documented", /Candidate areas for Phase 4C/u.test(docsText));
 check("Phase 5 boundary is documented", /Phase 5/u.test(docsText) && /material-change/u.test(docsText));
+check("documentation separates exact and partial metrics", /Exact match and partial match are separate metrics/u.test(docsText));
+check("documentation rejects empty-denominator 100 percent", /empty denominator is not 100%/iu.test(docsText));
+check("documentation disclaims synthetic production accuracy", /not production accuracy/iu.test(docsText) && /representative public gold evaluation/iu.test(docsText));
 
 const reportPath = path.join(root, "reports/engine-phase-4-gate-b-baseline.json");
 const reportText = fs.readFileSync(reportPath, "utf8");
@@ -103,13 +138,30 @@ check("report records exact Gate A base", report.base_gate_a_sha === "700b9a3bfc
 check("report implementation SHA is immutable", /^[a-f0-9]{40}$/u.test(report.implementation_sha));
 check("report live proof has public records", report.live_dry_run_summary?.result === "PASS" && report.live_dry_run_summary?.canonical_record_count >= 1);
 check("report live bounds are enforced", report.live_dry_run_summary?.source_count <= 2 && report.live_dry_run_summary?.notice_limit_per_source === 1);
+check("report identifies live proof as historical", /historical Gate B bounded live proof/u.test(report.live_dry_run_summary?.evidence_scope ?? ""));
+check("report exact metric matches evaluator", JSON.stringify(report.evaluation_summary?.normalized_exact_match) === JSON.stringify(evaluation.metrics.normalized_exact_match));
+check("report partial metric matches evaluator", JSON.stringify(report.evaluation_summary?.normalized_partial_match) === JSON.stringify(evaluation.metrics.normalized_partial_match));
+check("all report metric states match evaluator", Object.entries(evaluation.metrics).every(([name, metric]) =>
+  JSON.stringify(report.evaluation_summary?.[name]) === JSON.stringify(metric)));
+check("report does not claim partial 100 percent", report.evaluation_summary?.normalized_partial_match?.status === "not_evaluated"
+  && report.evaluation_summary?.normalized_partial_match?.value === null
+  && report.evaluation_summary?.normalized_partial_match?.sample_count === 0);
+check("report field slice matches evaluator coverage", report.evaluation_slices?.by_field?.sample_count === Object.values(evaluation.slices.by_field).reduce((sum, slice) => sum + slice.sample_count, 0));
+check("report source-type slice matches evaluator coverage", report.evaluation_slices?.by_source_type?.sample_count === Object.values(evaluation.slices.by_source_type).reduce((sum, slice) => sum + slice.sample_count, 0));
+check("report document-kind slice matches evaluator coverage", report.evaluation_slices?.by_document_kind?.sample_count === Object.values(evaluation.slices.by_document_kind).reduce((sum, slice) => sum + slice.sample_count, 0));
+check("report value-status slice matches evaluator coverage", report.evaluation_slices?.by_value_status?.sample_count === Object.values(evaluation.slices.by_value_status).reduce((sum, slice) => sum + slice.sample_count, 0));
+check("report extractor-kind slice matches evaluator coverage", report.evaluation_slices?.by_extractor_kind?.deterministic_sample_count === evaluation.slices.by_extractor_kind.deterministic.sample_count
+  && report.evaluation_slices?.by_extractor_kind?.model?.status === evaluation.slices.by_extractor_kind.model.status);
+check("report fixture-version slice matches evaluator coverage", report.evaluation_slices?.by_fixture_version?.key === FIXED_EXTRACTION_CONTEXT.evaluationFixtureVersion
+  && report.evaluation_slices?.by_fixture_version?.sample_count === evaluation.slices.by_fixture_version[FIXED_EXTRACTION_CONTEXT.evaluationFixtureVersion].sample_count);
 check("report contains no absolute local path", !/(?:[A-Za-z]:\\\\|\/Users\/|\/home\/)/u.test(reportText));
 check("report contains no secret-like value", !/(?:gho_|sk-[A-Za-z0-9]|service_role|DATABASE_URL|SUPABASE_URL)/u.test(reportText));
 const safetyKeys = [
   "database_accessed", "production_accessed", "production_credentials_requested", "external_llm_called",
   "migration_created_or_executed", "canary_write_performed", "production_scheduler_added", "queue_or_worker_added",
   "full_613_source_run", "parser_cache_contract_modified", "crawler_checkpoint_contract_modified",
-  "gate_a_contract_semantics_modified", "automatic_publish_performed", "notification_performed",
+  "gate_a_contract_semantics_modified", "deterministic_extractor_behavior_modified",
+  "automatic_publish_performed", "notification_performed",
 ];
 check("report safety remains fail-closed", safetyKeys.every((key) => report.safety?.[key] === false));
 check("combined PR targets main", report.combined_pr_scope?.base === "main" && report.combined_pr_scope?.head === "feat/engine-phase-4-deterministic-extraction-baseline");

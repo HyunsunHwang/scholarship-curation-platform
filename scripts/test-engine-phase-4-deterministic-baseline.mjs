@@ -13,6 +13,10 @@ import {
 } from "../lib/engine-phase-4/deterministic-normalizers.mjs";
 import { extractDeterministicScholarshipCandidate } from "../lib/engine-phase-4/deterministic-extractor.mjs";
 import { createSchemaValidators, validateCanonicalRecord } from "../lib/engine-phase-4/contracts.mjs";
+import {
+  evaluatedRatio,
+  evaluateDeterministicBaseline,
+} from "./evaluate-engine-phase-4-deterministic-baseline.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const validators = createSchemaValidators();
@@ -21,6 +25,7 @@ const outputs = new Map(deterministicBaselineCases.map((entry) => [
   entry.scenario,
   extractDeterministicScholarshipCandidate({ ...entry.input, extractionContext: FIXED_EXTRACTION_CONTEXT }),
 ]));
+const evaluation = evaluateDeterministicBaseline();
 
 function test(name, run) {
   tests.push({ name, run });
@@ -235,6 +240,74 @@ test("automatic publish is always false", () => {
 });
 test("notification is always false", () => {
   for (const record of outputs.values()) assert.equal(record.review.notification_allowed, false);
+});
+
+test("empty denominator does not return one", () => {
+  assert.notEqual(evaluatedRatio(0, 0, "No samples."), 1);
+  assert.notEqual(evaluatedRatio(0, 0, "No samples.").value, 1);
+});
+test("empty denominator returns not_evaluated", () => assert.equal(evaluatedRatio(0, 0, "No samples.").status, "not_evaluated"));
+test("empty denominator includes a concrete reason", () => assert.ok(evaluatedRatio(0, 0, "No samples.").reason.length > 0));
+test("empty denominator sample count is zero", () => assert.equal(evaluatedRatio(0, 0, "No samples.").sample_count, 0));
+test("normalized partial match is not an exact scalar copy", () => {
+  assert.equal(typeof evaluation.metrics.normalized_exact_match, "object");
+  assert.equal(typeof evaluation.metrics.normalized_partial_match, "object");
+  assert.notDeepEqual(evaluation.metrics.normalized_partial_match, evaluation.metrics.normalized_exact_match);
+});
+test("normalized partial match is not evaluated without partial gold", () => assert.equal(evaluation.metrics.normalized_partial_match.status, "not_evaluated"));
+test("normalized partial reason matches the Gate A contract boundary", () => assert.equal(
+  evaluation.metrics.normalized_partial_match.reason,
+  "No predeclared partial-overlap gold annotations exist in Gate B fixtures.",
+));
+test("tracked report does not claim partial match 100 percent", () => {
+  const report = JSON.parse(fs.readFileSync(path.join(root, "reports/engine-phase-4-gate-b-baseline.json"), "utf8"));
+  assert.equal(report.evaluation_summary.normalized_partial_match.status, "not_evaluated");
+  assert.equal(report.evaluation_summary.normalized_partial_match.value, null);
+});
+test("all required evaluation slice groups exist", () => assert.deepEqual(
+  Object.keys(evaluation.slices).sort(),
+  ["by_document_kind", "by_extractor_kind", "by_field", "by_fixture_version", "by_source_type", "by_value_status"].sort(),
+));
+test("by_field slice exists", () => assert.ok(Object.keys(evaluation.slices.by_field).length > 0));
+test("by_source_type slice exists", () => assert.ok(Object.keys(evaluation.slices.by_source_type).length > 0));
+test("by_document_kind slice exists", () => assert.ok(Object.keys(evaluation.slices.by_document_kind).length > 0));
+test("by_value_status slice exists", () => assert.ok(Object.keys(evaluation.slices.by_value_status).length > 0));
+test("by_extractor_kind slice exists", () => assert.ok(evaluation.slices.by_extractor_kind.deterministic));
+test("by_fixture_version slice exists", () => assert.ok(evaluation.slices.by_fixture_version[FIXED_EXTRACTION_CONTEXT.evaluationFixtureVersion]));
+test("every evaluated top-level slice has a positive sample count", () => {
+  for (const group of Object.values(evaluation.slices)) {
+    for (const slice of Object.values(group)) {
+      if (slice.status === "evaluated") assert.ok(slice.sample_count > 0);
+    }
+  }
+});
+test("empty slices never contain a fake 100 percent value", () => {
+  for (const group of Object.values(evaluation.slices)) {
+    for (const slice of Object.values(group)) {
+      if (slice.status !== "not_evaluated") continue;
+      assert.equal(slice.sample_count, 0);
+      assert.notEqual(slice.value, 1);
+    }
+  }
+});
+test("deterministic extractor slice matches fixture count", () => assert.equal(evaluation.slices.by_extractor_kind.deterministic.sample_count, deterministicBaselineCases.length));
+test("model extractor slice is not evaluated", () => {
+  assert.equal(evaluation.slices.by_extractor_kind.model.status, "not_evaluated");
+  assert.equal(evaluation.slices.by_extractor_kind.model.sample_count, 0);
+});
+test("fixture version slice key is exact", () => assert.deepEqual(Object.keys(evaluation.slices.by_fixture_version), ["engine-phase-4-deterministic-fixtures/v1"]));
+test("exact match reports its real sample count", () => {
+  assert.equal(evaluation.metrics.normalized_exact_match.status, "evaluated");
+  assert.equal(evaluation.metrics.normalized_exact_match.sample_count, 2);
+});
+test("existing Gate B acceptance remains satisfied after evaluator remediation", () => {
+  assert.equal(evaluation.acceptance.schema_valid_record_rate, 1);
+  assert.equal(evaluation.acceptance.evidence_reference_integrity, 1);
+  assert.equal(evaluation.acceptance.unsupported_value_rate, 0);
+  assert.equal(evaluation.acceptance.deterministic_rerun_match, true);
+  assert.equal(evaluation.acceptance.risky_review_required_recall, 1);
+  assert.equal(evaluation.acceptance.proposed_identity_evidence_missing_count, 0);
+  assert.equal(evaluation.acceptance.material_change_invented_count, 0);
 });
 
 let passed = 0;
