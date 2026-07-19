@@ -173,7 +173,7 @@ writeJson("fixtures/engine-phase-4-representative-gold/adjudication/adjudication
 if (!decisionsExist || forceInitialize) writeJson(decisionsPath, decisions);
 writeJson("fixtures/engine-phase-4-representative-gold/adjudication/unresolved-items.json", unresolvedTracker);
 writeJson("reports/engine-phase-4-gate-c-adjudication-status.json", status);
-fs.writeFileSync(path.join(root, "reports/engine-phase-4-gate-c-adjudication-review.md"), `${markdown.join("\n")}\n`);
+fs.writeFileSync(path.join(root, "reports/engine-phase-4-gate-c-adjudication-review.md"), `${markdown.join("\n").trimEnd()}\n`);
 
 console.log(`cases=${status.total_cases}`);
 console.log(`fields=${status.total_fields}`);
