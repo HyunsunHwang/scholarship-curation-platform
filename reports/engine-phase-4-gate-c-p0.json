@@ -1,0 +1,910 @@
+{
+  "audit_version": "engine-phase-4-gate-c-p0-audit/v1",
+  "official_phase": "ENGINE_PHASE_4",
+  "official_gate": "GATE_C_P0_DIAGNOSTIC_AUDIT",
+  "as_of": "2026-07-20T00:00:00+09:00",
+  "timezone": "Asia/Seoul",
+  "gold_policy": "reviewer-approved adjudication decisions only; candidate and pending values are excluded from correctness denominators",
+  "corpus": {
+    "total_case_count": 24,
+    "resolved_case_count": 0,
+    "pending_case_count": 24,
+    "total_p0_field_count": 240,
+    "resolved_p0_field_count": 0,
+    "pending_p0_field_count": 240,
+    "unresolved_p0_field_count": 0,
+    "resolved_safety_field_count": 0,
+    "pending_safety_field_count": 48
+  },
+  "aggregate_metrics": {
+    "field_presence_precision": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved P0 predicted-present samples."
+    },
+    "field_presence_recall": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved P0 gold-present samples."
+    },
+    "normalized_exact_match": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No jointly present reviewer-resolved P0 samples."
+    },
+    "evidence_supported_count": 22,
+    "unsupported_claim_count": 0,
+    "inferred_value_count": 0,
+    "ambiguous_or_review_required_count": 18,
+    "review_required_case_count": 24
+  },
+  "category_metrics": {
+    "identity_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for program_name."
+    },
+    "provider_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for provider."
+    },
+    "institution_or_campus_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for institution_or_campus."
+    },
+    "application_start_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for application_start."
+    },
+    "application_deadline_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for application_deadline."
+    },
+    "timezone_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for timezone."
+    },
+    "status_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for lifecycle_status."
+    },
+    "application_url_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for application_url."
+    },
+    "support_type_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for support_type."
+    },
+    "support_amount_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for support_amount."
+    }
+  },
+  "safety_gates": {
+    "document_kind_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for document_kind."
+    },
+    "non_recruitment_exposed_as_opportunity_count": 0,
+    "recruitment_suppressed_count": 0,
+    "critical_publishability_error_count": 0,
+    "pending_publishability_case_count": 24,
+    "note": "Publishability mismatch counts require reviewer-resolved document-kind gold; pending cases are not scored as safe or erroneous."
+  },
+  "case_metrics": {
+    "fully_correct_p0_case_count": 0,
+    "partially_correct_p0_case_count": 0,
+    "failed_p0_case_count": 0,
+    "pending_p0_case_count": 24
+  },
+  "by_field": {
+    "program_name": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for program_name."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for program_name."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for program_name."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for program_name."
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "provider": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for provider."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for provider."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for provider."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for provider."
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "institution_or_campus": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for institution_or_campus."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for institution_or_campus."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for institution_or_campus."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for institution_or_campus."
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "application_start": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for application_start."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for application_start."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for application_start."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for application_start."
+      },
+      "evidence_supported_count": 2,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 5
+    },
+    "application_deadline": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for application_deadline."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for application_deadline."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for application_deadline."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for application_deadline."
+      },
+      "evidence_supported_count": 2,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 5
+    },
+    "timezone": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for timezone."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for timezone."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for timezone."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for timezone."
+      },
+      "evidence_supported_count": 1,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "lifecycle_status": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for lifecycle_status."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for lifecycle_status."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for lifecycle_status."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for lifecycle_status."
+      },
+      "evidence_supported_count": 5,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "application_url": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for application_url."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for application_url."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for application_url."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for application_url."
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "support_type": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for support_type."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for support_type."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for support_type."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for support_type."
+      },
+      "evidence_supported_count": 6,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 4
+    },
+    "support_amount": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for support_amount."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for support_amount."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for support_amount."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for support_amount."
+      },
+      "evidence_supported_count": 6,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 4
+    },
+    "document_kind": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for document_kind."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for document_kind."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for document_kind."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for document_kind."
+      },
+      "evidence_supported_count": 24,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "publishable_opportunity": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for publishable_opportunity."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for publishable_opportunity."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for publishable_opportunity."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for publishable_opportunity."
+      },
+      "evidence_supported_count": 24,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    }
+  },
+  "critical_errors": [
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "recruitment_notice",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "recruitment_notice",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    }
+  ],
+  "error_taxonomy": {
+    "deterministic_extractor_defect": {
+      "count": 5,
+      "case_ids": [
+        "p4c_004_national_work_result",
+        "p4c_006_gwangsan_extension",
+        "p4c_008_cau_welfare_result_2025_1",
+        "p4c_009_cau_welfare_result_2024_2",
+        "p4c_022_grad_seoul_foundation_pdf"
+      ]
+    }
+  },
+  "responsibility_boundary": {
+    "deterministic_fields": [
+      "explicit application dates",
+      "explicit provider/program labels",
+      "explicit application URL",
+      "simple amount",
+      "conservative document classification"
+    ],
+    "llm_assisted_candidates": [
+      "provider/program separation",
+      "complex date roles",
+      "tiered or non-cash support",
+      "complex eligibility outside P0"
+    ],
+    "human_review_required": [
+      "lifecycle status",
+      "publishability",
+      "correction/extension/result semantics",
+      "campus scope",
+      "ambiguous or conflicting values"
+    ],
+    "schema_expressiveness_gaps": [
+      "lifecycle status has no enum and currently accepts document-kind values",
+      "tiered amount rows do not fit one amountValue",
+      "host institution and benefit type are optional and absent from the baseline output"
+    ]
+  },
+  "safety": {
+    "external_llm_called": false,
+    "production_db_touched": false,
+    "extractor_modified_for_score": false,
+    "existing_gate_c_report_replaced": false,
+    "automatic_publish_enabled": false
+  },
+  "case_results": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_019_uic_legacy",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "resolved_audit_field_count": 0,
+      "pending_audit_field_count": 12,
+      "outcome": "pending",
+      "review_required": true
+    }
+  ]
+}

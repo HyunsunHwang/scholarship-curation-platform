@@ -1,0 +1,707 @@
+{
+  "schema_version": "engine-phase-4-gate-c-p0-audit/v1",
+  "source_fixture_version": "engine-phase-4-representative-public-gold/v1",
+  "source_adjudication_schema_version": "engine-phase-4-gate-c-adjudication/v1",
+  "as_of": "2026-07-20T00:00:00+09:00",
+  "timezone": "Asia/Seoul",
+  "status": "pending_independent_review",
+  "note": "Only P0 fields absent from the full-field adjudication model live here. Existing adjudication decisions remain authoritative for mapped fields.",
+  "cases": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_019_uic_legacy",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "fields": [
+        {
+          "field_name": "institution_or_campus",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "lifecycle_status",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        },
+        {
+          "field_name": "support_type",
+          "decision": "pending",
+          "adjudicated_gold": null,
+          "review_reason": null,
+          "reviewer_role": null,
+          "reviewed_at": null
+        }
+      ]
+    }
+  ]
+}
