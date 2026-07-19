@@ -7,7 +7,6 @@ import { CAPTURED_AT, FIXTURE_VERSION, POLICY_VERSION, caseSeeds, relationGroups
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.join(root, "fixtures/engine-phase-4-representative-gold");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
-const stable = (value) => JSON.stringify(value, Object.keys(value).sort());
 const field = (status, raw = null, normalized = null, evidence = []) => ({
   value_status: status, raw_value: raw, normalized_value: normalized, evidence_refs: evidence,
   annotation_reason: status === "present" ? "Directly stated in the cited public evidence excerpt." : "Not established by the retained minimal evidence.",
@@ -81,7 +80,7 @@ function buildCase(seed) {
 const cases = caseSeeds.map(buildCase);
 const manifestBasis = { fixture_version: FIXTURE_VERSION, policy_version: POLICY_VERSION, selected_case_ids: cases.map((item) => item.case_id), selected_public_urls: cases.map((item) => item.public_url), selection_completed_at: CAPTURED_AT };
 const manifest = {
-  ...manifestBasis, selection_manifest_hash: sha256(JSON.stringify(manifestBasis)), corpus_freeze_sha: "0000000000000000000000000000000000000000",
+  ...manifestBasis, selection_manifest_hash: sha256(JSON.stringify(manifestBasis)), corpus_freeze_sha: "f4109294e86df35f2b9508b20edc665a18c50334",
   target_case_count: 24, minimum_case_count: 20, maximum_case_count: 30, source_count_limit: 12,
   selection_method: "Purposeful stratified public-source sampling fixed before extractor execution.",
   failed_cases_retained: true, replacement_cases: [], raw_documents_tracked: false, independent_adjudication_status: "pending_independent_review",

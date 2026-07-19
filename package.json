@@ -48,6 +48,8 @@
     "validate:engine-phase-4-gate-b": "node scripts/validate-engine-phase-4-gate-b.mjs",
     "build:engine-phase-4-gate-c-corpus": "node scripts/build-engine-phase-4-representative-corpus.mjs",
     "validate:engine-phase-4-gate-c-gold": "node scripts/validate-engine-phase-4-representative-gold.mjs",
+    "evaluate:engine-phase-4-gate-c": "node scripts/evaluate-engine-phase-4-representative-gold.mjs",
+    "validate:engine-phase-4-gate-c": "node scripts/validate-engine-phase-4-gate-c.mjs",
     "test:engine-phase-3": "node scripts/test-engine-phase-3-document-parsing.mjs",
     "live:engine-phase-3": "node scripts/run-engine-phase-3-live-dry-run.mjs",
     "evidence:engine-phase-3": "node scripts/build-engine-phase-3-evidence.mjs",

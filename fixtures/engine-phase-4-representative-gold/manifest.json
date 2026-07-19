@@ -55,7 +55,7 @@
   ],
   "selection_completed_at": "2026-07-19T06:00:00Z",
   "selection_manifest_hash": "51567d8e11508992ea0f2a9bef4473415f2f05a8587268da6f9b9a0520725471",
-  "corpus_freeze_sha": "0000000000000000000000000000000000000000",
+  "corpus_freeze_sha": "f4109294e86df35f2b9508b20edc665a18c50334",
   "target_case_count": 24,
   "minimum_case_count": 20,
   "maximum_case_count": 30,

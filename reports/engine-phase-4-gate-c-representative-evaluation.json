@@ -1,0 +1,1672 @@
+{
+  "official_phase": "ENGINE_PHASE_4",
+  "official_gate": "GATE_C",
+  "task": "representative-public-gold-evaluation-and-phase-5-readiness-assessment",
+  "generated_at": "2026-07-19T06:30:00Z",
+  "corpus_freeze_sha": "f4109294e86df35f2b9508b20edc665a18c50334",
+  "selection_manifest_hash": "51567d8e11508992ea0f2a9bef4473415f2f05a8587268da6f9b9a0520725471",
+  "fixture_version": "engine-phase-4-representative-public-gold/v1",
+  "extractor": {
+    "kind": "deterministic",
+    "name": "engine-phase-4-deterministic-extractor",
+    "source_sha256": "a6f7cc4134f593da2e52d93e86e012c96f5f5a6b1363230f1410148d54bbc024",
+    "behavior_modified": false
+  },
+  "corpus_summary": {
+    "case_count": 24,
+    "unique_source_key_count": 8,
+    "maximum_cases_per_source": 4,
+    "partial_policy_case_count": 17,
+    "relation_group_count": 8,
+    "relation_pair_count": 9,
+    "adjudication_status": "pending_independent_review"
+  },
+  "coverage": {
+    "by_format": {
+      "html": 10,
+      "table": 5,
+      "hwp": 2,
+      "image": 1,
+      "hwpx": 1,
+      "pdf": 5
+    },
+    "by_notice_kind": {
+      "recruitment_notice": 16,
+      "correction_notice": 3,
+      "result_announcement": 3,
+      "general_guidance": 2
+    },
+    "hwp_hwpx": {
+      "status": "not_evaluated",
+      "sample_count": 3,
+      "reason": "Selected attachments have metadata-only capture and no authoritative Phase 3 parse result."
+    },
+    "ocr_image": {
+      "status": "not_evaluated",
+      "sample_count": 1,
+      "reason": "No bounded authoritative OCR result was captured for the selected image-primary notice."
+    }
+  },
+  "metrics": {
+    "canonical_schema_valid": {
+      "status": "evaluated",
+      "value": 1,
+      "sample_count": 24,
+      "numerator": 24,
+      "denominator": 24
+    },
+    "evidence_integrity": {
+      "status": "evaluated",
+      "value": 1,
+      "sample_count": 24,
+      "numerator": 24,
+      "denominator": 24
+    },
+    "document_classification_accuracy": {
+      "status": "evaluated",
+      "value": 0.16666666666666666,
+      "sample_count": 24,
+      "numerator": 4,
+      "denominator": 24
+    },
+    "field_presence_precision": {
+      "status": "evaluated",
+      "value": 0.9142857142857143,
+      "sample_count": 70,
+      "numerator": 64,
+      "denominator": 70
+    },
+    "field_presence_recall": {
+      "status": "evaluated",
+      "value": 0.3386243386243386,
+      "sample_count": 189,
+      "numerator": 64,
+      "denominator": 189
+    },
+    "field_status_exact_accuracy": {
+      "status": "evaluated",
+      "value": 0.5565476190476191,
+      "sample_count": 336,
+      "numerator": 187,
+      "denominator": 336
+    },
+    "normalized_exact_match": {
+      "status": "evaluated",
+      "value": 0.78125,
+      "sample_count": 64,
+      "numerator": 50,
+      "denominator": 64
+    },
+    "normalized_partial_match": {
+      "status": "not_evaluated",
+      "value": null,
+      "sample_count": 0,
+      "reason": "Predeclared partial policies exist for 17 cases, but independent element-level set/range targets are not yet adjudicated; Gate C does not substitute exact match or a model judge."
+    },
+    "evidence_attribution_accuracy": {
+      "status": "evaluated",
+      "value": 1,
+      "sample_count": 64,
+      "numerator": 64,
+      "denominator": 64
+    },
+    "unsupported_value_rate": {
+      "status": "evaluated",
+      "value": 0,
+      "sample_count": 84,
+      "numerator": 0,
+      "denominator": 84
+    },
+    "review_required_recall": {
+      "status": "evaluated",
+      "value": 1,
+      "sample_count": 19,
+      "numerator": 19,
+      "denominator": 19
+    },
+    "review_required_precision": {
+      "status": "evaluated",
+      "value": 0.7916666666666666,
+      "sample_count": 24,
+      "numerator": 19,
+      "denominator": 24
+    },
+    "review_overuse_rate": {
+      "status": "evaluated",
+      "value": 1,
+      "sample_count": 5,
+      "numerator": 5,
+      "denominator": 5
+    },
+    "program_candidate_usable_rate": {
+      "status": "evaluated",
+      "value": 0,
+      "sample_count": 24,
+      "numerator": 0,
+      "denominator": 24
+    },
+    "cycle_candidate_usable_rate": {
+      "status": "evaluated",
+      "value": 0,
+      "sample_count": 24,
+      "numerator": 0,
+      "denominator": 24
+    },
+    "phase5_handoff_usable_rate": {
+      "status": "evaluated",
+      "value": 0,
+      "sample_count": 24,
+      "numerator": 0,
+      "denominator": 24
+    }
+  },
+  "counts": {
+    "canonical_schema_valid_count": 24,
+    "evidence_integrity_count": 24,
+    "false_present_count": 6,
+    "false_negative_count": 125,
+    "unsupported_present_value_count": 0,
+    "identity_blocking_review_count": 24,
+    "non_identity_review_count": 0
+  },
+  "usability": {
+    "program_candidate_usable_count": 0,
+    "cycle_candidate_usable_count": 0,
+    "phase5_handoff_usable_count": 0
+  },
+  "slices": {
+    "by_source_key": {
+      "korea_scholarship": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 1,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "korea_sejong_student_support": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 0,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "cau_univ_001": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 2,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "cau_068": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "yonsei_069": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 0,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "yonsei_060": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 0,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "yonsei_graduate_scholarship": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 1,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "korea_012": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_source_level": {
+      "student_support": {
+        "status": "evaluated",
+        "sample_count": 14,
+        "schema_valid_count": 14,
+        "classification_exact_count": 3,
+        "review_required_count": 14,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "department": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 0,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "college": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 0,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "graduate_school": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 1,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_source_type": {
+      "university": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "schema_valid_count": 24,
+        "classification_exact_count": 4,
+        "review_required_count": 24,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_document_format": {
+      "html": {
+        "status": "evaluated",
+        "sample_count": 10,
+        "schema_valid_count": 10,
+        "classification_exact_count": 3,
+        "review_required_count": 10,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "table": {
+        "status": "evaluated",
+        "sample_count": 5,
+        "schema_valid_count": 5,
+        "classification_exact_count": 0,
+        "review_required_count": 5,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "hwp": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "image": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "hwpx": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "pdf": {
+        "status": "evaluated",
+        "sample_count": 5,
+        "schema_valid_count": 5,
+        "classification_exact_count": 1,
+        "review_required_count": 5,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_document_kind": {
+      "recruitment_notice": {
+        "status": "evaluated",
+        "sample_count": 16,
+        "schema_valid_count": 16,
+        "classification_exact_count": 1,
+        "review_required_count": 16,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "correction_notice": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 0,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "result_announcement": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 3,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "general_guidance": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_parser_quality": {
+      "text_sufficient": {
+        "status": "evaluated",
+        "sample_count": 16,
+        "schema_valid_count": 16,
+        "classification_exact_count": 3,
+        "review_required_count": 16,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "partial_text": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 1,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "tool_unavailable": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 0,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "ocr_not_evaluated": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_review_reason": {
+      "complex_eligibility": {
+        "status": "evaluated",
+        "sample_count": 4,
+        "schema_valid_count": 4,
+        "classification_exact_count": 0,
+        "review_required_count": 4,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "none": {
+        "status": "evaluated",
+        "sample_count": 5,
+        "schema_valid_count": 5,
+        "classification_exact_count": 2,
+        "review_required_count": 5,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "unlabeled_date_role": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "cycle_evidence_missing": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 1,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "parser_missing_text": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 1,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "tiered_amount_table": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "multiple_date_conflict": {
+        "status": "evaluated",
+        "sample_count": 5,
+        "schema_valid_count": 5,
+        "classification_exact_count": 1,
+        "review_required_count": 5,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "required_document_taxonomy": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 1,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "application_method_taxonomy": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "missing_attachment_parser": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "schema_valid_count": 3,
+        "classification_exact_count": 0,
+        "review_required_count": 3,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "parser_low_quality": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "multiple_benefit_conflict": {
+        "status": "evaluated",
+        "sample_count": 2,
+        "schema_valid_count": 2,
+        "classification_exact_count": 0,
+        "review_required_count": 2,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "provider_program_separation": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "program_identity_insufficient": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "schema_valid_count": 1,
+        "classification_exact_count": 0,
+        "review_required_count": 1,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_fixture_version": {
+      "engine-phase-4-representative-public-gold/v1": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "schema_valid_count": 24,
+        "classification_exact_count": 4,
+        "review_required_count": 24,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      }
+    },
+    "by_extractor_kind": {
+      "deterministic": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "schema_valid_count": 24,
+        "classification_exact_count": 4,
+        "review_required_count": 24,
+        "program_candidate_usable_count": 0,
+        "cycle_candidate_usable_count": 0,
+        "phase5_handoff_usable_count": 0
+      },
+      "model": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 0,
+        "reason": "External model extraction is prohibited in Gate C."
+      }
+    },
+    "by_field": {
+      "title": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 24,
+        "false_present_count": 0,
+        "false_negative_count": 0
+      },
+      "provider": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 0,
+        "false_present_count": 0,
+        "false_negative_count": 24
+      },
+      "scholarship_program_name": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 0,
+        "false_present_count": 0,
+        "false_negative_count": 24
+      },
+      "recruitment_cycle_label": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 2,
+        "false_present_count": 0,
+        "false_negative_count": 21
+      },
+      "application_start": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 17,
+        "false_present_count": 2,
+        "false_negative_count": 0
+      },
+      "application_deadline": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 8,
+        "false_present_count": 0,
+        "false_negative_count": 13
+      },
+      "amount": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 15,
+        "false_present_count": 1,
+        "false_negative_count": 3
+      },
+      "eligibility": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 12,
+        "false_present_count": 1,
+        "false_negative_count": 7
+      },
+      "required_documents": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 16,
+        "false_present_count": 0,
+        "false_negative_count": 8
+      },
+      "application_method": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 16,
+        "false_present_count": 2,
+        "false_negative_count": 6
+      },
+      "application_url": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 24,
+        "false_present_count": 0,
+        "false_negative_count": 0
+      },
+      "source_language": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 24,
+        "false_present_count": 0,
+        "false_negative_count": 0
+      },
+      "status": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 5,
+        "false_present_count": 0,
+        "false_negative_count": 19
+      },
+      "notes": {
+        "status": "evaluated",
+        "sample_count": 24,
+        "status_exact_count": 24,
+        "false_present_count": 0,
+        "false_negative_count": 0
+      }
+    },
+    "by_value_status": {
+      "present": {
+        "status": "evaluated",
+        "sample_count": 189,
+        "status_exact_count": 64
+      },
+      "not_found": {
+        "status": "evaluated",
+        "sample_count": 136,
+        "status_exact_count": 117
+      },
+      "unknown": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "status_exact_count": 0
+      },
+      "not_applicable": {
+        "status": "evaluated",
+        "sample_count": 6,
+        "status_exact_count": 6
+      },
+      "ambiguous": {
+        "status": "evaluated",
+        "sample_count": 3,
+        "status_exact_count": 0
+      },
+      "conflicting": {
+        "status": "evaluated",
+        "sample_count": 1,
+        "status_exact_count": 0
+      }
+    },
+    "by_relation_type": {
+      "school_recommendation_vs_foundation_original": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 3,
+        "reason": "Phase 5 relation resolution is annotation-only in Gate C."
+      },
+      "same_program_different_cycle": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 4,
+        "reason": "Phase 5 relation resolution is annotation-only in Gate C."
+      },
+      "deadline_extension_same_cycle": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 0,
+        "reason": "Phase 5 relation resolution is annotation-only in Gate C."
+      },
+      "result_notice_related_to_recruitment": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 2,
+        "reason": "Phase 5 relation resolution is annotation-only in Gate C."
+      },
+      "same_notice_repost_candidate": {
+        "status": "not_evaluated",
+        "value": null,
+        "sample_count": 0,
+        "reason": "Phase 5 relation resolution is annotation-only in Gate C."
+      }
+    }
+  },
+  "error_taxonomy": {
+    "classification_rule_limit": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_003_hope_ladder_extension",
+        "p4c_005_miraero_second",
+        "p4c_006_gwangsan_extension",
+        "p4c_007_sejong_internal_guidance",
+        "p4c_010_cau_national_preapplication",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_012_history_central_love",
+        "p4c_013_history_growth_table",
+        "p4c_014_youth_farmer_image",
+        "p4c_015_seoul_talent_hwp",
+        "p4c_016_asan_hope_hwpx",
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy",
+        "p4c_020_uic_supporters_table",
+        "p4c_021_grad_need_based",
+        "p4c_023_russian_alumni_funds",
+        "p4c_024_dean_recommendation_guidance"
+      ],
+      "affected_fields": [
+        "document_kind"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_012",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_069",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "hwpx",
+        "image",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 20,
+      "review_required_count": 20,
+      "recommended_owner": "PHASE_4_DETERMINISTIC",
+      "case_count": 20
+    },
+    "provider_program_separation": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_003_hope_ladder_extension",
+        "p4c_004_national_work_result",
+        "p4c_005_miraero_second",
+        "p4c_006_gwangsan_extension",
+        "p4c_007_sejong_internal_guidance",
+        "p4c_008_cau_welfare_result_2025_1",
+        "p4c_009_cau_welfare_result_2024_2",
+        "p4c_010_cau_national_preapplication",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_012_history_central_love",
+        "p4c_013_history_growth_table",
+        "p4c_014_youth_farmer_image",
+        "p4c_015_seoul_talent_hwp",
+        "p4c_016_asan_hope_hwpx",
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy",
+        "p4c_020_uic_supporters_table",
+        "p4c_021_grad_need_based",
+        "p4c_022_grad_seoul_foundation_pdf",
+        "p4c_023_russian_alumni_funds",
+        "p4c_024_dean_recommendation_guidance"
+      ],
+      "affected_fields": [
+        "provider",
+        "scholarship_program_name"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_012",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_069",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "hwpx",
+        "image",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 48,
+      "review_required_count": 48,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 24
+    },
+    "other": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_003_hope_ladder_extension",
+        "p4c_004_national_work_result",
+        "p4c_005_miraero_second",
+        "p4c_006_gwangsan_extension",
+        "p4c_007_sejong_internal_guidance",
+        "p4c_008_cau_welfare_result_2025_1",
+        "p4c_009_cau_welfare_result_2024_2",
+        "p4c_010_cau_national_preapplication",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_012_history_central_love",
+        "p4c_013_history_growth_table",
+        "p4c_014_youth_farmer_image",
+        "p4c_015_seoul_talent_hwp",
+        "p4c_016_asan_hope_hwpx",
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy",
+        "p4c_020_uic_supporters_table",
+        "p4c_021_grad_need_based",
+        "p4c_022_grad_seoul_foundation_pdf",
+        "p4c_023_russian_alumni_funds",
+        "p4c_024_dean_recommendation_guidance"
+      ],
+      "affected_fields": [
+        "application_start",
+        "recruitment_cycle_label",
+        "status"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_012",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_069",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "hwpx",
+        "image",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 2,
+      "false_negative_count": 40,
+      "review_required_count": 42,
+      "recommended_owner": "PHASE_4_DETERMINISTIC",
+      "case_count": 24
+    },
+    "unlabeled_date_role": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_003_hope_ladder_extension",
+        "p4c_006_gwangsan_extension",
+        "p4c_007_sejong_internal_guidance",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_012_history_central_love",
+        "p4c_016_asan_hope_hwpx",
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy",
+        "p4c_020_uic_supporters_table",
+        "p4c_021_grad_need_based",
+        "p4c_022_grad_seoul_foundation_pdf"
+      ],
+      "affected_fields": [
+        "application_deadline"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_069",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "hwpx",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 13,
+      "review_required_count": 13,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 13
+    },
+    "complex_eligibility": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_005_miraero_second",
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy",
+        "p4c_021_grad_need_based",
+        "p4c_023_russian_alumni_funds"
+      ],
+      "affected_fields": [
+        "eligibility"
+      ],
+      "source_keys": [
+        "korea_012",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 1,
+      "false_negative_count": 7,
+      "review_required_count": 8,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 8
+    },
+    "application_method_taxonomy": {
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_007_sejong_internal_guidance",
+        "p4c_010_cau_national_preapplication",
+        "p4c_012_history_central_love",
+        "p4c_022_grad_seoul_foundation_pdf",
+        "p4c_023_russian_alumni_funds",
+        "p4c_024_dean_recommendation_guidance"
+      ],
+      "affected_fields": [
+        "application_method"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_012",
+        "korea_scholarship",
+        "korea_sejong_student_support",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 2,
+      "false_negative_count": 6,
+      "review_required_count": 8,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 8
+    },
+    "tiered_amount_table": {
+      "case_ids": [
+        "p4c_006_gwangsan_extension",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy"
+      ],
+      "affected_fields": [
+        "amount"
+      ],
+      "source_keys": [
+        "cau_univ_001",
+        "korea_sejong_student_support",
+        "yonsei_060"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "pdf"
+      ],
+      "false_present_count": 1,
+      "false_negative_count": 3,
+      "review_required_count": 4,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 4
+    },
+    "required_document_taxonomy": {
+      "case_ids": [
+        "p4c_007_sejong_internal_guidance",
+        "p4c_011_cau_innovation_hwp",
+        "p4c_012_history_central_love",
+        "p4c_019_uic_legacy",
+        "p4c_021_grad_need_based",
+        "p4c_022_grad_seoul_foundation_pdf",
+        "p4c_023_russian_alumni_funds",
+        "p4c_024_dean_recommendation_guidance"
+      ],
+      "affected_fields": [
+        "required_documents"
+      ],
+      "source_keys": [
+        "cau_068",
+        "cau_univ_001",
+        "korea_012",
+        "korea_sejong_student_support",
+        "yonsei_060",
+        "yonsei_graduate_scholarship"
+      ],
+      "document_formats": [
+        "html",
+        "hwp",
+        "pdf",
+        "table"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 8,
+      "review_required_count": 8,
+      "recommended_owner": "PHASE_4C_SELECTIVE_LLM",
+      "case_count": 8
+    },
+    "missing_attachment_parser": {
+      "case_ids": [
+        "p4c_011_cau_innovation_hwp",
+        "p4c_015_seoul_talent_hwp",
+        "p4c_016_asan_hope_hwpx"
+      ],
+      "affected_fields": [
+        "source_document"
+      ],
+      "source_keys": [
+        "cau_univ_001",
+        "yonsei_069"
+      ],
+      "document_formats": [
+        "hwp",
+        "hwpx"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 0,
+      "review_required_count": 3,
+      "recommended_owner": "PHASE_3",
+      "case_count": 3
+    },
+    "parser_low_quality": {
+      "case_ids": [
+        "p4c_014_youth_farmer_image"
+      ],
+      "affected_fields": [
+        "source_document"
+      ],
+      "source_keys": [
+        "yonsei_069"
+      ],
+      "document_formats": [
+        "image"
+      ],
+      "false_present_count": 0,
+      "false_negative_count": 0,
+      "review_required_count": 1,
+      "recommended_owner": "PHASE_3",
+      "case_count": 1
+    }
+  },
+  "failure_classes": {
+    "PHASE_3_INPUT_DEFECT": 4,
+    "PHASE_4_DETERMINISTIC_RULE_DEFECT": 44,
+    "PHASE_4_SEMANTIC_LIMITATION": 65,
+    "GOLD_ANNOTATION_AMBIGUITY": 0,
+    "SOURCE_UNAVAILABLE": 0,
+    "UNSUPPORTED_DOCUMENT_FORMAT": 3
+  },
+  "recommendation": {
+    "phase3_remediation_required": true,
+    "phase4c_candidate_areas": [
+      "provider_program_separation",
+      "unlabeled_date_role",
+      "complex_eligibility",
+      "application_method_taxonomy",
+      "tiered_amount_table",
+      "required_document_taxonomy"
+    ],
+    "recommended_next_stage": "HOLD_FOR_MULTIPLE_BLOCKERS",
+    "rationale": "Identity usability is measured but attachment parser gaps, semantic extraction failures, and pending independent gold adjudication remain. Run targeted Phase 3 remediation and a bounded Phase 4C experiment before a Phase 5 readiness decision.",
+    "phase5_ready": "HOLD",
+    "production_ready": "HOLD",
+    "production_threshold_asserted": false
+  },
+  "safety": {
+    "database_accessed": false,
+    "production_accessed": false,
+    "production_credentials_requested": false,
+    "external_llm_called": false,
+    "migration_created_or_executed": false,
+    "canary_write_performed": false,
+    "automatic_publish_performed": false,
+    "notification_performed": false,
+    "production_scheduler_added": false,
+    "queue_or_worker_added": false,
+    "full_613_source_run": false,
+    "parser_cache_contract_modified": false,
+    "crawler_checkpoint_contract_modified": false,
+    "gate_a_contract_semantics_modified": false,
+    "deterministic_extractor_behavior_modified": false,
+    "raw_public_document_committed": false,
+    "raw_html_committed": false,
+    "personal_absolute_path_committed": false
+  },
+  "case_results": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "source_key": "korea_scholarship",
+      "document_format": "html",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "source_key": "korea_scholarship",
+      "document_format": "html",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "source_key": "korea_scholarship",
+      "document_format": "html",
+      "document_kind_gold": "correction_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "source_key": "korea_scholarship",
+      "document_format": "html",
+      "document_kind_gold": "result_announcement",
+      "document_kind_predicted": "result_announcement",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "source_key": "korea_sejong_student_support",
+      "document_format": "html",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "source_key": "korea_sejong_student_support",
+      "document_format": "html",
+      "document_kind_gold": "correction_notice",
+      "document_kind_predicted": "recruitment_notice",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient",
+        "unsupported_yearless_date"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "source_key": "korea_sejong_student_support",
+      "document_format": "table",
+      "document_kind_gold": "general_guidance",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "source_key": "cau_univ_001",
+      "document_format": "html",
+      "document_kind_gold": "result_announcement",
+      "document_kind_predicted": "result_announcement",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "source_key": "cau_univ_001",
+      "document_format": "html",
+      "document_kind_gold": "result_announcement",
+      "document_kind_predicted": "result_announcement",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "source_key": "cau_univ_001",
+      "document_format": "table",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "source_key": "cau_univ_001",
+      "document_format": "hwp",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "document_parser_partial_or_failed",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "source_key": "cau_068",
+      "document_format": "html",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "source_key": "cau_068",
+      "document_format": "table",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "source_key": "yonsei_069",
+      "document_format": "image",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "document_parser_partial_or_failed",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "source_key": "yonsei_069",
+      "document_format": "hwp",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "document_parser_partial_or_failed",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "source_key": "yonsei_069",
+      "document_format": "hwpx",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "document_parser_partial_or_failed",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "source_key": "yonsei_060",
+      "document_format": "html",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "source_key": "yonsei_060",
+      "document_format": "pdf",
+      "document_kind_gold": "correction_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_019_uic_legacy",
+      "source_key": "yonsei_060",
+      "document_format": "pdf",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "source_key": "yonsei_060",
+      "document_format": "table",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "source_key": "yonsei_graduate_scholarship",
+      "document_format": "table",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "source_key": "yonsei_graduate_scholarship",
+      "document_format": "pdf",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "recruitment_notice",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "ambiguous_date_role",
+        "attachment_only_notice",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "source_key": "korea_012",
+      "document_format": "pdf",
+      "document_kind_gold": "recruitment_notice",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "source_key": "korea_012",
+      "document_format": "pdf",
+      "document_kind_gold": "general_guidance",
+      "document_kind_predicted": "unknown",
+      "canonical_schema_valid": true,
+      "review_required": true,
+      "review_reason_codes": [
+        "attachment_only_notice",
+        "classification_uncertain",
+        "cross_source_relationship_requires_phase_5",
+        "cycle_identity_insufficient",
+        "program_identity_insufficient",
+        "source_notice_body_quality_insufficient"
+      ],
+      "program_candidate_usable": false,
+      "cycle_candidate_usable": false,
+      "phase5_handoff_usable": false,
+      "identity_blocking_review": true
+    }
+  ]
+}
