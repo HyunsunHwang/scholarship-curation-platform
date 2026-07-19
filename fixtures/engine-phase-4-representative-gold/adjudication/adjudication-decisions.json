@@ -2,15 +2,15 @@
   "schema_version": "engine-phase-4-gate-c-adjudication/v1",
   "source_fixture_version": "engine-phase-4-representative-public-gold/v1",
   "source_case_manifest_hash": "51567d8e11508992ea0f2a9bef4473415f2f05a8587268da6f9b9a0520725471",
-  "adjudication_status": "pending_independent_review",
+  "adjudication_status": "in_review",
   "independent_reviewer_required": true,
   "cases": [
     {
       "case_id": "p4c_001_student_affairs_special",
       "source_capture_hash": "55c5824f0359b07b6243239743e7d09e154f868f0a017a89bc59bb9cd039b9ef",
       "case_priority": "P0",
-      "decision": "pending_independent_review",
-      "review_reason": null,
+      "decision": "in_review",
+      "review_reason": "Batch 1 records only the bounded P0 decisions explicitly approved by the project adjudication lead; all unlisted fields remain pending.",
       "reviewer_role": null,
       "reviewed_at": null,
       "suggested_review_issues": [
@@ -24,7 +24,7 @@
         {
           "field_name": "document_kind",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "recruitment_notice",
@@ -34,9 +34,9 @@
           },
           "candidate_gold_sha256": "bd2c33ee9eb03ced78a240eaa7d9a64eddb062d9d48a82b7e7fe432cf1b0a5ba",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained notice title and excerpt identify an application notice for 학생처특별장학금; document kind is recruitment_notice, distinct from lifecycle status.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "title",
@@ -58,7 +58,7 @@
         {
           "field_name": "provider",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "corrected",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "고려대학교 학생지원팀",
@@ -67,15 +67,21 @@
             ]
           },
           "candidate_gold_sha256": "c0ffbe83bde9342447a204c591d8a3f9eccbe030ee2f5fc1d8d4649aebad0994",
-          "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "adjudicated_gold": {
+            "status": "present",
+            "normalized_value": "고려대학교",
+            "evidence_ids": [
+              "p4c_001_student_affairs_special_e1"
+            ]
+          },
+          "review_reason": "The project adjudication lead distinguishes the university as provider from 학생지원팀 as the posting/administrative department; this uses retained source provenance and notice context, not an invented department claim.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "scholarship_program_name",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "학생처특별장학금",
@@ -85,9 +91,9 @@
           },
           "candidate_gold_sha256": "beaa4442b8c5728ba89056276fc7c503bf2d779ee535753655d4fddadb5452ea",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained notice title explicitly identifies 학생처특별장학금; only this program-name field is approved.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "recruitment_cycle_label",
@@ -306,8 +312,8 @@
       "case_id": "p4c_002_national_second_round",
       "source_capture_hash": "46c130dc425be432bb3e2c9e301e23549d2a112f7dbb7695813a2c14064450ac",
       "case_priority": "P0",
-      "decision": "pending_independent_review",
-      "review_reason": null,
+      "decision": "in_review",
+      "review_reason": "Batch 1 records only the bounded P0 decisions explicitly approved by the project adjudication lead; all unlisted fields remain pending.",
       "reviewer_role": null,
       "reviewed_at": null,
       "suggested_review_issues": [],
@@ -315,7 +321,7 @@
         {
           "field_name": "document_kind",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "recruitment_notice",
@@ -325,9 +331,9 @@
           },
           "candidate_gold_sha256": "16fb6dc098bcec43190cbbcdb29788f7c2758231009a440108f9c049f5de4b8e",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained application period and 한국장학재단 application channel support recruitment_notice; document kind remains separate from lifecycle status.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "title",
@@ -349,7 +355,7 @@
         {
           "field_name": "provider",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "한국장학재단",
@@ -359,9 +365,9 @@
           },
           "candidate_gold_sha256": "6f1517e38c307a6018d4d549c6317044deb36721059d0cc925732f368ab2afe0",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained evidence directs applicants to the 한국장학재단 website or app, supporting 한국장학재단 as the operating provider rather than the posting university department.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "scholarship_program_name",
@@ -615,8 +621,8 @@
       "case_id": "p4c_003_hope_ladder_extension",
       "source_capture_hash": "f304e4dbd4a77c50ae1388c3e193eb4f43846f4bf61a0156ed4ff8183988acab",
       "case_priority": "P0",
-      "decision": "pending_independent_review",
-      "review_reason": null,
+      "decision": "in_review",
+      "review_reason": "Batch 1 records only the bounded P0 decisions explicitly approved by the project adjudication lead; all unlisted fields remain pending.",
       "reviewer_role": null,
       "reviewed_at": null,
       "suggested_review_issues": [
@@ -630,7 +636,7 @@
         {
           "field_name": "document_kind",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "correction_notice",
@@ -640,9 +646,9 @@
           },
           "candidate_gold_sha256": "db17acb51566f706eb768ece2d91037191cd68e5eb38c0c28e3f4727cf8595d6",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained excerpt explicitly announces an extension to an existing application period; correction_notice is the existing canonical value and no new extension enum is introduced.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "title",
@@ -664,7 +670,7 @@
         {
           "field_name": "provider",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "한국장학재단",
@@ -674,9 +680,9 @@
           },
           "candidate_gold_sha256": "3ed25539972c3ba73b6db70dfc5faccb5bb5652fa53e1dd67f6090af3689da67",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The project adjudication lead approves 한국장학재단 as operator of the named national scholarship program; the decision is bounded to provider and anchored to the retained program notice evidence.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "scholarship_program_name",
@@ -892,8 +898,8 @@
       "case_id": "p4c_004_national_work_result",
       "source_capture_hash": "2ce70dd9ef3fa652f651b582d603f3d28362c963c0fc2ffc2268c22cf8adeff6",
       "case_priority": "P0",
-      "decision": "pending_independent_review",
-      "review_reason": null,
+      "decision": "in_review",
+      "review_reason": "Batch 1 records only the bounded P0 decisions explicitly approved by the project adjudication lead; all unlisted fields remain pending.",
       "reviewer_role": null,
       "reviewed_at": null,
       "suggested_review_issues": [
@@ -912,7 +918,7 @@
         {
           "field_name": "document_kind",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "result_announcement",
@@ -922,9 +928,9 @@
           },
           "candidate_gold_sha256": "3f9754365d23aa64fda9dd453b4a77c2aca0a64f0e4360a4456e6db18c6880f7",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained title and excerpt explicitly identify a selection-results announcement; result_announcement is document kind and derives publishable_opportunity=false.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "title",
@@ -946,7 +952,7 @@
         {
           "field_name": "provider",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "unresolved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "한국장학재단",
@@ -955,10 +961,14 @@
             ]
           },
           "candidate_gold_sha256": "de2f80dc945953f6624b36680f10a0ce063e778e1297521969ba41f65b801822",
-          "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "adjudicated_gold": {
+            "status": "unknown",
+            "normalized_value": null,
+            "evidence_ids": []
+          },
+          "review_reason": "The retained evidence is list-level text and does not safely distinguish the scholarship provider from the posting institution.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "scholarship_program_name",
@@ -1185,8 +1195,8 @@
       "case_id": "p4c_005_miraero_second",
       "source_capture_hash": "08c979ad835a230d861cab6fa38d85fdb57cc34badb7214d08369f5fca94e7ec",
       "case_priority": "P0",
-      "decision": "pending_independent_review",
-      "review_reason": null,
+      "decision": "in_review",
+      "review_reason": "Case 5 user feedback is the priority Batch 1 decision source; only the explicitly listed P0 fields are resolved and all other fields remain pending.",
       "reviewer_role": null,
       "reviewed_at": null,
       "suggested_review_issues": [],
@@ -1194,7 +1204,7 @@
         {
           "field_name": "document_kind",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "recruitment_notice",
@@ -1204,9 +1214,9 @@
           },
           "candidate_gold_sha256": "76af2e30ca8f2d47f45834d1efa8347822f69fa2859a20624515adf795084e55",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained title and excerpt explicitly describe a second-round application notice for 미래로 장학금; document kind is recruitment_notice.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "title",
@@ -1228,7 +1238,7 @@
         {
           "field_name": "provider",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "corrected",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "고려대학교 세종캠퍼스 학생생활지원팀",
@@ -1237,15 +1247,21 @@
             ]
           },
           "candidate_gold_sha256": "ab636b8e3ce5655c6084f70d18ef8249e3b9bc65181666a2b663ea5f11cca895",
-          "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "adjudicated_gold": {
+            "status": "present",
+            "normalized_value": "고려대학교",
+            "evidence_ids": [
+              "p4c_005_miraero_second_e1"
+            ]
+          },
+          "review_reason": "The project adjudication lead distinguishes 고려대학교 as the legal/top-level provider from 세종캠퍼스 scope and 학생생활지원팀 as an administrative department; retained source provenance and notice context support the bounded inference.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "scholarship_program_name",
           "priority": "P0",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "미래로 장학금",
@@ -1255,9 +1271,9 @@
           },
           "candidate_gold_sha256": "a26ebfcd9a2311c31240b59afdff4d19ab5700559bca990ddfafb742200080de",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained notice explicitly names 미래로 장학금; 2025학년도 1학기 2차 remains cycle information rather than part of program name.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "recruitment_cycle_label",
@@ -1279,22 +1295,28 @@
         {
           "field_name": "application_start",
           "priority": "P1",
-          "decision": "pending",
+          "decision": "corrected",
           "candidate_gold": {
             "status": "not_found",
             "normalized_value": null,
             "evidence_ids": []
           },
           "candidate_gold_sha256": "3d45d6fd893ebf70b2752e09ee5fcb7ec8b601a197b20b7af3d067271867a5aa",
-          "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "adjudicated_gold": {
+            "status": "present",
+            "normalized_value": "2025-04-01T10:00:00+09:00",
+            "evidence_ids": [
+              "p4c_005_miraero_second_e1"
+            ]
+          },
+          "review_reason": "The retained application-period text explicitly gives 2025.4.1 10:00 as the start; it is normalized as Korean local time without inventing a different clock time.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "application_deadline",
           "priority": "P1",
-          "decision": "pending",
+          "decision": "approved",
           "candidate_gold": {
             "status": "present",
             "normalized_value": "2025-04-30T16:00:00+09:00",
@@ -1304,9 +1326,9 @@
           },
           "candidate_gold_sha256": "ae9a6c5472b561758d645450c30b64a0304845b4c122abe51f8a0901113f64e8",
           "adjudicated_gold": null,
-          "review_reason": null,
-          "reviewer_role": null,
-          "reviewed_at": null
+          "review_reason": "The retained application-period text explicitly gives 2025.4.30 16:00 as the deadline, matching the candidate normalized datetime.",
+          "reviewer_role": "adjudication_lead",
+          "reviewed_at": "2026-07-20T00:53:07+09:00"
         },
         {
           "field_name": "amount",

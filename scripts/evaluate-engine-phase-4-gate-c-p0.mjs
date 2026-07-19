@@ -19,16 +19,20 @@ fs.writeFileSync(jsonOutput, `${JSON.stringify(report, null, 2)}\n`);
 
 const metric = (value) => value.status === "evaluated" ? `${value.numerator}/${value.denominator} (${(value.value * 100).toFixed(2)}%)` : `NOT_EVALUATED — ${value.reason}`;
 const categoryRows = Object.entries(report.category_metrics).map(([name, value]) => `| ${name} | ${metric(value)} |`);
+const caseRows = report.case_results.map((item) => `| ${item.case_id} | ${item.resolved_p0_field_count} | ${item.unresolved_p0_field_count} | ${item.pending_p0_field_count} | ${item.resolved_safety_field_count} | ${item.adjudication_coverage} | ${item.outcome} |`);
 const criticalRows = report.critical_errors.length
-  ? report.critical_errors.map((item) => `| ${item.case_id} | ${item.field_name} | ${item.error} | ${JSON.stringify(item.predicted_value)} | ${item.classification} | ${item.verified_against_gold ? "yes" : "no — gold pending"} |`)
+  ? report.critical_errors.map((item) => `| ${item.case_id} | ${item.field_name} | ${item.error} | ${JSON.stringify(item.predicted_value)} | ${item.classification} | ${item.verified_against_gold ? "yes" : `no — gold ${item.gold_state}`} |`)
   : ["| none | — | — | — | — | — |"];
+const publishabilityInterpretation = report.safety_gates.pending_publishability_case_count === report.corpus.total_case_count
+  ? `All ${report.corpus.total_case_count} publishability decisions are pending; zero mismatch counts do not prove safety.`
+  : `Publishability is resolved for ${report.corpus.total_case_count - report.safety_gates.pending_publishability_case_count}/${report.corpus.total_case_count} cases. The resolved subset has ${report.safety_gates.non_recruitment_exposed_as_opportunity_count} non-recruitment exposures and ${report.safety_gates.recruitment_suppressed_count} recruitment suppressions; ${report.safety_gates.pending_publishability_case_count} cases remain unscored.`;
 const markdown = `# Engine Phase 4 Gate C — P0 deterministic diagnostic audit
 
 ## Decision
 
 This audit is a separate diagnostic and does not replace or invalidate the full-schema Gate C report. The full-schema evaluation remains a stress test of the hybrid semantic system. This P0 audit narrows attention to the deterministic extractor's intended operational responsibility.
 
-Reviewer-approved P0 gold is currently unavailable: resolved fields are ${report.corpus.resolved_p0_field_count}/${report.corpus.total_p0_field_count}, and all ${report.corpus.total_case_count} cases remain pending. Correctness metrics therefore remain \`NOT_EVALUATED\`; pending candidate gold is not silently treated as truth.
+This rerun measures only the Batch 1 reviewer-resolved subset: ${report.corpus.resolved_p0_field_count}/${report.corpus.total_p0_field_count} P0 fields are resolved, ${report.corpus.unresolved_p0_field_count} are explicitly unresolved, and ${report.corpus.pending_p0_field_count} remain pending. Resolved-only scores cannot be generalized to the full 24-case corpus; pending and unresolved annotations are not silently treated as truth.
 
 ## Fixed evaluation context
 
@@ -43,21 +47,29 @@ Reviewer-approved P0 gold is currently unavailable: resolved fields are ${report
 | Dimension | Full-schema Gate C | P0 deterministic audit |
 | --- | --- | --- |
 | Scope | 14 canonical fields, identity usability, review behavior, relations and format stress | 10 user-critical P0 fields plus document-kind/publishability safety gates |
-| Gold maturity | candidate gold, pending independent review | reviewer-approved decisions only |
-| Cases | 24 | 24 total; ${report.corpus.resolved_case_count} fully resolved; ${report.corpus.pending_case_count} pending |
+| Gold maturity | candidate gold, pending independent review | Batch 1 reviewer-approved decisions only |
+| Cases | 24 | 24 total; ${report.corpus.resolved_case_count} fully resolved; ${report.corpus.partially_resolved_case_count} partially resolved; ${report.corpus.fully_pending_case_count} fully pending |
 | Classification | 4/24 | ${metric(report.safety_gates.document_kind_exact)} |
 | Field presence precision | 64/70 | ${metric(report.aggregate_metrics.field_presence_precision)} |
 | Field presence recall | 64/189 | ${metric(report.aggregate_metrics.field_presence_recall)} |
 | Normalized exact | 50/64 | ${metric(report.aggregate_metrics.normalized_exact_match)} |
 | Interpretation | Hybrid semantic-system stress test | Narrow deterministic responsibility diagnostic |
 
-The score difference is presently denominator maturity, not an accuracy improvement: the P0 audit refuses to score unapproved candidate annotations.
+The score difference reflects scope and denominator maturity, not an accuracy improvement: the P0 audit refuses to score unapproved candidate annotations.
 
 ## P0 category results
 
 | Category | Resolved-only exact result |
 | --- | --- |
 ${categoryRows.join("\n")}
+
+## Case-level adjudication coverage
+
+Partially adjudicated cases remain \`pending\` outcomes; they are never labelled fully correct or failed.
+
+| Case | Resolved P0 | Unresolved P0 | Pending P0 | Resolved safety | Coverage | Outcome |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+${caseRows.join("\n")}
 
 ## Output diagnostics independent of pending gold
 
@@ -74,7 +86,7 @@ ${categoryRows.join("\n")}
 | --- | --- | --- | --- | --- | --- |
 ${criticalRows.join("\n")}
 
-Publishability false-positive/false-negative counts are zero only because no reviewer-resolved document-kind gold is available; ${report.safety_gates.pending_publishability_case_count} cases are explicitly pending, not proven safe.
+${publishabilityInterpretation}
 
 ## Responsibility boundary
 
@@ -87,7 +99,7 @@ The existing admin flow already creates an LLM-assisted structured draft and req
 
 ## Next step
 
-Obtain independent human decisions for the mapped P0 fields and the three P0 overlay fields (institution/campus, lifecycle status, support type), then rerun this exact audit before changing extractor behavior.
+Continue independent review of the ${report.corpus.pending_p0_field_count} pending P0 fields and ${report.corpus.unresolved_p0_field_count} unresolved fields, prioritizing source-completeness and publishability risks, then rerun this exact audit before changing extractor behavior.
 `;
 fs.writeFileSync(path.join(root, "reports/engine-phase-4-gate-c-p0.md"), `${markdown.trimEnd()}\n`);
 console.log(`cases=${report.corpus.total_case_count}`);

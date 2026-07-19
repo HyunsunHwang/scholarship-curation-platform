@@ -35,7 +35,7 @@
   "corpus_freeze_sha": "f410929e93f7f003ad39a03a2376b4a24ef755dc",
   "relation_correction_sha": "3f5d26cd0128083b240f9ae5d8a7fa513ee63a3c",
   "adjudication_schema_version": "engine-phase-4-gate-c-adjudication/v1",
-  "adjudication_status": "pending_independent_review",
+  "adjudication_status": "in_review",
   "independent_reviewer_required": true,
   "created_at": "2026-07-19T12:00:00Z",
   "reviewed_case_count": 0,

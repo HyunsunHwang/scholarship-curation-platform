@@ -14,7 +14,7 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 ## p4c_001_student_affairs_special — [교내-12/30] 2025학년도 2학기 학생처특별장학금 신청 안내
 
-- **Case priority / decision:** `P0` / `pending_independent_review`
+- **Case priority / decision:** `P0` / `in_review`
 - **Source:** 고려대학교 학생지원팀 (`korea_scholarship`)
 - **Public URL:** https://scholarship.korea.ac.kr/scholarship/application/notice.do?articleNo=202512150901130535&mode=view
 - **Posted / kind / format:** 2025-12-15 / `recruitment_notice` / `html`
@@ -32,9 +32,9 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| document_kind | present | "recruitment_notice" | p4c_001_student_affairs_special_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| provider | present | "고려대학교 학생지원팀" | p4c_001_student_affairs_special_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| scholarship_program_name | present | "학생처특별장학금" | p4c_001_student_affairs_special_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| document_kind | present | "recruitment_notice" | p4c_001_student_affairs_special_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
+| provider | present | "고려대학교 학생지원팀" | p4c_001_student_affairs_special_e1 | corrected | [ ] approve · [ ] correct · [ ] unresolved |
+| scholarship_program_name | present | "학생처특별장학금" | p4c_001_student_affairs_special_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
 | recruitment_cycle_label | present | "2025학년도 2학기" | p4c_001_student_affairs_special_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | status | present | "recruitment_notice" | p4c_001_student_affairs_special_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 
@@ -89,7 +89,7 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 ## p4c_002_national_second_round — [국가-3/17] 2026학년도 1학기 국가장학금 2차 신청
 
-- **Case priority / decision:** `P0` / `pending_independent_review`
+- **Case priority / decision:** `P0` / `in_review`
 - **Source:** 고려대학교 학생지원팀 (`korea_scholarship`)
 - **Public URL:** https://scholarship.korea.ac.kr/scholarship/application/notice.do?articleNo=202601291008300593&mode=view
 - **Posted / kind / format:** 2026-01-29 / `recruitment_notice` / `html`
@@ -107,8 +107,8 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| document_kind | present | "recruitment_notice" | p4c_002_national_second_round_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| provider | present | "한국장학재단" | p4c_002_national_second_round_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| document_kind | present | "recruitment_notice" | p4c_002_national_second_round_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
+| provider | present | "한국장학재단" | p4c_002_national_second_round_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
 | scholarship_program_name | present | "국가장학금" | p4c_002_national_second_round_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | recruitment_cycle_label | present | "2026학년도 1학기 2차" | p4c_002_national_second_round_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | status | present | "recruitment_notice" | p4c_002_national_second_round_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
@@ -168,7 +168,7 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 ## p4c_003_hope_ladder_extension — [국가-3/27] 2026학년도 1학기 중소기업 취업연계 장학금(희망사다리 1유형) 신청(기간연장)
 
-- **Case priority / decision:** `P0` / `pending_independent_review`
+- **Case priority / decision:** `P0` / `in_review`
 - **Source:** 고려대학교 학생지원팀 (`korea_scholarship`)
 - **Public URL:** https://scholarship.korea.ac.kr/scholarship/application/notice.do?articleNo=202603031413200214&mode=view
 - **Posted / kind / format:** 2026-03-03 / `correction_notice` / `html`
@@ -186,8 +186,8 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| document_kind | present | "correction_notice" | p4c_003_hope_ladder_extension_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| provider | present | "한국장학재단" | p4c_003_hope_ladder_extension_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| document_kind | present | "correction_notice" | p4c_003_hope_ladder_extension_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
+| provider | present | "한국장학재단" | p4c_003_hope_ladder_extension_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
 | scholarship_program_name | present | "중소기업 취업연계 장학금(희망사다리 1유형)" | p4c_003_hope_ladder_extension_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | recruitment_cycle_label | present | "2026학년도 1학기" | p4c_003_hope_ladder_extension_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | status | present | "correction_notice" | p4c_003_hope_ladder_extension_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
@@ -242,7 +242,7 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 ## p4c_004_national_work_result — [국가근로] 2026학년도 국가근로 선발결과 및 사전교육자료 안내
 
-- **Case priority / decision:** `P0` / `pending_independent_review`
+- **Case priority / decision:** `P0` / `in_review`
 - **Source:** 고려대학교 학생지원팀 (`korea_scholarship`)
 - **Public URL:** https://scholarship.korea.ac.kr/scholarship/application/notice.do
 - **Posted / kind / format:** 2026-02-01 / `result_announcement` / `html`
@@ -260,8 +260,8 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| document_kind | present | "result_announcement" | p4c_004_national_work_result_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| provider | present | "한국장학재단" | p4c_004_national_work_result_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| document_kind | present | "result_announcement" | p4c_004_national_work_result_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
+| provider | present | "한국장학재단" | p4c_004_national_work_result_e1 | unresolved | [ ] approve · [ ] correct · [ ] unresolved |
 | scholarship_program_name | present | "국가근로장학금" | p4c_004_national_work_result_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | recruitment_cycle_label | present | "2026학년도" | p4c_004_national_work_result_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | status | present | "result_announcement" | p4c_004_national_work_result_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
@@ -316,7 +316,7 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 ## p4c_005_miraero_second — [세종캠퍼스] 2025학년도 1학기 미래로 장학금(2차) 신청 안내
 
-- **Case priority / decision:** `P0` / `pending_independent_review`
+- **Case priority / decision:** `P0` / `in_review`
 - **Source:** 고려대학교 세종캠퍼스 학생생활지원팀 (`korea_sejong_student_support`)
 - **Public URL:** https://st.korea.ac.kr/bbs/koreaSejong/659/257649/artclView.do?layout=unknown
 - **Posted / kind / format:** 2025-03-31 / `recruitment_notice` / `html`
@@ -334,9 +334,9 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| document_kind | present | "recruitment_notice" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| provider | present | "고려대학교 세종캠퍼스 학생생활지원팀" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| scholarship_program_name | present | "미래로 장학금" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| document_kind | present | "recruitment_notice" | p4c_005_miraero_second_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
+| provider | present | "고려대학교 세종캠퍼스 학생생활지원팀" | p4c_005_miraero_second_e1 | corrected | [ ] approve · [ ] correct · [ ] unresolved |
+| scholarship_program_name | present | "미래로 장학금" | p4c_005_miraero_second_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
 | recruitment_cycle_label | present | "2025학년도 1학기 2차" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | status | present | "recruitment_notice" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 
@@ -344,8 +344,8 @@ This Markdown file is a review aid only. Record all decisions in `fixtures/engin
 
 | Field | Candidate status | Candidate normalized value | Evidence | Current decision | Human choice |
 | --- | --- | --- | --- | --- | --- |
-| application_start | not_found | null | none | pending | [ ] approve · [ ] correct · [ ] unresolved |
-| application_deadline | present | "2025-04-30T16:00:00+09:00" | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
+| application_start | not_found | null | none | corrected | [ ] approve · [ ] correct · [ ] unresolved |
+| application_deadline | present | "2025-04-30T16:00:00+09:00" | p4c_005_miraero_second_e1 | approved | [ ] approve · [ ] correct · [ ] unresolved |
 | eligibility | present | {"operator":"review_required","conditions":[]} | p4c_005_miraero_second_e1 | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | required_documents | not_found | null | none | pending | [ ] approve · [ ] correct · [ ] unresolved |
 | application_method | not_found | null | none | pending | [ ] approve · [ ] correct · [ ] unresolved |

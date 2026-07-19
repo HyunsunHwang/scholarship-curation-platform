@@ -1,7 +1,7 @@
 {
   "schema_version": "engine-phase-4-gate-c-adjudication-unresolved-items/v1",
   "source_fixture_version": "engine-phase-4-representative-public-gold/v1",
-  "adjudication_unresolved_count": 0,
+  "adjudication_unresolved_count": 1,
   "note": "These are preparation-time risks, not human unresolved decisions. A reviewer must decide their disposition.",
   "items": [
     {
