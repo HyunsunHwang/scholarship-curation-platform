@@ -4,7 +4,7 @@
   "official_task": "Identity, Schema, Evidence, and Evaluation Contract",
   "result": "CONDITIONAL_PASS_INHERITED_MAIN_LINT_BASELINE",
   "base_sha": "a9918d377e4d958f9f8b86214f38768529b6a984",
-  "branch_sha": "WORKTREE_PENDING_IMPLEMENTATION_COMMIT",
+  "branch_sha": "21d8e60dd6268649a79eecfc869a1bdcf69c515a",
   "files_changed": [
     "docs/engine/adr/phase-4-identity-schema-evidence-evaluation.md",
     "docs/engine/engine-phase-4-evaluation-contract.md",
