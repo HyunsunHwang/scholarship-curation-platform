@@ -1,0 +1,169 @@
+{
+  "official_phase": "ENGINE_PHASE_4",
+  "official_gate": "GATE_B",
+  "official_task": "DETERMINISTIC_EXTRACTION_BASELINE",
+  "base_gate_a_sha": "700b9a3bfcff707509651189784dd2e9040ab317",
+  "current_main_sha": "a9918d377e4d958f9f8b86214f38768529b6a984",
+  "implementation_sha": "3ecf8e4e3c1a84c379ca4d92ea3778bc649f1fb5",
+  "branch": "feat/engine-phase-4-deterministic-extraction-baseline",
+  "extractor_contract_version": "engine-phase-4-deterministic-baseline/v1",
+  "canonical_schema_version": "engine-phase-4-canonical-scholarship/v1",
+  "input_contracts": [
+    "normalized SourceNotice / notice revision",
+    "engine-phase-3-document-result/v1"
+  ],
+  "output_record_type": "scholarship_extraction_candidate",
+  "supported_field_matrix": [
+    "document classification",
+    "title",
+    "explicit provider",
+    "explicit scholarship program name",
+    "explicit recruitment cycle label",
+    "application start and deadline",
+    "recommendation deadline",
+    "result announcement date",
+    "exact/range/tuition/non-cash amount",
+    "benefit type and payment frequency",
+    "explicit application URL",
+    "email and phone contact",
+    "required document allowlist",
+    "application method allowlist",
+    "simple explicit eligibility",
+    "source language",
+    "source-local program and cycle candidates"
+  ],
+  "unsupported_field_matrix": [
+    "relative or yearless date normalization",
+    "nested eligibility logic",
+    "semantic interpretation of tiered benefit tables",
+    "cross-source identity resolution",
+    "repost auto-merge",
+    "material change comparison without before/after revisions",
+    "automatic publication",
+    "notification"
+  ],
+  "fixture_summary": {
+    "version": "engine-phase-4-deterministic-fixtures/v1",
+    "case_count": 15,
+    "gate_a_scenarios_covered": 15,
+    "synthetic": true,
+    "sensitive_data": false,
+    "canonical_valid_count": 15
+  },
+  "evaluation_summary": {
+    "result": "PASS",
+    "document_classification_accuracy": 1,
+    "field_presence_precision": 1,
+    "field_presence_recall": 1,
+    "normalized_exact_match": 1,
+    "normalized_partial_match": 1,
+    "evidence_attribution_accuracy": 1,
+    "unsupported_value_rate": 0,
+    "review_required_recall": 1,
+    "schema_valid_record_rate": 1,
+    "evidence_reference_integrity": 1,
+    "identity_candidate_pair_precision": {
+      "status": "not_evaluated",
+      "reason": "No pair resolver exists in Gate B."
+    },
+    "identity_candidate_pair_recall": {
+      "status": "not_evaluated",
+      "reason": "No pair resolver exists in Gate B."
+    },
+    "material_change_classification_accuracy": {
+      "status": "not_evaluated",
+      "reason": "No before/after revision comparator exists in Gate B."
+    }
+  },
+  "determinism_summary": {
+    "rerun_match": true,
+    "stable_evidence_ids": true,
+    "stable_candidate_keys": true,
+    "stable_content_fingerprint": true,
+    "fixture_order_independent": true,
+    "clock_injected": true
+  },
+  "live_dry_run_summary": {
+    "result": "PASS",
+    "mode": "bounded_public_http_read_only",
+    "source_keys": [
+      "korea_002",
+      "yonsei_001"
+    ],
+    "source_count": 2,
+    "notice_limit_per_source": 1,
+    "observed_notice_count": 2,
+    "document_parsing_enabled": true,
+    "canonical_record_count": 2,
+    "schema_valid_count": 2,
+    "evidence_valid_count": 2,
+    "review_required_count": 2,
+    "unsupported_present_value_count": 0,
+    "raw_live_evidence_committed": false
+  },
+  "regression_summary": {
+    "gate_a_contract_tests": "51/51 PASS",
+    "gate_a_validator": "36/36 PASS",
+    "gate_b_tests": "69/69 PASS",
+    "gate_b_evaluator": "PASS",
+    "gate_b_validator": "49/49 PASS",
+    "phase_1": "15/15 PASS",
+    "phase_2": "32/32 PASS",
+    "phase_2_validator": "34/34 PASS",
+    "phase_2_gate_a": "40/40 PASS",
+    "phase_2_gate_a_validator": "59/59 PASS",
+    "phase_2_gate_b": "15/15 PASS",
+    "phase_2_gate_b_validator": "42/42 PASS",
+    "phase_3": "86/86 PASS",
+    "phase_3_validator": "69/69 PASS",
+    "post_phase_l": "17/17 PASS",
+    "typescript": "PASS",
+    "changed_file_eslint": "PASS",
+    "full_repository_eslint": {
+      "status": "BASELINE_ONLY",
+      "errors": 4,
+      "warnings": 2,
+      "new_errors": 0
+    },
+    "production_build": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "safety": {
+    "database_accessed": false,
+    "production_accessed": false,
+    "production_credentials_requested": false,
+    "external_llm_called": false,
+    "migration_created_or_executed": false,
+    "canary_write_performed": false,
+    "production_scheduler_added": false,
+    "queue_or_worker_added": false,
+    "full_613_source_run": false,
+    "parser_cache_contract_modified": false,
+    "crawler_checkpoint_contract_modified": false,
+    "gate_a_contract_semantics_modified": false,
+    "automatic_publish_performed": false,
+    "notification_performed": false
+  },
+  "deferred_scope": {
+    "phase_4c_candidates": [
+      "semantic classification conflicts",
+      "nested eligibility",
+      "tiered benefit tables",
+      "unlabeled date roles",
+      "unstructured provider/program separation"
+    ],
+    "phase_5": [
+      "cross-source identity resolver",
+      "repost merge",
+      "material change comparator"
+    ]
+  },
+  "combined_pr_scope": {
+    "base": "main",
+    "head": "feat/engine-phase-4-deterministic-extraction-baseline",
+    "gate_a_commits_included": 3,
+    "gate_b_commits_expected": 2,
+    "pr_created": false,
+    "recommended_title": "Engine Phase 4 Gates A–B: contracts and deterministic extraction baseline"
+  }
+}
