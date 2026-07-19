@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import { validateGateCProvenance } from "../lib/engine-phase-4/gate-c-provenance.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (name) => JSON.parse(fs.readFileSync(path.join(root, name), "utf8"));
@@ -20,6 +21,11 @@ const cases = corpus.cases;
 const allText = [JSON.stringify(manifest), JSON.stringify(corpus), JSON.stringify(relations)].join("\n");
 const ids = cases.map((item) => item.case_id);
 const sourceCounts = Object.groupBy(cases, (item) => item.source_key);
+const provenance = validateGateCProvenance({
+  repoRoot: root,
+  corpusFreezeSha: manifest.corpus_freeze_sha,
+  relationCorrectionSha: manifest.relation_correction_sha,
+});
 
 check("case count is 20-30", cases.length >= 20 && cases.length <= 30, String(cases.length));
 check("target case count is 24", cases.length === manifest.target_case_count && manifest.target_case_count === 24);
@@ -30,10 +36,20 @@ check("all cases satisfy candidate-gold schema", cases.every((item) => validate(
 check("all URLs are public HTTP(S)", cases.every((item) => /^https?:\/\//u.test(item.public_url)));
 const manifestBasis = { fixture_version: manifest.fixture_version, policy_version: manifest.policy_version, selected_case_ids: manifest.selected_case_ids, selected_public_urls: manifest.selected_public_urls, selection_completed_at: manifest.selection_completed_at };
 check("selection manifest hash matches frozen basis", manifest.selection_manifest_hash === sha256(JSON.stringify(manifestBasis)));
-check("corpus freeze SHA has commit shape", /^[a-f0-9]{40}$/u.test(manifest.corpus_freeze_sha));
+check("separate corpus and relation provenance model is explicit", manifest.provenance_model === "separate_corpus_and_relation_provenance" && typeof manifest.corpus_freeze_ref === "string" && manifest.corpus_freeze_ref.length > 0);
+check("corpus freeze SHA has full commit shape", provenance.corpus_freeze_sha_format_valid);
+check("relation correction SHA has full commit shape", provenance.relation_provenance_sha_format_valid);
+check("corpus freeze Git object exists", provenance.corpus_freeze_commit_exists);
+check("relation correction Git object exists", provenance.relation_provenance_commit_exists);
+check("corpus freeze is an ancestor of the target branch", provenance.corpus_freeze_is_branch_ancestor);
+check("relation correction is an ancestor of the target branch", provenance.relation_provenance_is_branch_ancestor);
+check("corpus freeze is at or after the Gate C base", provenance.corpus_freeze_is_after_or_equal_to_gate_c_base);
+check("relation correction is at or after the Gate C base", provenance.relation_provenance_is_after_or_equal_to_gate_c_base);
+check("relation correction is not earlier than corpus freeze", provenance.relation_provenance_order_valid);
+check("Git-aware provenance validation passes", provenance.provenance_validation_status === "PASS", provenance.errors.join(", ") || null);
 check("manifest and corpus case identities match", JSON.stringify(manifest.selected_case_ids) === JSON.stringify(ids));
 check("manifest and corpus public URLs match", JSON.stringify(manifest.selected_public_urls) === JSON.stringify(cases.map((item) => item.public_url)));
-check("policy and adjudication are fixed", cases.every((item) => item.annotator_policy_version === manifest.policy_version && item.adjudication_status === "pending_independent_review"));
+check("policy and adjudication are fixed", manifest.independent_adjudication_status === "pending_independent_review" && cases.every((item) => item.annotator_policy_version === manifest.policy_version && item.adjudication_status === "pending_independent_review"));
 check("source capture hashes are present", cases.every((item) => /^[a-f0-9]{64}$/u.test(item.source_capture_hash)));
 check("evidence excerpts are at most 500 characters", cases.every((item) => item.gold_evidence.every((evidence) => [...evidence.excerpt].length <= 500)));
 check("evidence IDs are unique per case", cases.every((item) => { const refs = item.gold_evidence.map((entry) => entry.evidence_id); return new Set(refs).size === refs.length; }));
@@ -57,4 +73,5 @@ check("image/OCR limitation is honest", cases.filter((item) => item.input_format
 const passed = checks.filter((item) => item.pass).length;
 console.log(`ENGINE PHASE 4 GATE C GOLD VALIDATOR: ${passed === checks.length ? "PASS" : "FAIL"}`);
 console.log(`checks=${passed}/${checks.length}`);
+console.log(`provenance_status=${provenance.provenance_validation_status}`);
 if (passed !== checks.length) process.exitCode = 1;

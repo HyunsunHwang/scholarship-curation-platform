@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSchemaValidators, validateCanonicalRecord } from "../lib/engine-phase-4/contracts.mjs";
 import { extractDeterministicScholarshipCandidate } from "../lib/engine-phase-4/deterministic-extractor.mjs";
+import { validateGateCProvenance } from "../lib/engine-phase-4/gate-c-provenance.mjs";
 import { buildSlices, deepEqual, ratio } from "../lib/engine-phase-4/representative-evaluation.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -43,6 +44,11 @@ const unsupportedCount = rows.reduce((sum, row) => sum + row.unsupported_present
 const risky = rows.filter((row) => row.fixture.gold_review_required);
 const reviewed = rows.filter((row) => row.record.review.required);
 const relationPairCount = relations.groups.reduce((sum, group) => sum + group.pairs.length, 0);
+const provenanceValidation = validateGateCProvenance({
+  repoRoot: root,
+  corpusFreezeSha: manifest.corpus_freeze_sha,
+  relationCorrectionSha: manifest.relation_correction_sha,
+});
 
 const metrics = {
   canonical_schema_valid: ratio(rows.filter((row) => row.validation.valid).length, rows.length, "No cases."),
@@ -88,7 +94,15 @@ const slices = buildSlices(rows, relations, corpus.fixture_version);
 const hardFailures = rows.filter((row) => !row.validation.valid).length;
 const report = {
   official_phase: "ENGINE_PHASE_4", official_gate: "GATE_C", task: "representative-public-gold-evaluation-and-phase-5-readiness-assessment",
-  generated_at: context.extractedAt, corpus_freeze_sha: manifest.corpus_freeze_sha, selection_manifest_hash: manifest.selection_manifest_hash,
+  generated_at: context.extractedAt,
+  provenance_model: manifest.provenance_model,
+  corpus_freeze_sha: manifest.corpus_freeze_sha,
+  corpus_freeze_ref: manifest.corpus_freeze_ref,
+  corpus_freeze_scope: manifest.corpus_freeze_scope,
+  relation_correction_sha: manifest.relation_correction_sha,
+  relation_correction_scope: manifest.relation_correction_scope,
+  provenance_validation: provenanceValidation,
+  selection_manifest_hash: manifest.selection_manifest_hash,
   fixture_version: corpus.fixture_version, extractor: { kind: "deterministic", name: "engine-phase-4-deterministic-extractor", source_sha256: sha256(fs.readFileSync(extractorPath)), behavior_modified: false },
   corpus_summary: { case_count: rows.length, unique_source_key_count: new Set(rows.map((row) => row.fixture.source_key)).size, maximum_cases_per_source: Math.max(...Object.values(Object.groupBy(rows, (row) => row.fixture.source_key)).map((items) => items.length)), partial_policy_case_count: rows.filter((row) => row.fixture.partial_gold.length > 0).length, relation_group_count: relations.groups.length, relation_pair_count: relationPairCount, adjudication_status: "pending_independent_review" },
   coverage: { by_format: Object.fromEntries(Object.entries(Object.groupBy(rows, (row) => row.fixture.input_format)).map(([key, items]) => [key, items.length])), by_notice_kind: Object.fromEntries(Object.entries(Object.groupBy(rows, (row) => row.fixture.document_kind_gold)).map(([key, items]) => [key, items.length])), hwp_hwpx: { status: "not_evaluated", sample_count: rows.filter((row) => ["hwp", "hwpx"].includes(row.fixture.input_format)).length, reason: "Selected attachments have metadata-only capture and no authoritative Phase 3 parse result." }, ocr_image: { status: "not_evaluated", sample_count: rows.filter((row) => row.fixture.input_format === "image").length, reason: "No bounded authoritative OCR result was captured for the selected image-primary notice." } },
@@ -103,5 +117,6 @@ const report = {
 const outputArg = process.argv.find((value) => value.startsWith("--output="));
 const output = path.resolve(root, outputArg?.slice(9) ?? "reports/engine-phase-4-gate-c-representative-evaluation.json");
 fs.mkdirSync(path.dirname(output), { recursive: true }); fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`);
-console.log(`cases=${rows.length}`); console.log(`schema_valid=${report.counts.canonical_schema_valid_count}`); console.log(`program_usable=${report.usability.program_candidate_usable_count}`); console.log(`cycle_usable=${report.usability.cycle_candidate_usable_count}`); console.log(`handoff_usable=${report.usability.phase5_handoff_usable_count}`); console.log("ENGINE PHASE 4 GATE C EVALUATOR: PASS");
+console.log(`cases=${rows.length}`); console.log(`schema_valid=${report.counts.canonical_schema_valid_count}`); console.log(`program_usable=${report.usability.program_candidate_usable_count}`); console.log(`cycle_usable=${report.usability.cycle_candidate_usable_count}`); console.log(`handoff_usable=${report.usability.phase5_handoff_usable_count}`); console.log(`provenance_status=${provenanceValidation.provenance_validation_status}`); console.log(`ENGINE PHASE 4 GATE C EVALUATOR: ${provenanceValidation.provenance_validation_status === "PASS" ? "PASS" : "FAIL"}`);
+if (provenanceValidation.provenance_validation_status !== "PASS") process.exitCode = 1;
 export { report };

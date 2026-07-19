@@ -15,6 +15,13 @@ const requiredSlices = ["by_field", "by_source_key", "by_source_level", "by_sour
 check("report matches a fresh evaluator run", JSON.stringify(report) === JSON.stringify(evaluated));
 check("report identifies official Gate C", report.official_phase === "ENGINE_PHASE_4" && report.official_gate === "GATE_C");
 check("corpus freeze and manifest hashes match", report.corpus_freeze_sha === manifest.corpus_freeze_sha && report.selection_manifest_hash === manifest.selection_manifest_hash);
+check("relation correction provenance matches manifest", report.relation_correction_sha === manifest.relation_correction_sha && report.provenance_model === manifest.provenance_model);
+check("provenance descriptions match manifest", report.corpus_freeze_ref === manifest.corpus_freeze_ref && report.corpus_freeze_scope === manifest.corpus_freeze_scope && report.relation_correction_scope === manifest.relation_correction_scope);
+check("Git-aware provenance validation passes", report.provenance_validation.provenance_validation_status === "PASS", report.provenance_validation.errors.join(", ") || null);
+check("both provenance commits exist", report.provenance_validation.corpus_freeze_commit_exists && report.provenance_validation.relation_provenance_commit_exists);
+check("both provenance commits belong to target history", report.provenance_validation.corpus_freeze_is_branch_ancestor && report.provenance_validation.relation_provenance_is_branch_ancestor);
+check("both provenance commits follow the Gate C base", report.provenance_validation.corpus_freeze_is_after_or_equal_to_gate_c_base && report.provenance_validation.relation_provenance_is_after_or_equal_to_gate_c_base);
+check("relation correction follows corpus freeze", report.provenance_validation.relation_provenance_order_valid);
 check("frozen extractor source hash matches", report.extractor.source_sha256 === sha256(fs.readFileSync(path.join(root, "lib/engine-phase-4/deterministic-extractor.mjs"))));
 check("extractor behavior is unmodified", report.extractor.behavior_modified === false && report.safety.deterministic_extractor_behavior_modified === false);
 check("all 24 cases were evaluated", report.corpus_summary.case_count === corpus.cases.length && corpus.cases.length === 24);
@@ -23,6 +30,23 @@ check("unsupported rate matches count", report.metrics.unsupported_value_rate.nu
 check("all required slices exist", requiredSlices.every((name) => report.slices[name] && typeof report.slices[name] === "object"));
 check("empty slices never claim 100 percent", requiredSlices.every((name) => Object.values(report.slices[name]).every((slice) => slice.status !== "not_evaluated" || (slice.value !== 1 && typeof slice.reason === "string"))));
 check("program/cycle/handoff usability is measured", ["program_candidate_usable_rate", "cycle_candidate_usable_rate", "phase5_handoff_usable_rate"].every((name) => report.metrics[name].status === "evaluated" && report.metrics[name].sample_count === 24));
+const expectedMetricCounts = {
+  canonical_schema_valid: [24, 24],
+  evidence_integrity: [24, 24],
+  document_classification_accuracy: [4, 24],
+  field_presence_precision: [64, 70],
+  field_presence_recall: [64, 189],
+  field_status_exact_accuracy: [187, 336],
+  normalized_exact_match: [50, 64],
+  evidence_attribution_accuracy: [64, 64],
+  unsupported_value_rate: [0, 84],
+  review_required_recall: [19, 19],
+  review_required_precision: [19, 24],
+  program_candidate_usable_rate: [0, 24],
+  cycle_candidate_usable_rate: [0, 24],
+  phase5_handoff_usable_rate: [0, 24],
+};
+check("provenance remediation leaves evaluation counts unchanged", Object.entries(expectedMetricCounts).every(([name, [numerator, denominator]]) => report.metrics[name].numerator === numerator && report.metrics[name].denominator === denominator));
 check("partial metric is honest", report.metrics.normalized_partial_match.status === "not_evaluated" && report.metrics.normalized_partial_match.value === null && /independent element-level/u.test(report.metrics.normalized_partial_match.reason));
 check("error taxonomy totals expose case IDs and owner", Object.values(report.error_taxonomy).every((bucket) => bucket.case_count === bucket.case_ids.length && typeof bucket.recommended_owner === "string"));
 check("Phase 3 and Phase 4C ownership are distinguished", Object.values(report.error_taxonomy).some((bucket) => bucket.recommended_owner === "PHASE_3") && Object.values(report.error_taxonomy).some((bucket) => bucket.recommended_owner === "PHASE_4C_SELECTIVE_LLM"));

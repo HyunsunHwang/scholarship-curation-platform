@@ -80,7 +80,20 @@ function buildCase(seed) {
 const cases = caseSeeds.map(buildCase);
 const manifestBasis = { fixture_version: FIXTURE_VERSION, policy_version: POLICY_VERSION, selected_case_ids: cases.map((item) => item.case_id), selected_public_urls: cases.map((item) => item.public_url), selection_completed_at: CAPTURED_AT };
 const manifest = {
-  ...manifestBasis, selection_manifest_hash: sha256(JSON.stringify(manifestBasis)), corpus_freeze_sha: "f4109294e86df35f2b9508b20edc665a18c50334",
+  ...manifestBasis,
+  selection_manifest_hash: sha256(JSON.stringify(manifestBasis)),
+  provenance_model: "separate_corpus_and_relation_provenance",
+  corpus_freeze_sha: "f410929e93f7f003ad39a03a2376b4a24ef755dc",
+  corpus_freeze_ref: "first_gate_c_corpus_introduction_commit",
+  corpus_freeze_scope: "Representative case selection, case payloads, field annotations and evidence, schema, and manifest membership as introduced by the first Gate C commit.",
+  relation_correction_sha: "3f5d26cd0128083b240f9ae5d8a7fa513ee63a3c",
+  relation_correction_scope: "Removal of invalid relation self-pairs and replacement with distinct-case relation comparisons in the Gate C evaluation commit.",
+  deprecated_provenance: [{
+    field: "corpus_freeze_sha",
+    value: "f4109294e86df35f2b9508b20edc665a18c50334",
+    status: "invalid_git_object",
+    replacement: "f410929e93f7f003ad39a03a2376b4a24ef755dc",
+  }],
   target_case_count: 24, minimum_case_count: 20, maximum_case_count: 30, source_count_limit: 12,
   selection_method: "Purposeful stratified public-source sampling fixed before extractor execution.",
   failed_cases_retained: true, replacement_cases: [], raw_documents_tracked: false, independent_adjudication_status: "pending_independent_review",

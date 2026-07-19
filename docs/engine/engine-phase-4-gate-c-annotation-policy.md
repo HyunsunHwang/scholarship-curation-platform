@@ -13,3 +13,9 @@ Partial overlap is predeclared before evaluation. Sets use `set_precision_recall
 HWP/HWPX and image cases are retained as coverage probes. When the representative capture has attachment metadata but no authoritative Phase 3 parse/OCR result, the case is marked `tool_unavailable` or `ocr_not_evaluated`; the report must not count those formats as successfully parsed.
 
 Relation groups are candidate Phase 5 evaluation evidence only. Gate C does not resolve or merge programs, cycles, reposts, results, recommendations, or extensions.
+
+## Provenance model
+
+Gate C uses separate provenance for the corpus and its relation corrections. `corpus_freeze_sha` identifies the commit that introduced the representative case selection, case payloads, field annotations and evidence, schema, and manifest membership. `relation_correction_sha` identifies the later commit that removed invalid self-pairs and substituted distinct-case comparisons. Both values must be full 40-character commit IDs, resolve to commit objects, be ancestors of the evaluated branch, and be at or after the Gate C base (`origin/main`). The relation correction must not precede the corpus freeze.
+
+The previously recorded value `f4109294e86df35f2b9508b20edc665a18c50334` is deprecated because it does not resolve to a Git object. Its replacement is the actual first Gate C commit, `f410929e93f7f003ad39a03a2376b4a24ef755dc`. This provenance-only correction does not alter selected cases, candidate-gold annotations, evidence, evaluation inputs, extractor behavior, or evaluation metrics.

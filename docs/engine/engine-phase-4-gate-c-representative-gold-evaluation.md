@@ -8,12 +8,15 @@ Recommended next stage: `HOLD_FOR_MULTIPLE_BLOCKERS`.
 
 ## Corpus freeze and correction record
 
-- Candidate case selection and field annotations were frozen in commit `f4109294e86df35f2b9508b20edc665a18c50334` before extractor evaluation.
+- Candidate case selection, case payloads, field annotations and evidence, schema, and manifest membership were frozen in the actual first Gate C commit, `f410929e93f7f003ad39a03a2376b4a24ef755dc`, before extractor evaluation.
+- Relation self-pair corrections are separately attributed to `3f5d26cd0128083b240f9ae5d8a7fa513ee63a3c`; this is intentionally not presented as the original corpus-freeze commit.
+- The previously recorded `f4109294e86df35f2b9508b20edc665a18c50334` is deprecated: it does not resolve to a Git object and appears to have resulted from treating the real abbreviated prefix `f410929` as sufficient to construct an unverified full SHA. Git-aware validation now rejects nonexistent, off-branch, pre-base, or incorrectly ordered provenance.
 - Manifest hash: `51567d8e11508992ea0f2a9bef4473415f2f05a8587268da6f9b9a0520725471`.
 - 24 cases, eight source keys, maximum four cases per source.
 - 17 cases have predeclared partial-overlap policies.
 - Eight relation groups contain nine distinct-case pairs.
 - After the freeze, three invalid self-pairs were removed from extension/update groups and replaced with three evidence-supported distinct-case comparisons. No case, field annotation, evidence excerpt, or extractor-facing input changed, and the correction was not based on extractor performance.
+- This remediation changes provenance metadata and validation only. All corpus membership, gold payloads, report metrics, and HOLD decisions remain unchanged.
 - Every annotation remains `candidate_gold` / `pending_independent_review`.
 
 The tracked fixture contains minimal excerpts only. Full HTML, raw documents, binaries, and OCR pages were not committed.

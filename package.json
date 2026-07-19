@@ -47,6 +47,7 @@
     "live:engine-phase-4-gate-b": "node scripts/run-engine-phase-4-gate-b-live.mjs",
     "validate:engine-phase-4-gate-b": "node scripts/validate-engine-phase-4-gate-b.mjs",
     "build:engine-phase-4-gate-c-corpus": "node scripts/build-engine-phase-4-representative-corpus.mjs",
+    "test:engine-phase-4-gate-c-provenance": "node scripts/test-engine-phase-4-gate-c-provenance.mjs",
     "validate:engine-phase-4-gate-c-gold": "node scripts/validate-engine-phase-4-representative-gold.mjs",
     "evaluate:engine-phase-4-gate-c": "node scripts/evaluate-engine-phase-4-representative-gold.mjs",
     "validate:engine-phase-4-gate-c": "node scripts/validate-engine-phase-4-gate-c.mjs",
