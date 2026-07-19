@@ -25,6 +25,9 @@ const first = evaluateP0Audit({ corpus, adjudicationDecisions: decisions, overla
 const second = evaluateP0Audit({ corpus, adjudicationDecisions: decisions, overlay, recordsByCase: buildRecords() });
 assert.equal(JSON.stringify(first), JSON.stringify(second));
 assert.equal(first.as_of, P0_AS_OF);
+assert.equal(first.responsibility_boundary.deterministic_fields.some((item) => item.includes("lifecycle derivation from unambiguous")), true);
+assert.equal(first.responsibility_boundary.human_review_required.some((item) => item.includes("date roles or timezone are ambiguous")), true);
+assert.equal(first.responsibility_boundary.human_review_required.includes("lifecycle status"), false);
 console.log("PASS repeated audit is byte-equivalent with fixed as_of");
 
 assert.equal(first.corpus.resolved_p0_field_count, 15);

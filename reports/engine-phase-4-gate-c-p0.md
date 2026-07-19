@@ -6,6 +6,8 @@ This audit is a separate diagnostic and does not replace or invalidate the full-
 
 This rerun measures only the Batch 1 reviewer-resolved subset: 15/240 P0 fields are resolved, 4 are explicitly unresolved, and 221 remain pending. Resolved-only scores cannot be generalized to the full 24-case corpus; pending and unresolved annotations are not silently treated as truth.
 
+Batch 1 is bounded to explicitly listed decisions across Cases 1–5. All unlisted fields and Cases 6–24 remain pending unless a later independent review records a decision.
+
 ## Fixed evaluation context
 
 - As-of: `2026-07-20T00:00:00+09:00`
@@ -101,10 +103,12 @@ Publishability is resolved for 5/24 cases. The resolved subset has 0 non-recruit
 
 ## Responsibility boundary
 
-- Keep deterministic: explicit application dates; explicit provider/program labels; explicit application URL; simple amount; conservative document classification.
+- Keep deterministic: explicit application dates; explicit provider/program labels; explicit application URL; simple amount; conservative document classification; lifecycle derivation from unambiguous start/deadline/timezone for a confirmed recruitment opportunity at fixed as_of.
 - LLM-assisted candidates: provider/program separation; complex date roles; tiered or non-cash support; complex eligibility outside P0.
-- Mandatory human review: lifecycle status; publishability; correction/extension/result semantics; campus scope; ambiguous or conflicting values.
+- Mandatory human review: publishability; lifecycle when date roles or timezone are ambiguous, dates conflict, multiple cycles are possible, or correction/extension/result relations are required; correction/extension/result semantics; campus scope; ambiguous or conflicting values.
 - Schema gaps: lifecycle status has no enum and currently accepts document-kind values; tiered amount rows do not fit one amountValue; host institution and benefit type are optional and absent from the baseline output.
+
+Lifecycle is deterministic only when a confirmed recruitment opportunity has unambiguous application start/deadline roles, sufficient timezone information, no date conflicts, and no correction, extension, result, or multi-cycle relation dependency. Otherwise it fails closed as unknown or requires human review; document-kind values are never lifecycle values.
 
 The existing admin flow already creates an LLM-assisted structured draft and requires human promotion review. It also defaults the application URL to the notice URL in the admin form; that is an application-layer default and is deliberately excluded from deterministic application-URL extraction scoring.
 

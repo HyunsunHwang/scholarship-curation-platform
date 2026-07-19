@@ -11,6 +11,7 @@ const readText = (name) => fs.readFileSync(path.join(root, name), "utf8");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const report = read("reports/engine-phase-4-gate-c-p0.json");
 const markdown = readText("reports/engine-phase-4-gate-c-p0.md");
+const contract = readText("docs/engine/engine-phase-4-gate-c-p0-audit.md");
 const validationShortlist = readText("reports/engine-phase-4-gate-c-p0-additional-validation.md");
 const fullReport = read("reports/engine-phase-4-gate-c-representative-evaluation.json");
 const corpus = read("fixtures/engine-phase-4-representative-gold/cases.json");
@@ -88,9 +89,11 @@ check("frozen extractor source matches the full Gate C hash", fullReport.extract
 check("P0 audit did not claim prohibited side effects", Object.values(report.safety).every((value) => value === false));
 check("Markdown explains subset scope and denominator maturity", /does not replace or invalidate the full-schema Gate C report/u.test(markdown) && /denominator maturity/u.test(markdown) && /cannot be generalized/u.test(markdown) && /NOT_EVALUATED/u.test(markdown));
 check("responsibility boundaries are explicit", Object.values(report.responsibility_boundary).every((items) => Array.isArray(items) && items.length > 0));
+check("Batch 1 documentation matches bounded adjudication state", /bounded reviewer-resolved subset across Cases 1–5/u.test(contract) && /All unlisted fields and Cases 6–24 remain pending/u.test(contract) && /Cases 1–4 are also pending/u.test(contract) === false && /Cases 1–5/u.test(markdown) && /Cases 6–24 remain pending/u.test(markdown));
+check("lifecycle responsibility permits only clear deterministic derivation", report.responsibility_boundary.deterministic_fields.some((item) => /lifecycle derivation from unambiguous start\/deadline\/timezone/u.test(item)) && report.responsibility_boundary.human_review_required.some((item) => /date roles or timezone are ambiguous/u.test(item)) && !report.responsibility_boundary.human_review_required.includes("lifecycle status") && /Lifecycle is deterministic only when a confirmed recruitment opportunity/u.test(markdown) && /fail closed as `unknown` or require human review/u.test(contract));
 const recommendedSourceCases = [4, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 20, 22, 23, 24].map((number) => `p4c_${String(number).padStart(3, "0")}_`);
 check("additional validation shortlist prioritizes Case 5 feedback and sixteen risk sources", /Case 5 feedback is the priority/u.test(validationShortlist) && recommendedSourceCases.every((prefix) => validationShortlist.includes(prefix)) && /full re-review of all 24 sources is not necessary/u.test(validationShortlist));
-const serialized = `${JSON.stringify(report)}\n${markdown}\n${validationShortlist}`;
+const serialized = `${JSON.stringify(report)}\n${markdown}\n${contract}\n${validationShortlist}`;
 check("reports contain no local paths or apparent secrets", !/(?:\/Users\/|\/home\/|DATABASE_URL|SUPABASE_URL|service_role|gho_|sk-[A-Za-z0-9]{12,})/u.test(serialized));
 
 const passed = checks.filter((item) => item.pass).length;

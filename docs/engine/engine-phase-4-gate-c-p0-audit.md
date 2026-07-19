@@ -10,7 +10,7 @@ The P0 audit is separate. It asks whether the frozen deterministic extractor saf
 
 Only independent human decisions are scorable. Existing adjudication decisions supply program name, provider, application dates, application URL, support amount, and document kind. The P0 overlay supplies only concepts absent from that model: institution/campus, lifecycle status, and support type. Timezone is mechanically derived from reviewer-approved date decisions; publishability is mechanically derived from reviewer-approved document kind.
 
-Pending candidate gold is excluded from correctness denominators. An unresolved human decision is reported separately and is not converted into a guessed exact value. The report always exposes total, resolved, pending, and unresolved counts. At the current preparation state, Cases 1–4 are also pending; no reviewer metadata exists and Codex does not promote them.
+Pending candidate gold is excluded from correctness denominators. An unresolved human decision is reported separately and is not converted into a guessed exact value. The report always exposes total, resolved, pending, and unresolved counts. Batch 1 records a bounded reviewer-resolved subset across Cases 1–5. Only explicitly listed approved, corrected, resolved, or unresolved decisions enter the audit. All unlisted fields and Cases 6–24 remain pending unless a later independent review records a decision.
 
 ## P0 fields
 
@@ -21,6 +21,10 @@ Pending candidate gold is excluded from correctness denominators. An unresolved 
 - Support: support type and structured support amount.
 
 The notice's canonical detail URL is provenance input and is never substituted for an application URL during scoring. The audit separately records whether the extractor produced the application URL from evidence.
+
+Lifecycle may be derived deterministically when the document is a confirmed recruitment opportunity, application start/deadline roles and timezone are sufficiently clear, the dates do not conflict, and no correction, extension, result, or multi-cycle relation is needed. At the fixed `as_of`, a time before the start is `upcoming`, a time within the application window is `open`, and a time after the deadline is `closed`.
+
+Lifecycle must fail closed as `unknown` or require human review when date roles are ambiguous, dates conflict across body and attachments, application/recommendation/document/consent/result dates are mixed, timezone is unsafe, multiple cycles are possible, or correction/extension/result/guidance semantics require relation resolution. Document-kind values such as `recruitment_notice` and `result_announced` are never lifecycle values.
 
 ## Safety gates
 
@@ -44,8 +48,8 @@ Errors use these ownership classes:
 
 ## Responsibility boundary
 
-Deterministic extraction should retain explicit dates, clearly labelled provider/program facts, explicit application URLs, simple amounts, and conservative classification. It should fail closed on complex date roles, provider/program separation, tiered or non-cash benefits, and relation-dependent correction/result meaning.
+Deterministic extraction should retain explicit dates, clearly labelled provider/program facts, explicit application URLs, simple amounts, and conservative classification. It may also derive lifecycle from unambiguous start/deadline/timezone evidence for a confirmed recruitment opportunity at the fixed `as_of`. It should fail closed on complex date roles, provider/program separation, tiered or non-cash benefits, and relation-dependent correction/result meaning.
 
 Complex eligibility trees, exception semantics, document completeness, and detailed application procedures are outside the P0 score. The existing admin flow in `lib/notice-extraction.ts` already supports LLM-generated structured drafts followed by human review. The P0 audit does not call that LLM or change the admin flow.
 
-Human review remains mandatory for publishability, lifecycle status, campus scope, ambiguous/conflicting values, correction/extension/result semantics, and all new adjudication gold. Phase 5 persistence and public projection remain out of scope.
+Human review remains mandatory for publishability, campus scope, ambiguous/conflicting values, correction/extension/result semantics, and lifecycle when date roles or timezone are unclear, dates conflict, multiple cycles are possible, or relation resolution is required. All new adjudication gold also requires human review. Phase 5 persistence and public projection remain out of scope.

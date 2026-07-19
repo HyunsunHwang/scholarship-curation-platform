@@ -702,7 +702,8 @@
       "explicit provider/program labels",
       "explicit application URL",
       "simple amount",
-      "conservative document classification"
+      "conservative document classification",
+      "lifecycle derivation from unambiguous start/deadline/timezone for a confirmed recruitment opportunity at fixed as_of"
     ],
     "llm_assisted_candidates": [
       "provider/program separation",
@@ -711,8 +712,8 @@
       "complex eligibility outside P0"
     ],
     "human_review_required": [
-      "lifecycle status",
       "publishability",
+      "lifecycle when date roles or timezone are ambiguous, dates conflict, multiple cycles are possible, or correction/extension/result relations are required",
       "correction/extension/result semantics",
       "campus scope",
       "ambiguous or conflicting values"

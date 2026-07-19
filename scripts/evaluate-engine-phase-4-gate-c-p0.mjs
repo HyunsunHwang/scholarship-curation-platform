@@ -34,6 +34,8 @@ This audit is a separate diagnostic and does not replace or invalidate the full-
 
 This rerun measures only the Batch 1 reviewer-resolved subset: ${report.corpus.resolved_p0_field_count}/${report.corpus.total_p0_field_count} P0 fields are resolved, ${report.corpus.unresolved_p0_field_count} are explicitly unresolved, and ${report.corpus.pending_p0_field_count} remain pending. Resolved-only scores cannot be generalized to the full 24-case corpus; pending and unresolved annotations are not silently treated as truth.
 
+Batch 1 is bounded to explicitly listed decisions across Cases 1–5. All unlisted fields and Cases 6–24 remain pending unless a later independent review records a decision.
+
 ## Fixed evaluation context
 
 - As-of: \`${report.as_of}\`
@@ -94,6 +96,8 @@ ${publishabilityInterpretation}
 - LLM-assisted candidates: ${report.responsibility_boundary.llm_assisted_candidates.join("; ")}.
 - Mandatory human review: ${report.responsibility_boundary.human_review_required.join("; ")}.
 - Schema gaps: ${report.responsibility_boundary.schema_expressiveness_gaps.join("; ")}.
+
+Lifecycle is deterministic only when a confirmed recruitment opportunity has unambiguous application start/deadline roles, sufficient timezone information, no date conflicts, and no correction, extension, result, or multi-cycle relation dependency. Otherwise it fails closed as unknown or requires human review; document-kind values are never lifecycle values.
 
 The existing admin flow already creates an LLM-assisted structured draft and requires human promotion review. It also defaults the application URL to the notice URL in the admin form; that is an application-layer default and is deliberately excluded from deterministic application-URL extraction scoring.
 
