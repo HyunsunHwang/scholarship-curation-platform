@@ -1,0 +1,145 @@
+{
+  "schema_version": "engine-phase-4-evaluation-cases/v1",
+  "fixture_version": "engine-phase-4-contract-fixtures/v1",
+  "metrics": [
+    "document_classification_accuracy",
+    "field_presence_precision",
+    "field_presence_recall",
+    "normalized_exact_match",
+    "normalized_partial_match",
+    "evidence_attribution_accuracy",
+    "unsupported_value_rate",
+    "identity_candidate_pair_precision",
+    "identity_candidate_pair_recall",
+    "material_change_classification_accuracy",
+    "review_required_recall"
+  ],
+  "threshold_stages": [
+    "contract_validator_threshold",
+    "prototype_evaluation_threshold",
+    "production_candidate_threshold",
+    "notification_safe_threshold"
+  ],
+  "cases": [
+    {
+      "case_id": "p4_normal_html",
+      "title": "Normal HTML recruitment notice",
+      "scenario": "normal_html",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "url_metadata"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "title": "present", "application_deadline": "present" }, "identity": { "notice_relation": "same", "document_relation": "not_applicable", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": false }
+    },
+    {
+      "case_id": "p4_pdf_primary",
+      "title": "PDF-primary recruitment notice",
+      "scenario": "pdf_primary",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "attachment_metadata", "pdf_text"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "required_documents": "present" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": false }
+    },
+    {
+      "case_id": "p4_table_primary",
+      "title": "Table-primary benefit and eligibility",
+      "scenario": "table_primary",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_table_cell", "pdf_table_cell"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "amount": "present", "eligibility": "present" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": false }
+    },
+    {
+      "case_id": "p4_attachment_only",
+      "title": "Attachment-only notice",
+      "scenario": "attachment_only",
+      "synthetic": true,
+      "input_profile": { "source_types": ["attachment_metadata", "hwpx_text"], "has_body": false, "document_count": 1, "quality_flags": ["attachment_only"] },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "notes": "not_found" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "review_required", "cycle_relation": "review_required" }, "material_change": "review_required", "review_required": true }
+    },
+    {
+      "case_id": "p4_multiple_dates",
+      "title": "Notice containing several date roles",
+      "scenario": "multiple_dates",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "pdf_text"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "application_deadline": "present", "recommendation_deadline": "present", "result_announcement_date": "present" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": false }
+    },
+    {
+      "case_id": "p4_deadline_extension",
+      "title": "Existing cycle with an extended deadline",
+      "scenario": "deadline_extension",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "pdf_text"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "application_deadline": "present" }, "identity": { "notice_relation": "same", "document_relation": "new_revision", "program_relation": "same", "cycle_relation": "same" }, "material_change": "deadline_extension", "review_required": false }
+    },
+    {
+      "case_id": "p4_new_term",
+      "title": "Same program in a new academic term",
+      "scenario": "new_term",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "academic_term": "present" }, "identity": { "notice_relation": "different", "document_relation": "not_applicable", "program_relation": "same", "cycle_relation": "different" }, "material_change": "new_cycle", "review_required": false }
+    },
+    {
+      "case_id": "p4_result_announcement",
+      "title": "Selection result announcement",
+      "scenario": "result_announcement",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "result_announcement", "field_statuses": { "application_deadline": "not_applicable" }, "identity": { "notice_relation": "different", "document_relation": "not_applicable", "program_relation": "review_required", "cycle_relation": "review_required" }, "material_change": "not_applicable", "review_required": true, "notes": "Related event, not a recruitment opportunity." }
+    },
+    {
+      "case_id": "p4_school_recommendation",
+      "title": "School recommendation notice for a foundation program",
+      "scenario": "school_recommendation",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "pdf_text"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "recommendation_deadline": "present" }, "identity": { "notice_relation": "different", "document_relation": "different", "program_relation": "same", "cycle_relation": "review_required" }, "material_change": "review_required", "review_required": true }
+    },
+    {
+      "case_id": "p4_reposted_notice",
+      "title": "Same source notice reposted under a new URL",
+      "scenario": "reposted_notice",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "url_metadata"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "title": "present" }, "identity": { "notice_relation": "review_required", "document_relation": "not_applicable", "program_relation": "same", "cycle_relation": "same" }, "material_change": "review_required", "review_required": true }
+    },
+    {
+      "case_id": "p4_complex_eligibility",
+      "title": "Eligibility with AND and OR branches",
+      "scenario": "complex_eligibility",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "html_table_cell"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "eligibility": "present" }, "identity": { "notice_relation": "same", "document_relation": "not_applicable", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": true }
+    },
+    {
+      "case_id": "p4_amount_range_tuition",
+      "title": "Amount range and full-tuition alternatives",
+      "scenario": "amount_range_or_tuition",
+      "synthetic": true,
+      "input_profile": { "source_types": ["pdf_table_cell"], "has_body": true, "document_count": 1 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "amount": "ambiguous" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": true }
+    },
+    {
+      "case_id": "p4_missing_value",
+      "title": "Recruitment notice with no stated amount",
+      "scenario": "missing_value",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text"], "has_body": true, "document_count": 0 },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "amount": "not_found" }, "identity": { "notice_relation": "same", "document_relation": "not_applicable", "program_relation": "same", "cycle_relation": "same" }, "material_change": "none", "review_required": false }
+    },
+    {
+      "case_id": "p4_conflicting_sources",
+      "title": "Body and attachment disagree on deadline",
+      "scenario": "conflicting_sources",
+      "synthetic": true,
+      "input_profile": { "source_types": ["html_text", "pdf_text"], "has_body": true, "document_count": 1, "quality_flags": ["cross_document_conflict"] },
+      "expected": { "classification": "recruitment_notice", "field_statuses": { "application_deadline": "conflicting" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "same", "cycle_relation": "review_required" }, "material_change": "review_required", "review_required": true }
+    },
+    {
+      "case_id": "p4_low_quality_ocr",
+      "title": "Low-confidence OCR document",
+      "scenario": "low_quality_ocr",
+      "synthetic": true,
+      "input_profile": { "source_types": ["attachment_metadata", "ocr_text"], "has_body": false, "document_count": 1, "quality_flags": ["ocr_low_confidence"] },
+      "expected": { "classification": "unknown", "field_statuses": { "application_deadline": "unknown", "amount": "unknown" }, "identity": { "notice_relation": "same", "document_relation": "same", "program_relation": "unresolved", "cycle_relation": "review_required" }, "material_change": "review_required", "review_required": true }
+    }
+  ]
+}

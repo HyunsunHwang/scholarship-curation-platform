@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation-platform.local/schemas/engine/phase-4-evaluation-case.schema.json",
+  "title": "Engine Phase 4 evaluation fixture manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "fixture_version", "metrics", "threshold_stages", "cases"],
+  "properties": {
+    "schema_version": { "const": "engine-phase-4-evaluation-cases/v1" },
+    "fixture_version": { "const": "engine-phase-4-contract-fixtures/v1" },
+    "metrics": {
+      "type": "array",
+      "minItems": 11,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "document_classification_accuracy",
+          "field_presence_precision",
+          "field_presence_recall",
+          "normalized_exact_match",
+          "normalized_partial_match",
+          "evidence_attribution_accuracy",
+          "unsupported_value_rate",
+          "identity_candidate_pair_precision",
+          "identity_candidate_pair_recall",
+          "material_change_classification_accuracy",
+          "review_required_recall"
+        ]
+      }
+    },
+    "threshold_stages": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "contract_validator_threshold",
+          "prototype_evaluation_threshold",
+          "production_candidate_threshold",
+          "notification_safe_threshold"
+        ]
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/case" }
+    }
+  },
+  "$defs": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "title", "scenario", "synthetic", "input_profile", "expected"],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^p4_[a-z0-9_]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "scenario": {
+          "enum": [
+            "normal_html", "pdf_primary", "table_primary", "attachment_only", "multiple_dates",
+            "deadline_extension", "new_term", "result_announcement", "school_recommendation",
+            "reposted_notice", "complex_eligibility", "amount_range_or_tuition", "missing_value",
+            "conflicting_sources", "low_quality_ocr"
+          ]
+        },
+        "synthetic": { "const": true },
+        "input_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_types", "has_body", "document_count"],
+          "properties": {
+            "source_types": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": ["html_text", "html_table_cell", "pdf_text", "pdf_table_cell", "hwp_text", "hwpx_text", "ocr_text", "attachment_metadata", "url_metadata"]
+              }
+            },
+            "has_body": { "type": "boolean" },
+            "document_count": { "type": "integer", "minimum": 0 },
+            "quality_flags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["classification", "field_statuses", "identity", "material_change", "review_required"],
+          "properties": {
+            "classification": { "enum": ["recruitment_notice", "result_announcement", "general_guidance", "unknown"] },
+            "field_statuses": {
+              "type": "object",
+              "additionalProperties": {
+                "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"]
+              }
+            },
+            "identity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["notice_relation", "document_relation", "program_relation", "cycle_relation"],
+              "properties": {
+                "notice_relation": { "enum": ["same", "different", "review_required", "not_applicable"] },
+                "document_relation": { "enum": ["same", "new_revision", "different", "review_required", "not_applicable"] },
+                "program_relation": { "enum": ["same", "different", "review_required", "unresolved", "not_applicable"] },
+                "cycle_relation": { "enum": ["same", "different", "review_required", "not_applicable"] }
+              }
+            },
+            "material_change": { "enum": ["none", "deadline_extension", "new_cycle", "review_required", "not_applicable"] },
+            "review_required": { "type": "boolean" },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation-platform.local/schemas/engine/phase-4-evidence.schema.json",
+  "title": "Engine Phase 4 evidence and provenance contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "source_type",
+    "raw_text",
+    "normalized_text",
+    "extractor",
+    "parser_version",
+    "created_at"
+  ],
+  "properties": {
+    "evidence_id": { "type": "string", "pattern": "^ev_[a-z0-9_:-]+$" },
+    "source_type": {
+      "enum": [
+        "html_text",
+        "html_attribute",
+        "html_table_cell",
+        "pdf_text",
+        "pdf_table_cell",
+        "hwp_text",
+        "hwpx_text",
+        "ocr_text",
+        "attachment_metadata",
+        "url_metadata",
+        "manual_annotation"
+      ]
+    },
+    "source_notice_id": { "type": ["string", "null"] },
+    "document_id": { "type": ["string", "null"] },
+    "document_revision_id": { "type": ["string", "null"] },
+    "document_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+    "attachment_url": { "type": ["string", "null"], "pattern": "^https?://" },
+    "locator": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "page_number": { "type": ["integer", "null"], "minimum": 1 },
+        "section": { "type": ["string", "null"] },
+        "html_selector": { "type": ["string", "null"] },
+        "attribute_name": { "type": ["string", "null"] },
+        "text_span": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["start", "end"],
+          "properties": {
+            "start": { "type": "integer", "minimum": 0 },
+            "end": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "table_coordinates": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["row", "column"],
+          "properties": {
+            "row": { "type": "integer", "minimum": 0 },
+            "column": { "type": "integer", "minimum": 0 },
+            "row_span": { "type": "integer", "minimum": 1 },
+            "column_span": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "bounding_box": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["x", "y", "width", "height", "unit"],
+          "properties": {
+            "x": { "type": "number", "minimum": 0 },
+            "y": { "type": "number", "minimum": 0 },
+            "width": { "type": "number", "exclusiveMinimum": 0 },
+            "height": { "type": "number", "exclusiveMinimum": 0 },
+            "unit": { "enum": ["pixel", "point", "normalized"] }
+          }
+        }
+      }
+    },
+    "raw_text": { "type": ["string", "null"], "maxLength": 4000 },
+    "normalized_text": { "type": ["string", "null"], "maxLength": 4000 },
+    "extractor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "kind"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["deterministic", "model", "manual"] },
+        "model_provider": { "type": ["string", "null"] },
+        "model_name": { "type": ["string", "null"] },
+        "prompt_version": { "type": ["string", "null"] }
+      }
+    },
+    "parser_version": { "type": "string", "minLength": 1 },
+    "inference_reason": { "type": ["string", "null"], "minLength": 1 },
+    "manual_annotation_id": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "source_type": { "enum": ["html_text", "html_attribute", "html_table_cell", "url_metadata"] } } },
+      "then": {
+        "required": ["source_notice_id"],
+        "properties": { "source_notice_id": { "type": "string", "minLength": 1 } }
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "enum": ["pdf_text", "pdf_table_cell", "hwp_text", "hwpx_text", "ocr_text"] } } },
+      "then": {
+        "required": ["document_id", "document_revision_id", "document_hash", "locator"],
+        "properties": {
+          "document_id": { "type": "string", "minLength": 1 },
+          "document_revision_id": { "type": "string", "minLength": 1 },
+          "document_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "locator": { "type": "object" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "enum": ["html_table_cell", "pdf_table_cell"] } } },
+      "then": {
+        "properties": {
+          "locator": {
+            "type": "object",
+            "required": ["table_coordinates"],
+            "properties": {
+              "table_coordinates": {
+                "type": "object",
+                "required": ["row", "column"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "const": "ocr_text" } } },
+      "then": {
+        "properties": {
+          "locator": {
+            "type": "object",
+            "required": ["page_number", "bounding_box"],
+            "properties": {
+              "page_number": { "type": "integer", "minimum": 1 },
+              "bounding_box": {
+                "type": "object",
+                "required": ["x", "y", "width", "height", "unit"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "const": "manual_annotation" } } },
+      "then": {
+        "required": ["manual_annotation_id", "inference_reason"],
+        "properties": {
+          "manual_annotation_id": { "type": "string", "minLength": 1 },
+          "inference_reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source_type": {
+            "enum": ["html_text", "html_attribute", "html_table_cell", "pdf_text", "pdf_table_cell", "hwp_text", "hwpx_text", "ocr_text"]
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          { "properties": { "raw_text": { "type": "string", "minLength": 1 } } },
+          { "properties": { "normalized_text": { "type": "string", "minLength": 1 } } }
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "const": "html_attribute" } } },
+      "then": {
+        "properties": {
+          "locator": {
+            "type": "object",
+            "required": ["attribute_name"],
+            "properties": { "attribute_name": { "type": "string", "minLength": 1 } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "source_type": { "enum": ["attachment_metadata", "url_metadata"] } } },
+      "then": {
+        "anyOf": [
+          { "required": ["raw_text"], "properties": { "raw_text": { "type": "string", "minLength": 1 } } },
+          { "required": ["normalized_text"], "properties": { "normalized_text": { "type": "string", "minLength": 1 } } },
+          { "required": ["metadata"], "properties": { "metadata": { "type": "object", "minProperties": 1 } } },
+          { "required": ["attachment_url"], "properties": { "attachment_url": { "type": "string", "minLength": 1, "pattern": "^https?://" } } }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,475 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation-platform.local/schemas/engine/phase-4-canonical-scholarship.schema.json",
+  "title": "Engine Phase 4 canonical scholarship extraction candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "classification",
+    "source_notice_identity",
+    "source_documents",
+    "program_identity_candidate",
+    "recruitment_cycle_identity_candidate",
+    "opportunity_revision",
+    "material_changes",
+    "fields",
+    "evidence",
+    "extraction_metadata",
+    "validation",
+    "review"
+  ],
+  "properties": {
+    "schema_version": { "const": "engine-phase-4-canonical-scholarship/v1" },
+    "record_type": { "const": "scholarship_extraction_candidate" },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_kind", "is_recruitment", "confidence", "evidence_refs"],
+      "properties": {
+        "document_kind": {
+          "enum": ["recruitment_notice", "result_announcement", "information_session", "general_guidance", "correction_notice", "unknown"]
+        },
+        "is_recruitment": { "type": "boolean" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_refs": { "$ref": "#/$defs/nonEmptyEvidenceRefs" }
+      }
+    },
+    "source_notice_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_key_snapshot", "notice_id", "identity_kind", "identity_key", "canonical_url"],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_key_snapshot": { "type": "string", "minLength": 1 },
+        "notice_id": { "type": "string", "minLength": 1 },
+        "identity_kind": { "enum": ["external_article_id", "canonical_detail_url"] },
+        "identity_key": { "type": "string", "minLength": 1 },
+        "canonical_url": { "type": "string", "pattern": "^https?://" }
+      }
+    },
+    "source_documents": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sourceDocument" },
+      "uniqueItems": true
+    },
+    "program_identity_candidate": { "$ref": "#/$defs/programCandidate" },
+    "recruitment_cycle_identity_candidate": { "$ref": "#/$defs/cycleCandidate" },
+    "opportunity_revision": { "$ref": "#/$defs/opportunityRevision" },
+    "material_changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/materialChange" }
+    },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title", "provider", "scholarship_program_name", "recruitment_cycle_label",
+        "application_start", "application_deadline", "amount", "eligibility",
+        "required_documents", "application_method", "application_url", "source_language", "status", "notes"
+      ],
+      "properties": {
+        "title": { "$ref": "#/$defs/scalarField" },
+        "provider": { "$ref": "#/$defs/scalarField" },
+        "host_institution": { "$ref": "#/$defs/listField" },
+        "scholarship_program_name": { "$ref": "#/$defs/scalarField" },
+        "recruitment_cycle_label": { "$ref": "#/$defs/scalarField" },
+        "academic_term": { "$ref": "#/$defs/scalarField" },
+        "application_start": { "$ref": "#/$defs/dateField" },
+        "application_deadline": { "$ref": "#/$defs/dateField" },
+        "recommendation_deadline": { "$ref": "#/$defs/dateField" },
+        "result_announcement_date": { "$ref": "#/$defs/dateField" },
+        "amount": { "$ref": "#/$defs/amountField" },
+        "benefit_type": { "$ref": "#/$defs/listField" },
+        "payment_frequency": { "$ref": "#/$defs/scalarField" },
+        "number_of_recipients": { "$ref": "#/$defs/scalarField" },
+        "eligible_universities": { "$ref": "#/$defs/listField" },
+        "eligible_departments_majors": { "$ref": "#/$defs/listField" },
+        "academic_level": { "$ref": "#/$defs/listField" },
+        "grade_year": { "$ref": "#/$defs/listField" },
+        "enrollment_status": { "$ref": "#/$defs/listField" },
+        "nationality": { "$ref": "#/$defs/listField" },
+        "residency": { "$ref": "#/$defs/listField" },
+        "income_criteria": { "$ref": "#/$defs/scalarField" },
+        "gpa_criteria": { "$ref": "#/$defs/scalarField" },
+        "age_criteria": { "$ref": "#/$defs/scalarField" },
+        "gender_criteria": { "$ref": "#/$defs/listField" },
+        "special_eligibility": { "$ref": "#/$defs/listField" },
+        "eligibility": { "$ref": "#/$defs/eligibilityField" },
+        "required_documents": { "$ref": "#/$defs/listField" },
+        "application_method": { "$ref": "#/$defs/listField" },
+        "application_url": { "$ref": "#/$defs/scalarField" },
+        "contact": { "$ref": "#/$defs/listField" },
+        "source_language": { "$ref": "#/$defs/scalarField" },
+        "status": { "$ref": "#/$defs/scalarField" },
+        "notes": { "$ref": "#/$defs/listField" }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "https://scholarship-curation-platform.local/schemas/engine/phase-4-evidence.schema.json" }
+    },
+    "extraction_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extractor_name", "extractor_version", "parser_contract_version", "evaluation_fixture_version", "extracted_at"],
+      "properties": {
+        "extractor_name": { "type": "string", "minLength": 1 },
+        "extractor_version": { "type": "string", "minLength": 1 },
+        "model_provider": { "type": ["string", "null"] },
+        "model_name": { "type": ["string", "null"] },
+        "prompt_version": { "type": ["string", "null"] },
+        "parser_contract_version": { "type": "string", "minLength": 1 },
+        "evaluation_fixture_version": { "type": "string", "minLength": 1 },
+        "extracted_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "errors", "warnings"],
+      "properties": {
+        "status": { "enum": ["valid", "invalid", "review_required"] },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "reason_codes", "automatic_publish_allowed", "notification_allowed"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "reason_codes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "automatic_publish_allowed": { "const": false },
+        "notification_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "valueStatus": { "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] },
+    "evidenceRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^ev_[a-z0-9_:-]+$" },
+      "uniqueItems": true
+    },
+    "nonEmptyEvidenceRefs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^ev_[a-z0-9_:-]+$" },
+      "uniqueItems": true
+    },
+    "fieldBase": {
+      "type": "object",
+      "required": ["raw_value", "value_status", "confidence", "evidence_refs", "validation_errors"],
+      "properties": {
+        "raw_value": { "type": ["string", "null"] },
+        "value_status": { "$ref": "#/$defs/valueStatus" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "validation_errors": { "type": "array", "items": { "type": "string" } },
+        "inference": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["is_inferred", "reason"],
+          "properties": {
+            "is_inferred": { "type": "boolean" },
+            "reason": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "scalarField": {
+      "allOf": [
+        { "$ref": "#/$defs/fieldBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_value"],
+          "properties": {
+            "raw_value": true,
+            "value_status": true,
+            "confidence": true,
+            "evidence_refs": true,
+            "validation_errors": true,
+            "inference": true,
+            "normalized_value": { "type": ["string", "number", "boolean", "null"] }
+          }
+        }
+      ]
+    },
+    "listField": {
+      "allOf": [
+        { "$ref": "#/$defs/fieldBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_value"],
+          "properties": {
+            "raw_value": true,
+            "value_status": true,
+            "confidence": true,
+            "evidence_refs": true,
+            "validation_errors": true,
+            "inference": true,
+            "normalized_value": { "type": ["array", "null"], "items": { "type": "string" }, "uniqueItems": true }
+          }
+        }
+      ]
+    },
+    "dateValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "timezone", "inferred"],
+      "properties": {
+        "kind": { "enum": ["exact_date", "exact_datetime", "date_range", "open_ended", "recurring", "relative_text_only"] },
+        "date": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "datetime": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}T" },
+        "start": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}" },
+        "end": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}" },
+        "recurrence": { "type": ["string", "null"] },
+        "relative_text": { "type": ["string", "null"] },
+        "timezone": { "type": ["string", "null"] },
+        "inferred": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "exact_date" } } },
+          "then": { "required": ["date"], "properties": { "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" } } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "exact_datetime" } } },
+          "then": { "required": ["datetime"], "properties": { "datetime": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T" } } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "date_range" } } },
+          "then": {
+            "required": ["start", "end"],
+            "properties": {
+              "start": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}" },
+              "end": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "open_ended" } } },
+          "then": {
+            "anyOf": [
+              { "required": ["start"], "properties": { "start": { "type": "string", "minLength": 1 } } },
+              { "required": ["relative_text"], "properties": { "relative_text": { "type": "string", "minLength": 1 } } }
+            ]
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "recurring" } } },
+          "then": { "required": ["recurrence"], "properties": { "recurrence": { "type": "string", "minLength": 1 } } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "relative_text_only" } } },
+          "then": { "required": ["relative_text"], "properties": { "relative_text": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "dateField": {
+      "allOf": [
+        { "$ref": "#/$defs/fieldBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_value"],
+          "properties": {
+            "raw_value": true,
+            "value_status": true,
+            "confidence": true,
+            "evidence_refs": true,
+            "validation_errors": true,
+            "inference": true,
+            "normalized_value": { "oneOf": [{ "$ref": "#/$defs/dateValue" }, { "type": "null" }] }
+          }
+        }
+      ]
+    },
+    "amountValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "currency", "period"],
+      "properties": {
+        "kind": { "enum": ["exact", "range", "tuition_waiver", "full_tuition", "partial_tuition", "non_cash"] },
+        "currency": { "type": ["string", "null"] },
+        "amount": { "type": ["number", "null"], "minimum": 0 },
+        "minimum": { "type": ["number", "null"], "minimum": 0 },
+        "maximum": { "type": ["number", "null"], "minimum": 0 },
+        "period": { "enum": ["one_time", "month", "semester", "year", "program", "not_applicable"] },
+        "description": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "exact" } } },
+          "then": {
+            "required": ["amount", "currency"],
+            "properties": {
+              "amount": { "type": "number", "minimum": 0 },
+              "currency": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "range" } } },
+          "then": {
+            "required": ["minimum", "maximum", "currency"],
+            "properties": {
+              "minimum": { "type": "number", "minimum": 0 },
+              "maximum": { "type": "number", "minimum": 0 },
+              "currency": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "enum": ["tuition_waiver", "partial_tuition", "non_cash"] } } },
+          "then": { "required": ["description"], "properties": { "description": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "amountField": {
+      "allOf": [
+        { "$ref": "#/$defs/fieldBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_value"],
+          "properties": {
+            "raw_value": true,
+            "value_status": true,
+            "confidence": true,
+            "evidence_refs": true,
+            "validation_errors": true,
+            "inference": true,
+            "normalized_value": { "oneOf": [{ "$ref": "#/$defs/amountValue" }, { "type": "null" }] }
+          }
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "operator", "values", "inclusion", "scope", "raw_expression"],
+      "properties": {
+        "dimension": { "type": "string", "minLength": 1 },
+        "operator": { "enum": ["equals", "one_of", "at_least", "at_most", "between", "contains", "other"] },
+        "values": { "type": "array", "minItems": 1, "items": { "type": ["string", "number", "boolean"] } },
+        "inclusion": { "enum": ["include", "exclude"] },
+        "scope": { "type": "string", "minLength": 1 },
+        "raw_expression": { "type": "string", "minLength": 1 }
+      }
+    },
+    "conditionGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator", "conditions"],
+      "properties": {
+        "operator": { "enum": ["and", "or"] },
+        "conditions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condition" } }
+      }
+    },
+    "eligibilityField": {
+      "allOf": [
+        { "$ref": "#/$defs/fieldBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["normalized_value"],
+          "properties": {
+            "raw_value": true,
+            "value_status": true,
+            "confidence": true,
+            "evidence_refs": true,
+            "validation_errors": true,
+            "inference": true,
+            "normalized_value": { "oneOf": [{ "$ref": "#/$defs/conditionGroup" }, { "type": "null" }] }
+          }
+        }
+      ]
+    },
+    "sourceDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_id", "document_revision_id", "document_hash", "media_type", "parser_version"],
+      "properties": {
+        "document_id": { "type": "string", "minLength": 1 },
+        "document_revision_id": { "type": "string", "minLength": 1 },
+        "document_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "attachment_url": { "type": ["string", "null"], "pattern": "^https?://" },
+        "media_type": { "enum": ["html", "pdf", "hwp", "hwpx", "image", "other"] },
+        "parser_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "programCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_key", "resolution_status", "provider_normalized", "name_normalized", "evidence_refs"],
+      "properties": {
+        "candidate_id": { "type": "string", "minLength": 1 },
+        "candidate_key": { "type": "string", "minLength": 1 },
+        "resolution_status": { "enum": ["proposed", "review_required", "unresolved"] },
+        "provider_normalized": { "type": ["string", "null"] },
+        "name_normalized": { "type": ["string", "null"] },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resolution_status": { "const": "proposed" } } },
+          "then": { "properties": { "evidence_refs": { "$ref": "#/$defs/nonEmptyEvidenceRefs" } } }
+        }
+      ]
+    },
+    "cycleCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "candidate_key", "program_candidate_id", "resolution_status", "cycle_label", "evidence_refs"],
+      "properties": {
+        "candidate_id": { "type": "string", "minLength": 1 },
+        "candidate_key": { "type": "string", "minLength": 1 },
+        "program_candidate_id": { "type": "string", "minLength": 1 },
+        "resolution_status": { "enum": ["proposed", "review_required", "unresolved"] },
+        "cycle_label": { "type": ["string", "null"] },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resolution_status": { "const": "proposed" } } },
+          "then": { "properties": { "evidence_refs": { "$ref": "#/$defs/nonEmptyEvidenceRefs" } } }
+        }
+      ]
+    },
+    "opportunityRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision_id", "cycle_candidate_id", "source_notice_id", "source_document_revision_ids", "content_fingerprint", "revision_ordinal"],
+      "properties": {
+        "revision_id": { "type": "string", "minLength": 1 },
+        "cycle_candidate_id": { "type": "string", "minLength": 1 },
+        "source_notice_id": { "type": "string", "minLength": 1 },
+        "source_document_revision_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "content_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "revision_ordinal": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "materialChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "from_revision_id", "to_revision_id", "change_type", "materiality", "notification_kind", "evidence_refs", "review_required"],
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1 },
+        "from_revision_id": { "type": ["string", "null"] },
+        "to_revision_id": { "type": "string", "minLength": 1 },
+        "change_type": { "enum": ["title_edit", "document_replacement", "deadline_extension", "eligibility_change", "benefit_change", "additional_recruitment", "new_cycle", "correction", "other"] },
+        "materiality": { "enum": ["non_material", "material", "review_required"] },
+        "notification_kind": { "enum": ["none", "new_opportunity", "changed_opportunity", "review_required"] },
+        "evidence_refs": { "$ref": "#/$defs/nonEmptyEvidenceRefs" },
+        "review_required": { "type": "boolean" }
+      }
+    }
+  }
+}

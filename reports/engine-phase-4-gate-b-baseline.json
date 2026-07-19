@@ -1,0 +1,294 @@
+{
+  "official_phase": "ENGINE_PHASE_4",
+  "official_gate": "GATE_B",
+  "official_task": "DETERMINISTIC_EXTRACTION_BASELINE",
+  "evaluator_remediation": {
+    "task": "Correct Partial Metrics, Empty-Denominator Semantics, and Evaluation Slices",
+    "result": "PASS",
+    "partial_metric": "not_evaluated_without_partial_overlap_gold",
+    "empty_denominator": "not_evaluated",
+    "required_slice_groups": 6,
+    "deterministic_extractor_behavior_modified": false
+  },
+  "base_gate_a_sha": "700b9a3bfcff707509651189784dd2e9040ab317",
+  "current_main_sha": "a9918d377e4d958f9f8b86214f38768529b6a984",
+  "implementation_sha": "3ecf8e4e3c1a84c379ca4d92ea3778bc649f1fb5",
+  "evaluator_remediation_base_sha": "169f678c02ded07b57598d51a958b376fc2efeb6",
+  "branch": "feat/engine-phase-4-deterministic-extraction-baseline",
+  "extractor_contract_version": "engine-phase-4-deterministic-baseline/v1",
+  "canonical_schema_version": "engine-phase-4-canonical-scholarship/v1",
+  "input_contracts": [
+    "normalized SourceNotice / notice revision",
+    "engine-phase-3-document-result/v1"
+  ],
+  "output_record_type": "scholarship_extraction_candidate",
+  "supported_field_matrix": [
+    "document classification",
+    "title",
+    "explicit provider",
+    "explicit scholarship program name",
+    "explicit recruitment cycle label",
+    "application start and deadline",
+    "recommendation deadline",
+    "result announcement date",
+    "exact/range/tuition/non-cash amount",
+    "benefit type and payment frequency",
+    "explicit application URL",
+    "email and phone contact",
+    "required document allowlist",
+    "application method allowlist",
+    "simple explicit eligibility",
+    "source language",
+    "source-local program and cycle candidates"
+  ],
+  "unsupported_field_matrix": [
+    "relative or yearless date normalization",
+    "nested eligibility logic",
+    "semantic interpretation of tiered benefit tables",
+    "cross-source identity resolution",
+    "repost auto-merge",
+    "material change comparison without before/after revisions",
+    "automatic publication",
+    "notification"
+  ],
+  "fixture_summary": {
+    "version": "engine-phase-4-deterministic-fixtures/v1",
+    "case_count": 15,
+    "gate_a_scenarios_covered": 15,
+    "synthetic": true,
+    "sensitive_data": false,
+    "canonical_valid_count": 15
+  },
+  "evaluation_summary": {
+    "result": "PASS",
+    "document_classification_accuracy": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 15,
+      "denominator": 15,
+      "sample_count": 15
+    },
+    "field_presence_precision": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 16,
+      "denominator": 16,
+      "sample_count": 16
+    },
+    "field_presence_recall": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 16,
+      "denominator": 16,
+      "sample_count": 16
+    },
+    "normalized_exact_match": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 2,
+      "denominator": 2,
+      "sample_count": 2
+    },
+    "normalized_partial_match": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No predeclared partial-overlap gold annotations exist in Gate B fixtures."
+    },
+    "evidence_attribution_accuracy": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 8,
+      "denominator": 8,
+      "sample_count": 8
+    },
+    "unsupported_value_rate": {
+      "status": "evaluated",
+      "value": 0,
+      "numerator": 0,
+      "denominator": 225,
+      "sample_count": 225
+    },
+    "review_required_recall": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 8,
+      "denominator": 8,
+      "sample_count": 8
+    },
+    "schema_valid_record_rate": 1,
+    "evidence_reference_integrity": 1,
+    "identity_candidate_pair_precision": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "Gate B emits source-local candidates and has no pair resolver."
+    },
+    "identity_candidate_pair_recall": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "Gate B emits source-local candidates and has no pair resolver."
+    },
+    "material_change_classification_accuracy": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "Gate B receives no before/after revision pair and emits no material changes."
+    }
+  },
+  "evaluation_slices": {
+    "by_field": {
+      "status": "evaluated",
+      "sample_count": 25,
+      "keys": [
+        "title",
+        "application_deadline",
+        "amount",
+        "required_documents",
+        "eligibility",
+        "notes",
+        "recommendation_deadline",
+        "result_announcement_date",
+        "academic_term",
+        "recruitment_cycle_label",
+        "status",
+        "benefit_type"
+      ]
+    },
+    "by_source_type": {
+      "status": "evaluated",
+      "sample_count": 8,
+      "evaluated": ["html_text", "pdf_text", "pdf_table_cell", "hwpx_text"],
+      "not_evaluated": ["hwp_text", "ocr_text"]
+    },
+    "by_document_kind": {
+      "status": "evaluated",
+      "sample_count": 15,
+      "evaluated": ["recruitment_notice", "result_announcement", "unknown"],
+      "not_evaluated": ["information_session", "general_guidance", "correction_notice"]
+    },
+    "by_value_status": {
+      "status": "evaluated",
+      "sample_count": 25,
+      "evaluated": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"]
+    },
+    "by_extractor_kind": {
+      "status": "evaluated",
+      "sample_count": 15,
+      "deterministic_sample_count": 15,
+      "model": {
+        "status": "not_evaluated",
+        "sample_count": 0,
+        "reason": "External model extraction is out of scope for Gate B."
+      }
+    },
+    "by_fixture_version": {
+      "status": "evaluated",
+      "sample_count": 15,
+      "key": "engine-phase-4-deterministic-fixtures/v1"
+    },
+    "empty_slice_policy": "not_evaluated with sample_count=0 and a concrete reason; never a synthetic 100 percent"
+  },
+  "determinism_summary": {
+    "rerun_match": true,
+    "stable_evidence_ids": true,
+    "stable_candidate_keys": true,
+    "stable_content_fingerprint": true,
+    "fixture_order_independent": true,
+    "clock_injected": true
+  },
+  "live_dry_run_summary": {
+    "result": "PASS",
+    "mode": "bounded_public_http_read_only",
+    "source_keys": [
+      "korea_002",
+      "yonsei_001"
+    ],
+    "source_count": 2,
+    "notice_limit_per_source": 1,
+    "observed_notice_count": 2,
+    "document_parsing_enabled": true,
+    "canonical_record_count": 2,
+    "schema_valid_count": 2,
+    "evidence_valid_count": 2,
+    "review_required_count": 2,
+    "unsupported_present_value_count": 0,
+    "raw_live_evidence_committed": false,
+    "evidence_scope": "historical Gate B bounded live proof from implementation validation; evaluator remediation did not rerun live crawling"
+  },
+  "regression_summary": {
+    "gate_a_contract_tests": "51/51 PASS",
+    "gate_a_validator": "36/36 PASS",
+    "gate_b_tests": "91/91 PASS",
+    "gate_b_evaluator": "PASS",
+    "gate_b_validator": "75/75 PASS",
+    "phase_1": "15/15 PASS",
+    "phase_2": "32/32 PASS",
+    "phase_2_validator": "34/34 PASS",
+    "phase_2_gate_a": "40/40 PASS",
+    "phase_2_gate_a_validator": "59/59 PASS",
+    "phase_2_gate_b": "15/15 PASS",
+    "phase_2_gate_b_validator": "42/42 PASS",
+    "phase_3": "86/86 PASS",
+    "phase_3_validator": "69/69 PASS",
+    "post_phase_l": "17/17 PASS",
+    "typescript": "PASS",
+    "changed_file_eslint": "PASS",
+    "full_repository_eslint": {
+      "status": "BASELINE_ONLY",
+      "errors": 4,
+      "warnings": 2,
+      "new_errors": 0
+    },
+    "production_build": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "safety": {
+    "database_accessed": false,
+    "production_accessed": false,
+    "production_credentials_requested": false,
+    "external_llm_called": false,
+    "migration_created_or_executed": false,
+    "canary_write_performed": false,
+    "production_scheduler_added": false,
+    "queue_or_worker_added": false,
+    "full_613_source_run": false,
+    "parser_cache_contract_modified": false,
+    "crawler_checkpoint_contract_modified": false,
+    "gate_a_contract_semantics_modified": false,
+    "deterministic_extractor_behavior_modified": false,
+    "automatic_publish_performed": false,
+    "notification_performed": false
+  },
+  "deferred_scope": {
+    "phase_4c_candidates": [
+      "semantic classification conflicts",
+      "nested eligibility",
+      "tiered benefit tables",
+      "unlabeled date roles",
+      "unstructured provider/program separation"
+    ],
+    "phase_5": [
+      "cross-source identity resolver",
+      "repost merge",
+      "material change comparator"
+    ]
+  },
+  "combined_pr_scope": {
+    "base": "main",
+    "head": "feat/engine-phase-4-deterministic-extraction-baseline",
+    "gate_a_commits_included": 3,
+    "gate_b_commits_expected": 3,
+    "pr_created": false,
+    "recommended_title": "Engine Phase 4 Gates A–B: contracts and deterministic extraction baseline"
+  }
+}

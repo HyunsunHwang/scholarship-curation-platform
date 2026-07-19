@@ -1,0 +1,107 @@
+{
+  "official_phase": "ENGINE_PHASE_4_FOUNDATION",
+  "official_gate": "GATE_A",
+  "official_task": "Identity, Schema, Evidence, and Evaluation Contract",
+  "result": "PASS",
+  "base_sha": "a9918d377e4d958f9f8b86214f38768529b6a984",
+  "implementation_sha": "21d8e60dd6268649a79eecfc869a1bdcf69c515a",
+  "implementation_sha_scope": "original Gate A contract implementation subject; final remote branch HEAD is reported outside this self-referential evidence file",
+  "files_changed": [
+    "docs/engine/adr/phase-4-identity-schema-evidence-evaluation.md",
+    "docs/engine/engine-phase-4-evaluation-contract.md",
+    "fixtures/engine-phase-4-contract/evaluation-cases.json",
+    "fixtures/engine-phase-4-contract/valid-canonical-record.json",
+    "lib/engine-phase-4/contracts.mjs",
+    "package-lock.json",
+    "package.json",
+    "reports/engine-phase-4-foundation-contracts.json",
+    "schemas/engine/phase-4-canonical-scholarship.schema.json",
+    "schemas/engine/phase-4-evaluation-case.schema.json",
+    "schemas/engine/phase-4-evidence.schema.json",
+    "scripts/test-engine-phase-4-contracts.mjs",
+    "scripts/validate-engine-phase-4-contracts.mjs"
+  ],
+  "remediation_files_changed": [
+    "docs/engine/adr/phase-4-identity-schema-evidence-evaluation.md",
+    "docs/engine/engine-phase-4-evaluation-contract.md",
+    "lib/engine-phase-4/contracts.mjs",
+    "reports/engine-phase-4-foundation-contracts.json",
+    "schemas/engine/phase-4-canonical-scholarship.schema.json",
+    "schemas/engine/phase-4-evidence.schema.json",
+    "scripts/test-engine-phase-4-contracts.mjs",
+    "scripts/validate-engine-phase-4-contracts.mjs"
+  ],
+  "identity_contract": {
+    "levels": ["SourceNotice", "SourceDocument", "ScholarshipProgram", "RecruitmentCycle", "OpportunityRevision", "MaterialChangeEvent"],
+    "decision_matrix_case_count": 10,
+    "cross_source_auto_merge": false
+  },
+  "schema_contract": {
+    "source_of_truth": "schemas/engine/phase-4-canonical-scholarship.schema.json",
+    "schema_version": "engine-phase-4-canonical-scholarship/v1",
+    "value_statuses": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"]
+  },
+  "evidence_contract": {
+    "source_type_count": 11,
+    "document_hash_required_for_document_evidence": true,
+    "document_identity_and_locator_required": true,
+    "ocr_page_and_bounding_box_required": true,
+    "table_coordinates_required": true,
+    "manual_annotation_provenance_required": true,
+    "text_payload_required_for_text_evidence": true,
+    "unsupported_inference_rejected": true,
+    "evidence_linked_decisions_required": true
+  },
+  "evaluation_contract": {
+    "fixture_version": "engine-phase-4-contract-fixtures/v1",
+    "case_count": 15,
+    "metric_count": 11,
+    "production_thresholds_finalized": false
+  },
+  "fixture_summary": { "result": "PASS", "passed": 51, "total": 51, "original_tests_retained": 15, "remediation_tests_added": 36 },
+  "validator_summary": { "result": "PASS", "passed": 36, "total": 36 },
+  "regression_summary": {
+    "result": "PASS",
+    "phase_1": "15/15",
+    "phase_2": "32/32",
+    "phase_2_validator": "34/34",
+    "phase_2_gate_a": "40/40",
+    "phase_2_gate_b": "15/15",
+    "phase_2_gate_b_validator": "42/42",
+    "phase_3": "86/86",
+    "phase_3_validator": "69/69",
+    "post_phase_l": "17/17",
+    "typescript": "PASS",
+    "changed_file_eslint": "PASS",
+    "production_build": "PASS",
+    "full_eslint": {
+      "result": "INHERITED_MAIN_BASELINE",
+      "errors": 4,
+      "warnings": 2,
+      "phase_4_changed_file_errors": 0
+    },
+    "git_diff_check": "PASS"
+  },
+  "safety": {
+    "database_accessed": false,
+    "production_accessed": false,
+    "production_credentials_requested": false,
+    "external_llm_called": false,
+    "migration_created_or_executed": false,
+    "canary_write_performed": false,
+    "production_scheduler_added": false,
+    "queue_or_worker_added": false,
+    "full_613_source_run": false,
+    "parser_cache_modified": false,
+    "crawler_checkpoint_contract_modified": false
+  },
+  "deferred_scope": [
+    "actual extraction",
+    "LLM/provider integration",
+    "identity resolution implementation",
+    "DB physical schema/migration",
+    "review UI",
+    "notification integration",
+    "production thresholds"
+  ]
+}
