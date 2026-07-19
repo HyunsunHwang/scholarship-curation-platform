@@ -1,0 +1,362 @@
+{
+  "schema_version": "engine-phase-4-canonical-scholarship/v1",
+  "record_type": "scholarship_extraction_candidate",
+  "classification": {
+    "document_kind": "recruitment_notice",
+    "is_recruitment": true,
+    "confidence": 1,
+    "evidence_refs": ["ev_title"]
+  },
+  "source_notice_identity": {
+    "source_id": "synthetic_001",
+    "source_key_snapshot": "synthetic_001",
+    "notice_id": "notice_synthetic_001",
+    "identity_kind": "external_article_id",
+    "identity_key": "external:articleNo:100",
+    "canonical_url": "https://example.invalid/notices/100"
+  },
+  "source_documents": [
+    {
+      "document_id": "document_application_guide",
+      "document_revision_id": "document_application_guide_revision_1",
+      "document_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "attachment_url": "https://example.invalid/files/guide.pdf",
+      "media_type": "pdf",
+      "parser_version": "engine-phase-3-document-result/v1"
+    },
+    {
+      "document_id": "document_eligibility_form",
+      "document_revision_id": "document_eligibility_form_revision_1",
+      "document_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "attachment_url": "https://example.invalid/files/eligibility.hwpx",
+      "media_type": "hwpx",
+      "parser_version": "engine-phase-3-document-result/v1"
+    }
+  ],
+  "program_identity_candidate": {
+    "candidate_id": "program_candidate_synthetic_foundation",
+    "candidate_key": "synthetic-foundation|future-leaders",
+    "resolution_status": "review_required",
+    "provider_normalized": "Synthetic Scholarship Foundation",
+    "name_normalized": "Future Leaders Scholarship",
+    "evidence_refs": ["ev_title"]
+  },
+  "recruitment_cycle_identity_candidate": {
+    "candidate_id": "cycle_candidate_synthetic_2026_fall",
+    "candidate_key": "program_candidate_synthetic_foundation|2026-fall",
+    "program_candidate_id": "program_candidate_synthetic_foundation",
+    "resolution_status": "review_required",
+    "cycle_label": "2026 fall",
+    "evidence_refs": ["ev_title", "ev_deadline"]
+  },
+  "opportunity_revision": {
+    "revision_id": "opportunity_revision_synthetic_1",
+    "cycle_candidate_id": "cycle_candidate_synthetic_2026_fall",
+    "source_notice_id": "notice_synthetic_001",
+    "source_document_revision_ids": [
+      "document_application_guide_revision_1",
+      "document_eligibility_form_revision_1"
+    ],
+    "content_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "revision_ordinal": 1
+  },
+  "material_changes": [],
+  "fields": {
+    "title": {
+      "raw_value": "2026 Future Leaders Scholarship Fall Recruitment",
+      "normalized_value": "2026 Future Leaders Scholarship Fall Recruitment",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "provider": {
+      "raw_value": "Synthetic Scholarship Foundation",
+      "normalized_value": "Synthetic Scholarship Foundation",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "scholarship_program_name": {
+      "raw_value": "Future Leaders Scholarship",
+      "normalized_value": "Future Leaders Scholarship",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "recruitment_cycle_label": {
+      "raw_value": "2026 fall recruitment",
+      "normalized_value": "2026 fall",
+      "value_status": "present",
+      "confidence": 0.98,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "academic_term": {
+      "raw_value": "2026 fall",
+      "normalized_value": "2026-fall",
+      "value_status": "present",
+      "confidence": 0.98,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "application_start": {
+      "raw_value": "2026-08-01",
+      "normalized_value": {
+        "kind": "exact_date",
+        "date": "2026-08-01",
+        "timezone": "Asia/Seoul",
+        "inferred": false
+      },
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_deadline"],
+      "validation_errors": []
+    },
+    "application_deadline": {
+      "raw_value": "2026-08-31 17:00 KST",
+      "normalized_value": {
+        "kind": "exact_datetime",
+        "datetime": "2026-08-31T17:00:00+09:00",
+        "timezone": "Asia/Seoul",
+        "inferred": false
+      },
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_deadline"],
+      "validation_errors": []
+    },
+    "amount": {
+      "raw_value": "KRW 2,000,000 per semester",
+      "normalized_value": {
+        "kind": "exact",
+        "currency": "KRW",
+        "amount": 2000000,
+        "period": "semester",
+        "description": null
+      },
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_amount"],
+      "validation_errors": []
+    },
+    "eligibility": {
+      "raw_value": "Enrolled undergraduate AND GPA at least 3.0",
+      "normalized_value": {
+        "operator": "and",
+        "conditions": [
+          {
+            "dimension": "enrollment_status",
+            "operator": "equals",
+            "values": ["enrolled_undergraduate"],
+            "inclusion": "include",
+            "scope": "applicant",
+            "raw_expression": "Enrolled undergraduate"
+          },
+          {
+            "dimension": "gpa",
+            "operator": "at_least",
+            "values": [3],
+            "inclusion": "include",
+            "scope": "applicant",
+            "raw_expression": "GPA at least 3.0"
+          }
+        ]
+      },
+      "value_status": "present",
+      "confidence": 0.99,
+      "evidence_refs": ["ev_eligibility"],
+      "validation_errors": []
+    },
+    "required_documents": {
+      "raw_value": "Application form, transcript",
+      "normalized_value": ["application_form", "transcript"],
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_eligibility"],
+      "validation_errors": []
+    },
+    "application_method": {
+      "raw_value": "Apply online",
+      "normalized_value": ["online"],
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_url"],
+      "validation_errors": []
+    },
+    "application_url": {
+      "raw_value": "https://example.invalid/apply",
+      "normalized_value": "https://example.invalid/apply",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_url"],
+      "validation_errors": []
+    },
+    "source_language": {
+      "raw_value": "English",
+      "normalized_value": "en",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_title"],
+      "validation_errors": []
+    },
+    "status": {
+      "raw_value": "Open",
+      "normalized_value": "open",
+      "value_status": "present",
+      "confidence": 1,
+      "evidence_refs": ["ev_deadline"],
+      "validation_errors": []
+    },
+    "notes": {
+      "raw_value": null,
+      "normalized_value": null,
+      "value_status": "not_found",
+      "confidence": 1,
+      "evidence_refs": [],
+      "validation_errors": []
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "ev_title",
+      "source_type": "html_text",
+      "source_notice_id": "notice_synthetic_001",
+      "document_id": null,
+      "document_revision_id": null,
+      "document_hash": null,
+      "attachment_url": null,
+      "locator": {
+        "page_number": null,
+        "section": "heading",
+        "html_selector": "h1",
+        "attribute_name": null,
+        "text_span": { "start": 0, "end": 48 },
+        "table_coordinates": null,
+        "bounding_box": null
+      },
+      "raw_text": "2026 Future Leaders Scholarship Fall Recruitment",
+      "normalized_text": "2026 Future Leaders Scholarship Fall Recruitment",
+      "extractor": { "name": "synthetic-fixture", "version": "1", "kind": "deterministic", "model_provider": null, "model_name": null, "prompt_version": null },
+      "parser_version": "engine-phase-1-html/v1",
+      "inference_reason": null,
+      "manual_annotation_id": null,
+      "created_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "evidence_id": "ev_deadline",
+      "source_type": "pdf_text",
+      "source_notice_id": "notice_synthetic_001",
+      "document_id": "document_application_guide",
+      "document_revision_id": "document_application_guide_revision_1",
+      "document_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "attachment_url": "https://example.invalid/files/guide.pdf",
+      "locator": {
+        "page_number": 1,
+        "section": "Application schedule",
+        "html_selector": null,
+        "attribute_name": null,
+        "text_span": { "start": 12, "end": 68 },
+        "table_coordinates": null,
+        "bounding_box": null
+      },
+      "raw_text": "Applications: 2026-08-01 through 2026-08-31 17:00 KST",
+      "normalized_text": "Applications 2026-08-01 to 2026-08-31 17:00 Asia/Seoul",
+      "extractor": { "name": "phase-3-pdf-parser", "version": "1", "kind": "deterministic", "model_provider": null, "model_name": null, "prompt_version": null },
+      "parser_version": "engine-phase-3-document-result/v1",
+      "inference_reason": null,
+      "manual_annotation_id": null,
+      "created_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "evidence_id": "ev_amount",
+      "source_type": "pdf_table_cell",
+      "source_notice_id": "notice_synthetic_001",
+      "document_id": "document_application_guide",
+      "document_revision_id": "document_application_guide_revision_1",
+      "document_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "attachment_url": "https://example.invalid/files/guide.pdf",
+      "locator": {
+        "page_number": 2,
+        "section": "Benefits",
+        "html_selector": null,
+        "attribute_name": null,
+        "text_span": { "start": 0, "end": 30 },
+        "table_coordinates": { "row": 1, "column": 1, "row_span": 1, "column_span": 1 },
+        "bounding_box": null
+      },
+      "raw_text": "KRW 2,000,000 per semester",
+      "normalized_text": "KRW 2000000 per semester",
+      "extractor": { "name": "phase-3-pdf-parser", "version": "1", "kind": "deterministic", "model_provider": null, "model_name": null, "prompt_version": null },
+      "parser_version": "engine-phase-3-document-result/v1",
+      "inference_reason": null,
+      "manual_annotation_id": null,
+      "created_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "evidence_id": "ev_eligibility",
+      "source_type": "hwpx_text",
+      "source_notice_id": "notice_synthetic_001",
+      "document_id": "document_eligibility_form",
+      "document_revision_id": "document_eligibility_form_revision_1",
+      "document_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "attachment_url": "https://example.invalid/files/eligibility.hwpx",
+      "locator": {
+        "page_number": null,
+        "section": "Eligibility and documents",
+        "html_selector": null,
+        "attribute_name": null,
+        "text_span": { "start": 0, "end": 96 },
+        "table_coordinates": null,
+        "bounding_box": null
+      },
+      "raw_text": "Enrolled undergraduate AND GPA at least 3.0. Submit application form and transcript.",
+      "normalized_text": "Enrolled undergraduate and GPA >= 3.0; application form; transcript",
+      "extractor": { "name": "phase-3-hwpx-parser", "version": "1", "kind": "deterministic", "model_provider": null, "model_name": null, "prompt_version": null },
+      "parser_version": "engine-phase-3-document-result/v1",
+      "inference_reason": null,
+      "manual_annotation_id": null,
+      "created_at": "2026-07-19T00:00:00Z"
+    },
+    {
+      "evidence_id": "ev_url",
+      "source_type": "url_metadata",
+      "source_notice_id": "notice_synthetic_001",
+      "document_id": null,
+      "document_revision_id": null,
+      "document_hash": null,
+      "attachment_url": null,
+      "locator": null,
+      "raw_text": "https://example.invalid/apply",
+      "normalized_text": "https://example.invalid/apply",
+      "extractor": { "name": "synthetic-fixture", "version": "1", "kind": "deterministic", "model_provider": null, "model_name": null, "prompt_version": null },
+      "parser_version": "url-normalization-v1",
+      "inference_reason": null,
+      "manual_annotation_id": null,
+      "created_at": "2026-07-19T00:00:00Z"
+    }
+  ],
+  "extraction_metadata": {
+    "extractor_name": "contract-fixture",
+    "extractor_version": "1",
+    "model_provider": null,
+    "model_name": null,
+    "prompt_version": null,
+    "parser_contract_version": "engine-phase-3-document-result/v1",
+    "evaluation_fixture_version": "engine-phase-4-contract-fixtures/v1",
+    "extracted_at": "2026-07-19T00:00:00Z"
+  },
+  "validation": {
+    "status": "review_required",
+    "errors": [],
+    "warnings": ["identity_candidates_require_phase_5_resolution"]
+  },
+  "review": {
+    "required": true,
+    "reason_codes": ["program_identity_review", "cycle_identity_review"],
+    "automatic_publish_allowed": false,
+    "notification_allowed": false
+  }
+}
