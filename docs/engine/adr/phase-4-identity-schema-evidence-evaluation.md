@@ -91,6 +91,10 @@ Dates preserve exact date/datetime, ranges, open-ended/recurring/relative forms,
 
 Confirmed normalized values require evidence references. Deterministic identity metadata is allowed through explicit source-notice/document provenance rather than a fabricated text quote. Model inference requires both evidence and an inference reason. Values absent from evidence are validation failures. Canonical records contain only minimal evidence spans; they do not duplicate raw bytes or complete extracted documents. Evidence must exclude unnecessary personal information and secrets.
 
+Document-backed evidence requires a non-null logical document ID, document-revision ID, SHA-256, and locator. HTML/URL evidence requires a non-null source-notice ID; OCR requires a page and bounding box; table evidence requires coordinates; manual annotations require an annotation ID and reason. Text evidence must carry non-empty raw or normalized text. Metadata evidence must carry text, a non-empty metadata object, or an attributable attachment URL. JSON Schema enforces these shapes and the semantic validator repeats them with diagnostic error codes.
+
+Confirmed classification and material-change events always require evidence. Proposed program and cycle candidates require evidence. An `unresolved` identity candidate may have no evidence only while the record remains explicitly review-required, automatic publication and notification remain disabled, and no identity is treated as resolved. This represents insufficient evidence, not an evidence-free identity conclusion.
+
 Extractor kind/name/version, parser version, model/provider/prompt version when applicable, document hash, and creation time make results comparable. Manual annotations use non-personal annotation IDs; actor identity remains in the existing review event boundary.
 
 ## Pipeline connection

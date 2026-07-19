@@ -2,9 +2,10 @@
   "official_phase": "ENGINE_PHASE_4_FOUNDATION",
   "official_gate": "GATE_A",
   "official_task": "Identity, Schema, Evidence, and Evaluation Contract",
-  "result": "CONDITIONAL_PASS_INHERITED_MAIN_LINT_BASELINE",
+  "result": "PASS",
   "base_sha": "a9918d377e4d958f9f8b86214f38768529b6a984",
-  "branch_sha": "21d8e60dd6268649a79eecfc869a1bdcf69c515a",
+  "implementation_sha": "21d8e60dd6268649a79eecfc869a1bdcf69c515a",
+  "implementation_sha_scope": "original Gate A contract implementation subject; final remote branch HEAD is reported outside this self-referential evidence file",
   "files_changed": [
     "docs/engine/adr/phase-4-identity-schema-evidence-evaluation.md",
     "docs/engine/engine-phase-4-evaluation-contract.md",
@@ -16,6 +17,16 @@
     "reports/engine-phase-4-foundation-contracts.json",
     "schemas/engine/phase-4-canonical-scholarship.schema.json",
     "schemas/engine/phase-4-evaluation-case.schema.json",
+    "schemas/engine/phase-4-evidence.schema.json",
+    "scripts/test-engine-phase-4-contracts.mjs",
+    "scripts/validate-engine-phase-4-contracts.mjs"
+  ],
+  "remediation_files_changed": [
+    "docs/engine/adr/phase-4-identity-schema-evidence-evaluation.md",
+    "docs/engine/engine-phase-4-evaluation-contract.md",
+    "lib/engine-phase-4/contracts.mjs",
+    "reports/engine-phase-4-foundation-contracts.json",
+    "schemas/engine/phase-4-canonical-scholarship.schema.json",
     "schemas/engine/phase-4-evidence.schema.json",
     "scripts/test-engine-phase-4-contracts.mjs",
     "scripts/validate-engine-phase-4-contracts.mjs"
@@ -33,7 +44,13 @@
   "evidence_contract": {
     "source_type_count": 11,
     "document_hash_required_for_document_evidence": true,
-    "unsupported_inference_rejected": true
+    "document_identity_and_locator_required": true,
+    "ocr_page_and_bounding_box_required": true,
+    "table_coordinates_required": true,
+    "manual_annotation_provenance_required": true,
+    "text_payload_required_for_text_evidence": true,
+    "unsupported_inference_rejected": true,
+    "evidence_linked_decisions_required": true
   },
   "evaluation_contract": {
     "fixture_version": "engine-phase-4-contract-fixtures/v1",
@@ -41,10 +58,10 @@
     "metric_count": 11,
     "production_thresholds_finalized": false
   },
-  "fixture_summary": { "result": "PASS", "passed": 15, "total": 15 },
-  "validator_summary": { "result": "PASS", "passed": 23, "total": 23 },
+  "fixture_summary": { "result": "PASS", "passed": 51, "total": 51, "original_tests_retained": 15, "remediation_tests_added": 36 },
+  "validator_summary": { "result": "PASS", "passed": 36, "total": 36 },
   "regression_summary": {
-    "result": "PASS_WITH_INHERITED_MAIN_LINT_BASELINE",
+    "result": "PASS",
     "phase_1": "15/15",
     "phase_2": "32/32",
     "phase_2_validator": "34/34",

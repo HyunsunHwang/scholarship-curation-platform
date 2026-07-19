@@ -48,7 +48,13 @@ No production, prototype, or notification-safe numeric target is asserted in Gat
 - unsupported invented value or model inference without reason
 - invalid date or amount range
 - identity hierarchy contradiction
+- null or missing source/document provenance for the selected evidence type
+- empty text evidence, missing OCR page/bounding box, missing table coordinates, or incomplete manual annotation provenance
+- date/amount kind without its required semantic payload
+- evidence-free classification, proposed program/cycle identity, or material-change event
 - duplicate evaluation case ID
 - raw bytes, full document replication, secrets, credentials, or absolute local paths in tracked evidence
 
 The validator is deterministic, local, and network-free. It performs no database, production, migration, crawler, provider, or LLM operation.
+
+An unresolved identity candidate with no supporting evidence is a valid fail-closed state only when human review remains required and publication/notification remain disabled. It is scored as unresolved, never as a correct same/different identity decision.

@@ -44,6 +44,16 @@ const manifest = readJson(contractPaths.evaluationCases);
 const canonicalResult = validateCanonicalRecord(record, validators);
 const evaluationResult = validateEvaluationManifest(manifest, validators);
 
+function semanticCodes(candidate) {
+  return new Set(validateCanonicalRecord(candidate, validators).errors.map((entry) => entry.code));
+}
+
+function mutatedRecord(mutate) {
+  const candidate = structuredClone(record);
+  mutate(candidate);
+  return candidate;
+}
+
 check("canonical fixture satisfies JSON Schema", validators.canonical(record), JSON.stringify(validators.canonical.errors ?? []));
 check("evidence items satisfy evidence schema", record.evidence.every((entry) => validators.evidence(entry)));
 check("evaluation manifest satisfies JSON Schema", validators.evaluation(manifest), JSON.stringify(validators.evaluation.errors ?? []));
@@ -54,6 +64,91 @@ check("evidence identifiers are unique", new Set(record.evidence.map((entry) => 
 check("field value status enum is enforced", validators.schemas.canonicalSchema.$defs.valueStatus.enum.length === 6);
 check("normalized present values have evidence", Object.values(record.fields).filter((field) => field.value_status === "present").every((field) => field.evidence_refs.length > 0));
 check("identity hierarchy is consistent", !canonicalResult.errors.some((entry) => entry.code === "identity_hierarchy_contradiction"));
+check("document provenance nulls are rejected", (() => {
+  const candidate = mutatedRecord((value) => { value.evidence[1].document_hash = null; });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("evidence_document_hash_missing");
+})());
+check("OCR page and bounding box are enforced", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.evidence[1].source_type = "ocr_text";
+    value.evidence[1].locator.page_number = null;
+    value.evidence[1].locator.bounding_box = null;
+  });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("evidence_ocr_locator_missing");
+})());
+check("table coordinates are enforced", (() => {
+  const candidate = mutatedRecord((value) => { value.evidence[2].locator.table_coordinates = null; });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("evidence_table_coordinates_missing");
+})());
+check("manual annotation provenance is enforced", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.evidence[0].source_type = "manual_annotation";
+    value.evidence[0].manual_annotation_id = null;
+    value.evidence[0].inference_reason = null;
+  });
+  const codes = semanticCodes(candidate);
+  return !validators.canonical(candidate)
+    && codes.has("manual_annotation_identity_missing")
+    && codes.has("manual_annotation_reason_missing");
+})());
+check("text evidence requires a meaningful payload", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.evidence[0].raw_text = "";
+    value.evidence[0].normalized_text = "";
+  });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("evidence_text_missing");
+})());
+check("date kind payload is enforced", (() => {
+  const candidate = mutatedRecord((value) => { value.fields.application_start.normalized_value.date = null; });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("exact_date_value_missing");
+})());
+check("amount kind payload is enforced", (() => {
+  const candidate = mutatedRecord((value) => { value.fields.amount.normalized_value.amount = null; });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("exact_amount_value_missing");
+})());
+check("classification evidence is enforced", (() => {
+  const candidate = mutatedRecord((value) => { value.classification.evidence_refs = []; });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("classification_evidence_missing");
+})());
+check("proposed program evidence is enforced", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.program_identity_candidate.resolution_status = "proposed";
+    value.program_identity_candidate.evidence_refs = [];
+  });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("program_candidate_evidence_missing");
+})());
+check("proposed cycle evidence is enforced", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.recruitment_cycle_identity_candidate.resolution_status = "proposed";
+    value.recruitment_cycle_identity_candidate.evidence_refs = [];
+  });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("cycle_candidate_evidence_missing");
+})());
+check("material change evidence is enforced", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.material_changes.push({
+      event_id: "validator_change",
+      from_revision_id: null,
+      to_revision_id: value.opportunity_revision.revision_id,
+      change_type: "deadline_extension",
+      materiality: "material",
+      notification_kind: "changed_opportunity",
+      evidence_refs: [],
+      review_required: false,
+    });
+  });
+  return !validators.canonical(candidate) && semanticCodes(candidate).has("material_change_evidence_missing");
+})());
+check("unresolved identity is evidence-optional but review-required", (() => {
+  const candidate = mutatedRecord((value) => {
+    value.program_identity_candidate.resolution_status = "unresolved";
+    value.program_identity_candidate.evidence_refs = [];
+    value.review.required = true;
+  });
+  const allowed = validateCanonicalRecord(candidate, validators).valid;
+  candidate.review.required = false;
+  return allowed && semanticCodes(candidate).has("unresolved_identity_review_missing");
+})());
 check("schema version is explicit", record.schema_version === "engine-phase-4-canonical-scholarship/v1");
 check("fixture case identifiers are unique", new Set(manifest.cases.map((entry) => entry.case_id)).size === manifest.cases.length);
 check("representative fixture count is bounded", manifest.cases.length >= 10 && manifest.cases.length <= 20, String(manifest.cases.length));
@@ -75,6 +170,7 @@ check("tracked report safety is fail-closed", [
   "queue_or_worker_added", "full_613_source_run", "parser_cache_modified", "crawler_checkpoint_contract_modified",
 ].every((key) => report.safety?.[key] === false));
 check("report identifies official Gate A", report.official_phase === "ENGINE_PHASE_4_FOUNDATION" && report.official_gate === "GATE_A");
+check("report SHA field describes the implementation subject", typeof report.implementation_sha === "string" && /^[a-f0-9]{40}$/.test(report.implementation_sha) && !("branch_sha" in report));
 
 const passed = checks.filter((entry) => entry.pass).length;
 console.log(`ENGINE PHASE 4 FOUNDATION CONTRACTS: ${passed === checks.length ? "PASS" : "FAIL"}`);
