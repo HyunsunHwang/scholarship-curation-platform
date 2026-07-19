@@ -1,0 +1,138 @@
+{
+  "fixture_version": "engine-phase-4-representative-public-gold/v1",
+  "policy_version": "engine-phase-4-representative-gold-policy/v1",
+  "groups": [
+    {
+      "group_id": "rg_national_2026_1",
+      "relation_type": "school_recommendation_vs_foundation_original",
+      "case_ids": [
+        "p4c_002_national_second_round",
+        "p4c_010_cau_national_preapplication"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_002_national_second_round",
+          "right": "p4c_010_cau_national_preapplication",
+          "relation": "review_required",
+          "reason": "School pre-application and foundation application have different deadlines."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_cau_welfare_cycles",
+      "relation_type": "same_program_different_cycle",
+      "case_ids": [
+        "p4c_008_cau_welfare_result_2025_1",
+        "p4c_009_cau_welfare_result_2024_2"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_008_cau_welfare_result_2025_1",
+          "right": "p4c_009_cau_welfare_result_2024_2",
+          "relation": "same_program_different_cycle",
+          "reason": "Same named CAU program; explicit term differs."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_uic_cycles",
+      "relation_type": "same_program_different_cycle",
+      "case_ids": [
+        "p4c_017_uic_2025_fall",
+        "p4c_018_uic_samsung_updated",
+        "p4c_019_uic_legacy"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_017_uic_2025_fall",
+          "right": "p4c_018_uic_samsung_updated",
+          "relation": "clearly_different_program",
+          "reason": "Same college and term but distinct program names/providers."
+        },
+        {
+          "left": "p4c_017_uic_2025_fall",
+          "right": "p4c_019_uic_legacy",
+          "relation": "clearly_different_program",
+          "reason": "Same college and term but distinct scholarship programs."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_hope_ladder_extension",
+      "relation_type": "deadline_extension_same_cycle",
+      "case_ids": [
+        "p4c_003_hope_ladder_extension"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_003_hope_ladder_extension",
+          "right": "p4c_003_hope_ladder_extension",
+          "relation": "deadline_extension_same_cycle",
+          "reason": "Notice title explicitly identifies an extended deadline; original notice URL not selected."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_gwangsan_extension",
+      "relation_type": "deadline_extension_same_cycle",
+      "case_ids": [
+        "p4c_006_gwangsan_extension"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_006_gwangsan_extension",
+          "right": "p4c_006_gwangsan_extension",
+          "relation": "deadline_extension_same_cycle",
+          "reason": "Notice explicitly states period extension; original notice URL not selected."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_national_work_result",
+      "relation_type": "result_notice_related_to_recruitment",
+      "case_ids": [
+        "p4c_004_national_work_result",
+        "p4c_002_national_second_round"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_004_national_work_result",
+          "right": "p4c_002_national_second_round",
+          "relation": "clearly_different_program",
+          "reason": "Both are national schemes but work-study and national tuition aid differ."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_samsung_update",
+      "relation_type": "same_notice_repost_candidate",
+      "case_ids": [
+        "p4c_018_uic_samsung_updated"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_018_uic_samsung_updated",
+          "right": "p4c_018_uic_samsung_updated",
+          "relation": "review_required",
+          "reason": "The title records an update but no prior revision capture is retained."
+        }
+      ]
+    },
+    {
+      "group_id": "rg_school_recommendation",
+      "relation_type": "school_recommendation_vs_foundation_original",
+      "case_ids": [
+        "p4c_024_dean_recommendation_guidance",
+        "p4c_023_russian_alumni_funds"
+      ],
+      "pairs": [
+        {
+          "left": "p4c_024_dean_recommendation_guidance",
+          "right": "p4c_023_russian_alumni_funds",
+          "relation": "review_required",
+          "reason": "Guidance may support many programs and cannot be automatically linked to this selected program."
+        }
+      ]
+    }
+  ]
+}
