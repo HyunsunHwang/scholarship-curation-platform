@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -9,6 +9,10 @@ import { login, signup, type AuthState } from "./actions";
 import { createClient } from "@/lib/supabase/client";
 
 type Tab = "login" | "signup";
+
+function tabFromMode(mode: string | null): Tab {
+  return mode === "signup" ? "signup" : "login";
+}
 
 function KakaoOAuthButton() {
   async function handleKakaoLogin() {
@@ -200,9 +204,14 @@ export default function AuthPageClient({
 }: {
   headerLogoSrc?: string;
 }) {
-  const [tab, setTab] = useState<Tab>("login");
   const searchParams = useSearchParams();
   const oauthError = searchParams.get("error");
+  const modeTab = tabFromMode(searchParams.get("mode"));
+  const [tab, setTab] = useState<Tab>(modeTab);
+
+  useEffect(() => {
+    setTab(modeTab);
+  }, [modeTab]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 py-12">
