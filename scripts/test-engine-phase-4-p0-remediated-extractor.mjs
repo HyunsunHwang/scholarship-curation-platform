@@ -2,7 +2,15 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import AdmZip from "adm-zip";
 import Ajv2020 from "ajv/dist/2020.js";
+import {
+  createDocumentResult,
+  createImageOcrAdapter,
+  parseHtmlDocument,
+  parseHwpDocument,
+  parseImageDocument,
+} from "../lib/crawler-engine/document-parsing/index.mjs";
 import {
   extractP0RemediatedCandidate,
   extractP0RemediatedCandidateWithDiagnostics,
@@ -365,8 +373,8 @@ test("located safe OCR preserves page and bounding box", () => {
       document_id: "located_ocr",
       document_hash: "f".repeat(64),
       media_type: "image",
-      extraction_status: "text_sufficient",
-      quality_status: "text_sufficient",
+      extraction_status: "ocr_succeeded",
+      quality_status: "ocr_succeeded",
       content_blocks: [{ type: "ocr_text", page_number: 2, bounding_box: { x: 1, y: 2, width: 100, height: 20 }, text: "지원금액: 500만원" }],
     }],
   });
@@ -375,6 +383,157 @@ test("located safe OCR preserves page and bounding box", () => {
   const evidence = output.evidence_references.find((item) => item.source_type === "ocr_text");
   assert.match(evidence.locator, /page:2:bbox:/u);
   assert.match(evidence.locator, /height/u);
+});
+
+test("canonical Phase 3 ocr_succeeded reaches the locator gate instead of status rejection", async () => {
+  const adapter = createImageOcrAdapter({
+    engineName: "focused-ocr",
+    engineVersion: "1",
+    async recognize() { return { text: "미래 장학금 신청 안내 지원금액 500만원 신청기간 관련 충분한 OCR 원문입니다.", confidence: 95 }; },
+  });
+  const parsed = await parseImageDocument({ document_id: "phase3_ocr", bytes: Buffer.from("phase3-image") }, { ocrAdapter: adapter });
+  assert.equal(parsed.extraction_status, "ocr_succeeded");
+  assert.equal(parsed.quality_status, "ocr_succeeded");
+  assert.equal(parsed.manual_review_required, false);
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.phase3_success_status_accepted_count, 1);
+  assert.equal(diagnostics.attachment_status_rejected_count, 0);
+  assert.equal(diagnostics.ocr_missing_locator_count, 1);
+});
+
+test("canonical Phase 3 ocr_succeeded is usable after page and bbox provenance is supplied", async () => {
+  const adapter = createImageOcrAdapter({
+    engineName: "focused-ocr",
+    engineVersion: "1",
+    async recognize() { return { text: "미래 장학금 신청 안내 지원금액 500만원 신청기간 관련 충분한 OCR 원문입니다.", confidence: 95 }; },
+  });
+  const parsed = await parseImageDocument({ document_id: "phase3_located_ocr", bytes: Buffer.from("phase3-located-image") }, { ocrAdapter: adapter });
+  parsed.content_blocks = parsed.content_blocks.map((block) => ({ ...block, page_number: 1, bounding_box: [0, 0, 300, 40] }));
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.phase3_success_status_accepted_count, 1);
+  assert.equal(diagnostics.ocr_present_claim_count > 0, true);
+});
+
+test("OCR-derived table without locator cannot bypass as table_text", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "ocr_table_unlocated",
+      document_hash: "7".repeat(64),
+      media_type: "pdf",
+      extraction_status: "ocr_succeeded",
+      quality_status: "ocr_succeeded",
+      manual_review_required: false,
+      ocr_used: true,
+      content_blocks: [{ type: "table", rows: [["지원금액 500만원"]], page_number: 1 }],
+    }],
+  });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.ocr_missing_locator_count, 1);
+  assert.equal(output.evidence_references.some((item) => item.source_type === "table_text" && item.document_id === "ocr_table_unlocated"), false);
+});
+
+test("located OCR-derived table retains OCR provenance and is usable", () => {
+  const { output } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "ocr_table_located",
+      document_hash: "8".repeat(64),
+      media_type: "pdf",
+      extraction_status: "ocr_succeeded",
+      quality_status: "ocr_succeeded",
+      manual_review_required: false,
+      ocr_used: true,
+      content_blocks: [{ type: "table", rows: [["지원금액 500만원"]], page_number: 1, bounding_box: [0, 0, 300, 40] }],
+    }],
+  });
+  assert.equal(output.fields.support_amount.status, "present");
+  const evidence = output.evidence_references.find((item) => item.evidence_id === output.fields.support_amount.evidence_references[0]);
+  assert.equal(evidence.source_type, "ocr_text");
+});
+
+test("actual Phase 3 structured HTML table status is accepted", async () => {
+  const parsed = await parseHtmlDocument({
+    document_id: "phase3_html_table",
+    html: "<main><h1>미래 장학금 신청 안내</h1><p>지원 대상 학생은 온라인으로 신청할 수 있습니다.</p><table><tr><th>항목</th><th>내용</th></tr><tr><td>지원금액</td><td>500만원</td></tr></table></main>",
+  });
+  assert.equal(parsed.extraction_status, "table_structure_preserved");
+  assert.equal(parsed.quality_status, "table_structure_preserved");
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.phase3_success_status_accepted_count, 1);
+  const evidence = output.evidence_references.find((item) => item.evidence_id === output.fields.support_amount.evidence_references[0]);
+  assert.equal(evidence.source_type, "table_text");
+});
+
+test("actual Phase 3 HWPX safe parse is accepted", async () => {
+  const zip = new AdmZip();
+  zip.addFile("mimetype", Buffer.from("application/hwp+zip"));
+  zip.addFile("Contents/section0.xml", Buffer.from("<hp:p><hp:t>미래 장학금 신청 안내 지원금액 500만원이며 지원 대상과 신청 방법을 포함한 충분한 원문입니다.</hp:t></hp:p>"));
+  const parsed = await parseHwpDocument({ document_id: "phase3_hwpx", bytes: zip.toBuffer(), filename: "notice.hwpx" });
+  assert.equal(parsed.extraction_status, "text_sufficient");
+  assert.equal(parsed.manual_review_required, false);
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.phase3_success_status_accepted_count, 1);
+});
+
+test("actual Phase 3 hwp_only_primary_document remains rejected because it requires manual review", async () => {
+  const bytes = Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]);
+  const parsed = await parseHwpDocument({ document_id: "phase3_hwp_only", bytes, filename: "notice.hwp", notice_context: { filename: "notice.hwp", bodyText: "" } });
+  assert.equal(parsed.extraction_status, "hwp_only_primary_document");
+  assert.equal(parsed.quality_status, "manual_review_required");
+  assert.equal(parsed.manual_review_required, true);
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.attachment_status_rejected_count, 1);
+});
+
+test("Phase 3 attachment_primary_content with retained safe quality is accepted", () => {
+  const parsed = createDocumentResult({
+    document_id: "phase3_attachment_primary",
+    bytes: Buffer.from("phase3 attachment primary"),
+    detected_format: "html",
+    extraction_status: "attachment_primary_content",
+    quality_status: "text_sufficient",
+    manual_review_required: false,
+    extracted_text: "미래 장학금 신청 안내 지원금액 500만원이며 지원 대상과 신청 방법을 포함한 충분한 원문입니다.",
+    content_blocks: [{ type: "paragraph", text: "미래 장학금 신청 안내 지원금액 500만원이며 지원 대상과 신청 방법을 포함한 충분한 원문입니다." }],
+  });
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [parsed] });
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.phase3_success_status_accepted_count, 1);
+});
+
+test("Phase 3 review and failure states cannot create present evidence", () => {
+  for (const [index, status] of ["text_short_needs_review", "image_only_detected"].entries()) {
+    const { output, diagnostics } = extractDiagnostic({
+      sourceDocuments: [{
+        document_id: `phase3_review_${index}`,
+        document_hash: String(index + 5).repeat(64),
+        media_type: "html",
+        extraction_status: status,
+        quality_status: status,
+        manual_review_required: true,
+        content_blocks: [{ type: "paragraph", text: "지원금액 500만원" }],
+      }],
+    });
+    assert.notEqual(output.fields.support_amount.status, "present");
+    assert.equal(diagnostics.attachment_status_rejected_count, 1);
+  }
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "phase3_manual_override",
+      document_hash: "6".repeat(64),
+      media_type: "html",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      manual_review_required: true,
+      content_blocks: [{ type: "paragraph", text: "지원금액 500만원" }],
+    }],
+  });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.attachment_status_rejected_count, 1);
 });
 
 test("body-driven recruitment classification includes the actual body signal", () => {
@@ -495,7 +654,7 @@ test("identical inputs are deterministic", () => {
 let passed = 0;
 for (const item of tests) {
   try {
-    item.run();
+    await item.run();
     passed += 1;
     console.log(`PASS ${item.name}`);
   } catch (error) {

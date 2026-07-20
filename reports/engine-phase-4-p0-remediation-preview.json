@@ -1,5 +1,5 @@
 {
-  "report_version": "engine-phase-4-p0-remediation-preview/v2",
+  "report_version": "engine-phase-4-p0-remediation-preview/v3",
   "preview_only": true,
   "official_p0_reevaluation_completed": false,
   "official_full_gate_c_reevaluation_completed": false,
@@ -15,8 +15,8 @@
     "remediated": {
       "name": "engine-phase-4-p0-remediated-deterministic",
       "path": "lib/engine-phase-4/p0-remediated-extractor.mjs",
-      "sha256": "660b08feb9d7011a40d15b3c53cd5b2ef7e56fded9327500f9d2ffda3085631c",
-      "version": "1.1.0",
+      "sha256": "94b915f735d4282ac31476b566c419812a84186ff8184bc9d1db67c26efd18ae",
+      "version": "1.1.1",
       "output_schema": "engine-phase-4-p0-remediation-output/v1"
     }
   },
@@ -50,8 +50,11 @@
     "low_quality_body_rejected_count": 2,
     "attachment_missing_provenance_count": 0,
     "attachment_rejected_count": 7,
+    "attachment_status_rejected_count": 7,
     "ocr_missing_locator_count": 0,
     "ocr_low_quality_rejected_count": 1,
+    "ocr_quality_rejected_count": 1,
+    "phase3_success_status_accepted_count": 7,
     "classification_title_only_count": 18,
     "classification_multi_evidence_count": 6,
     "duplicate_evidence_suppressed_count": 0,
@@ -433,8 +436,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_397bc0bc8dcde932090def63"
@@ -458,8 +464,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_e42d535dd534dba6192b757a"
@@ -492,8 +501,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_f1d0b2065aa213898cc73c18"
@@ -522,8 +534,11 @@
         "low_quality_body_rejected_count": 1,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_7f6bac49d413a85bcd655a24"
@@ -543,8 +558,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_46db4f35ef4e17cfc39cbac2"
@@ -580,8 +598,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_ad3440faa466feb93ca8d6a7",
@@ -612,8 +633,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_968c344a12bcf150923dd4b2",
@@ -644,8 +668,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_26f0410ff6641bc83b735cd4",
@@ -666,8 +693,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_e042c658e9d6a543396f000f",
@@ -688,8 +718,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_b4b66bedcbfae04682fbe4ae"
@@ -726,8 +759,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_6823759dea75d74072422543"
@@ -751,8 +787,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_359b6ece0af326411948e5ad"
@@ -793,8 +832,11 @@
         "low_quality_body_rejected_count": 1,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_c9c75ef03023dd4dc7fc9cc1"
@@ -821,8 +863,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 1,
+        "ocr_quality_rejected_count": 1,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_69ad8f99ff50509d0930a7d7"
@@ -853,8 +898,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_39a979448c09aaf5e3a71bf0"
@@ -885,8 +933,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_309d87b821c70c707e09a589"
@@ -913,8 +964,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_a0c9ebe7c4f06dbfb5c49f0d"
@@ -948,8 +1002,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_7b05d5337ac23f209a75ce25"
@@ -969,8 +1026,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_7d16fbfb76bed4d67bc22f83"
@@ -1003,8 +1063,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_ba9d265c9c09faa04dcf5374"
@@ -1037,8 +1100,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_aecf229554ddf7b10a132108",
@@ -1069,8 +1135,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_d8400a947ca75a59be7b0bac"
@@ -1100,8 +1169,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 0,
+        "attachment_status_rejected_count": 0,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 1,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_dbbce79bba2c226bc8cf8f9b",
@@ -1136,8 +1208,11 @@
         "low_quality_body_rejected_count": 0,
         "attachment_missing_provenance_count": 0,
         "attachment_rejected_count": 1,
+        "attachment_status_rejected_count": 1,
         "ocr_missing_locator_count": 0,
         "ocr_low_quality_rejected_count": 0,
+        "ocr_quality_rejected_count": 0,
+        "phase3_success_status_accepted_count": 0,
         "duplicate_evidence_suppressed_count": 0,
         "classification_evidence_ids": [
           "p0ev_46d6cbdedd1d8050a449ceed"
@@ -1233,6 +1308,7 @@
   "gate_status": {
     "p0_extractor_remediation": "PASS",
     "evidence_preservation": "PASS",
+    "phase3_status_compatibility": "PASS",
     "official_p0_reevaluation": "NOT RUN",
     "full_schema_gate_c": "HOLD",
     "phase5": "HOLD"

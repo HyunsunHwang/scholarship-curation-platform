@@ -52,8 +52,11 @@ check("evidence diagnostics cover every case and reconcile with metrics", () => 
     "low_quality_body_rejected_count",
     "attachment_missing_provenance_count",
     "attachment_rejected_count",
+    "attachment_status_rejected_count",
     "ocr_missing_locator_count",
     "ocr_low_quality_rejected_count",
+    "ocr_quality_rejected_count",
+    "phase3_success_status_accepted_count",
     "classification_title_only_count",
     "classification_multi_evidence_count",
     "duplicate_evidence_suppressed_count",
@@ -64,6 +67,14 @@ check("evidence diagnostics cover every case and reconcile with metrics", () => 
     assert.ok(trackedReport.metrics[metric] >= 0, metric);
     assert.equal(trackedReport.metrics[metric], diagnostics.reduce((sum, item) => sum + item[metric], 0), metric);
   }
+  assert.ok(trackedReport.metrics.phase3_success_status_accepted_count > 0);
+  assert.ok(trackedReport.metrics.attachment_status_rejected_count <= trackedReport.metrics.attachment_rejected_count);
+  assert.equal(trackedReport.metrics.ocr_quality_rejected_count, trackedReport.metrics.ocr_low_quality_rejected_count);
+});
+check("Phase 3 compatibility versions and gate are explicit", () => {
+  assert.equal(trackedReport.report_version, "engine-phase-4-p0-remediation-preview/v3");
+  assert.equal(trackedReport.extractor.remediated.version, "1.1.1");
+  assert.equal(trackedReport.gate_status.phase3_status_compatibility, "PASS");
 });
 check("classification and present-field diagnostics resolve to actual evidence", () => {
   const outputs = new Map(trackedReport.outputs.map((output) => [output.case_id, output]));

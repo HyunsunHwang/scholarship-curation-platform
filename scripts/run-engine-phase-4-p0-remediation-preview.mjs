@@ -183,7 +183,7 @@ const validationPass = outputs.length === 24
   && Object.values(knownCaseChecks).every(Boolean);
 
 export const report = {
-  report_version: "engine-phase-4-p0-remediation-preview/v2",
+  report_version: "engine-phase-4-p0-remediation-preview/v3",
   preview_only: true,
   official_p0_reevaluation_completed: false,
   official_full_gate_c_reevaluation_completed: false,
@@ -228,8 +228,11 @@ export const report = {
     low_quality_body_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.low_quality_body_rejected_count, 0),
     attachment_missing_provenance_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_missing_provenance_count, 0),
     attachment_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_rejected_count, 0),
+    attachment_status_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_status_rejected_count, 0),
     ocr_missing_locator_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_missing_locator_count, 0),
     ocr_low_quality_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_low_quality_rejected_count, 0),
+    ocr_quality_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_quality_rejected_count, 0),
+    phase3_success_status_accepted_count: evidenceDiagnostics.reduce((sum, item) => sum + item.phase3_success_status_accepted_count, 0),
     classification_title_only_count: evidenceDiagnostics.reduce((sum, item) => sum + item.classification_title_only_count, 0),
     classification_multi_evidence_count: evidenceDiagnostics.reduce((sum, item) => sum + item.classification_multi_evidence_count, 0),
     duplicate_evidence_suppressed_count: evidenceDiagnostics.reduce((sum, item) => sum + item.duplicate_evidence_suppressed_count, 0),
@@ -264,6 +267,7 @@ export const report = {
   gate_status: {
     p0_extractor_remediation: validationPass ? "PASS" : "HOLD",
     evidence_preservation: validationPass ? "PASS" : "HOLD",
+    phase3_status_compatibility: validationPass ? "PASS" : "HOLD",
     official_p0_reevaluation: "NOT RUN",
     full_schema_gate_c: "HOLD",
     phase5: "HOLD",
@@ -313,6 +317,8 @@ Cases 1, 2, and 5 are no longer silently suppressed. Case 4 is terminal. Cases 6
 All ${P0_OPPORTUNITY_FIELDS.length} P0 fields use evidence-linked, fail-closed states. Unsupported present claims, missing evidence references, and source-route substitution are zero. Automatic publication remains disabled. Protected baseline, contract, corpus, gold, and official report hashes are unchanged.
 
 Body text with an explicit unsafe quality state and attachments without complete provenance are excluded before extraction. OCR requires safe quality, document provenance, page, and bounding-box coordinates. Per-case rejected sources, classification evidence IDs, and present-field source types are recorded in the JSON diagnostics.
+
+Phase 3 extraction and quality statuses use separate allowlists. \`table_structure_preserved\`, \`ocr_succeeded\`, and safe-quality \`attachment_primary_content\` pass the document gate; manual-review and failure states do not. OCR-derived tables retain \`ocr_text\` provenance and must pass the same page/bounding-box gate. The actual parser-unavailable \`hwp_only_primary_document + manual_review_required\` combination remains rejected.
 
 ## Next step
 

@@ -9,7 +9,7 @@ This implementation adds a deterministic P0 remediation version without changing
 - Historical baseline: `lib/engine-phase-4/deterministic-extractor.mjs`, contract `engine-phase-4-deterministic-baseline/v1`.
 - Remediated extractor: `lib/engine-phase-4/p0-remediated-extractor.mjs`.
 - Name: `engine-phase-4-p0-remediated-deterministic`.
-- Version: `1.1.0` (evidence-preservation boundary; the initial remediation preview was `1.0.0`).
+- Version: `1.1.1` (Phase 3 status compatibility; evidence preservation was `1.1.0` and the initial remediation preview was `1.0.0`).
 - Entry point: `extractP0RemediatedCandidate({ sourceNotice, sourceDocuments, extractionContext })`.
 
 The new extractor imports the baseline whitespace, explicit-label, and date-candidate normalizers read-only. Its classification priority, source-role separation, amount preservation, URL route checks, lifecycle calculation, review-reason generation, and evidence adapter are remediation-specific. This keeps the official baseline reproducible and avoids copying the baseline extractor wholesale.
@@ -45,6 +45,26 @@ Classification records the segment that supplied each decisive signal. Strong ti
 Evidence selection priority is structured HTML/table, safe attachment table/text, safe located OCR, then title fallback. Identical dates from multiple sources resolve once using that priority; different safe dates conflict. A detailed attachment amount structure takes precedence over a body summary scalar so a composite cannot be reduced to the first number encountered.
 
 For paid student activity, `activity_scholarship` and `work_scholarship` are contract-expressible support types and therefore use `support_type.status=present`. A combined monthly and hourly amount remains `support_amount.status=schema_expressiveness_gap` with components and the `paid_activity_feed_partition_required`, `complex_amount_structure`, and `amount_schema_expressiveness_gap` review reasons.
+
+## Phase 3 parser-status compatibility
+
+Phase 3 uses one contract enum for both extraction and quality, but the meanings are not interchangeable. The remediation gate therefore uses separate extraction and quality allowlists plus an explicit review/failure denylist.
+
+| Extraction status | Quality status | Manual review | Evidence behavior |
+| --- | --- | --- | --- |
+| `text_sufficient` | `text_sufficient` | false | accepted with complete document provenance |
+| `table_structure_preserved` | `table_structure_preserved` | false | accepted; table block provenance retained |
+| `ocr_succeeded` | `ocr_succeeded` | false | document accepted, then every OCR-derived block must pass page/bounding-box checks |
+| `attachment_primary_content` | `text_sufficient`, `table_structure_preserved`, or `ocr_succeeded` | false | accepted subject to the corresponding text/table/OCR block gate |
+| `hwp_only_primary_document` | `manual_review_required` | true | rejected; this is the actual parser-unavailable HWP result, not readable HWP text |
+| `text_short_needs_review`, `image_only_detected`, `ocr_low_quality`, tool/parser/download/format/bounds failures | any review/failure status | true or false | rejected |
+| any otherwise safe strings | any otherwise safe strings | true | rejected; the boolean manual-review signal wins |
+
+Successful HWP and HWPX parsing does not emit `hwp_only_primary_document`: available binary HWP and parsed HWPX return normal safe text quality states and are accepted with full provenance. `hwp_only_primary_document` is emitted only when the binary parser is unavailable for the primary document and therefore remains fail-closed.
+
+OCR provenance is detected before table source typing. Image format, document-level `ocr_used`, `ocr_text`, `shared_image_ocr`, and OCR extraction methods all keep `ocr_text` provenance, including OCR-produced table blocks. Consequently, an OCR table cannot bypass page/bounding-box validation as `table_text`.
+
+The current Phase 3 image and PDF OCR implementations emit successful OCR text without bounding boxes. Such canonical `ocr_succeeded` results pass the status gate but are rejected at the block gate as `ocr_missing_locator`. A block becomes usable only when upstream page and bounding-box provenance is present. The Phase 3 parser itself is intentionally unchanged by this remediation patch.
 
 ## Preview and validation
 
