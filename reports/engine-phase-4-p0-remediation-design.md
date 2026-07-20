@@ -123,23 +123,34 @@ The nine opportunity concepts remain program_name, provider, institution_or_camp
 ## Cross-field safety
 
 - document_kind and lifecycle_status enums are disjoint
-- result, information-session, and guidance documents are terminal and non-publishable
-- standalone correction is non-publishable and requires relation resolution
+- recruitment_notice is non-terminal; result, information-session, and guidance documents are terminal, non-publishable, and not_applicable opportunities
+- standalone correction is non-publishable, non-terminal, requires relation resolution, and requires review
+- unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review
 - an updated existing recruitment page may remain recruitment_notice only with a revision note
 - publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind
 - paid_student_activity never silently enters the general scholarship feed
+- date-only values must be real calendar dates and offset datetimes compare as actual instants
+- mixed date/datetime precision cannot produce an automatic lifecycle
 - primary application start cannot be after deadline and no standalone timezone field exists
 - unsafe or conflicting date roles force lifecycle unknown and review
-- source canonical URL is never automatically application_url
+- every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt
+- source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version
 - provider, posting_organization, and institution_or_campus are independent
 - unlike benefits, target tiers, total budget, and per-person amounts are never collapsed
 - maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity
+
+## Review enforcement
+
+- Unsafe statuses: unknown, ambiguous, conflicting, schema_expressiveness_gap; each requires review and a field-specific reason.
+- Terminal `not_applicable` is exempt.
+- `not_found` requires review for: program_name, provider, application_start, application_deadline, support_type, support_amount.
+- Clear `not_found` may remain no-review for: posting_organization, institution_or_campus, application_url.
 
 ## Amount design
 
 - First remediation auto-kinds: exact, maximum_cap, range, percentage_of_tuition, full_tuition, recurring_monthly, recurring_semester, hourly_rate.
 - Structure-only complex kinds: tiered_by_target, tiered_by_degree_level, composite_components, installment, multiple_program_schema_gap.
-- Rich Phase 4 values preserve display/source text, currency, exact/min/max/percentage, period, cap basis, labels, components/installments, and evidence.
+- Rich Phase 4 values preserve display/source text, currency, exact/min/max/percentage, period, cap basis, labels, components/installments, and evidence. Simple kinds reject incompatible scalar/component properties.
 - Legacy compatibility projects only reviewed `display` into `support_amount_text`; rich persistence needs a future Phase 5 migration.
 
 ## Compatibility plan
@@ -184,7 +195,7 @@ These counts are deterministic over the existing 24-case frozen input and curren
 
 ## Completion contract for the next remediation
 
-The next implementation is complete only when all 16 contract fixtures remain valid, mutation tests reject unsafe combinations, the diagnosed lifecycle and verified suppression defects are eliminated without exposing terminal documents, evidence references remain complete, existing Gate B/C/P0 regressions pass, and all production/Phase 5 safety flags remain false.
+The next implementation is complete only when all 17 contract fixtures remain valid, mutation tests reject unsafe combinations, the diagnosed lifecycle and verified suppression defects are eliminated without exposing terminal documents, evidence references remain complete, existing Gate B/C/P0 regressions pass, and all production/Phase 5 safety flags remain false.
 
 ## Gate status
 

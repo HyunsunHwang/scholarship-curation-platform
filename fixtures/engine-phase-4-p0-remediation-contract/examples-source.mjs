@@ -122,8 +122,8 @@ export const exampleManifest = {
       caseId: "standalone_correction",
       scenario: "standalone_correction_notice",
       sourceText: "광산장학금 신청 마감일을 2025-09-19로 연장합니다.",
-      documentKind: "correction_notice", publishable: false, relationRequired: true,
-      reviewRequired: true, reviewReasons: ["relation_resolution_required"],
+      documentKind: "correction_notice", publishable: false, terminal: false, relationRequired: true,
+      reviewRequired: true, reviewReasons: ["relation_resolution_required", "missing_primary_application_window", "support_type_uncertain", "support_amount_uncertain"],
       fields: (ref) => ({
         program_name: present("광산장학금", ref), provider: present("광산장학회", ref), institution_or_campus: notApplicable(),
         application_start: unknown([ref]), application_deadline: present("2025-09-19", ref), lifecycle_status: lifecycleUnknown(),
@@ -187,7 +187,7 @@ export const exampleManifest = {
       reviewReasons: ["paid_activity_feed_partition_required", "complex_amount_structure", "amount_schema_expressiveness_gap"],
       fields: (ref) => ({
         program_name: present("Global Service Desk Supporters", ref), provider: present("Underwood International College", ref), institution_or_campus: present("Underwood International College", ref),
-        application_start: present("2026-01-15", ref), application_deadline: present("2026-01-28T23:59:00+09:00", ref), lifecycle_status: present("closed", ref), application_url: notFound(), support_type: present(["activity_scholarship", "work_scholarship"], ref),
+        application_start: present("2026-01-15T00:00:00+09:00", ref), application_deadline: present("2026-01-28T23:59:00+09:00", ref), lifecycle_status: present("closed", ref), application_url: notFound(), support_type: present(["activity_scholarship", "work_scholarship"], ref),
         support_amount: amount("schema_expressiveness_gap", amountValue(ref, { display: "월 200,000원 + 시간당 10,320원", kind: "composite_components", components: [
           { kind: "recurring_monthly", display: "월 200,000원", currency: "KRW", exact_amount: 200000, period: "month" },
           { kind: "hourly_rate", display: "시간당 10,320원", currency: "KRW", exact_amount: 10320, period: "hour" }
@@ -209,12 +209,21 @@ export const exampleManifest = {
       scenario: "ambiguous_application_date_role",
       sourceText: "신청 및 서류 보완 일정 2026-05-01 ~ 2026-05-31",
       publishable: false, opportunityKind: "unknown", reviewRequired: true,
-      reviewReasons: ["ambiguous_date_role", "publishability_requires_confirmation"],
+      reviewReasons: ["ambiguous_date_role", "publishability_requires_confirmation", "provider_posting_organization_ambiguous", "campus_scope_ambiguous", "support_type_uncertain", "support_amount_uncertain"],
       fields: (ref) => ({
         program_name: present("날짜 역할 불명 장학금", ref), provider: unknown([ref]), institution_or_campus: unknown([ref]),
         application_start: field("ambiguous", null, [ref]), application_deadline: field("ambiguous", null, [ref]), lifecycle_status: lifecycleUnknown(),
         application_url: notFound(), support_type: unknown(), support_amount: unknown(),
       }),
+    }),
+    baseExample({
+      caseId: "unknown_document",
+      scenario: "unknown_document_requires_review",
+      sourceText: "장학 관련 공지이며 모집 여부와 지원 내용은 원문만으로 확인되지 않음",
+      documentKind: "unknown_document", publishable: false, opportunityKind: "unknown", terminal: false,
+      reviewRequired: true,
+      reviewReasons: ["classification_uncertain", "program_identity_insufficient", "provider_posting_organization_ambiguous", "campus_scope_ambiguous", "missing_primary_application_window", "application_url_unverified", "support_type_uncertain", "support_amount_uncertain"],
+      fields: () => ({}),
     }),
     baseExample({
       caseId: "amount_range",

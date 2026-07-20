@@ -32,7 +32,9 @@ The desired contract separates:
 - `publishable_opportunity`: whether it represents a standalone opportunity eligible for administrator consideration;
 - `review.automatic_publish_allowed`: always false during Phase 4.
 
-Result announcements, information sessions, and general/application-support guidance are terminal non-opportunities. A standalone correction or deadline-extension notice is not independently publishable and requires relation resolution. An existing recruitment page that was edited may remain `recruitment_notice` when `source_revision_mode=updated_existing_page` and a revision note is retained.
+Result announcements, information sessions, and general/application-support guidance are terminal non-opportunities. A standalone correction or deadline-extension notice is non-publishable and relation-dependent, but `terminal_non_opportunity=false` because it may retain opportunity fields needed to resolve the change. An existing recruitment page that was edited may remain `recruitment_notice` when `source_revision_mode=updated_existing_page` and a revision note is retained.
+
+`unknown_document` is non-publishable and non-terminal, uses `opportunity_kind=unknown`, and always requires `classification_uncertain` review. It is not converted to `not_applicable` because the document role has not been established.
 
 ### Document kind versus lifecycle
 
@@ -77,7 +79,7 @@ A subprogram-specific window is not generalized to an entire composite notice.
 
 The current deterministic URL normalizer is conservative: it requires an HTTP(S) URL on a line containing an application-context term. Current frozen outputs do not copy the canonical source URL into `application_url`.
 
-There is, however, a compatibility risk in the legacy administrator review page: it defaults `apply_url` to `notice.notice_url`. The new Phase 4 contract rejects `application_url` equal to the source canonical URL unless separately evidenced as the actual application route. This design does not change the admin page.
+There is, however, a compatibility risk in the legacy administrator review page: it defaults `apply_url` to `notice.notice_url`. Phase 4 P0 always rejects `application_url` equal to the source canonical/detail route, including trailing-slash, query, and fragment variants of the same host/path. Only a distinct, explicitly evidenced HTTP(S) application path is accepted. Supporting a same-page application flow later requires an explicit contract revision; evidence alone does not create an exception in this version. This design does not change the admin page.
 
 ### Amounts
 
@@ -144,7 +146,7 @@ The production compatibility flow remains appropriate for complex semantics: an 
 - Auto allowed: one explicit year-bearing application range has no role conflict.
 - Stop: recommendation, completion, consent, result, multiple cycle, subprogram-only, or conflicting dates.
 - Fixtures: normal recruitment and ambiguous date role.
-- Complete: start ≤ deadline; unsafe roles yield lifecycle unknown plus review.
+- Complete: valid date-only values compare by calendar day, offset datetimes compare by their actual instants, and start ≤ deadline. Mixed date/datetime precision or unsafe roles yield lifecycle unknown plus review.
 
 ### Application URL
 
@@ -166,7 +168,7 @@ The production compatibility flow remains appropriate for complex semantics: an 
 
 - Reuse canonical evidence identities and locators.
 - Every present value resolves at least one evidence ID.
-- Unknown, ambiguous, conflicting, and schema-gap states carry review reasons.
+- Every `unknown`, `ambiguous`, `conflicting`, and `schema_expressiveness_gap` P0/auxiliary field forces review with a field-specific reason. Terminal `not_applicable` is exempt. Essential identity/window/benefit `not_found` values require review, while clearly absent posting scope or URL may remain no-review under the field policy.
 - `automatic_publish_allowed` remains false for every candidate.
 
 ## Explicitly excluded from the first remediation
@@ -205,23 +207,31 @@ All fields are required as state-bearing objects or classification values. “Re
 
 The JSON design report contains data type, required/null policy, exact allowed values, evidence rule, current-field mapping, and Phase 4/Phase 5 handoff designation for each field.
 
+### Review enforcement policy
+
+The statuses `unknown`, `ambiguous`, `conflicting`, and `schema_expressiveness_gap` always set `review.required=true`, require at least one reason, and require a reason assigned to that field: program identity, provider/poster role, campus scope, application-date role/conflict/missing window, URL verification, support type, or amount structure/schema gap. A generic unrelated reason does not satisfy the rule. Terminal `not_applicable` is exempt.
+
+For a clear `not_found`, review is field-specific. Missing `program_name`, `provider`, primary application start/deadline, `support_type`, or `support_amount` requires its corresponding review reason. `posting_organization`, `institution_or_campus`, and `application_url` may be `not_found` without review when absence is itself clear; for example, an offline/email application does not invent a URL. The machine-readable mapping is `review_policy` in the design JSON report.
+
 ## Cross-field safety invariants
 
 1. `document_kind` and `lifecycle_status` allowed values do not overlap.
-2. Result, information-session, and guidance documents are terminal and non-publishable.
-3. Standalone correction is non-publishable and requires relation resolution.
+2. Recruitment notices are never terminal; result, information-session, and guidance documents are terminal, non-publishable, and `opportunity_kind=not_applicable`.
+3. Standalone correction is non-publishable, non-terminal, requires relation resolution, and requires administrator review.
 4. Updated existing recruitment pages require revision notes but may stay recruitment notices.
-5. `publishable_opportunity=true` requires confirmed recruitment and a non-unknown opportunity kind.
-6. Paid activity requires its own opportunity kind and administrator partition review.
-7. Application start cannot be after deadline.
-8. Unsafe date roles force lifecycle `unknown` and review.
-9. No standalone timezone field exists.
-10. Source canonical URL is not automatically an application URL.
-11. Provider, posting organization, and institution/campus are independent.
-12. Unlike benefits, target tiers, totals, and per-person amounts are not collapsed.
-13. `maximum_cap` is never normalized as `exact`.
-14. Applicant-requested and not-predefined amounts are semantic values, not `not_found`.
-15. Clear unsupported meaning is `schema_expressiveness_gap`, not ambiguity.
+5. `unknown_document` is non-publishable, non-terminal, `opportunity_kind=unknown`, and requires `classification_uncertain` review.
+6. `publishable_opportunity=true` requires confirmed recruitment and a non-unknown opportunity kind.
+7. Paid activity requires its own opportunity kind and administrator partition review.
+8. Date-only values must be real calendar dates; datetimes require an offset and compare as actual instants. Mixed precision cannot produce an automatic lifecycle.
+9. Unsafe date roles force lifecycle `unknown` and review.
+10. No standalone timezone field exists.
+11. Source canonical/detail URL is never an application URL in this contract version.
+12. Provider, posting organization, and institution/campus are independent.
+13. Every uncertain field state requires a field-specific review reason; terminal `not_applicable` is exempt.
+14. Unlike benefits, target tiers, totals, and per-person amounts are not collapsed.
+15. `maximum_cap` is never normalized as `exact`.
+16. Applicant-requested and not-predefined amounts are semantic values, not `not_found`.
+17. Clear unsupported meaning is `schema_expressiveness_gap`, not ambiguity.
 
 ## Amount result structure
 
@@ -246,6 +256,8 @@ evidence_references
 ```
 
 Fields not applicable to the selected kind are omitted or null. Components retain their own labels, units, periods, and numeric values. There is intentionally no “representative amount” property for tiered/composite values.
+
+Simple amount invariants are strict: `exact` requires only `exact_amount`; `maximum_cap` requires `maximum_amount` and forbids `exact_amount`; `range` requires ordered minimum/maximum bounds and forbids `exact_amount`; tuition percentage requires `percentage` and forbids numeric currency amounts; full tuition forbids invented numeric amounts. Monthly, semester, and hourly kinds require `exact_amount` with `period=month`, `semester`, and `hour` respectively. Properties that are inapplicable must be absent or null; component/installment arrays are not allowed on `exact`.
 
 Complex kinds supported structurally but excluded from first automatic extraction are `tiered_by_target`, `tiered_by_degree_level`, `composite_components`, `installment`, and `multiple_program_schema_gap`. Applicant-requested, not-predefined, variable, actual-paid-cap, non-cash, and complex values are suitable for LLM-assisted draft and administrator confirmation.
 
@@ -280,7 +292,7 @@ The next remediation is complete only when:
 - the five lifecycle enum violations are eliminated;
 - the three verified recruitment suppressions are fixed;
 - result/guidance/correction fixtures remain non-publishable;
-- source URL is never accepted as application URL without separate evidence;
+- source canonical/detail URL is never accepted as application URL;
 - simple amount kinds normalize losslessly;
 - complex amount fixtures remain structured schema gaps, not scalars;
 - paid activity remains partitioned;

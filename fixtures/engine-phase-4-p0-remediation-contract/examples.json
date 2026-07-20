@@ -527,7 +527,10 @@
         "review": {
           "required": true,
           "reasons": [
-            "relation_resolution_required"
+            "relation_resolution_required",
+            "missing_primary_application_window",
+            "support_type_uncertain",
+            "support_amount_uncertain"
           ],
           "automatic_publish_allowed": false
         },
@@ -1113,7 +1116,7 @@
           },
           "application_start": {
             "status": "present",
-            "value": "2026-01-15",
+            "value": "2026-01-15T00:00:00+09:00",
             "evidence_references": [
               "paid_student_activity_ev_1"
             ]
@@ -1416,7 +1419,11 @@
           "required": true,
           "reasons": [
             "ambiguous_date_role",
-            "publishability_requires_confirmation"
+            "publishability_requires_confirmation",
+            "provider_posting_organization_ambiguous",
+            "campus_scope_ambiguous",
+            "support_type_uncertain",
+            "support_amount_uncertain"
           ],
           "automatic_publish_allowed": false
         },
@@ -1429,6 +1436,110 @@
             "document_revision_id": null,
             "document_hash": null,
             "source_text": "신청 및 서류 보완 일정 2026-05-01 ~ 2026-05-31",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "unknown_document_requires_review",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "unknown_document",
+        "source": {
+          "notice_id": "unknown_document_notice",
+          "canonical_url": "https://example.org/notices/unknown_document"
+        },
+        "classification": {
+          "document_kind": "unknown_document",
+          "publishable_opportunity": false,
+          "opportunity_kind": "unknown",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "unknown_document_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "provider": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "unknown_document_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_deadline": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "lifecycle_status": {
+            "status": "unknown",
+            "value": "unknown",
+            "evidence_references": []
+          },
+          "application_url": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_amount": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "classification_uncertain",
+            "program_identity_insufficient",
+            "provider_posting_organization_ambiguous",
+            "campus_scope_ambiguous",
+            "missing_primary_application_window",
+            "application_url_unverified",
+            "support_type_uncertain",
+            "support_amount_uncertain"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "unknown_document_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "unknown_document_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "장학 관련 공지이며 모집 여부와 지원 내용은 원문만으로 확인되지 않음",
             "locator": "main"
           }
         ]

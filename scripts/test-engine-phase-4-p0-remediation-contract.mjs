@@ -40,6 +40,31 @@ test("standalone correction remains non-publishable and relation-dependent", () 
   expectInvalid(record, "correction_relation_rule");
 });
 
+test("recruitment notice cannot be terminal", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.classification.terminal_non_opportunity = true;
+  expectInvalid(record, "recruitment_marked_terminal");
+});
+
+test("result announcement must remain terminal", () => {
+  const record = clone(byScenario.result_announcement);
+  record.classification.terminal_non_opportunity = false;
+  expectInvalid(record, "terminal_document_invariant");
+});
+
+test("correction notice cannot be terminal", () => {
+  const record = clone(byScenario.standalone_correction_notice);
+  record.classification.terminal_non_opportunity = true;
+  expectInvalid(record, "correction_relation_rule");
+});
+
+test("unknown document requires classification review", () => {
+  const record = clone(byScenario.unknown_document_requires_review);
+  record.review.required = false;
+  record.review.reasons = [];
+  expectInvalid(record, "unknown_document_invariant");
+});
+
 test("updated existing page requires revision note", () => {
   const record = clone(byScenario.updated_existing_recruitment_page);
   record.classification.revision_note = null;
@@ -58,6 +83,40 @@ test("application start cannot follow deadline", () => {
   expectInvalid(record, "invalid_application_window");
 });
 
+test("same-day offset datetimes compare full instants", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_start.value = "2026-07-20T18:00:00+09:00";
+  record.fields.application_deadline.value = "2026-07-20T09:00:00+09:00";
+  expectInvalid(record, "invalid_application_window");
+});
+
+test("impossible February date is rejected", () => {
+  const record = clone(byScenario.closed_recruitment_notice);
+  record.fields.application_start.value = "2026-02-30";
+  expectInvalid(record, "invalid_calendar_date");
+});
+
+test("invalid month is rejected", () => {
+  const record = clone(byScenario.closed_recruitment_notice);
+  record.fields.application_start.value = "2026-13-01";
+  expectInvalid(record, "invalid_calendar_date");
+});
+
+test("mixed date precision cannot remain auto-confirmed", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_start.value = "2026-07-01";
+  expectInvalid(record, "mixed_date_precision_unsafe");
+});
+
+test("mixed date precision fails closed with an explicit review reason", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_start.value = "2026-07-01";
+  record.fields.lifecycle_status = { status: "unknown", value: "unknown", evidence_references: [] };
+  record.review.required = true;
+  record.review.reasons = ["mixed_date_precision_requires_review"];
+  assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
+});
+
 test("ambiguous date roles cannot produce closed lifecycle", () => {
   const record = clone(byScenario.ambiguous_application_date_role);
   record.fields.lifecycle_status = { status: "present", value: "closed", evidence_references: [record.evidence_references[0].evidence_id] };
@@ -68,6 +127,54 @@ test("source detail URL is not an application URL", () => {
   const record = clone(byScenario.normal_recruitment_notice);
   record.fields.application_url.value = record.source.canonical_url;
   expectInvalid(record, "source_url_used_as_application_url");
+});
+
+test("source detail route variants are not application URLs", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_url.value = `${record.source.canonical_url}/?tracking=application#form`;
+  expectInvalid(record, "source_url_used_as_application_url");
+});
+
+test("ambiguous provider forces field-specific admin review", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.provider = { status: "ambiguous", value: null, evidence_references: [record.evidence_references[0].evidence_id] };
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
+test("unknown campus forces field-specific admin review", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.institution_or_campus = { status: "unknown", value: null, evidence_references: [] };
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
+test("conflicting date forces field-specific admin review", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_start = { status: "conflicting", value: null, evidence_references: [record.evidence_references[0].evidence_id] };
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
+test("conflicting date rejects an unrelated date reason", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_start = { status: "conflicting", value: null, evidence_references: [record.evidence_references[0].evidence_id] };
+  record.fields.lifecycle_status = { status: "unknown", value: "unknown", evidence_references: [] };
+  record.review.required = true;
+  record.review.reasons = ["ambiguous_date_role"];
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
+test("unknown application URL requires its specific reason", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_url = { status: "unknown", value: null, evidence_references: [] };
+  record.review.required = true;
+  record.review.reasons = ["llm_assisted_draft_recommended"];
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
+test("amount schema gap cannot disable review", () => {
+  const record = clone(byScenario.tiered_by_target_amount);
+  record.review.required = false;
+  record.review.reasons = [];
+  expectInvalid(record, "unsafe_field_review_missing");
 });
 
 test("missing evidence reference fails closed", () => {
@@ -88,6 +195,12 @@ test("exact amount requires exact_amount", () => {
   expectInvalid(record, "exact_amount_missing");
 });
 
+test("exact amount forbids a maximum scalar", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.support_amount.value.maximum_amount = 1000000;
+  expectInvalid(record, "amount_property_forbidden");
+});
+
 test("maximum cap requires maximum_amount and is not exact", () => {
   const record = clone(byScenario.maximum_cap_amount);
   assert.equal(record.fields.support_amount.value.kind, "maximum_cap");
@@ -95,10 +208,54 @@ test("maximum cap requires maximum_amount and is not exact", () => {
   expectInvalid(record, "maximum_amount_missing");
 });
 
+test("maximum cap forbids exact_amount", () => {
+  const record = clone(byScenario.maximum_cap_amount);
+  record.fields.support_amount.value.exact_amount = 1000000;
+  expectInvalid(record, "amount_property_forbidden");
+});
+
 test("invalid amount range fails", () => {
   const record = clone(byScenario.range_amount);
   record.fields.support_amount.value.minimum_amount = 2000000;
   expectInvalid(record, "invalid_amount_range");
+});
+
+test("range amount forbids exact_amount", () => {
+  const record = clone(byScenario.range_amount);
+  record.fields.support_amount.value.exact_amount = 750000;
+  expectInvalid(record, "amount_property_forbidden");
+});
+
+test("tuition percentage forbids numeric currency amount", () => {
+  const record = clone(byScenario.percentage_of_tuition_amount);
+  record.fields.support_amount.value.exact_amount = 500000;
+  expectInvalid(record, "amount_property_forbidden");
+});
+
+test("full tuition forbids invented numeric amount", () => {
+  const record = clone(byScenario.full_tuition_amount);
+  record.fields.support_amount.value.exact_amount = 1;
+  expectInvalid(record, "amount_property_forbidden");
+});
+
+test("recurring monthly amount requires month period", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.support_amount.value.kind = "recurring_monthly";
+  record.fields.support_amount.value.period = "semester";
+  expectInvalid(record, "period_mismatch");
+});
+
+test("recurring semester amount requires an exact scalar", () => {
+  const record = clone(byScenario.updated_existing_recruitment_page);
+  delete record.fields.support_amount.value.exact_amount;
+  expectInvalid(record, "periodic_amount_missing");
+});
+
+test("hourly rate requires hour period", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.support_amount.value.kind = "hourly_rate";
+  record.fields.support_amount.value.period = "month";
+  expectInvalid(record, "period_mismatch");
 });
 
 test("target tiers require labels", () => {

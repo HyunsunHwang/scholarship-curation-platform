@@ -339,7 +339,10 @@
           "relation_resolution_required",
           "source_revision_history_missing",
           "upstream_evidence_incomplete",
-          "llm_assisted_draft_recommended"
+          "llm_assisted_draft_recommended",
+          "support_type_uncertain",
+          "support_amount_uncertain",
+          "mixed_date_precision_requires_review"
         ],
         "null_or_unknown_allowed": true,
         "automatic_generation_condition": "Deterministic rule emits a known reason",
@@ -659,7 +662,7 @@
           "normal_recruitment_notice",
           "ambiguous_application_date_role"
         ],
-        "completion_condition": "Start is never after deadline and unsafe roles force unknown lifecycle plus review."
+        "completion_condition": "Real date-only values compare by calendar day, offset datetimes compare by instant, and mixed precision forces unknown lifecycle plus review."
       },
       {
         "problem": "Source/detail URL can be confused with application URL downstream.",
@@ -776,14 +779,18 @@
   },
   "cross_field_safety_rules": [
     "document_kind and lifecycle_status enums are disjoint",
-    "result, information-session, and guidance documents are terminal and non-publishable",
-    "standalone correction is non-publishable and requires relation resolution",
+    "recruitment_notice is non-terminal; result, information-session, and guidance documents are terminal, non-publishable, and not_applicable opportunities",
+    "standalone correction is non-publishable, non-terminal, requires relation resolution, and requires review",
+    "unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review",
     "an updated existing recruitment page may remain recruitment_notice only with a revision note",
     "publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind",
     "paid_student_activity never silently enters the general scholarship feed",
+    "date-only values must be real calendar dates and offset datetimes compare as actual instants",
+    "mixed date/datetime precision cannot produce an automatic lifecycle",
     "primary application start cannot be after deadline and no standalone timezone field exists",
     "unsafe or conflicting date roles force lifecycle unknown and review",
-    "source canonical URL is never automatically application_url",
+    "every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt",
+    "source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version",
     "provider, posting_organization, and institution_or_campus are independent",
     "unlike benefits, target tiers, total budget, and per-person amounts are never collapsed",
     "maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity"
@@ -865,7 +872,82 @@
       "installment",
       "multiple_program_schema_gap"
     ],
+    "simple_kind_invariants": {
+      "exact": "exact_amount required; min/max/percentage/components/installments absent or null",
+      "maximum_cap": "maximum_amount required; exact_amount absent or null",
+      "range": "ordered minimum_amount and maximum_amount required; exact_amount absent or null",
+      "percentage_of_tuition": "percentage required; numeric amount fields absent or null",
+      "full_tuition": "numeric amount fields absent or null",
+      "recurring_monthly": "exact_amount required; period=month",
+      "recurring_semester": "exact_amount required; period=semester",
+      "hourly_rate": "exact_amount required; period=hour"
+    },
     "legacy_projection": "After admin confirmation, project display to support_amount_text; do not persist the rich object in this phase."
+  },
+  "review_policy": {
+    "unsafe_statuses": [
+      "unknown",
+      "ambiguous",
+      "conflicting",
+      "schema_expressiveness_gap"
+    ],
+    "terminal_not_applicable_exempt": true,
+    "field_reason_options": {
+      "program_name": [
+        "program_identity_insufficient"
+      ],
+      "provider": [
+        "provider_posting_organization_ambiguous"
+      ],
+      "posting_organization": [
+        "provider_posting_organization_ambiguous"
+      ],
+      "institution_or_campus": [
+        "campus_scope_ambiguous"
+      ],
+      "application_start": [
+        "ambiguous_date_role",
+        "conflicting_date_evidence",
+        "missing_primary_application_window",
+        "mixed_date_precision_requires_review"
+      ],
+      "application_deadline": [
+        "ambiguous_date_role",
+        "conflicting_date_evidence",
+        "missing_primary_application_window",
+        "mixed_date_precision_requires_review"
+      ],
+      "lifecycle_status": [
+        "ambiguous_date_role",
+        "conflicting_date_evidence",
+        "missing_primary_application_window",
+        "mixed_date_precision_requires_review"
+      ],
+      "application_url": [
+        "application_url_unverified"
+      ],
+      "support_type": [
+        "support_type_uncertain"
+      ],
+      "support_amount": [
+        "support_amount_uncertain",
+        "complex_amount_structure",
+        "amount_schema_expressiveness_gap"
+      ]
+    },
+    "not_found_requires_review": {
+      "program_name": "program_identity_insufficient",
+      "provider": "provider_posting_organization_ambiguous",
+      "application_start": "missing_primary_application_window",
+      "application_deadline": "missing_primary_application_window",
+      "support_type": "support_type_uncertain",
+      "support_amount": "support_amount_uncertain"
+    },
+    "not_found_without_review_allowed": [
+      "posting_organization",
+      "institution_or_campus",
+      "application_url"
+    ]
   },
   "compatibility_plan": [
     {
@@ -1143,7 +1225,7 @@
   },
   "validation": {
     "schema_compiles": true,
-    "example_count": 16,
+    "example_count": 17,
     "examples_valid": true,
     "deterministic_report": true
   },
@@ -1152,6 +1234,7 @@
     "accuracy_improvement_claimed": false,
     "frozen_corpus_modified": false,
     "full_gate_c_report_modified": false,
+    "p0_official_report_modified": false,
     "production_db_touched": false,
     "migration_modified": false,
     "external_llm_called": false,

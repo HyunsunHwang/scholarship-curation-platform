@@ -6,6 +6,7 @@ import { exampleManifest } from "../fixtures/engine-phase-4-p0-remediation-contr
 import {
   AMOUNT_KINDS,
   DOCUMENT_KINDS,
+  FIELD_REVIEW_POLICY,
   LIFECYCLE_STATUSES,
   P0_OPPORTUNITY_FIELDS,
   PROTECTED_BASELINE_SHA256,
@@ -45,7 +46,7 @@ try {
 const exampleResults = schemaValidator
   ? examples.examples.map((item) => ({ scenario: item.scenario, result: validateP0RemediationRecord(item.output, schemaValidator) }))
   : [];
-check("all example fixtures pass schema and semantic validation", exampleResults.length === 16 && exampleResults.every((item) => item.result.valid), JSON.stringify(exampleResults.filter((item) => !item.result.valid)));
+check("all example fixtures pass schema and semantic validation", exampleResults.length === 17 && exampleResults.every((item) => item.result.valid), JSON.stringify(exampleResults.filter((item) => !item.result.valid)));
 check("generated example fixture matches its source deterministically", readText("fixtures/engine-phase-4-p0-remediation-contract/examples.json") === `${JSON.stringify(exampleManifest, null, 2)}\n`);
 check("generated design JSON matches a fresh deterministic build", JSON.stringify(report) === JSON.stringify(freshReport));
 
@@ -54,6 +55,7 @@ const requiredScenarios = [
   "standalone_correction_notice", "updated_existing_recruitment_page", "maximum_cap_amount", "full_tuition_amount",
   "tiered_by_target_amount", "paid_student_activity", "application_url_not_found", "ambiguous_application_date_role",
   "range_amount", "percentage_of_tuition_amount", "applicant_requested_amount", "not_predefined_amount",
+  "unknown_document_requires_review",
 ];
 check("all required representative scenarios exist", requiredScenarios.every((scenario) => examples.examples.some((item) => item.scenario === scenario)));
 check("example case IDs are unique", new Set(examples.examples.map((item) => item.output.case_id)).size === examples.examples.length);
@@ -62,19 +64,25 @@ check("standalone timezone field is absent", !Object.hasOwn(schema.properties, "
 check("document kind and lifecycle enums are disjoint", DOCUMENT_KINDS.every((value) => !LIFECYCLE_STATUSES.includes(value)) && report.contract.lifecycle_statuses.length === 4);
 check("document and lifecycle enums match schema/report", JSON.stringify(schema.properties.classification.properties.document_kind.enum) === JSON.stringify(DOCUMENT_KINDS) && JSON.stringify(report.contract.lifecycle_statuses) === JSON.stringify(LIFECYCLE_STATUSES));
 check("provider and posting organization are independent required fields", schema.properties.fields.required.includes("provider") && schema.properties.fields.required.includes("posting_organization") && canonicalSchema.properties.fields.properties.posting_organization === undefined);
+check("review policy covers every field and unsafe status", JSON.stringify(report.review_policy) === JSON.stringify(FIELD_REVIEW_POLICY) && Object.keys(FIELD_REVIEW_POLICY.field_reason_options).length === 10 && FIELD_REVIEW_POLICY.unsafe_statuses.join() === "unknown,ambiguous,conflicting,schema_expressiveness_gap");
+check("not_found review policy is explicit and field-specific", Object.keys(FIELD_REVIEW_POLICY.not_found_requires_review).join() === "program_name,provider,application_start,application_deadline,support_type,support_amount" && FIELD_REVIEW_POLICY.not_found_without_review_allowed.join() === "posting_organization,institution_or_campus,application_url" && FIELD_REVIEW_POLICY.terminal_not_applicable_exempt);
 
 const byScenario = Object.fromEntries(examples.examples.map((item) => [item.scenario, item.output]));
 check("result announcement is terminal and non-publishable", byScenario.result_announcement.classification.terminal_non_opportunity && !byScenario.result_announcement.classification.publishable_opportunity && Object.entries(byScenario.result_announcement.fields).filter(([name]) => P0_OPPORTUNITY_FIELDS.includes(name)).every(([, field]) => field.status === "not_applicable"));
 check("application support guidance is terminal and non-publishable", byScenario.application_support_guidance.classification.document_kind === "general_guidance" && !byScenario.application_support_guidance.classification.publishable_opportunity);
 check("standalone correction is non-publishable and relation-dependent", byScenario.standalone_correction_notice.classification.document_kind === "correction_notice" && !byScenario.standalone_correction_notice.classification.publishable_opportunity && byScenario.standalone_correction_notice.classification.relation_resolution_required);
+check("correction is consistently non-terminal and review-required", !byScenario.standalone_correction_notice.classification.terminal_non_opportunity && byScenario.standalone_correction_notice.review.required && byScenario.standalone_correction_notice.review.reasons.includes("relation_resolution_required"));
+check("unknown document fails closed with classification review", !byScenario.unknown_document_requires_review.classification.publishable_opportunity && !byScenario.unknown_document_requires_review.classification.terminal_non_opportunity && byScenario.unknown_document_requires_review.classification.opportunity_kind === "unknown" && byScenario.unknown_document_requires_review.review.reasons.includes("classification_uncertain"));
 check("updated existing page remains a recruitment notice with revision metadata", byScenario.updated_existing_recruitment_page.classification.document_kind === "recruitment_notice" && byScenario.updated_existing_recruitment_page.classification.source_revision_mode === "updated_existing_page" && Boolean(byScenario.updated_existing_recruitment_page.classification.revision_note));
 check("normal recruitment may be publishable but never automatically published", byScenario.normal_recruitment_notice.classification.publishable_opportunity && byScenario.normal_recruitment_notice.review.automatic_publish_allowed === false);
 check("ambiguous date roles force unknown lifecycle and review", byScenario.ambiguous_application_date_role.fields.application_start.status === "ambiguous" && byScenario.ambiguous_application_date_role.fields.lifecycle_status.value === "unknown" && byScenario.ambiguous_application_date_role.review.required);
 check("source and application URLs remain distinct", byScenario.normal_recruitment_notice.fields.application_url.value !== byScenario.normal_recruitment_notice.source.canonical_url && byScenario.application_url_not_found.fields.application_url.status === "not_found");
+check("source URL policy has no same-page evidence exception", /always rejects `application_url` equal to the source canonical\/detail route/u.test(contractDoc) && /same-page application flow later requires an explicit contract revision/u.test(contractDoc));
 check("paid student activity is feed-partitioned", byScenario.paid_student_activity.classification.opportunity_kind === "paid_student_activity" && byScenario.paid_student_activity.fields.support_type.value.includes("activity_scholarship") && byScenario.paid_student_activity.review.reasons.includes("paid_activity_feed_partition_required"));
 
 check("amount enum covers the approved taxonomy", JSON.stringify(schema.$defs.amountKind.enum) === JSON.stringify(AMOUNT_KINDS));
 check("exact and maximum-cap semantics are distinct", byScenario.normal_recruitment_notice.fields.support_amount.value.kind === "exact" && byScenario.maximum_cap_amount.fields.support_amount.value.kind === "maximum_cap" && byScenario.maximum_cap_amount.fields.support_amount.value.maximum_amount === 1000000);
+check("simple amount invariants are machine-readable", Object.keys(report.amount_contract.simple_kind_invariants).join() === "exact,maximum_cap,range,percentage_of_tuition,full_tuition,recurring_monthly,recurring_semester,hourly_rate");
 check("range boundaries remain ordered", byScenario.range_amount.fields.support_amount.value.minimum_amount === 500000 && byScenario.range_amount.fields.support_amount.value.maximum_amount === 1000000);
 check("full tuition does not invent a currency amount", byScenario.full_tuition_amount.fields.support_amount.value.kind === "full_tuition" && byScenario.full_tuition_amount.fields.support_amount.value.exact_amount === undefined);
 check("target tiers retain labels and no representative scalar", byScenario.tiered_by_target_amount.fields.support_amount.status === "schema_expressiveness_gap" && byScenario.tiered_by_target_amount.fields.support_amount.value.components.every((item) => item.target_label) && byScenario.tiered_by_target_amount.fields.support_amount.value.exact_amount === undefined);
@@ -99,6 +107,7 @@ check("existing P0 diagnostic counts are unchanged", p0Report.p0_contract.total_
 check("existing full Gate C counts and HOLD remain unchanged", fullGateC.metrics.document_classification_accuracy.numerator === 4 && fullGateC.metrics.document_classification_accuracy.denominator === 24 && fullGateC.metrics.normalized_exact_match.numerator === 50 && fullGateC.metrics.normalized_exact_match.denominator === 64 && fullGateC.recommendation.phase5_ready === "HOLD" && fullGateC.recommendation.production_ready === "HOLD");
 check("protected extractor/corpus/reports retain base hashes", Object.entries(PROTECTED_BASELINE_SHA256).every(([relativePath, expected]) => sha256(readText(relativePath)) === expected && report.protected_baselines[relativePath]?.unchanged));
 check("design safety flags are all false", Object.values(report.safety).every((value) => value === false));
+check("official P0 report is explicitly protected", report.safety.p0_official_report_modified === false && report.protected_baselines["reports/engine-phase-4-gate-c-p0.json"]?.unchanged);
 check("contract decision is PASS while Gate C and Phase 5 remain HOLD", report.decision === "PASS" && report.gate_status.p0_remediation_contract === "PASS" && report.gate_status.full_schema_gate_c === "HOLD" && report.gate_status.phase5 === "HOLD");
 check("package scripts expose report/test/validate commands", Boolean(packageJson.scripts?.["engine:phase4:p0-remediation:report"] && packageJson.scripts?.["engine:phase4:p0-remediation:test"] && packageJson.scripts?.["engine:phase4:p0-remediation:validate"]));
 check("documentation and report describe the full safety boundary", /Current-code findings/u.test(contractDoc) && /Responsibility matrix/u.test(contractDoc) && /Explicitly excluded/u.test(contractDoc) && /Amount result structure/u.test(contractDoc) && /Compatibility plan/u.test(contractDoc) && /Full-schema Gate C: HOLD/u.test(markdown));

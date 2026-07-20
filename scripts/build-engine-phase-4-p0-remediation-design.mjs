@@ -12,6 +12,7 @@ import {
   CURRENT_CODE_FINDINGS,
   DOCUMENT_KINDS,
   FIRST_REMEDIATION_AMOUNT_KINDS,
+  FIELD_REVIEW_POLICY,
   LIFECYCLE_STATUSES,
   NEXT_EXTRACTOR_SCOPE,
   OPPORTUNITY_KINDS,
@@ -108,7 +109,7 @@ const remediationItems = [
     auto_allowed_when: "One explicit application range with a year and safe offset exists.",
     stop_when: "Roles are ambiguous, conflict, apply to only one subprogram, or describe follow-up steps.",
     validation_scenarios: ["normal_recruitment_notice", "ambiguous_application_date_role"],
-    completion_condition: "Start is never after deadline and unsafe roles force unknown lifecycle plus review.",
+    completion_condition: "Real date-only values compare by calendar day, offset datetimes compare by instant, and mixed precision forces unknown lifecycle plus review.",
   },
   {
     problem: "Source/detail URL can be confused with application URL downstream.",
@@ -211,14 +212,18 @@ const report = {
   next_extractor_remediation: { ...NEXT_EXTRACTOR_SCOPE, items: remediationItems, deferred_roadmap: deferredRoadmap },
   cross_field_safety_rules: [
     "document_kind and lifecycle_status enums are disjoint",
-    "result, information-session, and guidance documents are terminal and non-publishable",
-    "standalone correction is non-publishable and requires relation resolution",
+    "recruitment_notice is non-terminal; result, information-session, and guidance documents are terminal, non-publishable, and not_applicable opportunities",
+    "standalone correction is non-publishable, non-terminal, requires relation resolution, and requires review",
+    "unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review",
     "an updated existing recruitment page may remain recruitment_notice only with a revision note",
     "publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind",
     "paid_student_activity never silently enters the general scholarship feed",
+    "date-only values must be real calendar dates and offset datetimes compare as actual instants",
+    "mixed date/datetime precision cannot produce an automatic lifecycle",
     "primary application start cannot be after deadline and no standalone timezone field exists",
     "unsafe or conflicting date roles force lifecycle unknown and review",
-    "source canonical URL is never automatically application_url",
+    "every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt",
+    "source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version",
     "provider, posting_organization, and institution_or_campus are independent",
     "unlike benefits, target tiers, total budget, and per-person amounts are never collapsed",
     "maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity",
@@ -230,8 +235,19 @@ const report = {
     structure_only_complex_kinds: COMPLEX_AMOUNT_KINDS,
     llm_assisted_candidates: ["actual_tuition_paid_cap", "applicant_requested", "not_predefined", "variable_by_review", "non_cash_or_service", ...COMPLEX_AMOUNT_KINDS],
     mandatory_review_kinds: ["applicant_requested", "not_predefined", "variable_by_review", ...COMPLEX_AMOUNT_KINDS],
+    simple_kind_invariants: {
+      exact: "exact_amount required; min/max/percentage/components/installments absent or null",
+      maximum_cap: "maximum_amount required; exact_amount absent or null",
+      range: "ordered minimum_amount and maximum_amount required; exact_amount absent or null",
+      percentage_of_tuition: "percentage required; numeric amount fields absent or null",
+      full_tuition: "numeric amount fields absent or null",
+      recurring_monthly: "exact_amount required; period=month",
+      recurring_semester: "exact_amount required; period=semester",
+      hourly_rate: "exact_amount required; period=hour",
+    },
     legacy_projection: "After admin confirmation, project display to support_amount_text; do not persist the rich object in this phase.",
   },
+  review_policy: FIELD_REVIEW_POLICY,
   compatibility_plan: COMPATIBILITY_PLAN,
   current_extractor_contract_violations: currentViolations,
   baseline_metrics: {
@@ -262,6 +278,7 @@ const report = {
     accuracy_improvement_claimed: false,
     frozen_corpus_modified: false,
     full_gate_c_report_modified: false,
+    p0_official_report_modified: false,
     production_db_touched: false,
     migration_modified: false,
     external_llm_called: false,
@@ -315,11 +332,18 @@ ${fieldRows}
 
 ${report.cross_field_safety_rules.map((item) => `- ${item}`).join("\n")}
 
+## Review enforcement
+
+- Unsafe statuses: ${FIELD_REVIEW_POLICY.unsafe_statuses.join(", ")}; each requires review and a field-specific reason.
+- Terminal \`not_applicable\` is exempt.
+- \`not_found\` requires review for: ${Object.keys(FIELD_REVIEW_POLICY.not_found_requires_review).join(", ")}.
+- Clear \`not_found\` may remain no-review for: ${FIELD_REVIEW_POLICY.not_found_without_review_allowed.join(", ")}.
+
 ## Amount design
 
 - First remediation auto-kinds: ${FIRST_REMEDIATION_AMOUNT_KINDS.join(", ")}.
 - Structure-only complex kinds: ${COMPLEX_AMOUNT_KINDS.join(", ")}.
-- Rich Phase 4 values preserve display/source text, currency, exact/min/max/percentage, period, cap basis, labels, components/installments, and evidence.
+- Rich Phase 4 values preserve display/source text, currency, exact/min/max/percentage, period, cap basis, labels, components/installments, and evidence. Simple kinds reject incompatible scalar/component properties.
 - Legacy compatibility projects only reviewed \`display\` into \`support_amount_text\`; rich persistence needs a future Phase 5 migration.
 
 ## Compatibility plan
@@ -340,7 +364,7 @@ These counts are deterministic over the existing 24-case frozen input and curren
 
 ## Completion contract for the next remediation
 
-The next implementation is complete only when all 16 contract fixtures remain valid, mutation tests reject unsafe combinations, the diagnosed lifecycle and verified suppression defects are eliminated without exposing terminal documents, evidence references remain complete, existing Gate B/C/P0 regressions pass, and all production/Phase 5 safety flags remain false.
+The next implementation is complete only when all ${exampleManifest.examples.length} contract fixtures remain valid, mutation tests reject unsafe combinations, the diagnosed lifecycle and verified suppression defects are eliminated without exposing terminal documents, evidence references remain complete, existing Gate B/C/P0 regressions pass, and all production/Phase 5 safety flags remain false.
 
 ## Gate status
 
