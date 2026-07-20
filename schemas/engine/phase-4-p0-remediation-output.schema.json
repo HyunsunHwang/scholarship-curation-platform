@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation-platform.local/schemas/engine/phase-4-p0-remediation-output.schema.json",
+  "title": "Engine Phase 4 P0 remediation output contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "source",
+    "classification",
+    "fields",
+    "review",
+    "evidence_references"
+  ],
+  "properties": {
+    "schema_version": { "const": "engine-phase-4-p0-remediation-output/v1" },
+    "case_id": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notice_id", "canonical_url"],
+      "properties": {
+        "notice_id": { "type": "string", "minLength": 1 },
+        "canonical_url": { "type": "string", "pattern": "^https?://" }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_kind",
+        "publishable_opportunity",
+        "opportunity_kind",
+        "terminal_non_opportunity",
+        "relation_resolution_required",
+        "source_revision_mode",
+        "revision_note",
+        "evidence_references"
+      ],
+      "properties": {
+        "document_kind": {
+          "enum": [
+            "recruitment_notice",
+            "result_announcement",
+            "information_session",
+            "general_guidance",
+            "correction_notice",
+            "unknown_document"
+          ]
+        },
+        "publishable_opportunity": { "type": "boolean" },
+        "opportunity_kind": {
+          "enum": ["scholarship", "paid_student_activity", "not_applicable", "unknown"]
+        },
+        "terminal_non_opportunity": { "type": "boolean" },
+        "relation_resolution_required": { "type": "boolean" },
+        "source_revision_mode": { "enum": ["standalone_document", "updated_existing_page"] },
+        "revision_note": { "type": ["string", "null"] },
+        "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+      }
+    },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "program_name",
+        "provider",
+        "posting_organization",
+        "institution_or_campus",
+        "application_start",
+        "application_deadline",
+        "lifecycle_status",
+        "application_url",
+        "support_type",
+        "support_amount"
+      ],
+      "properties": {
+        "program_name": { "$ref": "#/$defs/stringField" },
+        "provider": { "$ref": "#/$defs/stringField" },
+        "posting_organization": { "$ref": "#/$defs/stringField" },
+        "institution_or_campus": { "$ref": "#/$defs/stringField" },
+        "application_start": { "$ref": "#/$defs/dateField" },
+        "application_deadline": { "$ref": "#/$defs/dateField" },
+        "lifecycle_status": { "$ref": "#/$defs/lifecycleField" },
+        "application_url": { "$ref": "#/$defs/urlField" },
+        "support_type": { "$ref": "#/$defs/stringArrayField" },
+        "support_amount": { "$ref": "#/$defs/amountField" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "reasons", "automatic_publish_allowed"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "classification_uncertain",
+              "publishability_requires_confirmation",
+              "program_identity_insufficient",
+              "provider_posting_organization_ambiguous",
+              "campus_scope_ambiguous",
+              "ambiguous_date_role",
+              "conflicting_date_evidence",
+              "missing_primary_application_window",
+              "application_url_unverified",
+              "complex_amount_structure",
+              "amount_schema_expressiveness_gap",
+              "paid_activity_feed_partition_required",
+              "relation_resolution_required",
+              "source_revision_history_missing",
+              "upstream_evidence_incomplete",
+              "llm_assisted_draft_recommended"
+            ]
+          }
+        },
+        "automatic_publish_allowed": { "const": false }
+      }
+    },
+    "evidence_references": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidenceReference" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": { "publishable_opportunity": { "const": true } },
+            "required": ["publishable_opportunity"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": {
+              "document_kind": { "const": "recruitment_notice" },
+              "terminal_non_opportunity": { "const": false },
+              "opportunity_kind": { "enum": ["scholarship", "paid_student_activity"] }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": {
+              "document_kind": {
+                "enum": ["result_announcement", "information_session", "general_guidance"]
+              }
+            },
+            "required": ["document_kind"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": {
+              "publishable_opportunity": { "const": false },
+              "terminal_non_opportunity": { "const": true },
+              "opportunity_kind": { "const": "not_applicable" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": { "document_kind": { "const": "correction_notice" } },
+            "required": ["document_kind"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": {
+              "publishable_opportunity": { "const": false },
+              "relation_resolution_required": { "const": true }
+            }
+          },
+          "review": {
+            "type": "object",
+            "properties": { "required": { "const": true } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": { "source_revision_mode": { "const": "updated_existing_page" } },
+            "required": ["source_revision_mode"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "classification": {
+            "type": "object",
+            "properties": { "revision_note": { "type": "string", "minLength": 1 } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "fieldStatus": {
+      "enum": [
+        "present",
+        "not_found",
+        "unknown",
+        "not_applicable",
+        "ambiguous",
+        "conflicting",
+        "schema_expressiveness_gap"
+      ]
+    },
+    "evidenceIdArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "nullableEvidenceIdArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "stringField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "$ref": "#/$defs/fieldStatus" },
+        "value": { "type": ["string", "null"] },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "present" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "type": "string", "minLength": 1 },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": ["not_found", "unknown", "not_applicable", "ambiguous", "conflicting"]
+              }
+            },
+            "required": ["status"]
+          },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "stringArrayField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "$ref": "#/$defs/fieldStatus" },
+        "value": {
+          "oneOf": [
+            { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+            { "type": "null" }
+          ]
+        },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "present" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "type": "array", "minItems": 1 },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "dateField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] },
+        "value": {
+          "oneOf": [
+            { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2}))?$" },
+            { "type": "null" }
+          ]
+        },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "present" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "type": "string" },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "lifecycleField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "enum": ["present", "unknown", "not_applicable"] },
+        "value": { "enum": ["upcoming", "open", "closed", "unknown", null] },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "present" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "enum": ["upcoming", "open", "closed"] },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "unknown" } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": "unknown" } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "not_applicable" } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "urlField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "enum": ["present", "not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] },
+        "value": { "type": ["string", "null"], "pattern": "^https?://" },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "present" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "type": "string", "pattern": "^https?://" },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "amountKind": {
+      "enum": [
+        "exact",
+        "maximum_cap",
+        "range",
+        "percentage_of_tuition",
+        "full_tuition",
+        "actual_tuition_paid_cap",
+        "tiered_by_target",
+        "tiered_by_degree_level",
+        "composite_components",
+        "recurring_monthly",
+        "recurring_semester",
+        "installment",
+        "hourly_rate",
+        "applicant_requested",
+        "not_predefined",
+        "variable_by_review",
+        "non_cash_or_service",
+        "multiple_program_schema_gap"
+      ]
+    },
+    "amountComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "display"],
+      "properties": {
+        "kind": { "$ref": "#/$defs/amountKind" },
+        "display": { "type": "string", "minLength": 1 },
+        "currency": { "type": ["string", "null"] },
+        "exact_amount": { "type": ["number", "null"], "minimum": 0 },
+        "minimum_amount": { "type": ["number", "null"], "minimum": 0 },
+        "maximum_amount": { "type": ["number", "null"], "minimum": 0 },
+        "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "period": { "enum": ["one_time", "month", "semester", "year", "hour", "program", "not_applicable", null] },
+        "cap_basis": { "enum": ["stated_maximum", "actual_tuition_paid", "requested_amount", "review_decision", null] },
+        "target_label": { "type": ["string", "null"] },
+        "degree_level": { "type": ["string", "null"] }
+      }
+    },
+    "installment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "amount"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "amount": { "type": "number", "minimum": 0 },
+        "scheduled_for": { "type": ["string", "null"] }
+      }
+    },
+    "amountValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "kind", "currency", "period", "source_text", "evidence_references"],
+      "properties": {
+        "display": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/amountKind" },
+        "currency": { "type": ["string", "null"] },
+        "exact_amount": { "type": ["number", "null"], "minimum": 0 },
+        "minimum_amount": { "type": ["number", "null"], "minimum": 0 },
+        "maximum_amount": { "type": ["number", "null"], "minimum": 0 },
+        "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "period": { "enum": ["one_time", "month", "semester", "year", "hour", "program", "not_applicable", null] },
+        "cap_basis": { "enum": ["stated_maximum", "actual_tuition_paid", "requested_amount", "review_decision", null] },
+        "target_label": { "type": ["string", "null"] },
+        "degree_level": { "type": ["string", "null"] },
+        "components": { "type": "array", "items": { "$ref": "#/$defs/amountComponent" } },
+        "installments": { "type": "array", "items": { "$ref": "#/$defs/installment" } },
+        "source_text": { "type": "string", "minLength": 1 },
+        "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+      }
+    },
+    "amountField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "evidence_references"],
+      "properties": {
+        "status": { "$ref": "#/$defs/fieldStatus" },
+        "value": { "oneOf": [{ "$ref": "#/$defs/amountValue" }, { "type": "null" }] },
+        "evidence_references": { "$ref": "#/$defs/nullableEvidenceIdArray" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "enum": ["present", "schema_expressiveness_gap"] } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "$ref": "#/$defs/amountValue" },
+              "evidence_references": { "$ref": "#/$defs/evidenceIdArray" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["not_found", "unknown", "not_applicable", "ambiguous", "conflicting"] } }, "required": ["status"] },
+          "then": { "properties": { "value": { "const": null } } }
+        }
+      ]
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "source_type", "source_notice_id", "source_text", "locator"],
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "source_type": { "enum": ["html_text", "pdf_text", "table_text", "hwp_text", "hwpx_text", "ocr_text", "source_metadata", "manual_annotation"] },
+        "source_notice_id": { "type": "string", "minLength": 1 },
+        "document_id": { "type": ["string", "null"] },
+        "document_revision_id": { "type": ["string", "null"] },
+        "document_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "source_text": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

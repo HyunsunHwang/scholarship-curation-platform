@@ -1,0 +1,1931 @@
+{
+  "fixture_version": "engine-phase-4-p0-remediation-contract-examples/v1",
+  "contract_schema_version": "engine-phase-4-p0-remediation-output/v1",
+  "examples": [
+    {
+      "scenario": "normal_recruitment_notice",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "normal_open_recruitment",
+        "source": {
+          "notice_id": "normal_open_recruitment_notice",
+          "canonical_url": "https://example.org/notices/normal_open_recruitment"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "normal_open_recruitment_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "정상 장학금",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-07-01T09:00:00+09:00",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-07-31T18:00:00+09:00",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "open",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "present",
+            "value": "https://apply.example.org/normal",
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "1인당 1,000,000원",
+              "evidence_references": [
+                "normal_open_recruitment_ev_1"
+              ],
+              "display": "1인당 1,000,000원",
+              "kind": "exact",
+              "exact_amount": 1000000
+            },
+            "evidence_references": [
+              "normal_open_recruitment_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "normal_open_recruitment_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "normal_open_recruitment_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "정상 장학금 신청기간 2026-07-01 09:00부터 2026-07-31 18:00까지, 신청 https://apply.example.org/normal",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "closed_recruitment_notice",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "closed_recruitment",
+        "source": {
+          "notice_id": "closed_recruitment_notice",
+          "canonical_url": "https://example.org/notices/closed_recruitment"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "closed_recruitment_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "마감된 장학금",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2025-01-01",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2025-01-31",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "500,000원",
+              "evidence_references": [
+                "closed_recruitment_ev_1"
+              ],
+              "display": "500,000원",
+              "kind": "exact",
+              "exact_amount": 500000
+            },
+            "evidence_references": [
+              "closed_recruitment_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "closed_recruitment_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "closed_recruitment_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "마감된 장학금 신청기간 2025-01-01부터 2025-01-31까지",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "result_announcement",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "result_announcement",
+        "source": {
+          "notice_id": "result_announcement_notice",
+          "canonical_url": "https://example.org/notices/result_announcement"
+        },
+        "classification": {
+          "document_kind": "result_announcement",
+          "publishable_opportunity": false,
+          "opportunity_kind": "not_applicable",
+          "terminal_non_opportunity": true,
+          "relation_resolution_required": true,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "result_announcement_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "provider": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "result_announcement_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_deadline": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "lifecycle_status": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_url": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_amount": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "relation_resolution_required"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "result_announcement_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "result_announcement_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "2025학년도 복지장학금 선발 결과 발표",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "application_support_guidance",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "application_support_guidance",
+        "source": {
+          "notice_id": "application_support_guidance_notice",
+          "canonical_url": "https://example.org/notices/application_support_guidance"
+        },
+        "classification": {
+          "document_kind": "general_guidance",
+          "publishable_opportunity": false,
+          "opportunity_kind": "not_applicable",
+          "terminal_non_opportunity": true,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "application_support_guidance_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "provider": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "application_support_guidance_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_deadline": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "lifecycle_status": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_url": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_amount": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "application_support_guidance_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "application_support_guidance_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "외부장학금 신청을 위한 학장 추천서 발급 절차 안내",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "standalone_correction_notice",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "standalone_correction",
+        "source": {
+          "notice_id": "standalone_correction_notice",
+          "canonical_url": "https://example.org/notices/standalone_correction"
+        },
+        "classification": {
+          "document_kind": "correction_notice",
+          "publishable_opportunity": false,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": true,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "standalone_correction_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "광산장학금",
+            "evidence_references": [
+              "standalone_correction_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "광산장학회",
+            "evidence_references": [
+              "standalone_correction_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "standalone_correction_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": [
+              "standalone_correction_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2025-09-19",
+            "evidence_references": [
+              "standalone_correction_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "unknown",
+            "value": "unknown",
+            "evidence_references": []
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_amount": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "relation_resolution_required"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "standalone_correction_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "standalone_correction_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "광산장학금 신청 마감일을 2025-09-19로 연장합니다.",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "updated_existing_recruitment_page",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "updated_existing_page",
+        "source": {
+          "notice_id": "updated_existing_page_notice",
+          "canonical_url": "https://example.org/notices/updated_existing_page"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "updated_existing_page",
+          "revision_note": "Updated as of 2025-06-16; prior revision is not retained.",
+          "evidence_references": [
+            "updated_existing_page_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "Global Hope Scholarship",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "Samsung",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "Underwood International College",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2025-06-18",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2025-07-18",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "semester",
+              "source_text": "KRW 4,800,000 per semester",
+              "evidence_references": [
+                "updated_existing_page_ev_1"
+              ],
+              "display": "KRW 4,800,000 per semester",
+              "kind": "recurring_semester",
+              "exact_amount": 4800000
+            },
+            "evidence_references": [
+              "updated_existing_page_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "source_revision_history_missing"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "updated_existing_page_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "updated_existing_page_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "Global Hope Scholarship, application 2025-06-18 to 2025-07-18, updated as of 2025-06-16",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "maximum_cap_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "maximum_cap",
+        "source": {
+          "notice_id": "maximum_cap_notice",
+          "canonical_url": "https://example.org/notices/maximum_cap"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "maximum_cap_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "상한 장학금",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-01-01",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-01-31",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "tuition_support"
+            ],
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "1,000,000원 이내",
+              "evidence_references": [
+                "maximum_cap_ev_1"
+              ],
+              "display": "1,000,000원 이내",
+              "kind": "maximum_cap",
+              "maximum_amount": 1000000,
+              "cap_basis": "actual_tuition_paid"
+            },
+            "evidence_references": [
+              "maximum_cap_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "maximum_cap_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "maximum_cap_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "지원금액은 1,000,000원 이내이며 등록금 실납입액을 초과할 수 없음",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "full_tuition_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "full_tuition",
+        "source": {
+          "notice_id": "full_tuition_notice",
+          "canonical_url": "https://example.org/notices/full_tuition"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "full_tuition_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "등록금 전액 장학금",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-02-01",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-02-28",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "tuition_support"
+            ],
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": null,
+              "period": "semester",
+              "source_text": "등록금 전액",
+              "evidence_references": [
+                "full_tuition_ev_1"
+              ],
+              "display": "등록금 전액",
+              "kind": "full_tuition"
+            },
+            "evidence_references": [
+              "full_tuition_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "full_tuition_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "full_tuition_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "매 학기 등록금 전액 지원",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "tiered_by_target_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "tiered_target_amount",
+        "source": {
+          "notice_id": "tiered_target_amount_notice",
+          "canonical_url": "https://example.org/notices/tiered_target_amount"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "tiered_target_amount_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "대상별 장학금",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-03-01",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-03-31",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "schema_expressiveness_gap",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "중고생 50만원 / 전문대생 150만원 / 종합대생 200만원",
+              "evidence_references": [
+                "tiered_target_amount_ev_1"
+              ],
+              "display": "중고생 50만원 / 전문대생 150만원 / 종합대생 200만원",
+              "kind": "tiered_by_target",
+              "components": [
+                {
+                  "kind": "exact",
+                  "display": "500,000원",
+                  "currency": "KRW",
+                  "exact_amount": 500000,
+                  "target_label": "중·고생"
+                },
+                {
+                  "kind": "exact",
+                  "display": "1,500,000원",
+                  "currency": "KRW",
+                  "exact_amount": 1500000,
+                  "target_label": "전문대생"
+                },
+                {
+                  "kind": "exact",
+                  "display": "2,000,000원",
+                  "currency": "KRW",
+                  "exact_amount": 2000000,
+                  "target_label": "종합대생"
+                }
+              ]
+            },
+            "evidence_references": [
+              "tiered_target_amount_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "complex_amount_structure",
+            "amount_schema_expressiveness_gap"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "tiered_target_amount_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "tiered_target_amount_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "중고생 50만원, 전문대생 150만원, 종합대생 200만원",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "paid_student_activity",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "paid_student_activity",
+        "source": {
+          "notice_id": "paid_student_activity_notice",
+          "canonical_url": "https://example.org/notices/paid_student_activity"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "paid_student_activity",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "paid_student_activity_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "Global Service Desk Supporters",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "Underwood International College",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "Underwood International College",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-01-15",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-01-28T23:59:00+09:00",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "activity_scholarship",
+              "work_scholarship"
+            ],
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "schema_expressiveness_gap",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "월 200,000원 + 시간당 10,320원",
+              "evidence_references": [
+                "paid_student_activity_ev_1"
+              ],
+              "display": "월 200,000원 + 시간당 10,320원",
+              "kind": "composite_components",
+              "components": [
+                {
+                  "kind": "recurring_monthly",
+                  "display": "월 200,000원",
+                  "currency": "KRW",
+                  "exact_amount": 200000,
+                  "period": "month"
+                },
+                {
+                  "kind": "hourly_rate",
+                  "display": "시간당 10,320원",
+                  "currency": "KRW",
+                  "exact_amount": 10320,
+                  "period": "hour"
+                }
+              ]
+            },
+            "evidence_references": [
+              "paid_student_activity_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "paid_activity_feed_partition_required",
+            "complex_amount_structure",
+            "amount_schema_expressiveness_gap"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "paid_student_activity_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "paid_student_activity_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "Global Service Desk Supporters 활동장학금 월 20만원 및 근로장학금 시간당 10,320원",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "application_url_not_found",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "application_url_absent",
+        "source": {
+          "notice_id": "application_url_absent_notice",
+          "canonical_url": "https://example.org/notices/application_url_absent"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "application_url_absent_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "이메일 접수 장학금",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-04-01",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-04-30",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "300,000원",
+              "evidence_references": [
+                "application_url_absent_ev_1"
+              ],
+              "display": "300,000원",
+              "kind": "exact",
+              "exact_amount": 300000
+            },
+            "evidence_references": [
+              "application_url_absent_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "application_url_absent_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "application_url_absent_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "신청서는 학과 이메일로 제출",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "ambiguous_application_date_role",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "ambiguous_date_role",
+        "source": {
+          "notice_id": "ambiguous_date_role_notice",
+          "canonical_url": "https://example.org/notices/ambiguous_date_role"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": false,
+          "opportunity_kind": "unknown",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "ambiguous_date_role_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "날짜 역할 불명 장학금",
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "ambiguous",
+            "value": null,
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "ambiguous",
+            "value": null,
+            "evidence_references": [
+              "ambiguous_date_role_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "unknown",
+            "value": "unknown",
+            "evidence_references": []
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_amount": {
+            "status": "unknown",
+            "value": null,
+            "evidence_references": []
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "ambiguous_date_role",
+            "publishability_requires_confirmation"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "ambiguous_date_role_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "ambiguous_date_role_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "신청 및 서류 보완 일정 2026-05-01 ~ 2026-05-31",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "range_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "amount_range",
+        "source": {
+          "notice_id": "amount_range_notice",
+          "canonical_url": "https://example.org/notices/amount_range"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "amount_range_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "범위 장학금",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-05-01",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-05-31",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": "KRW",
+              "period": "one_time",
+              "source_text": "500,000원~1,000,000원",
+              "evidence_references": [
+                "amount_range_ev_1"
+              ],
+              "display": "500,000원~1,000,000원",
+              "kind": "range",
+              "minimum_amount": 500000,
+              "maximum_amount": 1000000
+            },
+            "evidence_references": [
+              "amount_range_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "amount_range_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "amount_range_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "1인당 500,000원~1,000,000원 지원",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "percentage_of_tuition_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "percentage_tuition",
+        "source": {
+          "notice_id": "percentage_tuition_notice",
+          "canonical_url": "https://example.org/notices/percentage_tuition"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "percentage_tuition_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "등록금 비율 장학금",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-06-01",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-06-30",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "closed",
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "tuition_support"
+            ],
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": null,
+              "period": "semester",
+              "source_text": "등록금의 50%",
+              "evidence_references": [
+                "percentage_tuition_ev_1"
+              ],
+              "display": "등록금의 50%",
+              "kind": "percentage_of_tuition",
+              "percentage": 50
+            },
+            "evidence_references": [
+              "percentage_tuition_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": false,
+          "reasons": [],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "percentage_tuition_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "percentage_tuition_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "등록금의 50% 지원",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "applicant_requested_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "applicant_requested",
+        "source": {
+          "notice_id": "applicant_requested_notice",
+          "canonical_url": "https://example.org/notices/applicant_requested"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "applicant_requested_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "희망금액 장학금",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "present",
+            "value": "예시대학교",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-07-01",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-07-31",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "open",
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "applicant_requested"
+            ],
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": null,
+              "period": "not_applicable",
+              "source_text": "신청자 희망금액",
+              "evidence_references": [
+                "applicant_requested_ev_1"
+              ],
+              "display": "신청자 희망금액",
+              "kind": "applicant_requested",
+              "cap_basis": "requested_amount"
+            },
+            "evidence_references": [
+              "applicant_requested_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "llm_assisted_draft_recommended"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "applicant_requested_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "applicant_requested_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "신청자가 희망 지원금액을 기재",
+            "locator": "main"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "not_predefined_amount",
+      "expected_responsibility": [],
+      "output": {
+        "schema_version": "engine-phase-4-p0-remediation-output/v1",
+        "case_id": "not_predefined",
+        "source": {
+          "notice_id": "not_predefined_notice",
+          "canonical_url": "https://example.org/notices/not_predefined"
+        },
+        "classification": {
+          "document_kind": "recruitment_notice",
+          "publishable_opportunity": true,
+          "opportunity_kind": "scholarship",
+          "terminal_non_opportunity": false,
+          "relation_resolution_required": false,
+          "source_revision_mode": "standalone_document",
+          "revision_note": null,
+          "evidence_references": [
+            "not_predefined_ev_1"
+          ]
+        },
+        "fields": {
+          "program_name": {
+            "status": "present",
+            "value": "심사결정 장학금",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "provider": {
+            "status": "present",
+            "value": "예시장학재단",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "posting_organization": {
+            "status": "present",
+            "value": "예시 게시기관",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "institution_or_campus": {
+            "status": "not_applicable",
+            "value": null,
+            "evidence_references": []
+          },
+          "application_start": {
+            "status": "present",
+            "value": "2026-08-01",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "application_deadline": {
+            "status": "present",
+            "value": "2026-08-31",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "lifecycle_status": {
+            "status": "present",
+            "value": "upcoming",
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "application_url": {
+            "status": "not_found",
+            "value": null,
+            "evidence_references": []
+          },
+          "support_type": {
+            "status": "present",
+            "value": [
+              "cash_award"
+            ],
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          },
+          "support_amount": {
+            "status": "present",
+            "value": {
+              "currency": null,
+              "period": "not_applicable",
+              "source_text": "심사 후 결정",
+              "evidence_references": [
+                "not_predefined_ev_1"
+              ],
+              "display": "심사 후 결정",
+              "kind": "not_predefined",
+              "cap_basis": "review_decision"
+            },
+            "evidence_references": [
+              "not_predefined_ev_1"
+            ]
+          }
+        },
+        "review": {
+          "required": true,
+          "reasons": [
+            "llm_assisted_draft_recommended"
+          ],
+          "automatic_publish_allowed": false
+        },
+        "evidence_references": [
+          {
+            "evidence_id": "not_predefined_ev_1",
+            "source_type": "html_text",
+            "source_notice_id": "not_predefined_notice",
+            "document_id": null,
+            "document_revision_id": null,
+            "document_hash": null,
+            "source_text": "지원금액은 심사 후 결정",
+            "locator": "main"
+          }
+        ]
+      }
+    }
+  ]
+}
