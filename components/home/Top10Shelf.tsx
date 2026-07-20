@@ -58,7 +58,7 @@ function formatDeadlineBadge(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "상시";
   const days = daysUntilApplyDeadlineKorea(dateStr);
   if (days < 0) return "마감";
-  if (days === 0) return "오늘";
+  if (days === 0) return "D-DAY";
   return `D-${days}`;
 }
 

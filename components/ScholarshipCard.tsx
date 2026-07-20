@@ -61,12 +61,12 @@ const institutionGradient: Record<string, string> = {
   기타: "from-stone-300 to-stone-500",
 };
 
-/** 카드 뱃지용: D-n / 오늘 / 상시 / 마감 */
+/** 카드 뱃지용: D-n / D-DAY / 상시 / 마감 */
 function formatDeadlineBadge(dateStr: string): string {
   if (isAlwaysOpenRecruitment(dateStr)) return "상시";
   const days = daysUntilApplyDeadlineKorea(dateStr);
   if (days < 0) return "마감";
-  if (days === 0) return "오늘";
+  if (days === 0) return "D-DAY";
   return `D-${days}`;
 }
 
