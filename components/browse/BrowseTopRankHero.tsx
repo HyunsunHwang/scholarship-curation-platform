@@ -266,7 +266,7 @@ export default function BrowseTopRankHero({
               {intro ? (
                 <p
                   id={headingId}
-                  className="mt-2 text-xl font-extrabold leading-snug tracking-tight text-ink sm:text-2xl md:text-[1.75rem]"
+                  className="mt-2 text-lg font-extrabold leading-snug tracking-tight text-ink sm:text-xl md:text-[1.35rem]"
                 >
                   {title}
                 </p>
