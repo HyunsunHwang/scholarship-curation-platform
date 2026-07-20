@@ -13,7 +13,6 @@ import { daysUntilApplyDeadlineKorea } from "@/lib/scholarship-dates";
 import { buildTop10 } from "@/lib/home-rails";
 import { useHomeSearchFilters } from "./HomeSearchContext";
 import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
-import HorizontalShelf from "./HorizontalShelf";
 import HomeSectionTitle from "./HomeSectionTitle";
 
 function itemKey(item: CardScholarship) {
@@ -181,15 +180,19 @@ export default function HomeFeed({
                     sort: "deadline",
                     list: browseKind === "all",
                   })}
+                  subtitle={`${searchShelfItems.length.toLocaleString()}개`}
                 />
-                <HorizontalShelf
-                  label={isSearching ? "검색 결과" : "전체 공고"}
-                  items={searchShelfItems}
-                  getKey={(s) => itemKey(s)}
-                  renderItem={(scholarship) => (
-                    <ShelfCard scholarship={scholarship} />
-                  )}
-                />
+                <div
+                  role="list"
+                  aria-label={isSearching ? "검색 결과" : "전체 공고"}
+                  className="grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-8 md:grid-cols-4 lg:grid-cols-5"
+                >
+                  {searchShelfItems.map((scholarship) => (
+                    <div key={itemKey(scholarship)} role="listitem">
+                      <ShelfCard scholarship={scholarship} />
+                    </div>
+                  ))}
+                </div>
               </section>
             ) : null}
           </>

@@ -482,8 +482,10 @@ export function buildContinueWatching(options: {
     }
   }
 
-  pushAll(options.serverRecent);
+  // localStorage가 방금 본 순서를 갖고 있으므로 로컬을 먼저 쓴다.
+  // (홈 RSC 캐시의 serverRecent가 앞서면 재조회해도 순서가 안 바뀜)
   pushAll(options.localRecent ?? []);
+  pushAll(options.serverRecent);
   pushAll(options.urgentBookmarks ?? []);
   return out;
 }

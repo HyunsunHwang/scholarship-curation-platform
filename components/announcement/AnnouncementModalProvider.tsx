@@ -17,6 +17,8 @@ import {
   type AnnouncementDetailPayload,
   type AnnouncementKind,
 } from "@/lib/announcement-detail";
+import { trackBrowseEventClient } from "@/lib/browse-events";
+import { recordRecentView } from "@/lib/recent-views";
 
 type OpenTarget = { kind: AnnouncementKind; id: number };
 
@@ -137,6 +139,24 @@ export default function AnnouncementModalProvider({
         const payload = (await res.json()) as AnnouncementDetailPayload;
         if (cancelled || gen !== fetchGen.current) return;
         setData(payload);
+        // 모달은 상세 페이지를 거치지 않으므로 여기서 최근본을 남긴다
+        recordRecentView({
+          id: payload.id,
+          name: payload.name,
+          organization: payload.organization,
+          poster_image_url: payload.posterImageUrl,
+          apply_end_date: payload.scholarship.apply_end_date || "2099-12-31",
+          content_kind: payload.kind,
+        });
+        void trackBrowseEventClient({
+          contentKind: payload.kind,
+          contentId: payload.id,
+          name: payload.name,
+          organization: payload.organization,
+          posterImageUrl: payload.posterImageUrl,
+          applyEndDate: payload.scholarship.apply_end_date || "2099-12-31",
+          pagePath: payload.href,
+        });
       } catch (e) {
         if (cancelled || gen !== fetchGen.current) return;
         setError(e instanceof Error ? e.message : "불러오기 실패");

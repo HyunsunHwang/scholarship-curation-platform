@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import ScholarshipCard, { type CardScholarship } from "@/components/ScholarshipCard";
 import {
+  getRecentViewsServerSnapshot,
   readRecentViews,
-  RECENT_VIEWS_CHANGED_EVENT,
+  subscribeRecentViews,
   type RecentViewItem,
 } from "@/lib/recent-views";
 import { cardBookmarkKey } from "@/lib/bookmark-keys";
@@ -61,7 +62,11 @@ export default function RecentViewsShelf({
   /** 홈 카탈로그 — local 최근본 혜택 보강용 */
   catalog?: CardScholarship[];
 }) {
-  const [localRecent, setLocalRecent] = useState<CardScholarship[]>([]);
+  const localRows = useSyncExternalStore(
+    subscribeRecentViews,
+    readRecentViews,
+    getRecentViewsServerSnapshot
+  );
   const bookmarkedSet = useMemo(() => new Set(bookmarkedKeys), [bookmarkedKeys]);
   const catalogByKey = useMemo(() => {
     const map = new Map<string, CardScholarship>();
@@ -69,22 +74,13 @@ export default function RecentViewsShelf({
     return map;
   }, [catalog]);
 
-  useEffect(() => {
-    function sync() {
-      setLocalRecent(
-        readRecentViews()
-          .filter((row) => !isScholarshipExpired(row.apply_end_date))
-          .map(toCard)
-      );
-    }
-    sync();
-    window.addEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(RECENT_VIEWS_CHANGED_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+  const localRecent = useMemo(
+    () =>
+      localRows
+        .filter((row) => !isScholarshipExpired(row.apply_end_date))
+        .map(toCard),
+    [localRows]
+  );
 
   const items = useMemo(
     () =>
