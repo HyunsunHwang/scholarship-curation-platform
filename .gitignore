@@ -26,6 +26,7 @@
 *.pem
 .crawler/
 exports/
+reports/engine-phase-5-semantic-review-live.local.json
 # 루트 데이터 export CSV (예: 장학금/학과 덤프)
 /*.csv
 

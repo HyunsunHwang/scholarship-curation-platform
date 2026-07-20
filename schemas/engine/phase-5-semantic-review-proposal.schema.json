@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scholarship-curation.local/schemas/engine/phase-5-semantic-review-proposal.schema.json",
+  "title": "Engine Phase 5 Semantic Review Proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "source_notice_identity", "input_record_hash",
+    "organization_role_assertions", "benefit_components", "program_candidates", "cycle_candidates",
+    "relation_proposals", "canonical_projection", "uncertainties", "review", "model_metadata"
+  ],
+  "properties": {
+    "schema_version": { "const": "engine-phase-5-semantic-review-proposal/v1" },
+    "case_id": { "type": "string", "minLength": 1 },
+    "source_notice_identity": { "$ref": "#/$defs/sourceIdentity" },
+    "input_record_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "organization_role_assertions": { "type": "array", "items": { "$ref": "#/$defs/organizationAssertion" } },
+    "benefit_components": { "type": "array", "items": { "$ref": "#/$defs/benefitComponent" } },
+    "program_candidates": { "type": "array", "items": { "$ref": "#/$defs/programCandidate" } },
+    "cycle_candidates": { "type": "array", "items": { "$ref": "#/$defs/cycleCandidate" } },
+    "relation_proposals": { "type": "array", "items": { "$ref": "#/$defs/relationProposal" } },
+    "canonical_projection": { "type": "array", "items": { "$ref": "#/$defs/canonicalProjection" } },
+    "uncertainties": { "type": "array", "items": { "$ref": "#/$defs/uncertainty" } },
+    "review": { "$ref": "#/$defs/review" },
+    "model_metadata": { "$ref": "#/$defs/modelMetadata" }
+  },
+  "$defs": {
+    "evidenceRefs": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "sourceIdentity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["notice_id", "source_key_snapshot", "canonical_url"],
+      "properties": {
+        "notice_id": { "type": "string", "minLength": 1 },
+        "source_key_snapshot": { "type": "string", "minLength": 1 },
+        "canonical_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "identityReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["notice_id", "canonical_url", "unresolved_label"],
+      "properties": {
+        "notice_id": { "type": ["string", "null"] },
+        "canonical_url": { "type": ["string", "null"], "format": "uri" },
+        "unresolved_label": { "type": ["string", "null"] }
+      },
+      "anyOf": [
+        { "properties": { "notice_id": { "type": "string", "minLength": 1 } } },
+        { "properties": { "canonical_url": { "type": "string", "format": "uri" } } },
+        { "properties": { "unresolved_label": { "type": "string", "minLength": 1 } } }
+      ]
+    },
+    "organizationAssertion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["assertion_id", "organization_name", "normalized_name", "roles", "status", "evidence_refs", "reason"],
+      "properties": {
+        "assertion_id": { "type": "string", "minLength": 1 },
+        "organization_name": { "type": "string", "minLength": 1 },
+        "normalized_name": { "type": ["string", "null"] },
+        "roles": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "enum": ["posting_organization", "scholarship_provider", "funding_organization", "operating_organization", "host_institution", "recommending_organization", "paying_organization", "unknown_role"] }
+        },
+        "status": { "enum": ["proposed", "ambiguous", "conflicting", "not_found"] },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "benefitComponent": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_id", "component_kind", "currency", "amount", "minimum", "maximum", "percentage", "period", "recipient_group", "condition", "raw_text", "evidence_refs", "canonical_projection_status"],
+      "properties": {
+        "component_id": { "type": "string", "minLength": 1 },
+        "component_kind": { "enum": ["fixed_amount", "amount_range", "maximum_amount", "full_tuition", "partial_tuition", "percentage_tuition", "periodic_payment", "hourly_payment", "non_cash", "applicant_requested", "other"] },
+        "currency": { "type": ["string", "null"] },
+        "amount": { "type": ["number", "null"], "minimum": 0 },
+        "minimum": { "type": ["number", "null"], "minimum": 0 },
+        "maximum": { "type": ["number", "null"], "minimum": 0 },
+        "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "period": { "type": ["string", "null"] },
+        "recipient_group": { "type": ["string", "null"] },
+        "condition": { "type": ["string", "null"] },
+        "raw_text": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "canonical_projection_status": { "enum": ["exact", "partial", "not_representable"] }
+      }
+    },
+    "programCandidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proposal_id", "proposed_name", "organization_assertion_refs", "benefit_component_refs", "benefit_types", "evidence_refs", "status"],
+      "properties": {
+        "proposal_id": { "type": "string", "minLength": 1 },
+        "proposed_name": { "type": "string", "minLength": 1 },
+        "organization_assertion_refs": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "benefit_component_refs": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "benefit_types": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["tuition_support", "activity_scholarship", "work_scholarship", "living_expense", "research_support", "non_cash", "other"] } },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "status": { "$ref": "#/$defs/proposalStatus" }
+      }
+    },
+    "cycleCandidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proposal_id", "program_proposal_ref", "cycle_label", "academic_year", "term", "round", "application_window", "evidence_refs", "status"],
+      "properties": {
+        "proposal_id": { "type": "string", "minLength": 1 },
+        "program_proposal_ref": { "type": "string", "minLength": 1 },
+        "cycle_label": { "type": ["string", "null"] },
+        "academic_year": { "type": ["string", "integer", "null"] },
+        "term": { "type": ["string", "null"] },
+        "round": { "type": ["string", "null"] },
+        "application_window": { "type": ["string", "null"] },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "status": { "$ref": "#/$defs/proposalStatus" }
+      }
+    },
+    "proposalStatus": { "enum": ["review_proposed", "ambiguous", "conflicting", "insufficient_evidence"] },
+    "relationProposal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proposal_id", "relation_type", "subject_identity", "object_identity", "evidence_refs", "status", "review_required", "automatic_resolution_allowed"],
+      "properties": {
+        "proposal_id": { "type": "string", "minLength": 1 },
+        "relation_type": { "enum": ["correction_of", "deadline_extension_of", "result_of", "information_session_for", "recommendation_flow_for", "repost_of", "same_program_candidate", "same_cycle_candidate", "different_cycle_candidate", "unresolved_relation"] },
+        "subject_identity": { "$ref": "#/$defs/identityReference" },
+        "object_identity": { "$ref": "#/$defs/identityReference" },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" },
+        "status": { "$ref": "#/$defs/proposalStatus" },
+        "review_required": { "const": true },
+        "automatic_resolution_allowed": { "const": false }
+      }
+    },
+    "canonicalProjection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field_name", "status", "reason", "evidence_refs"],
+      "properties": {
+        "field_name": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["exact", "partial", "not_representable"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "$ref": "#/$defs/evidenceRefs" }
+      }
+    },
+    "uncertainty": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "description", "evidence_refs"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required", "automatic_identity_resolution_allowed", "automatic_publish_allowed", "notification_allowed", "proposal_status", "reason_codes"],
+      "properties": {
+        "required": { "const": true },
+        "automatic_identity_resolution_allowed": { "const": false },
+        "automatic_publish_allowed": { "const": false },
+        "notification_allowed": { "const": false },
+        "proposal_status": { "enum": ["review_required", "rejected_by_validator"] },
+        "reason_codes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "modelMetadata": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "provider", "model", "prompt_version", "response_fixture_id", "confidence"],
+      "properties": {
+        "mode": { "enum": ["replay", "live"] },
+        "provider": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "prompt_version": { "const": "engine-phase-5-semantic-review-prompt/v1" },
+        "response_fixture_id": { "type": ["string", "null"] },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
