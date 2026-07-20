@@ -8,7 +8,7 @@ import {
 import {
   P0_REMEDIATED_EXTRACTOR_NAME,
   P0_REMEDIATED_EXTRACTOR_VERSION,
-  extractP0RemediatedCandidate,
+  extractP0RemediatedCandidateWithDiagnostics,
 } from "../lib/engine-phase-4/p0-remediated-extractor.mjs";
 import {
   P0_OPPORTUNITY_FIELDS,
@@ -71,12 +71,14 @@ const extractionContext = {
   asOf: P0_REMEDIATION_PREVIEW_AS_OF,
   extractedAt: P0_REMEDIATION_PREVIEW_AS_OF,
 };
-const execute = () => corpus.cases.map((fixture) => extractP0RemediatedCandidate({
+const execute = () => corpus.cases.map((fixture) => extractP0RemediatedCandidateWithDiagnostics({
   ...fixture.evaluation_input,
   extractionContext: { ...extractionContext, caseId: fixture.case_id },
 }));
-const outputs = execute();
+const executions = execute();
 const rerun = execute();
+const outputs = executions.map((execution) => execution.output);
+const evidenceDiagnostics = executions.map((execution) => ({ case_id: execution.output.case_id, ...execution.diagnostics }));
 const validation = outputs.map((output) => {
   const schemaValid = schemaValidator(output);
   const schemaErrors = structuredClone(schemaValidator.errors ?? []);
@@ -108,6 +110,7 @@ const knownCaseIds = [
   "p4c_009_cau_welfare_result_2024_2",
   "p4c_020_uic_supporters_table",
   "p4c_022_grad_seoul_foundation_pdf",
+  "p4c_024_dean_recommendation_guidance",
 ];
 const knownCaseResults = knownCaseIds.map((caseId) => {
   const output = byCase.get(caseId);
@@ -154,10 +157,22 @@ const knownCaseChecks = {
   paid_activity_partitioned: (() => {
     const output = byCase.get("p4c_020_uic_supporters_table");
     return output.classification.opportunity_kind === "paid_student_activity"
-      && output.review.reasons.includes("paid_activity_feed_partition_required");
+      && output.review.reasons.includes("paid_activity_feed_partition_required")
+      && output.fields.support_type.status === "present"
+      && output.fields.support_type.value.includes("activity_scholarship")
+      && output.fields.support_type.value.includes("work_scholarship")
+      && output.fields.support_amount.status === "schema_expressiveness_gap"
+      && !output.review.reasons.includes("support_type_uncertain");
+  })(),
+  recommendation_guidance_terminal: (() => {
+    const output = byCase.get("p4c_024_dean_recommendation_guidance");
+    return output.classification.document_kind === "general_guidance"
+      && output.classification.terminal_non_opportunity
+      && !output.classification.publishable_opportunity
+      && output.classification.opportunity_kind === "not_applicable";
   })(),
 };
-const deterministicRerunMatch = JSON.stringify(outputs) === JSON.stringify(rerun);
+const deterministicRerunMatch = JSON.stringify(executions) === JSON.stringify(rerun);
 const validationPass = outputs.length === 24
   && validation.every((item) => item.schema_valid && item.semantic_valid)
   && deterministicRerunMatch
@@ -168,7 +183,7 @@ const validationPass = outputs.length === 24
   && Object.values(knownCaseChecks).every(Boolean);
 
 export const report = {
-  report_version: "engine-phase-4-p0-remediation-preview/v1",
+  report_version: "engine-phase-4-p0-remediation-preview/v2",
   preview_only: true,
   official_p0_reevaluation_completed: false,
   official_full_gate_c_reevaluation_completed: false,
@@ -210,6 +225,16 @@ export const report = {
     unsupported_present_claim_count: unsupportedPresent.length,
     missing_evidence_reference_count: missingEvidence.length,
     source_url_substitution_count: sourceSubstitutions.length,
+    low_quality_body_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.low_quality_body_rejected_count, 0),
+    attachment_missing_provenance_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_missing_provenance_count, 0),
+    attachment_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_rejected_count, 0),
+    ocr_missing_locator_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_missing_locator_count, 0),
+    ocr_low_quality_rejected_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_low_quality_rejected_count, 0),
+    classification_title_only_count: evidenceDiagnostics.reduce((sum, item) => sum + item.classification_title_only_count, 0),
+    classification_multi_evidence_count: evidenceDiagnostics.reduce((sum, item) => sum + item.classification_multi_evidence_count, 0),
+    duplicate_evidence_suppressed_count: evidenceDiagnostics.reduce((sum, item) => sum + item.duplicate_evidence_suppressed_count, 0),
+    attachment_present_claim_count: evidenceDiagnostics.reduce((sum, item) => sum + item.attachment_present_claim_count, 0),
+    ocr_present_claim_count: evidenceDiagnostics.reduce((sum, item) => sum + item.ocr_present_claim_count, 0),
   },
   known_case_results: knownCaseResults,
   known_case_checks: knownCaseChecks,
@@ -218,6 +243,7 @@ export const report = {
     unsupported_present_claims: unsupportedPresent,
     missing_evidence_references: missingEvidence,
     source_url_substitution_case_ids: sourceSubstitutions,
+    case_evidence_diagnostics: evidenceDiagnostics,
   },
   protected_baselines: protectedBaselines,
   safety: {
@@ -233,9 +259,11 @@ export const report = {
     external_llm_called: false,
     automatic_publish_enabled: false,
     pr_created: false,
+    main_merged: false,
   },
   gate_status: {
     p0_extractor_remediation: validationPass ? "PASS" : "HOLD",
+    evidence_preservation: validationPass ? "PASS" : "HOLD",
     official_p0_reevaluation: "NOT RUN",
     full_schema_gate_c: "HOLD",
     phase5: "HOLD",
@@ -278,11 +306,13 @@ Document kinds: ${Object.entries(documentKindDistribution).map(([kind, count]) =
 | --- | --- | --- | --- | --- | --- |
 ${knownRows}
 
-Cases 1, 2, and 5 are no longer silently suppressed. Case 4 is terminal. Cases 6, 8, 9, and 22 use only contract lifecycle states. Case 20 is partitioned as paid student activity.
+Cases 1, 2, and 5 are no longer silently suppressed. Case 4 is terminal. Cases 6, 8, 9, and 22 use only contract lifecycle states. Case 20 is partitioned as paid student activity. Case 24 remains terminal general guidance.
 
 ## Safety
 
 All ${P0_OPPORTUNITY_FIELDS.length} P0 fields use evidence-linked, fail-closed states. Unsupported present claims, missing evidence references, and source-route substitution are zero. Automatic publication remains disabled. Protected baseline, contract, corpus, gold, and official report hashes are unchanged.
+
+Body text with an explicit unsafe quality state and attachments without complete provenance are excluded before extraction. OCR requires safe quality, document provenance, page, and bounding-box coordinates. Per-case rejected sources, classification evidence IDs, and present-field source types are recorded in the JSON diagnostics.
 
 ## Next step
 

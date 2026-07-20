@@ -45,9 +45,68 @@ check("preview metrics enforce evidence and URL safety", () => {
   assert.equal(trackedReport.metrics.missing_evidence_reference_count, 0);
   assert.equal(trackedReport.metrics.source_url_substitution_count, 0);
 });
+check("evidence diagnostics cover every case and reconcile with metrics", () => {
+  const diagnostics = trackedReport.diagnostics.case_evidence_diagnostics;
+  assert.equal(diagnostics.length, 24);
+  for (const metric of [
+    "low_quality_body_rejected_count",
+    "attachment_missing_provenance_count",
+    "attachment_rejected_count",
+    "ocr_missing_locator_count",
+    "ocr_low_quality_rejected_count",
+    "classification_title_only_count",
+    "classification_multi_evidence_count",
+    "duplicate_evidence_suppressed_count",
+    "attachment_present_claim_count",
+    "ocr_present_claim_count",
+  ]) {
+    assert.equal(Number.isInteger(trackedReport.metrics[metric]), true, metric);
+    assert.ok(trackedReport.metrics[metric] >= 0, metric);
+    assert.equal(trackedReport.metrics[metric], diagnostics.reduce((sum, item) => sum + item[metric], 0), metric);
+  }
+});
+check("classification and present-field diagnostics resolve to actual evidence", () => {
+  const outputs = new Map(trackedReport.outputs.map((output) => [output.case_id, output]));
+  for (const diagnostic of trackedReport.diagnostics.case_evidence_diagnostics) {
+    const output = outputs.get(diagnostic.case_id);
+    const evidence = new Map(output.evidence_references.map((item) => [item.evidence_id, item]));
+    assert.deepEqual(diagnostic.classification_evidence_ids, output.classification.evidence_references, diagnostic.case_id);
+    assert.equal(diagnostic.classification_evidence_ids.every((reference) => evidence.has(reference)), true, diagnostic.case_id);
+    for (const [fieldName, sourceTypes] of Object.entries(diagnostic.present_field_evidence_sources)) {
+      assert.equal(output.fields[fieldName].status, "present", `${diagnostic.case_id}:${fieldName}`);
+      const actual = [...new Set(output.fields[fieldName].evidence_references.map((reference) => evidence.get(reference)?.source_type).filter(Boolean))];
+      assert.deepEqual(sourceTypes, actual, `${diagnostic.case_id}:${fieldName}`);
+    }
+  }
+});
+check("attachment and OCR evidence always retain complete provenance", () => {
+  for (const output of trackedReport.outputs) {
+    for (const evidence of output.evidence_references) {
+      if (!["html_text"].includes(evidence.source_type)) {
+        assert.ok(evidence.document_id, `${output.case_id}:${evidence.evidence_id}:document_id`);
+        assert.ok(evidence.document_revision_id, `${output.case_id}:${evidence.evidence_id}:document_revision_id`);
+        assert.match(evidence.document_hash, /^[a-f0-9]{64}$/u, `${output.case_id}:${evidence.evidence_id}:document_hash`);
+      }
+      if (evidence.source_type === "ocr_text") {
+        assert.match(evidence.locator, /:page:(?!unknown)[^:]+:bbox:(?!none)/u, `${output.case_id}:${evidence.evidence_id}:locator`);
+      }
+    }
+  }
+});
 check("known case acceptance checks all pass", () => assert.equal(Object.values(trackedReport.known_case_checks).every(Boolean), true));
+check("Case 20 support type is present and only its amount is a schema gap", () => {
+  const output = trackedReport.outputs.find((item) => item.case_id === "p4c_020_uic_supporters_table");
+  assert.equal(output.fields.support_type.status, "present");
+  assert.deepEqual(output.fields.support_type.value, ["activity_scholarship", "work_scholarship"]);
+  assert.equal(output.fields.support_amount.status, "schema_expressiveness_gap");
+  assert.equal(output.review.reasons.includes("support_type_uncertain"), false);
+});
 check("automatic publication is disabled for every output", () => {
   assert.equal(trackedReport.outputs.every((output) => output.review.automatic_publish_allowed === false), true);
+});
+check("main merge and other prohibited side effects remain disabled", () => {
+  assert.equal(trackedReport.safety.main_merged, false);
+  assert.equal(Object.values(trackedReport.safety).every((value) => value === false), true);
 });
 check("extractor and corpus hashes match current files", () => {
   assert.equal(trackedReport.extractor.remediated.sha256, sha256(readText(trackedReport.extractor.remediated.path)));

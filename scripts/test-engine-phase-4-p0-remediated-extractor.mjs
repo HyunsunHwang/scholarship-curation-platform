@@ -3,7 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
-import { extractP0RemediatedCandidate } from "../lib/engine-phase-4/p0-remediated-extractor.mjs";
+import {
+  extractP0RemediatedCandidate,
+  extractP0RemediatedCandidateWithDiagnostics,
+} from "../lib/engine-phase-4/p0-remediated-extractor.mjs";
 import { validateP0RemediationRecord } from "../lib/engine-phase-4/p0-remediation-contract.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,21 +17,26 @@ const tests = [];
 const test = (name, run) => tests.push({ name, run });
 let sequence = 0;
 
-function extract({ title = "미래 장학금 신청 안내", body = "", canonicalUrl, sourceDocuments = [] } = {}) {
+function extractDiagnostic({ title = "미래 장학금 신청 안내", body = "", canonicalUrl, sourceDocuments = [], sourceNotice = {} } = {}) {
   sequence += 1;
-  const output = extractP0RemediatedCandidate({
+  const result = extractP0RemediatedCandidateWithDiagnostics({
     sourceNotice: {
       notice_id: `focused_${sequence}`,
       title,
       canonical_url: canonicalUrl ?? `https://example.org/notices/${sequence}`,
       body,
+      ...sourceNotice,
     },
     sourceDocuments,
     extractionContext: { caseId: `focused_${sequence}`, asOf: "2026-07-20T00:00:00+09:00" },
   });
-  const validation = validateP0RemediationRecord(output, schemaValidator);
+  const validation = validateP0RemediationRecord(result.output, schemaValidator);
   assert.equal(validation.valid, true, JSON.stringify(validation.errors));
-  return output;
+  return result;
+}
+
+function extract(input = {}) {
+  return extractDiagnostic(input).output;
 }
 
 test("recruitment is not silently suppressed", () => {
@@ -216,6 +224,264 @@ test("failed parser document does not create present values", () => {
   });
   assert.notEqual(output.fields.support_amount.status, "present");
   assert.equal(output.review.reasons.includes("upstream_evidence_incomplete"), true);
+});
+
+test("low-quality HTML body cannot create present dates amounts or URLs", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    title: "장학 관련 알림",
+    body: "신청기간: 2026.07.01 ~ 2026.07.31 지원금액: 500만원 온라인 신청: https://apply.example.org/form",
+    sourceNotice: { body_quality_status: "partial" },
+  });
+  assert.equal(output.classification.document_kind, "unknown_document");
+  assert.notEqual(output.fields.application_start.status, "present");
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.notEqual(output.fields.application_url.status, "present");
+  assert.equal(output.review.reasons.includes("upstream_evidence_incomplete"), true);
+  assert.equal(diagnostics.low_quality_body_rejected_count, 1);
+});
+
+test("missing body status remains backward-compatible", () => {
+  const output = extract({ body: "신청기간: 2026.07.01 ~ 2026.07.31 지원금액: 100만원" });
+  assert.equal(output.fields.application_start.status, "present");
+  assert.equal(output.fields.support_amount.status, "present");
+});
+
+test("attachment without hash cannot create a present amount", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "missing_hash",
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "지원금액: 500만원" }],
+    }],
+  });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.attachment_missing_provenance_count, 1);
+});
+
+test("PDF without document ID cannot create present dates", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_hash: "a".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31" }],
+    }],
+  });
+  assert.notEqual(output.fields.application_start.status, "present");
+  assert.equal(diagnostics.attachment_missing_provenance_count, 1);
+});
+
+test("valid attachment provenance permits present evidence", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "valid_pdf",
+      document_hash: "b".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31 지원금액: 500만원" }],
+    }],
+  });
+  assert.equal(output.fields.application_start.status, "present");
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.ok(diagnostics.attachment_present_claim_count > 0);
+  const evidence = output.evidence_references.find((item) => item.evidence_id === output.fields.support_amount.evidence_references[0]);
+  assert.equal(evidence.document_id, "valid_pdf");
+  assert.equal(evidence.document_hash, "b".repeat(64));
+  assert.ok(evidence.document_revision_id);
+});
+
+test("derived revision and evidence IDs are deterministic", () => {
+  const input = {
+    sourceNotice: { notice_id: "stable_attachment", title: "미래 장학금 신청 안내", canonical_url: "https://example.org/stable", body: "" },
+    sourceDocuments: [{
+      document_id: "stable_pdf",
+      document_hash: "c".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31" }],
+    }],
+    extractionContext: { caseId: "stable_attachment", asOf: "2026-07-20T00:00:00+09:00" },
+  };
+  const first = extractP0RemediatedCandidate(input);
+  const second = extractP0RemediatedCandidate(input);
+  assert.deepEqual(first, second);
+  assert.equal(first.evidence_references.find((item) => item.document_id === "stable_pdf").document_revision_id,
+    second.evidence_references.find((item) => item.document_id === "stable_pdf").document_revision_id);
+});
+
+test("identical evidence entries are deterministically deduplicated", () => {
+  const document = {
+    document_id: "duplicate_pdf",
+    document_hash: "9".repeat(64),
+    media_type: "pdf",
+    extraction_status: "text_sufficient",
+    quality_status: "text_sufficient",
+    content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31" }],
+  };
+  const { output, diagnostics } = extractDiagnostic({ sourceDocuments: [document, structuredClone(document)] });
+  const ids = output.evidence_references.map((item) => item.evidence_id);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.ok(diagnostics.duplicate_evidence_suppressed_count > 0);
+});
+
+test("unlocated OCR cannot create present evidence", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "unlocated_ocr",
+      document_hash: "d".repeat(64),
+      media_type: "image",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "ocr_text", page_number: 1, text: "지원금액: 500만원" }],
+    }],
+  });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.ocr_missing_locator_count, 1);
+});
+
+test("low-quality OCR cannot create present evidence", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "low_quality_ocr",
+      document_hash: "e".repeat(64),
+      media_type: "image",
+      extraction_status: "ocr_low_quality",
+      quality_status: "ocr_low_quality",
+      content_blocks: [{ type: "ocr_text", page_number: 1, bounding_box: [0, 0, 100, 20], text: "지원금액: 500만원" }],
+    }],
+  });
+  assert.notEqual(output.fields.support_amount.status, "present");
+  assert.equal(diagnostics.ocr_low_quality_rejected_count, 1);
+});
+
+test("located safe OCR preserves page and bounding box", () => {
+  const { output, diagnostics } = extractDiagnostic({
+    sourceDocuments: [{
+      document_id: "located_ocr",
+      document_hash: "f".repeat(64),
+      media_type: "image",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "ocr_text", page_number: 2, bounding_box: { x: 1, y: 2, width: 100, height: 20 }, text: "지원금액: 500만원" }],
+    }],
+  });
+  assert.equal(output.fields.support_amount.status, "present");
+  assert.ok(diagnostics.ocr_present_claim_count > 0);
+  const evidence = output.evidence_references.find((item) => item.source_type === "ocr_text");
+  assert.match(evidence.locator, /page:2:bbox:/u);
+  assert.match(evidence.locator, /height/u);
+});
+
+test("body-driven recruitment classification includes the actual body signal", () => {
+  const { output } = extractDiagnostic({
+    title: "2026학년도 교내장학금 안내",
+    body: "신청기간: 2026.07.01 ~ 2026.07.31\n신청방법: 온라인 접수",
+  });
+  const locators = output.classification.evidence_references.map((reference) => output.evidence_references.find((item) => item.evidence_id === reference).locator);
+  assert.equal(output.classification.document_kind, "recruitment_notice");
+  assert.equal(locators.some((locator) => locator.startsWith("notice:body")), true);
+});
+
+test("result-title classification retains title evidence", () => {
+  const output = extract({ title: "미래 장학생 선발 결과", body: "최종 선정자를 안내합니다." });
+  const locators = output.classification.evidence_references.map((reference) => output.evidence_references.find((item) => item.evidence_id === reference).locator);
+  assert.equal(locators.some((locator) => locator.startsWith("notice:title")), true);
+});
+
+test("body-driven correction classification includes correction body evidence", () => {
+  const output = extract({ title: "미래 장학금 안내", body: "기존 신청 마감 연장 안내입니다." });
+  const locators = output.classification.evidence_references.map((reference) => output.evidence_references.find((item) => item.evidence_id === reference).locator);
+  assert.equal(output.classification.document_kind, "correction_notice");
+  assert.equal(locators.some((locator) => locator.startsWith("notice:body")), true);
+});
+
+test("attachment-driven recruitment references attachment evidence", () => {
+  const output = extract({
+    title: "2026 지원 안내",
+    sourceDocuments: [{
+      document_id: "classification_pdf",
+      document_hash: "1".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31 신청방법: 온라인 접수" }],
+    }],
+  });
+  assert.equal(output.classification.document_kind, "recruitment_notice");
+  assert.equal(output.classification.evidence_references.some((reference) => output.evidence_references.find((item) => item.evidence_id === reference).document_id === "classification_pdf"), true);
+});
+
+test("all classification evidence IDs resolve", () => {
+  const output = extract({ body: "신청기간: 2026.07.01 ~ 2026.07.31 신청방법: 온라인 접수" });
+  const known = new Set(output.evidence_references.map((item) => item.evidence_id));
+  assert.equal(output.classification.evidence_references.every((reference) => known.has(reference)), true);
+});
+
+test("attachment complex amount overrides a body summary scalar", () => {
+  const output = extract({
+    body: "신청기간: 2026.07.01 ~ 2026.07.31 지원금액: 100만원",
+    sourceDocuments: [{
+      document_id: "complex_pdf",
+      document_hash: "2".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "등록금 100만원 및 생활비 50만원" }],
+    }],
+  });
+  assert.equal(output.fields.support_amount.status, "schema_expressiveness_gap");
+  assert.equal(output.fields.support_amount.value.kind, "composite_components");
+});
+
+test("duplicate dates across body and attachment resolve once by priority", () => {
+  const output = extract({
+    body: "신청기간: 2026.07.01 ~ 2026.07.31",
+    sourceDocuments: [{
+      document_id: "same_date_pdf",
+      document_hash: "3".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.07.31" }],
+    }],
+  });
+  assert.equal(output.fields.application_deadline.status, "present");
+  assert.equal(output.fields.application_deadline.evidence_references.length, 1);
+  const evidence = output.evidence_references.find((item) => item.evidence_id === output.fields.application_deadline.evidence_references[0]);
+  assert.equal(evidence.source_type, "html_text");
+});
+
+test("different safe deadlines conflict", () => {
+  const output = extract({
+    body: "신청기간: 2026.07.01 ~ 2026.07.31",
+    sourceDocuments: [{
+      document_id: "different_date_pdf",
+      document_hash: "4".repeat(64),
+      media_type: "pdf",
+      extraction_status: "text_sufficient",
+      quality_status: "text_sufficient",
+      content_blocks: [{ type: "pdf_page", page_number: 1, text: "신청기간: 2026.07.01 ~ 2026.08.15" }],
+    }],
+  });
+  assert.equal(output.fields.application_deadline.status, "conflicting");
+  assert.equal(output.fields.lifecycle_status.value, "unknown");
+});
+
+test("Case 20 support types are present while only amount remains a schema gap", () => {
+  const output = extract({
+    title: "UIC Supporters Scholarship Application Announcement",
+    body: "Benefits: supporters scholarship KRW 200,000 per month; work scholarship KRW 10,320 per hour. Application Jan 15–28, 2026 23:59 KST.",
+  });
+  assert.equal(output.classification.opportunity_kind, "paid_student_activity");
+  assert.equal(output.fields.support_type.status, "present");
+  assert.deepEqual(output.fields.support_type.value, ["activity_scholarship", "work_scholarship"]);
+  assert.equal(output.fields.support_amount.status, "schema_expressiveness_gap");
+  assert.equal(output.review.reasons.includes("support_type_uncertain"), false);
 });
 
 test("identical inputs are deterministic", () => {

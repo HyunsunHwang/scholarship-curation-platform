@@ -9,7 +9,7 @@ This implementation adds a deterministic P0 remediation version without changing
 - Historical baseline: `lib/engine-phase-4/deterministic-extractor.mjs`, contract `engine-phase-4-deterministic-baseline/v1`.
 - Remediated extractor: `lib/engine-phase-4/p0-remediated-extractor.mjs`.
 - Name: `engine-phase-4-p0-remediated-deterministic`.
-- Version: `1.0.0`.
+- Version: `1.1.0` (evidence-preservation boundary; the initial remediation preview was `1.0.0`).
 - Entry point: `extractP0RemediatedCandidate({ sourceNotice, sourceDocuments, extractionContext })`.
 
 The new extractor imports the baseline whitespace, explicit-label, and date-candidate normalizers read-only. Its classification priority, source-role separation, amount preservation, URL route checks, lifecycle calculation, review-reason generation, and evidence adapter are remediation-specific. This keeps the official baseline reproducible and avoids copying the baseline extractor wholesale.
@@ -30,6 +30,22 @@ Amounts preserve exact values, caps, ranges, tuition percentages, full tuition, 
 
 Every present value references evidence included in the output. Parser failures, unsafe document quality states, and unlocated OCR text are excluded from present-value extraction and force review where applicable.
 
+## Evidence preservation boundary
+
+Source HTML body text is accepted when its explicit quality/extraction metadata is one of `text_sufficient`, `success`, `safe`, `normalized`, `clean`, `good_text`, `no_assets_but_text_sufficient`, or `text_sufficient_no_assets`. Explicit empty, partial, insufficient, low-quality, OCR-unevaluated, parser-failed, unsupported, download-failed, or manual-review states are rejected before classification or field extraction. Existing fixtures with no body status remain accepted for backward compatibility; the absence is not converted into a synthetic quality assertion.
+
+Attachment text is eligible only when it has a document ID, a valid SHA-256 document hash, a supplied or deterministically derived revision ID, a recognized PDF/HWP/HWPX/image/HTML format, explicit successful extraction and quality statuses, and a stable block or document locator. A revision ID may be derived only from the document ID and valid hash. Missing provenance, partial extraction, failed parsing, unsafe quality, or manual review rejects the entire attachment and adds `upstream_evidence_incomplete`.
+
+OCR has the attachment requirements plus a safe OCR status, page number, and bounding box. The locator serializes document ID, block index, page, and a key-sorted bounding box. OCR document-level text without a located block is rejected. This makes both revision and evidence identities deterministic.
+
+HTML bodies are segmented only at existing paragraph or line boundaries. Attachment tables and text retain their upstream blocks; OCR retains its located block. Evidence IDs use notice ID, document revision, source type, locator, and normalized text. Exact duplicate IDs are suppressed, while equal text with different provenance remains separate.
+
+Classification records the segment that supplied each decisive signal. Strong title decisions retain title evidence; body- or attachment-driven recruitment and correction decisions reference their actual signal segments; multi-signal decisions retain the minimal unique segment set. Every classification reference must resolve within the output evidence list.
+
+Evidence selection priority is structured HTML/table, safe attachment table/text, safe located OCR, then title fallback. Identical dates from multiple sources resolve once using that priority; different safe dates conflict. A detailed attachment amount structure takes precedence over a body summary scalar so a composite cannot be reduced to the first number encountered.
+
+For paid student activity, `activity_scholarship` and `work_scholarship` are contract-expressible support types and therefore use `support_type.status=present`. A combined monthly and hourly amount remains `support_amount.status=schema_expressiveness_gap` with components and the `paid_activity_feed_partition_required`, `complex_amount_structure`, and `amount_schema_expressiveness_gap` review reasons.
+
 ## Preview and validation
 
 Run:
@@ -46,5 +62,7 @@ The preview executes the frozen 24-case corpus twice with a fixed clock, validat
 reports/engine-phase-4-p0-remediation-preview.json
 reports/engine-phase-4-p0-remediation-preview.md
 ```
+
+The JSON report also records rejected evidence sources and reasons, classification evidence IDs, present-field source types, low-quality body and attachment rejection counts, OCR locator/quality rejection counts, classification evidence shape, duplicate suppression, and attachment/OCR present-claim counts. These are preview diagnostics, not an official accuracy reevaluation.
 
 The reports are generated artifacts; change the extractor or preview generator first, then regenerate them. Full-schema Gate C and Phase 5 remain HOLD until separately authorized official reevaluations are completed.
