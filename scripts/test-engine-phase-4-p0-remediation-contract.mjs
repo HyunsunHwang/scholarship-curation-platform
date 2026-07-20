@@ -46,6 +46,20 @@ test("recruitment notice cannot be terminal", () => {
   expectInvalid(record, "recruitment_marked_terminal");
 });
 
+test("non-publishable recruitment cannot suppress review", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.classification.publishable_opportunity = false;
+  expectInvalid(record, "recruitment_suppression_review_missing");
+});
+
+test("non-publishable recruitment passes with explicit publishability review", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.classification.publishable_opportunity = false;
+  record.review.required = true;
+  record.review.reasons = ["publishability_requires_confirmation"];
+  assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
+});
+
 test("result announcement must remain terminal", () => {
   const record = clone(byScenario.result_announcement);
   record.classification.terminal_non_opportunity = false;
@@ -117,6 +131,32 @@ test("mixed date precision fails closed with an explicit review reason", () => {
   assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
 });
 
+test("unknown document lifecycle may be unknown because classification is uncertain", () => {
+  const record = clone(byScenario.unknown_document_requires_review);
+  assert.equal(record.fields.application_start.status, "present");
+  assert.equal(record.fields.application_deadline.status, "present");
+  assert.equal(record.fields.lifecycle_status.status, "unknown");
+  assert.equal(record.review.reasons.includes("missing_primary_application_window"), false);
+  assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
+});
+
+test("correction lifecycle may be unknown because relation resolution is required", () => {
+  const record = clone(byScenario.standalone_correction_notice);
+  assert.equal(record.fields.application_start.status, "present");
+  assert.equal(record.fields.application_deadline.status, "present");
+  assert.equal(record.fields.lifecycle_status.status, "unknown");
+  assert.equal(record.review.reasons.includes("missing_primary_application_window"), false);
+  assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
+});
+
+test("unknown lifecycle rejects an unrelated review reason", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.lifecycle_status = { status: "unknown", value: "unknown", evidence_references: [] };
+  record.review.required = true;
+  record.review.reasons = ["llm_assisted_draft_recommended"];
+  expectInvalid(record, "unsafe_field_review_missing");
+});
+
 test("ambiguous date roles cannot produce closed lifecycle", () => {
   const record = clone(byScenario.ambiguous_application_date_role);
   record.fields.lifecycle_status = { status: "present", value: "closed", evidence_references: [record.evidence_references[0].evidence_id] };
@@ -133,6 +173,26 @@ test("source detail route variants are not application URLs", () => {
   const record = clone(byScenario.normal_recruitment_notice);
   record.fields.application_url.value = `${record.source.canonical_url}/?tracking=application#form`;
   expectInvalid(record, "source_url_used_as_application_url");
+});
+
+test("source detail route protocol variants are not application URLs", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.fields.application_url.value = record.source.canonical_url.replace(/^https:/u, "http:");
+  expectInvalid(record, "source_url_used_as_application_url");
+});
+
+test("HTTP and HTTPS default ports normalize to the same source route", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.source.canonical_url = "https://example.org:443/notices/normal_open_recruitment";
+  record.fields.application_url.value = "http://example.org:80/notices/normal_open_recruitment";
+  expectInvalid(record, "source_url_used_as_application_url");
+});
+
+test("different non-default URL ports remain distinct routes", () => {
+  const record = clone(byScenario.normal_recruitment_notice);
+  record.source.canonical_url = "https://example.org:8443/notices/normal_open_recruitment";
+  record.fields.application_url.value = "http://example.org:8080/notices/normal_open_recruitment";
+  assert.equal(validate(record).valid, true, JSON.stringify(validate(record).errors));
 });
 
 test("ambiguous provider forces field-specific admin review", () => {

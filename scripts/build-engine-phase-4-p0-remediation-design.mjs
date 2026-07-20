@@ -217,13 +217,14 @@ const report = {
     "unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review",
     "an updated existing recruitment page may remain recruitment_notice only with a revision note",
     "publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind",
+    "recruitment_notice with publishable_opportunity=false requires publishability confirmation review",
     "paid_student_activity never silently enters the general scholarship feed",
     "date-only values must be real calendar dates and offset datetimes compare as actual instants",
     "mixed date/datetime precision cannot produce an automatic lifecycle",
     "primary application start cannot be after deadline and no standalone timezone field exists",
     "unsafe or conflicting date roles force lifecycle unknown and review",
     "every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt",
-    "source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version",
+    "source canonical/detail route ignores protocol and query/fragment/trailing-slash variants, normalizes default ports, and is never application_url in this contract version",
     "provider, posting_organization, and institution_or_campus are independent",
     "unlike benefits, target tiers, total budget, and per-person amounts are never collapsed",
     "maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity",
@@ -248,6 +249,20 @@ const report = {
     legacy_projection: "After admin confirmation, project display to support_amount_text; do not persist the rich object in this phase.",
   },
   review_policy: FIELD_REVIEW_POLICY,
+  recruitment_suppression_policy: {
+    document_kind: "recruitment_notice",
+    when_publishable_opportunity_false: { review_required: true, required_reason: "publishability_requires_confirmation" },
+    automatic_publish_allowed: false,
+  },
+  url_route_identity_policy: {
+    protocol_ignored: true,
+    hostname_significant: true,
+    default_ports_normalized: true,
+    non_default_port_significant: true,
+    trailing_slash_ignored: true,
+    query_ignored: true,
+    fragment_ignored: true,
+  },
   compatibility_plan: COMPATIBILITY_PLAN,
   current_extractor_contract_violations: currentViolations,
   baseline_metrics: {
@@ -338,6 +353,9 @@ ${report.cross_field_safety_rules.map((item) => `- ${item}`).join("\n")}
 - Terminal \`not_applicable\` is exempt.
 - \`not_found\` requires review for: ${Object.keys(FIELD_REVIEW_POLICY.not_found_requires_review).join(", ")}.
 - Clear \`not_found\` may remain no-review for: ${FIELD_REVIEW_POLICY.not_found_without_review_allowed.join(", ")}.
+- Unknown lifecycle reasons include date uncertainty, classification uncertainty, relation resolution, and publishability confirmation; an unrelated reason is rejected.
+- Non-publishable recruitment requires \`publishability_requires_confirmation\` review.
+- Source-route comparison ignores protocol/query/fragment/trailing slash, normalizes default ports, and preserves non-default port differences.
 
 ## Amount design
 

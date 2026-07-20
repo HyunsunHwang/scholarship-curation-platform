@@ -128,13 +128,14 @@ The nine opportunity concepts remain program_name, provider, institution_or_camp
 - unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review
 - an updated existing recruitment page may remain recruitment_notice only with a revision note
 - publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind
+- recruitment_notice with publishable_opportunity=false requires publishability confirmation review
 - paid_student_activity never silently enters the general scholarship feed
 - date-only values must be real calendar dates and offset datetimes compare as actual instants
 - mixed date/datetime precision cannot produce an automatic lifecycle
 - primary application start cannot be after deadline and no standalone timezone field exists
 - unsafe or conflicting date roles force lifecycle unknown and review
 - every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt
-- source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version
+- source canonical/detail route ignores protocol and query/fragment/trailing-slash variants, normalizes default ports, and is never application_url in this contract version
 - provider, posting_organization, and institution_or_campus are independent
 - unlike benefits, target tiers, total budget, and per-person amounts are never collapsed
 - maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity
@@ -145,6 +146,9 @@ The nine opportunity concepts remain program_name, provider, institution_or_camp
 - Terminal `not_applicable` is exempt.
 - `not_found` requires review for: program_name, provider, application_start, application_deadline, support_type, support_amount.
 - Clear `not_found` may remain no-review for: posting_organization, institution_or_campus, application_url.
+- Unknown lifecycle reasons include date uncertainty, classification uncertainty, relation resolution, and publishability confirmation; an unrelated reason is rejected.
+- Non-publishable recruitment requires `publishability_requires_confirmation` review.
+- Source-route comparison ignores protocol/query/fragment/trailing slash, normalizes default ports, and preserves non-default port differences.
 
 ## Amount design
 

@@ -155,6 +155,31 @@
         "properties": {
           "classification": {
             "type": "object",
+            "properties": {
+              "document_kind": { "const": "recruitment_notice" },
+              "publishable_opportunity": { "const": false }
+            },
+            "required": ["document_kind", "publishable_opportunity"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "type": "object",
+            "properties": {
+              "required": { "const": true },
+              "reasons": { "type": "array", "contains": { "const": "publishability_requires_confirmation" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "classification": {
+            "type": "object",
             "properties": { "publishable_opportunity": { "const": true } },
             "required": ["publishable_opportunity"]
           }
@@ -168,6 +193,47 @@
               "document_kind": { "const": "recruitment_notice" },
               "terminal_non_opportunity": { "const": false },
               "opportunity_kind": { "enum": ["scholarship", "paid_student_activity"] }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fields": {
+            "type": "object",
+            "properties": {
+              "lifecycle_status": {
+                "type": "object",
+                "properties": { "status": { "const": "unknown" } },
+                "required": ["status"]
+              }
+            },
+            "required": ["lifecycle_status"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "type": "object",
+            "properties": {
+              "required": { "const": true },
+              "reasons": {
+                "type": "array",
+                "contains": {
+                  "enum": [
+                    "ambiguous_date_role",
+                    "conflicting_date_evidence",
+                    "missing_primary_application_window",
+                    "mixed_date_precision_requires_review",
+                    "classification_uncertain",
+                    "relation_resolution_required",
+                    "publishability_requires_confirmation"
+                  ]
+                }
+              }
             }
           }
         }

@@ -784,13 +784,14 @@
     "unknown_document is non-publishable, non-terminal, unknown opportunity kind, and requires classification_uncertain review",
     "an updated existing recruitment page may remain recruitment_notice only with a revision note",
     "publishable_opportunity=true requires a confirmed recruitment_notice and a partitioned opportunity_kind",
+    "recruitment_notice with publishable_opportunity=false requires publishability confirmation review",
     "paid_student_activity never silently enters the general scholarship feed",
     "date-only values must be real calendar dates and offset datetimes compare as actual instants",
     "mixed date/datetime precision cannot produce an automatic lifecycle",
     "primary application start cannot be after deadline and no standalone timezone field exists",
     "unsafe or conflicting date roles force lifecycle unknown and review",
     "every unknown, ambiguous, conflicting, or schema-gap field requires review and a field-specific reason; terminal not_applicable is exempt",
-    "source canonical/detail route, including query/fragment/trailing-slash variants, is never application_url in this contract version",
+    "source canonical/detail route ignores protocol and query/fragment/trailing-slash variants, normalizes default ports, and is never application_url in this contract version",
     "provider, posting_organization, and institution_or_campus are independent",
     "unlike benefits, target tiers, total budget, and per-person amounts are never collapsed",
     "maximum_cap is not exact and clear unsupported structures are schema gaps rather than ambiguity"
@@ -921,7 +922,10 @@
         "ambiguous_date_role",
         "conflicting_date_evidence",
         "missing_primary_application_window",
-        "mixed_date_precision_requires_review"
+        "mixed_date_precision_requires_review",
+        "classification_uncertain",
+        "relation_resolution_required",
+        "publishability_requires_confirmation"
       ],
       "application_url": [
         "application_url_unverified"
@@ -948,6 +952,23 @@
       "institution_or_campus",
       "application_url"
     ]
+  },
+  "recruitment_suppression_policy": {
+    "document_kind": "recruitment_notice",
+    "when_publishable_opportunity_false": {
+      "review_required": true,
+      "required_reason": "publishability_requires_confirmation"
+    },
+    "automatic_publish_allowed": false
+  },
+  "url_route_identity_policy": {
+    "protocol_ignored": true,
+    "hostname_significant": true,
+    "default_ports_normalized": true,
+    "non_default_port_significant": true,
+    "trailing_slash_ignored": true,
+    "query_ignored": true,
+    "fragment_ignored": true
   },
   "compatibility_plan": [
     {

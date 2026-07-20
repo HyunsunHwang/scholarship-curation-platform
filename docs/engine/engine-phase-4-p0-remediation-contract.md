@@ -36,6 +36,8 @@ Result announcements, information sessions, and general/application-support guid
 
 `unknown_document` is non-publishable and non-terminal, uses `opportunity_kind=unknown`, and always requires `classification_uncertain` review. It is not converted to `not_applicable` because the document role has not been established.
 
+A confirmed `recruitment_notice` may be non-publishable while identity or safety is being checked, but that outcome may never silently suppress the candidate: `publishable_opportunity=false` requires `review.required=true` and `publishability_requires_confirmation`. Automatic publication remains false regardless of publishability.
+
 ### Document kind versus lifecycle
 
 The current extractor writes `result_announced` or `recruitment_notice` to `fields.status`. Those are document meanings, not lifecycle values. Five current frozen outputs violate the new lifecycle enum: Cases 4, 6, 8, 9, and 22.
@@ -79,7 +81,7 @@ A subprogram-specific window is not generalized to an entire composite notice.
 
 The current deterministic URL normalizer is conservative: it requires an HTTP(S) URL on a line containing an application-context term. Current frozen outputs do not copy the canonical source URL into `application_url`.
 
-There is, however, a compatibility risk in the legacy administrator review page: it defaults `apply_url` to `notice.notice_url`. Phase 4 P0 always rejects `application_url` equal to the source canonical/detail route, including trailing-slash, query, and fragment variants of the same host/path. Only a distinct, explicitly evidenced HTTP(S) application path is accepted. Supporting a same-page application flow later requires an explicit contract revision; evidence alone does not create an exception in this version. This design does not change the admin page.
+There is, however, a compatibility risk in the legacy administrator review page: it defaults `apply_url` to `notice.notice_url`. Phase 4 P0 always rejects `application_url` equal to the source canonical/detail route. Route identity ignores HTTP versus HTTPS, normalizes their default ports, removes a trailing slash, and ignores query and fragment; hostname, normalized non-default port, and pathname remain significant. Only a distinct, explicitly evidenced HTTP(S) application path is accepted. Supporting a same-page application flow later requires an explicit contract revision; evidence alone does not create an exception in this version. This design does not change the admin page.
 
 ### Amounts
 
@@ -211,6 +213,8 @@ The JSON design report contains data type, required/null policy, exact allowed v
 
 The statuses `unknown`, `ambiguous`, `conflicting`, and `schema_expressiveness_gap` always set `review.required=true`, require at least one reason, and require a reason assigned to that field: program identity, provider/poster role, campus scope, application-date role/conflict/missing window, URL verification, support type, or amount structure/schema gap. A generic unrelated reason does not satisfy the rule. Terminal `not_applicable` is exempt.
 
+An unknown lifecycle is not necessarily a missing-date claim. Its allowed field-specific reasons distinguish date uncertainty (`ambiguous_date_role`, `conflicting_date_evidence`, `missing_primary_application_window`, or mixed precision), classification uncertainty, relation resolution, and publishability confirmation. Thus an unknown/correction document may retain a clear application window while lifecycle remains unknown for the actual classification or relation reason.
+
 For a clear `not_found`, review is field-specific. Missing `program_name`, `provider`, primary application start/deadline, `support_type`, or `support_amount` requires its corresponding review reason. `posting_organization`, `institution_or_campus`, and `application_url` may be `not_found` without review when absence is itself clear; for example, an offline/email application does not invent a URL. The machine-readable mapping is `review_policy` in the design JSON report.
 
 ## Cross-field safety invariants
@@ -220,12 +224,12 @@ For a clear `not_found`, review is field-specific. Missing `program_name`, `prov
 3. Standalone correction is non-publishable, non-terminal, requires relation resolution, and requires administrator review.
 4. Updated existing recruitment pages require revision notes but may stay recruitment notices.
 5. `unknown_document` is non-publishable, non-terminal, `opportunity_kind=unknown`, and requires `classification_uncertain` review.
-6. `publishable_opportunity=true` requires confirmed recruitment and a non-unknown opportunity kind.
+6. A non-publishable recruitment notice requires explicit publishability review; `publishable_opportunity=true` still requires confirmed recruitment and a non-unknown opportunity kind.
 7. Paid activity requires its own opportunity kind and administrator partition review.
 8. Date-only values must be real calendar dates; datetimes require an offset and compare as actual instants. Mixed precision cannot produce an automatic lifecycle.
 9. Unsafe date roles force lifecycle `unknown` and review.
 10. No standalone timezone field exists.
-11. Source canonical/detail URL is never an application URL in this contract version.
+11. Source canonical/detail route is never an application URL in this contract version, including HTTP/HTTPS and query/fragment/trailing-slash variants of the same normalized host, port, and path.
 12. Provider, posting organization, and institution/campus are independent.
 13. Every uncertain field state requires a field-specific review reason; terminal `not_applicable` is exempt.
 14. Unlike benefits, target tiers, totals, and per-person amounts are not collapsed.

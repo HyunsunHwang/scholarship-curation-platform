@@ -121,12 +121,12 @@ export const exampleManifest = {
     baseExample({
       caseId: "standalone_correction",
       scenario: "standalone_correction_notice",
-      sourceText: "광산장학금 신청 마감일을 2025-09-19로 연장합니다.",
+      sourceText: "광산장학금 신청기간은 2025-09-01부터이며 마감일을 2025-09-19로 연장합니다.",
       documentKind: "correction_notice", publishable: false, terminal: false, relationRequired: true,
-      reviewRequired: true, reviewReasons: ["relation_resolution_required", "missing_primary_application_window", "support_type_uncertain", "support_amount_uncertain"],
+      reviewRequired: true, reviewReasons: ["relation_resolution_required", "support_type_uncertain", "support_amount_uncertain"],
       fields: (ref) => ({
         program_name: present("광산장학금", ref), provider: present("광산장학회", ref), institution_or_campus: notApplicable(),
-        application_start: unknown([ref]), application_deadline: present("2025-09-19", ref), lifecycle_status: lifecycleUnknown(),
+        application_start: present("2025-09-01", ref), application_deadline: present("2025-09-19", ref), lifecycle_status: lifecycleUnknown(),
         application_url: notFound(), support_type: unknown(), support_amount: unknown(),
       }),
     }),
@@ -219,11 +219,15 @@ export const exampleManifest = {
     baseExample({
       caseId: "unknown_document",
       scenario: "unknown_document_requires_review",
-      sourceText: "장학 관련 공지이며 모집 여부와 지원 내용은 원문만으로 확인되지 않음",
+      sourceText: "신청기간은 2026-05-01부터 2026-05-31까지이나 문서가 모집 공고인지 안내문인지 확인되지 않음",
       documentKind: "unknown_document", publishable: false, opportunityKind: "unknown", terminal: false,
       reviewRequired: true,
-      reviewReasons: ["classification_uncertain", "program_identity_insufficient", "provider_posting_organization_ambiguous", "campus_scope_ambiguous", "missing_primary_application_window", "application_url_unverified", "support_type_uncertain", "support_amount_uncertain"],
-      fields: () => ({}),
+      reviewReasons: ["classification_uncertain", "program_identity_insufficient", "provider_posting_organization_ambiguous", "campus_scope_ambiguous", "application_url_unverified", "support_type_uncertain", "support_amount_uncertain"],
+      fields: (ref) => ({
+        application_start: present("2026-05-01", ref),
+        application_deadline: present("2026-05-31", ref),
+        lifecycle_status: lifecycleUnknown(),
+      }),
     }),
     baseExample({
       caseId: "amount_range",

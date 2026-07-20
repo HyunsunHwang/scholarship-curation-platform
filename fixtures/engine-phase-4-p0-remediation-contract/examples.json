@@ -490,8 +490,8 @@
             "evidence_references": []
           },
           "application_start": {
-            "status": "unknown",
-            "value": null,
+            "status": "present",
+            "value": "2025-09-01",
             "evidence_references": [
               "standalone_correction_ev_1"
             ]
@@ -528,7 +528,6 @@
           "required": true,
           "reasons": [
             "relation_resolution_required",
-            "missing_primary_application_window",
             "support_type_uncertain",
             "support_amount_uncertain"
           ],
@@ -542,7 +541,7 @@
             "document_id": null,
             "document_revision_id": null,
             "document_hash": null,
-            "source_text": "광산장학금 신청 마감일을 2025-09-19로 연장합니다.",
+            "source_text": "광산장학금 신청기간은 2025-09-01부터이며 마감일을 2025-09-19로 연장합니다.",
             "locator": "main"
           }
         ]
@@ -1487,14 +1486,18 @@
             "evidence_references": []
           },
           "application_start": {
-            "status": "unknown",
-            "value": null,
-            "evidence_references": []
+            "status": "present",
+            "value": "2026-05-01",
+            "evidence_references": [
+              "unknown_document_ev_1"
+            ]
           },
           "application_deadline": {
-            "status": "unknown",
-            "value": null,
-            "evidence_references": []
+            "status": "present",
+            "value": "2026-05-31",
+            "evidence_references": [
+              "unknown_document_ev_1"
+            ]
           },
           "lifecycle_status": {
             "status": "unknown",
@@ -1524,7 +1527,6 @@
             "program_identity_insufficient",
             "provider_posting_organization_ambiguous",
             "campus_scope_ambiguous",
-            "missing_primary_application_window",
             "application_url_unverified",
             "support_type_uncertain",
             "support_amount_uncertain"
@@ -1539,7 +1541,7 @@
             "document_id": null,
             "document_revision_id": null,
             "document_hash": null,
-            "source_text": "장학 관련 공지이며 모집 여부와 지원 내용은 원문만으로 확인되지 않음",
+            "source_text": "신청기간은 2026-05-01부터 2026-05-31까지이나 문서가 모집 공고인지 안내문인지 확인되지 않음",
             "locator": "main"
           }
         ]
