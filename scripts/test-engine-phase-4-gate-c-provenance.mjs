@@ -39,6 +39,10 @@ try {
 
   assert.equal(validate(freezeSha, relationSha).provenance_validation_status, "PASS");
 
+  git("branch", "-f", "origin/main", relationSha);
+  assert.equal(validate(freezeSha, relationSha).provenance_validation_status, "PASS");
+  git("branch", "-f", "origin/main", baseSha);
+
   const nonexistent = validate("f".repeat(40), relationSha);
   assert.equal(nonexistent.provenance_validation_status, "FAIL");
   assert.equal(nonexistent.corpus_freeze_commit_exists, false);

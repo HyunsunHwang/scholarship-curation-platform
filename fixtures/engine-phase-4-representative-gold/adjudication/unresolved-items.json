@@ -1,0 +1,576 @@
+{
+  "schema_version": "engine-phase-4-gate-c-adjudication-unresolved-items/v1",
+  "source_fixture_version": "engine-phase-4-representative-public-gold/v1",
+  "adjudication_unresolved_count": 1,
+  "note": "These are preparation-time risks, not human unresolved decisions. A reviewer must decide their disposition.",
+  "items": [
+    {
+      "item_id": "review_risk_001",
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "document_text",
+      "reason": "authoritative_source_text_missing",
+      "category": "phase_3_input_provenance",
+      "current_status": "authoritative_document_missing"
+    },
+    {
+      "item_id": "review_risk_002",
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "field_name": "document_text",
+      "reason": "authoritative_hwp_parse_missing",
+      "category": "phase_3_input_provenance",
+      "current_status": "phase_3_parse_required"
+    },
+    {
+      "item_id": "review_risk_003",
+      "case_id": "p4c_014_youth_farmer_image",
+      "field_name": "document_text",
+      "reason": "authoritative_ocr_missing",
+      "category": "phase_3_input_provenance",
+      "current_status": "ocr_required"
+    },
+    {
+      "item_id": "review_risk_004",
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "document_text",
+      "reason": "authoritative_hwp_parse_missing",
+      "category": "phase_3_input_provenance",
+      "current_status": "phase_3_parse_required"
+    },
+    {
+      "item_id": "review_risk_005",
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "field_name": "document_text",
+      "reason": "authoritative_hwpx_parse_missing",
+      "category": "phase_3_input_provenance",
+      "current_status": "phase_3_parse_required"
+    },
+    {
+      "item_id": "review_risk_006",
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "complex_eligibility",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_007",
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_008",
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_009",
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_010",
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_011",
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "unlabeled_date_role",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_012",
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "source_provenance",
+      "category": "source_access",
+      "reason": "available_list_identity_only",
+      "current_status": "authoritative_document_missing"
+    },
+    {
+      "item_id": "review_risk_013",
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "cycle_evidence_missing",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_014",
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "parser_missing_text",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_015",
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_016",
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_017",
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "tiered_amount_table",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_018",
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_date_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_019",
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "amount",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_020",
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_021",
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "required_document_taxonomy",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_022",
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_023",
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_024",
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_date_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_025",
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "application_method_taxonomy",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_026",
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_027",
+      "case_id": "p4c_010_cau_national_preapplication",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_028",
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "missing_attachment_parser",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_029",
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_030",
+      "case_id": "p4c_012_history_central_love",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "required_document_taxonomy",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_031",
+      "case_id": "p4c_012_history_central_love",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_032",
+      "case_id": "p4c_012_history_central_love",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_033",
+      "case_id": "p4c_013_history_growth_table",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "complex_eligibility",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_034",
+      "case_id": "p4c_013_history_growth_table",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_035",
+      "case_id": "p4c_013_history_growth_table",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_036",
+      "case_id": "p4c_014_youth_farmer_image",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "parser_low_quality",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_037",
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "missing_attachment_parser",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_038",
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "complex_eligibility",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_039",
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "missing_attachment_parser",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_040",
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_benefit_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_041",
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "complex_eligibility",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_042",
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "amount",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_043",
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_044",
+      "case_id": "p4c_017_uic_2025_fall",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_045",
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_date_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_046",
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_047",
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_048",
+      "case_id": "p4c_019_uic_legacy",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_049",
+      "case_id": "p4c_019_uic_legacy",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_050",
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_benefit_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_051",
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "tiered_amount_table",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_052",
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "amount",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_053",
+      "case_id": "p4c_020_uic_supporters_table",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_054",
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_date_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_055",
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_056",
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_057",
+      "case_id": "p4c_021_grad_need_based",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_058",
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "required_document_taxonomy",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_059",
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "multiple_date_conflict",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_060",
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_061",
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "application_deadline",
+      "category": "partial_gold",
+      "reason": "element_level_range_boundary_and_bounded_overlap/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_062",
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "provider_program_separation",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_063",
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "eligibility",
+      "category": "partial_gold",
+      "reason": "element_level_condition_set_and_boolean_structure/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_064",
+      "case_id": "p4c_023_russian_alumni_funds",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_065",
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "program_identity_insufficient",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_066",
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "candidate_gold",
+      "category": "suspected_candidate_gold_problem",
+      "reason": "cycle_evidence_missing",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_067",
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "application_method",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_068",
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "field_name": "required_documents",
+      "category": "partial_gold",
+      "reason": "element_level_set_precision_recall/v1_not_adjudicated",
+      "current_status": "pending_independent_review"
+    },
+    {
+      "item_id": "review_risk_069",
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "relation_meaning",
+      "category": "relation_coverage",
+      "reason": "Original pre-extension notice was not selected, so no pair is asserted.",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_070",
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "relation_meaning",
+      "category": "relation_coverage",
+      "reason": "Original pre-extension notice was not selected, so no pair is asserted.",
+      "current_status": "requires_independent_decision"
+    },
+    {
+      "item_id": "review_risk_071",
+      "case_id": "p4c_018_uic_samsung_updated",
+      "field_name": "relation_meaning",
+      "category": "relation_coverage",
+      "reason": "The title records an update but no prior revision capture is retained.",
+      "current_status": "requires_independent_decision"
+    }
+  ]
+}

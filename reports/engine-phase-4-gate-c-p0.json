@@ -1,0 +1,1538 @@
+{
+  "audit_version": "engine-phase-4-gate-c-p0-audit/v1",
+  "official_phase": "ENGINE_PHASE_4",
+  "official_gate": "GATE_C_P0_DIAGNOSTIC_AUDIT",
+  "as_of": "2026-07-20T00:00:00+09:00",
+  "timezone": "Asia/Seoul",
+  "gold_policy": "frozen-excerpt correctness uses reviewer-approved adjudication decisions only; production-source review is reported separately; candidate, pending, and production-source-only values are excluded from frozen correctness denominators",
+  "p0_contract": {
+    "opportunity_fields": [
+      "program_name",
+      "provider",
+      "institution_or_campus",
+      "application_start",
+      "application_deadline",
+      "lifecycle_status",
+      "application_url",
+      "support_type",
+      "support_amount"
+    ],
+    "standalone_timezone_field": false,
+    "total_concept_slots": 216,
+    "primary_application_window_only": true,
+    "terminal_non_opportunity_downstream_fields_excluded": true
+  },
+  "evidence_scopes": {
+    "frozen_excerpt_scope": "scorable in resolved-only deterministic accuracy",
+    "production_source_review_scope": "shadow operational review; never inserted into frozen-excerpt accuracy denominators"
+  },
+  "corpus": {
+    "total_case_count": 24,
+    "resolved_case_count": 0,
+    "partially_resolved_case_count": 5,
+    "fully_pending_case_count": 19,
+    "pending_case_count": 24,
+    "total_p0_field_count": 216,
+    "resolved_p0_field_count": 14,
+    "pending_p0_field_count": 198,
+    "unresolved_p0_field_count": 4,
+    "resolved_safety_field_count": 10,
+    "pending_safety_field_count": 38
+  },
+  "aggregate_metrics": {
+    "field_presence_precision": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 3,
+      "denominator": 3,
+      "sample_count": 3
+    },
+    "field_presence_recall": {
+      "status": "evaluated",
+      "value": 0.21428571428571427,
+      "numerator": 3,
+      "denominator": 14,
+      "sample_count": 14
+    },
+    "normalized_exact_match": {
+      "status": "evaluated",
+      "value": 0.6666666666666666,
+      "numerator": 2,
+      "denominator": 3,
+      "sample_count": 3
+    },
+    "evidence_supported_count": 21,
+    "unsupported_claim_count": 0,
+    "inferred_value_count": 0,
+    "ambiguous_or_review_required_count": 18,
+    "review_required_case_count": 24
+  },
+  "category_metrics": {
+    "identity_exact": {
+      "status": "evaluated",
+      "value": 0,
+      "numerator": 0,
+      "denominator": 2,
+      "sample_count": 2
+    },
+    "provider_exact": {
+      "status": "evaluated",
+      "value": 0,
+      "numerator": 0,
+      "denominator": 4,
+      "sample_count": 4
+    },
+    "institution_or_campus_exact": {
+      "status": "evaluated",
+      "value": 0,
+      "numerator": 0,
+      "denominator": 2,
+      "sample_count": 2
+    },
+    "application_start_exact": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 1,
+      "denominator": 1,
+      "sample_count": 1
+    },
+    "application_deadline_exact": {
+      "status": "evaluated",
+      "value": 1,
+      "numerator": 1,
+      "denominator": 1,
+      "sample_count": 1
+    },
+    "status_exact": {
+      "status": "evaluated",
+      "value": 0,
+      "numerator": 0,
+      "denominator": 4,
+      "sample_count": 4
+    },
+    "application_url_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for application_url."
+    },
+    "support_type_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for support_type."
+    },
+    "support_amount_exact": {
+      "status": "not_evaluated",
+      "value": null,
+      "numerator": 0,
+      "denominator": 0,
+      "sample_count": 0,
+      "reason": "No reviewer-resolved samples for support_amount."
+    }
+  },
+  "safety_gates": {
+    "document_kind_exact": {
+      "status": "evaluated",
+      "value": 0.2,
+      "numerator": 1,
+      "denominator": 5,
+      "sample_count": 5
+    },
+    "non_recruitment_exposed_as_opportunity_count": 0,
+    "recruitment_suppressed_count": 3,
+    "critical_publishability_error_count": 3,
+    "pending_publishability_case_count": 19,
+    "note": "Publishability mismatch counts require reviewer-resolved document-kind gold; pending cases are not scored as safe or erroneous."
+  },
+  "case_metrics": {
+    "fully_correct_p0_case_count": 0,
+    "partially_correct_p0_case_count": 0,
+    "failed_p0_case_count": 0,
+    "pending_p0_case_count": 24,
+    "partially_adjudicated_p0_case_count": 5,
+    "fully_pending_p0_case_count": 19
+  },
+  "by_field": {
+    "program_name": {
+      "resolved_count": 2,
+      "pending_count": 22,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for program_name."
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 2,
+        "sample_count": 2
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for program_name."
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 2,
+        "sample_count": 2
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "provider": {
+      "resolved_count": 4,
+      "pending_count": 19,
+      "unresolved_count": 1,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for provider."
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 4,
+        "sample_count": 4
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for provider."
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 4,
+        "sample_count": 4
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "institution_or_campus": {
+      "resolved_count": 2,
+      "pending_count": 19,
+      "unresolved_count": 3,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for institution_or_campus."
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 2,
+        "sample_count": 2
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for institution_or_campus."
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 2,
+        "sample_count": 2
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "application_start": {
+      "resolved_count": 1,
+      "pending_count": 23,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "normalized_exact_match": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "evidence_supported_count": 2,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 5
+    },
+    "application_deadline": {
+      "resolved_count": 1,
+      "pending_count": 23,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "normalized_exact_match": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "evidence_supported_count": 2,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 5
+    },
+    "lifecycle_status": {
+      "resolved_count": 4,
+      "pending_count": 20,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 1,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 0.25,
+        "numerator": 1,
+        "denominator": 4,
+        "sample_count": 4
+      },
+      "normalized_exact_match": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 1,
+        "sample_count": 1
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0,
+        "numerator": 0,
+        "denominator": 4,
+        "sample_count": 4
+      },
+      "evidence_supported_count": 5,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "application_url": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for application_url."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for application_url."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for application_url."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for application_url."
+      },
+      "evidence_supported_count": 0,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "support_type": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for support_type."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for support_type."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for support_type."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for support_type."
+      },
+      "evidence_supported_count": 6,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 4
+    },
+    "support_amount": {
+      "resolved_count": 0,
+      "pending_count": 24,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved predicted-present samples for support_amount."
+      },
+      "field_presence_recall": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved gold-present samples for support_amount."
+      },
+      "normalized_exact_match": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No jointly present reviewer-resolved samples for support_amount."
+      },
+      "exact": {
+        "status": "not_evaluated",
+        "value": null,
+        "numerator": 0,
+        "denominator": 0,
+        "sample_count": 0,
+        "reason": "No reviewer-resolved samples for support_amount."
+      },
+      "evidence_supported_count": 6,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 4
+    },
+    "document_kind": {
+      "resolved_count": 5,
+      "pending_count": 19,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 5,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 5,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "normalized_exact_match": {
+        "status": "evaluated",
+        "value": 0.2,
+        "numerator": 1,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0.2,
+        "numerator": 1,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "evidence_supported_count": 24,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    },
+    "publishable_opportunity": {
+      "resolved_count": 5,
+      "pending_count": 19,
+      "unresolved_count": 0,
+      "field_presence_precision": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 5,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "field_presence_recall": {
+        "status": "evaluated",
+        "value": 1,
+        "numerator": 5,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "normalized_exact_match": {
+        "status": "evaluated",
+        "value": 0.4,
+        "numerator": 2,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "exact": {
+        "status": "evaluated",
+        "value": 0.4,
+        "numerator": 2,
+        "denominator": 5,
+        "sample_count": 5
+      },
+      "evidence_supported_count": 24,
+      "unsupported_claim_count": 0,
+      "inferred_value_count": 0,
+      "ambiguous_or_review_required_count": 0
+    }
+  },
+  "critical_errors": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "publishable_opportunity",
+      "error": "recruitment_suppressed",
+      "predicted_value": false,
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "resolved",
+      "verified_against_gold": true
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "publishable_opportunity",
+      "error": "recruitment_suppressed",
+      "predicted_value": false,
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "resolved",
+      "verified_against_gold": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "resolved",
+      "verified_against_gold": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "publishable_opportunity",
+      "error": "recruitment_suppressed",
+      "predicted_value": false,
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "resolved",
+      "verified_against_gold": true
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "recruitment_notice",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "result_announced",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "field_name": "lifecycle_status",
+      "error": "document_kind_used_as_lifecycle_status",
+      "predicted_value": "recruitment_notice",
+      "classification": "deterministic_extractor_defect",
+      "gold_state": "pending",
+      "verified_against_gold": false
+    }
+  ],
+  "error_taxonomy": {
+    "deterministic_extractor_defect": {
+      "count": 8,
+      "case_ids": [
+        "p4c_001_student_affairs_special",
+        "p4c_002_national_second_round",
+        "p4c_004_national_work_result",
+        "p4c_005_miraero_second",
+        "p4c_006_gwangsan_extension",
+        "p4c_008_cau_welfare_result_2025_1",
+        "p4c_009_cau_welfare_result_2024_2",
+        "p4c_022_grad_seoul_foundation_pdf"
+      ]
+    }
+  },
+  "responsibility_boundary": {
+    "deterministic_fields": [
+      "explicit primary application window with embedded offset/timezone",
+      "explicit provider/program labels",
+      "explicit application URL",
+      "simple exact/cap/range/period/unit amount semantics",
+      "conservative document classification",
+      "lifecycle derivation from unambiguous start/deadline/timezone for a confirmed recruitment opportunity at fixed as_of"
+    ],
+    "llm_assisted_candidates": [
+      "provider/program separation",
+      "complex date roles and process timeline",
+      "cross-table amount component/program alignment",
+      "complex Korean eligibility and exceptions outside P0"
+    ],
+    "human_review_required": [
+      "publishability",
+      "lifecycle when date roles or timezone are ambiguous, dates conflict, multiple cycles are possible, or correction/extension/result relations are required",
+      "correction/extension/result semantics",
+      "campus scope",
+      "ambiguous or conflicting values"
+    ],
+    "schema_expressiveness_gaps": [
+      "lifecycle status has no enum and currently accepts document-kind values",
+      "tiered, composite, recurring, hourly, applicant-requested, and multi-program amounts do not fit one amountValue",
+      "host institution and benefit type are optional and absent from the baseline output"
+    ],
+    "input_minimization": [
+      "use HTML when it already contains P0 facts",
+      "require full HWP/HWPX parsing only when P0 is absent from accessible HTML",
+      "use minimal OCR/vision for image-only program, primary application window, amount, and application path",
+      "defer detailed eligibility and follow-up procedure semantics to LLM-assisted draft plus administrator review"
+    ]
+  },
+  "safety": {
+    "external_llm_called": false,
+    "production_db_touched": false,
+    "extractor_modified_for_score": false,
+    "existing_gate_c_report_replaced": false,
+    "automatic_publish_enabled": false
+  },
+  "production_source_review": {
+    "batch": 2,
+    "status": "completed",
+    "reviewed_case_count": 19,
+    "combined_p0_case_review_count": 24,
+    "total_corpus_concept_slots": 216,
+    "production_review_concept_slots": 171,
+    "status_counts": {
+      "present": 104,
+      "not_found": 10,
+      "not_applicable": 32,
+      "unresolved": 9,
+      "schema_expressiveness_gap": 16
+    },
+    "frozen_excerpt_supported_field_count": 51,
+    "production_source_only_field_count": 88,
+    "terminal_non_opportunity_case_ids": [
+      "p4c_008_cau_welfare_result_2025_1",
+      "p4c_009_cau_welfare_result_2024_2",
+      "p4c_024_dean_recommendation_guidance"
+    ],
+    "standalone_non_publishable_case_ids": [
+      "p4c_006_gwangsan_extension",
+      "p4c_008_cau_welfare_result_2025_1",
+      "p4c_009_cau_welfare_result_2024_2",
+      "p4c_024_dean_recommendation_guidance"
+    ],
+    "schema_gap_case_ids": [
+      "p4c_006_gwangsan_extension",
+      "p4c_007_sejong_internal_guidance",
+      "p4c_010_cau_national_preapplication",
+      "p4c_012_history_central_love",
+      "p4c_013_history_growth_table",
+      "p4c_014_youth_farmer_image",
+      "p4c_015_seoul_talent_hwp",
+      "p4c_017_uic_2025_fall",
+      "p4c_020_uic_supporters_table",
+      "p4c_022_grad_seoul_foundation_pdf"
+    ],
+    "date_normalization": {
+      "reviewed_field_count": 38,
+      "applicable_field_count": 32,
+      "present_count": 30,
+      "date_only_count": 15,
+      "offset_datetime_count": 15,
+      "unresolved_or_not_found_count": 2,
+      "not_applicable_count": 6
+    },
+    "amount_semantics": {
+      "reviewed_field_count": 19,
+      "applicable_field_count": 16,
+      "semantically_resolved_count": 15,
+      "canonical_schema_representable_count": 6,
+      "taxonomy_counts": {
+        "tiered_by_target": 1,
+        "multiple_program_schema_gap": 2,
+        "not_applicable": 3,
+        "unresolved": 1,
+        "exact": 5,
+        "applicant_requested": 1,
+        "maximum_cap": 1,
+        "composite_components": 2,
+        "installment": 1,
+        "recurring_semester": 1,
+        "tiered_by_degree_level": 1
+      },
+      "schema_gap_count": 9,
+      "unresolved_count": 1,
+      "not_applicable_count": 3
+    }
+  },
+  "reviewer_resolved_field_results": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "program_name",
+      "gold": {
+        "status": "present",
+        "normalized_value": "학생처특별장학금",
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "provider",
+      "gold": {
+        "status": "present",
+        "normalized_value": "고려대학교",
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "institution_or_campus",
+      "gold": {
+        "status": "present",
+        "normalized_value": "고려대학교",
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "lifecycle_status",
+      "gold": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_applicable",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "document_kind",
+      "gold": {
+        "status": "present",
+        "normalized_value": "recruitment_notice",
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "ev_8532630c1d157236d1837810"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "field_name": "publishable_opportunity",
+      "gold": {
+        "status": "present",
+        "normalized_value": true,
+        "evidence_ids": [
+          "p4c_001_student_affairs_special_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "ev_8532630c1d157236d1837810"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "provider",
+      "gold": {
+        "status": "present",
+        "normalized_value": "한국장학재단",
+        "evidence_ids": [
+          "p4c_002_national_second_round_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "document_kind",
+      "gold": {
+        "status": "present",
+        "normalized_value": "recruitment_notice",
+        "evidence_ids": [
+          "p4c_002_national_second_round_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "ev_da08452149409a6cc5867c72"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "field_name": "publishable_opportunity",
+      "gold": {
+        "status": "present",
+        "normalized_value": true,
+        "evidence_ids": [
+          "p4c_002_national_second_round_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "ev_da08452149409a6cc5867c72"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "provider",
+      "gold": {
+        "status": "present",
+        "normalized_value": "한국장학재단",
+        "evidence_ids": [
+          "p4c_003_hope_ladder_extension_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "lifecycle_status",
+      "gold": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "p4c_003_hope_ladder_extension_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_applicable",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "document_kind",
+      "gold": {
+        "status": "present",
+        "normalized_value": "correction_notice",
+        "evidence_ids": [
+          "p4c_003_hope_ladder_extension_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "ev_59afbdeb05282b86eadf6a01"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "field_name": "publishable_opportunity",
+      "gold": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "p4c_003_hope_ladder_extension_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "ev_59afbdeb05282b86eadf6a01"
+        ],
+        "inferred": false
+      },
+      "exact": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "lifecycle_status",
+      "gold": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "p4c_004_national_work_result_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "result_announced",
+        "evidence_ids": [
+          "ev_82bc78d12e42281a038c5e99"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "document_kind",
+      "gold": {
+        "status": "present",
+        "normalized_value": "result_announcement",
+        "evidence_ids": [
+          "p4c_004_national_work_result_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "result_announcement",
+        "evidence_ids": [
+          "ev_82bc78d12e42281a038c5e99"
+        ],
+        "inferred": false
+      },
+      "exact": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "field_name": "publishable_opportunity",
+      "gold": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "p4c_004_national_work_result_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "ev_82bc78d12e42281a038c5e99"
+        ],
+        "inferred": false
+      },
+      "exact": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "program_name",
+      "gold": {
+        "status": "present",
+        "normalized_value": "미래로 장학금",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "provider",
+      "gold": {
+        "status": "present",
+        "normalized_value": "고려대학교",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "institution_or_campus",
+      "gold": {
+        "status": "present",
+        "normalized_value": "고려대학교 세종캠퍼스",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_found",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "application_start",
+      "gold": {
+        "status": "present",
+        "normalized_value": "2025-04-01T10:00:00+09:00",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "2025-04-01T10:00:00+09:00",
+        "evidence_ids": [
+          "ev_9540e479407c2831247faf7a"
+        ],
+        "inferred": false
+      },
+      "exact": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "application_deadline",
+      "gold": {
+        "status": "present",
+        "normalized_value": "2025-04-30T16:00:00+09:00",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "2025-04-30T16:00:00+09:00",
+        "evidence_ids": [
+          "ev_313e5d7265d520bfb3ef5014"
+        ],
+        "inferred": false
+      },
+      "exact": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "lifecycle_status",
+      "gold": {
+        "status": "present",
+        "normalized_value": "closed",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "not_applicable",
+        "normalized_value": null,
+        "evidence_ids": [],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "document_kind",
+      "gold": {
+        "status": "present",
+        "normalized_value": "recruitment_notice",
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": "unknown",
+        "evidence_ids": [
+          "ev_924f37760c89433847c1c049"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "field_name": "publishable_opportunity",
+      "gold": {
+        "status": "present",
+        "normalized_value": true,
+        "evidence_ids": [
+          "p4c_005_miraero_second_e1"
+        ]
+      },
+      "prediction": {
+        "status": "present",
+        "normalized_value": false,
+        "evidence_ids": [
+          "ev_924f37760c89433847c1c049"
+        ],
+        "inferred": false
+      },
+      "exact": false
+    }
+  ],
+  "case_results": [
+    {
+      "case_id": "p4c_001_student_affairs_special",
+      "resolved_p0_field_count": 4,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 5,
+      "resolved_safety_field_count": 2,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 0,
+      "adjudication_coverage": "partially_resolved",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_002_national_second_round",
+      "resolved_p0_field_count": 1,
+      "unresolved_p0_field_count": 1,
+      "pending_p0_field_count": 7,
+      "resolved_safety_field_count": 2,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 0,
+      "adjudication_coverage": "partially_resolved",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_003_hope_ladder_extension",
+      "resolved_p0_field_count": 2,
+      "unresolved_p0_field_count": 1,
+      "pending_p0_field_count": 6,
+      "resolved_safety_field_count": 2,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 0,
+      "adjudication_coverage": "partially_resolved",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_004_national_work_result",
+      "resolved_p0_field_count": 1,
+      "unresolved_p0_field_count": 2,
+      "pending_p0_field_count": 6,
+      "resolved_safety_field_count": 2,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 0,
+      "adjudication_coverage": "partially_resolved",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_005_miraero_second",
+      "resolved_p0_field_count": 6,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 3,
+      "resolved_safety_field_count": 2,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 0,
+      "adjudication_coverage": "partially_resolved",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_006_gwangsan_extension",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_007_sejong_internal_guidance",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_008_cau_welfare_result_2025_1",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_009_cau_welfare_result_2024_2",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_010_cau_national_preapplication",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_011_cau_innovation_hwp",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_012_history_central_love",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_013_history_growth_table",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_014_youth_farmer_image",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_015_seoul_talent_hwp",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_016_asan_hope_hwpx",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_017_uic_2025_fall",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_018_uic_samsung_updated",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_019_uic_legacy",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_020_uic_supporters_table",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_021_grad_need_based",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_022_grad_seoul_foundation_pdf",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_023_russian_alumni_funds",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    },
+    {
+      "case_id": "p4c_024_dean_recommendation_guidance",
+      "resolved_p0_field_count": 0,
+      "unresolved_p0_field_count": 0,
+      "pending_p0_field_count": 9,
+      "resolved_safety_field_count": 0,
+      "unresolved_safety_field_count": 0,
+      "pending_safety_field_count": 2,
+      "adjudication_coverage": "fully_pending",
+      "outcome": "pending",
+      "review_required": true
+    }
+  ]
+}
