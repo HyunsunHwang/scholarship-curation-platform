@@ -1821,6 +1821,8 @@
     "safe_fail_closed_count": 82,
     "overclaim_count": 0,
     "schema_gap_alignment_count": 3,
+    "schema_gap_collapsed_to_present_count": 3,
+    "representation_loss_risk_count": 3,
     "by_field": {
       "program_name": {
         "concept_slot_count": 19,
@@ -1831,7 +1833,9 @@
         "value_mismatch_count": 5,
         "safe_fail_closed_count": 6,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "provider": {
         "concept_slot_count": 19,
@@ -1842,7 +1846,9 @@
         "value_mismatch_count": 0,
         "safe_fail_closed_count": 13,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "institution_or_campus": {
         "concept_slot_count": 19,
@@ -1853,7 +1859,9 @@
         "value_mismatch_count": 1,
         "safe_fail_closed_count": 10,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "application_start": {
         "concept_slot_count": 19,
@@ -1864,7 +1872,9 @@
         "value_mismatch_count": 0,
         "safe_fail_closed_count": 11,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "application_deadline": {
         "concept_slot_count": 19,
@@ -1875,7 +1885,9 @@
         "value_mismatch_count": 1,
         "safe_fail_closed_count": 11,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "lifecycle_status": {
         "concept_slot_count": 19,
@@ -1886,7 +1898,9 @@
         "value_mismatch_count": 0,
         "safe_fail_closed_count": 14,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "application_url": {
         "concept_slot_count": 19,
@@ -1897,7 +1911,9 @@
         "value_mismatch_count": 0,
         "safe_fail_closed_count": 0,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 0,
+        "representation_loss_risk_count": 0
       },
       "support_type": {
         "concept_slot_count": 19,
@@ -1908,7 +1924,9 @@
         "value_mismatch_count": 5,
         "safe_fail_closed_count": 9,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 0
+        "schema_gap_alignment_count": 0,
+        "schema_gap_collapsed_to_present_count": 2,
+        "representation_loss_risk_count": 2
       },
       "support_amount": {
         "concept_slot_count": 19,
@@ -1919,9 +1937,25 @@
         "value_mismatch_count": 3,
         "safe_fail_closed_count": 8,
         "overclaim_count": 0,
-        "schema_gap_alignment_count": 3
+        "schema_gap_alignment_count": 3,
+        "schema_gap_collapsed_to_present_count": 1,
+        "representation_loss_risk_count": 1
       }
     },
+    "schema_gap_collapsed_case_fields": [
+      {
+        "case_id": "p4c_012_history_central_love",
+        "field_name": "support_amount"
+      },
+      {
+        "case_id": "p4c_017_uic_2025_fall",
+        "field_name": "support_type"
+      },
+      {
+        "case_id": "p4c_020_uic_supporters_table",
+        "field_name": "support_type"
+      }
+    ],
     "case_mismatches": [
       {
         "case_id": "p4c_006_gwangsan_extension",
@@ -1938,6 +1972,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -1954,6 +1989,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -1970,6 +2006,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -1986,6 +2023,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2002,6 +2040,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2018,6 +2057,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -2039,6 +2079,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2055,6 +2096,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2071,6 +2113,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2087,6 +2130,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2103,6 +2147,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2124,6 +2169,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2140,6 +2186,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2156,6 +2203,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2172,6 +2220,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2188,6 +2237,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2204,6 +2254,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2225,6 +2276,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2241,6 +2293,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2257,6 +2310,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2273,6 +2327,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2289,6 +2344,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2305,6 +2361,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2321,6 +2378,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2342,6 +2400,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2358,6 +2417,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2374,6 +2434,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2390,6 +2451,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2406,6 +2468,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2422,6 +2485,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -2438,8 +2502,9 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": true,
             "mismatch_taxonomy": [
-              "status_mismatch"
+              "schema_gap_collapsed_to_present"
             ]
           }
         ]
@@ -2459,6 +2524,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2475,6 +2541,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2491,6 +2558,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2507,6 +2575,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2523,6 +2592,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2539,6 +2609,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2555,6 +2626,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2571,6 +2643,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2592,6 +2665,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -2608,6 +2682,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2624,6 +2699,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2640,6 +2716,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2656,6 +2733,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2672,6 +2750,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2688,6 +2767,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2704,6 +2784,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2720,6 +2801,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2741,6 +2823,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2757,6 +2840,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2773,6 +2857,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2789,6 +2874,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2805,6 +2891,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2821,6 +2908,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2837,6 +2925,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2853,6 +2942,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2874,6 +2964,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -2890,6 +2981,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -2906,6 +2998,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2922,6 +3015,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2938,6 +3032,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2954,6 +3049,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2970,6 +3066,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -2991,6 +3088,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3007,6 +3105,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3023,6 +3122,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3039,6 +3139,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3055,6 +3156,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3071,6 +3173,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3087,6 +3190,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3103,8 +3207,9 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": true,
             "mismatch_taxonomy": [
-              "status_mismatch"
+              "schema_gap_collapsed_to_present"
             ]
           }
         ]
@@ -3124,6 +3229,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3140,6 +3246,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3156,6 +3263,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3172,6 +3280,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3188,6 +3297,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3204,6 +3314,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3220,6 +3331,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3236,6 +3348,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3252,6 +3365,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3273,6 +3387,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3289,6 +3404,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3305,6 +3421,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3321,6 +3438,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3337,6 +3455,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3353,6 +3472,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3374,6 +3494,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3390,6 +3511,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3406,6 +3528,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3422,6 +3545,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3438,8 +3562,9 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": true,
             "mismatch_taxonomy": [
-              "status_mismatch"
+              "schema_gap_collapsed_to_present"
             ]
           }
         ]
@@ -3459,6 +3584,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3475,6 +3601,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3491,6 +3618,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3507,6 +3635,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3523,6 +3652,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3539,6 +3669,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3555,6 +3686,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3571,6 +3703,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3592,6 +3725,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3608,6 +3742,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3624,6 +3759,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3640,6 +3776,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3656,6 +3793,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3672,6 +3810,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "status_mismatch"
             ]
@@ -3688,6 +3827,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3704,6 +3844,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3725,6 +3866,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3741,6 +3883,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3757,6 +3900,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3773,6 +3917,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3789,6 +3934,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3805,6 +3951,7 @@
             "safe_fail_closed": true,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "safe_fail_closed"
             ]
@@ -3821,6 +3968,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -3837,6 +3985,7 @@
             "safe_fail_closed": false,
             "overclaim": false,
             "schema_gap_aligned": false,
+            "schema_gap_collapsed_to_present": false,
             "mismatch_taxonomy": [
               "value_mismatch"
             ]
@@ -4236,11 +4385,12 @@
     }
   ],
   "ocr_boundary": {
-    "ocr_status_accepted_count": 7,
+    "ocr_status_accepted_count": 0,
     "parser_success_status_accepted_count": 7,
     "ocr_missing_locator_count": 0,
     "ocr_present_claim_count": 0,
     "bbox_missing_ocr_present_claim_count": 0,
+    "bbox_missing_ocr_present_claims": [],
     "ocr_fail_closed_case_ids": [],
     "policy": "OCR parser success status is accepted, but located OCR evidence is required; OCR without a bounding box adds upstream_evidence_incomplete and cannot support a present claim."
   },

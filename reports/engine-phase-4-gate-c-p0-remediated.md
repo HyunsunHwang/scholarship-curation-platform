@@ -106,6 +106,8 @@ Categories with a zero denominator remain not comparable; they are never describ
 - Safe fail-close: 82
 - Overclaim: 0
 - Schema-gap alignment: 3
+- Schema gap collapsed to present: 3
+- Representation-loss risk: 3
 
 | Field | Status alignment | Exact / both present | Safe fail-close | Overclaim |
 | --- | ---: | ---: | ---: | ---: |
@@ -127,15 +129,15 @@ These shadow results measure operational alignment, not frozen-excerpt correctne
 | p4c_007_sejong_internal_guidance | 5 | safe_fail_closed |
 | p4c_010_cau_national_preapplication | 6 | safe_fail_closed, status_mismatch |
 | p4c_011_cau_innovation_hwp | 7 | safe_fail_closed |
-| p4c_012_history_central_love | 7 | safe_fail_closed, value_mismatch, status_mismatch |
+| p4c_012_history_central_love | 7 | safe_fail_closed, value_mismatch, schema_gap_collapsed_to_present |
 | p4c_013_history_growth_table | 8 | safe_fail_closed |
 | p4c_014_youth_farmer_image | 9 | value_mismatch, safe_fail_closed, status_mismatch |
 | p4c_015_seoul_talent_hwp | 8 | safe_fail_closed, status_mismatch |
 | p4c_016_asan_hope_hwpx | 7 | value_mismatch, status_mismatch, safe_fail_closed |
-| p4c_017_uic_2025_fall | 8 | safe_fail_closed, value_mismatch, status_mismatch |
+| p4c_017_uic_2025_fall | 8 | safe_fail_closed, value_mismatch, status_mismatch, schema_gap_collapsed_to_present |
 | p4c_018_uic_samsung_updated | 9 | safe_fail_closed, status_mismatch |
 | p4c_019_uic_legacy | 6 | safe_fail_closed, status_mismatch, value_mismatch |
-| p4c_020_uic_supporters_table | 5 | safe_fail_closed, status_mismatch |
+| p4c_020_uic_supporters_table | 5 | safe_fail_closed, status_mismatch, schema_gap_collapsed_to_present |
 | p4c_021_grad_need_based | 8 | value_mismatch, safe_fail_closed |
 | p4c_022_grad_seoul_foundation_pdf | 8 | value_mismatch, status_mismatch, safe_fail_closed |
 | p4c_023_russian_alumni_funds | 8 | safe_fail_closed, value_mismatch |
@@ -157,7 +159,7 @@ These shadow results measure operational alignment, not frozen-excerpt correctne
 
 ## OCR boundary
 
-- OCR parser success statuses accepted: 7
+- OCR parser success statuses accepted: 0
 - Missing OCR locators: 0
 - OCR-backed present claims: 0
 - Missing-bbox OCR present claims: 0

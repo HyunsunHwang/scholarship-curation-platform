@@ -16,6 +16,9 @@ const readText = (relativePath) => fs.readFileSync(path.join(root, relativePath)
 const read = (relativePath) => JSON.parse(readText(relativePath));
 const write = (relativePath, value) => fs.writeFileSync(path.join(root, relativePath), value);
 const deepEqual = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+const OCR_SAFE_EXTRACTION_STATUSES = new Set(["text_sufficient", "table_structure_preserved", "ocr_succeeded", "attachment_primary_content", "success", "safe", "normalized"]);
+const OCR_SAFE_QUALITY_STATUSES = new Set(["text_sufficient", "table_structure_preserved", "ocr_succeeded", "success", "safe", "normalized", "clean", "good_text", "no_assets_but_text_sufficient", "text_sufficient_no_assets"]);
+const OCR_REVIEW_OR_FAILURE_STATUSES = new Set(["text_short_needs_review", "image_only_detected", "ocr_low_quality", "ocr_not_evaluated", "tool_unavailable", "unsupported_format", "parser_failed", "download_failed", "encrypted_or_protected", "bounded_limit_exceeded", "manual_review_required", "partial", "partial_text", "insufficient", "low_quality", "empty", "missing_body", "short_body_needs_review", "image_only_suspected", "attachment_required_unknown"]);
 
 export const OFFICIAL_P0_REMEDIATED_REPORT_VERSION = "engine-phase-4-gate-c-p0-remediated-reevaluation/v1";
 export const OFFICIAL_P0_REMEDIATED_EXTRACTOR_SHA256 = "94b915f735d4282ac31476b566c419812a84186ff8184bc9d1db67c26efd18ae";
@@ -44,6 +47,49 @@ export const OFFICIAL_P0_REMEDIATED_PROTECTED_SHA256 = Object.freeze({
 export function mapExtractorStatusToShadow(status) {
   if (["unknown", "ambiguous", "conflicting"].includes(status)) return "unresolved";
   return status;
+}
+
+function isOcrDerivedDocument(document) {
+  const mediaType = String(document.detected_format ?? document.media_type ?? "").toLowerCase();
+  const documentMethod = String(document.extraction_method ?? "").toLowerCase();
+  return mediaType.includes("image")
+    || /(?:png|jpe?g|gif|webp|tiff)/u.test(mediaType)
+    || document.ocr_used === true
+    || documentMethod === "ocr"
+    || documentMethod.includes("shared_image_ocr")
+    || (document.content_blocks ?? []).some((block) => block.type === "ocr_text" || String(block.extraction_method ?? "").toLowerCase().includes("ocr"));
+}
+
+function ocrDocumentPassesStatusGate(document) {
+  const extractionStatus = String(document.extraction_status ?? "").trim().toLowerCase();
+  const qualityStatus = String(document.quality_status ?? "").trim().toLowerCase();
+  return isOcrDerivedDocument(document)
+    && OCR_SAFE_EXTRACTION_STATUSES.has(extractionStatus)
+    && OCR_SAFE_QUALITY_STATUSES.has(qualityStatus)
+    && !OCR_REVIEW_OR_FAILURE_STATUSES.has(extractionStatus)
+    && !OCR_REVIEW_OR_FAILURE_STATUSES.has(qualityStatus)
+    && document.manual_review_required !== true;
+}
+
+function hasLocatedOcrLocator(locator) {
+  return typeof locator === "string"
+    && /:page:(?!unknown(?:[:]|$))[^:]+:bbox:(?!none(?:[:]|$)).+$/u.test(locator);
+}
+
+export function countBboxMissingOcrPresentClaims(outputs) {
+  const claims = [];
+  for (const output of outputs) {
+    const evidenceById = new Map(output.evidence_references.map((item) => [item.evidence_id, item]));
+    for (const [fieldName, field] of Object.entries(output.fields)) {
+      if (field.status !== "present") continue;
+      const invalidReferences = field.evidence_references.filter((reference) => {
+        const evidence = evidenceById.get(reference);
+        return evidence?.source_type === "ocr_text" && !hasLocatedOcrLocator(evidence.locator);
+      });
+      if (invalidReferences.length > 0) claims.push({ case_id: output.case_id, field_name: fieldName, evidence_references: invalidReferences });
+    }
+  }
+  return claims;
 }
 
 function routeIdentity(value) {
@@ -118,8 +164,9 @@ export function evaluateProductionShadow(outputs, productionSourceReview) {
     const safeFailClosed = ["present", "schema_expressiveness_gap"].includes(reviewed.status)
       && ["unresolved", "not_found"].includes(extractedStatus);
     const schemaGapAligned = reviewed.status === "schema_expressiveness_gap" && extractedStatus === "schema_expressiveness_gap";
+    const schemaGapCollapsedToPresent = reviewed.status === "schema_expressiveness_gap" && extractedStatus === "present";
     const mismatchTaxonomy = [];
-    if (!statusAligned) mismatchTaxonomy.push(overclaim ? "overclaim" : safeFailClosed ? "safe_fail_closed" : "status_mismatch");
+    if (!statusAligned) mismatchTaxonomy.push(overclaim ? "overclaim" : schemaGapCollapsedToPresent ? "schema_gap_collapsed_to_present" : safeFailClosed ? "safe_fail_closed" : "status_mismatch");
     if (bothPresent && !exactValue) mismatchTaxonomy.push("value_mismatch");
     return {
       case_id: reviewCase.case_id,
@@ -133,6 +180,7 @@ export function evaluateProductionShadow(outputs, productionSourceReview) {
       safe_fail_closed: safeFailClosed,
       overclaim,
       schema_gap_aligned: schemaGapAligned,
+      schema_gap_collapsed_to_present: schemaGapCollapsedToPresent,
       mismatch_taxonomy: mismatchTaxonomy,
     };
   }));
@@ -146,6 +194,8 @@ export function evaluateProductionShadow(outputs, productionSourceReview) {
     safe_fail_closed_count: items.filter((item) => item.safe_fail_closed).length,
     overclaim_count: items.filter((item) => item.overclaim).length,
     schema_gap_alignment_count: items.filter((item) => item.schema_gap_aligned).length,
+    schema_gap_collapsed_to_present_count: items.filter((item) => item.schema_gap_collapsed_to_present).length,
+    representation_loss_risk_count: items.filter((item) => item.schema_gap_collapsed_to_present).length,
   });
   return {
     scope: "production_source_review_shadow_only",
@@ -153,6 +203,7 @@ export function evaluateProductionShadow(outputs, productionSourceReview) {
     reviewed_case_count: productionSourceReview.cases.length,
     ...summarize(observations),
     by_field: Object.fromEntries(P0_FIELDS.map((fieldName) => [fieldName, summarize(observations.filter((item) => item.field_name === fieldName))])),
+    schema_gap_collapsed_case_fields: observations.filter((item) => item.schema_gap_collapsed_to_present).map((item) => ({ case_id: item.case_id, field_name: item.field_name })),
     case_mismatches: productionSourceReview.cases.map((item) => ({
       case_id: item.case_id,
       mismatches: observations.filter((observation) => observation.case_id === item.case_id && observation.mismatch_taxonomy.length > 0),
@@ -258,6 +309,9 @@ const criticalRegressionKeys = new Set([
 const criticalExactRegressions = exactRegressions.filter((item) => criticalRegressionKeys.has(item.key));
 const metricSum = (name) => diagnostics.reduce((sum, item) => sum + item[name], 0);
 const ocrFailClosedCaseIds = diagnostics.filter((item) => item.ocr_missing_locator_count > 0).map((item) => item.case_id);
+const ocrStatusAccepted = corpus.cases.flatMap((fixture) => fixture.evaluation_input.sourceDocuments ?? [])
+  .filter(ocrDocumentPassesStatusGate).length;
+const bboxMissingOcrPresentClaims = countBboxMissingOcrPresentClaims(outputs);
 const mandatorySafety = {
   case_count_24: outputs.length === 24,
   schema_valid_count_24: validation.filter((item) => item.schema_valid).length === 24,
@@ -329,11 +383,12 @@ export const report = {
     return { case_id: output.case_id, classification: output.classification, lifecycle_status: output.fields.lifecycle_status, support_type: output.fields.support_type, support_amount: output.fields.support_amount };
   }),
   ocr_boundary: {
-    ocr_status_accepted_count: metricSum("phase3_success_status_accepted_count"),
+    ocr_status_accepted_count: ocrStatusAccepted,
     parser_success_status_accepted_count: metricSum("phase3_success_status_accepted_count"),
     ocr_missing_locator_count: metricSum("ocr_missing_locator_count"),
     ocr_present_claim_count: metricSum("ocr_present_claim_count"),
-    bbox_missing_ocr_present_claim_count: 0,
+    bbox_missing_ocr_present_claim_count: bboxMissingOcrPresentClaims.length,
+    bbox_missing_ocr_present_claims: bboxMissingOcrPresentClaims,
     ocr_fail_closed_case_ids: ocrFailClosedCaseIds,
     policy: "OCR parser success status is accepted, but located OCR evidence is required; OCR without a bounding box adds upstream_evidence_incomplete and cannot support a present claim.",
   },
@@ -442,6 +497,8 @@ ${caseRows}
 - Safe fail-close: ${productionShadow.safe_fail_closed_count}
 - Overclaim: ${productionShadow.overclaim_count}
 - Schema-gap alignment: ${productionShadow.schema_gap_alignment_count}
+- Schema gap collapsed to present: ${productionShadow.schema_gap_collapsed_to_present_count}
+- Representation-loss risk: ${productionShadow.representation_loss_risk_count}
 
 | Field | Status alignment | Exact / both present | Safe fail-close | Overclaim |
 | --- | ---: | ---: | ---: | ---: |

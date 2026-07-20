@@ -12,6 +12,7 @@ const {
   OFFICIAL_P0_REMEDIATED_EXTRACTOR_SHA256,
   OFFICIAL_P0_REMEDIATED_PROTECTED_SHA256,
   OFFICIAL_P0_REMEDIATED_REPORT_VERSION,
+  countBboxMissingOcrPresentClaims,
   report: generatedReport,
 } = await import("./evaluate-engine-phase-4-gate-c-p0-remediated.mjs");
 const checks = [];
@@ -82,8 +83,15 @@ check("all declared safety flags remain false", () => assert.equal(Object.values
 check("OCR boundary forbids unlocated present claims", () => {
   assert.equal(trackedReport.ocr_boundary.bbox_missing_ocr_present_claim_count, 0);
   assert.equal(trackedReport.ocr_boundary.ocr_present_claim_count, 0);
-  assert.equal(trackedReport.ocr_boundary.ocr_status_accepted_count, trackedReport.ocr_boundary.parser_success_status_accepted_count);
+  assert.equal(trackedReport.ocr_boundary.ocr_status_accepted_count, 0);
   assert.ok(trackedReport.ocr_boundary.parser_success_status_accepted_count > 0);
+  const mutation = structuredClone(trackedReport.outputs);
+  const target = mutation.find((output) => Object.values(output.fields).some((field) => field.status === "present"));
+  const field = Object.values(target.fields).find((item) => item.status === "present");
+  const evidence = target.evidence_references.find((item) => field.evidence_references.includes(item.evidence_id));
+  evidence.source_type = "ocr_text";
+  evidence.locator = "document:mutation:block:0:page:unknown:bbox:none";
+  assert.equal(countBboxMissingOcrPresentClaims(mutation).length, 1);
 });
 check("report contains no local paths or credential-shaped values", () => {
   const serialized = JSON.stringify(trackedReport);

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { adaptP0RemediatedOutputForAudit, P0_REMEDIATED_AUDIT_FIELD_MAP } from "../lib/engine-phase-4/p0-remediated-audit-adapter.mjs";
-import { buildBaselineDelta, evaluateProductionShadow, mapExtractorStatusToShadow, report } from "./evaluate-engine-phase-4-gate-c-p0-remediated.mjs";
+import { buildBaselineDelta, countBboxMissingOcrPresentClaims, evaluateProductionShadow, mapExtractorStatusToShadow, report } from "./evaluate-engine-phase-4-gate-c-p0-remediated.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relativePath) => JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8"));
@@ -122,6 +122,22 @@ check("shadow overclaims and safe fail-close use distinct taxonomies", () => {
   const mismatches = report.production_source_shadow.case_mismatches.flatMap((item) => item.mismatches);
   assert.equal(mismatches.filter((item) => item.overclaim).length, report.production_source_shadow.overclaim_count);
   assert.equal(mismatches.filter((item) => item.safe_fail_closed).length, report.production_source_shadow.safe_fail_closed_count);
+  assert.ok(report.production_source_shadow.schema_gap_collapsed_to_present_count > 0);
+  assert.equal(report.production_source_shadow.representation_loss_risk_count, report.production_source_shadow.schema_gap_collapsed_to_present_count);
+  assert.ok(report.production_source_shadow.schema_gap_collapsed_case_fields.some((item) => item.case_id === "p4c_017_uic_2025_fall" && item.field_name === "support_type"));
+});
+
+check("OCR accepted and missing-bbox claim counts are independently computed", () => {
+  assert.equal(report.ocr_boundary.parser_success_status_accepted_count, 7);
+  assert.equal(report.ocr_boundary.ocr_status_accepted_count, 0);
+  assert.deepEqual(countBboxMissingOcrPresentClaims(report.outputs), []);
+  const mutation = structuredClone(report.outputs);
+  const target = mutation.find((output) => Object.values(output.fields).some((field) => field.status === "present"));
+  const [fieldName, field] = Object.entries(target.fields).find(([, value]) => value.status === "present");
+  const evidence = target.evidence_references.find((item) => field.evidence_references.includes(item.evidence_id));
+  evidence.source_type = "ocr_text";
+  evidence.locator = `document:mutation:block:0:page:1:bbox:none`;
+  assert.deepEqual(countBboxMissingOcrPresentClaims(mutation).map((item) => [item.case_id, item.field_name]), [[target.case_id, fieldName]]);
 });
 
 check("baseline exact dates and publishability do not regress", () => {
