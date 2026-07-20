@@ -55,6 +55,7 @@
     "test:engine-phase-4-gate-c-adjudication": "node scripts/test-engine-phase-4-gate-c-adjudication.mjs",
     "validate:engine-phase-4-gate-c-adjudication": "node scripts/validate-engine-phase-4-gate-c-adjudication.mjs",
     "build:engine-phase-4-gate-c-p0-overlay": "node scripts/build-engine-phase-4-gate-c-p0-overlay.mjs",
+    "build:engine-phase-4-gate-c-p0-production-review": "node scripts/build-engine-phase-4-gate-c-p0-production-source-review.mjs",
     "evaluate:engine-phase-4-gate-c-p0": "node scripts/evaluate-engine-phase-4-gate-c-p0.mjs",
     "test:engine-phase-4-gate-c-p0": "node scripts/test-engine-phase-4-gate-c-p0.mjs",
     "validate:engine-phase-4-gate-c-p0": "node scripts/validate-engine-phase-4-gate-c-p0.mjs",

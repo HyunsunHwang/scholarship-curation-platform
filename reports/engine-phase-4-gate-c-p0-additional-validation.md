@@ -1,10 +1,16 @@
 # Engine Phase 4 Gate C — additional source-validation shortlist
 
-## Recommendation
+## Batch 2 disposition
 
-Case 5 feedback is the priority Batch 1 adjudication input and has been recorded first. A full re-review of all 24 sources is not necessary for the next feedback round. Sixteen sources have materially higher P0 or publishability risk and should be checked before the lower-risk remainder.
+The sixteen-source shortlist below is retained as the provenance of the previous validation request. The user subsequently reviewed and approved Cases 6–24 from current public sources in Batch 2, so it is no longer an outstanding request list. No further source retrieval is required to call the bounded P0 case review 24/24 complete.
 
-This shortlist is about additional source verification, not automatic gold approval. All still-pending fields eventually require an independent decision before the complete 24-case corpus can be called adjudicated.
+It does not close P1/P2 review, make production-source-only facts reproducible from frozen excerpts, or make the full-schema Gate C ready. Cases with source conflicts, missing retained revisions, or schema expressiveness gaps remain explicitly classified in the separate production-source review asset.
+
+## Prior recommendation (completed)
+
+Case 5 feedback was the priority Batch 1 adjudication input and was recorded first. A full re-review of all 24 sources was not necessary for the next feedback round. Sixteen sources had materially higher P0 or publishability risk and were selected before the lower-risk remainder.
+
+This shortlist was about additional source verification, not automatic frozen-excerpt gold approval. Batch 2 decisions are recorded in production-source review scope and do not enter the frozen-excerpt accuracy denominator.
 
 ## Tier A — user-safety and relation semantics
 

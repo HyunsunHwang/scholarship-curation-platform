@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { P0_AS_OF, P0_TIMEZONE, P0_FIELDS, validateP0Overlay } from "../lib/engine-phase-4/gate-c-p0-audit.mjs";
+import { P0_AS_OF, P0_TIMEZONE, P0_FIELDS, validateP0Overlay, validateProductionSourceReview } from "../lib/engine-phase-4/gate-c-p0-audit.mjs";
 import { report as evaluated } from "./evaluate-engine-phase-4-gate-c-p0.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -17,6 +17,7 @@ const fullReport = read("reports/engine-phase-4-gate-c-representative-evaluation
 const corpus = read("fixtures/engine-phase-4-representative-gold/cases.json");
 const decisions = read("fixtures/engine-phase-4-representative-gold/adjudication/adjudication-decisions.json");
 const overlay = read("fixtures/engine-phase-4-gate-c-p0/p0-adjudication-overlay.json");
+const productionSourceReview = read("fixtures/engine-phase-4-gate-c-p0/production-source-review.json");
 const checks = [];
 const check = (name, pass, detail = null) => {
   checks.push({ name, pass: Boolean(pass) });
@@ -27,12 +28,13 @@ check("report matches a fresh deterministic evaluator run", JSON.stringify(repor
 check("report identifies the separate P0 diagnostic", report.official_phase === "ENGINE_PHASE_4" && report.official_gate === "GATE_C_P0_DIAGNOSTIC_AUDIT");
 check("fixed evaluation clock is recorded", report.as_of === P0_AS_OF && report.timezone === P0_TIMEZONE);
 check("P0 overlay is valid", validateP0Overlay(corpus, decisions, overlay).valid);
+check("production-source review is valid", validateProductionSourceReview(corpus, productionSourceReview).valid);
 check("all 24 frozen cases are evaluated", corpus.cases.length === 24 && report.corpus.total_case_count === 24);
-check("all ten P0 fields are represented", P0_FIELDS.length === 10 && report.corpus.total_p0_field_count === 24 * P0_FIELDS.length && P0_FIELDS.every((name) => report.by_field[name]));
-check("Batch 1 denominator states are exact", report.corpus.resolved_p0_field_count === 15 && report.corpus.pending_p0_field_count === 221 && report.corpus.unresolved_p0_field_count === 4 && report.corpus.resolved_safety_field_count === 10);
+check("all nine P0 opportunity fields are represented without standalone timezone", P0_FIELDS.length === 9 && !P0_FIELDS.includes("timezone") && report.p0_contract.standalone_timezone_field === false && report.corpus.total_p0_field_count === 216 && P0_FIELDS.every((name) => report.by_field[name]) && !report.by_field.timezone);
+check("frozen-excerpt denominator states are exact", report.corpus.resolved_p0_field_count === 14 && report.corpus.pending_p0_field_count === 198 && report.corpus.unresolved_p0_field_count === 4 && report.corpus.resolved_safety_field_count === 10);
 check("partial cases are not scored as correct or failed", report.case_metrics.pending_p0_case_count === 24 && report.case_metrics.partially_adjudicated_p0_case_count === 5 && report.case_metrics.fully_pending_p0_case_count === 19 && report.case_metrics.fully_correct_p0_case_count === 0 && report.case_metrics.partially_correct_p0_case_count === 0 && report.case_metrics.failed_p0_case_count === 0);
-check("aggregate correctness uses resolved-only denominators", report.aggregate_metrics.field_presence_precision.denominator === 4 && report.aggregate_metrics.field_presence_recall.denominator === 15 && report.aggregate_metrics.normalized_exact_match.denominator === 4);
-const expectedCategoryDenominators = { identity_exact: 2, provider_exact: 4, institution_or_campus_exact: 2, application_start_exact: 1, application_deadline_exact: 1, timezone_exact: 1, status_exact: 4, application_url_exact: 0, support_type_exact: 0, support_amount_exact: 0 };
+check("aggregate correctness uses resolved-only denominators", report.aggregate_metrics.field_presence_precision.denominator === 3 && report.aggregate_metrics.field_presence_recall.denominator === 14 && report.aggregate_metrics.normalized_exact_match.denominator === 3);
+const expectedCategoryDenominators = { identity_exact: 2, provider_exact: 4, institution_or_campus_exact: 2, application_start_exact: 1, application_deadline_exact: 1, status_exact: 4, application_url_exact: 0, support_type_exact: 0, support_amount_exact: 0 };
 check("category denominators include only resolved gold", Object.entries(expectedCategoryDenominators).every(([name, denominator]) => report.category_metrics[name].denominator === denominator && (denominator > 0 ? report.category_metrics[name].status === "evaluated" : report.category_metrics[name].status === "not_evaluated")));
 check("publishability safety subset is scored honestly", report.safety_gates.pending_publishability_case_count === 19 && report.safety_gates.document_kind_exact.numerator === 1 && report.safety_gates.document_kind_exact.denominator === 5 && report.safety_gates.recruitment_suppressed_count === 3 && report.safety_gates.critical_publishability_error_count === 3);
 check("unsupported claims are visible", Number.isInteger(report.aggregate_metrics.unsupported_claim_count) && report.aggregate_metrics.unsupported_claim_count >= 0 && report.by_field.application_url.unsupported_claim_count >= 0);
@@ -44,9 +46,9 @@ const case4Publishability = report.reviewer_resolved_field_results.find((item) =
 const case5 = Object.fromEntries(report.reviewer_resolved_field_results.filter((item) => item.case_id === "p4c_005_miraero_second").map((item) => [item.field_name, item]));
 check("Case 4 result announcement is safely suppressed", case4Publishability?.gold.normalized_value === false && case4Publishability?.prediction.normalized_value === false && case4Publishability?.exact);
 check("Case 5 provider and campus remain distinct", case5.provider?.gold.normalized_value === "고려대학교" && case5.institution_or_campus?.gold.normalized_value === "고려대학교 세종캠퍼스");
-check("Case 5 dates and timezone normalize exactly", case5.application_start?.exact && case5.application_deadline?.exact && case5.timezone?.exact);
+check("Case 5 dates retain embedded offsets and normalize exactly", case5.application_start?.exact && case5.application_deadline?.exact && /\+09:00$/u.test(case5.application_start.gold.normalized_value) && /\+09:00$/u.test(case5.application_deadline.gold.normalized_value) && !case5.timezone);
 check("Case 5 closed lifecycle exposes extractor miss", case5.lifecycle_status?.gold.normalized_value === "closed" && case5.lifecycle_status?.prediction.status === "not_applicable" && !case5.lifecycle_status?.exact);
-check("Case 6 remains entirely pending", decisions.cases[5].decision === "pending_independent_review" && decisions.cases[5].fields.every((item) => item.decision === "pending") && overlay.cases[5].fields.every((item) => item.decision === "pending"));
+check("Case 6 remains pending in frozen scope and reviewed in production scope", decisions.cases[5].decision === "pending_independent_review" && decisions.cases[5].fields.every((item) => item.decision === "pending") && overlay.cases[5].fields.every((item) => item.decision === "pending") && productionSourceReview.cases[0].case_id === decisions.cases[5].case_id && productionSourceReview.cases[0].review_status === "reviewed");
 const expectedFullBatch = {
   p4c_001_student_affairs_special: ["document_kind:approved", "provider:corrected", "scholarship_program_name:approved"],
   p4c_002_national_second_round: ["document_kind:approved", "provider:approved"],
@@ -89,11 +91,14 @@ check("frozen extractor source matches the full Gate C hash", fullReport.extract
 check("P0 audit did not claim prohibited side effects", Object.values(report.safety).every((value) => value === false));
 check("Markdown explains subset scope and denominator maturity", /does not replace or invalidate the full-schema Gate C report/u.test(markdown) && /denominator maturity/u.test(markdown) && /cannot be generalized/u.test(markdown) && /NOT_EVALUATED/u.test(markdown));
 check("responsibility boundaries are explicit", Object.values(report.responsibility_boundary).every((items) => Array.isArray(items) && items.length > 0));
-check("Batch 1 documentation matches bounded adjudication state", /bounded reviewer-resolved subset across Cases 1–5/u.test(contract) && /All unlisted fields and Cases 6–24 remain pending/u.test(contract) && /Cases 1–4 are also pending/u.test(contract) === false && /Cases 1–5/u.test(markdown) && /Cases 6–24 remain pending/u.test(markdown));
+check("documentation separates Batch 1 frozen and Batch 2 production scopes", /bounded reviewer-resolved subset across Cases 1–5/u.test(contract) && /Cases 6–24/u.test(contract) && /production-source review scope/u.test(contract) && /Batch 2 records Cases 6–24 only in production-source review scope/u.test(markdown));
 check("lifecycle responsibility permits only clear deterministic derivation", report.responsibility_boundary.deterministic_fields.some((item) => /lifecycle derivation from unambiguous start\/deadline\/timezone/u.test(item)) && report.responsibility_boundary.human_review_required.some((item) => /date roles or timezone are ambiguous/u.test(item)) && !report.responsibility_boundary.human_review_required.includes("lifecycle status") && /Lifecycle is deterministic only when a confirmed recruitment opportunity/u.test(markdown) && /fail closed as `unknown` or require human review/u.test(contract));
 const recommendedSourceCases = [4, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 20, 22, 23, 24].map((number) => `p4c_${String(number).padStart(3, "0")}_`);
-check("additional validation shortlist prioritizes Case 5 feedback and sixteen risk sources", /Case 5 feedback is the priority/u.test(validationShortlist) && recommendedSourceCases.every((prefix) => validationShortlist.includes(prefix)) && /full re-review of all 24 sources is not necessary/u.test(validationShortlist));
-const serialized = `${JSON.stringify(report)}\n${markdown}\n${contract}\n${validationShortlist}`;
+check("completed validation shortlist preserves its sixteen-source provenance", /sixteen-source shortlist below is retained as the provenance/u.test(validationShortlist) && /no longer an outstanding request list/u.test(validationShortlist) && /Case 5 feedback was the priority/u.test(validationShortlist) && recommendedSourceCases.every((prefix) => validationShortlist.includes(prefix)) && /full re-review of all 24 sources was not necessary/u.test(validationShortlist));
+check("Batch 2 key classifications and early stops are exact", report.production_source_review.combined_p0_case_review_count === 24 && JSON.stringify(report.production_source_review.terminal_non_opportunity_case_ids) === JSON.stringify(["p4c_008_cau_welfare_result_2025_1", "p4c_009_cau_welfare_result_2024_2", "p4c_024_dean_recommendation_guidance"]) && productionSourceReview.cases.find((item) => item.case_id === "p4c_018_uic_samsung_updated")?.document_kind === "recruitment_notice" && productionSourceReview.cases.find((item) => item.case_id === "p4c_020_uic_supporters_table")?.opportunity_kind === "paid_student_activity" && productionSourceReview.cases.find((item) => item.case_id === "p4c_024_dean_recommendation_guidance")?.content_kind === "application_support_guidance");
+check("date and amount capability diagnostics are exact", report.production_source_review.date_normalization.reviewed_field_count === 38 && report.production_source_review.date_normalization.applicable_field_count === 32 && report.production_source_review.date_normalization.present_count === 30 && report.production_source_review.amount_semantics.reviewed_field_count === 19 && report.production_source_review.amount_semantics.applicable_field_count === 16 && report.production_source_review.amount_semantics.semantically_resolved_count === 15 && report.production_source_review.amount_semantics.canonical_schema_representable_count === 6 && report.production_source_review.amount_semantics.schema_gap_count === 9 && report.production_source_review.amount_semantics.unresolved_count === 1);
+check("production review never enters frozen-excerpt denominators", report.production_source_review.production_review_concept_slots === 171 && report.corpus.resolved_p0_field_count === 14 && /never inserted into frozen-excerpt accuracy denominators/u.test(report.evidence_scopes.production_source_review_scope));
+const serialized = `${JSON.stringify(report)}\n${JSON.stringify(productionSourceReview)}\n${markdown}\n${contract}\n${validationShortlist}`;
 check("reports contain no local paths or apparent secrets", !/(?:\/Users\/|\/home\/|DATABASE_URL|SUPABASE_URL|service_role|gho_|sk-[A-Za-z0-9]{12,})/u.test(serialized));
 
 const passed = checks.filter((item) => item.pass).length;
