@@ -55,7 +55,10 @@ export default async function Home({
                 <Suspense fallback={<HomePersonalizationShelfFallback />}>
                   <HomePersonalizationPrimary catalog={catalog} user={user} />
                 </Suspense>
-              ) : null
+              ) : (
+                // 로그인 For You와 같은 슬롯 — 히어로 바로 아래에 붙여 단절감 줄임
+                <HomeGuestSections catalog={catalog} />
+              )
             }
             afterTop10={
               user ? (
@@ -67,10 +70,7 @@ export default async function Home({
                     <HomePersonalizationRails catalog={catalog} user={user} />
                   </Suspense>
                 </>
-              ) : (
-                // 비로그인: 10초 진단 티저 + 로드맵 레일 + 커리어 GPS 배너
-                <HomeGuestSections catalog={catalog} />
-              )
+              ) : null
             }
           />
         </main>

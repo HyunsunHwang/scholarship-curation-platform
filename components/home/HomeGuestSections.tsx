@@ -44,7 +44,13 @@ function itemMatchesInterest(
   return (item.qual_field_codes ?? []).some((f) => fields.includes(f));
 }
 
-function GuestInterestRail({ catalog }: { catalog: CardScholarship[] }) {
+function GuestInterestRail({
+  catalog,
+  flush = false,
+}: {
+  catalog: CardScholarship[];
+  flush?: boolean;
+}) {
   // 공고가 충분한 분야만 칩으로 노출 — 빈 결과 화면 방지
   const interestOptions = useMemo(() => {
     return INTEREST_CATEGORIES.map((category) => ({
@@ -63,7 +69,10 @@ function GuestInterestRail({ catalog }: { catalog: CardScholarship[] }) {
   if (!active) return null;
 
   return (
-    <section aria-labelledby="guest-interest-heading" className="mt-8 sm:mt-10">
+    <section
+      aria-labelledby="guest-interest-heading"
+      className={flush ? "mt-0" : "mt-8 sm:mt-10"}
+    >
       <HomeSectionTitle
         id="guest-interest-heading"
         title="분야별 인기 공고"
@@ -231,13 +240,13 @@ function GuestRailSection({
   flush = false,
 }: {
   rail: GuestRail;
-  /** 히어로 바로 다음 섹션 — 상단 여백 축소 */
+  /** 히어로 바로 다음 섹션 — For You와 같이 상단 여백 없음 */
   flush?: boolean;
 }) {
   return (
     <section
       aria-labelledby={`${rail.key}-heading`}
-      className={flush ? "mt-2 sm:mt-3" : "mt-8 sm:mt-10"}
+      className={flush ? "mt-0" : "mt-8 sm:mt-10"}
     >
       <HomeSectionTitle
         id={`${rail.key}-heading`}
@@ -274,7 +283,7 @@ export default function HomeGuestSections({
   return (
     <>
       {firstRail ? <GuestRailSection rail={firstRail} flush /> : null}
-      <GuestInterestRail catalog={catalog} />
+      <GuestInterestRail catalog={catalog} flush={!firstRail} />
       <GuestSignupStrip />
       {restRails.map((rail) => (
         <GuestRailSection key={rail.key} rail={rail} />

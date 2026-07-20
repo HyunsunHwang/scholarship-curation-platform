@@ -115,18 +115,32 @@ export default function HomeFeed({
     <div className="w-full">
       {showTopRankHero ? (
         <BrowseTopRankHero
-          title="오늘 TOP 10"
+          title="방학 동안 뭐 할지 고민이라면"
           items={top10}
+          backgroundSrc={null}
           backHref={null}
           badge="TODAY TOP 10"
           subtitle={null}
           headingId="home-top10-heading"
+          intro={{
+            title: (
+              <>
+                나에게 꼭 맞는
+                <br />
+                커리어 정보를 한눈에
+              </>
+            ),
+            description:
+              "교내 장학금부터 대외활동까지, 내 프로필 기반 맞춤 추천",
+            ctaLabel: "내 공고 보러가기",
+            ctaHref: "/matched",
+          }}
         />
       ) : null}
 
       <div
         className={`w-full px-4 pb-10 sm:px-6 lg:px-10 ${
-          showTopRankHero ? "pt-1 sm:pt-2" : "pt-4 sm:pt-5"
+          showTopRankHero ? "pt-0 sm:pt-1" : "pt-4 sm:pt-5"
         }`}
       >
         {emptyCategory ? (
