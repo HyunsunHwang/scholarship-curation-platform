@@ -25,13 +25,13 @@ export default function BrandLogo({
   imageClassName = "object-contain object-left",
   priority = false,
 }: Props) {
-  const src = logoSrc?.trim() || "/brand-logo.png";
+  const src = logoSrc?.trim() || "/brand-logo-ko.png";
 
   return (
     <Link
       href="/"
       className={twMerge(
-        "inline-flex shrink-0 items-center justify-center overflow-visible h-5 max-h-5 max-w-[min(80px,calc(100vw-12rem))] sm:h-5 sm:max-h-5 sm:max-w-[min(96px,calc(100vw-13rem))] md:h-6 md:max-h-6 md:max-w-24",
+        "inline-flex shrink-0 items-center justify-center overflow-visible h-4 max-h-4 max-w-[min(64px,calc(100vw-12rem))] sm:h-4 sm:max-h-4 sm:max-w-[min(72px,calc(100vw-13rem))] md:h-4.5 md:max-h-4.5 md:max-w-18",
         className
       )}
     >
@@ -41,7 +41,7 @@ export default function BrandLogo({
         width={898}
         height={225}
         priority={priority}
-        sizes="(max-width: 640px) 64px, (max-width: 768px) 96px, 96px"
+        sizes="(max-width: 640px) 56px, 72px"
         className={twMerge(
           "max-h-full w-auto max-w-full object-contain object-left",
           imageClassName
