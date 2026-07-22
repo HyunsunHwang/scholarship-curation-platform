@@ -127,6 +127,41 @@ test("report builder is deterministic and preserves JSON and CSV contracts", () 
     externalLlmCallCount: 0,
   });
   assert.equal("notices" in first.boundedExecution.sources[0], false);
+  assert.deepEqual(first.observedItems[0], {
+    sourceId: "fixture",
+    title: "Observed",
+    noticeUrl: "https://example.test/observed",
+    listUrl: undefined,
+    dateText: "",
+    detailDate: "",
+    parsedDate: "",
+    detailFetchError: "",
+    detailResultStatus: null,
+    detailTransportErrorCode: null,
+    detailTransportErrorCategory: null,
+    detailTransportErrorRetryable: null,
+    contentExcerpt: "body text",
+    qualitySignals: null,
+    documentEvidence: null,
+    matched: false,
+  });
+  const detailFailureReport = buildCrawlerReport({
+    ...input,
+    crawled: [{
+      sourceId: "fixture_source",
+      title: "상세 페이지 실패 공고",
+      noticeUrl: "https://example.test/notice/1",
+      detailFetchError: "fetch failed",
+      detailResultStatus: "network_error",
+      detailTransportErrorCode: "CERT_HAS_EXPIRED",
+      detailTransportErrorCategory: "tls_certificate",
+      detailTransportErrorRetryable: false,
+    }],
+  });
+  assert.equal(detailFailureReport.observedItems[0].detailResultStatus, "network_error");
+  assert.equal(detailFailureReport.observedItems[0].detailTransportErrorCode, "CERT_HAS_EXPIRED");
+  assert.equal(detailFailureReport.observedItems[0].detailTransportErrorCategory, "tls_certificate");
+  assert.equal(detailFailureReport.observedItems[0].detailTransportErrorRetryable, false);
   const csv = buildCrawlerNoticeCsv({ runAt: input.runAt, notices: input.allNew });
   assert.equal(csv.startsWith(`${String.fromCharCode(0xfeff)}${CRAWLER_NOTICE_CSV_COLUMNS.join(",")}${String.fromCharCode(13, 10)}`), true);
   assert.equal(csv.split("\r\n")[1].includes('"A, B"'), true);
