@@ -6,6 +6,7 @@ import { Agent as UndiciAgent } from "undici";
 import {
   buildBoundedPaginationUrls,
   extractNoticeUrlFromLinkNode,
+  getAdapterCapabilityEvidence,
   getListAdapter,
   getSourceAdapterStrategy,
 } from "../lib/crawler-adapters/index.mjs";
@@ -25,6 +26,8 @@ import {
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import {
+  OPERATIONAL_COMMON_LIST_SELECTORS,
+  OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR,
   attachOperationalListParserEvidence,
   collectOperationalListParserEvidence,
 } from "../lib/crawler-engine/operational-parser-evidence.mjs";
@@ -567,8 +570,13 @@ export function extractFromList(source, html) {
         ? itemRoot.find(source.linkSelector).first()
         : itemRoot.find("a[href]").first()
       : null;
-    const fallbackLinkNode = !itemRoot ? $("a[href]").eq(index) : null;
+    const fallbackLinkNode = !itemRoot
+      ? $("a[href], a[onclick], a[data-href], a[data-url], a[data-link]").eq(index)
+      : null;
     const activeLinkNode = linkNode && linkNode.length ? linkNode : fallbackLinkNode;
+
+    if (activeLinkNode?.closest(OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR).length) return;
+    if (itemRoot?.closest(OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR).length) return;
 
     const noticeUrl = extractNoticeUrlFromLinkNode(source, activeLinkNode);
     if (!noticeUrl || seen.has(noticeUrl)) return;
@@ -605,7 +613,12 @@ export function extractFromList(source, html) {
   if (source.listItemSelector) {
     $(source.listItemSelector).each((index, node) => pushResult(node, index));
   } else {
-    $("a[href]").each((index) => pushResult(null, index));
+    const commonSelector = OPERATIONAL_COMMON_LIST_SELECTORS.find((selector) => $(selector).length > 0);
+    if (commonSelector) {
+      $(commonSelector).each((index, node) => pushResult(node, index));
+    } else {
+      $("a[href], a[onclick], a[data-href], a[data-url], a[data-link]").each((index) => pushResult(null, index));
+    }
   }
 
   if (source.noticeUrlPattern) {
@@ -872,6 +885,7 @@ async function run({ signal } = {}) {
           finished_at: finishedAt,
           final_reason_code: resultStatus,
           final_error_summary: "",
+          adapter_evidence: getAdapterCapabilityEvidence(source.adapter),
         };
       } else {
         const commonResult = await runBoundedCrawlerSource({
@@ -1222,9 +1236,15 @@ async function run({ signal } = {}) {
 
   const csvPath = path.join(resolvedOutputDir, `scholarship-notices-new-${kstDate}.csv`);
   fs.writeFileSync(csvPath, buildCrawlerNoticeCsv({ runAt: RUN_AT, notices: allNew }), "utf8");
+  const operationalDiagnosticsCsv = buildOperationalCrawlDiagnosticsCsv(operationalDiagnostics);
   fs.writeFileSync(
     path.join(resolvedOutputDir, `crawler-operational-diagnostics-${kstDate}.csv`),
-    buildOperationalCrawlDiagnosticsCsv(operationalDiagnostics),
+    operationalDiagnosticsCsv,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(resolvedOutputDir, "crawler-operational-diagnostics-latest.csv"),
+    operationalDiagnosticsCsv,
     "utf8",
   );
 
