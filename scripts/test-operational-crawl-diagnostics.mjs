@@ -470,6 +470,80 @@ test("only explicit and authoritative empty evidence produces no-posts status", 
   assert.equal(insufficientStages.final_result, "manual_review_required");
 });
 
+test("configured empty-state evidence outranks zero selector matches only after a successful list fetch", () => {
+  const normalEmpty = analyzeOperationalCrawlerSource({
+    source: { sourceId: "configured_explicit_empty" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        configured_list_selector: ".notice-row",
+        selector_match_count: 0,
+        list_candidate_count: 0,
+        resolved_detail_url_count: 0,
+        valid_detail_url_count: 0,
+        explicit_empty_state_detected: true,
+        empty_state_evidence: "No posts",
+      },
+    },
+    notices: [],
+    filterMetrics: { parsed_date_count: 0, keyword_match_count: 0, date_match_count: 0 },
+    matchedCount: 0,
+  });
+  const normalStages = Object.fromEntries(normalEmpty.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(normalEmpty.operational_codes.includes("ZERO_RECENT_NOTICES"), true);
+  assert.equal(normalEmpty.operational_codes.includes("LIST_SELECTOR_ZERO_MATCHES"), false);
+  assert.equal(normalEmpty.operational_codes.includes("CONFIG_OR_SELECTOR_MISMATCH"), false);
+  assert.equal(normalEmpty.operational_codes.includes("URL_RESOLUTION_FAILED"), false);
+  assert.equal(normalEmpty.capability_status, "no_posts_detected");
+  assert.equal(normalStages.list_parse, "success");
+  assert.equal(normalStages.notice_url_resolution, "skipped");
+  assert.equal(normalStages.final_result, "success");
+
+  const missingEmptyState = analyzeOperationalCrawlerSource({
+    source: { sourceId: "configured_selector_missing" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        configured_list_selector: ".notice-row",
+        selector_match_count: 0,
+        list_candidate_count: 0,
+        explicit_empty_state_detected: false,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  const missingStages = Object.fromEntries(missingEmptyState.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(missingEmptyState.operational_codes.includes("LIST_SELECTOR_ZERO_MATCHES"), true);
+  assert.equal(missingEmptyState.operational_codes.includes("CONFIG_OR_SELECTOR_MISMATCH"), true);
+  assert.equal(missingEmptyState.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(missingEmptyState.capability_status, "config_or_selector_fix");
+  assert.equal(missingStages.list_parse, "failed");
+
+  const failedFetch = analyzeOperationalCrawlerSource({
+    source: { sourceId: "network_error_with_stale_empty_state" },
+    executionResult: {
+      result_status: "network_error",
+      observed_count: 0,
+      parser_evidence: {
+        configured_list_selector: ".notice-row",
+        selector_match_count: 0,
+        list_candidate_count: 0,
+        explicit_empty_state_detected: true,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  const failedStages = Object.fromEntries(failedFetch.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(failedFetch.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(failedFetch.capability_status, "manual_review_required");
+  assert.equal(failedStages.list_fetch, "failed");
+  assert.equal(failedStages.final_result, "manual_review_required");
+});
+
 test("verified adapters use declared profiles without requiring HTML title identity", () => {
   const jsonAdapter = analyzeOperationalCrawlerSource({
     source: { sourceId: "json_adapter", adapter: "cau_portal" },
