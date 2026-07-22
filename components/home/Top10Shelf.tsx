@@ -165,7 +165,7 @@ function Top10Poster({
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-black/25" />
 
       <span
-        className={`absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-2.25rem)] items-center truncate rounded-sm border bg-black/70 px-1.5 py-[3px] text-[10px] font-semibold leading-none text-white sm:left-2 sm:top-2 ${badgeClass}`}
+        className={`absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-2.25rem)] items-center truncate rounded-sm border bg-black/70 px-1.5 py-0.75 text-[10px] font-semibold leading-none text-white sm:left-2 sm:top-2 ${badgeClass}`}
         aria-label={kindBadgeLabel}
       >
         {kindBadgeLabel}

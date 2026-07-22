@@ -131,7 +131,7 @@ export default function ScholarshipDetailHero({
   return (
     <>
       <div className="relative w-full overflow-hidden bg-gray-100">
-        <div className="relative h-[min(58vh,420px)] w-full min-h-[280px]">
+        <div className="relative h-[min(58vh,420px)] w-full min-h-70">
           {posterUrl ? (
             <button
               type="button"

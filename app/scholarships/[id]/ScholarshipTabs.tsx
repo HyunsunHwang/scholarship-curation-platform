@@ -456,7 +456,7 @@ function ScheduleTimelineItem({
     <div className="relative flex min-w-0 gap-4 pb-6 last:pb-0">
       <span
         className={`relative z-10 mt-1.5 shrink-0 rounded-full ${
-          isSelection ? "h-[11px] w-[11px] bg-ink" : "h-[11px] w-[11px] border-2 border-ink/20 bg-white"
+          isSelection ? "h-2.75 w-2.75 bg-ink" : "h-2.75 w-2.75 border-2 border-ink/20 bg-white"
         }`}
       />
       <div className="min-w-0 flex-1">
@@ -497,7 +497,7 @@ function ScheduleTimelineItem({
 function ScheduleAfterAcceptanceDivider() {
   return (
     <div className="relative flex items-center gap-3 pb-4 pt-1">
-      <span className="relative z-10 h-[7px] w-[7px] shrink-0 rounded-full bg-ink/20" />
+      <span className="relative z-10 h-1.75 w-1.75 shrink-0 rounded-full bg-ink/20" />
       <span className="text-xs font-medium text-ink/35">합격 이후</span>
     </div>
   );
@@ -515,7 +515,7 @@ function ScheduleExpandToggle({
   return (
     <div className="relative flex min-w-0 items-center gap-4 pt-1">
       <span
-        className="relative z-10 mt-0.5 flex h-[11px] w-[11px] shrink-0 items-center justify-center rounded-full border border-dashed border-ink/25 bg-white"
+        className="relative z-10 mt-0.5 flex h-2.75 w-2.75 shrink-0 items-center justify-center rounded-full border border-dashed border-ink/25 bg-white"
         aria-hidden
       >
         <span className="h-1 w-1 rounded-full bg-ink/25" />
@@ -523,7 +523,7 @@ function ScheduleExpandToggle({
       <button
         type="button"
         onClick={onToggle}
-        className="inline-flex items-center gap-1 rounded-full border border-ink/10 bg-[#f7f5f2] px-2.5 py-1 text-[11px] font-semibold tracking-tight text-ink/55 transition-colors hover:border-ink/20 hover:bg-[#efece7] hover:text-ink/75"
+        className="inline-flex items-center gap-1 rounded-full border border-ink/10 bg-beige px-2.5 py-1 text-[11px] font-semibold tracking-tight text-ink/55 transition-colors hover:border-ink/20 hover:bg-cream hover:text-ink/75"
         aria-expanded={expanded}
       >
         {expanded ? "일정 접기" : `이후 일정 ${hiddenCount}개 더보기`}
@@ -695,7 +695,7 @@ function ScheduleSection({ s, selectionStages }: { s: ScholarshipDetail; selecti
 
   return (
     <div className="relative">
-      <span className="absolute left-[5px] top-2 bottom-2 w-px bg-gray-200" />
+      <span className="absolute left-1.25 top-2 bottom-2 w-px bg-gray-200" />
       <div>
         {visibleEntries.map((entry) =>
           entry.type === "divider" ? (
@@ -769,7 +769,7 @@ function DocumentsSection({ s }: { s: ScholarshipDetail }) {
           href={s.homepage_url}
           target="_blank"
           rel="noopener noreferrer"
-        className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#f1d6ba] bg-[#fff2df] px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-[#ffe9cd] sm:w-auto"
+        className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-brand/20 bg-skyblue/70 px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-skyblue sm:w-auto"
         >
           서류 양식 다운로드
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -805,7 +805,7 @@ function ApplySection({ s }: { s: ScholarshipDetail }) {
         href={s.apply_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/20 transition hover:bg-[#e82a2a] sm:w-auto"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-brand/20 transition hover:bg-brand/85 sm:w-auto"
       >
         신청하러 가기
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

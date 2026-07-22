@@ -415,12 +415,12 @@ export default function AirbnbHeader({
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
-        <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-2 pl-1 pr-3 sm:h-[60px] sm:gap-3 sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
+        <div className="mx-auto flex h-14 max-w-440 items-center gap-2 pl-1 pr-3 sm:h-15 sm:gap-3 sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <BrandLogo
               logoSrc={logoSrc || undefined}
               priority
-              className="-ml-0.5 h-5 max-h-5 max-w-[84px] sm:h-6 sm:max-h-6 sm:max-w-[100px] md:h-7 md:max-h-7 md:max-w-[116px]"
+              className="-ml-0.5 h-4 max-h-4 max-w-16 sm:h-5 sm:max-h-5 sm:max-w-20 md:h-5 md:max-h-5 md:max-w-24"
             />
             <MainNav isLoggedIn={isLoggedIn} />
           </div>

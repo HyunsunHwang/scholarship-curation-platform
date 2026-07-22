@@ -73,7 +73,7 @@ function RankCardLink({
       onClick={onAnnouncementClick}
       role="listitem"
       data-rank-card
-      className="group w-[92px] shrink-0 snap-start sm:w-[108px] md:w-[118px]"
+      className="group w-23 shrink-0 snap-start sm:w-27 md:w-29.5"
     >
       <div className="relative aspect-2/3 overflow-hidden rounded-lg shadow-md ring-1 ring-black/8 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
         {item.poster_image_url ? (
@@ -186,7 +186,7 @@ export default function BrowseTopRankHero({
       aria-labelledby={intro ? "home-hero-intro-heading" : headingId}
       className={intro ? "relative mb-0" : "relative mb-3 sm:mb-4"}
     >
-      <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[360px]">
+      <div className="relative min-h-70 sm:min-h-80 lg:min-h-90">
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           {useGradient ? (
             <>
@@ -212,8 +212,8 @@ export default function BrowseTopRankHero({
         <div
           className={`relative mx-auto flex h-full flex-col px-4 sm:px-6 md:px-10 ${
             intro
-              ? "min-h-[280px] max-w-[1760px] justify-center gap-6 pt-8 pb-6 sm:min-h-[320px] sm:gap-8 sm:pt-10 sm:pb-7 lg:min-h-[360px] lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:pt-12 lg:pb-8"
-              : "min-h-[280px] max-w-6xl justify-end pt-12 pb-5 sm:min-h-[320px] sm:pt-14 sm:pb-6 lg:min-h-[360px]"
+              ? "min-h-70 max-w-440 justify-center gap-6 pt-8 pb-6 sm:min-h-80 sm:gap-8 sm:pt-10 sm:pb-7 lg:min-h-90 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:pt-12 lg:pb-8"
+              : "min-h-70 max-w-6xl justify-end pt-12 pb-5 sm:min-h-80 sm:pt-14 sm:pb-6 lg:min-h-90"
           }`}
         >
           {backHref ? (
@@ -237,7 +237,7 @@ export default function BrowseTopRankHero({
                 {intro.title}
               </h2>
               {intro.description ? (
-                <p className="mt-3 max-w-[22rem] text-sm font-medium leading-relaxed text-ink/65 sm:max-w-none sm:text-[15px]">
+                <p className="mt-3 max-w-88 text-sm font-medium leading-relaxed text-ink/65 sm:max-w-none sm:text-[15px]">
                   {intro.description}
                 </p>
               ) : null}
@@ -256,11 +256,11 @@ export default function BrowseTopRankHero({
             }`}
           >
             <div className="mb-4 w-full text-right sm:mb-5 sm:w-auto sm:max-w-none">
-              <p className="inline-flex items-center justify-end gap-2 rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-emerald-800 shadow-sm backdrop-blur-sm sm:text-xs">
+              <p className="inline-flex items-center justify-end gap-2 rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-bold tracking-[0.14em] text-brand shadow-sm backdrop-blur-sm sm:text-xs">
                 {badge}
                 <span
                   aria-hidden
-                  className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-600"
+                  className="inline-block h-1.5 w-1.5 rounded-full bg-brand"
                 />
               </p>
               {intro ? (

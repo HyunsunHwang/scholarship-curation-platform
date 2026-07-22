@@ -64,7 +64,7 @@ export default function HomeHero({
               className="object-cover object-top opacity-55"
             />
           ) : (
-            <div className="h-full w-full bg-linear-to-br from-ink via-[#020080] to-[#8019de]" />
+            <div className="h-full w-full bg-linear-to-br from-ink via-brand to-peach" />
           )}
           <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/55 to-black/20" />
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-black/10" />
@@ -76,7 +76,7 @@ export default function HomeHero({
           bookmarkTarget={isContestLike ? "contest" : "scholarship"}
         />
 
-        <div className="relative z-10 flex min-h-[220px] flex-col justify-end gap-4 px-5 py-6 sm:min-h-[280px] sm:px-8 sm:py-8 md:min-h-[320px] md:max-w-[62%]">
+        <div className="relative z-10 flex min-h-55 flex-col justify-end gap-4 px-5 py-6 sm:min-h-70 sm:px-8 sm:py-8 md:min-h-80 md:max-w-[62%]">
           <div className="flex flex-wrap items-center gap-2">
             {eyebrow ? (
               <span className="rounded-sm bg-brand px-2 py-0.5 text-[11px] font-bold tracking-wide text-white">

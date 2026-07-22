@@ -39,7 +39,7 @@ const ScholarshipTabs = dynamic(
     ),
   }
 );
-const posterPlaceholderGradient = "from-sky-400 to-sky-700";
+const posterPlaceholderGradient = "from-brand to-[#8019de]";
 
 type OpportunityKind = "contest" | "education" | "activity";
 

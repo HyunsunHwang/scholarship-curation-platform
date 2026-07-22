@@ -213,7 +213,7 @@ export default function BookmarkApplyButtons({
                 scholarshipId,
               });
             }}
-            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#6ca6e8] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#5f99da] active:scale-[0.98]"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-bold text-white transition hover:bg-brand/85 active:scale-[0.98]"
           >
             지원하기
           </a>

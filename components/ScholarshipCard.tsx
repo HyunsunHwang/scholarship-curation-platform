@@ -144,7 +144,7 @@ function ScholarshipCard({
         )}
 
         <span
-          className={`absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-2.5rem)] items-center truncate rounded-sm border bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none sm:left-3 sm:top-3 sm:max-w-[calc(100%-3rem)] sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
+          className={`absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-2.5rem)] items-center truncate rounded-sm border bg-white px-1.5 py-0.75 text-[10px] font-semibold leading-none sm:left-3 sm:top-3 sm:max-w-[calc(100%-3rem)] sm:px-2 sm:text-[11px] ${kindBadgeClass}`}
           aria-label={kindBadgeLabel}
         >
           {kindBadgeLabel}
@@ -172,7 +172,7 @@ function ScholarshipCard({
           {kind === "scholarship" &&
             (scholarship.is_advertisement || scholarship.is_recommended) && (
               <span
-                className={`mt-[2px] inline-flex shrink-0 items-center rounded-sm bg-white px-1.5 py-[3px] text-[10px] font-semibold leading-none sm:mt-0.5 sm:px-2 sm:text-[11px] ${
+                className={`mt-0.5 inline-flex shrink-0 items-center rounded-sm bg-white px-1.5 py-0.75 text-[10px] font-semibold leading-none sm:mt-0.5 sm:px-2 sm:text-[11px] ${
                   scholarship.is_advertisement
                     ? "border border-amber-500 text-amber-600"
                     : "border border-fuchsia-600 text-fuchsia-600"

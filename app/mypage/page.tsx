@@ -83,7 +83,7 @@ export default async function MyPage() {
         <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
           {/* 프로필 히어로 카드 */}
           <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white">
-            <div className="h-24 bg-linear-to-r from-brand/80 via-brand to-[#8a1a1a] sm:h-28" />
+            <div className="h-24 bg-linear-to-r from-brand via-brand to-peach sm:h-28" />
             <div className="px-5 pb-5 sm:px-8 sm:pb-6">
               <div className="-mt-10 flex items-end justify-between sm:-mt-12">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-brand text-3xl font-bold text-white sm:h-24 sm:w-24">
