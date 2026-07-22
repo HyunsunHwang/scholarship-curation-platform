@@ -18,10 +18,16 @@ import {
   buildCrawlerRunSummary,
   buildCrawlerNoticeCsv,
   buildCrawlerReport,
+  buildOperationalCrawlDiagnostics,
+  buildOperationalCrawlDiagnosticsCsv,
   classifyCrawlerFailure,
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
+import {
+  attachOperationalListParserEvidence,
+  collectOperationalListParserEvidence,
+} from "../lib/crawler-engine/operational-parser-evidence.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
   buildCrawlerWorkItemKey,
@@ -451,6 +457,10 @@ export function extractFromList(source, html) {
   const results = [];
   const seen = new Set();
   const sourceId = cleanText(source.sourceId).toLowerCase();
+  const finalize = (items = results) => attachOperationalListParserEvidence(
+    items,
+    collectOperationalListParserEvidence(source, html, items),
+  );
 
   const addBoardItem = (link, title, dateText, noticeUrlOverride = "") => {
     const noticeUrl = noticeUrlOverride || extractNoticeUrlFromLinkNode(source, link);
@@ -499,7 +509,7 @@ export function extractFromList(source, html) {
         dateText: extractListDateText(row, source.dateSelector),
       });
     });
-    return results;
+    return finalize();
   }
 
   if (sourceId === "cau_003") {
@@ -521,7 +531,7 @@ export function extractFromList(source, html) {
         target.toString(),
       );
     });
-    return results;
+    return finalize();
   }
 
   if (sourceId === "cau_007") {
@@ -534,7 +544,7 @@ export function extractFromList(source, html) {
         row.find(".board_list_info .line").last().text(),
       );
     });
-    return results;
+    return finalize();
   }
 
   if (sourceId === "cau_008") {
@@ -547,7 +557,7 @@ export function extractFromList(source, html) {
         row.find(".bbs-inline").eq(1).text(),
       );
     });
-    return results;
+    return finalize();
   }
 
   const pushResult = (node, index) => {
@@ -600,15 +610,15 @@ export function extractFromList(source, html) {
 
   if (source.noticeUrlPattern) {
     const pattern = new RegExp(source.noticeUrlPattern);
-    return results.filter((item) => pattern.test(item.noticeUrl));
+    return finalize(results.filter((item) => pattern.test(item.noticeUrl)));
   }
   // When a list-item selector exists but no URL pattern was configured,
   // prefer detail-like URLs over menu/home links from the same board.
   if (source.listItemSelector) {
     const patterned = results.filter((item) => DEFAULT_NOTICE_URL_PATTERN.test(item.noticeUrl));
-    if (patterned.length > 0) return patterned;
+    if (patterned.length > 0) return finalize(patterned);
   }
-  return results;
+  return finalize();
 }
 
 function containsScholarshipKeyword(text, keywords) {
@@ -922,7 +932,7 @@ async function run({ signal } = {}) {
       }));
 
       const keywords = source.keywords.length > 0 ? source.keywords : DEFAULT_KEYWORDS;
-      const matched = detailItems
+      const datedItems = detailItems
         .map((item) => {
           const parsedDate =
             parseNoticeDate(item.detailDate) ??
@@ -932,13 +942,13 @@ async function run({ signal } = {}) {
             ...item,
             parsedDate: parsedDate ? parsedDate.toISOString().slice(0, 10) : "",
           };
-        })
-        .filter((item) => {
+        });
+      const keywordMatchedItems = datedItems.filter((item) => {
           // Require the keyword in the title so nav/footer chrome in detail
           // bodies (e.g. a sitewide "장학" menu) cannot create false positives.
           return containsScholarshipKeyword(item.title ?? "", keywords);
-        })
-        .filter((item) => {
+        });
+      const matched = keywordMatchedItems.filter((item) => {
           const parsed = item.parsedDate ? new Date(`${item.parsedDate}T00:00:00.000Z`) : null;
           if (!parsed && ALLOW_UNDATED) return true;
           return isWithinLookback(parsed, LOOKBACK_DAYS);
@@ -955,6 +965,12 @@ async function run({ signal } = {}) {
         adapterStrategy: getSourceAdapterStrategy(source),
         detailItems,
         matched,
+        filterMetrics: {
+          observed_count: detailItems.length,
+          parsed_date_count: datedItems.filter((item) => Boolean(item.parsedDate)).length,
+          keyword_match_count: keywordMatchedItems.length,
+          date_match_count: matched.length,
+        },
         error: "",
         executionResult,
       };
@@ -1116,6 +1132,19 @@ async function run({ signal } = {}) {
     started_at: RUN_AT,
     finished_at: runFinishedAt,
   });
+  const sourceById = new Map(sources.map((source) => [source.sourceId, source]));
+  const operationalDiagnostics = buildOperationalCrawlDiagnostics({
+    sources: processed.map((result) => ({
+      source: sourceById.get(result.sourceId) ?? {
+        sourceId: result.sourceId,
+        sourceName: result.sourceName,
+      },
+      executionResult: result.executionResult,
+      notices: result.detailItems,
+      matchedCount: result.matched.length,
+      filterMetrics: result.filterMetrics,
+    })),
+  });
   const cancelled = signal?.aborted === true;
   const cancellationReason = cancelled ? cleanText(signal.reason) || "crawler_cancelled" : null;
   const checkpointCancellation = cancelled && checkpointSession
@@ -1163,6 +1192,7 @@ async function run({ signal } = {}) {
     },
     executionSummary,
     executionResults,
+    operationalDiagnostics,
     recovery: checkpointSession ? {
       status: checkpointSnapshot.status,
       cancelled,
@@ -1192,6 +1222,11 @@ async function run({ signal } = {}) {
 
   const csvPath = path.join(resolvedOutputDir, `scholarship-notices-new-${kstDate}.csv`);
   fs.writeFileSync(csvPath, buildCrawlerNoticeCsv({ runAt: RUN_AT, notices: allNew }), "utf8");
+  fs.writeFileSync(
+    path.join(resolvedOutputDir, `crawler-operational-diagnostics-${kstDate}.csv`),
+    buildOperationalCrawlDiagnosticsCsv(operationalDiagnostics),
+    "utf8",
+  );
 
   fs.writeFileSync(
     resolvedStatePath,

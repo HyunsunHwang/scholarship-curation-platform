@@ -119,7 +119,8 @@ test("report builder is deterministic and preserves JSON and CSV contracts", () 
   const first = buildCrawlerReport(input);
   const second = buildCrawlerReport(input);
   assert.deepEqual(first, second);
-  assert.deepEqual(Object.keys(first), ["runAt", "input", "sourceMode", "safety", "totals", "boundedExecution", "recovery", "perSource", "observedItems", "newNotices"]);
+  assert.deepEqual(Object.keys(first), ["runAt", "input", "sourceMode", "safety", "totals", "boundedExecution", "operationalDiagnostics", "recovery", "perSource", "observedItems", "newNotices"]);
+  assert.equal(first.operationalDiagnostics, null);
   assert.deepEqual(first.safety, {
     databaseReadPerformed: false,
     databaseWritePerformed: false,
