@@ -6,13 +6,15 @@ import {
   DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
   DEFAULT_CRAWLER_TIMEOUT_MS,
   MAX_CRAWLER_RETRY_BACKOFF_MS,
-  buildCrawlerRunSummary,
-  deterministicCrawlerProjection,
   runBoundedCrawlerSource,
   runCommonCrawler,
   sanitizeCrawlerError,
-  validateCrawlerRunSummary,
 } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  buildCrawlerRunSummary,
+  deterministicCrawlerProjection,
+  validateCrawlerRunSummary,
+} from "../lib/crawler-engine/crawler-run-summary.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
 import {
   analyzeRuntimeCrawlFailures,

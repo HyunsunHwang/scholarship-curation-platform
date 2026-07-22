@@ -9,18 +9,18 @@ import {
   getListAdapter,
   getSourceAdapterStrategy,
 } from "../lib/crawler-adapters/index.mjs";
-import {
-  attachmentMetadataToCsvCell,
-  imageUrlsToCsvCell,
-} from "../lib/notice-body-extraction.mjs";
 import { loadSources } from "../lib/notice-sources-loader.mjs";
 import {
-  buildCrawlerRunSummary,
   classifyCrawlerFailure,
   normalizeRetryBackoffMs,
   runBoundedCrawlerSource,
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
+import { buildCrawlerRunSummary } from "../lib/crawler-engine/crawler-run-summary.mjs";
+import {
+  buildCrawlerNoticeCsv,
+  buildCrawlerReport,
+} from "../lib/crawler-engine/crawler-report-builder.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
@@ -707,13 +707,6 @@ function loadState(filePath) {
   return parsed;
 }
 
-function escapeCsvCell(value) {
-  const text = cleanText(value ?? "");
-  const escaped = text.replace(/"/g, "\"\"");
-  if (/[",\n\r]/.test(escaped)) return `"${escaped}"`;
-  return escaped;
-}
-
 function formatKstDate(date = new Date()) {
   return new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Seoul",
@@ -1123,11 +1116,6 @@ async function run({ signal } = {}) {
     started_at: RUN_AT,
     finished_at: runFinishedAt,
   });
-  const sourceExecutionEvidence = executionResults.map((result) => {
-    const evidence = { ...result };
-    delete evidence.notices;
-    return evidence;
-  });
   const cancelled = signal?.aborted === true;
   const cancellationReason = cancelled ? cleanText(signal.reason) || "crawler_cancelled" : null;
   const checkpointCancellation = cancelled && checkpointSession
@@ -1142,16 +1130,11 @@ async function run({ signal } = {}) {
   await checkpointSession?.flush();
   const checkpointSnapshot = checkpointSession?.snapshot() ?? null;
 
-  const report = {
+  const report = buildCrawlerReport({
     runAt: RUN_AT,
-    input: loaded.inputLabel,
+    inputLabel: loaded.inputLabel,
     sourceMode: loaded.mode,
-    safety: {
-      databaseReadPerformed: loaded.mode === "db",
-      databaseWritePerformed: false,
-      productionAccessPerformed: false,
-      externalLlmCallCount: 0,
-    },
+    databaseReadPerformed: loaded.mode === "db",
     totals: {
       sourceCount: sources.length,
       crawledCount: crawled.length,
@@ -1175,15 +1158,11 @@ async function run({ signal } = {}) {
       retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
       retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
       retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
-      sourceLevelFilterCount:
-        SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
-      collegeFilterCount:
-        COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
+      sourceLevelFilterCount: SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
+      collegeFilterCount: COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
     },
-    boundedExecution: {
-      summary: executionSummary,
-      sources: sourceExecutionEvidence,
-    },
+    executionSummary,
+    executionResults,
     recovery: checkpointSession ? {
       status: checkpointSnapshot.status,
       cancelled,
@@ -1198,81 +1177,21 @@ async function run({ signal } = {}) {
       skippedSourceCount: sources.length - pendingSources.length,
       pendingSourceCount: Math.max(0, sources.length - checkpointSnapshot.completed_source_keys.length),
     } : null,
-    perSource: stats,
-    observedItems: crawled.map((item) => ({
-      sourceId: item.sourceId,
-      title: item.title,
-      noticeUrl: item.noticeUrl,
-      listUrl: item.listUrl,
-      dateText: item.dateText ?? "",
-      detailDate: item.detailDate ?? "",
-      parsedDate: item.parsedDate ?? "",
-      detailFetchError: item.detailFetchError ?? "",
-      contentExcerpt: cleanText(item.content ?? "").slice(0, 500),
-      qualitySignals: item.qualitySignals ?? null,
-      documentEvidence: documentRuntime.enabled ? summarizeNoticeDocumentEvidence(item) : null,
-      matched: allMatched.some(
-        (matchedItem) =>
-          matchedItem.sourceId === item.sourceId && matchedItem.noticeUrl === item.noticeUrl,
-      ),
-    })),
-    newNotices: allNew,
-  };
+    stats,
+    crawled,
+    allMatched,
+    allNew,
+    documentParsingEnabled: documentRuntime.enabled,
+    summarizeDocumentEvidence: summarizeNoticeDocumentEvidence,
+  });
 
   const jsonPath = path.join(resolvedOutputDir, `scholarship-notices-${kstDate}.json`);
   const latestJsonPath = path.join(resolvedOutputDir, "scholarship-notices-latest.json");
   fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2), "utf8");
   fs.writeFileSync(latestJsonPath, JSON.stringify(report, null, 2), "utf8");
 
-  const csvHeader = [
-    "run_at",
-    "source_id",
-    "university_slug",
-    "university_id",
-    "college_id",
-    "department_id",
-    "college_name",
-    "department_name",
-    "source_level",
-    "source_name",
-    "title",
-    "notice_url",
-    "date_text",
-    "detail_date",
-    "parsed_date",
-    "content",
-    "image_urls",
-    "attachment_metadata",
-  ];
-  const csvLines = [
-    csvHeader.join(","),
-    ...allNew.map((row) =>
-      [
-        RUN_AT,
-        row.sourceId,
-        row.universitySlug ?? "",
-        row.universityId ?? "",
-        row.collegeId ?? "",
-        row.departmentId ?? "",
-        row.collegeName ?? "",
-        row.departmentName ?? "",
-        row.sourceLevel ?? "",
-        row.sourceName,
-        row.title,
-        row.noticeUrl,
-        row.dateText ?? "",
-        row.detailDate ?? "",
-        row.parsedDate ?? "",
-        row.content ?? "",
-        imageUrlsToCsvCell(row.imageUrls),
-        attachmentMetadataToCsvCell(row.attachmentMetadata),
-      ]
-        .map((cell) => escapeCsvCell(cell))
-        .join(","),
-    ),
-  ];
   const csvPath = path.join(resolvedOutputDir, `scholarship-notices-new-${kstDate}.csv`);
-  fs.writeFileSync(csvPath, `\uFEFF${csvLines.join("\r\n")}`, "utf8");
+  fs.writeFileSync(csvPath, buildCrawlerNoticeCsv({ runAt: RUN_AT, notices: allNew }), "utf8");
 
   fs.writeFileSync(
     resolvedStatePath,

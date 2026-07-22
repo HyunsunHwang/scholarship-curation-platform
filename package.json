@@ -31,6 +31,7 @@
     "crawl:notices:db": "node scripts/crawl-scholarship-notices.mjs db",
     "test:engine-phase-1": "node scripts/test-engine-phase-1-common-crawler.mjs",
     "test:engine-phase-2": "node scripts/test-engine-phase-2-resilience-observability.mjs",
+    "test:crawler-runtime-modules": "node scripts/test-crawler-runtime-modules.mjs",
     "validate:engine-phase-2": "node scripts/validate-engine-phase-2.mjs",
     "test:engine-phase-2-gate-a": "node scripts/test-engine-phase-2-gate-a.mjs",
     "live:engine-phase-2-gate-a": "node scripts/run-engine-phase-2-gate-a-live.mjs",
