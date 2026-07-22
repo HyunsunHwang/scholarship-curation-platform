@@ -7,6 +7,9 @@ import {
   classifyCrawlerFailure,
   CRAWLER_NOTICE_CSV_COLUMNS,
   deterministicCrawlerProjection,
+  extractSafeCrawlerErrorEvidence,
+  isRetryableTransportErrorCode,
+  normalizeTransportErrorCode,
   sanitizeCrawlerError,
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
@@ -29,6 +32,8 @@ test("failure analyzer treats cancellation, empty, and unknown status safely", (
     blocked_source_count: 0,
     partial_or_blocked_source_count: 0,
     runtime_failure_reason_counts: [],
+    runtime_transport_error_category_counts: [],
+    runtime_transport_error_counts: [],
   });
   assert.deepEqual(analyzeRuntimeCrawlFailures([
     { result_status: "partial", error_code: "cancelled" },
@@ -39,6 +44,29 @@ test("failure analyzer treats cancellation, empty, and unknown status safely", (
     { reason_code: "cancelled", source_count: 1 },
     { reason_code: "socket_reset", source_count: 2 },
     { reason_code: "unexpected_state", source_count: 1 },
+  ]);
+});
+
+test("failure analyzer preserves safe nested transport evidence and aggregates it", () => {
+  const evidence = extractSafeCrawlerErrorEvidence(new TypeError("fetch failed", {
+    cause: { code: "CERT_HAS_EXPIRED", message: "certificate has expired" },
+  }));
+  assert.deepEqual(evidence, {
+    transport_error_code: "CERT_HAS_EXPIRED",
+    transport_error_category: "tls_certificate",
+    transport_error_retryable: false,
+  });
+  assert.equal(normalizeTransportErrorCode(" ECONNRESET "), "ECONNRESET");
+  assert.equal(normalizeTransportErrorCode("connect ECONNREFUSED 10.0.0.1"), null);
+  assert.equal(isRetryableTransportErrorCode("ECONNRESET"), true);
+  assert.equal(isRetryableTransportErrorCode("ENOTFOUND"), false);
+  assert.deepEqual(analyzeRuntimeCrawlFailures([
+    { result_status: "network_error", error_code: "network_error", transport_error_code: "CERT_HAS_EXPIRED", transport_error_category: "tls_certificate" },
+    { result_status: "network_error", error_code: "network_error", transport_error_code: "ECONNRESET", transport_error_category: "connection_reset" },
+    { result_status: "partial", error_code: "network_error", transport_error_code: "CERT_HAS_EXPIRED", transport_error_category: "tls_certificate" },
+  ]).runtime_transport_error_counts, [
+    { category: "connection_reset", code: "ECONNRESET", source_count: 1 },
+    { category: "tls_certificate", code: "CERT_HAS_EXPIRED", source_count: 2 },
   ]);
 });
 

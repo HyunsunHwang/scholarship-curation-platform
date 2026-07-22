@@ -64,6 +64,10 @@ function networkError(message = "fetch failed") {
   return new TypeError(message);
 }
 
+function transportError(code) {
+  return new TypeError("fetch failed", { cause: { code } });
+}
+
 function abortableHang(activeRequests) {
   return (_url, options) => new Promise((resolve, reject) => {
     activeRequests.count += 1;
@@ -177,6 +181,49 @@ await test("transient network failure recovers on second attempt", async () => {
   assert.deepEqual(result.attempt_history.map((attempt) => attempt.status), ["network_error", "success"]);
   assert.deepEqual(clock.delays, [100]);
   assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
+});
+
+await test("TLS transport failures preserve evidence and do not retry", async () => {
+  for (const code of [
+    "CERT_HAS_EXPIRED",
+    "DEPTH_ZERO_SELF_SIGNED_CERT",
+    "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+    "ERR_TLS_CERT_ALTNAME_INVALID",
+    "ERR_SSL_EE_KEY_TOO_SMALL",
+  ]) {
+    const result = await runSource(sourceA, async () => { throw transportError(code); }, { retryCount: 2 });
+    assert.equal(result.result_status, "network_error");
+    assert.equal(result.total_attempt_count, 1);
+    assert.equal(result.retried, false);
+    assert.equal(result.retry_exhausted, false);
+    assert.equal(result.transport_error_code, code);
+    assert.equal(result.transport_error_category, "tls_certificate");
+    assert.equal(result.transport_error_retryable, false);
+    assert.equal(result.attempt_history[0].transport_error_code, code);
+  }
+});
+
+await test("retryable transport failures retain retry policy and recover", async () => {
+  for (const code of ["ECONNRESET", "ETIMEDOUT", "EAI_AGAIN", "UND_ERR_CONNECT_TIMEOUT"]) {
+    const result = await runSource(
+      sourceA,
+      sequenceFetcher({ [sourceA.listUrl]: [transportError(code), jsonItems("fixture_a")] }),
+    );
+    assert.equal(result.total_attempt_count, 2);
+    assert.equal(result.retried, true);
+    assert.equal(result.recovered_after_retry, true);
+    assert.equal(result.attempt_history[0].transport_error_retryable, true);
+  }
+});
+
+await test("unknown transport evidence preserves legacy network retry fallback", async () => {
+  const result = await runSource(
+    sourceA,
+    sequenceFetcher({ [sourceA.listUrl]: [networkError(), jsonItems("fixture_a")] }),
+  );
+  assert.equal(result.total_attempt_count, 2);
+  assert.equal(result.attempt_history[0].transport_error_code, null);
+  assert.equal(result.attempt_history[0].transport_error_category, "unknown");
 });
 
 await test("timeout recovers on retry", async () => {
@@ -417,7 +464,7 @@ await test("detail-level failure is explicit partial result", async () => {
     strategy: detailStrategy,
     fetchHtml: async (url) => {
       if (url === sourceA.listUrl) return jsonItems("fixture_a");
-      throw networkError("detail unavailable");
+      throw transportError("ECONNRESET");
     },
     fetchDetails: true,
     retryCount: 1,
@@ -425,6 +472,9 @@ await test("detail-level failure is explicit partial result", async () => {
   assert.equal(result.result_status, "partial");
   assert.equal(result.total_attempt_count, 1);
   assert.equal(result.notices[0].detailResultStatus, "network_error");
+  assert.equal(result.notices[0].detailTransportErrorCode, "ECONNRESET");
+  assert.equal(result.notices[0].detailTransportErrorCategory, "connection_reset");
+  assert.equal(result.notices[0].detailTransportErrorRetryable, true);
   assert.equal(result.attempt_history[0].retry_delay_ms, 0);
 });
 
@@ -603,6 +653,8 @@ await test("runtime crawl failure analyzer classifies and aggregates final failu
       { reason_code: "http_429", source_count: 1 },
       { reason_code: "invalid_list_url", source_count: 1 },
     ],
+    runtime_transport_error_category_counts: [],
+    runtime_transport_error_counts: [],
   });
 });
 
