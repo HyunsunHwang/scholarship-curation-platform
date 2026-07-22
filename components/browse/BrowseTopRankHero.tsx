@@ -184,9 +184,19 @@ export default function BrowseTopRankHero({
   return (
     <section
       aria-labelledby={intro ? "home-hero-intro-heading" : headingId}
-      className={intro ? "relative mb-0" : "relative mb-3 sm:mb-4"}
+      className={
+        intro
+          ? "relative mb-0 -mt-14 sm:-mt-15"
+          : "relative mb-3 sm:mb-4"
+      }
     >
-      <div className="relative min-h-70 sm:min-h-80 lg:min-h-90">
+      <div
+        className={`relative ${
+          intro
+            ? "min-h-[calc(17.5rem+3.5rem)] sm:min-h-[calc(20rem+3.75rem)] lg:min-h-[calc(22.5rem+3.75rem)]"
+            : "min-h-70 sm:min-h-80 lg:min-h-90"
+        }`}
+      >
         <div className="absolute inset-0 overflow-hidden" aria-hidden>
           {useGradient ? (
             <>
@@ -212,7 +222,7 @@ export default function BrowseTopRankHero({
         <div
           className={`relative mx-auto flex h-full flex-col px-4 sm:px-6 md:px-10 ${
             intro
-              ? "min-h-70 max-w-440 justify-center gap-6 pt-8 pb-6 sm:min-h-80 sm:gap-8 sm:pt-10 sm:pb-7 lg:min-h-90 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:pt-12 lg:pb-8"
+              ? "min-h-[calc(17.5rem+3.5rem)] max-w-440 justify-center gap-6 pt-[calc(3.5rem+2rem)] pb-6 sm:min-h-[calc(20rem+3.75rem)] sm:gap-8 sm:pt-[calc(3.75rem+2.5rem)] sm:pb-7 lg:min-h-[calc(22.5rem+3.75rem)] lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:pt-[calc(3.75rem+3rem)] lg:pb-8"
               : "min-h-70 max-w-6xl justify-end pt-12 pb-5 sm:min-h-80 sm:pt-14 sm:pb-6 lg:min-h-90"
           }`}
         >

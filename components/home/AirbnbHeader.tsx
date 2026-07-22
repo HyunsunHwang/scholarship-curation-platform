@@ -365,12 +365,43 @@ export default function AirbnbHeader({
   displayInitial,
   profileTitle,
 }: AirbnbHeaderProps) {
+  const pathname = usePathname();
+  const blendWithHero = pathname === "/";
   const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const portalReady = useSyncExternalStore(
     subscribeToBrowserMount,
     () => true,
     () => false,
   );
+
+  useEffect(() => {
+    let frame = 0;
+    const readY = () =>
+      window.scrollY ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
+
+    const update = () => {
+      frame = 0;
+      setScrolled(readY() > 8);
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("scroll", onScroll, true);
+    };
+  }, []);
 
   useEffect(() => {
     if (!comingSoon) return;
@@ -412,9 +443,19 @@ export default function AirbnbHeader({
         )
       : null;
 
+  const solidHeader = !blendWithHero || scrolled;
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/90 [overflow-anchor:none]">
+      <header
+        className={`${
+          blendWithHero ? "fixed inset-x-0 top-0" : "sticky top-0"
+        } z-50 w-full [overflow-anchor:none] transition-[background-color,border-color,box-shadow] duration-200 ${
+          solidHeader
+            ? "border-b border-gray-200/80 bg-white/95 shadow-[0_1px_0_rgba(15,23,42,0.04)] backdrop-blur supports-backdrop-filter:bg-white/90"
+            : "border-b border-transparent bg-transparent shadow-none"
+        }`}
+      >
         <div className="mx-auto flex h-14 max-w-440 items-center gap-2 pl-1 pr-3 sm:h-15 sm:gap-3 sm:pl-2 sm:pr-6 lg:pl-3 lg:pr-10">
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <BrandLogo
@@ -437,6 +478,10 @@ export default function AirbnbHeader({
           </div>
         </div>
       </header>
+      {/* fixed 홈 헤더 높이만큼 레이아웃 확보 — 히어로가 -mt 로 위로 끌어올려 배경을 연결 */}
+      {blendWithHero ? (
+        <div className="h-14 shrink-0 sm:h-15" aria-hidden />
+      ) : null}
 
       <MobileBottomNav
         isLoggedIn={isLoggedIn}
