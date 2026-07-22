@@ -62,11 +62,6 @@ export default async function SpotifyTopNav({
 
   const isAdmin = profile?.role === "admin";
   const headerLogoSrc = getHeaderLogoSrc(siteSettings);
-  const displayInitial = (
-    profile?.name?.trim()?.charAt(0) ||
-    user?.email?.charAt(0) ||
-    "?"
-  ).toUpperCase();
   const profileTitle = profile?.name ?? user?.email ?? "프로필";
 
   return (
@@ -74,7 +69,6 @@ export default async function SpotifyTopNav({
       logoSrc={headerLogoSrc}
       isLoggedIn={Boolean(user)}
       isAdmin={isAdmin}
-      displayInitial={displayInitial}
       profileTitle={profileTitle}
       urgentBookmarkCount={urgentBookmarkCount}
       variant={variant}

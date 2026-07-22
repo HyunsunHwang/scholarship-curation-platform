@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
+import ProfileAvatar from "@/components/ProfileAvatar";
 import ProfileSpecBoard from "@/components/profile/ProfileSpecBoard";
 import { SPEC_SECTIONS, type SpecItem } from "@/lib/profile-spec";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
@@ -46,7 +47,6 @@ export default async function MyPage() {
   const specItems = (specItemsResult.data ?? []) as SpecItem[];
 
   const displayName = profile?.name ?? user.email ?? "";
-  const initial = displayName.charAt(0).toUpperCase();
   const schoolLine = [profile?.school_name, profile?.department]
     .filter(Boolean)
     .join(" · ");
@@ -86,9 +86,12 @@ export default async function MyPage() {
             <div className="h-24 bg-linear-to-r from-brand via-brand to-peach sm:h-28" />
             <div className="px-5 pb-5 sm:px-8 sm:pb-6">
               <div className="-mt-10 flex items-end justify-between sm:-mt-12">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-brand text-3xl font-bold text-white sm:h-24 sm:w-24">
-                  {initial}
-                </div>
+                <ProfileAvatar
+                  alt={displayName || "프로필"}
+                  className="h-20 w-20 border-4 border-white sm:h-24 sm:w-24"
+                  sizes="96px"
+                  priority
+                />
                 <Link
                   href="/onboarding"
                   className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-semibold text-ink transition-colors hover:bg-cream"

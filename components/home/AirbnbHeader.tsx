@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import BrandLogo from "@/components/BrandLogo";
+import ProfileAvatar from "@/components/ProfileAvatar";
 import { logout } from "@/app/auth/actions";
 import { useHomeSearchQuery } from "./HomeSearchContext";
 import MobileBottomNav from "./MobileBottomNav";
@@ -13,7 +14,6 @@ type AirbnbHeaderProps = {
   logoSrc?: string | null;
   isLoggedIn: boolean;
   isAdmin: boolean;
-  displayInitial: string;
   profileTitle: string;
   urgentBookmarkCount: number;
   /** 호환용 — 헤더는 로고·메인탭·검색만 표시 */
@@ -190,13 +190,11 @@ function HeaderSearch() {
 function UserActions({
   isLoggedIn,
   isAdmin,
-  displayInitial,
   profileTitle,
   onComingSoon,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
-  displayInitial: string;
   profileTitle: string;
   onComingSoon: (label: string) => void;
 }) {
@@ -296,9 +294,11 @@ function UserActions({
                 clipRule="evenodd"
               />
             </svg>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
-              {displayInitial}
-            </span>
+            <ProfileAvatar
+              alt={profileTitle}
+              className="h-7 w-7"
+              sizes="28px"
+            />
           </button>
 
           {menuOpen ? (
@@ -362,7 +362,6 @@ export default function AirbnbHeader({
   logoSrc,
   isLoggedIn,
   isAdmin,
-  displayInitial,
   profileTitle,
 }: AirbnbHeaderProps) {
   const pathname = usePathname();
@@ -471,7 +470,6 @@ export default function AirbnbHeader({
             <UserActions
               isLoggedIn={isLoggedIn}
               isAdmin={isAdmin}
-              displayInitial={displayInitial}
               profileTitle={profileTitle}
               onComingSoon={setComingSoon}
             />
