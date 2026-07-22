@@ -8,7 +8,7 @@ import { toggleBookmark, toggleContestBookmark } from "@/app/mypage/actions";
 
 const BOOKMARK_EVENT = "scholarship:bookmark-toggled";
 
-const posterPlaceholderGradient = "from-brand to-[#c00000]";
+const posterPlaceholderGradient = "from-brand to-[#8019de]";
 
 type Props = {
   scholarshipId: number;

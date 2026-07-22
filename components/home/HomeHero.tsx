@@ -64,7 +64,7 @@ export default function HomeHero({
               className="object-cover object-top opacity-55"
             />
           ) : (
-            <div className="h-full w-full bg-linear-to-br from-ink via-[#3a241c] to-brand/80" />
+            <div className="h-full w-full bg-linear-to-br from-ink via-[#020080] to-[#8019de]" />
           )}
           <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/55 to-black/20" />
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-black/10" />

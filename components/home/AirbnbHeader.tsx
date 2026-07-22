@@ -420,7 +420,7 @@ export default function AirbnbHeader({
             <BrandLogo
               logoSrc={logoSrc || undefined}
               priority
-              className="-ml-0.5 h-10 max-h-10 max-w-[120px] sm:h-12 sm:max-h-12 sm:max-w-[160px] md:h-14 md:max-h-14 md:max-w-[190px]"
+              className="-ml-0.5 h-5 max-h-5 max-w-[84px] sm:h-6 sm:max-h-6 sm:max-w-[100px] md:h-7 md:max-h-7 md:max-w-[116px]"
             />
             <MainNav isLoggedIn={isLoggedIn} />
           </div>

@@ -31,17 +31,17 @@ export default function BrandLogo({
     <Link
       href="/"
       className={twMerge(
-        "inline-flex shrink-0 items-center justify-center overflow-visible h-12 max-h-12 max-w-[min(176px,calc(100vw-12rem))] sm:h-16 sm:max-h-16 sm:max-w-[min(280px,calc(100vw-13rem))] md:h-24 md:max-h-24 md:max-w-[432px]",
+        "inline-flex shrink-0 items-center justify-center overflow-visible h-6 max-h-6 max-w-[min(100px,calc(100vw-12rem))] sm:h-7 sm:max-h-7 sm:max-w-[min(116px,calc(100vw-13rem))] md:h-8 md:max-h-8 md:max-w-[132px]",
         className
       )}
     >
       <Image
         src={src}
-        alt="장학쌤"
-        width={432}
-        height={144}
+        alt="이루리"
+        width={898}
+        height={225}
         priority={priority}
-        sizes="(max-width: 640px) 176px, (max-width: 768px) 280px, 432px"
+        sizes="(max-width: 640px) 84px, (max-width: 768px) 116px, 132px"
         className={twMerge(
           "max-h-full w-auto max-w-full object-contain object-left",
           imageClassName

@@ -15,9 +15,9 @@ import { cleanScholarshipName } from "@/lib/scholarship-name";
 import { contentKindHref } from "@/lib/content-categories";
 
 const DEFAULT_HERO_BG = "/images/browse-rank-hero.png";
-/** 위는 톤 있게, 아래로 갈수록 흰색에 녹아 피드와 연결 */
+/** 위는 톤 있게, 아래로 갈수록 흰색에 녹아 피드와 연결 (Bold Blue → Plum → white) */
 const DEFAULT_GRADIENT =
-  "bg-linear-to-b from-[#ffe4dc] via-[#fff1ec] to-white";
+  "bg-linear-to-b from-[#dde0f5] via-[#f1e8fb] to-white";
 
 /** 뷰포트에 보이는 카드 수 · 화살표 한 번에 이동량 */
 const PAGE_SIZE = 5;

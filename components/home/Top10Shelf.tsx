@@ -76,15 +76,15 @@ function kindMeta(kind: CardScholarship["content_kind"]) {
 }
 
 const institutionGradient: Record<string, string> = {
-  국가기관: "from-[#ff3131] to-[#c00000]",
-  공공기관: "from-[#b3e4fb] to-[#5ab8e8]",
-  지방자치단체: "from-[#fea276] to-[#e06030]",
-  기업: "from-violet-400 to-purple-600",
-  재단법인: "from-emerald-400 to-teal-600",
-  학교법인: "from-[#fbeca8] to-[#f0c040]",
-  "언론/방송": "from-rose-400 to-red-600",
-  종교단체: "from-[#fbeca8] to-[#fea276]",
-  기타: "from-stone-300 to-stone-500",
+  국가기관: "from-[#020080] to-[#01004d]",
+  공공기관: "from-[#3d5cff] to-[#020080]",
+  지방자치단체: "from-[#8019de] to-[#4e0f8a]",
+  기업: "from-[#a35ef0] to-[#8019de]",
+  재단법인: "from-[#1a3a8a] to-[#0b0f14]",
+  학교법인: "from-[#6b7cff] to-[#020080]",
+  "언론/방송": "from-[#8019de] to-[#020080]",
+  종교단체: "from-[#c48ef5] to-[#8019de]",
+  기타: "from-[#5c6570] to-[#0b0f14]",
 };
 
 function getTop10CardModel(scholarship: CardScholarship) {

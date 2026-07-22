@@ -66,7 +66,7 @@ export default async function Navbar({
     <header className="sticky top-0 z-50 w-full overflow-x-clip border-b border-gray-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
       <div className="mx-auto flex h-16 min-h-16 max-h-16 max-w-7xl items-center justify-between gap-2 overflow-x-clip pl-1 pr-3 sm:gap-3 sm:pl-3 sm:pr-6 lg:pl-4 lg:pr-8">
         <div className="min-w-0 flex-1">
-          <BrandLogo logoSrc={headerLogoSrc || undefined} />
+          <BrandLogo logoSrc={headerLogoSrc || undefined} className="h-6 max-h-6 max-w-[100px] sm:h-7 sm:max-h-7 sm:max-w-[116px]" />
         </div>
 
         {/* 우측 액션 영역 — 모바일에서 로고와 너비 경쟁 시 줄바꿈 방지 */}

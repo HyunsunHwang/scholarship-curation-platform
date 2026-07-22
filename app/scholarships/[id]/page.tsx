@@ -41,7 +41,7 @@ const ScholarshipTabs = dynamic(() => import("./ScholarshipTabs"), {
   ),
 });
 
-const posterPlaceholderGradient = "from-brand to-[#c00000]";
+const posterPlaceholderGradient = "from-brand to-[#8019de]";
 
 type ContactChannel = { icon: "mail" | "phone" | "info"; text: string; href: string | null };
 
