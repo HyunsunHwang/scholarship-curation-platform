@@ -496,6 +496,9 @@ test("configured empty-state evidence outranks zero selector matches only after 
   assert.equal(normalEmpty.operational_codes.includes("CONFIG_OR_SELECTOR_MISMATCH"), false);
   assert.equal(normalEmpty.operational_codes.includes("URL_RESOLUTION_FAILED"), false);
   assert.equal(normalEmpty.capability_status, "no_posts_detected");
+  assert.equal(normalEmpty.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.SOURCE_CONFIG_OR_SELECTOR_MISMATCH), false);
+  assert.equal(normalEmpty.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.UNKNOWN_NEEDS_MANUAL_REVIEW), false);
+  assert.deepEqual(normalEmpty.access_profiles, []);
   assert.equal(normalStages.list_parse, "success");
   assert.equal(normalStages.notice_url_resolution, "skipped");
   assert.equal(normalStages.final_result, "success");
@@ -520,6 +523,7 @@ test("configured empty-state evidence outranks zero selector matches only after 
   assert.equal(missingEmptyState.operational_codes.includes("CONFIG_OR_SELECTOR_MISMATCH"), true);
   assert.equal(missingEmptyState.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
   assert.equal(missingEmptyState.capability_status, "config_or_selector_fix");
+  assert.equal(missingEmptyState.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.SOURCE_CONFIG_OR_SELECTOR_MISMATCH), true);
   assert.equal(missingStages.list_parse, "failed");
 
   const failedFetch = analyzeOperationalCrawlerSource({
@@ -540,8 +544,29 @@ test("configured empty-state evidence outranks zero selector matches only after 
   const failedStages = Object.fromEntries(failedFetch.stage_entries.map((entry) => [entry.stage, entry.status]));
   assert.equal(failedFetch.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
   assert.equal(failedFetch.capability_status, "manual_review_required");
+  assert.equal(failedFetch.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.SOURCE_CONFIG_OR_SELECTOR_MISMATCH), false);
+  assert.equal(failedFetch.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.UNKNOWN_NEEDS_MANUAL_REVIEW), true);
   assert.equal(failedStages.list_fetch, "failed");
   assert.equal(failedStages.final_result, "manual_review_required");
+
+  const paginatedEmpty = analyzeOperationalCrawlerSource({
+    source: { sourceId: "paginated_explicit_empty" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        list_candidate_count: 0,
+        explicit_empty_state_detected: true,
+        pagination_evidence_count: 1,
+        pagination_verified: false,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  assert.equal(paginatedEmpty.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.SERVER_RENDERED_WITH_PAGINATION), true);
+  assert.equal(paginatedEmpty.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.SOURCE_CONFIG_OR_SELECTOR_MISMATCH), false);
+  assert.equal(paginatedEmpty.access_profiles.includes(OPERATIONAL_ACCESS_PROFILES.UNKNOWN_NEEDS_MANUAL_REVIEW), false);
 });
 
 test("verified adapters use declared profiles without requiring HTML title identity", () => {
