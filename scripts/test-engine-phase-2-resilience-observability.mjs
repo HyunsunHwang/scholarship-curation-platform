@@ -14,6 +14,10 @@ import {
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/common-runner.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
+import {
+  analyzeRuntimeCrawlFailures,
+  classifyCrawlerFailure,
+} from "../lib/crawler-engine/runtime-crawl-failure-analyzer.mjs";
 import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
 
 function source(sourceId) {
@@ -575,6 +579,31 @@ await test("summary builder distinguishes zero-match runs", async () => {
   const summary = buildCrawlerRunSummary([zero, success], { run_id: "zero-match-run" });
   assert.equal(summary.overall_run_status, "completed_with_zero_match");
   assert.equal(summary.zero_match_source_count, 1);
+});
+
+await test("runtime crawl failure analyzer classifies and aggregates final failures", () => {
+  const timeout = Object.assign(new Error("slow response"), { code: "attempt_timeout" });
+  assert.equal(classifyCrawlerFailure(timeout), "timeout");
+  assert.equal(classifyCrawlerFailure({ crawlerStatus: "parser_error" }), "parser_error");
+  assert.deepEqual(analyzeRuntimeCrawlFailures([
+    { result_status: "success", final_reason_code: "recovered_after_retry" },
+    { result_status: "timeout", final_reason_code: "attempt_timeout" },
+    { result_status: "http_error", error_code: "http_429" },
+    { result_status: "partial", error_code: "cancelled" },
+    { result_status: "configuration_error", error_code: "invalid_list_url" },
+  ]), {
+    failed_source_count: 3,
+    timeout_source_count: 1,
+    partial_source_count: 1,
+    blocked_source_count: 1,
+    partial_or_blocked_source_count: 2,
+    runtime_failure_reason_counts: [
+      { reason_code: "attempt_timeout", source_count: 1 },
+      { reason_code: "cancelled", source_count: 1 },
+      { reason_code: "http_429", source_count: 1 },
+      { reason_code: "invalid_list_url", source_count: 1 },
+    ],
+  });
 });
 
 const failed = validations.filter((validation) => !validation.passed);
