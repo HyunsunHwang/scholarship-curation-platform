@@ -16,11 +16,11 @@ import {
   runBoundedCrawlerSource,
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
-import { buildCrawlerRunSummary } from "../lib/crawler-engine/crawler-run-summary.mjs";
 import {
+  buildCrawlerRunSummary,
   buildCrawlerNoticeCsv,
   buildCrawlerReport,
-} from "../lib/crawler-engine/crawler-report-builder.mjs";
+} from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {

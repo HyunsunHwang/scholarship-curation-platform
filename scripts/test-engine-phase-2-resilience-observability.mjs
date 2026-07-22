@@ -11,15 +11,13 @@ import {
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import {
+  analyzeRuntimeCrawlFailures,
   buildCrawlerRunSummary,
+  classifyCrawlerFailure,
   deterministicCrawlerProjection,
   validateCrawlerRunSummary,
-} from "../lib/crawler-engine/crawler-run-summary.mjs";
+} from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
-import {
-  analyzeRuntimeCrawlFailures,
-  classifyCrawlerFailure,
-} from "../lib/crawler-engine/runtime-crawl-failure-analyzer.mjs";
 import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
 
 function source(sourceId) {

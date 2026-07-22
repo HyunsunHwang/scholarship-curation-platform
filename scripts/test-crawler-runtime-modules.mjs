@@ -1,19 +1,24 @@
 import assert from "node:assert/strict";
 import {
   analyzeRuntimeCrawlFailures,
-  classifyCrawlerFailure,
-  sanitizeCrawlerError,
-} from "../lib/crawler-engine/runtime-crawl-failure-analyzer.mjs";
-import {
-  buildCrawlerRunSummary,
-  deterministicCrawlerProjection,
-  validateCrawlerRunSummary,
-} from "../lib/crawler-engine/crawler-run-summary.mjs";
-import { buildCrawlerRunSummary as buildCrawlerRunSummaryCompatibility } from "../lib/crawler-engine/common-runner.mjs";
-import {
-  CRAWLER_NOTICE_CSV_COLUMNS,
   buildCrawlerNoticeCsv,
   buildCrawlerReport,
+  buildCrawlerRunSummary,
+  classifyCrawlerFailure,
+  CRAWLER_NOTICE_CSV_COLUMNS,
+  deterministicCrawlerProjection,
+  sanitizeCrawlerError,
+  validateCrawlerRunSummary,
+} from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
+import { buildCrawlerRunSummary as buildCrawlerRunSummaryCompatibility } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  analyzeRuntimeCrawlFailures as analyzeRuntimeCrawlFailuresCompatibility,
+} from "../lib/crawler-engine/runtime-crawl-failure-analyzer.mjs";
+import {
+  buildCrawlerRunSummary as buildCrawlerRunSummaryLegacyCompatibility,
+} from "../lib/crawler-engine/crawler-run-summary.mjs";
+import {
+  buildCrawlerReport as buildCrawlerReportCompatibility,
 } from "../lib/crawler-engine/crawler-report-builder.mjs";
 
 let passed = 0;
@@ -22,6 +27,24 @@ function test(name, fn) {
   passed += 1;
   console.log(`PASS ${name}`);
 }
+
+test("runtime diagnostics index and compatibility paths expose equivalent APIs", () => {
+  const results = [{ result_status: "network_error", error_code: "socket_reset" }];
+  const summaryInput = { run_id: "compatibility-check" };
+  const reportInput = { runAt: "2026-01-01T00:00:00.000Z" };
+  assert.deepEqual(
+    analyzeRuntimeCrawlFailuresCompatibility(results),
+    analyzeRuntimeCrawlFailures(results),
+  );
+  assert.deepEqual(
+    buildCrawlerRunSummaryLegacyCompatibility(results, summaryInput),
+    buildCrawlerRunSummary(results, summaryInput),
+  );
+  assert.deepEqual(
+    buildCrawlerReportCompatibility(reportInput),
+    buildCrawlerReport(reportInput),
+  );
+});
 
 test("failure analyzer treats cancellation, empty, and unknown status safely", () => {
   assert.equal(classifyCrawlerFailure({ code: "cancelled" }, "network_error", {
