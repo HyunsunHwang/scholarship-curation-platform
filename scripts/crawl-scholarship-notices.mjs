@@ -11,15 +11,15 @@ import {
 } from "../lib/crawler-adapters/index.mjs";
 import { loadSources } from "../lib/notice-sources-loader.mjs";
 import {
-  classifyCrawlerFailure,
   normalizeRetryBackoffMs,
   runBoundedCrawlerSource,
-  sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import {
   buildCrawlerRunSummary,
   buildCrawlerNoticeCsv,
   buildCrawlerReport,
+  classifyCrawlerFailure,
+  sanitizeCrawlerError,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";

@@ -3,11 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  CRAWLER_RESULT_STATUSES,
-  deterministicCrawlerProjection,
   runCommonCrawler,
   runCommonCrawlerSource,
 } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  CRAWLER_RESULT_STATUSES,
+  deterministicCrawlerProjection,
+} from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
 import { mapRawSource } from "../lib/notice-sources-loader.mjs";

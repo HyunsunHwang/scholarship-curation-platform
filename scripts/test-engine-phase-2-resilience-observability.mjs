@@ -8,13 +8,13 @@ import {
   MAX_CRAWLER_RETRY_BACKOFF_MS,
   runBoundedCrawlerSource,
   runCommonCrawler,
-  sanitizeCrawlerError,
 } from "../lib/crawler-engine/common-runner.mjs";
 import {
   analyzeRuntimeCrawlFailures,
   buildCrawlerRunSummary,
   classifyCrawlerFailure,
   deterministicCrawlerProjection,
+  sanitizeCrawlerError,
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";

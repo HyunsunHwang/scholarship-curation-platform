@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateCrawlerRunSummary } from "../lib/crawler-engine/common-runner.mjs";
+import { validateCrawlerRunSummary } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const reportPath = path.resolve(root, process.argv[2] ?? "reports/engine-phase-2-baseline.json");

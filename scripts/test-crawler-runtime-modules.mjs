@@ -10,16 +10,6 @@ import {
   sanitizeCrawlerError,
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
-import { buildCrawlerRunSummary as buildCrawlerRunSummaryCompatibility } from "../lib/crawler-engine/common-runner.mjs";
-import {
-  analyzeRuntimeCrawlFailures as analyzeRuntimeCrawlFailuresCompatibility,
-} from "../lib/crawler-engine/runtime-crawl-failure-analyzer.mjs";
-import {
-  buildCrawlerRunSummary as buildCrawlerRunSummaryLegacyCompatibility,
-} from "../lib/crawler-engine/crawler-run-summary.mjs";
-import {
-  buildCrawlerReport as buildCrawlerReportCompatibility,
-} from "../lib/crawler-engine/crawler-report-builder.mjs";
 
 let passed = 0;
 function test(name, fn) {
@@ -27,24 +17,6 @@ function test(name, fn) {
   passed += 1;
   console.log(`PASS ${name}`);
 }
-
-test("runtime diagnostics index and compatibility paths expose equivalent APIs", () => {
-  const results = [{ result_status: "network_error", error_code: "socket_reset" }];
-  const summaryInput = { run_id: "compatibility-check" };
-  const reportInput = { runAt: "2026-01-01T00:00:00.000Z" };
-  assert.deepEqual(
-    analyzeRuntimeCrawlFailuresCompatibility(results),
-    analyzeRuntimeCrawlFailures(results),
-  );
-  assert.deepEqual(
-    buildCrawlerRunSummaryLegacyCompatibility(results, summaryInput),
-    buildCrawlerRunSummary(results, summaryInput),
-  );
-  assert.deepEqual(
-    buildCrawlerReportCompatibility(reportInput),
-    buildCrawlerReport(reportInput),
-  );
-});
 
 test("failure analyzer treats cancellation, empty, and unknown status safely", () => {
   assert.equal(classifyCrawlerFailure({ code: "cancelled" }, "network_error", {
@@ -97,7 +69,6 @@ test("run summary handles success, failure, zero match, partial, and retry recov
   assert.equal(summary.recovered_after_retry_count, 1);
   assert.equal(summary.exhausted_retry_count, 1);
   assert.deepEqual(validateCrawlerRunSummary(summary), { valid: true, errors: [] });
-  assert.deepEqual(buildCrawlerRunSummaryCompatibility(sources, { run_id: "summary-contract" }), summary);
   assert.equal(buildCrawlerRunSummary([{ result_status: "timeout" }]).overall_run_status, "failed");
 });
 

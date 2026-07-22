@@ -4,8 +4,8 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
   DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
-  validateCrawlerRunSummary,
 } from "../lib/crawler-engine/common-runner.mjs";
+import { validateCrawlerRunSummary } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

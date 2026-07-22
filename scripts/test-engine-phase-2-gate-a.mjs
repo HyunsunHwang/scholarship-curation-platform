@@ -2,14 +2,16 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  buildCrawlerRunSummary,
-  deterministicCrawlerProjection,
   isRetryableCrawlerResult,
   runBoundedCrawlerSource,
   runCommonCrawler,
   runCommonCrawlerSource,
-  validateCrawlerRunSummary,
 } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  buildCrawlerRunSummary,
+  deterministicCrawlerProjection,
+  validateCrawlerRunSummary,
+} from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import {
   abortableDelay,
   boundedMap,

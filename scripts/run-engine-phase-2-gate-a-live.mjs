@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { runCommonCrawler, sanitizeCrawlerError } from "../lib/crawler-engine/common-runner.mjs";
+import { runCommonCrawler } from "../lib/crawler-engine/common-runner.mjs";
+import { sanitizeCrawlerError } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import { readSourceConfigFromCsv } from "../lib/notice-sources-loader.mjs";
