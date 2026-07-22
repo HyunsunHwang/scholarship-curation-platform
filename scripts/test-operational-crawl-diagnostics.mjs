@@ -3,6 +3,7 @@ import { runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs"
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import {
   OPERATIONAL_COMMON_LIST_SELECTORS,
+  collectOperationalListParserEvidence,
 } from "../lib/crawler-engine/operational-parser-evidence.mjs";
 import {
   OPERATIONAL_ACCESS_PROFILES,
@@ -223,7 +224,7 @@ test("all nine capability statuses are reachable from explicit evidence", () => 
       executionResult: {
         result_status: "empty_observed",
         observed_count: 0,
-        parser_evidence: { parser_strategy: "heuristic_anchor", list_candidate_count: 0, title_extract_count: 0, date_extract_count: 0, resolved_detail_url_count: 0, valid_detail_url_count: 0 },
+        parser_evidence: { parser_strategy: "heuristic_anchor", list_candidate_count: 0, title_extract_count: 0, date_extract_count: 0, resolved_detail_url_count: 0, valid_detail_url_count: 0, explicit_empty_state_detected: true, empty_state_evidence: "no results" },
       },
       notices: [],
       filterMetrics: { parsed_date_count: 0, keyword_match_count: 0, date_match_count: 0 },
@@ -308,6 +309,165 @@ test("stage entries reflect actual success, failure, skipped, and unobserved sta
   assert.equal(failedStages.list_parse, "skipped");
   assert.equal(failedStages.candidate_filter, "not_observed");
   assert.equal(failedStages.final_result, "manual_review_required");
+});
+
+test("empty-state evidence is limited to list-area empty-state elements", () => {
+  const explicit = collectOperationalListParserEvidence(
+    { listUrl: "https://example.test/notices" },
+    "<main><div class='board-empty'>No results</div></main>",
+    [],
+  );
+  assert.equal(explicit.explicit_empty_state_detected, true);
+  assert.equal(explicit.empty_state_evidence, "No results");
+
+  const unrelated = collectOperationalListParserEvidence(
+    { listUrl: "https://example.test/notices" },
+    "<footer>No results</footer>",
+    [],
+  );
+  assert.equal(unrelated.explicit_empty_state_detected, false);
+  assert.equal(unrelated.empty_state_evidence, null);
+});
+
+test("rows without resolved detail URLs require a selector or configuration fix", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "configured_rows_without_url" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        parser_strategy: "configured_selector",
+        configured_list_selector: ".row",
+        selector_match_count: 20,
+        list_candidate_count: 0,
+        resolved_detail_url_count: 0,
+        valid_detail_url_count: 0,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  const stages = Object.fromEntries(row.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(row.operational_codes.includes("URL_RESOLUTION_FAILED"), true);
+  assert.equal(row.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(row.capability_status, "config_or_selector_fix");
+  assert.equal(stages.notice_url_resolution, "failed");
+});
+
+test("common selector rows without candidates are not treated as zero notices", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "common_rows_without_url" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        parser_strategy: "common_board_selector",
+        matched_list_selector: ".board-list-wrap > li",
+        selector_match_count: 8,
+        list_candidate_count: 0,
+        resolved_detail_url_count: 0,
+        valid_detail_url_count: 0,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  assert.equal(row.operational_codes.includes("URL_RESOLUTION_FAILED"), true);
+  assert.equal(row.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(row.capability_status, "config_or_selector_fix");
+});
+
+test("placeholder event links remain manual browser network work, not zero notices", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "placeholder_event_links" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        selector_match_count: 3,
+        list_candidate_count: 0,
+        resolved_detail_url_count: 0,
+        valid_detail_url_count: 0,
+        manual_network_evidence_required_count: 3,
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  assert.equal(row.operational_codes.includes("MANUAL_BROWSER_NETWORK_REQUIRED"), true);
+  assert.equal(row.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(row.capability_status, "manual_review_required");
+});
+
+test("unimplemented client profiles require an adapter instead of reporting zero notices", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "client_profile" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: { list_candidate_count: 0, client_rendered_marker_detected: true },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  assert.equal(row.operational_codes.includes("ADAPTER_REQUIRED"), true);
+  assert.equal(row.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(row.capability_status, "adapter_required");
+});
+
+test("only explicit and authoritative empty evidence produces no-posts status", () => {
+  const explicit = analyzeOperationalCrawlerSource({
+    source: { sourceId: "explicit_empty" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      parser_evidence: {
+        selector_match_count: 0,
+        list_candidate_count: 0,
+        explicit_empty_state_detected: true,
+        empty_state_evidence: "No posts",
+      },
+    },
+    notices: [],
+    filterMetrics: { parsed_date_count: 0, keyword_match_count: 0, date_match_count: 0 },
+    matchedCount: 0,
+  });
+  const explicitStages = Object.fromEntries(explicit.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(explicit.capability_status, "no_posts_detected");
+  assert.equal(explicit.operational_codes.includes("ZERO_RECENT_NOTICES"), true);
+  assert.equal(explicitStages.notice_url_resolution, "skipped");
+  assert.equal(explicitStages.detail_fetch, "skipped");
+  assert.equal(explicitStages.detail_content_extract, "skipped");
+  assert.equal(explicitStages.candidate_filter, "success");
+  assert.equal(explicitStages.final_result, "success");
+
+  const adapter = analyzeOperationalCrawlerSource({
+    source: { sourceId: "authoritative_empty_adapter", adapter: "fixture" },
+    executionResult: {
+      result_status: "empty_observed",
+      observed_count: 0,
+      adapter_evidence: {
+        adapter_capability_verified: true,
+        adapter_provides_authoritative_detail: true,
+        adapter_access_profile: "JSON_XHR_API",
+      },
+    },
+    notices: [],
+    matchedCount: 0,
+  });
+  assert.equal(adapter.capability_status, "no_posts_detected");
+
+  const insufficient = analyzeOperationalCrawlerSource({
+    source: { sourceId: "unproven_empty" },
+    executionResult: { result_status: "empty_observed", observed_count: 0 },
+    notices: [],
+    matchedCount: 0,
+  });
+  const insufficientStages = Object.fromEntries(insufficient.stage_entries.map((entry) => [entry.stage, entry.status]));
+  assert.equal(insufficient.operational_codes.includes("UNKNOWN_NEEDS_MANUAL_REVIEW"), true);
+  assert.equal(insufficient.operational_codes.includes("ZERO_RECENT_NOTICES"), false);
+  assert.equal(insufficient.capability_status, "manual_review_required");
+  assert.equal(insufficientStages.final_result, "manual_review_required");
 });
 
 test("verified adapters use declared profiles without requiring HTML title identity", () => {
