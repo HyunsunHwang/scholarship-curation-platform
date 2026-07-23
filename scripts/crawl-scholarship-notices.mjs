@@ -21,6 +21,7 @@ import {
   buildCrawlerRunSummary,
   buildCrawlerNoticeCsv,
   buildCrawlerReport,
+  buildCandidateDetectionDiagnostics,
   buildOperationalCrawlDiagnostics,
   buildOperationalCrawlDiagnosticsCsv,
   classifyCrawlerFailure,
@@ -49,6 +50,17 @@ import {
 } from "../lib/crawler-engine/crawler-performance-telemetry.mjs";
 import { resolveSourceExecutionMode } from "../lib/crawler-engine/source-execution-mode.mjs";
 import {
+  DEFAULT_SCHOLARSHIP_KEYWORDS,
+  detectScholarshipCandidate,
+  parseScholarshipNoticeDate,
+} from "../lib/detection/scholarship-candidate-detector.mjs";
+import { buildDetailFetchPlan } from "../lib/crawler-engine/detail-fetch-planner.mjs";
+import {
+  buildPreliminaryScholarshipCandidatePlan,
+  finalizeScholarshipCandidateDetection,
+} from "../lib/crawler-engine/scholarship-candidate-pipeline.mjs";
+import { buildSourceRegistryDiagnostics } from "../lib/crawler-engine/source-registry-diagnostics.mjs";
+import {
   buildCrawlerWorkItemKey,
   createCrawlerCheckpointSession,
   installCrawlerSignalHandlers,
@@ -59,16 +71,6 @@ import {
   isDocumentParsingEnabled,
   summarizeNoticeDocumentEvidence,
 } from "../lib/crawler-engine/document-parsing/index.mjs";
-
-const DEFAULT_KEYWORDS = [
-  "장학",
-  "장학금",
-  "학자금",
-  "등록금",
-  "scholarship",
-  "tuition",
-  "financial aid",
-];
 
 // Input: "db:ewha" (preferred) or legacy CSV path like data/notice-sources-cau.csv
 const IS_MAIN = isMainThread
@@ -355,7 +357,7 @@ export async function fetchUrlWithMetadata(url, options = {}) {
   const maxBytes = Math.max(1, Number(options.maxBytes ?? DOCUMENT_MAX_BYTES));
   const method = options.method ?? "GET";
   for (let attempt = 0; attempt <= retryCount; attempt += 1) {
-    const telemetryRequest = telemetryHttpStarted({ url, attempt });
+    const telemetryRequest = telemetryHttpStarted({ url, attempt, kind: options.kind });
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     const signal = options.signal
@@ -371,8 +373,23 @@ export async function fetchUrlWithMetadata(url, options = {}) {
           "user-agent": REQUEST_USER_AGENT,
           accept: options.accept ?? "*/*",
           "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+          ...(options.headers ?? {}),
         },
       });
+      if (response.status === 304) {
+        telemetryHttpFinished(telemetryRequest, { status: response.status, bytes: 0 });
+        return {
+          bytes: Buffer.alloc(0),
+          httpStatus: response.status,
+          finalUrl: response.url || url,
+          contentType: response.headers.get("content-type") ?? "",
+          etag: response.headers.get("etag"),
+          lastModified: response.headers.get("last-modified"),
+          contentLength: 0,
+          retryCount: attempt,
+          notModified: true,
+        };
+      }
       if (!response.ok) {
         const error = new Error(`HTTP ${response.status}`);
         error.httpStatus = response.status;
@@ -391,6 +408,7 @@ export async function fetchUrlWithMetadata(url, options = {}) {
         lastModified: response.headers.get("last-modified"),
         contentLength: Number(response.headers.get("content-length")) || null,
         retryCount: attempt,
+        notModified: false,
       };
     } catch (error) {
       lastError = error;
@@ -668,11 +686,6 @@ export function extractFromList(source, html) {
   return finalize();
 }
 
-function containsScholarshipKeyword(text, keywords) {
-  const normalized = cleanText(text).toLowerCase();
-  return keywords.some((keyword) => normalized.includes(keyword.toLowerCase()));
-}
-
 function trimItems(items, maxItems) {
   if (!Number.isFinite(maxItems) || maxItems <= 0) return items;
   return items.slice(0, maxItems);
@@ -682,76 +695,7 @@ async function mapLimit(items, limit, mapper, options = {}) {
   return boundedMap(items, limit, mapper, options);
 }
 
-const ENGLISH_MONTHS = new Map(
-  [
-    "jan", "feb", "mar", "apr", "may", "jun",
-    "jul", "aug", "sep", "oct", "nov", "dec",
-  ].map((month, index) => [month, index + 1]),
-);
-
-function validUtcDate(year, month, day) {
-  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
-    return null;
-  }
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-  if (
-    Number.isNaN(parsed.getTime()) ||
-    parsed.getUTCFullYear() !== year ||
-    parsed.getUTCMonth() !== month - 1 ||
-    parsed.getUTCDate() !== day
-  ) {
-    return null;
-  }
-  return parsed;
-}
-
-export function parseNoticeDate(rawText) {
-  const text = cleanText(rawText);
-  if (!text) return null;
-
-  const patterns = [
-    /(\d{4})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})/,
-    /(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/,
-    /(\d{2})\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (!match) continue;
-
-    let year = Number(match[1]);
-    const month = Number(match[2]);
-    const day = Number(match[3]);
-    if (year < 100) year += 2000;
-    const parsed = validUtcDate(year, month, day);
-    if (!parsed) continue;
-    return parsed;
-  }
-
-  const englishPatterns = [
-    /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2}),?\s+(\d{4})\b/i,
-    /\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*,?\s+(\d{4})\b/i,
-  ];
-  for (const [index, pattern] of englishPatterns.entries()) {
-    const match = text.match(pattern);
-    if (!match) continue;
-    const monthText = index === 0 ? match[1] : match[2];
-    const day = Number(index === 0 ? match[2] : match[1]);
-    const year = Number(match[3]);
-    const month = ENGLISH_MONTHS.get(monthText.slice(0, 3).toLowerCase());
-    const parsed = validUtcDate(year, month, day);
-    if (parsed) return parsed;
-  }
-
-  return null;
-}
-
-function isWithinLookback(parsedDate, days) {
-  if (!parsedDate) return false;
-  const now = new Date();
-  const minDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-  return parsedDate >= minDate && parsedDate <= now;
-}
+export { parseScholarshipNoticeDate as parseNoticeDate };
 
 function loadState(filePath) {
   const resolved = path.resolve(filePath);
@@ -773,6 +717,26 @@ function formatKstDate(date = new Date()) {
   })
     .format(date)
     .replace(/-/g, "");
+}
+
+export function buildConditionalRequestHeaders({ etag, lastModified } = {}) {
+  const headers = {};
+  const normalizedEtag = cleanText(etag);
+  const normalizedLastModified = cleanText(lastModified);
+  if (normalizedEtag) headers["if-none-match"] = normalizedEtag;
+  if (normalizedLastModified) headers["if-modified-since"] = normalizedLastModified;
+  return headers;
+}
+
+function scholarshipCandidateOptions(source) {
+  return {
+    keywords: Array.isArray(source.keywords) && source.keywords.length > 0
+      ? source.keywords
+      : DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: LOOKBACK_DAYS,
+    allowUndated: ALLOW_UNDATED,
+    now: new Date(RUN_AT),
+  };
 }
 
 export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents) {
@@ -898,7 +862,13 @@ export function buildSourceExecutionErrorResult(source, startedAt, startedMs, st
   };
 }
 
-async function executeSourceInWorker({ source, inventoryRows, completedWorkItemKeys, checkpointSession }) {
+async function executeSourceInWorker({
+  source,
+  inventoryRows,
+  completedWorkItemKeys,
+  checkpointSession,
+  seenNoticeUrls,
+}) {
   const startedAt = new Date().toISOString();
   const startedMs = Date.now();
   const stageEvents = [];
@@ -925,6 +895,8 @@ async function executeSourceInWorker({ source, inventoryRows, completedWorkItemK
         hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
         hostConcurrency: HOST_CONCURRENCY,
         telemetryEnabled: isCrawlerPerformanceTelemetryActive(),
+        runAt: RUN_AT,
+        seenNoticeUrls,
       },
     },
   });
@@ -1091,6 +1063,7 @@ async function run({ signal } = {}) {
           inventoryRows,
           completedWorkItemKeys: checkpointSession?.snapshot().completed_work_item_keys ?? [],
           checkpointSession,
+          seenNoticeUrls: Object.keys(seen),
         })
         : null;
       if (workerResult?.error) throw workerResult.error;
@@ -1128,7 +1101,15 @@ async function run({ signal } = {}) {
           }),
           MAX_ITEMS_PER_SOURCE,
         );
-        detailItems = listItems.filter((notice) => {
+        const candidateOptions = scholarshipCandidateOptions(source);
+        const { preliminaryCandidateResults, detailFetchPlan } =
+          buildPreliminaryScholarshipCandidatePlan(listItems, {
+            detector: detectScholarshipCandidate,
+            planner: buildDetailFetchPlan,
+            detectorOptions: candidateOptions,
+            plannerOptions: { seenNoticeUrls: Object.keys(seen) },
+          });
+        detailItems = detailFetchPlan.fetch.filter((notice) => {
           const workItemKey = buildCrawlerWorkItemKey(source.sourceId, notice);
           return !checkpointSession?.shouldSkipWorkItem(workItemKey);
         });
@@ -1141,17 +1122,38 @@ async function run({ signal } = {}) {
           }, { signal, settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms });
           detailItems = detailItems.filter((notice) => !notice?.__bounded_map_abandoned && !notice?.__bounded_map_error);
         }
+        const candidateDetection = finalizeScholarshipCandidateDetection({
+          listObservations: listItems,
+          preliminaryCandidateResults,
+          detailFetchPlan,
+          detailObservations: detailItems,
+          detector: detectScholarshipCandidate,
+          detectorOptions: candidateOptions,
+          detailFetchRequired: false,
+        });
         const finishedAt = new Date().toISOString();
         const durationMs = Math.max(0, Date.now() - sourceStartedMs);
-        const resultStatus = detailItems.length > 0 ? "success" : "empty_observed";
+        const resultStatus = listItems.length > 0 ? "success" : "empty_observed";
         executionResult = {
           source_key: source.sourceId,
           source_id: source.sourceId,
           source_name: source.sourceName,
           strategy: getSourceAdapterStrategy(source),
           result_status: resultStatus,
-          observed_count: detailItems.length,
+          observed_count: listItems.length,
+          matched_count: candidateDetection.final_summary.candidate_count,
           notices: detailItems,
+          candidate_detection: candidateDetection,
+          item_summary: {
+            observed_list_item_count: listItems.length,
+            eligible_count: detailFetchPlan.fetch.length,
+            completed_count: detailItems.length,
+            successful_count: detailItems.length,
+            failed_count: 0,
+            cancelled_count: 0,
+            preliminary_skip_count: detailFetchPlan.skip.length,
+            resumed_skip_count: detailFetchPlan.fetch.length - detailItems.length,
+          },
           total_attempt_count: 1,
           attempt_history: [{
             sequence: 1,
@@ -1160,7 +1162,7 @@ async function run({ signal } = {}) {
             duration_ms: durationMs,
             reason_code: resultStatus,
             timeout: false,
-            item_count: detailItems.length,
+            item_count: listItems.length,
             started_at: sourceStartedAt,
             finished_at: finishedAt,
             error_summary: "",
@@ -1201,6 +1203,10 @@ async function run({ signal } = {}) {
           processNoticeDocuments: documentRuntime.processNoticeDocuments,
           settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms,
           signal,
+          candidateDetector: detectScholarshipCandidate,
+          detailFetchPlanner: buildDetailFetchPlan,
+          candidateDetectionOptions: scholarshipCandidateOptions(source),
+          detailFetchPlannerOptions: { seenNoticeUrls: Object.keys(seen) },
         });
         executionResult = commonResult;
         if (!["success", "empty_observed", "partial"].includes(commonResult.result_status)) {
@@ -1237,28 +1243,18 @@ async function run({ signal } = {}) {
         sourceLevel: item.sourceLevel ?? source.sourceLevel,
       }));
 
-      const keywords = source.keywords.length > 0 ? source.keywords : DEFAULT_KEYWORDS;
-      const datedItems = detailItems
-        .map((item) => {
-          const parsedDate =
-            parseNoticeDate(item.detailDate) ??
-            parseNoticeDate(item.dateText) ??
-            parseNoticeDate(item.title);
-          return {
-            ...item,
-            parsedDate: parsedDate ? parsedDate.toISOString().slice(0, 10) : "",
-          };
-        });
-      const keywordMatchedItems = datedItems.filter((item) => {
-          // Require the keyword in the title so nav/footer chrome in detail
-          // bodies (e.g. a sitewide "장학" menu) cannot create false positives.
-          return containsScholarshipKeyword(item.title ?? "", keywords);
-        });
-      const matched = keywordMatchedItems.filter((item) => {
-          const parsed = item.parsedDate ? new Date(`${item.parsedDate}T00:00:00.000Z`) : null;
-          if (!parsed && ALLOW_UNDATED) return true;
-          return isWithinLookback(parsed, LOOKBACK_DAYS);
-        });
+      const finalCandidateResults =
+        executionResult?.candidate_detection?.final_candidate_results ?? [];
+      const datedItems = detailItems.map((item, index) => ({
+        ...item,
+        parsedDate: finalCandidateResults[index]?.dateResult?.parsedValue ?? "",
+        scholarshipCandidateResult: finalCandidateResults[index] ?? null,
+      }));
+      const matched = datedItems.filter((_item, index) =>
+        finalCandidateResults[index]?.eligibleForDownstream === true);
+      const preliminarySummary =
+        executionResult?.candidate_detection?.preliminary_summary ?? {};
+      const finalSummary = executionResult?.candidate_detection?.final_summary ?? {};
       return {
         sourceId: source.sourceId,
         universitySlug: source.universitySlug,
@@ -1272,10 +1268,33 @@ async function run({ signal } = {}) {
         detailItems,
         matched,
         filterMetrics: {
-          observed_count: detailItems.length,
-          parsed_date_count: datedItems.filter((item) => Boolean(item.parsedDate)).length,
-          keyword_match_count: keywordMatchedItems.length,
+          observed_count:
+            executionResult?.candidate_detection?.observed_list_item_count
+            ?? detailItems.length,
+          parsed_date_count: finalCandidateResults.filter((result) =>
+            Boolean(result?.dateResult?.parsedValue)).length,
+          keyword_match_count: finalCandidateResults.filter((result) =>
+            result?.keywordResult?.matched === true).length,
           date_match_count: matched.length,
+          preliminary_candidate_count: preliminarySummary.candidate_count ?? 0,
+          preliminary_not_candidate_count: preliminarySummary.not_candidate_count ?? 0,
+          preliminary_out_of_range_count: preliminarySummary.out_of_range_count ?? 0,
+          preliminary_undetermined_count: preliminarySummary.undetermined_count ?? 0,
+          detail_fetch_planned_count:
+            executionResult?.candidate_detection?.detail_fetch_planned_count ?? 0,
+          detail_fetch_completed_count:
+            executionResult?.candidate_detection?.detail_fetch_completed_count ?? 0,
+          detail_fetch_skipped_count:
+            executionResult?.candidate_detection?.detail_fetch_skipped_count ?? 0,
+          requests_avoided_by_preliminary_filter:
+            executionResult?.candidate_detection?.requests_avoided_by_preliminary_filter ?? 0,
+          final_candidate_count: finalSummary.candidate_count ?? 0,
+          final_not_candidate_count: finalSummary.not_candidate_count ?? 0,
+          final_out_of_range_count: finalSummary.out_of_range_count ?? 0,
+          final_undetermined_count: finalSummary.undetermined_count ?? 0,
+          candidate_detection_error_count:
+            (preliminarySummary.detection_error_count ?? 0)
+            + (finalSummary.detection_error_count ?? 0),
         },
         error: "",
         executionResult,
@@ -1474,6 +1493,8 @@ async function run({ signal } = {}) {
     finished_at: runFinishedAt,
   });
   const sourceById = new Map(sources.map((source) => [source.sourceId, source]));
+  const sourceRegistryDiagnostics = buildSourceRegistryDiagnostics(sources);
+  const candidateDetectionDiagnostics = buildCandidateDetectionDiagnostics(processed);
   const operationalDiagnostics = buildOperationalCrawlDiagnostics({
     sources: processed.map((result) => ({
       source: sourceById.get(result.sourceId) ?? {
@@ -1484,6 +1505,8 @@ async function run({ signal } = {}) {
       notices: result.detailItems,
       matchedCount: result.matched.length,
       filterMetrics: result.filterMetrics,
+      candidateDetection: candidateDetectionDiagnostics.sources.find((row) =>
+        row.source_id === result.sourceId) ?? null,
     })),
   });
   const cancelled = signal?.aborted === true;
@@ -1536,6 +1559,8 @@ async function run({ signal } = {}) {
     executionSummary,
     executionResults,
     operationalDiagnostics,
+    candidateDetection: candidateDetectionDiagnostics,
+    sourceRegistryDiagnostics,
     recovery: checkpointSession ? {
       status: checkpointSnapshot.status,
       cancelled,

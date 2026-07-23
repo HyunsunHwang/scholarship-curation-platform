@@ -86,6 +86,7 @@ try {
   const bridgedRequest = telemetryHttpStarted({
     url: "https://user:password@example.edu/path?api_key=secret",
     attempt: 0,
+    kind: "detail",
   });
   telemetryHttpFinished(bridgedRequest, { status: 200, bytes: 10 });
   telemetryDetailFinished(bridgedDetail);
@@ -109,12 +110,29 @@ try {
     matrixMaxParallel: 5, sourceConcurrency: 2, detailConcurrency: 1, hostConcurrency: 2 });
   telemetrySourcesQueued(1); const source = telemetrySourceStarted();
   telemetryDetailsQueued(1); const detail = telemetryDetailStarted();
-  const request = telemetryHttpStarted({ url: "https://user:password@example.com/a?api_key=secret", attempt: 1 });
+  const request = telemetryHttpStarted({
+    url: "https://user:password@example.com/a?api_key=secret",
+    attempt: 1,
+    kind: "detail",
+  });
   telemetryRetryDelay(25);
   await wait(48);
   telemetryHttpFinished(request, { status: 200, bytes: 128 });
   telemetryDetailFinished(detail); telemetrySourceFinished(source);
-  const result = await finishCrawlerPerformanceTelemetry({ crawlerResult: { report: { counts: { observed: 2 } } } });
+  const result = await finishCrawlerPerformanceTelemetry({
+    crawlerResult: {
+      report: {
+        counts: { observed: 2 },
+        candidateDetection: {
+          summary: {
+            observed_list_item_count: 2,
+            detail_fetch_skipped_count: 3,
+            requests_avoided_by_preliminary_filter: 3,
+          },
+        },
+      },
+    },
+  });
   assert.equal(isCrawlerPerformanceTelemetryActive(), false, "monitor must stop with crawler process");
   assert.ok(result.summary.measurement.sample_count >= 2, "short fixture interval should create multiple samples");
   assert.equal(result.summary.concurrency_summary.active_sources_peak, 1);
@@ -122,6 +140,11 @@ try {
   assert.ok(result.summary.resource_summary.rss_peak_bytes > 0, "RSS peak must be measured");
   assert.equal(result.summary.host_summaries[0].hostname, "example.com");
   assert.equal(result.summary.host_summaries[0].retry_count, 1);
+  assert.equal(result.summary.reliability.list_request_count, 0);
+  assert.equal(result.summary.reliability.detail_request_count, 1);
+  assert.equal(result.summary.reliability.detail_request_skipped_count, 3);
+  assert.equal(result.summary.reliability.requests_avoided_by_preliminary_filter, 3);
+  assert.ok(result.summary.performance.observed_notices_per_minute > 0);
   assert.ok(fs.readFileSync(result.paths.latestCsv, "utf8").split(/\r?\n/).length >= 3);
   assert.equal(validateCrawlerPerformanceSummary(result.summary).valid, true);
 
@@ -392,6 +415,11 @@ try {
   assert.ok(workflow.includes("name: crawl-result-${{ matrix.group }}"));
   assert.ok(workflow.includes(".crawler/${{ matrix.group }}-daily-state.json"));
   assert.ok(workflow.includes("fail-fast: false"));
+  assert.ok(workflow.includes("max-parallel: ${{ fromJSON(inputs.matrix_parallel || '9') }}"));
+  assert.match(workflow, /matrix_parallel:[\s\S]*?default: "9"/);
+  assert.match(workflow, /source_concurrency:[\s\S]*?default: "4"/);
+  assert.ok(workflow.includes("CRAWL_DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}"));
+  assert.ok(workflow.includes("CRAWL_HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}"));
   assert.ok(workflow.includes('CRAWL_SOURCE_EXECUTION_ISOLATION: "false"'));
   assert.ok(workflow.includes("crawler-daily-state-v2-"));
   assert.ok(workflow.includes('STATE_SOURCE="v2_legacy"'));

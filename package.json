@@ -34,6 +34,7 @@
     "test:crawler-runtime-modules": "node scripts/test-crawler-runtime-modules.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:crawler-performance-telemetry": "node scripts/test-crawler-performance-telemetry.mjs",
+    "test:scholarship-candidate-detector": "node scripts/test-scholarship-candidate-detector.mjs",
     "validate:engine-phase-2": "node scripts/validate-engine-phase-2.mjs",
     "test:engine-phase-2-gate-a": "node scripts/test-engine-phase-2-gate-a.mjs",
     "live:engine-phase-2-gate-a": "node scripts/run-engine-phase-2-gate-a-live.mjs",

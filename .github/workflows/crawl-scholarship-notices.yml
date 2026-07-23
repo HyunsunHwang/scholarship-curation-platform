@@ -22,12 +22,12 @@ on:
       matrix_parallel:
         description: "Maximum universities running in parallel (1-9)"
         required: false
-        default: "5"
+        default: "9"
         type: string
       source_concurrency:
         description: "Concurrent sources per university (1-8)"
         required: false
-        default: "2"
+        default: "4"
         type: string
       detail_concurrency:
         description: "Concurrent details per source (1-8)"
@@ -57,8 +57,8 @@ jobs:
     steps:
       - name: Validate bounded concurrency and telemetry inputs
         env:
-          MATRIX_PARALLEL: ${{ inputs.matrix_parallel || '5' }}
-          SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '2' }}
+          MATRIX_PARALLEL: ${{ inputs.matrix_parallel || '9' }}
+          SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '4' }}
           DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
           HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
           SAMPLE_INTERVAL_MS: ${{ inputs.telemetry_sample_interval_ms || '2000' }}
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: ${{ fromJSON(inputs.matrix_parallel || '5') }}
+      max-parallel: ${{ fromJSON(inputs.matrix_parallel || '9') }}
       matrix:
         group: [ewha, cau, korea, khu, hanyang, hongik, yonsei, skku, uos]
     env:
@@ -157,11 +157,11 @@ jobs:
           GROUP: ${{ matrix.group }}
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '2' }}
+          CRAWL_SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '4' }}
           CRAWL_SOURCE_EXECUTION_ISOLATION: "false"
           CRAWL_DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
           CRAWL_HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
-          CRAWL_MATRIX_MAX_PARALLEL: ${{ inputs.matrix_parallel || '5' }}
+          CRAWL_MATRIX_MAX_PARALLEL: ${{ inputs.matrix_parallel || '9' }}
           CRAWLER_TELEMETRY_ENABLED: ${{ github.event_name != 'workflow_dispatch' || inputs.telemetry_enabled }}
           TELEMETRY_SAMPLE_INTERVAL_MS: ${{ inputs.telemetry_sample_interval_ms || '2000' }}
           CRAWLER_UNIVERSITY_GROUP: ${{ matrix.group }}
