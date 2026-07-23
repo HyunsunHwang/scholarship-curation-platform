@@ -19,14 +19,70 @@ on:
         required: false
         default: false
         type: boolean
+      matrix_parallel:
+        description: "Maximum universities running in parallel (1-9)"
+        required: false
+        default: "5"
+        type: string
+      source_concurrency:
+        description: "Concurrent sources per university (1-8)"
+        required: false
+        default: "2"
+        type: string
+      detail_concurrency:
+        description: "Concurrent details per source (1-8)"
+        required: false
+        default: "1"
+        type: string
+      host_concurrency:
+        description: "Concurrent requests per hostname (1-8)"
+        required: false
+        default: "2"
+        type: string
+      telemetry_enabled:
+        description: "Collect crawler performance telemetry"
+        required: false
+        default: true
+        type: boolean
+      telemetry_sample_interval_ms:
+        description: "Telemetry sample interval in milliseconds (1000-30000)"
+        required: false
+        default: "2000"
+        type: string
 
 jobs:
+  validate-inputs:
+    name: Validate crawl controls
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate bounded concurrency and telemetry inputs
+        env:
+          MATRIX_PARALLEL: ${{ inputs.matrix_parallel || '5' }}
+          SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '2' }}
+          DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
+          HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
+          SAMPLE_INTERVAL_MS: ${{ inputs.telemetry_sample_interval_ms || '2000' }}
+        run: |
+          validate_integer() {
+            local name="$1" value="$2" minimum="$3" maximum="$4"
+            [[ "$value" =~ ^[0-9]+$ ]] && [ "$value" -ge "$minimum" ] && [ "$value" -le "$maximum" ] || {
+              echo "::error::${name} must be an integer between ${minimum} and ${maximum}; received '${value}'"
+              exit 1
+            }
+          }
+          validate_integer matrix_parallel "$MATRIX_PARALLEL" 1 9
+          validate_integer source_concurrency "$SOURCE_CONCURRENCY" 1 8
+          validate_integer detail_concurrency "$DETAIL_CONCURRENCY" 1 8
+          validate_integer host_concurrency "$HOST_CONCURRENCY" 1 8
+          validate_integer telemetry_sample_interval_ms "$SAMPLE_INTERVAL_MS" 1000 30000
+
   crawl-by-university:
     name: Crawl ${{ matrix.group }}
+    needs: validate-inputs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: ${{ fromJSON(inputs.matrix_parallel || '5') }}
       matrix:
         group: [ewha, cau, korea, khu, hanyang, hongik, yonsei, skku, uos]
     env:
@@ -62,11 +118,21 @@ jobs:
           GROUP: ${{ matrix.group }}
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "2"
-          CRAWL_DETAIL_CONCURRENCY: "1"
-          CRAWL_HOST_CONCURRENCY: "2"
+          CRAWL_SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '2' }}
+          CRAWL_DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
+          CRAWL_HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
+          CRAWL_MATRIX_MAX_PARALLEL: ${{ inputs.matrix_parallel || '5' }}
+          CRAWLER_TELEMETRY_ENABLED: ${{ github.event_name != 'workflow_dispatch' || inputs.telemetry_enabled }}
+          TELEMETRY_SAMPLE_INTERVAL_MS: ${{ inputs.telemetry_sample_interval_ms || '2000' }}
+          CRAWLER_UNIVERSITY_GROUP: ${{ matrix.group }}
+          CRAWLER_TELEMETRY_OUTPUT_DIR: exports/notices/${{ matrix.group }}
+          CRAWL_RETRY_MAX_DELAY_MS: "30000"
+          CRAWL_RETRY_JITTER_RATIO: "0.1"
+          CRAWL_FRESH_START: ${{ inputs.fresh_start || 'false' }}
           CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
         run: |
+          UNIVERSITY_JOB_STARTED_MS=$(date +%s%3N)
+          echo "UNIVERSITY_JOB_STARTED_MS=${UNIVERSITY_JOB_STARTED_MS}" >> "$GITHUB_ENV"
           case "$GROUP" in
             ewha)
               export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="3" CRAWL_RETRY_BACKOFF_MS="1500" CRAWL_FORCE_IPV4="true"
@@ -87,6 +153,7 @@ jobs:
         env:
           GROUP: ${{ matrix.group }}
         run: |
+          CLEANER_STARTED_MS=$(date +%s%3N)
           TODAY=$(TZ=Asia/Seoul date +%Y%m%d)
           INPUT="exports/notices/${GROUP}/scholarship-notices-new-${TODAY}.csv"
           if [ -f "$INPUT" ]; then
@@ -97,6 +164,22 @@ jobs:
           else
             echo "skip=missing_${GROUP}_csv"
           fi
+          echo "CLEANER_DURATION_MS=$(($(date +%s%3N)-CLEANER_STARTED_MS))" >> "$GITHUB_ENV"
+
+      - name: Finalize university performance telemetry
+        if: always()
+        env:
+          GROUP: ${{ matrix.group }}
+        run: |
+          if [ "${{ github.event_name != 'workflow_dispatch' || inputs.telemetry_enabled }}" != "true" ]; then
+            echo "telemetry=disabled"
+            exit 0
+          fi
+          JOB_DURATION_MS=$(($(date +%s%3N)-${UNIVERSITY_JOB_STARTED_MS:-$(date +%s%3N)}))
+          node scripts/finalize-crawler-performance-telemetry.mjs \
+            "exports/notices/${GROUP}" \
+            "${CLEANER_DURATION_MS:-}" \
+            "$JOB_DURATION_MS" || echo "::warning::performance telemetry finalization failed for ${GROUP}"
 
       - name: Save university crawler state
         if: ${{ always() && github.event.inputs.fresh_start != 'true' && github.event.inputs.ignore_seen != 'true' }}
@@ -167,6 +250,10 @@ jobs:
               exit 1
             }
           done
+
+      - name: Build combined performance telemetry
+        if: always()
+        run: node scripts/build-crawler-performance-report.mjs exports/notices
 
       - name: Build combined daily CSV
         if: ${{ needs.crawl-by-university.result == 'success' }}

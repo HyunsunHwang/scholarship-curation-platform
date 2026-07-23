@@ -34,6 +34,16 @@ import {
 } from "../lib/crawler-engine/operational-parser-evidence.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
+  finishCrawlerPerformanceTelemetry,
+  startCrawlerPerformanceTelemetry,
+  telemetryHttpFinished,
+  telemetryHttpStarted,
+  telemetryRetryDelay,
+  telemetrySourceFinished,
+  telemetrySourceStarted,
+  telemetrySourcesQueued,
+} from "../lib/crawler-engine/crawler-performance-telemetry.mjs";
+import {
   buildCrawlerWorkItemKey,
   createCrawlerCheckpointSession,
   installCrawlerSignalHandlers,
@@ -339,6 +349,7 @@ export async function fetchUrlWithMetadata(url, options = {}) {
   const maxBytes = Math.max(1, Number(options.maxBytes ?? DOCUMENT_MAX_BYTES));
   const method = options.method ?? "GET";
   for (let attempt = 0; attempt <= retryCount; attempt += 1) {
+    const telemetryRequest = telemetryHttpStarted({ url, attempt });
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     const signal = options.signal
@@ -364,6 +375,7 @@ export async function fetchUrlWithMetadata(url, options = {}) {
         throw error;
       }
       const bytes = options.readBody === false ? Buffer.alloc(0) : await readResponseBytesBounded(response, maxBytes);
+      telemetryHttpFinished(telemetryRequest, { status: response.status, bytes: bytes.length });
       return {
         bytes,
         httpStatus: response.status,
@@ -376,9 +388,15 @@ export async function fetchUrlWithMetadata(url, options = {}) {
       };
     } catch (error) {
       lastError = error;
+      telemetryHttpFinished(telemetryRequest, {
+        status: error?.httpStatus,
+        error,
+        timeout: controller.signal.aborted && !options.signal?.aborted,
+      });
       if (options.signal?.aborted) break;
       if (attempt < retryCount) {
         const waitMs = REQUEST_RETRY_BACKOFF_MS * (attempt + 1);
+        telemetryRetryDelay(waitMs);
         await new Promise((resolve) => setTimeout(resolve, waitMs));
         continue;
       }
@@ -1211,10 +1229,16 @@ async function run({ signal } = {}) {
       };
     }
   };
+  telemetrySourcesQueued(pendingSources.length);
   const rawProcessed = await mapLimit(pendingSources, SOURCE_CONCURRENCY, async (source) => {
-    const result = await processSource(source);
-    await checkpointSession?.recordSourceResult(result.executionResult);
-    return result;
+    const telemetrySource = telemetrySourceStarted();
+    try {
+      const result = await processSource(source);
+      await checkpointSession?.recordSourceResult(result.executionResult);
+      return result;
+    } finally {
+      telemetrySourceFinished(telemetrySource);
+    }
   }, {
     signal,
     settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms,
@@ -1458,6 +1482,35 @@ async function run({ signal } = {}) {
 }
 
 if (IS_MAIN) {
+  let telemetrySession = null;
+  try {
+    telemetrySession = startCrawlerPerformanceTelemetry({
+      outputDirectory: OUTPUT_DIR,
+      universityGroup: process.env.CRAWLER_UNIVERSITY_GROUP ?? INPUT_ARG.replace(/^db:/, ""),
+      sourceConcurrency: SOURCE_CONCURRENCY,
+      detailConcurrency: DETAIL_CONCURRENCY,
+      hostConcurrency: HOST_CONCURRENCY,
+      timeoutMs: REQUEST_TIMEOUT_MS,
+      retryCount: REQUEST_RETRY_COUNT,
+      retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
+      retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
+      retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+      lookbackDays: LOOKBACK_DAYS,
+      allowUndated: ALLOW_UNDATED,
+      ignoreSeen: IGNORE_SEEN,
+      documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
+    });
+  } catch (error) {
+    console.error(`crawler_telemetry_start_warning=${sanitizeCrawlerError(error)}`);
+  }
+  const finishTelemetrySafely = async (input) => {
+    if (!telemetrySession) return;
+    try {
+      await finishCrawlerPerformanceTelemetry(input);
+    } catch (error) {
+      console.error(`crawler_telemetry_finish_warning=${sanitizeCrawlerError(error)}`);
+    }
+  };
   const controller = new AbortController();
   const signalHandlers = installCrawlerSignalHandlers({
     controller,
@@ -1466,17 +1519,19 @@ if (IS_MAIN) {
     },
   });
   run({ signal: controller.signal })
-    .then((result) => {
+    .then(async (result) => {
       // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
       // the event loop alive well after all work is done, especially on
       // Windows. Force an explicit exit once results are written so the
       // process (and any CI job wrapping it) doesn't hang.
       signalHandlers.dispose();
+      await finishTelemetrySafely({ crawlerResult: result });
       process.exit(result.cancelled ? 130 : 0);
     })
-    .catch((error) => {
+    .catch(async (error) => {
       console.error(error);
       signalHandlers.dispose();
+      await finishTelemetrySafely({ error });
       process.exit(1);
     });
 }
