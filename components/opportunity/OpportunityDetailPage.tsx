@@ -16,6 +16,7 @@ import { contestToScholarshipDetail } from "@/lib/announcement-detail";
 import RecentViewTracker from "@/components/RecentViewTracker";
 import ContestViewCountIncrementer from "@/components/opportunity/ContestViewCountIncrementer";
 import LiveEngagementBadges from "@/app/scholarships/[id]/LiveEngagementBadges";
+import SiteFooter from "@/components/SiteFooter";
 import {
   interestCategoryLabel,
   isInterestCategoryId,
@@ -340,19 +341,10 @@ export default async function OpportunityDetailPage({
         contentKind={kind}
       />
 
-      <footer className="mt-12 hidden border-t border-gray-100 bg-white py-8 md:block">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-ink/60">
-            문의 메일:{" "}
-            <a
-              href="mailto:hyunsun4819@gmail.com"
-              className="font-medium text-brand hover:underline"
-            >
-              hyunsun4819@gmail.com
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter
+        className="mt-12 hidden md:block"
+        contentClassName="max-w-6xl"
+      />
     </div>
   );
 }

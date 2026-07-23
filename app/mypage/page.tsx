@@ -5,6 +5,7 @@ import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import ProfileSpecBoard from "@/components/profile/ProfileSpecBoard";
+import SiteFooter from "@/components/SiteFooter";
 import { SPEC_SECTIONS, coerceSpecItem } from "@/lib/profile-spec";
 import { normalizeInterestCategories } from "@/lib/interestCategories";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
@@ -189,19 +190,7 @@ export default async function MyPage() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-gray-600">
-            문의 메일:{" "}
-            <a
-              href="mailto:hyunsun4819@gmail.com"
-              className="font-medium text-brand hover:underline"
-            >
-              hyunsun4819@gmail.com
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
