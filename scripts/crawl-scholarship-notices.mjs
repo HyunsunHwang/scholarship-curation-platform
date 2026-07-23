@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { Worker, isMainThread } from "node:worker_threads";
 import { load as loadHtml } from "cheerio";
@@ -35,6 +36,9 @@ import {
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
   finishCrawlerPerformanceTelemetry,
+  applyCrawlerTelemetryEvent,
+  isCrawlerPerformanceTelemetryActive,
+  releaseCrawlerTelemetryWorker,
   startCrawlerPerformanceTelemetry,
   telemetryHttpFinished,
   telemetryHttpStarted,
@@ -43,6 +47,7 @@ import {
   telemetrySourceStarted,
   telemetrySourcesQueued,
 } from "../lib/crawler-engine/crawler-performance-telemetry.mjs";
+import { resolveSourceExecutionMode } from "../lib/crawler-engine/source-execution-mode.mjs";
 import {
   buildCrawlerWorkItemKey,
   createCrawlerCheckpointSession,
@@ -108,10 +113,11 @@ const MAX_PAGES_PER_SOURCE = Math.max(
   Math.min(5, Number(process.env.CRAWL_MAX_PAGES_PER_SOURCE ?? 1)),
 );
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
-// The worker owns its own rate limiter. Keep multi-source mode on the existing
-// shared limiter so its host-level concurrency contract remains unchanged.
-const SOURCE_EXECUTION_ISOLATION_ENABLED =
-  SOURCE_CONCURRENCY === 1 && process.env.CRAWL_SOURCE_EXECUTION_ISOLATION !== "false";
+const SOURCE_EXECUTION_MODE = resolveSourceExecutionMode({
+  sourceConcurrency: SOURCE_CONCURRENCY,
+  isolationRequested: process.env.CRAWL_SOURCE_EXECUTION_ISOLATION === "true",
+});
+const SOURCE_EXECUTION_ISOLATION_ENABLED = SOURCE_EXECUTION_MODE.isolation_enabled;
 const DETAIL_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_DETAIL_CONCURRENCY ?? 2)));
 const HOST_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_HOST_CONCURRENCY ?? 2)));
 const SOURCE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.CRAWL_SOURCE_MIN_INTERVAL_MS ?? 250));
@@ -769,7 +775,7 @@ function formatKstDate(date = new Date()) {
     .replace(/-/g, "");
 }
 
-function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents) {
+export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents) {
   const finishedAt = new Date().toISOString();
   const durationMs = Math.max(0, Date.now() - startedMs);
   return {
@@ -777,16 +783,26 @@ function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEv
     source_id: source.sourceId,
     source_name: source.sourceName,
     strategy: getSourceAdapterStrategy(source),
-    result_status: "partial",
+    result_status: "timeout",
     observed_count: 0,
+    matched_count: 0,
     notices: [],
+    error_code: "source_execution_timeout",
+    error_message: "Source execution exceeded its isolated hard timeout.",
+    timeout: true,
+    transport_error_code: null,
+    transport_error_category: null,
+    transport_error_retryable: null,
     total_attempt_count: 1,
     attempt_history: [{
       sequence: 1,
-      status: "partial",
+      status: "timeout",
       retryable: false,
       duration_ms: durationMs,
       reason_code: "source_execution_timeout",
+      transport_error_code: null,
+      transport_error_category: null,
+      transport_error_retryable: null,
       timeout: true,
       item_count: 0,
       started_at: startedAt,
@@ -804,9 +820,78 @@ function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEv
     finished_at: finishedAt,
     final_reason_code: "source_execution_timeout",
     final_error_summary: "Source execution exceeded its isolated hard timeout.",
+    final_transport_error_code: null,
+    final_transport_error_category: null,
+    final_transport_error_retryable: null,
     execution_stage_evidence: {
       source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
       timed_out: true,
+      last_observed_stage: stageEvents.at(-1)?.stage ?? null,
+      stage_events: stageEvents,
+    },
+  };
+}
+
+export function buildSourceExecutionErrorResult(source, startedAt, startedMs, stageEvents, safeError) {
+  const finishedAt = new Date().toISOString();
+  const durationMs = Math.max(0, Date.now() - startedMs);
+  const status = cleanText(safeError?.status ?? safeError?.result_status) || "network_error";
+  const errorCode = cleanText(safeError?.error_code) || status;
+  const errorMessage = sanitizeCrawlerError(safeError?.error_message) || status;
+  const transportErrorCode = cleanText(safeError?.transport_error_code) || null;
+  const transportErrorCategory = cleanText(safeError?.transport_error_category) || "unknown";
+  const transportErrorRetryable =
+    typeof safeError?.transport_error_retryable === "boolean"
+      ? safeError.transport_error_retryable
+      : null;
+  return {
+    source_key: source.sourceId,
+    source_id: source.sourceId,
+    source_name: source.sourceName,
+    strategy: getSourceAdapterStrategy(source),
+    result_status: status,
+    observed_count: 0,
+    matched_count: 0,
+    notices: [],
+    error_code: errorCode,
+    error_message: errorMessage,
+    timeout: status === "timeout",
+    transport_error_code: transportErrorCode,
+    transport_error_category: transportErrorCategory,
+    transport_error_retryable: transportErrorRetryable,
+    total_attempt_count: 1,
+    attempt_history: [{
+      sequence: 1,
+      status,
+      retryable: transportErrorRetryable === true,
+      duration_ms: durationMs,
+      reason_code: errorCode,
+      transport_error_code: transportErrorCode,
+      transport_error_category: transportErrorCategory,
+      transport_error_retryable: transportErrorRetryable,
+      timeout: status === "timeout",
+      item_count: 0,
+      started_at: startedAt,
+      finished_at: finishedAt,
+      error_summary: errorMessage,
+      retry_delay_ms: 0,
+    }],
+    retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+    total_retry_delay_ms: 0,
+    retried: false,
+    recovered_after_retry: false,
+    retry_exhausted: false,
+    duration_ms: durationMs,
+    started_at: startedAt,
+    finished_at: finishedAt,
+    final_reason_code: errorCode,
+    final_error_summary: errorMessage,
+    final_transport_error_code: transportErrorCode,
+    final_transport_error_category: transportErrorCategory,
+    final_transport_error_retryable: transportErrorRetryable,
+    execution_stage_evidence: {
+      source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
+      timed_out: false,
       last_observed_stage: stageEvents.at(-1)?.stage ?? null,
       stage_events: stageEvents,
     },
@@ -817,8 +902,10 @@ async function executeSourceInWorker({ source, inventoryRows, completedWorkItemK
   const startedAt = new Date().toISOString();
   const startedMs = Date.now();
   const stageEvents = [];
+  const workerId = `${source.sourceId}:${randomUUID()}`;
   const worker = new Worker(new URL("../lib/crawler-engine/source-execution-worker.mjs", import.meta.url), {
     workerData: {
+      workerId,
       source,
       inventoryRows,
       completedWorkItemKeys,
@@ -837,15 +924,17 @@ async function executeSourceInWorker({ source, inventoryRows, completedWorkItemK
         sourceMinimumIntervalMs: SOURCE_MIN_INTERVAL_MS,
         hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
         hostConcurrency: HOST_CONCURRENCY,
+        telemetryEnabled: isCrawlerPerformanceTelemetryActive(),
       },
     },
   });
   return new Promise((resolve) => {
     let settled = false;
-    const finish = async (value) => {
+    const finish = async (value, releaseReason = "worker_exit") => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      releaseCrawlerTelemetryWorker(workerId, releaseReason);
       await worker.terminate().catch(() => {});
       resolve(value);
     };
@@ -854,10 +943,15 @@ async function executeSourceInWorker({ source, inventoryRows, completedWorkItemK
         executionResult: buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents),
         notices: [],
         timedOut: true,
-      });
+      }, "source_execution_timeout");
     }, SOURCE_EXECUTION_TIMEOUT_MS);
     worker.on("message", (message) => {
-      if (message?.type === "stage") {
+      if (message?.type === "telemetry_event") {
+        applyCrawlerTelemetryEvent({
+          ...message.event,
+          worker_id: workerId,
+        });
+      } else if (message?.type === "stage") {
         stageEvents.push({
           stage: cleanText(message.stage),
           status: cleanText(message.status),
@@ -877,19 +971,30 @@ async function executeSourceInWorker({ source, inventoryRows, completedWorkItemK
             stage_events: stageEvents,
           },
         };
-        void finish({ executionResult, notices: message.notices ?? executionResult.notices ?? [], timedOut: false });
+        void finish(
+          { executionResult, notices: message.notices ?? executionResult.notices ?? [], timedOut: false },
+          "worker_exit",
+        );
       } else if (message?.type === "error") {
-        const error = new Error(cleanText(message.error?.message) || "source_worker_error");
-        error.code = cleanText(message.error?.code) || "source_worker_error";
-        void finish({ error, timedOut: false });
+        void finish({
+          executionResult: buildSourceExecutionErrorResult(
+            source,
+            startedAt,
+            startedMs,
+            stageEvents,
+            message.error,
+          ),
+          notices: [],
+          timedOut: false,
+        }, "worker_error");
       }
     });
-    worker.on("error", (error) => void finish({ error, timedOut: false }));
+    worker.on("error", (error) => void finish({ error, timedOut: false }, "worker_error"));
     worker.on("exit", (code) => {
-      if (!settled && code !== 0) {
+      if (!settled) {
         const error = new Error(`source_worker_exit_${code}`);
         error.code = "source_worker_exit";
-        void finish({ error, timedOut: false });
+        void finish({ error, timedOut: false }, "worker_exit");
       }
     });
   });
@@ -959,6 +1064,7 @@ async function run({ signal } = {}) {
       retry_jitter_ratio: REQUEST_RETRY_JITTER_RATIO,
       timeout_ms: REQUEST_TIMEOUT_MS,
       source_execution_isolation_enabled: SOURCE_EXECUTION_ISOLATION_ENABLED,
+      source_execution_mode: SOURCE_EXECUTION_MODE.mode,
       source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
       source_minimum_interval_ms: SOURCE_MIN_INTERVAL_MS,
       host_minimum_interval_ms: HOST_MIN_INTERVAL_MS,
@@ -1244,23 +1350,52 @@ async function run({ signal } = {}) {
     settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms,
   });
   const processed = rawProcessed.map((result) => {
-    if (!result?.__bounded_map_abandoned) return result;
-    const source = pendingSources[result.index];
+    if (!result?.__bounded_map_abandoned && !result?.__bounded_map_error) return result;
+    const source = pendingSources[result.index] ?? {};
+    const sourceId = cleanText(source.sourceId) || `unknown_source_${result.index ?? "map_error"}`;
+    const sourceName = cleanText(source.sourceName) || sourceId;
+    const isAbandoned = Boolean(result.__bounded_map_abandoned);
+    const error = result.__bounded_map_error;
+    const status = isAbandoned ? "partial" : classifyCrawlerFailure(error, "network_error");
+    const errorSummary = isAbandoned
+      ? "crawler_settle_timeout"
+      : sanitizeCrawlerError(error) || "crawler_source_map_error";
     return {
-      sourceId: source.sourceId,
-      sourceName: source.sourceName,
+      sourceId,
+      universitySlug: source.universitySlug,
+      universityId: source.universityId,
+      collegeId: source.collegeId,
+      departmentId: source.departmentId,
+      sourceLevel: source.sourceLevel,
+      collegeName: source.collegeName,
+      sourceName,
       adapterStrategy: getSourceAdapterStrategy(source),
-      error: "crawler_settle_timeout",
+      error: errorSummary,
       detailItems: [],
       matched: [],
       executionResult: {
-        source_key: source.sourceId,
-        source_id: source.sourceId,
-        result_status: "partial",
-        cancelled: true,
+        source_key: sourceId,
+        source_id: sourceId,
+        source_name: sourceName,
+        strategy: getSourceAdapterStrategy(source),
+        result_status: status,
+        cancelled: isAbandoned,
         observed_count: 0,
         notices: [],
-        final_reason_code: "crawler_settle_timeout",
+        total_attempt_count: 1,
+        attempt_history: [{
+          sequence: 1,
+          status,
+          retryable: false,
+          duration_ms: 0,
+          reason_code: isAbandoned ? "crawler_settle_timeout" : status,
+          timeout: status === "timeout",
+          item_count: 0,
+          error_summary: errorSummary,
+          retry_delay_ms: 0,
+        }],
+        final_reason_code: isAbandoned ? "crawler_settle_timeout" : status,
+        final_error_summary: errorSummary,
       },
     };
   });

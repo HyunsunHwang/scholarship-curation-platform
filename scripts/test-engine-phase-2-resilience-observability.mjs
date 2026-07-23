@@ -19,6 +19,7 @@ import {
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 import { classifyEnginePhase2EvidencePaths } from "../lib/crawler-engine/evidence-safety.mjs";
 import { buildNormalizedGraphPlan } from "../lib/post-phase-l/normalized-graph.mjs";
+import { boundedMap } from "../lib/crawler-engine/execution-policy.mjs";
 
 function source(sourceId) {
   return {
@@ -181,6 +182,15 @@ await test("transient network failure recovers on second attempt", async () => {
   assert.deepEqual(result.attempt_history.map((attempt) => attempt.status), ["network_error", "success"]);
   assert.deepEqual(clock.delays, [100]);
   assert.deepEqual(result.attempt_history.map((attempt) => attempt.retry_delay_ms), [100, 0]);
+});
+
+await test("bounded map retains failed worker index for caller-level recovery", async () => {
+  const error = new Error("fixture worker failure");
+  const results = await boundedMap(["first", "second"], 2, async (value, index) => {
+    if (index === 1) throw error;
+    return value;
+  });
+  assert.deepEqual(results, ["first", { __bounded_map_error: error, index: 1 }]);
 });
 
 await test("TLS transport failures preserve evidence and do not retry", async () => {

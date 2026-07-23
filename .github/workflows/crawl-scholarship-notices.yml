@@ -94,7 +94,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Restore university crawler state
+      - name: Restore university crawler state v3
+        id: restore-state-v3
         if: ${{ github.event.inputs.fresh_start != 'true' }}
         uses: actions/cache/restore@v4
         with:
@@ -102,6 +103,44 @@ jobs:
           key: crawler-daily-state-v3-${{ matrix.group }}-${{ github.run_id }}
           restore-keys: |
             crawler-daily-state-v3-${{ matrix.group }}-
+
+      - name: Check restored university crawler state v3
+        id: check-state-v3
+        if: ${{ github.event.inputs.fresh_start != 'true' }}
+        env:
+          GROUP: ${{ matrix.group }}
+        run: |
+          if [ -f ".crawler/${GROUP}-daily-state.json" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Restore legacy university crawler state v2
+        if: ${{ github.event.inputs.fresh_start != 'true' && steps.check-state-v3.outputs.present != 'true' }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .crawler
+          key: crawler-daily-state-v2-${{ github.run_id }}-${{ matrix.group }}
+          restore-keys: |
+            crawler-daily-state-v2-
+
+      - name: Report university crawler state source
+        env:
+          GROUP: ${{ matrix.group }}
+          FRESH_START: ${{ github.event.inputs.fresh_start || 'false' }}
+          V3_PRESENT: ${{ steps.check-state-v3.outputs.present || 'false' }}
+        run: |
+          if [ "$FRESH_START" = "true" ]; then
+            STATE_SOURCE="fresh_start"
+          elif [ "$V3_PRESENT" = "true" ]; then
+            STATE_SOURCE="v3"
+          elif [ -f ".crawler/${GROUP}-daily-state.json" ]; then
+            STATE_SOURCE="v2_legacy"
+          else
+            STATE_SOURCE="none"
+          fi
+          echo "state_restore_source=${STATE_SOURCE} group=${GROUP}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -119,6 +158,7 @@ jobs:
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
           CRAWL_SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '2' }}
+          CRAWL_SOURCE_EXECUTION_ISOLATION: "false"
           CRAWL_DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
           CRAWL_HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
           CRAWL_MATRIX_MAX_PARALLEL: ${{ inputs.matrix_parallel || '5' }}
