@@ -21,8 +21,14 @@ on:
         type: boolean
 
 jobs:
-  daily-update:
+  crawl-by-university:
+    name: Crawl ${{ matrix.group }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        group: [ewha, cau, korea, khu, hanyang, hongik, yonsei, skku, uos]
     env:
       # Crawl sources are loaded from public.notice_sources (not CSV).
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -32,15 +38,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Restore daily crawler state
+      - name: Restore university crawler state
         if: ${{ github.event.inputs.fresh_start != 'true' }}
-        id: crawler-state-restore
         uses: actions/cache/restore@v4
         with:
-          path: .crawler
-          key: crawler-daily-state-v2-${{ github.run_id }}
+          path: .crawler/${{ matrix.group }}-daily-state.json
+          key: crawler-daily-state-v3-${{ matrix.group }}-${{ github.run_id }}
           restore-keys: |
-            crawler-daily-state-v2-
+            crawler-daily-state-v3-${{ matrix.group }}-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -52,206 +57,121 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Ewha crawler
+      - name: Run university crawler
         env:
+          GROUP: ${{ matrix.group }}
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "1"
-          CRAWL_TIMEOUT_MS: "30000"
-          CRAWL_RETRY_COUNT: "3"
-          CRAWL_RETRY_BACKOFF_MS: "1500"
-          CRAWL_FORCE_IPV4: "true"
+          CRAWL_SOURCE_CONCURRENCY: "2"
+          CRAWL_DETAIL_CONCURRENCY: "1"
+          CRAWL_HOST_CONCURRENCY: "2"
           CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:ewha exports/notices/ewha .crawler/ewha-daily-state.json
-
-      - name: Clean Ewha crawl results
         run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/ewha/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/ewha/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/ewha/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/ewha/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_ewha_csv"
-          fi
+          case "$GROUP" in
+            ewha)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="3" CRAWL_RETRY_BACKOFF_MS="1500" CRAWL_FORCE_IPV4="true"
+              ;;
+            cau)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="2" CRAWL_RETRY_BACKOFF_MS="1200" CRAWL_ALLOW_INSECURE_TLS_HOSTS="econ.cau.ac.kr"
+              ;;
+            hanyang)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="3" CRAWL_RETRY_BACKOFF_MS="1500" CRAWL_FORCE_IPV4="true" CRAWL_ALLOW_INSECURE_TLS_HOSTS="hyurban.hanyang.ac.kr"
+              ;;
+            uos)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="2" CRAWL_RETRY_BACKOFF_MS="1200"
+              ;;
+          esac
+          node scripts/crawl-scholarship-notices.mjs "db:${GROUP}" "exports/notices/${GROUP}" ".crawler/${GROUP}-daily-state.json"
 
-      - name: Run CAU crawler
+      - name: Clean university crawl results
         env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "3"
-          CRAWL_TIMEOUT_MS: "30000"
-          CRAWL_RETRY_COUNT: "2"
-          CRAWL_RETRY_BACKOFF_MS: "1200"
-          CRAWL_ALLOW_INSECURE_TLS_HOSTS: "econ.cau.ac.kr"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:cau exports/notices/cau .crawler/cau-daily-state.json
-
-      - name: Clean CAU crawl results
+          GROUP: ${{ matrix.group }}
         run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/cau/scholarship-notices-new-${TODAY}.csv" ]; then
+          TODAY=$(TZ=Asia/Seoul date +%Y%m%d)
+          INPUT="exports/notices/${GROUP}/scholarship-notices-new-${TODAY}.csv"
+          if [ -f "$INPUT" ]; then
             node scripts/clean-crawled-notices.mjs \
-              "exports/notices/cau/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/cau/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/cau/scholarship-notices-latest.rejected.csv"
+              "$INPUT" \
+              "exports/notices/${GROUP}/scholarship-notices-latest.cleaned.csv" \
+              "exports/notices/${GROUP}/scholarship-notices-latest.rejected.csv"
           else
-            echo "skip=missing_cau_csv"
+            echo "skip=missing_${GROUP}_csv"
           fi
 
-      - name: Run Korea crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:korea exports/notices/korea .crawler/korea-daily-state.json
+      - name: Save university crawler state
+        if: ${{ always() && github.event.inputs.fresh_start != 'true' && github.event.inputs.ignore_seen != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: .crawler/${{ matrix.group }}-daily-state.json
+          key: crawler-daily-state-v3-${{ matrix.group }}-${{ github.run_id }}
 
-      - name: Clean Korea crawl results
+      - name: Upload university crawl artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawl-result-${{ matrix.group }}
+          path: |
+            exports/notices/${{ matrix.group }}
+            .crawler/${{ matrix.group }}-daily-state.json
+          if-no-files-found: warn
+
+  aggregate:
+    name: Aggregate daily crawl
+    needs: crawl-by-university
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore quality and source health history
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            exports/notices/quality
+            exports/notices/*/scholarship-notices-????????.json
+          key: crawler-quality-history-v1-${{ github.run_id }}
+          restore-keys: |
+            crawler-quality-history-v1-
+
+      - name: Download university crawl artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: crawl-result-*
+          merge-multiple: true
+          path: .
+
+      - name: Verify university crawl results
         run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/korea/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/korea/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/korea/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/korea/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_korea_csv"
-          fi
-
-      - name: Run KHU crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:khu exports/notices/khu .crawler/khu-daily-state.json
-
-      - name: Clean KHU crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/khu/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/khu/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/khu/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/khu/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_khu_csv"
-          fi
-
-      - name: Run Hanyang crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "1"
-          CRAWL_TIMEOUT_MS: "30000"
-          CRAWL_RETRY_COUNT: "3"
-          CRAWL_RETRY_BACKOFF_MS: "1500"
-          CRAWL_FORCE_IPV4: "true"
-          # hyurban cert is issued for greenranger.or.kr (hostname mismatch).
-          CRAWL_ALLOW_INSECURE_TLS_HOSTS: "hyurban.hanyang.ac.kr"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:hanyang exports/notices/hanyang .crawler/hanyang-daily-state.json
-
-      - name: Clean Hanyang crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/hanyang/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/hanyang/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/hanyang/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/hanyang/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_hanyang_csv"
-          fi
-
-      - name: Run Hongik crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:hongik exports/notices/hongik .crawler/hongik-daily-state.json
-
-      - name: Clean Hongik crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/hongik/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/hongik/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/hongik/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/hongik/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_hongik_csv"
-          fi
-
-      - name: Run Yonsei crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:yonsei exports/notices/yonsei .crawler/yonsei-daily-state.json
-
-      - name: Clean Yonsei crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/yonsei/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/yonsei/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/yonsei/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/yonsei/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_yonsei_csv"
-          fi
-
-      - name: Run SKKU crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "8"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:skku exports/notices/skku .crawler/skku-daily-state.json
-
-      - name: Clean SKKU crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/skku/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/skku/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/skku/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/skku/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_skku_csv"
-          fi
-
-      - name: Run UOS crawler
-        env:
-          CRAWL_LOOKBACK_DAYS: "1"
-          CRAWL_ALLOW_UNDATED: "true"
-          CRAWL_SOURCE_CONCURRENCY: "3"
-          CRAWL_TIMEOUT_MS: "30000"
-          CRAWL_RETRY_COUNT: "2"
-          CRAWL_RETRY_BACKOFF_MS: "1200"
-          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
-        run: node scripts/crawl-scholarship-notices.mjs db:uos exports/notices/uos .crawler/uos-daily-state.json
-
-      - name: Clean UOS crawl results
-        run: |
-          TODAY=$(date +%Y%m%d)
-          if [ -f "exports/notices/uos/scholarship-notices-new-${TODAY}.csv" ]; then
-            node scripts/clean-crawled-notices.mjs \
-              "exports/notices/uos/scholarship-notices-new-${TODAY}.csv" \
-              "exports/notices/uos/scholarship-notices-latest.cleaned.csv" \
-              "exports/notices/uos/scholarship-notices-latest.rejected.csv"
-          else
-            echo "skip=missing_uos_csv"
-          fi
+          for GROUP in ewha cau korea khu hanyang hongik yonsei skku uos; do
+            test -f "exports/notices/${GROUP}/scholarship-notices-latest.json" || {
+              echo "::error::missing report for ${GROUP}"
+              exit 1
+            }
+            test -f "exports/notices/${GROUP}/scholarship-notices-latest.cleaned.csv" || {
+              echo "::error::missing cleaned CSV for ${GROUP}"
+              exit 1
+            }
+          done
 
       - name: Build combined daily CSV
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         run: |
-          TODAY=$(date +%Y%m%d)
+          TODAY=$(TZ=Asia/Seoul date +%Y%m%d)
           MERGE_INPUT_PATHS="exports/notices/cau/scholarship-notices-latest.cleaned.csv,exports/notices/ewha/scholarship-notices-latest.cleaned.csv,exports/notices/hanyang/scholarship-notices-latest.cleaned.csv,exports/notices/hongik/scholarship-notices-latest.cleaned.csv,exports/notices/khu/scholarship-notices-latest.cleaned.csv,exports/notices/korea/scholarship-notices-latest.cleaned.csv,exports/notices/skku/scholarship-notices-latest.cleaned.csv,exports/notices/uos/scholarship-notices-latest.cleaned.csv,exports/notices/yonsei/scholarship-notices-latest.cleaned.csv" \
           MERGE_OUTPUT_PATH="exports/notices/daily/scholarship-notices-daily-${TODAY}.csv" \
           npm run merge:notices
@@ -260,6 +180,7 @@ jobs:
           npm run merge:notices
 
       - name: Evaluate crawl quality
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         env:
           QUALITY_LOOKBACK_DAYS: "7"
           QUALITY_DAILY_DROP_RATIO: "0.5"
@@ -268,34 +189,41 @@ jobs:
         run: npm run evaluate:notices
 
       - name: Evaluate source health
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         env:
           HEALTH_LOOKBACK_DAYS: "7"
           HEALTH_CONSECUTIVE_ERROR_THRESHOLD: "3"
         run: npm run evaluate:source-health
 
       - name: Warn on quality regressions
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         run: |
           node -e "const fs=require('fs');const p='exports/notices/quality/quality-snapshot-latest.json';if(!fs.existsSync(p)){process.exit(0);}const s=JSON.parse(fs.readFileSync(p,'utf8'));const w=s.warnings||[];console.log('quality_warnings='+w.length);for(const item of w){console.log('::warning::'+item);}"
           node -e "const fs=require('fs');const p='exports/notices/quality/source-health-latest.json';if(!fs.existsSync(p)){process.exit(0);}const s=JSON.parse(fs.readFileSync(p,'utf8'));const total=s.totalCandidates||0;console.log('source_health_candidates='+total);for(const group of (s.perGroup||[])){for(const c of (group.candidates||[]).slice(0,5)){console.log('::warning::source unhealthy group='+group.group+' source='+c.sourceId+' streak='+c.consecutiveErrorDays+' error='+c.lastError);}}"
 
+      - name: Save quality and source health history
+        if: ${{ needs.crawl-by-university.result == 'success' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            exports/notices/quality
+            exports/notices/*/scholarship-notices-????????.json
+          key: crawler-quality-history-v1-${{ github.run_id }}
+
       - name: Ingest notices into Supabase
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         run: |
-          TODAY=$(date +%Y%m%d)
+          TODAY=$(TZ=Asia/Seoul date +%Y%m%d)
           npm run ingest:notices -- "exports/notices/daily/scholarship-notices-daily-${TODAY}.csv"
 
       - name: Summarize review feedback
-        if: always()
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           FEEDBACK_LOOKBACK_DAYS: "14"
         run: npm run feedback:notices
 
       - name: Send Slack summary
-        if: always()
+        if: ${{ needs.crawl-by-university.result == 'success' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           REPORT_JSON_PATHS: exports/notices/cau/scholarship-notices-latest.json,exports/notices/ewha/scholarship-notices-latest.json,exports/notices/hanyang/scholarship-notices-latest.json,exports/notices/hongik/scholarship-notices-latest.json,exports/notices/khu/scholarship-notices-latest.json,exports/notices/korea/scholarship-notices-latest.json,exports/notices/skku/scholarship-notices-latest.json,exports/notices/uos/scholarship-notices-latest.json,exports/notices/yonsei/scholarship-notices-latest.json
@@ -304,17 +232,18 @@ jobs:
           SLACK_PREVIEW_COUNT: "5"
         run: npm run notify:slack
 
-      - name: Save daily crawler state
-        if: ${{ always() && github.event.inputs.fresh_start != 'true' && github.event.inputs.ignore_seen != 'true' }}
-        uses: actions/cache/save@v4
-        with:
-          path: .crawler
-          key: crawler-daily-state-v2-${{ github.run_id }}
+      - name: Record incomplete crawl matrix
+        if: ${{ needs.crawl-by-university.result != 'success' }}
+        run: |
+          echo "crawl_matrix_result=${{ needs.crawl-by-university.result }}"
+          echo "ingestion_skipped=incomplete_university_results"
 
-      - name: Upload crawl artifacts
+      - name: Upload aggregate crawl artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: scholarship-notice-daily
           path: |
             exports/notices
             .crawler
+          if-no-files-found: warn

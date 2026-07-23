@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { Worker, isMainThread } from "node:worker_threads";
 import { load as loadHtml } from "cheerio";
 import { Agent as UndiciAgent } from "undici";
 import {
@@ -55,7 +56,8 @@ const DEFAULT_KEYWORDS = [
 ];
 
 // Input: "db:ewha" (preferred) or legacy CSV path like data/notice-sources-cau.csv
-const IS_MAIN = Boolean(process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url));
+const IS_MAIN = isMainThread
+  && Boolean(process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url));
 const CLI_ARGUMENTS = IS_MAIN
   ? parseCrawlerCheckpointArguments(process.argv.slice(2))
   : parseCrawlerCheckpointArguments([]);
@@ -77,6 +79,10 @@ const REQUEST_RETRY_JITTER_RATIO = Math.min(
   1,
   Math.max(0, Number(process.env.CRAWL_RETRY_JITTER_RATIO ?? 0.1)),
 );
+const SOURCE_EXECUTION_TIMEOUT_MS = Math.max(
+  REQUEST_TIMEOUT_MS,
+  Number(process.env.CRAWL_SOURCE_EXECUTION_TIMEOUT_MS ?? 180_000),
+);
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const DOCUMENT_PARSING_ENABLED = isDocumentParsingEnabled(process.env.CRAWL_DOCUMENT_PARSING_ENABLED);
 const DOCUMENT_CACHE_DIRECTORY = process.env.CRAWL_DOCUMENT_CACHE_DIRECTORY ?? ".tmp/engine-phase-3/cache";
@@ -92,6 +98,10 @@ const MAX_PAGES_PER_SOURCE = Math.max(
   Math.min(5, Number(process.env.CRAWL_MAX_PAGES_PER_SOURCE ?? 1)),
 );
 const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.CRAWL_SOURCE_CONCURRENCY ?? 1));
+// The worker owns its own rate limiter. Keep multi-source mode on the existing
+// shared limiter so its host-level concurrency contract remains unchanged.
+const SOURCE_EXECUTION_ISOLATION_ENABLED =
+  SOURCE_CONCURRENCY === 1 && process.env.CRAWL_SOURCE_EXECUTION_ISOLATION !== "false";
 const DETAIL_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_DETAIL_CONCURRENCY ?? 2)));
 const HOST_CONCURRENCY = Math.max(1, Math.min(16, Number(process.env.CRAWL_HOST_CONCURRENCY ?? 2)));
 const SOURCE_MIN_INTERVAL_MS = Math.max(0, Number(process.env.CRAWL_SOURCE_MIN_INTERVAL_MS ?? 250));
@@ -741,6 +751,132 @@ function formatKstDate(date = new Date()) {
     .replace(/-/g, "");
 }
 
+function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents) {
+  const finishedAt = new Date().toISOString();
+  const durationMs = Math.max(0, Date.now() - startedMs);
+  return {
+    source_key: source.sourceId,
+    source_id: source.sourceId,
+    source_name: source.sourceName,
+    strategy: getSourceAdapterStrategy(source),
+    result_status: "partial",
+    observed_count: 0,
+    notices: [],
+    total_attempt_count: 1,
+    attempt_history: [{
+      sequence: 1,
+      status: "partial",
+      retryable: false,
+      duration_ms: durationMs,
+      reason_code: "source_execution_timeout",
+      timeout: true,
+      item_count: 0,
+      started_at: startedAt,
+      finished_at: finishedAt,
+      error_summary: "Source execution exceeded its isolated hard timeout.",
+      retry_delay_ms: 0,
+    }],
+    retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+    total_retry_delay_ms: 0,
+    retried: false,
+    recovered_after_retry: false,
+    retry_exhausted: false,
+    duration_ms: durationMs,
+    started_at: startedAt,
+    finished_at: finishedAt,
+    final_reason_code: "source_execution_timeout",
+    final_error_summary: "Source execution exceeded its isolated hard timeout.",
+    execution_stage_evidence: {
+      source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
+      timed_out: true,
+      last_observed_stage: stageEvents.at(-1)?.stage ?? null,
+      stage_events: stageEvents,
+    },
+  };
+}
+
+async function executeSourceInWorker({ source, inventoryRows, completedWorkItemKeys, checkpointSession }) {
+  const startedAt = new Date().toISOString();
+  const startedMs = Date.now();
+  const stageEvents = [];
+  const worker = new Worker(new URL("../lib/crawler-engine/source-execution-worker.mjs", import.meta.url), {
+    workerData: {
+      source,
+      inventoryRows,
+      completedWorkItemKeys,
+      config: {
+        lookbackDays: LOOKBACK_DAYS,
+        allowUndated: ALLOW_UNDATED,
+        maxItems: MAX_ITEMS_PER_SOURCE,
+        maxPages: MAX_PAGES_PER_SOURCE,
+        fetchDetails: DETAIL_FETCH_ENABLED,
+        timeoutMs: REQUEST_TIMEOUT_MS,
+        retryCount: REQUEST_RETRY_COUNT,
+        retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
+        retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
+        retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+        detailConcurrency: DETAIL_CONCURRENCY,
+        sourceMinimumIntervalMs: SOURCE_MIN_INTERVAL_MS,
+        hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
+        hostConcurrency: HOST_CONCURRENCY,
+      },
+    },
+  });
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = async (value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      await worker.terminate().catch(() => {});
+      resolve(value);
+    };
+    const timer = setTimeout(() => {
+      void finish({
+        executionResult: buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents),
+        notices: [],
+        timedOut: true,
+      });
+    }, SOURCE_EXECUTION_TIMEOUT_MS);
+    worker.on("message", (message) => {
+      if (message?.type === "stage") {
+        stageEvents.push({
+          stage: cleanText(message.stage),
+          status: cleanText(message.status),
+          detail_url: cleanText(message.detail_url) || null,
+          observed_at: new Date().toISOString(),
+        });
+        if (stageEvents.length > 80) stageEvents.shift();
+      } else if (message?.type === "work_item") {
+        void checkpointSession?.recordWorkItem(message);
+      } else if (message?.type === "result") {
+        const executionResult = {
+          ...message.execution_result,
+          execution_stage_evidence: {
+            source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
+            timed_out: false,
+            last_observed_stage: stageEvents.at(-1)?.stage ?? null,
+            stage_events: stageEvents,
+          },
+        };
+        void finish({ executionResult, notices: message.notices ?? executionResult.notices ?? [], timedOut: false });
+      } else if (message?.type === "error") {
+        const error = new Error(cleanText(message.error?.message) || "source_worker_error");
+        error.code = cleanText(message.error?.code) || "source_worker_error";
+        void finish({ error, timedOut: false });
+      }
+    });
+    worker.on("error", (error) => void finish({ error, timedOut: false }));
+    worker.on("exit", (code) => {
+      if (!settled && code !== 0) {
+        const error = new Error(`source_worker_exit_${code}`);
+        error.code = "source_worker_exit";
+        void finish({ error, timedOut: false });
+      }
+    });
+  });
+}
+
 async function run({ signal } = {}) {
   const loaded = await loadSources(INPUT_ARG);
   const configuredSources = loaded.sources;
@@ -804,6 +940,8 @@ async function run({ signal } = {}) {
       retry_maximum_delay_ms: REQUEST_RETRY_MAX_DELAY_MS,
       retry_jitter_ratio: REQUEST_RETRY_JITTER_RATIO,
       timeout_ms: REQUEST_TIMEOUT_MS,
+      source_execution_isolation_enabled: SOURCE_EXECUTION_ISOLATION_ENABLED,
+      source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
       source_minimum_interval_ms: SOURCE_MIN_INTERVAL_MS,
       host_minimum_interval_ms: HOST_MIN_INTERVAL_MS,
       host_concurrency: HOST_CONCURRENCY,
@@ -823,9 +961,38 @@ async function run({ signal } = {}) {
     const sourceStartedMs = Date.now();
     let executionResult = null;
     try {
+      const workerResult = SOURCE_EXECUTION_ISOLATION_ENABLED
+        ? await executeSourceInWorker({
+          source,
+          inventoryRows,
+          completedWorkItemKeys: checkpointSession?.snapshot().completed_work_item_keys ?? [],
+          checkpointSession,
+        })
+        : null;
+      if (workerResult?.error) throw workerResult.error;
+      executionResult = workerResult?.executionResult ?? null;
+      if (workerResult && (workerResult.timedOut || !["success", "empty_observed", "partial"].includes(executionResult.result_status))) {
+        return {
+          sourceId: source.sourceId,
+          universitySlug: source.universitySlug,
+          universityId: source.universityId,
+          collegeId: source.collegeId,
+          departmentId: source.departmentId,
+          sourceLevel: source.sourceLevel,
+          collegeName: source.collegeName,
+          sourceName: source.sourceName,
+          adapterStrategy: getSourceAdapterStrategy(source),
+          error: executionResult.final_error_summary || executionResult.final_reason_code || executionResult.result_status,
+          detailItems: [],
+          matched: [],
+          executionResult,
+        };
+      }
+      let detailItems = workerResult?.notices ?? [];
+      if (!workerResult) {
       const listAdapter = getListAdapter(source.adapter);
       let listItems;
-      let detailItems = [];
+      detailItems = [];
       if (listAdapter) {
         // 어댑터 소스: 목록 API가 제목/날짜/본문 요약을 모두 제공하므로
         // 기본 HTML 파싱과 개별 상세 요청을 건너뜁니다.
@@ -931,6 +1098,7 @@ async function run({ signal } = {}) {
         }
         listItems = commonResult.notices;
         detailItems = commonResult.notices;
+      }
       }
       detailItems = detailItems.map((item) => ({
         ...item,
@@ -1197,6 +1365,8 @@ async function run({ signal } = {}) {
       documentParsingEnabled: documentRuntime.enabled,
       documentCacheDirectory: documentRuntime.enabled ? ".tmp/engine-phase-3/cache" : null,
       timeoutMs: REQUEST_TIMEOUT_MS,
+      sourceExecutionIsolationEnabled: SOURCE_EXECUTION_ISOLATION_ENABLED,
+      sourceExecutionTimeoutMs: SOURCE_EXECUTION_TIMEOUT_MS,
       retryCount: REQUEST_RETRY_COUNT,
       retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
       retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
