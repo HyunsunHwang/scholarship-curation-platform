@@ -36,14 +36,14 @@ const sample = JSON.parse(
 );
 
 const INTEREST_MAP = {
-  "기획/아이디어": "planning",
+  "기획/아이디어": "pm",
   "광고/마케팅": "marketing",
   "디자인": "design",
-  "영상/콘텐츠": "content",
-  "콘텐츠": "content",
-  "IT/개발": "dev",
-  "데이터": "data_ai",
-  "AI": "data_ai",
+  "영상/콘텐츠": "media",
+  "콘텐츠": "media",
+  "IT/개발": "dev_eng",
+  "데이터": "dev_eng",
+  "AI": "dev_eng",
 };
 
 function mapInterests(cats = []) {
@@ -52,8 +52,8 @@ function mapInterests(cats = []) {
     const id = INTEREST_MAP[c];
     if (id && !out.includes(id)) out.push(id);
   }
-  // CHAI is AI advertising — ensure data_ai + marketing + planning
-  for (const extra of ["planning", "marketing", "data_ai"]) {
+  // CHAI is AI advertising — ensure pm + marketing + dev_eng
+  for (const extra of ["pm", "marketing", "dev_eng"]) {
     if (!out.includes(extra)) out.push(extra);
   }
   return out;

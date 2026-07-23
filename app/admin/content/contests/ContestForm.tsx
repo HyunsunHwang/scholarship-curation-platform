@@ -225,7 +225,7 @@ export default function ContestForm({
           placeholder="예: 개인, 팀, 기업"
         />
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">관심 분야</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">관심 직무</label>
           <div className="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
             {INTEREST_CATEGORIES.map((cat) => (
               <label
