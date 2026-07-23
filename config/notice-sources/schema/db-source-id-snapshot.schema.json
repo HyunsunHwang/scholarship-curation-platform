@@ -7,7 +7,7 @@
     "capturedAt": { "type": "string", "minLength": 1 },
     "provenance": { "type": "string", "minLength": 1 },
     "parityStatus": { "type": "string", "enum": ["verified_from_db_read", "unverified_without_db_read"] },
-    "sourceIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "sourceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
     "sourceIdSetSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
   }
 }

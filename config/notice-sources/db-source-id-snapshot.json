@@ -1,7 +1,7 @@
 {
   "schemaVersion": "db-source-id-snapshot-v1",
   "capturedAt": "2026-07-23T00:00:00.000Z",
-  "provenance": "bootstrap_from_checked_in_csv:data\\notice-sources.csv",
+  "provenance": "bootstrap_from_checked_in_csv:data/notice-sources.csv",
   "parityStatus": "unverified_without_db_read",
   "sourceIds": [
     "cau_001",

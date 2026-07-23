@@ -5,8 +5,7 @@ import {
   buildNormalizedGraphPlan,
   summarizeGraphPlan,
 } from "../lib/post-phase-l/normalized-graph.mjs";
-import { resolveExactSourceKey } from "../lib/post-phase-l/source-resolver.mjs";
-import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
+import { resolveInputWithManifestRegistry } from "../lib/post-phase-l/source-resolver.mjs";
 import {
   assertPostPhaseLTarget,
   POST_PHASE_L_TARGET_PROJECT_REF,
@@ -15,7 +14,6 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const DEFAULT_INPUT = "fixtures/post-phase-l/pilot-fixture.json";
-const DEFAULT_INVENTORY = "docs/post-phase-l-schema-inventory.json";
 const DEFAULT_OUTPUT = "reports/post-phase-l-pilot-run.json";
 
 function parseArgs(argv) {
@@ -128,44 +126,6 @@ export function normalizePilotInput(input) {
       };
     }),
   };
-}
-
-function localResolve(input, inventory) {
-  const rows = inventory.pilot_sources.map((source) => ({
-    source_id: source.canonical_source_id,
-    source_name: source.source_name,
-  }));
-  return {
-    ...input,
-    source_results: input.source_results.map((result) => {
-      const resolution = resolveExactSourceKey(result.source_key, rows);
-      if (resolution.blocked) {
-        throw new Error(`Local exact source resolution blocked: ${resolution.reason}`);
-      }
-      return { ...result, source_id: resolution.source_id };
-    }),
-  };
-}
-
-function manifestResolve(input) {
-  const registry = loadNoticeSourceManifestRegistry();
-  const inventory = registry.sources.map((source) => ({
-    source_id: source.sourceId,
-    source_name: source.sourceName,
-    enabled: source.enabled,
-  }));
-  const resolved = [];
-  for (const result of input.source_results) {
-    const resolution = resolveExactSourceKey(result.source_key, inventory);
-    if (resolution.blocked) {
-      throw new Error(`Manifest exact source resolution blocked: ${resolution.reason}`);
-    }
-    if (resolution.source.enabled !== true) {
-      throw new Error(`Manifest source is disabled: ${result.source_key}`);
-    }
-    resolved.push({ ...result, source_id: resolution.source_id });
-  }
-  return { ...input, source_results: resolved, source_registry: registry.fingerprint };
 }
 
 async function upsertRows(supabase, table, rows, options) {
@@ -310,8 +270,7 @@ async function main() {
       },
       { requireApply: false },
     );
-    const inventory = readJson(args.inventory ?? DEFAULT_INVENTORY);
-    const input = localResolve(rawInput, inventory);
+    const input = resolveInputWithManifestRegistry(rawInput);
     const plan = buildNormalizedGraphPlan(input, {
       targetProjectRef: POST_PHASE_L_TARGET_PROJECT_REF,
     });
@@ -325,6 +284,11 @@ async function main() {
       target_project_ref_match: guard.target_project_ref_match,
       production_ref_detected: guard.production_ref_detected,
       source_keys: input.source_results.map((row) => row.source_key),
+      source_registry: input.source_registry,
+      source_registry_resolution_mode: input.source_registry_resolution_mode,
+      exact_source_resolution_passed: input.exact_source_resolution_passed,
+      fuzzy_source_match_count: input.fuzzy_source_match_count,
+      automatic_source_create_count: input.automatic_source_create_count,
       graph_counts: summarizeGraphPlan(plan),
       plan,
     };
@@ -365,7 +329,7 @@ async function main() {
     return;
   }
 
-  const input = manifestResolve(rawInput);
+  const input = resolveInputWithManifestRegistry(rawInput);
   const plan = buildNormalizedGraphPlan(input, {
     targetProjectRef: guard.target_project_ref,
   });

@@ -49,7 +49,23 @@ export async function compareNoticeSourceManifestsWithDb({ outputDirectory = roo
     const dbGroup = dbSources.filter((source) => source.universitySlug === group);
     byGroup.set(group, compareCanonicalSources(manifestGroup, dbGroup));
   }
-  const combined = { generated_at: new Date().toISOString(), mode: "read_only_db_parity", source_registry: registry.fingerprint, ...report, parity_passed: Object.values(report.summary).every((count) => count === 0) };
+  const manifestSourceLevels = [...new Set(registry.sources.map((source) => source.sourceLevel))].sort();
+  const dbSourceLevels = [...new Set(dbSources.map((source) => source.sourceLevel))].sort();
+  const unsupportedManifestSourceLevels = manifestSourceLevels.filter((level) => !dbSourceLevels.includes(level));
+  const combined = {
+    generated_at: new Date().toISOString(),
+    mode: "read_only_db_parity",
+    source_registry: registry.fingerprint,
+    source_level_compatibility: {
+      checked_via: "notice_sources.source_level SELECT",
+      manifest_source_levels: manifestSourceLevels,
+      db_source_levels: dbSourceLevels,
+      unsupported_manifest_source_levels: unsupportedManifestSourceLevels,
+      compatible: unsupportedManifestSourceLevels.length === 0,
+    },
+    ...report,
+    parity_passed: Object.values(report.summary).every((count) => count === 0) && unsupportedManifestSourceLevels.length === 0,
+  };
   fs.mkdirSync(outputDirectory, { recursive: true });
   fs.writeFileSync(path.join(outputDirectory, "combined.json"), `${JSON.stringify(combined, null, 2)}\n`, "utf8");
   for (const [group, groupReport] of byGroup) fs.writeFileSync(path.join(outputDirectory, `${group}.json`), `${JSON.stringify(groupReport, null, 2)}\n`, "utf8");

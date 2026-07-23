@@ -24,6 +24,17 @@ const SOURCE_FIELDS = Object.freeze([
 
 function stableJson(value) { return `${JSON.stringify(value, null, 2)}\n`; }
 
+export function canonicalRepositoryPath(filePath, { repositoryRoot = path.resolve(".") } = {}) {
+  const root = path.resolve(repositoryRoot);
+  const resolved = path.resolve(filePath);
+  const relative = path.relative(root, resolved);
+  if (!relative || relative === ".") return ".";
+  if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error(`CSV bootstrap path must be inside repository: ${filePath}`);
+  }
+  return relative.split(path.sep).join("/");
+}
+
 function normalizedSource(source) {
   const mapped = mapRawSource(source);
   return Object.fromEntries(SOURCE_FIELDS.map((key) => [key, mapped[key]]));
@@ -87,10 +98,10 @@ function changedFileCount(files, rootDirectory) {
 export async function exportNoticeSourceManifests({ fromCsv, check = false, rootDirectory = NOTICE_SOURCE_MANIFEST_ROOT, env = process.env } = {}) {
   const sourceMode = fromCsv ? "csv_bootstrap" : "db_read_only";
   const rawSources = fromCsv
-    ? readSourceConfigFromCsv(fromCsv)
+    ? readSourceConfigFromCsv(fromCsv, { includeDisabled: true })
     : await readSourceConfigFromDb({ env, includeDisabled: true });
   const files = buildFiles(rawSources, fromCsv
-    ? { provenance: `bootstrap_from_checked_in_csv:${path.normalize(fromCsv)}`, parityStatus: "unverified_without_db_read" }
+    ? { provenance: `bootstrap_from_checked_in_csv:${canonicalRepositoryPath(fromCsv)}`, parityStatus: "unverified_without_db_read" }
     : { provenance: "read_only_select:public.notice_sources", parityStatus: "verified_from_db_read" });
   const changedFileCountValue = changedFileCount(files, rootDirectory);
   if (!check) writeFiles(files, rootDirectory);

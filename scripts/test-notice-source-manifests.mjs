@@ -3,10 +3,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadSources, mapRawSource, parseSourceInput, readSourceConfigFromCsv } from "../lib/notice-sources-loader.mjs";
+import { loadSources, mapRawSource, parseSourceInput, readSourceConfigFromCsv, readSourceConfigFromDb } from "../lib/notice-sources-loader.mjs";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 import { readManifestJson, sha256Canonical, validateNoticeSourceManifests } from "../lib/notice-source-manifest-validator.mjs";
 import { buildCrawlerReport } from "../lib/crawler-engine/runtime-diagnostics/report-builder.mjs";
+import { canonicalRepositoryPath, exportNoticeSourceManifests } from "./export-notice-source-manifests.mjs";
+import { compareCanonicalSources } from "./compare-notice-source-manifests-with-db.mjs";
+import { resolveInputWithManifestRegistry } from "../lib/post-phase-l/source-resolver.mjs";
 
 const root = path.resolve("config/notice-sources");
 let passed = 0;
@@ -28,6 +31,41 @@ await test("missing and malformed manifest files fail closed", () => {
 });
 await test("deterministic ordering and hashes", () => { const first = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); const second = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); assert.deepEqual(first.sources.map((source) => source.sourceId), first.sources.map((source) => source.sourceId).slice().sort()); assert.equal(first.fingerprint.manifestSha256, second.fingerprint.manifestSha256); assert.equal(sha256Canonical(first.sources), sha256Canonical(second.sources)); });
 await test("CSV and manifest produce identical canonical SourceConfig rows", () => { const csv = readSourceConfigFromCsv("data/notice-sources.csv").sort((a, b) => a.sourceId.localeCompare(b.sourceId)); const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource); assert.deepEqual(manifest, csv); });
+await test("CSV includeDisabled preserves disabled rows only when requested", () => {
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-csv-"));
+  const csvPath = path.join(temporary, "sources.csv");
+  fs.writeFileSync(csvPath, "source_id,source_name,list_url,enabled\newha_001,Enabled,https://example.test,true\newha_002,Disabled,https://example.test,false\n", "utf8");
+  try {
+    assert.deepEqual(readSourceConfigFromCsv(csvPath).map((source) => source.sourceId), ["ewha_001"]);
+    assert.deepEqual(readSourceConfigFromCsv(csvPath, { includeDisabled: true }).map((source) => source.sourceId), ["ewha_001", "ewha_002"]);
+  } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
+});
+await test("DB loader mock preserves disabled rows only when requested", async () => {
+  const rows = [
+    { source_id: "ewha_001", source_name: "Enabled", list_url: "https://example.test", enabled: true },
+    { source_id: "ewha_002", source_name: "Disabled", list_url: "https://example.test", enabled: false },
+  ];
+  const createClientFactory = () => ({ from: () => {
+    const query = {
+      select: () => query,
+      order: () => query,
+      eq: () => query,
+      range: () => query,
+      then: (resolve) => resolve({ data: rows, error: null }),
+    };
+    return query;
+  } });
+  const options = { env: { SUPABASE_URL: "https://example.supabase.co", SUPABASE_SERVICE_ROLE_KEY: "test" }, createClientFactory };
+  assert.deepEqual((await readSourceConfigFromDb(options)).map((source) => source.sourceId), ["ewha_001"]);
+  assert.deepEqual((await readSourceConfigFromDb({ ...options, includeDisabled: true })).map((source) => source.sourceId), ["ewha_001", "ewha_002"]);
+});
+await test("parity detects disabled source mismatch and missing disabled sources", () => {
+  const enabled = mapRawSource({ sourceId: "ewha_001", sourceName: "Enabled", listUrl: "https://example.test", enabled: true });
+  const disabled = mapRawSource({ sourceId: "ewha_002", sourceName: "Disabled", listUrl: "https://example.test", enabled: false });
+  assert.equal(compareCanonicalSources([enabled], [enabled, disabled]).summary.missing_in_manifest_count, 1);
+  assert.equal(compareCanonicalSources([enabled, disabled], [enabled]).summary.missing_in_db_count, 1);
+  assert.equal(compareCanonicalSources([enabled], [{ ...enabled, enabled: false }]).summary.enabled_mismatch_count, 1);
+});
 await test("duplicate IDs, invalid URL, regex, prefix, slug, adapter, required enabled values and snapshot misses fail validation", () => {
   const fixture = manifests(); const source = fixture.manifests[0].sources[0];
   const variants = [
@@ -43,6 +81,48 @@ await test("duplicate IDs, invalid URL, regex, prefix, slug, adapter, required e
     (value) => { value.snapshot.sourceIds = value.snapshot.sourceIds.filter((id) => id !== source.sourceId); },
   ];
   for (const mutate of variants) { const value = structuredClone(fixture); mutate(value); assert.equal(validateNoticeSourceManifests(value).valid, false); }
+});
+await test("snapshot invariants, manifest version, and keyword normalization fail closed", () => {
+  const fixture = manifests();
+  const variants = [
+    (value) => { value.snapshot.sourceIds.splice(1, 0, value.snapshot.sourceIds[0]); },
+    (value) => { [value.snapshot.sourceIds[0], value.snapshot.sourceIds[1]] = [value.snapshot.sourceIds[1], value.snapshot.sourceIds[0]]; },
+    (value) => { value.snapshot.sourceIdSetSha256 = "0".repeat(64); },
+    (value) => { value.manifests[0].manifestVersion = "2026-07-23.2"; },
+    (value) => { value.manifests[0].sources[0].keywords = [" keyword "]; },
+  ];
+  for (const mutate of variants) { const value = structuredClone(fixture); mutate(value); assert.equal(validateNoticeSourceManifests(value).valid, false); }
+});
+await test("CSV provenance uses deterministic repository POSIX paths", async () => {
+  assert.equal(canonicalRepositoryPath(path.join(path.resolve("."), "data", "notice-sources.csv")), "data/notice-sources.csv");
+  assert.equal(canonicalRepositoryPath("data/notice-sources.csv"), "data/notice-sources.csv");
+  const result = await exportNoticeSourceManifests({ fromCsv: "data/notice-sources.csv", check: true });
+  assert.equal(result.changedFileCount, 0);
+});
+await test("Post-Phase L dry-run and apply share manifest exact resolution", () => {
+  const input = { source_results: [{ source_key: "ewha_003" }] };
+  const dryRun = resolveInputWithManifestRegistry(input);
+  const apply = resolveInputWithManifestRegistry(input);
+  assert.deepEqual(dryRun, apply);
+  assert.equal(dryRun.source_registry_resolution_mode, "manifest_exact");
+  assert.equal(dryRun.fuzzy_source_match_count, 0);
+  assert.equal(dryRun.automatic_source_create_count, 0);
+  assert.throws(() => resolveInputWithManifestRegistry({ source_results: [{ source_key: "missing_999" }] }), /Manifest exact source resolution blocked/);
+});
+await test("Post-Phase L rejects a disabled manifest source in both paths", () => {
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-registry-"));
+  const temporaryRoot = path.join(temporary, "notice-sources");
+  fs.cpSync(root, temporaryRoot, { recursive: true });
+  try {
+    const filePath = path.join(temporaryRoot, "universities", "ewha.json");
+    const manifest = readManifestJson(filePath);
+    const source = manifest.sources.find((item) => item.sourceId === "ewha_003");
+    source.enabled = false;
+    fs.writeFileSync(filePath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+    const input = { source_results: [{ source_key: "ewha_003" }] };
+    assert.throws(() => resolveInputWithManifestRegistry(input, { manifestRoot: temporaryRoot }), /Manifest source is disabled/);
+    assert.throws(() => resolveInputWithManifestRegistry(input, { manifestRoot: temporaryRoot }), /Manifest source is disabled/);
+  } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 });
 await test("actual source files are deterministic UTF-8 JSON", () => { for (const group of manifests().index.groups) assert.doesNotThrow(() => JSON.parse(fs.readFileSync(path.join(root, group.path), "utf8"))); });
 await test("runtime report includes an additive manifest fingerprint", () => {
