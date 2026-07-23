@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ScholarshipDashboard from "@/components/ScholarshipDashboard";
+import SiteFooter from "@/components/SiteFooter";
 import { createClient } from "@/lib/supabase/server";
 import { loadMatchedPageData } from "@/lib/matched-data";
 import { getBookmarkedScholarshipIds } from "@/lib/user-bookmarks";
@@ -153,19 +154,7 @@ export default async function MatchedPage({
         )}
       </main>
 
-      <footer className="border-t border-gray-200 bg-white py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-gray-600">
-            문의 메일:{" "}
-            <a
-              href="mailto:hyunsun4819@gmail.com"
-              className="font-medium text-brand hover:underline"
-            >
-              hyunsun4819@gmail.com
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

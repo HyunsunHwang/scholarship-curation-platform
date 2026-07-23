@@ -14,6 +14,7 @@ import BenefitHighlights from "@/components/BenefitHighlights";
 import ViewCountIncrementer from "./ViewCountIncrementer";
 import RecentViewTracker from "@/components/RecentViewTracker";
 import LiveEngagementBadges from "./LiveEngagementBadges";
+import SiteFooter from "@/components/SiteFooter";
 import {
   getScholarshipQualMatch,
   hasAutoCheckableQualifications,
@@ -337,19 +338,10 @@ export default async function ScholarshipDetailPage({
         contentKind="scholarship"
       />
 
-      <footer className="mt-12 hidden border-t border-gray-100 bg-white py-8 md:block">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-ink/60">
-            문의 메일:{" "}
-            <a
-              href="mailto:hyunsun4819@gmail.com"
-              className="font-medium text-brand hover:underline"
-            >
-              hyunsun4819@gmail.com
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter
+        className="mt-12 hidden md:block"
+        contentClassName="max-w-6xl"
+      />
     </div>
   );
 }

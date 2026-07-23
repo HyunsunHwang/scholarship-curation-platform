@@ -9,6 +9,7 @@ import HomeGuestSections from "@/components/home/HomeGuestSections";
 import { HomePersonalizationShelfFallback } from "@/components/skeletons/HomeLoadingSkeleton";
 import NavbarSkeleton from "@/components/skeletons/NavbarSkeleton";
 import type { CardScholarship } from "@/components/ScholarshipCard";
+import SiteFooter from "@/components/SiteFooter";
 import { getCachedHomeScholarships, getCachedHomeContests } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -75,15 +76,7 @@ export default async function Home({
           />
         </main>
       </HomeSearchRoot>
-      <footer className="shrink-0 border-t border-gray-200/80 bg-white px-4 py-2.5 text-center text-xs text-ink/50">
-        문의:{" "}
-        <a
-          href="mailto:hyunsun4819@gmail.com"
-          className="font-medium text-brand hover:underline"
-        >
-          hyunsun4819@gmail.com
-        </a>
-      </footer>
+      <SiteFooter className="shrink-0" />
     </div>
   );
 }
