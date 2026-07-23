@@ -279,6 +279,101 @@ assert.equal(
   integrationResult.candidate_detection.detail_fetch_completed_count,
 );
 
+let diagnosticProbeRequestCount = 0;
+const noCandidateItems = [
+  {
+    sourceId: "probe_source",
+    sourceName: "Probe source",
+    noticeUrl: "https://example.edu/probe/first",
+    title: "일반 공지",
+    dateText: "2026.07.20",
+  },
+  {
+    sourceId: "probe_source",
+    sourceName: "Probe source",
+    noticeUrl: "https://example.edu/probe/last",
+    title: "행사 안내",
+    dateText: "2026.07.20",
+  },
+];
+const diagnosticProbeResult = await runCommonCrawlerSource({
+  source: { sourceId: "probe_source", sourceName: "Probe source", listUrl: "https://example.edu/probe" },
+  inventoryRows: [{ source_id: "probe_source" }],
+  strategy: {
+    name: "probe-fixture",
+    buildListRequest: ({ listUrl }) => ({ url: listUrl, kind: "list" }),
+    parseList: () => noCandidateItems,
+    resolveDetailUrl: ({ item }) => item.noticeUrl,
+    buildDetailRequest: ({ item }) => ({ url: item.noticeUrl, kind: "detail" }),
+    parseDetail: () => ({ content: "A readable non-scholarship detail body for diagnostics." }),
+    normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
+  },
+  fetchHtml: async (_url, request) => {
+    if (request.kind === "detail") diagnosticProbeRequestCount += 1;
+    return "<html></html>";
+  },
+  fetchDetails: true,
+  candidateDetector: detectScholarshipCandidate,
+  detailFetchPlanner: buildDetailFetchPlan,
+  candidateDetectionOptions: {
+    keywords: DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: 31,
+    allowUndated: false,
+    now,
+  },
+});
+assert.equal(diagnosticProbeRequestCount, 1);
+assert.equal(diagnosticProbeResult.notices.length, 0);
+assert.equal(diagnosticProbeResult.result_status, "success");
+assert.equal(diagnosticProbeResult.candidate_detection.diagnostic_detail_probe_planned_count, 1);
+assert.equal(diagnosticProbeResult.candidate_detection.requests_avoided_by_preliminary_filter, 1);
+assert.deepEqual(diagnosticProbeResult.diagnostic_detail_probe, {
+  observation_key: "https://example.edu/probe/last",
+  selection_reason: "last_non_candidate_list_observation",
+  notice_url: "https://example.edu/probe/last",
+  status: "success",
+  detail_result_status: null,
+  detail_transport_error_code: null,
+  detail_transport_error_category: null,
+  detail_transport_error_retryable: null,
+  detail_content_extracted: true,
+  detail_content_char_count: 55,
+  error: null,
+});
+
+const failedDiagnosticProbeResult = await runCommonCrawlerSource({
+  source: { sourceId: "probe_failure", sourceName: "Probe failure", listUrl: "https://example.edu/probe-failure" },
+  inventoryRows: [{ source_id: "probe_failure" }],
+  strategy: {
+    name: "probe-failure-fixture",
+    buildListRequest: ({ listUrl }) => ({ url: listUrl, kind: "list" }),
+    parseList: () => noCandidateItems.map((item) => ({ ...item, noticeUrl: item.noticeUrl.replace("/probe/", "/probe-failure/") })),
+    resolveDetailUrl: ({ item }) => item.noticeUrl,
+    buildDetailRequest: ({ item }) => ({ url: item.noticeUrl, kind: "detail" }),
+    normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
+  },
+  fetchHtml: async (_url, request) => {
+    if (request.kind === "detail") throw Object.assign(new Error("HTTP 403"), { status: 403 });
+    return "<html></html>";
+  },
+  fetchDetails: true,
+  candidateDetector: detectScholarshipCandidate,
+  detailFetchPlanner: buildDetailFetchPlan,
+  candidateDetectionOptions: {
+    keywords: DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: 31,
+    allowUndated: false,
+    now,
+  },
+});
+assert.equal(failedDiagnosticProbeResult.result_status, "partial");
+assert.equal(failedDiagnosticProbeResult.notices.length, 0);
+assert.equal(failedDiagnosticProbeResult.item_summary.failed_count, 1);
+assert.equal(failedDiagnosticProbeResult.item_summary.successful_count, 0);
+assert.equal(failedDiagnosticProbeResult.item_summary.diagnostic_detail_probe_attempted, 1);
+assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.status, "failed");
+assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.detail_result_status, "network_error");
+
 const candidateDiagnostics = buildCandidateDetectionDiagnostics([
   {
     sourceId: "normal_zero",

@@ -657,6 +657,35 @@ test("multiple operational codes are retained with deterministic primary priorit
   assert.equal(row.operational_codes.includes("PAGINATION_UNVERIFIED"), true);
 });
 
+test("non-candidate diagnostic detail probe makes unreachable details observable", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "diagnostic_detail_probe" },
+    executionResult: {
+      result_status: "partial",
+      observed_count: 8,
+      diagnostic_detail_probe: {
+        status: "failed",
+        detail_result_status: "http_error",
+        error: "HTTP 403",
+        detail_content_extracted: false,
+        detail_content_char_count: 0,
+      },
+    },
+    notices: [],
+    filterMetrics: {
+      observed_count: 8,
+      keyword_match_count: 0,
+      date_match_count: 0,
+    },
+    matchedCount: 0,
+  });
+  assert.equal(row.capability_status, "list_supported_detail_failed");
+  assert.equal(row.metrics.diagnostic_detail_probe_attempted_count, 1);
+  assert.equal(row.metrics.diagnostic_detail_probe_failure_count, 1);
+  assert.equal(row.metrics.detail_fetch_failure_count, 1);
+  assert.equal(row.operational_codes.includes("DETAIL_FETCH_FAILED"), true);
+});
+
 test("contamination leaks and rate nullability are explicit", () => {
   const contaminated = analyzeOperationalCrawlerSource({
     source: { sourceId: "contaminated" },
