@@ -29,7 +29,7 @@ const GuestShelfCard = memo(function GuestShelfCard({
   return <ScholarshipCard scholarship={scholarship} />;
 });
 
-/* ── 분야별 인기 공고 ──────────────────────────────────────── */
+/* ── 직무별 인기 공고 ──────────────────────────────────────── */
 
 const FINDER_SHELF_LIMIT = 16;
 const FINDER_CHIP_MIN_ITEMS = 4;
@@ -75,7 +75,7 @@ function GuestInterestRail({
     >
       <HomeSectionTitle
         id="guest-interest-heading"
-        title="분야별 인기 공고"
+        title="직무별 인기 공고"
         href="/browse"
       />
 
@@ -269,7 +269,7 @@ function GuestRailSection({
 /* ── 진입점 ───────────────────────────────────────────────── */
 
 /**
- * 비로그인 홈: 마감 임박 → 분야별 인기 → 종류별 레일, 사이에 가입 안내 한 줄.
+ * 비로그인 홈: 마감 임박 → 직무별 인기 → 종류별 레일, 사이에 가입 안내 한 줄.
  * 로그인 시 이 자리에는 HomePersonalization*이 들어간다.
  */
 export default function HomeGuestSections({

@@ -96,7 +96,7 @@ const PARENT_OCCUPATION_OPTIONS = [
   "경찰/소방관", "택배기사", "환경미화원", "연극인", "외국인 근로자",
 ];
 const MILITARY_STATUS_OPTIONS = ["군필", "미필", "비대상", "면제"];
-const STEPS = ["인적사항", "학적사항", "재정/가계", "기타/특수", "관심분야"];
+const STEPS = ["인적사항", "학적사항", "재정/가계", "기타/특수", "관심 직무"];
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────
 function formatPhone(value: string) {
@@ -736,7 +736,7 @@ function Step4({ form, toggleArray, update }: {
   );
 }
 
-// ── Step 5: 관심분야 (건너뛰기 가능, 최대 5개) ────────────────────────────
+// ── Step 5: 관심 직무 (건너뛰기 가능, 최대 5개) ───────────────────────────
 function Step5({ form, toggleInterest }: {
   form: OnboardingFormData;
   toggleInterest: (id: InterestCategoryId) => void;
@@ -746,14 +746,14 @@ function Step5({ form, toggleInterest }: {
     <div className="flex flex-col gap-5">
       <div>
         <p className="text-sm text-ink/70">
-          관심 있는 분야를 골라주세요. 공모전·대외활동·교육·장학금 추천에 활용됩니다.
+          관심 있는 직무를 골라주세요. 공모전·대외활동·교육·장학금 추천에 활용됩니다.
         </p>
         <p className="mt-1 text-xs text-gray-400">
           최대 {INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요. 건너뛰어도 인기·마감임박 추천은 받을 수 있습니다.
         </p>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">관심 분야</span>
+        <span className="text-sm font-medium text-gray-700">관심 직무</span>
         <span className={`text-xs font-medium ${
           selectedCount >= INTEREST_CATEGORY_MAX ? "text-brand" : "text-ink/40"
         }`}>
@@ -849,7 +849,7 @@ function validateStep(step: number, form: OnboardingFormData): string {
   if (step === 2) {
     if (!form.income_level) return "소득분위를 선택해주세요.";
   }
-  // step 3 (기타/특수), step 4 (관심분야): 모두 선택 사항 — 검증 없음
+  // step 3 (기타/특수), step 4 (관심 직무): 모두 선택 사항 — 검증 없음
   return "";
 }
 
@@ -903,7 +903,7 @@ export default function OnboardingPageClient({
     });
     setErrorMsg((prevErr) => {
       // clear max-limit message when toggling; chips already disable at limit
-      if (prevErr.startsWith("관심 분야는 최대")) return "";
+      if (prevErr.startsWith("관심 직무는 최대")) return "";
       return prevErr;
     });
   };

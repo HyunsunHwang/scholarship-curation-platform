@@ -89,7 +89,7 @@ export type OnboardingFormData = {
   special_info: string[];
   parent_occupation: string[];
   military_status: string;
-  /** 관심 분야 태그 ID (건너뛰기 시 빈 배열). 최대 INTEREST_CATEGORY_MAX개 */
+  /** 관심 직무 대분류 ID (건너뛰기 시 빈 배열). 최대 INTEREST_CATEGORY_MAX개 */
   interest_categories: InterestCategoryId[];
 };
 
@@ -468,12 +468,12 @@ function validateProfile(data: OnboardingFormData): string | null {
     return "직전학기 이수학점은 0 ~ 30 사이로 입력해주세요.";
   }
 
-  // 관심 분야: 선택 사항. 비어 있어도 OK. 알 수 없는 id / 최대 개수만 검증.
+  // 관심 직무: 선택 사항. 비어 있어도 OK. 알 수 없는 id / 최대 개수만 검증.
   if (data.interest_categories.length > INTEREST_CATEGORY_MAX) {
-    return `관심 분야는 최대 ${INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요.`;
+    return `관심 직무는 최대 ${INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요.`;
   }
   if (data.interest_categories.some((id) => !isInterestCategoryId(id))) {
-    return "관심 분야 값이 올바르지 않습니다.";
+    return "관심 직무 값이 올바르지 않습니다.";
   }
 
   return null;

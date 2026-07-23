@@ -210,7 +210,7 @@ export interface Database {
           special_info: SpecialInfoType[] | null;
           parent_occupation: ParentOccupationType[] | null;
           military_status: MilitaryStatusType | null;
-          /** 관심 분야 태그 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
+          /** 관심 직무 대분류 태그 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
           interest_categories: string[] | null;
           // 프로필(스펙) 소개
           headline: string | null;
@@ -285,6 +285,14 @@ export interface Database {
           start_date: string | null;
           end_date: string | null;
           is_current: boolean;
+          /** STAR: 내가 맡은 역할 (Situation/Task) */
+          star_role: string | null;
+          /** STAR: 구체적으로 어떻게 했는지 (Action) */
+          star_action: string | null;
+          /** STAR: 결과·수치 (Result) */
+          star_result: string | null;
+          /** 결과물 첨부 (링크·파일). 담당자 카드/공유 노출용 */
+          artifacts: import("@/lib/profile-artifacts").SpecArtifact[];
           sort_order: number;
           created_at: string;
           updated_at: string;
@@ -299,6 +307,10 @@ export interface Database {
           start_date?: string | null;
           end_date?: string | null;
           is_current?: boolean;
+          star_role?: string | null;
+          star_action?: string | null;
+          star_result?: string | null;
+          artifacts?: import("@/lib/profile-artifacts").SpecArtifact[];
           sort_order?: number;
           created_at?: string;
           updated_at?: string;
@@ -672,7 +684,7 @@ export interface Database {
           targets: string[] | null;
           benefits: string[] | null;
           apply_types: string[] | null;
-          /** lib/interestCategories.ts 고정 ID */
+          /** lib/interestCategories.ts 관심 직무 대분류 ID */
           interest_categories: string[] | null;
           /** contest | education | activity */
           content_kind: "contest" | "education" | "activity";

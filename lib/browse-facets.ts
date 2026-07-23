@@ -1,6 +1,6 @@
 /**
  * 탐색 목록 세부 필터 — 실제 DB 값에 맞춘 택소노미.
- * (관심분야·혜택·주최기관 + 검색. 참여대상은 대학생 전용으로 고정되어 UI에서 제외)
+ * (관심 직무·혜택·주최기관 + 검색. 참여대상은 대학생 전용으로 고정되어 UI에서 제외)
  */
 
 import {
@@ -266,7 +266,7 @@ export function facetTabsFor(
   const isScholarship = kind === "scholarship";
 
   return [
-    { key: "interest", label: "관심분야" },
+    { key: "interest", label: "관심 직무" },
     {
       key: "benefit",
       label: isScholarship ? "지원유형" : "활동혜택",

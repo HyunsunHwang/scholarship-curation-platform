@@ -5,7 +5,8 @@ import HomeSearchRoot from "@/components/home/HomeSearchRoot";
 import SpotifyTopNav from "@/components/home/SpotifyTopNav";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import ProfileSpecBoard from "@/components/profile/ProfileSpecBoard";
-import { SPEC_SECTIONS, type SpecItem } from "@/lib/profile-spec";
+import { SPEC_SECTIONS, coerceSpecItem } from "@/lib/profile-spec";
+import { normalizeInterestCategories } from "@/lib/interestCategories";
 import { resolveNavUserContext } from "@/lib/nav-user-context";
 
 function enrollmentBadge(status: string | null, academicYear: number | null): string {
@@ -28,14 +29,14 @@ export default async function MyPage() {
     supabase
       .from("profiles")
       .select(
-        "name, email, headline, bio, skills, school_name, department, academic_year, enrollment_status"
+        "name, email, headline, bio, interest_categories, school_name, department, academic_year, enrollment_status"
       )
       .eq("id", user.id)
       .single(),
     supabase
       .from("profile_spec_items")
       .select(
-        "id, item_type, title, organization, description, start_date, end_date, is_current"
+        "id, item_type, title, organization, description, start_date, end_date, is_current, star_role, star_action, star_result, artifacts"
       )
       .eq("user_id", user.id)
       .order("sort_order", { ascending: true })
@@ -44,7 +45,9 @@ export default async function MyPage() {
     resolveNavUserContext(user),
   ]);
 
-  const specItems = (specItemsResult.data ?? []) as SpecItem[];
+  const specItems = (specItemsResult.data ?? []).map((row) =>
+    coerceSpecItem(row as Parameters<typeof coerceSpecItem>[0])
+  );
 
   const displayName = profile?.name ?? user.email ?? "";
   const schoolLine = [profile?.school_name, profile?.department]
@@ -55,14 +58,18 @@ export default async function MyPage() {
     profile?.academic_year ?? null
   );
 
-  // 프로필 완성도: 소개 3항목 + 섹션별 1개 이상
+  const interestCategories = normalizeInterestCategories(
+    profile?.interest_categories ?? null
+  );
+
+  // 프로필 완성도: 소개 3항목(한줄·소개·관심직무) + 섹션별 1개 이상
   const filledSections = SPEC_SECTIONS.filter((s) =>
     specItems.some((item) => item.item_type === s.type)
   ).length;
   const introFilled =
     Number(Boolean(profile?.headline)) +
     Number(Boolean(profile?.bio)) +
-    Number((profile?.skills ?? []).length > 0);
+    Number(interestCategories.length > 0);
   const completeness = Math.round(
     ((introFilled + filledSections) / (3 + SPEC_SECTIONS.length)) * 100
   );
@@ -124,7 +131,7 @@ export default async function MyPage() {
               intro={{
                 headline: profile?.headline ?? null,
                 bio: profile?.bio ?? null,
-                skills: profile?.skills ?? null,
+                interest_categories: interestCategories,
               }}
               items={specItems}
             />

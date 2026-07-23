@@ -1007,7 +1007,7 @@ async function callAnthropic(params: {
   return { content: textBlock };
 }
 
-async function callLlm(params: {
+export async function callLlm(params: {
   systemPrompt: string;
   userPrompt: string;
   jsonObject?: boolean;
