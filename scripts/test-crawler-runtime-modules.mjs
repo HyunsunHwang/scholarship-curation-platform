@@ -13,6 +13,10 @@ import {
   sanitizeCrawlerError,
   validateCrawlerRunSummary,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
+import {
+  parseInsecureTlsHostAllowlist,
+  shouldAllowInsecureTls,
+} from "./crawl-scholarship-notices.mjs";
 
 let passed = 0;
 function test(name, fn) {
@@ -20,6 +24,13 @@ function test(name, fn) {
   passed += 1;
   console.log(`PASS ${name}`);
 }
+
+test("insecure TLS is limited to the explicit HTTPS host allowlist", () => {
+  const hosts = parseInsecureTlsHostAllowlist("econ.cau.ac.kr, hyurban.hanyang.ac.kr");
+  assert.equal(shouldAllowInsecureTls("https://econ.cau.ac.kr/news/notice/", hosts), true);
+  assert.equal(shouldAllowInsecureTls("https://other.cau.ac.kr/", hosts), false);
+  assert.equal(shouldAllowInsecureTls("http://econ.cau.ac.kr/news/notice/", hosts), false);
+});
 
 test("failure analyzer treats cancellation, empty, and unknown status safely", () => {
   assert.equal(classifyCrawlerFailure({ code: "cancelled" }, "network_error", {
@@ -60,6 +71,26 @@ test("failure analyzer preserves safe nested transport evidence and aggregates i
   assert.equal(normalizeTransportErrorCode("connect ECONNREFUSED 10.0.0.1"), null);
   assert.equal(isRetryableTransportErrorCode("ECONNRESET"), true);
   assert.equal(isRetryableTransportErrorCode("ENOTFOUND"), false);
+  assert.deepEqual(
+    extractSafeCrawlerErrorEvidence(new TypeError("fetch failed", {
+      cause: new Error("Response does not match the HTTP/1.1 protocol (Invalid header token)"),
+    })),
+    {
+      transport_error_code: "INVALID_HTTP_RESPONSE",
+      transport_error_category: "http_protocol",
+      transport_error_retryable: false,
+    },
+  );
+  assert.deepEqual(
+    extractSafeCrawlerErrorEvidence(new TypeError("fetch failed", {
+      cause: Object.assign(new Error("EE certificate key too weak"), { code: "UNSPECIFIED" }),
+    })),
+    {
+      transport_error_code: "ERR_SSL_EE_KEY_TOO_SMALL",
+      transport_error_category: "tls_certificate",
+      transport_error_retryable: false,
+    },
+  );
   assert.deepEqual(analyzeRuntimeCrawlFailures([
     { result_status: "network_error", error_code: "network_error", transport_error_code: "CERT_HAS_EXPIRED", transport_error_category: "tls_certificate" },
     { result_status: "network_error", error_code: "network_error", transport_error_code: "ECONNRESET", transport_error_category: "connection_reset" },

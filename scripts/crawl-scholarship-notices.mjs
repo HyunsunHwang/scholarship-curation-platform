@@ -154,15 +154,44 @@ const REQUEST_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 // Linux CI often prefers broken IPv6 for .ac.kr hosts; force IPv4 by default.
 const FORCE_IPV4 = process.env.CRAWL_FORCE_IPV4 !== "false";
+export function parseInsecureTlsHostAllowlist(value) {
+  return new Set(
+    String(value ?? "")
+      .split(/[\s,|]+/)
+      .map((host) => host.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+export function shouldAllowInsecureTls(url, insecureTlsHosts) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && insecureTlsHosts.has(parsed.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+const INSECURE_TLS_HOSTS = parseInsecureTlsHostAllowlist(
+  process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS,
+);
+const REQUEST_DISPATCHERS = new Map();
+function dispatcherForUrl(url) {
+  const allowInsecureTls = shouldAllowInsecureTls(url, INSECURE_TLS_HOSTS);
+  if (!FORCE_IPV4 && !allowInsecureTls) return null;
+  const key = `${FORCE_IPV4 ? "ipv4" : "default"}:${allowInsecureTls ? "insecure" : "strict"}`;
+  if (!REQUEST_DISPATCHERS.has(key)) {
+    REQUEST_DISPATCHERS.set(key, new UndiciAgent({
+      connect: {
+        ...(FORCE_IPV4 ? { family: 4 } : {}),
+        ...(allowInsecureTls ? { rejectUnauthorized: false } : {}),
+      },
+    }));
+  }
+  return REQUEST_DISPATCHERS.get(key);
+}
 const DEFAULT_NOTICE_URL_PATTERN =
   /(mode=view|sMode=VIEW_FORM|iBrdContNo=|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
-const DEFAULT_DISPATCHER = FORCE_IPV4
-  ? new UndiciAgent({
-      connect: {
-        family: 4,
-      },
-    })
-  : null;
 const RUN_AT = new Date().toISOString();
 
 function cleanText(value) {
@@ -350,7 +379,7 @@ async function readResponseBytesBounded(response, maxBytes) {
 }
 
 export async function fetchUrlWithMetadata(url, options = {}) {
-  const dispatcher = DEFAULT_DISPATCHER;
+  const dispatcher = dispatcherForUrl(url);
   let lastError = null;
   const retryCount = Math.max(0, Math.min(3, Number(options.retryCount ?? REQUEST_RETRY_COUNT)));
   const timeoutMs = Math.max(1, Number(options.timeoutMs ?? REQUEST_TIMEOUT_MS));

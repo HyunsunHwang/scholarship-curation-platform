@@ -398,7 +398,7 @@
       "departmentName": "화학공학과",
       "sourceLevel": "department",
       "sourceName": "중앙대 화학공학과",
-      "listUrl": "https://chemeng.cau.ac.kr/2018/sub05/sub05_01.php",
+      "listUrl": "https://chemeng.cau.ac.kr/bbs/board.php?bo_table=notice2",
       "baseUrl": "https://chemeng.cau.ac.kr",
       "listItemSelector": "",
       "linkSelector": "a[href]",
