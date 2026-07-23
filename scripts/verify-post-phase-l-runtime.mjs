@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { POST_PHASE_L_PILOT_SOURCE_KEYS } from "../lib/post-phase-l/normalized-graph.mjs";
 import { assertPostPhaseLTarget } from "../lib/post-phase-l/target-guard.mjs";
+import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const DEFAULT_OUTPUT = "reports/post-phase-l-runtime-verification.json";
@@ -157,12 +158,10 @@ async function main() {
     scholarshipIds,
     "id,is_verified,list_on_home",
   );
-  const noticeSources = sourceKeys.length === 0
-    ? []
-    : await queryRows(
-        client.from("notice_sources").select("source_id,enabled").in("source_id", sourceKeys),
-        "notice_sources",
-      );
+  const registry = loadNoticeSourceManifestRegistry();
+  const noticeSources = registry.sources
+    .filter((source) => sourceKeys.includes(source.sourceId))
+    .map((source) => ({ source_id: source.sourceId, enabled: source.enabled }));
 
   const sourceSet = new Set(noticeSources.map((row) => row.source_id));
   const exactSourceResolutionPassed = sourceResults.every(
@@ -227,6 +226,7 @@ async function main() {
     production_read_performed: false,
     production_write_performed: false,
     l_project_remote_read_performed: true,
+    source_registry: registry.fingerprint,
     l_project_remote_write_performed: false,
     environment_values_printed: false,
     run_id: runId,

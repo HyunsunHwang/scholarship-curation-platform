@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "manifestVersion", "universitySlug", "sources"],
+  "properties": {
+    "schemaVersion": { "const": "notice-source-manifest-v1" },
+    "manifestVersion": { "type": "string", "minLength": 1 },
+    "universitySlug": { "type": "string", "enum": ["ewha", "cau", "korea", "khu", "hanyang", "hongik", "yonsei", "skku", "uos"] },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceId", "universitySlug", "universityId", "collegeId", "departmentId", "orgUnitId", "collegeName", "departmentName", "sourceLevel", "sourceName", "listUrl", "baseUrl", "listItemSelector", "linkSelector", "titleSelector", "dateSelector", "detailContentSelector", "detailDateSelector", "noticeUrlPattern", "keywords", "adapter", "enabled"],
+        "properties": {
+          "sourceId": { "type": "string", "minLength": 1 },
+          "universitySlug": { "type": "string", "minLength": 1 },
+          "universityId": { "type": "string" }, "collegeId": { "type": "string" }, "departmentId": { "type": "string" }, "orgUnitId": { "type": "string" },
+          "collegeName": { "type": "string" }, "departmentName": { "type": "string" },
+          "sourceLevel": { "type": "string", "enum": ["university", "college", "department", "division"] },
+          "sourceName": { "type": "string", "minLength": 1 }, "listUrl": { "type": "string", "minLength": 1 }, "baseUrl": { "type": "string" },
+          "listItemSelector": { "type": "string" }, "linkSelector": { "type": "string" }, "titleSelector": { "type": "string" }, "dateSelector": { "type": "string" },
+          "detailContentSelector": { "type": "string" }, "detailDateSelector": { "type": "string" }, "noticeUrlPattern": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" } }, "adapter": { "type": "string" }, "enabled": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

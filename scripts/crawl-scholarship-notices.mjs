@@ -1527,6 +1527,7 @@ async function run({ signal } = {}) {
     runAt: RUN_AT,
     inputLabel: loaded.inputLabel,
     sourceMode: loaded.mode,
+    sourceRegistry: loaded.sourceRegistry ?? null,
     databaseReadPerformed: loaded.mode === "db",
     totals: {
       sourceCount: sources.length,

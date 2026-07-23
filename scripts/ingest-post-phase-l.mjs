@@ -6,6 +6,7 @@ import {
   summarizeGraphPlan,
 } from "../lib/post-phase-l/normalized-graph.mjs";
 import { resolveExactSourceKey } from "../lib/post-phase-l/source-resolver.mjs";
+import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 import {
   assertPostPhaseLTarget,
   POST_PHASE_L_TARGET_PROJECT_REF,
@@ -146,25 +147,25 @@ function localResolve(input, inventory) {
   };
 }
 
-async function remoteResolve(input, supabase) {
+function manifestResolve(input) {
+  const registry = loadNoticeSourceManifestRegistry();
+  const inventory = registry.sources.map((source) => ({
+    source_id: source.sourceId,
+    source_name: source.sourceName,
+    enabled: source.enabled,
+  }));
   const resolved = [];
   for (const result of input.source_results) {
-    const { data, error } = await supabase
-      .from("notice_sources")
-      .select("source_id, source_name, enabled")
-      .eq("source_id", result.source_key)
-      .limit(2);
-    if (error) throw new Error(`Exact source query failed: ${error.message}`);
-    const resolution = resolveExactSourceKey(result.source_key, data ?? []);
+    const resolution = resolveExactSourceKey(result.source_key, inventory);
     if (resolution.blocked) {
-      throw new Error(`Remote exact source resolution blocked: ${resolution.reason}`);
+      throw new Error(`Manifest exact source resolution blocked: ${resolution.reason}`);
     }
     if (resolution.source.enabled !== true) {
-      throw new Error(`Remote source is disabled: ${result.source_key}`);
+      throw new Error(`Manifest source is disabled: ${result.source_key}`);
     }
     resolved.push({ ...result, source_id: resolution.source_id });
   }
-  return { ...input, source_results: resolved };
+  return { ...input, source_results: resolved, source_registry: registry.fingerprint };
 }
 
 async function upsertRows(supabase, table, rows, options) {
@@ -364,7 +365,7 @@ async function main() {
     return;
   }
 
-  const input = await remoteResolve(rawInput, supabase);
+  const input = manifestResolve(rawInput);
   const plan = buildNormalizedGraphPlan(input, {
     targetProjectRef: guard.target_project_ref,
   });
@@ -378,6 +379,7 @@ async function main() {
     production_ref_detected: false,
     environment_values_printed: false,
     source_keys: input.source_results.map((row) => row.source_key),
+    source_registry: input.source_registry,
     graph_counts: summarizeGraphPlan(plan),
     attempted_rows: attempted,
     run_id: plan.tables.ingestion_crawl_runs[0].id,

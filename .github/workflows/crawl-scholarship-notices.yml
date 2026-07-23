@@ -49,13 +49,21 @@ on:
         required: false
         default: "2000"
         type: string
+      source_registry_mode:
+        description: "Source registry for a manual run (manifest is DB-free; db is emergency rollback only)"
+        required: false
+        default: manifest
+        type: choice
+        options:
+          - manifest
+          - db
 
 jobs:
   validate-inputs:
     name: Validate crawl controls
     runs-on: ubuntu-latest
     steps:
-      - name: Validate bounded concurrency and telemetry inputs
+      - name: Validate bounded concurrency, telemetry, and registry inputs
         env:
           MATRIX_PARALLEL: ${{ inputs.matrix_parallel || '9' }}
           SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '4' }}
@@ -75,6 +83,7 @@ jobs:
           validate_integer detail_concurrency "$DETAIL_CONCURRENCY" 1 8
           validate_integer host_concurrency "$HOST_CONCURRENCY" 1 8
           validate_integer telemetry_sample_interval_ms "$SAMPLE_INTERVAL_MS" 1000 30000
+          case "${{ inputs.source_registry_mode || 'db' }}" in manifest|db) ;; *) echo "::error::source_registry_mode must be manifest or db"; exit 1;; esac
 
   crawl-by-university:
     name: Crawl ${{ matrix.group }}
@@ -85,11 +94,6 @@ jobs:
       max-parallel: ${{ fromJSON(inputs.matrix_parallel || '9') }}
       matrix:
         group: [ewha, cau, korea, khu, hanyang, hongik, yonsei, skku, uos]
-    env:
-      # Crawl sources are loaded from public.notice_sources (not CSV).
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -152,8 +156,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run university crawler
+      # Scheduled cutover remains DB until a read-only DB ↔ manifest parity report proves it safe.
+      - name: Run university crawler (legacy DB registry)
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.source_registry_mode == 'db' }}
         env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GROUP: ${{ matrix.group }}
           CRAWL_LOOKBACK_DAYS: "1"
           CRAWL_ALLOW_UNDATED: "true"
@@ -188,6 +196,44 @@ jobs:
               ;;
           esac
           node scripts/crawl-scholarship-notices.mjs "db:${GROUP}" "exports/notices/${GROUP}" ".crawler/${GROUP}-daily-state.json"
+
+      - name: Run university crawler (Git manifest registry)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.source_registry_mode == 'manifest' }}
+        env:
+          GROUP: ${{ matrix.group }}
+          CRAWL_LOOKBACK_DAYS: "1"
+          CRAWL_ALLOW_UNDATED: "true"
+          CRAWL_SOURCE_CONCURRENCY: ${{ inputs.source_concurrency || '4' }}
+          CRAWL_SOURCE_EXECUTION_ISOLATION: "false"
+          CRAWL_DETAIL_CONCURRENCY: ${{ inputs.detail_concurrency || '1' }}
+          CRAWL_HOST_CONCURRENCY: ${{ inputs.host_concurrency || '2' }}
+          CRAWL_MATRIX_MAX_PARALLEL: ${{ inputs.matrix_parallel || '9' }}
+          CRAWLER_TELEMETRY_ENABLED: ${{ inputs.telemetry_enabled }}
+          TELEMETRY_SAMPLE_INTERVAL_MS: ${{ inputs.telemetry_sample_interval_ms || '2000' }}
+          CRAWLER_UNIVERSITY_GROUP: ${{ matrix.group }}
+          CRAWLER_TELEMETRY_OUTPUT_DIR: exports/notices/${{ matrix.group }}
+          CRAWL_RETRY_MAX_DELAY_MS: "30000"
+          CRAWL_RETRY_JITTER_RATIO: "0.1"
+          CRAWL_FRESH_START: ${{ inputs.fresh_start || 'false' }}
+          CRAWL_IGNORE_SEEN: ${{ github.event.inputs.ignore_seen || 'false' }}
+        run: |
+          UNIVERSITY_JOB_STARTED_MS=$(date +%s%3N)
+          echo "UNIVERSITY_JOB_STARTED_MS=${UNIVERSITY_JOB_STARTED_MS}" >> "$GITHUB_ENV"
+          case "$GROUP" in
+            ewha)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="3" CRAWL_RETRY_BACKOFF_MS="1500" CRAWL_FORCE_IPV4="true"
+              ;;
+            cau)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="2" CRAWL_RETRY_BACKOFF_MS="1200" CRAWL_ALLOW_INSECURE_TLS_HOSTS="econ.cau.ac.kr"
+              ;;
+            hanyang)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="3" CRAWL_RETRY_BACKOFF_MS="1500" CRAWL_FORCE_IPV4="true" CRAWL_ALLOW_INSECURE_TLS_HOSTS="hyurban.hanyang.ac.kr"
+              ;;
+            uos)
+              export CRAWL_TIMEOUT_MS="30000" CRAWL_RETRY_COUNT="2" CRAWL_RETRY_BACKOFF_MS="1200"
+              ;;
+          esac
+          node scripts/crawl-scholarship-notices.mjs "manifest:${GROUP}" "exports/notices/${GROUP}" ".crawler/${GROUP}-daily-state.json"
 
       - name: Clean university crawl results
         env:

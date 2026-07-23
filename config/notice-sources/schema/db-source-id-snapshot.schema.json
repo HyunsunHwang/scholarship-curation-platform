@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "capturedAt", "provenance", "parityStatus", "sourceIds", "sourceIdSetSha256"],
+  "properties": {
+    "schemaVersion": { "const": "db-source-id-snapshot-v1" },
+    "capturedAt": { "type": "string", "minLength": 1 },
+    "provenance": { "type": "string", "minLength": 1 },
+    "parityStatus": { "type": "string", "enum": ["verified_from_db_read", "unverified_without_db_read"] },
+    "sourceIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "sourceIdSetSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

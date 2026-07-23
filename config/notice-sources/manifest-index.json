@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "notice-source-index-v1",
+  "manifestVersion": "2026-07-23.1",
+  "groups": [
+    {
+      "universitySlug": "ewha",
+      "path": "universities/ewha.json"
+    },
+    {
+      "universitySlug": "cau",
+      "path": "universities/cau.json"
+    },
+    {
+      "universitySlug": "korea",
+      "path": "universities/korea.json"
+    },
+    {
+      "universitySlug": "khu",
+      "path": "universities/khu.json"
+    },
+    {
+      "universitySlug": "hanyang",
+      "path": "universities/hanyang.json"
+    },
+    {
+      "universitySlug": "hongik",
+      "path": "universities/hongik.json"
+    },
+    {
+      "universitySlug": "yonsei",
+      "path": "universities/yonsei.json"
+    },
+    {
+      "universitySlug": "skku",
+      "path": "universities/skku.json"
+    },
+    {
+      "universitySlug": "uos",
+      "path": "universities/uos.json"
+    }
+  ]
+}
