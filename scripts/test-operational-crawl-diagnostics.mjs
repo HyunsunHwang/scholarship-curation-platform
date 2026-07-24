@@ -686,6 +686,74 @@ test("non-candidate diagnostic detail probe makes unreachable details observable
   assert.equal(row.operational_codes.includes("DETAIL_FETCH_FAILED"), true);
 });
 
+test("inline multi-notice topology keeps Drive and form links out of the detail model", () => {
+  const source = {
+    sourceId: "inline_fixture",
+    listUrl: "https://example.test/notices",
+    baseUrl: "https://example.test",
+    contentMode: "inline_sections",
+    detailFetchRequired: false,
+    detailContentAlreadyAvailable: true,
+  };
+  const html = `
+    <h2>Scholarship application</h2><p>${"Detailed scholarship eligibility and application period. ".repeat(4)}</p><a href="https://drive.google.com/file/d/1">Attachment</a>
+    <h2>Scholarship interview</h2><p>${"Detailed scholarship interview schedule and required documents. ".repeat(4)}</p><a href="https://forms.gle/example">Apply</a>
+    <h2>Scholarship result</h2><p>${"Detailed scholarship result announcement and follow-up instructions. ".repeat(4)}</p><a href="https://drive.google.com/file/d/2">Result file</a>`;
+  const evidence = collectOperationalListParserEvidence(source, html, []);
+  assert.equal(extractFromList(source, html).length, 0);
+  assert.equal(evidence.list_page_contains_candidate_body, true);
+  assert.equal(evidence.inline_notice_section_count, 3);
+  assert.equal(evidence.independent_detail_url_count, 0);
+  assert.equal(evidence.attachment_link_count, 1);
+  assert.equal(evidence.external_resource_link_count, 3);
+  const row = analyzeOperationalCrawlerSource({
+    source,
+    executionResult: { result_status: "empty_observed", observed_count: 0, parser_evidence: evidence },
+    notices: [],
+    filterMetrics: { observed_count: 0, keyword_match_count: 0, date_match_count: 0 },
+  });
+  assert.equal(row.content_topology_profiles.includes("INLINE_MULTI_NOTICE_PAGE"), true);
+  assert.equal(row.capability_status, "adapter_required");
+  assert.equal(row.primary_failure_code, "ADAPTER_REQUIRED");
+  assert.equal(row.recommended_action, "implement_inline_section_adapter");
+});
+
+test("navigation links do not contribute inline notice evidence", () => {
+  const evidence = collectOperationalListParserEvidence(
+    { sourceId: "navigation_fixture", listUrl: "https://example.test/notices", baseUrl: "https://example.test" },
+    `<header><h2>Scholarship navigation</h2><a href="/notice?articleNo=99">Notice menu</a></header>
+      <h2>Only heading</h2><p>Short text.</p><footer><a href="/notice?articleNo=98">Footer notice</a></footer>`,
+    [],
+  );
+  assert.equal(evidence.list_page_contains_candidate_body, false);
+  assert.equal(evidence.same_origin_link_count, 0);
+});
+
+test("verified inline adapter makes the same topology supported", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "inline_adapter", contentMode: "inline_sections" },
+    executionResult: {
+      result_status: "success",
+      observed_count: 2,
+      parser_evidence: { list_page_contains_candidate_body: true, inline_notice_section_count: 2, independent_detail_url_count: 0 },
+      adapter_evidence: { adapter_capability_verified: true, adapter_provides_authoritative_detail: true },
+    },
+    notices: [{ content: "authoritative inline body" }, { content: "another authoritative inline body" }],
+    matchedCount: 1,
+  });
+  assert.equal(row.capability_status, "supported");
+});
+
+test("ordinary detail 404 remains a detail failure", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "ordinary_detail" },
+    executionResult: { result_status: "partial", observed_count: 1, parser_evidence: { valid_detail_url_count: 1 } },
+    notices: [{ detailResultStatus: "http_error", detailFetchError: "HTTP 404" }],
+  });
+  assert.equal(row.capability_status, "list_supported_detail_failed");
+  assert.equal(row.content_topology_profiles.includes("LIST_DETAIL_PAGES"), true);
+});
+
 test("contamination leaks and rate nullability are explicit", () => {
   const contaminated = analyzeOperationalCrawlerSource({
     source: { sourceId: "contaminated" },

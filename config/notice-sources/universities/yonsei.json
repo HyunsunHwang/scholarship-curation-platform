@@ -311,6 +311,11 @@
       "detailContentSelector": "",
       "detailDateSelector": "",
       "noticeUrlPattern": "",
+      "contentMode": "inline_sections",
+      "detailFetchRequired": false,
+      "detailContentAlreadyAvailable": true,
+      "sectionTitleSelector": "h2, h3",
+      "sectionBodyBoundary": "next_heading",
       "keywords": [
         "장학",
         "장학금",

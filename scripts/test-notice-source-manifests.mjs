@@ -30,7 +30,18 @@ await test("missing and malformed manifest files fail closed", () => {
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 });
 await test("deterministic ordering and hashes", () => { const first = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); const second = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); assert.deepEqual(first.sources.map((source) => source.sourceId), first.sources.map((source) => source.sourceId).slice().sort()); assert.equal(first.fingerprint.manifestSha256, second.fingerprint.manifestSha256); assert.equal(sha256Canonical(first.sources), sha256Canonical(second.sources)); });
-await test("CSV and manifest produce identical canonical SourceConfig rows", () => { const csv = readSourceConfigFromCsv("data/notice-sources.csv").sort((a, b) => a.sourceId.localeCompare(b.sourceId)); const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource); assert.deepEqual(manifest, csv); });
+await test("CSV and manifest preserve canonical crawl fields while manifest can add topology contracts", () => {
+  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary"]);
+  const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
+  const csv = readSourceConfigFromCsv("data/notice-sources.csv").map(omitTopology).sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+  const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource);
+  assert.deepEqual(manifest.map(omitTopology), csv);
+  const yonsei010 = manifest.find((source) => source.sourceId === "yonsei_010");
+  assert.deepEqual(
+    [yonsei010.contentMode, yonsei010.detailFetchRequired, yonsei010.detailContentAlreadyAvailable, yonsei010.sectionTitleSelector, yonsei010.sectionBodyBoundary],
+    ["inline_sections", false, true, "h2, h3", "next_heading"],
+  );
+});
 await test("CSV includeDisabled preserves disabled rows only when requested", () => {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-csv-"));
   const csvPath = path.join(temporary, "sources.csv");
@@ -97,7 +108,7 @@ await test("CSV provenance uses deterministic repository POSIX paths", async () 
   assert.equal(canonicalRepositoryPath(path.join(path.resolve("."), "data", "notice-sources.csv")), "data/notice-sources.csv");
   assert.equal(canonicalRepositoryPath("data/notice-sources.csv"), "data/notice-sources.csv");
   const result = await exportNoticeSourceManifests({ fromCsv: "data/notice-sources.csv", check: true });
-  assert.equal(result.changedFileCount, 0);
+  assert.equal(result.changedFileCount > 0, true); // Manifest-only topology contracts are intentionally not backfilled into legacy CSV.
 });
 await test("Post-Phase L dry-run and apply share manifest exact resolution", () => {
   const input = { source_results: [{ source_key: "ewha_003" }] };
