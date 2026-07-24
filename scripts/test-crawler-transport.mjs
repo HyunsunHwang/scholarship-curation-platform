@@ -704,13 +704,9 @@ await test("central CAU adapter uses injected TransportClient with exact request
 });
 
 await test("CAU adapter accepts the CMS JSON response despite its text/html header", async () => {
-  const source = {
-    sourceId: "cau_fixture_content_type",
-    sourceName: "CAU fixture content type",
-    universitySlug: "cau",
-    listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
-    baseUrl: "https://www.cau.ac.kr/",
-  };
+  const source = structuredClone(
+    manifestSources.find((item) => item.sourceId === "cau_univ_001"),
+  );
   const accepted = [];
   const client = createTransportClient({
     source,
@@ -726,6 +722,67 @@ await test("CAU adapter accepts the CMS JSON response despite its text/html head
   });
   await fetchCauPortalList(source, { transportClient: client, maxPages: 1 });
   assert.equal(accepted.at(-1), "*/*");
+  assert.deepEqual(source.adapterConfig, {
+    apiAccept: "*/*",
+    jsonContentTypePolicy: "body-json",
+    requiredListPath: "data.list",
+  });
+});
+
+await test("CAU adapter strict policy rejects a JSON body labeled as HTML", async () => {
+  const source = {
+    sourceId: "cau_fixture_strict_content_type",
+    sourceName: "CAU strict fixture",
+    universitySlug: "cau",
+    listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
+    adapterConfig: {
+      apiAccept: "application/json",
+      jsonContentTypePolicy: "strict",
+      requiredListPath: "data.list",
+    },
+  };
+  const client = createTransportClient({
+    source,
+    policy: policy(),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async (_url, options) => (
+      options.method === "GET"
+        ? response(200, '<form id="sendForm"><input name="MENU_ID" value="100"></form>', { "content-type": "text/html" })
+        : response(200, '{"data":{"list":[]}}', { "content-type": "text/html" })
+    ),
+  });
+  await assert.rejects(
+    () => fetchCauPortalList(source, { transportClient: client, maxPages: 1 }),
+    (error) => error.code === "unexpected_content_type",
+  );
+});
+
+await test("CAU adapter requiredListPath fails closed on a changed JSON shape", async () => {
+  const source = {
+    sourceId: "cau_fixture_shape",
+    sourceName: "CAU shape fixture",
+    universitySlug: "cau",
+    listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
+    adapterConfig: {
+      apiAccept: "*/*",
+      jsonContentTypePolicy: "body-json",
+      requiredListPath: "data.list",
+    },
+  };
+  const client = createTransportClient({
+    source,
+    policy: policy(),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async (_url, options) => (
+      options.method === "GET"
+        ? response(200, '<form id="sendForm"><input name="MENU_ID" value="100"></form>', { "content-type": "text/html" })
+        : response(200, '{"data":{"items":[]}}', { "content-type": "text/html" })
+    ),
+  });
+  await assert.rejects(
+    () => fetchCauPortalList(source, { transportClient: client, maxPages: 1 }),
+    (error) => error.code === "json_shape_mismatch",
+  );
 });
 
 await test("invalid JSON response is non-retryable", async () => {

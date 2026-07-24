@@ -26,7 +26,22 @@
           "detailFetchRequired": { "type": "boolean" }, "detailContentAlreadyAvailable": { "type": "boolean" },
           "sectionTitleSelector": { "type": "string" }, "sectionBodyBoundary": { "type": "string", "enum": ["", "next_heading"] }, "sectionPublishedDateSelector": { "type": "string" },
           "undatedCandidatePolicy": { "type": "string", "enum": ["manual_review", "reject", "allow_explicitly"] },
-          "keywords": { "type": "array", "items": { "type": "string" } }, "adapter": { "type": "string" }, "enabled": { "type": "boolean" }
+          "keywords": { "type": "array", "items": { "type": "string" } },
+          "adapter": { "type": "string" },
+          "adapterConfig": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["apiAccept", "jsonContentTypePolicy", "requiredListPath"],
+            "properties": {
+              "apiAccept": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+              "jsonContentTypePolicy": { "type": "string", "enum": ["strict", "body-json"] },
+              "requiredListPath": {
+                "type": "string",
+                "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+              }
+            }
+          },
+          "enabled": { "type": "boolean" }
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "notice-source-manifest-v1",
-  "manifestVersion": "2026-07-23.1",
+  "manifestVersion": "2026-07-24.1",
   "universitySlug": "cau",
   "sources": [
     {
@@ -1825,6 +1825,11 @@
         "fellowship"
       ],
       "adapter": "cau_portal",
+      "adapterConfig": {
+        "apiAccept": "*/*",
+        "jsonContentTypePolicy": "body-json",
+        "requiredListPath": "data.list"
+      },
       "enabled": true
     }
   ]

@@ -38,8 +38,8 @@ await test("missing and malformed manifest files fail closed", () => {
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 });
 await test("deterministic ordering and hashes", () => { const first = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); const second = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); assert.deepEqual(first.sources.map((source) => source.sourceId), first.sources.map((source) => source.sourceId).slice().sort()); assert.equal(first.fingerprint.manifestSha256, second.fingerprint.manifestSha256); assert.equal(sha256Canonical(first.sources), sha256Canonical(second.sources)); });
-await test("CSV and manifest preserve canonical crawl fields while manifest can add topology contracts", () => {
-  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary"]);
+await test("CSV and manifest preserve canonical crawl fields while manifest can add runtime contracts", () => {
+  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary", "adapterConfig"]);
   const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
   const csv = readSourceConfigFromCsv("data/notice-sources.csv").map(omitTopology).sort((a, b) => a.sourceId.localeCompare(b.sourceId));
   const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource);
@@ -100,6 +100,26 @@ await test("duplicate IDs, invalid URL, regex, prefix, slug, adapter, required e
     (value) => { value.snapshot.sourceIds = value.snapshot.sourceIds.filter((id) => id !== source.sourceId); },
   ];
   for (const mutate of variants) { const value = structuredClone(fixture); mutate(value); assert.equal(validateNoticeSourceManifests(value).valid, false); }
+});
+await test("CAU adapterConfig is required and rejects unknown or untrimmed values", () => {
+  const fixture = manifests();
+  const cauManifest = fixture.manifests.find((manifest) => manifest.universitySlug === "cau");
+  const source = cauManifest.sources.find((item) => item.sourceId === "cau_univ_001");
+  const variants = [
+    (value) => { delete value.adapterConfig; },
+    (value) => { value.adapterConfig.apiAccept = " */* "; },
+    (value) => { value.adapterConfig.jsonContentTypePolicy = "permissive"; },
+    (value) => { value.adapterConfig.requiredListPath = "data.list[0]"; },
+    (value) => { value.adapterConfig.unexpected = true; },
+  ];
+  for (const mutate of variants) {
+    const value = structuredClone(source);
+    mutate(value);
+    const changed = structuredClone(fixture);
+    const manifest = changed.manifests.find((item) => item.universitySlug === "cau");
+    manifest.sources[manifest.sources.findIndex((item) => item.sourceId === source.sourceId)] = value;
+    assert.equal(validateNoticeSourceManifests(changed).valid, false);
+  }
 });
 await test("snapshot invariants, manifest version, and keyword normalization fail closed", () => {
   const fixture = manifests();
