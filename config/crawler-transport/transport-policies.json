@@ -128,7 +128,7 @@
       "allowedHosts": ["econ.cau.ac.kr"],
       "profile": "system-ca",
       "reason": "Use the operating-system trust store while preserving certificate and hostname verification",
-      "evidenceCommit": "b5afaf6",
+      "evidenceCommit": "3d1b60edff05aac27fbfb317ba178cad262f6a5a",
       "createdAt": "2026-07-24"
     },
     {

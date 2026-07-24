@@ -22,6 +22,9 @@ const now = new Date("2026-07-24T00:00:00.000Z");
 let passed = 0;
 
 function clone(value) { return structuredClone(value); }
+function preparedRegistry(value) {
+  return { ...value, registryFingerprint: fingerprintTransportPolicy(value) };
+}
 async function test(name, operation) {
   await operation();
   passed += 1;
@@ -71,6 +74,49 @@ await test("hostname fields reject uppercase, wildcards, URL forms, ports, and s
       .allowedHosts = [value];
     assert.equal(validate(invalid).valid, false, value);
   }
+  for (const value of ["EXAMPLE.com", "*.example.com", ".example.com", "https://example.com", "example.com:80", "example .com"]) {
+    const invalid = clone(rawRegistry);
+    invalid.bindings.find((binding) => binding.bindingId === "legacy-http-sources")
+      .allowedHttpHosts = [value];
+    assert.equal(validate(invalid).valid, false, value);
+  }
+});
+
+await test("overlapping bindings with different allowedHosts fail closed", () => {
+  const invalid = clone(rawRegistry);
+  invalid.bindings.push(
+    { bindingId: "trust-host-a", priority: 777, sourceIds: ["cau_002"], allowedHosts: ["econ.cau.ac.kr"] },
+    { bindingId: "trust-host-b", priority: 777, sourceIds: ["cau_002"], allowedHosts: ["other.example"] },
+  );
+  const result = validate(invalid);
+  assert.equal(result.valid, false);
+  assert.match(result.errors.join(" | "), /conflicting allowedHosts/i);
+});
+
+await test("same canonical allowedHosts set does not conflict by order", () => {
+  const valid = clone(rawRegistry);
+  valid.bindings.push(
+    { bindingId: "trust-host-order-a", priority: 778, sourceIds: ["cau_002"], allowedHosts: ["a.example", "b.example"] },
+    { bindingId: "trust-host-order-b", priority: 778, sourceIds: ["cau_002"], allowedHosts: ["b.example", "a.example"] },
+  );
+  const result = validate(valid);
+  assert.equal(result.errors.some((error) => /conflicting allowedHosts/i.test(error)), false);
+});
+
+await test("HTTP trust allowlists conflict only when both overlapping bindings differ", () => {
+  const conflicting = clone(rawRegistry);
+  conflicting.bindings.push(
+    { bindingId: "trust-http-a", priority: 779, sourceIds: ["hanyang_012"], allowedHttpHosts: ["a.example"] },
+    { bindingId: "trust-http-b", priority: 779, sourceIds: ["hanyang_012"], allowedHttpHosts: ["b.example"] },
+  );
+  assert.match(validate(conflicting).errors.join(" | "), /conflicting allowedHttpHosts/i);
+
+  const oneSided = clone(rawRegistry);
+  oneSided.bindings.push(
+    { bindingId: "trust-http-one-sided-a", priority: 780, sourceIds: ["hanyang_012"], allowedHttpHosts: ["a.example"] },
+    { bindingId: "trust-http-one-sided-b", priority: 780, sourceIds: ["hanyang_012"], policy: { timeoutMs: 31000 } },
+  );
+  assert.equal(validate(oneSided).errors.some((error) => /conflicting allowedHttpHosts/i.test(error)), false);
 });
 
 await test("system CA certificates require a supported non-empty system store and are deterministic", () => {
@@ -113,6 +159,7 @@ await test("system-ca and insecure agents are exact-host scoped", async () => {
 });
 
 await test("preserve-http derives a deterministic exact list hostname allowlist", () => {
+  assert.equal(validate(rawRegistry).valid, true, "registry need not repeat a derived HTTP hostname");
   for (const source of sources.filter((item) => new URL(item.listUrl).protocol === "http:")) {
     const resolved = resolveEffectiveTransportPolicy({ source, registry, now });
     assert.equal(resolved.protocolMode, "preserve-http", source.sourceId);
@@ -121,11 +168,39 @@ await test("preserve-http derives a deterministic exact list hostname allowlist"
   }
   const legacySource = sources.find((source) => source.sourceId === "hanyang_012");
   const legacyPolicy = resolveEffectiveTransportPolicy({ source: legacySource, registry, now });
-  const changed = resolveEffectiveTransportPolicy({
-    source: { ...legacySource, listUrl: "http://different.example/list" }, registry, now,
+  const changedRegistry = clone(rawRegistry);
+  changedRegistry.bindings.find((binding) => binding.bindingId === "legacy-http-sources")
+    .allowedHttpHosts = ["extra.example"];
+  const changedPolicy = resolveEffectiveTransportPolicy({
+    source: legacySource, registry: preparedRegistry(changedRegistry), now,
   });
-  assert.notEqual(legacyPolicy.policyFingerprint, changed.policyFingerprint);
-  assert.equal(fingerprintTransportPolicy(legacyPolicy.allowedHttpHosts), fingerprintTransportPolicy(legacyPolicy.allowedHttpHosts));
+  assert.notEqual(legacyPolicy.policyFingerprint, changedPolicy.policyFingerprint);
+  assert.equal(changedPolicy.allowedHttpHosts.includes("extra.example"), true);
+  assert.deepEqual(changedPolicy.allowedHttpHosts, [...changedPolicy.allowedHttpHosts].sort());
+
+  const reorderedRegistry = clone(rawRegistry);
+  reorderedRegistry.bindings.find((binding) => binding.bindingId === "legacy-http-sources")
+    .allowedHttpHosts = ["b.example", "a.example"];
+  const reversedRegistry = clone(reorderedRegistry);
+  reversedRegistry.bindings.find((binding) => binding.bindingId === "legacy-http-sources")
+    .allowedHttpHosts.reverse();
+  const reorderedPolicy = resolveEffectiveTransportPolicy({ source: legacySource, registry: preparedRegistry(reorderedRegistry), now });
+  const reversedPolicy = resolveEffectiveTransportPolicy({ source: legacySource, registry: preparedRegistry(reversedRegistry), now });
+  assert.equal(reorderedPolicy.policyFingerprint, reversedPolicy.policyFingerprint);
+
+  const nonPreserving = clone(rawRegistry);
+  nonPreserving.bindings.find((binding) => binding.bindingId === "legacy-http-sources")
+    .profile = "system-ca";
+  assert.match(validate(nonPreserving).errors.join(" | "), /HTTP list URL requires an explicit preserve-http policy/i);
+});
+
+await test("strict bindings cannot explicitly authorize HTTP hosts", () => {
+  const invalid = clone(rawRegistry);
+  invalid.bindings.push({
+    bindingId: "strict-http-hosts", priority: 781, sourceIds: ["cau_002"],
+    policy: { protocolMode: "strict" }, allowedHttpHosts: ["econ.cau.ac.kr"],
+  });
+  assert.match(validate(invalid).errors.join(" | "), /strict policy cannot declare allowedHttpHosts/i);
 });
 
 await test("deprecated insecure override cannot re-authorize cau_002", () => {
