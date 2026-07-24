@@ -1,0 +1,57 @@
+{
+  "schema_version": "crawler-runtime-protocol-evidence-v1",
+  "captured_at": "2026-07-24T15:40:35.000Z",
+  "source_id": "hanyang_014",
+  "official_site_verification": {
+    "site_url": "http://energy.hanyang.ac.kr/main/",
+    "site_http_status": 200,
+    "site_title": "한양대학교 에너지공학과 (한글)",
+    "notice_board_link_found": "http://energy.hanyang.ac.kr/modules/board/bd_list.html?id=notice&mc_code=1510"
+  },
+  "list_url": "http://energy.hanyang.ac.kr/modules/board/bd_list.html?id=notice&mc_code=1510",
+  "probe_policy": {
+    "request_count_per_protocol_and_client": 1,
+    "retry_count": 0,
+    "timeout_ms": 25000,
+    "response_body_recorded": false
+  },
+  "curl": {
+    "http": {
+      "raw_status_line": "HTTP/1.1 200 OK",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "final_url": "http://energy.hanyang.ac.kr/modules/board/bd_list.html?id=notice&mc_code=1510",
+      "redirect_chain": []
+    },
+    "https": {
+      "success": false,
+      "error_code": "SEC_E_INVALID_TOKEN",
+      "http_status": null,
+      "redirect_chain": []
+    }
+  },
+  "node_transport_client": {
+    "http": {
+      "success": false,
+      "error_code": null,
+      "cause_code": null,
+      "error_message": "fetch failed",
+      "final_url": "http://energy.hanyang.ac.kr/modules/board/bd_list.html?id=notice&mc_code=1510",
+      "redirect_chain": [],
+      "protocol_mode": "preserve-http",
+      "tls_mode": "strict"
+    },
+    "https": {
+      "success": false,
+      "error_code": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "cause_code": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "error_message": "fetch failed",
+      "final_url": "https://energy.hanyang.ac.kr/modules/board/bd_list.html?id=notice&mc_code=1510",
+      "redirect_chain": [],
+      "protocol_mode": "preserve-http",
+      "tls_mode": "strict"
+    }
+  },
+  "classification": "unresolved",
+  "remediation_decision": "No manifest URL change, transport exception, retry increase, timeout increase, or disablement was applied because HTTPS does not verify and Node HTTP failure has no reproducible specific protocol code."
+}
