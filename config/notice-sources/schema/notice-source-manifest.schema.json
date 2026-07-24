@@ -21,7 +21,7 @@
           "sourceLevel": { "type": "string", "enum": ["university", "college", "department", "division"] },
           "sourceName": { "type": "string", "minLength": 1 }, "listUrl": { "type": "string", "minLength": 1 }, "baseUrl": { "type": "string" },
           "listItemSelector": { "type": "string" }, "linkSelector": { "type": "string" }, "titleSelector": { "type": "string" }, "dateSelector": { "type": "string" },
-          "detailContentSelector": { "type": "string" }, "detailDateSelector": { "type": "string" }, "noticeUrlPattern": { "type": "string" },
+          "detailContentSelector": { "type": "string" }, "detailDateSelector": { "type": "string" }, "detailTitleSelector": { "type": "string" }, "noticeUrlPattern": { "type": "string" },
           "contentMode": { "type": "string", "enum": ["", "inline_sections"] },
           "detailFetchRequired": { "type": "boolean" }, "detailContentAlreadyAvailable": { "type": "boolean" },
           "sectionTitleSelector": { "type": "string" }, "sectionBodyBoundary": { "type": "string", "enum": ["", "next_heading"] }, "sectionPublishedDateSelector": { "type": "string" },

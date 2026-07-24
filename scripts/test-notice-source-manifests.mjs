@@ -39,7 +39,7 @@ await test("missing and malformed manifest files fail closed", () => {
 });
 await test("deterministic ordering and hashes", () => { const first = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); const second = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); assert.deepEqual(first.sources.map((source) => source.sourceId), first.sources.map((source) => source.sourceId).slice().sort()); assert.equal(first.fingerprint.manifestSha256, second.fingerprint.manifestSha256); assert.equal(sha256Canonical(first.sources), sha256Canonical(second.sources)); });
 await test("CSV and manifest preserve canonical crawl fields while manifest can add runtime contracts", () => {
-  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary", "adapterConfig"]);
+  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary", "detailTitleSelector", "adapterConfig"]);
   const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
   const remediatedSourceIds = new Set(["cau_036", "cau_072", "korea_030", "korea_032", "korea_033", "uos_001"]);
   const runtimeContractFields = new Set([

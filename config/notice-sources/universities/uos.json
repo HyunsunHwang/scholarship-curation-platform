@@ -1,6 +1,6 @@
 {
   "schemaVersion": "notice-source-manifest-v1",
-  "manifestVersion": "2026-07-25.1",
+  "manifestVersion": "2026-07-25.2",
   "universitySlug": "uos",
   "sources": [
     {
@@ -20,9 +20,10 @@
       "linkSelector": "td.kboard-list-title a[href*=\"uid=\"][href*=\"mod=document\"]",
       "titleSelector": ".kboard-default-cut-strings",
       "dateSelector": "td.kboard-list-date",
-      "detailContentSelector": ".kboard-content",
-      "detailDateSelector": "",
-      "noticeUrlPattern": "^https://lauos\\.or\\.kr/notice\\?(?=[^#]*\\bmod=document(?:&|$))(?=[^#]*\\buid=\\d+(?:&|$))[^#]*$",
+        "detailContentSelector": ".kboard-content",
+        "detailDateSelector": "",
+        "detailTitleSelector": ".kboard-title",
+        "noticeUrlPattern": "^https://lauos\\.or\\.kr/notice\\?(?=[^#]*\\bmod=document(?:&|$))(?=[^#]*\\buid=\\d+(?:&|$))[^#]*$",
       "keywords": [
         "장학",
         "장학금",

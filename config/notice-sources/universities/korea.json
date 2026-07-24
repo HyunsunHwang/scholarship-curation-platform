@@ -1,6 +1,6 @@
 {
   "schemaVersion": "notice-source-manifest-v1",
-  "manifestVersion": "2026-07-25.1",
+  "manifestVersion": "2026-07-25.2",
   "universitySlug": "korea",
   "sources": [
     {
@@ -980,9 +980,10 @@
       "linkSelector": "a[href*=\"undernotice_ugd_view.html\"][href*=\"no=\"]",
       "titleSelector": ".tit p",
       "dateSelector": ".info .date",
-      "detailContentSelector": ".board_view",
-      "detailDateSelector": ".date",
-      "noticeUrlPattern": "^https://me\\.korea\\.ac\\.kr/community/undernotice_ugd_view\\.html\\?(?=[^#]*\\bno=\\d+(?:&|$))[^#]*$",
+        "detailContentSelector": ".board_view",
+        "detailDateSelector": ".date",
+        "detailTitleSelector": ".title_info .tit",
+        "noticeUrlPattern": "^https://me\\.korea\\.ac\\.kr/community/undernotice_ugd_view\\.html\\?(?=[^#]*\\bno=\\d+(?:&|$))[^#]*$",
       "keywords": [
         "장학",
         "장학금",

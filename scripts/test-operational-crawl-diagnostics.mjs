@@ -82,6 +82,33 @@ test("Kyunghee-style detail title selector is collected before body cleanup", ()
   assert.equal(detail.detailIdentity.verified, true);
 });
 
+test("configured detail title selectors take priority and preserve selector evidence", () => {
+  const strategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
+  const detail = strategy.parseDetail({
+    source: { sourceId: "detail_title_fixture", detailContentSelector: ".body", detailTitleSelector: ".configured-title" },
+    item: { title: "공통 장학금 안내", noticeUrl: "https://example.test/notice/1" },
+    html: "<h1>Unrelated page heading</h1><h2 class='configured-title'>[장학] 장학금 안내</h2><div class='body'>장학금 신청 본문 내용입니다.</div>",
+  });
+  assert.equal(detail.detailTitle, "[장학] 장학금 안내");
+  assert.equal(detail.detailIdentity.verified, true);
+  assert.equal(detail.detailIdentity.configured_detail_title_selector, ".configured-title");
+  assert.equal(detail.detailIdentity.detail_title_selector_match_count, 1);
+  assert.equal(detail.detailIdentity.detail_title_extracted, true);
+});
+
+test("missing configured detail title selectors leave identity unverified without failing detail extraction", () => {
+  const strategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
+  const detail = strategy.parseDetail({
+    source: { sourceId: "detail_title_missing", detailContentSelector: ".body", detailTitleSelector: ".missing-title" },
+    item: { title: "공통 장학금 안내", noticeUrl: "https://example.test/notice/1" },
+    html: "<div class='body'>장학금 신청 본문 내용입니다.</div>",
+  });
+  assert.equal(detail.detailIdentity.verified, false);
+  assert.equal(detail.detailIdentity.configured_detail_title_selector, ".missing-title");
+  assert.equal(detail.detailIdentity.detail_title_selector_match_count, 0);
+  assert.equal(detail.detailIdentity.detail_title_extracted, false);
+});
+
 test("Sungkyunkwan-style list selector is observed without changing list extraction", () => {
   const source = {
     sourceId: "skku_fixture",
