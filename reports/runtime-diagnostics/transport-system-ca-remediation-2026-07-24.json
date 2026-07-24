@@ -1,0 +1,82 @@
+{
+  "schema_version": "crawler-transport-system-ca-evidence-v1",
+  "captured_at": "2026-07-24T12:37:32.416Z",
+  "probe_policy": {
+    "request_method": "GET",
+    "request_count_per_mode": 1,
+    "timeout_ms": 25000,
+    "retry_count": 0,
+    "response_body_recorded": false
+  },
+  "sources": [
+    {
+      "source_id": "skku_009",
+      "list_url": "https://nano.skku.edu/bbs/board.php?tbl=bbs42",
+      "hostname": "nano.skku.edu",
+      "strict": {
+        "success": false,
+        "error_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        "final_url": "https://nano.skku.edu/bbs/board.php?tbl=bbs42",
+        "redirect_chain": [],
+        "system_ca_applied": false,
+        "insecure_tls_applied": false
+      },
+      "system_ca": {
+        "success": true,
+        "http_status": 200,
+        "content_type": "text/html",
+        "final_url": "https://nano.skku.edu/bbs/board.php?tbl=bbs42",
+        "redirect_chain": [],
+        "certificate_verification_preserved": true,
+        "system_ca_applied": true,
+        "insecure_tls_applied": false
+      }
+    },
+    {
+      "source_id": "skku_013",
+      "list_url": "https://cheme.skku.edu/notice/",
+      "hostname": "cheme.skku.edu",
+      "strict": {
+        "success": false,
+        "error_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        "final_url": "https://cheme.skku.edu/notice/",
+        "redirect_chain": [],
+        "system_ca_applied": false,
+        "insecure_tls_applied": false
+      },
+      "system_ca": {
+        "success": true,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "final_url": "https://cheme.skku.edu/notice/",
+        "redirect_chain": [],
+        "certificate_verification_preserved": true,
+        "system_ca_applied": true,
+        "insecure_tls_applied": false
+      }
+    },
+    {
+      "source_id": "yonsei_057",
+      "list_url": "https://ped.yonsei.ac.kr/board/departmentnews",
+      "hostname": "ped.yonsei.ac.kr",
+      "strict": {
+        "success": false,
+        "error_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        "final_url": "https://ped.yonsei.ac.kr/board/departmentnews",
+        "redirect_chain": [],
+        "system_ca_applied": false,
+        "insecure_tls_applied": false
+      },
+      "system_ca": {
+        "success": true,
+        "http_status": 200,
+        "content_type": "text/html;charset=UTF-8",
+        "final_url": "https://ped.yonsei.ac.kr/board/departmentnews",
+        "redirect_chain": [],
+        "certificate_verification_preserved": true,
+        "system_ca_applied": true,
+        "insecure_tls_applied": false
+      }
+    }
+  ]
+}

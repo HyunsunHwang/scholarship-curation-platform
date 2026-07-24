@@ -17,6 +17,12 @@ import { loadSources } from "../lib/notice-sources-loader.mjs";
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const policyRoot = path.join(repositoryRoot, "config", "crawler-transport");
 const rawRegistry = JSON.parse(fs.readFileSync(path.join(policyRoot, "transport-policies.json"), "utf8"));
+const systemCaEvidence = JSON.parse(fs.readFileSync(path.join(
+  repositoryRoot,
+  "reports",
+  "runtime-diagnostics",
+  "transport-system-ca-remediation-2026-07-24.json",
+), "utf8"));
 const sources = (await loadSources("manifest")).sources;
 const now = new Date("2026-07-24T00:00:00.000Z");
 let passed = 0;
@@ -42,6 +48,35 @@ const cau002 = sources.find((source) => source.sourceId === "cau_002");
 const hanyang009 = sources.find((source) => source.sourceId === "hanyang_009");
 const cauPolicy = resolveEffectiveTransportPolicy({ source: cau002, registry, now });
 const hanyangPolicy = resolveEffectiveTransportPolicy({ source: hanyang009, registry, now });
+
+await test("system CA live evidence is bounded, exact-host, and verification-preserving", () => {
+  const expected = [
+    ["skku_009", "nano.skku.edu"],
+    ["skku_013", "cheme.skku.edu"],
+    ["yonsei_057", "ped.yonsei.ac.kr"],
+  ];
+  assert.equal(systemCaEvidence.schema_version, "crawler-transport-system-ca-evidence-v1");
+  assert.deepEqual(
+    systemCaEvidence.sources.map((entry) => [entry.source_id, entry.hostname]),
+    expected,
+  );
+  assert.equal(systemCaEvidence.probe_policy.request_count_per_mode, 1);
+  assert.equal(systemCaEvidence.probe_policy.retry_count, 0);
+  assert.equal(systemCaEvidence.probe_policy.response_body_recorded, false);
+  for (const entry of systemCaEvidence.sources) {
+    assert.equal(entry.strict.success, false);
+    assert.equal(entry.strict.error_code, "UNABLE_TO_VERIFY_LEAF_SIGNATURE");
+    assert.equal(entry.strict.system_ca_applied, false);
+    assert.equal(entry.strict.insecure_tls_applied, false);
+    assert.equal(entry.system_ca.success, true);
+    assert.equal(entry.system_ca.http_status, 200);
+    assert.equal(entry.system_ca.certificate_verification_preserved, true);
+    assert.equal(entry.system_ca.system_ca_applied, true);
+    assert.equal(entry.system_ca.insecure_tls_applied, false);
+    assert.equal(new URL(entry.list_url).hostname, entry.hostname);
+    assert.equal(new URL(entry.system_ca.final_url).hostname, entry.hostname);
+  }
+});
 
 await test("all sources resolve and only hanyang_009 is insecure exact-host", () => {
   const policies = resolveTransportPoliciesForSources({ sources, registry, now });
