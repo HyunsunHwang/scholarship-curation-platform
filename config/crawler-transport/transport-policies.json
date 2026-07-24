@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "crawler-transport-policy-v1",
+  "registryVersion": "2026-07-24.1",
+  "userAgentProfiles": {
+    "browser-default": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+  },
+  "defaults": {
+    "protocolMode": "strict",
+    "dnsFamily": "ipv4",
+    "tlsMode": "strict",
+    "userAgentProfile": "browser-default",
+    "timeoutMs": 25000,
+    "maximumResponseBytes": 20000000,
+    "retry": {
+      "count": 1,
+      "baseDelayMs": 1000,
+      "maximumDelayMs": 30000,
+      "jitterRatio": 0.1
+    },
+    "redirect": {
+      "maximumHops": 5,
+      "allowCrossHost": true,
+      "allowHttpsToHttpDowngrade": false
+    }
+  },
+  "profiles": {
+    "ewha-daily": {
+      "timeoutMs": 30000,
+      "retry": {
+        "count": 3,
+        "baseDelayMs": 1500
+      }
+    },
+    "cau-daily": {
+      "timeoutMs": 30000,
+      "retry": {
+        "count": 2,
+        "baseDelayMs": 1200
+      }
+    },
+    "hanyang-daily": {
+      "timeoutMs": 30000,
+      "retry": {
+        "count": 3,
+        "baseDelayMs": 1500
+      }
+    },
+    "uos-daily": {
+      "timeoutMs": 30000,
+      "retry": {
+        "count": 2,
+        "baseDelayMs": 1200
+      }
+    },
+    "legacy-http-only": {
+      "protocolMode": "preserve-http"
+    },
+    "insecure-exact-host": {
+      "tlsMode": "insecure-exact-host"
+    }
+  },
+  "bindings": [
+    {
+      "bindingId": "ewha-daily-policy",
+      "priority": 10,
+      "universitySlugs": ["ewha"],
+      "profile": "ewha-daily"
+    },
+    {
+      "bindingId": "cau-daily-policy",
+      "priority": 10,
+      "universitySlugs": ["cau"],
+      "profile": "cau-daily"
+    },
+    {
+      "bindingId": "hanyang-daily-policy",
+      "priority": 10,
+      "universitySlugs": ["hanyang"],
+      "profile": "hanyang-daily"
+    },
+    {
+      "bindingId": "uos-daily-policy",
+      "priority": 10,
+      "universitySlugs": ["uos"],
+      "profile": "uos-daily"
+    },
+    {
+      "bindingId": "legacy-http-sources",
+      "priority": 20,
+      "sourceIds": [
+        "cau_010",
+        "cau_013",
+        "cau_016",
+        "cau_069",
+        "cau_072",
+        "cau_082",
+        "hanyang_009",
+        "hanyang_012",
+        "hanyang_014",
+        "hanyang_015",
+        "hanyang_016",
+        "hanyang_017",
+        "hanyang_018",
+        "hanyang_041",
+        "khu_082",
+        "khu_084",
+        "khu_108",
+        "khu_110",
+        "khu_128",
+        "khu_132",
+        "korea_037",
+        "skku_059",
+        "yonsei_015",
+        "yonsei_024"
+      ],
+      "profile": "legacy-http-only",
+      "reason": "Source registry declares an HTTP-only list endpoint",
+      "evidenceCommit": "b5afaf6",
+      "createdAt": "2026-07-24"
+    },
+    {
+      "bindingId": "cau-002-insecure-tls",
+      "priority": 100,
+      "sourceIds": ["cau_002"],
+      "allowedHosts": ["econ.cau.ac.kr"],
+      "profile": "insecure-exact-host",
+      "reason": "Verified legacy certificate chain failure on the exact source host",
+      "evidenceCommit": "b5afaf6",
+      "createdAt": "2026-07-24",
+      "expiresAt": "2026-12-31"
+    },
+    {
+      "bindingId": "hanyang-009-insecure-tls",
+      "priority": 100,
+      "sourceIds": ["hanyang_009"],
+      "allowedHosts": ["hyurban.hanyang.ac.kr"],
+      "profile": "insecure-exact-host",
+      "reason": "Verified HTTPS certificate hostname mismatch on the exact source host",
+      "evidenceCommit": "5f37f7267f50ea23a2dccb52ba4014a629f25e11",
+      "createdAt": "2026-07-24",
+      "expiresAt": "2026-12-31"
+    }
+  ]
+}

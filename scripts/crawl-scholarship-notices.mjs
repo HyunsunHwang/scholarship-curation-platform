@@ -3,20 +3,27 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { Worker, isMainThread } from "node:worker_threads";
-import { load as loadHtml } from "cheerio";
-import { Agent as UndiciAgent } from "undici";
 import {
   buildBoundedPaginationUrls,
-  extractNoticeUrlFromLinkNode,
   getAdapterCapabilityEvidence,
   getListAdapter,
   getSourceAdapterStrategy,
 } from "../lib/crawler-adapters/index.mjs";
 import { loadSources } from "../lib/notice-sources-loader.mjs";
 import {
-  normalizeRetryBackoffMs,
+  DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
   runBoundedCrawlerSource,
 } from "../lib/crawler-engine/common-runner.mjs";
+import {
+  buildResolvedTransportPolicyEvidence,
+  createTransportClient,
+  createTransportDispatcherPool,
+  loadTransportPolicyRegistry,
+  parseTransportRuntimeOverrides,
+  resolveEffectiveTransportPolicy,
+  resolveTransportPoliciesForSources,
+  sanitizeTransportUrl,
+} from "../lib/crawler-engine/transport/index.mjs";
 import {
   buildCrawlerRunSummary,
   buildCrawlerNoticeCsv,
@@ -27,13 +34,9 @@ import {
   classifyCrawlerFailure,
   sanitizeCrawlerError,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
+import { extractFromList } from "../lib/crawler-engine/crawler-list-parser.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
-import {
-  OPERATIONAL_COMMON_LIST_SELECTORS,
-  OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR,
-  attachOperationalListParserEvidence,
-  collectOperationalListParserEvidence,
-} from "../lib/crawler-engine/operational-parser-evidence.mjs";
+import { createListAdapterExecution } from "../lib/crawler-engine/list-adapter-strategy.mjs";
 import { boundedMap, createCrawlerRateLimiter } from "../lib/crawler-engine/execution-policy.mjs";
 import {
   finishCrawlerPerformanceTelemetry,
@@ -41,9 +44,6 @@ import {
   isCrawlerPerformanceTelemetryActive,
   releaseCrawlerTelemetryWorker,
   startCrawlerPerformanceTelemetry,
-  telemetryHttpFinished,
-  telemetryHttpStarted,
-  telemetryRetryDelay,
   telemetrySourceFinished,
   telemetrySourceStarted,
   telemetrySourcesQueued,
@@ -55,13 +55,8 @@ import {
   parseScholarshipNoticeDate,
 } from "../lib/detection/scholarship-candidate-detector.mjs";
 import { buildDetailFetchPlan } from "../lib/crawler-engine/detail-fetch-planner.mjs";
-import {
-  buildPreliminaryScholarshipCandidatePlan,
-  finalizeScholarshipCandidateDetection,
-} from "../lib/crawler-engine/scholarship-candidate-pipeline.mjs";
 import { buildSourceRegistryDiagnostics } from "../lib/crawler-engine/source-registry-diagnostics.mjs";
 import {
-  buildCrawlerWorkItemKey,
   createCrawlerCheckpointSession,
   installCrawlerSignalHandlers,
   parseCrawlerCheckpointArguments,
@@ -82,24 +77,13 @@ const INPUT_ARG = CLI_ARGUMENTS.positional[0] ?? "db";
 const OUTPUT_DIR = CLI_ARGUMENTS.positional[1] ?? "exports/notices";
 const STATE_FILE_PATH =
   CLI_ARGUMENTS.positional[2] ?? ".crawler/scholarship-notice-state.json";
-const REQUEST_TIMEOUT_MS = Number(process.env.CRAWL_TIMEOUT_MS ?? 25_000);
-const REQUEST_RETRY_COUNT = Math.max(0, Math.min(3, Number(process.env.CRAWL_RETRY_COUNT ?? 1)));
-const REQUEST_RETRY_BACKOFF_MS = Math.max(
-  200,
-  normalizeRetryBackoffMs(Number(process.env.CRAWL_RETRY_BACKOFF_MS ?? 1_000)),
+const TRANSPORT_RUNTIME_OVERRIDES = parseTransportRuntimeOverrides(process.env);
+const SOURCE_EXECUTION_TIMEOUT_INPUT = Number(
+  process.env.CRAWL_SOURCE_EXECUTION_TIMEOUT_MS ?? 180_000,
 );
-const REQUEST_RETRY_MAX_DELAY_MS = Math.max(
-  REQUEST_RETRY_BACKOFF_MS,
-  Math.min(30_000, Number(process.env.CRAWL_RETRY_MAX_DELAY_MS ?? 30_000)),
-);
-const REQUEST_RETRY_JITTER_RATIO = Math.min(
-  1,
-  Math.max(0, Number(process.env.CRAWL_RETRY_JITTER_RATIO ?? 0.1)),
-);
-const SOURCE_EXECUTION_TIMEOUT_MS = Math.max(
-  REQUEST_TIMEOUT_MS,
-  Number(process.env.CRAWL_SOURCE_EXECUTION_TIMEOUT_MS ?? 180_000),
-);
+const SOURCE_EXECUTION_TIMEOUT_MS = Number.isFinite(SOURCE_EXECUTION_TIMEOUT_INPUT)
+  ? Math.max(25_000, SOURCE_EXECUTION_TIMEOUT_INPUT)
+  : 180_000;
 const DETAIL_FETCH_ENABLED = process.env.CRAWL_DETAIL_FETCH !== "false";
 const DOCUMENT_PARSING_ENABLED = isDocumentParsingEnabled(process.env.CRAWL_DOCUMENT_PARSING_ENABLED);
 const DOCUMENT_CACHE_DIRECTORY = process.env.CRAWL_DOCUMENT_CACHE_DIRECTORY ?? ".tmp/engine-phase-3/cache";
@@ -145,15 +129,8 @@ const COLLEGE_NAME_ALLOWLIST = new Set(
     .map((item) => cleanText(item).toLowerCase())
     .filter(Boolean),
 );
-// Some university WAFs (e.g. cau.ac.kr) silently hang/drop requests whose
-// User-Agent contains an identifiable bot string, even though the same page
-// loads instantly for a normal browser UA. Default to a browser-like UA to
-// avoid mistaking a WAF block for a dead link; still overridable via env.
-const REQUEST_USER_AGENT =
-  process.env.CRAWL_USER_AGENT ??
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
-// Linux CI often prefers broken IPv6 for .ac.kr hosts; force IPv4 by default.
-const FORCE_IPV4 = process.env.CRAWL_FORCE_IPV4 !== "false";
+// Compatibility exports retained for older tests and operational callers.
+// Production dispatchers are created only by the transport policy layer.
 export function parseInsecureTlsHostAllowlist(value) {
   return new Set(
     String(value ?? "")
@@ -172,26 +149,8 @@ export function shouldAllowInsecureTls(url, insecureTlsHosts) {
   }
 }
 
-const INSECURE_TLS_HOSTS = parseInsecureTlsHostAllowlist(
-  process.env.CRAWL_ALLOW_INSECURE_TLS_HOSTS,
-);
-const REQUEST_DISPATCHERS = new Map();
-function dispatcherForUrl(url) {
-  const allowInsecureTls = shouldAllowInsecureTls(url, INSECURE_TLS_HOSTS);
-  if (!FORCE_IPV4 && !allowInsecureTls) return null;
-  const key = `${FORCE_IPV4 ? "ipv4" : "default"}:${allowInsecureTls ? "insecure" : "strict"}`;
-  if (!REQUEST_DISPATCHERS.has(key)) {
-    REQUEST_DISPATCHERS.set(key, new UndiciAgent({
-      connect: {
-        ...(FORCE_IPV4 ? { family: 4 } : {}),
-        ...(allowInsecureTls ? { rejectUnauthorized: false } : {}),
-      },
-    }));
-  }
-  return REQUEST_DISPATCHERS.get(key);
-}
-const DEFAULT_NOTICE_URL_PATTERN =
-  /(mode=view|sMode=VIEW_FORM|iBrdContNo=|articleNo=|boardNo=|nttNo=|idx=\d+|no=\d+|wr_id=\d+|boardSeq=\d+|b_idx=\d+|seq=\d+|uid=\d+|artclView\.do|notice-view\?id=|mod=document)/i;
+const MODULE_TRANSPORT_DISPATCHER_POOL = createTransportDispatcherPool();
+let standaloneTransportRegistry = null;
 const RUN_AT = new Date().toISOString();
 
 function cleanText(value) {
@@ -210,264 +169,53 @@ export function formatFetchError(error) {
   return msg;
 }
 
-function normalizeUrlKey(value) {
-  try {
-    const u = new URL(value);
-    u.hash = "";
-    let pathname = u.pathname.replace(/\/+$/, "") || "/";
-    if (/\/index\.(html?|php|jsp|asp|aspx|do)$/i.test(pathname)) {
-      pathname = pathname.replace(/\/index\.(html?|php|jsp|asp|aspx|do)$/i, "") || "/";
-    }
-    u.pathname = pathname;
-    return u.href;
-  } catch {
-    return cleanText(value).replace(/\/+$/, "");
-  }
-}
-
-function isLikelyNonDetailNoticeUrl(noticeUrl, listUrl, baseUrl) {
-  try {
-    const notice = new URL(noticeUrl);
-    const noticeKey = normalizeUrlKey(noticeUrl);
-    if (listUrl && noticeKey === normalizeUrlKey(listUrl)) return true;
-    if (baseUrl && noticeKey === normalizeUrlKey(baseUrl)) return true;
-
-    // Some CMS boards keep detail pages on "/" with query params
-    // (e.g. sMode=VIEW_FORM&iBrdContNo=...). Treat those as detail URLs.
-    if (DEFAULT_NOTICE_URL_PATTERN.test(`${notice.pathname}${notice.search}`)) {
-      return false;
-    }
-
-    const pathName = notice.pathname.toLowerCase();
-    if (pathName === "/" || pathName === "") return true;
-    if (/\/(index|main|home|sitemap)(\.(html?|php|jsp|asp|aspx|do))?$/i.test(pathName)) {
-      return true;
-    }
-    if (/\/(sitemap|login|member|intro|about)(\/|$)/i.test(pathName)) return true;
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-function extractDateLikeText(text) {
-  const cleaned = cleanText(text);
-  if (!cleaned) return "";
-
-  const patterns = [
-    /(\d{4}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{1,2})/,
-    /(\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일)/,
-    /(\d{2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{1,2})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = cleaned.match(pattern);
-    if (match) return cleanText(match[1]);
-  }
-
-  return "";
-}
-
-function extractListDateText(itemRoot, dateSelector) {
-  const candidates = [];
-  const seen = new Set();
-
-  const pushCandidate = (value) => {
-    const text = cleanText(value);
-    if (!text || seen.has(text)) return;
-    seen.add(text);
-    candidates.push(text);
+function createStandaloneTransportClient(url, { fetchImpl } = {}) {
+  standaloneTransportRegistry ??= loadTransportPolicyRegistry();
+  const source = {
+    sourceId: "standalone_transport",
+    universitySlug: "standalone",
+    listUrl: url,
   };
-
-  if (dateSelector) {
-    itemRoot.find(dateSelector).each((_, node) => {
-      pushCandidate(itemRoot.find(node).text());
-    });
-  }
-
-  itemRoot.find("time, td, span, div").each((index, node) => {
-    if (index > 40) return false;
-    pushCandidate(itemRoot.find(node).text());
-    return undefined;
+  const transportPolicy = resolveEffectiveTransportPolicy({
+    source,
+    registry: standaloneTransportRegistry,
+    runtimeOverrides: {
+      ...TRANSPORT_RUNTIME_OVERRIDES,
+      deprecatedInsecureTlsHosts: [],
+    },
   });
-
-  for (const candidate of candidates) {
-    const dateLike = extractDateLikeText(candidate);
-    if (dateLike) return dateLike;
-  }
-
-  return "";
-}
-
-function normalizeCharset(value) {
-  const normalized = cleanText(value).toLowerCase().replace(/^['"]|['"]$/g, "");
-  if (!normalized) return "";
-  if (normalized === "utf8") return "utf-8";
-  if (["cp949", "ms949", "ks_c_5601-1987"].includes(normalized)) return "euc-kr";
-  return normalized;
-}
-
-function detectCharsetFromHeaders(contentType) {
-  const raw = cleanText(contentType);
-  if (!raw) return "";
-  const match = raw.match(/charset\s*=\s*([^;]+)/i);
-  if (!match) return "";
-  return normalizeCharset(match[1]);
-}
-
-function detectCharsetFromHtmlProbe(htmlProbe) {
-  const probe = cleanText(htmlProbe);
-  if (!probe) return "";
-  const metaCharset = probe.match(/<meta[^>]*charset\s*=\s*["']?\s*([a-zA-Z0-9._-]+)/i);
-  if (metaCharset?.[1]) return normalizeCharset(metaCharset[1]);
-  const metaContent = probe.match(
-    /<meta[^>]*content\s*=\s*["'][^"']*charset\s*=\s*([a-zA-Z0-9._-]+)/i,
-  );
-  if (metaContent?.[1]) return normalizeCharset(metaContent[1]);
-  return "";
-}
-
-function decodeHtmlBuffer(buffer, headerCharset) {
-  const probe = new TextDecoder("latin1").decode(buffer.subarray(0, 4096));
-  const metaCharset = detectCharsetFromHtmlProbe(probe);
-
-  const candidates = [headerCharset, metaCharset, FALLBACK_CHARSET, "utf-8", "euc-kr"]
-    .map((value) => normalizeCharset(value))
-    .filter(Boolean);
-  const uniqueCandidates = [...new Set(candidates)];
-
-  for (const charset of uniqueCandidates) {
-    try {
-      return new TextDecoder(charset, { fatal: true }).decode(buffer);
-    } catch {
-      // Try the next candidate charset.
-    }
-  }
-
-  return new TextDecoder("utf-8").decode(buffer);
-}
-
-async function readResponseBytesBounded(response, maxBytes) {
-  const declared = Number(response.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > maxBytes) {
-    await response.body?.cancel();
-    const error = new Error("Response content length exceeds the configured byte limit.");
-    error.code = "bounded_limit_exceeded";
-    throw error;
-  }
-  if (!response.body) return Buffer.alloc(0);
-  const reader = response.body.getReader();
-  const chunks = [];
-  let total = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      total += value.byteLength;
-      if (total > maxBytes) {
-        await reader.cancel();
-        const error = new Error("Response body exceeds the configured byte limit.");
-        error.code = "bounded_limit_exceeded";
-        throw error;
-      }
-      chunks.push(Buffer.from(value));
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  return Buffer.concat(chunks, total);
+  return createTransportClient({
+    source,
+    policy: transportPolicy,
+    dispatcherPool: MODULE_TRANSPORT_DISPATCHER_POOL,
+    fallbackCharset: FALLBACK_CHARSET,
+    fetchImpl,
+  });
 }
 
 export async function fetchUrlWithMetadata(url, options = {}) {
-  const dispatcher = dispatcherForUrl(url);
-  let lastError = null;
-  const retryCount = Math.max(0, Math.min(3, Number(options.retryCount ?? REQUEST_RETRY_COUNT)));
-  const timeoutMs = Math.max(1, Number(options.timeoutMs ?? REQUEST_TIMEOUT_MS));
-  const maxBytes = Math.max(1, Number(options.maxBytes ?? DOCUMENT_MAX_BYTES));
-  const method = options.method ?? "GET";
-  for (let attempt = 0; attempt <= retryCount; attempt += 1) {
-    const telemetryRequest = telemetryHttpStarted({ url, attempt, kind: options.kind });
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    const signal = options.signal
-      ? AbortSignal.any([controller.signal, options.signal])
-      : controller.signal;
-    try {
-      const response = await fetch(url, {
-        method,
-        signal,
-        dispatcher: dispatcher ?? undefined,
-        redirect: "follow",
-        headers: {
-          "user-agent": REQUEST_USER_AGENT,
-          accept: options.accept ?? "*/*",
-          "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-          ...(options.headers ?? {}),
-        },
-      });
-      if (response.status === 304) {
-        telemetryHttpFinished(telemetryRequest, { status: response.status, bytes: 0 });
-        return {
-          bytes: Buffer.alloc(0),
-          httpStatus: response.status,
-          finalUrl: response.url || url,
-          contentType: response.headers.get("content-type") ?? "",
-          etag: response.headers.get("etag"),
-          lastModified: response.headers.get("last-modified"),
-          contentLength: 0,
-          retryCount: attempt,
-          notModified: true,
-        };
-      }
-      if (!response.ok) {
-        const error = new Error(`HTTP ${response.status}`);
-        error.httpStatus = response.status;
-        error.finalUrl = response.url || url;
-        error.retryAfter = response.headers.get("retry-after");
-        throw error;
-      }
-      const bytes = options.readBody === false ? Buffer.alloc(0) : await readResponseBytesBounded(response, maxBytes);
-      telemetryHttpFinished(telemetryRequest, { status: response.status, bytes: bytes.length });
-      return {
-        bytes,
-        httpStatus: response.status,
-        finalUrl: response.url || url,
-        contentType: response.headers.get("content-type") ?? "",
-        etag: response.headers.get("etag"),
-        lastModified: response.headers.get("last-modified"),
-        contentLength: Number(response.headers.get("content-length")) || null,
-        retryCount: attempt,
-        notModified: false,
-      };
-    } catch (error) {
-      lastError = error;
-      telemetryHttpFinished(telemetryRequest, {
-        status: error?.httpStatus,
-        error,
-        timeout: controller.signal.aborted && !options.signal?.aborted,
-      });
-      if (options.signal?.aborted) break;
-      if (attempt < retryCount) {
-        const waitMs = REQUEST_RETRY_BACKOFF_MS * (attempt + 1);
-        telemetryRetryDelay(waitMs);
-        await new Promise((resolve) => setTimeout(resolve, waitMs));
-        continue;
-      }
-    } finally {
-      clearTimeout(timeout);
-    }
-  }
-  throw lastError ?? new Error("fetch failed");
+  const {
+    transportClient: providedTransportClient,
+    fetchImpl,
+    ...requestOptions
+  } = options;
+  const transportClient = providedTransportClient
+    ?? createStandaloneTransportClient(url, { fetchImpl });
+  return transportClient.request(url, requestOptions);
 }
 
 export async function fetchHtmlWithMetadata(url, options = {}) {
-  const response = await fetchUrlWithMetadata(url, {
-    ...options,
-    accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    maxBytes: options.maxBytes ?? DOCUMENT_MAX_BYTES,
+  const {
+    transportClient: providedTransportClient,
+    fetchImpl,
+    ...requestOptions
+  } = options;
+  const transportClient = providedTransportClient
+    ?? createStandaloneTransportClient(url, { fetchImpl });
+  return transportClient.fetchHtml(url, {
+    ...requestOptions,
+    maxBytes: requestOptions.maxBytes ?? DOCUMENT_MAX_BYTES,
   });
-  const headerCharset = detectCharsetFromHeaders(response.contentType);
-  return { ...response, html: decodeHtmlBuffer(response.bytes, headerCharset) };
 }
 
 export async function fetchHtml(url, options = {}) {
@@ -476,14 +224,15 @@ export async function fetchHtml(url, options = {}) {
 
 export async function inspectCrawlerAsset(asset, context = {}) {
   const response = await fetchUrlWithMetadata(asset.url, {
+    transportClient: context.transportClient,
     method: "HEAD",
     readBody: false,
     retryCount: 0,
-    timeoutMs: context.timeoutMs ?? REQUEST_TIMEOUT_MS,
+    timeoutMs: context.timeoutMs,
     maxBytes: context.maxBytes ?? DOCUMENT_MAX_BYTES,
   });
   return {
-    finalUrl: response.finalUrl,
+    finalUrl: sanitizeTransportUrl(response.finalUrl),
     mimeType: response.contentType.split(";")[0],
     etag: response.etag,
     lastModified: response.lastModified,
@@ -493,14 +242,15 @@ export async function inspectCrawlerAsset(asset, context = {}) {
 
 export async function fetchCrawlerAsset(asset, context = {}) {
   const response = await fetchUrlWithMetadata(asset.url, {
+    transportClient: context.transportClient,
     method: "GET",
     retryCount: 0,
-    timeoutMs: context.timeoutMs ?? REQUEST_TIMEOUT_MS,
+    timeoutMs: context.timeoutMs,
     maxBytes: context.maxBytes ?? DOCUMENT_MAX_BYTES,
   });
   return {
     bytes: response.bytes,
-    finalUrl: response.finalUrl,
+    finalUrl: sanitizeTransportUrl(response.finalUrl),
     mimeType: response.contentType.split(";")[0],
     etag: response.etag,
     lastModified: response.lastModified,
@@ -518,7 +268,14 @@ export function createAuthoritativeDocumentRuntime(options = {}) {
           signal: context.signal,
         })
       : null;
-    try { return await transport(asset, context); } finally { permit?.release(); }
+    try {
+      return await transport(asset, {
+        ...context,
+        transportClient: context.transportClient ?? options.transportClient,
+      });
+    } finally {
+      permit?.release();
+    }
   };
   return createCrawlerDocumentRuntime({
     enabled: options.enabled ?? DOCUMENT_PARSING_ENABLED,
@@ -536,189 +293,7 @@ export function createAuthoritativeDocumentRuntime(options = {}) {
   });
 }
 
-export function extractFromList(source, html) {
-  const $ = loadHtml(html);
-  const results = [];
-  const seen = new Set();
-  const sourceId = cleanText(source.sourceId).toLowerCase();
-  const finalize = (items = results) => attachOperationalListParserEvidence(
-    items,
-    collectOperationalListParserEvidence(source, html, items),
-  );
-
-  const addBoardItem = (link, title, dateText, noticeUrlOverride = "") => {
-    const noticeUrl = noticeUrlOverride || extractNoticeUrlFromLinkNode(source, link);
-    const normalizedTitle = cleanText(title);
-    if (!noticeUrl || !normalizedTitle || seen.has(noticeUrl)) return;
-    seen.add(noticeUrl);
-    results.push({
-      sourceId: source.sourceId,
-      universitySlug: source.universitySlug,
-      universityId: source.universityId,
-      collegeId: source.collegeId,
-      departmentId: source.departmentId,
-      collegeName: source.collegeName,
-      departmentName: source.departmentName,
-      sourceLevel: source.sourceLevel,
-      sourceName: source.sourceName,
-      listUrl: source.listUrl,
-      noticeUrl,
-      title: normalizedTitle,
-      dateText: cleanText(dateText),
-    });
-  };
-
-  if (sourceId === "cau_001") {
-    $("tr").each((_, node) => {
-      const row = $(node);
-      const link = row.find('a[href*="sub06_01_view.php"][href*="bbsIdx="]').first();
-      if (!link.length) return;
-      const noticeUrl = extractNoticeUrlFromLinkNode(source, link);
-      const title = cleanText(link.text());
-      if (!noticeUrl || !title || seen.has(noticeUrl)) return;
-      seen.add(noticeUrl);
-      results.push({
-        sourceId: source.sourceId,
-        universitySlug: source.universitySlug,
-        universityId: source.universityId,
-        collegeId: source.collegeId,
-        departmentId: source.departmentId,
-        collegeName: source.collegeName,
-        departmentName: source.departmentName,
-        sourceLevel: source.sourceLevel,
-        sourceName: source.sourceName,
-        listUrl: source.listUrl,
-        noticeUrl,
-        title,
-        dateText: extractListDateText(row, source.dateSelector),
-      });
-    });
-    return finalize();
-  }
-
-  if (sourceId === "cau_003") {
-    $("table.board-table tbody tr").each((_, node) => {
-      const row = $(node);
-      const link = row.find("a.board-page-link").first();
-      const articleId = cleanText(link.attr("href")).match(
-        /javascript:view\(\s*['"](\d+)['"]/i,
-      )?.[1];
-      if (!articleId) return;
-      const target = new URL(source.listUrl);
-      target.search = "";
-      target.searchParams.set("p_idx", articleId);
-      target.searchParams.set("p_mode", "view");
-      addBoardItem(
-        link,
-        link.text(),
-        row.find(".board-col--mb .date").first().text() || row.find("td").last().text(),
-        target.toString(),
-      );
-    });
-    return finalize();
-  }
-
-  if (sourceId === "cau_007") {
-    $("ul.board_list > li").each((_, node) => {
-      const row = $(node);
-      const link = row.find('a[href*="seq="]').first();
-      addBoardItem(
-        link,
-        row.find(".board_list_tit").first().text(),
-        row.find(".board_list_info .line").last().text(),
-      );
-    });
-    return finalize();
-  }
-
-  if (sourceId === "cau_008") {
-    $(".bbs-list-row").each((_, node) => {
-      const row = $(node);
-      const link = row.find('a[href*="bgu=view"][href*="idx="]').first();
-      addBoardItem(
-        link,
-        row.find(".bbs-subject-txt").first().text(),
-        row.find(".bbs-inline").eq(1).text(),
-      );
-    });
-    return finalize();
-  }
-
-  const pushResult = (node, index) => {
-    const itemRoot = node ? $(node) : null;
-    const linkNode = itemRoot
-      ? source.linkSelector
-        ? itemRoot.find(source.linkSelector).first()
-        : itemRoot.find("a[href]").first()
-      : null;
-    const fallbackLinkNode = !itemRoot
-      ? $("a[href], a[onclick], a[data-href], a[data-url], a[data-link]").eq(index)
-      : null;
-    const activeLinkNode = linkNode && linkNode.length ? linkNode : fallbackLinkNode;
-
-    if (activeLinkNode?.closest(OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR).length) return;
-    if (itemRoot?.closest(OPERATIONAL_NAVIGATION_CONTAINER_SELECTOR).length) return;
-
-    const noticeUrl = extractNoticeUrlFromLinkNode(source, activeLinkNode);
-    if (!noticeUrl || seen.has(noticeUrl)) return;
-
-    const titleRaw = itemRoot
-      ? source.titleSelector
-        ? itemRoot.find(source.titleSelector).first().text()
-        : activeLinkNode?.text() ?? itemRoot.text()
-      : activeLinkNode?.text() ?? "";
-    const title = cleanText(titleRaw);
-    if (!title) return;
-    if (isLikelyNonDetailNoticeUrl(noticeUrl, source.listUrl, source.baseUrl)) return;
-
-    const dateText = itemRoot ? extractListDateText(itemRoot, source.dateSelector) : "";
-
-    seen.add(noticeUrl);
-    results.push({
-      sourceId: source.sourceId,
-      universitySlug: source.universitySlug,
-      universityId: source.universityId,
-      collegeId: source.collegeId,
-      departmentId: source.departmentId,
-      collegeName: source.collegeName,
-      departmentName: source.departmentName,
-      sourceLevel: source.sourceLevel,
-      sourceName: source.sourceName,
-      listUrl: source.listUrl,
-      noticeUrl,
-      title,
-      dateText,
-    });
-  };
-
-  if (source.listItemSelector) {
-    $(source.listItemSelector).each((index, node) => pushResult(node, index));
-  } else {
-    const commonSelector = OPERATIONAL_COMMON_LIST_SELECTORS.find((selector) => $(selector).length > 0);
-    if (commonSelector) {
-      $(commonSelector).each((index, node) => pushResult(node, index));
-    } else {
-      $("a[href], a[onclick], a[data-href], a[data-url], a[data-link]").each((index) => pushResult(null, index));
-    }
-  }
-
-  if (source.noticeUrlPattern) {
-    const pattern = new RegExp(source.noticeUrlPattern);
-    return finalize(results.filter((item) => pattern.test(item.noticeUrl)));
-  }
-  // When a list-item selector exists but no URL pattern was configured,
-  // prefer detail-like URLs over menu/home links from the same board.
-  if (source.listItemSelector) {
-    const patterned = results.filter((item) => DEFAULT_NOTICE_URL_PATTERN.test(item.noticeUrl));
-    if (patterned.length > 0) return finalize(patterned);
-  }
-  return finalize();
-}
-
-function trimItems(items, maxItems) {
-  if (!Number.isFinite(maxItems) || maxItems <= 0) return items;
-  return items.slice(0, maxItems);
-}
+export { extractFromList };
 
 async function mapLimit(items, limit, mapper, options = {}) {
   return boundedMap(items, limit, mapper, options);
@@ -768,7 +343,13 @@ function scholarshipCandidateOptions(source) {
   };
 }
 
-export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents) {
+export function buildSourceExecutionTimeoutResult(
+  source,
+  startedAt,
+  startedMs,
+  stageEvents,
+  transportPolicy = null,
+) {
   const finishedAt = new Date().toISOString();
   const durationMs = Math.max(0, Date.now() - startedMs);
   return {
@@ -803,7 +384,9 @@ export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, 
       error_summary: "Source execution exceeded its isolated hard timeout.",
       retry_delay_ms: 0,
     }],
-    retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+    retry_backoff_ms:
+      transportPolicy?.retry?.baseDelayMs
+      ?? DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
     total_retry_delay_ms: 0,
     retried: false,
     recovered_after_retry: false,
@@ -816,6 +399,18 @@ export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, 
     final_transport_error_code: null,
     final_transport_error_category: null,
     final_transport_error_retryable: null,
+    transport_evidence: transportPolicy
+      ? {
+          ...buildResolvedTransportPolicyEvidence(transportPolicy),
+          request_attempt_count: null,
+          request_retry_count: null,
+          redirect_hop_count: null,
+          redirect_chain: [],
+          final_url: null,
+          insecure_tls_applied: null,
+          request_attempt_history: [],
+        }
+      : null,
     execution_stage_evidence: {
       source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
       timed_out: true,
@@ -825,7 +420,14 @@ export function buildSourceExecutionTimeoutResult(source, startedAt, startedMs, 
   };
 }
 
-export function buildSourceExecutionErrorResult(source, startedAt, startedMs, stageEvents, safeError) {
+export function buildSourceExecutionErrorResult(
+  source,
+  startedAt,
+  startedMs,
+  stageEvents,
+  safeError,
+  transportPolicy = null,
+) {
   const finishedAt = new Date().toISOString();
   const durationMs = Math.max(0, Date.now() - startedMs);
   const status = cleanText(safeError?.status ?? safeError?.result_status) || "network_error";
@@ -869,7 +471,9 @@ export function buildSourceExecutionErrorResult(source, startedAt, startedMs, st
       error_summary: errorMessage,
       retry_delay_ms: 0,
     }],
-    retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+    retry_backoff_ms:
+      transportPolicy?.retry?.baseDelayMs
+      ?? DEFAULT_CRAWLER_RETRY_BACKOFF_MS,
     total_retry_delay_ms: 0,
     retried: false,
     recovered_after_retry: false,
@@ -882,6 +486,7 @@ export function buildSourceExecutionErrorResult(source, startedAt, startedMs, st
     final_transport_error_code: transportErrorCode,
     final_transport_error_category: transportErrorCategory,
     final_transport_error_retryable: transportErrorRetryable,
+    transport_evidence: safeError?.transport_evidence ?? null,
     execution_stage_evidence: {
       source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
       timed_out: false,
@@ -897,6 +502,7 @@ async function executeSourceInWorker({
   completedWorkItemKeys,
   checkpointSession,
   seenNoticeUrls,
+  transportPolicy,
 }) {
   const startedAt = new Date().toISOString();
   const startedMs = Date.now();
@@ -906,6 +512,7 @@ async function executeSourceInWorker({
     workerData: {
       workerId,
       source,
+      transportPolicy,
       inventoryRows,
       completedWorkItemKeys,
       config: {
@@ -914,12 +521,19 @@ async function executeSourceInWorker({
         maxItems: MAX_ITEMS_PER_SOURCE,
         maxPages: MAX_PAGES_PER_SOURCE,
         fetchDetails: DETAIL_FETCH_ENABLED,
-        timeoutMs: REQUEST_TIMEOUT_MS,
-        retryCount: REQUEST_RETRY_COUNT,
-        retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
-        retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
-        retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+        timeoutMs: transportPolicy.timeoutMs,
+        retryCount: transportPolicy.retry.count,
+        retryBackoffMs: transportPolicy.retry.baseDelayMs,
+        retryMaximumDelayMs: transportPolicy.retry.maximumDelayMs,
+        retryJitterRatio: transportPolicy.retry.jitterRatio,
         detailConcurrency: DETAIL_CONCURRENCY,
+        documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
+        documentCacheDirectory: DOCUMENT_CACHE_DIRECTORY,
+        documentMaxBytes: DOCUMENT_MAX_BYTES,
+        documentMaxPages: DOCUMENT_MAX_PAGES,
+        documentMaxOcrPages: DOCUMENT_MAX_OCR_PAGES,
+        documentOcrTimeoutMs: DOCUMENT_OCR_TIMEOUT_MS,
+        fallbackCharset: FALLBACK_CHARSET,
         sourceMinimumIntervalMs: SOURCE_MIN_INTERVAL_MS,
         hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
         hostConcurrency: HOST_CONCURRENCY,
@@ -941,7 +555,13 @@ async function executeSourceInWorker({
     };
     const timer = setTimeout(() => {
       void finish({
-        executionResult: buildSourceExecutionTimeoutResult(source, startedAt, startedMs, stageEvents),
+        executionResult: buildSourceExecutionTimeoutResult(
+          source,
+          startedAt,
+          startedMs,
+          stageEvents,
+          transportPolicy,
+        ),
         notices: [],
         timedOut: true,
       }, "source_execution_timeout");
@@ -956,7 +576,7 @@ async function executeSourceInWorker({
         stageEvents.push({
           stage: cleanText(message.stage),
           status: cleanText(message.status),
-          detail_url: cleanText(message.detail_url) || null,
+          detail_url: cleanText(sanitizeTransportUrl(message.detail_url)) || null,
           observed_at: new Date().toISOString(),
         });
         if (stageEvents.length > 80) stageEvents.shift();
@@ -984,6 +604,7 @@ async function executeSourceInWorker({
             startedMs,
             stageEvents,
             message.error,
+            transportPolicy,
           ),
           notices: [],
           timedOut: false,
@@ -1001,9 +622,24 @@ async function executeSourceInWorker({
   });
 }
 
-async function run({ signal } = {}) {
+async function run({ signal, onTransportResolved } = {}) {
   const loaded = await loadSources(INPUT_ARG);
   const configuredSources = loaded.sources;
+  const transportRegistry = loadTransportPolicyRegistry({
+    sources: configuredSources,
+    now: new Date(RUN_AT),
+  });
+  const transportPolicies = resolveTransportPoliciesForSources({
+    sources: configuredSources,
+    registry: transportRegistry,
+    runtimeOverrides: TRANSPORT_RUNTIME_OVERRIDES,
+    now: new Date(RUN_AT),
+  });
+  if (TRANSPORT_RUNTIME_OVERRIDES.deprecatedInsecureTlsHosts.length > 0) {
+    console.warn(
+      "warning=CRAWL_ALLOW_INSECURE_TLS_HOSTS is deprecated; exact hosts were authorized by the transport registry",
+    );
+  }
   console.log(`source_input=${loaded.inputLabel} mode=${loaded.mode} loaded=${configuredSources.length}`);
   const configuredPrefixes = [...new Set(configuredSources.map((source) => source.sourceId.split("_")[0]))];
   if (!SOURCE_ID_PREFIX && configuredPrefixes.length > 1) {
@@ -1044,12 +680,31 @@ async function run({ signal } = {}) {
   const stats = [];
   const genericHtmlStrategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
   const inventoryRows = configuredSources.map((source) => ({ source_id: source.sourceId }));
+  const selectedTransportPolicies = sources.map((source) => {
+    const policy = transportPolicies.get(source.sourceId);
+    if (!policy) throw new Error(`Missing resolved transport policy: ${source.sourceId}`);
+    return policy;
+  });
+  const resolvedTransportPolicyFingerprints = Object.fromEntries(
+    sources
+      .map((source) => [
+        source.sourceId,
+        transportPolicies.get(source.sourceId).policyFingerprint,
+      ])
+      .sort(([left], [right]) => left.localeCompare(right)),
+  );
+  const maximumTransportValue = (selector) =>
+    Math.max(...selectedTransportPolicies.map(selector));
+  await onTransportResolved?.({
+    transportRegistry,
+    selectedTransportPolicies,
+    sourceCount: sources.length,
+  });
   const requestLimiter = createCrawlerRateLimiter({
     minimumSourceIntervalMs: SOURCE_MIN_INTERVAL_MS,
     minimumHostIntervalMs: HOST_MIN_INTERVAL_MS,
     maximumHostConcurrency: HOST_CONCURRENCY,
   });
-  const documentRuntime = createAuthoritativeDocumentRuntime({ requestLimiter });
   const checkpointSession = await createCrawlerCheckpointSession({
     checkpointPath: CLI_ARGUMENTS.checkpoint_path,
     resume: CLI_ARGUMENTS.resume,
@@ -1059,11 +714,18 @@ async function run({ signal } = {}) {
       runner_contract_version: "engine-phase-2-common-runner-v1",
       source_concurrency: SOURCE_CONCURRENCY,
       detail_concurrency: DETAIL_CONCURRENCY,
-      retry_count: REQUEST_RETRY_COUNT,
-      retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
-      retry_maximum_delay_ms: REQUEST_RETRY_MAX_DELAY_MS,
-      retry_jitter_ratio: REQUEST_RETRY_JITTER_RATIO,
-      timeout_ms: REQUEST_TIMEOUT_MS,
+      retry_count: maximumTransportValue((policy) => policy.retry.count),
+      retry_backoff_ms: maximumTransportValue((policy) => policy.retry.baseDelayMs),
+      retry_maximum_delay_ms: maximumTransportValue(
+        (policy) => policy.retry.maximumDelayMs,
+      ),
+      retry_jitter_ratio: maximumTransportValue((policy) => policy.retry.jitterRatio),
+      timeout_ms: maximumTransportValue((policy) => policy.timeoutMs),
+      transport_policy_schema_version: transportRegistry.schemaVersion,
+      transport_policy_registry_version: transportRegistry.registryVersion,
+      transport_policy_registry_fingerprint: transportRegistry.registryFingerprint,
+      resolved_transport_policy_fingerprints: resolvedTransportPolicyFingerprints,
+      runtime_transport_overrides: TRANSPORT_RUNTIME_OVERRIDES.evidence,
       source_execution_isolation_enabled: SOURCE_EXECUTION_ISOLATION_ENABLED,
       source_execution_mode: SOURCE_EXECUTION_MODE.mode,
       source_execution_timeout_ms: SOURCE_EXECUTION_TIMEOUT_MS,
@@ -1071,7 +733,7 @@ async function run({ signal } = {}) {
       host_minimum_interval_ms: HOST_MIN_INTERVAL_MS,
       host_concurrency: HOST_CONCURRENCY,
       fetch_details: DETAIL_FETCH_ENABLED,
-      document_parsing_enabled: documentRuntime.enabled,
+      document_parsing_enabled: DOCUMENT_PARSING_ENABLED,
       maximum_items_per_source: MAX_ITEMS_PER_SOURCE,
       maximum_pages_per_source: MAX_PAGES_PER_SOURCE,
       lookback_days: LOOKBACK_DAYS,
@@ -1084,6 +746,24 @@ async function run({ signal } = {}) {
   const processSource = async (source) => {
     const sourceStartedAt = new Date().toISOString();
     const sourceStartedMs = Date.now();
+    const transportPolicy = transportPolicies.get(source.sourceId);
+    const transportClient = SOURCE_EXECUTION_ISOLATION_ENABLED
+      ? null
+      : createTransportClient({
+          source,
+          policy: transportPolicy,
+          dispatcherPool: MODULE_TRANSPORT_DISPATCHER_POOL,
+          requestLimiter,
+          fallbackCharset: FALLBACK_CHARSET,
+        });
+    const documentRuntime = SOURCE_EXECUTION_ISOLATION_ENABLED
+      ? null
+      : createAuthoritativeDocumentRuntime({ transportClient });
+    const sourceExecutionContext = Object.freeze({
+      source,
+      transportPolicy,
+      transportClient,
+    });
     let executionResult = null;
     try {
       const workerResult = SOURCE_EXECUTION_ISOLATION_ENABLED
@@ -1093,6 +773,7 @@ async function run({ signal } = {}) {
           completedWorkItemKeys: checkpointSession?.snapshot().completed_work_item_keys ?? [],
           checkpointSession,
           seenNoticeUrls: Object.keys(seen),
+          transportPolicy,
         })
         : null;
       if (workerResult?.error) throw workerResult.error;
@@ -1116,116 +797,20 @@ async function run({ signal } = {}) {
       }
       let detailItems = workerResult?.notices ?? [];
       if (!workerResult) {
-      const listAdapter = getListAdapter(source.adapter);
-      let listItems;
-      detailItems = [];
-      if (listAdapter) {
-        // 어댑터 소스: 목록 API가 제목/날짜/본문 요약을 모두 제공하므로
-        // 기본 HTML 파싱과 개별 상세 요청을 건너뜁니다.
-        listItems = trimItems(
-          await listAdapter(source, {
-            lookbackDays: LOOKBACK_DAYS,
-            allowUndated: ALLOW_UNDATED,
-            maxItems: MAX_ITEMS_PER_SOURCE,
-          }),
-          MAX_ITEMS_PER_SOURCE,
-        );
-        const candidateOptions = scholarshipCandidateOptions(source);
-        const { preliminaryCandidateResults, detailFetchPlan } =
-          buildPreliminaryScholarshipCandidatePlan(listItems, {
-            detector: detectScholarshipCandidate,
-            planner: buildDetailFetchPlan,
-            detectorOptions: candidateOptions,
-            plannerOptions: { seenNoticeUrls: Object.keys(seen) },
-          });
-        detailItems = detailFetchPlan.fetch.filter((notice) => {
-          const workItemKey = buildCrawlerWorkItemKey(source.sourceId, notice);
-          return !checkpointSession?.shouldSkipWorkItem(workItemKey);
-        });
-        if (documentRuntime.enabled) {
-          detailItems = await mapLimit(detailItems, DETAIL_CONCURRENCY, async (notice) => {
-            const processedNotice = await documentRuntime.processNoticeDocuments({ source, notice, signal });
-            const workItemKey = buildCrawlerWorkItemKey(source.sourceId, processedNotice);
-            await checkpointSession?.recordWorkItem({ sourceKey: source.sourceId, workItemKey });
-            return processedNotice;
-          }, { signal, settleTimeoutMs: CLI_ARGUMENTS.settle_timeout_ms });
-          detailItems = detailItems.filter((notice) => !notice?.__bounded_map_abandoned && !notice?.__bounded_map_error);
-        }
-        const candidateDetection = finalizeScholarshipCandidateDetection({
-          listObservations: listItems,
-          preliminaryCandidateResults,
-          detailFetchPlan,
-          detailObservations: detailItems,
-          detector: detectScholarshipCandidate,
-          detectorOptions: candidateOptions,
-          detailFetchRequired: false,
-        });
-        const finishedAt = new Date().toISOString();
-        const durationMs = Math.max(0, Date.now() - sourceStartedMs);
-        const resultStatus = listItems.length > 0 ? "success" : "empty_observed";
-        executionResult = {
-          source_key: source.sourceId,
-          source_id: source.sourceId,
-          source_name: source.sourceName,
-          strategy: getSourceAdapterStrategy(source),
-          result_status: resultStatus,
-          observed_count: listItems.length,
-          matched_count: candidateDetection.final_summary.candidate_count,
-          notices: detailItems,
-          candidate_detection: candidateDetection,
-          item_summary: {
-            observed_list_item_count: listItems.length,
-            eligible_count: detailFetchPlan.fetch.length,
-            completed_count: detailItems.length,
-            successful_count: detailItems.length,
-            failed_count: 0,
-            cancelled_count: 0,
-            preliminary_skip_count: detailFetchPlan.skip.length,
-            resumed_skip_count: detailFetchPlan.fetch.length - detailItems.length,
-          },
-          total_attempt_count: 1,
-          attempt_history: [{
-            sequence: 1,
-            status: resultStatus,
-            retryable: false,
-            duration_ms: durationMs,
-            reason_code: resultStatus,
-            timeout: false,
-            item_count: listItems.length,
-            started_at: sourceStartedAt,
-            finished_at: finishedAt,
-            error_summary: "",
-            retry_delay_ms: 0,
-          }],
-          retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
-          total_retry_delay_ms: 0,
-          retried: false,
-          recovered_after_retry: false,
-          retry_exhausted: false,
-          duration_ms: durationMs,
-          started_at: sourceStartedAt,
-          finished_at: finishedAt,
-          final_reason_code: resultStatus,
-          final_error_summary: "",
-          adapter_evidence: getAdapterCapabilityEvidence(source.adapter),
-        };
-      } else {
-        const commonResult = await runBoundedCrawlerSource({
+        const listAdapter = getListAdapter(source.adapter);
+        const commonOptions = {
           source,
           inventoryRows,
-          strategy: genericHtmlStrategy,
-          fetchHtml,
-          listUrls: buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE),
           maxItems: MAX_ITEMS_PER_SOURCE,
-          fetchDetails: DETAIL_FETCH_ENABLED,
-          timeoutMs: REQUEST_TIMEOUT_MS,
-          retryCount: REQUEST_RETRY_COUNT,
-          retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
-          maximumRetryDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
-          retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+          timeoutMs: transportPolicy.timeoutMs,
+          retryCount: transportPolicy.retry.count,
+          retryBackoffMs: transportPolicy.retry.baseDelayMs,
+          maximumRetryDelayMs: transportPolicy.retry.maximumDelayMs,
+          retryJitterRatio: transportPolicy.retry.jitterRatio,
           detailConcurrency: DETAIL_CONCURRENCY,
-          requestLimiter,
-          completedWorkItemKeys: checkpointSession?.snapshot().completed_work_item_keys ?? [],
+          requestLimiter: null,
+          completedWorkItemKeys:
+            checkpointSession?.snapshot().completed_work_item_keys ?? [],
           onWorkItemSettled: checkpointSession
             ? (item) => checkpointSession.recordWorkItem(item)
             : null,
@@ -1236,8 +821,48 @@ async function run({ signal } = {}) {
           detailFetchPlanner: buildDetailFetchPlan,
           candidateDetectionOptions: scholarshipCandidateOptions(source),
           detailFetchPlannerOptions: { seenNoticeUrls: Object.keys(seen) },
-        });
-        executionResult = commonResult;
+        };
+        let commonResult;
+        if (listAdapter) {
+          const adapterExecution = createListAdapterExecution({
+            source,
+            listAdapter,
+            transportClient,
+            strategyName: getSourceAdapterStrategy(source),
+            adapterOptions: {
+              transportPolicy: sourceExecutionContext.transportPolicy,
+              lookbackDays: LOOKBACK_DAYS,
+              allowUndated: ALLOW_UNDATED,
+              maxItems: MAX_ITEMS_PER_SOURCE,
+            },
+          });
+          commonResult = await runBoundedCrawlerSource({
+            ...commonOptions,
+            strategy: adapterExecution.strategy,
+            fetchHtml: adapterExecution.fetchHtml,
+            listUrls: [source.listUrl],
+            fetchDetails: false,
+          });
+          commonResult.adapter_evidence = getAdapterCapabilityEvidence(source.adapter);
+        } else {
+          const transportFetchHtml = async (url, request = {}) => (
+            await transportClient.fetchHtml(url, {
+              ...request,
+              retryCount: 0,
+            })
+          ).html;
+          commonResult = await runBoundedCrawlerSource({
+            ...commonOptions,
+            strategy: genericHtmlStrategy,
+            fetchHtml: transportFetchHtml,
+            listUrls: buildBoundedPaginationUrls(source, MAX_PAGES_PER_SOURCE),
+            fetchDetails: DETAIL_FETCH_ENABLED,
+          });
+        }
+        executionResult = {
+          ...commonResult,
+          transport_evidence: transportClient.evidence(),
+        };
         if (!["success", "empty_observed", "partial"].includes(commonResult.result_status)) {
           return {
             sourceId: source.sourceId,
@@ -1255,9 +880,7 @@ async function run({ signal } = {}) {
             executionResult,
           };
         }
-        listItems = commonResult.notices;
         detailItems = commonResult.notices;
-      }
       }
       detailItems = detailItems.map((item) => ({
         ...item,
@@ -1355,7 +978,7 @@ async function run({ signal } = {}) {
           error_summary: errorSummary,
           retry_delay_ms: 0,
         }],
-        retry_backoff_ms: REQUEST_RETRY_BACKOFF_MS,
+        retry_backoff_ms: transportPolicy.retry.baseDelayMs,
         total_retry_delay_ms: 0,
         retried: false,
         recovered_after_retry: false,
@@ -1365,6 +988,10 @@ async function run({ signal } = {}) {
         finished_at: finishedAt,
         final_reason_code: status,
         final_error_summary: errorSummary,
+        transport_evidence:
+          transportClient?.evidence()
+          ?? error?.transport_evidence
+          ?? null,
       };
       return {
         sourceId: source.sourceId,
@@ -1557,6 +1184,14 @@ async function run({ signal } = {}) {
     inputLabel: loaded.inputLabel,
     sourceMode: loaded.mode,
     sourceRegistry: loaded.sourceRegistry ?? null,
+    transportPolicyRegistry: {
+      schema_version: transportRegistry.schemaVersion,
+      registry_version: transportRegistry.registryVersion,
+      registry_fingerprint: transportRegistry.registryFingerprint,
+      resolved_source_count: transportPolicies.size,
+      resolved_policy_fingerprints: resolvedTransportPolicyFingerprints,
+      runtime_overrides: TRANSPORT_RUNTIME_OVERRIDES.evidence,
+    },
     databaseReadPerformed: loaded.mode === "db",
     totals: {
       sourceCount: sources.length,
@@ -1574,15 +1209,19 @@ async function run({ signal } = {}) {
       ignoreSeen: IGNORE_SEEN,
       maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
-      documentParsingEnabled: documentRuntime.enabled,
-      documentCacheDirectory: documentRuntime.enabled ? ".tmp/engine-phase-3/cache" : null,
-      timeoutMs: REQUEST_TIMEOUT_MS,
+      documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
+      documentCacheDirectory: DOCUMENT_PARSING_ENABLED
+        ? DOCUMENT_CACHE_DIRECTORY
+        : null,
+      timeoutMs: maximumTransportValue((policy) => policy.timeoutMs),
       sourceExecutionIsolationEnabled: SOURCE_EXECUTION_ISOLATION_ENABLED,
       sourceExecutionTimeoutMs: SOURCE_EXECUTION_TIMEOUT_MS,
-      retryCount: REQUEST_RETRY_COUNT,
-      retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
-      retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
-      retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
+      retryCount: maximumTransportValue((policy) => policy.retry.count),
+      retryBackoffMs: maximumTransportValue((policy) => policy.retry.baseDelayMs),
+      retryMaximumDelayMs: maximumTransportValue(
+        (policy) => policy.retry.maximumDelayMs,
+      ),
+      retryJitterRatio: maximumTransportValue((policy) => policy.retry.jitterRatio),
       sourceLevelFilterCount: SOURCE_LEVEL_ALLOWLIST.size > 0 ? SOURCE_LEVEL_ALLOWLIST.size : "all",
       collegeFilterCount: COLLEGE_NAME_ALLOWLIST.size > 0 ? COLLEGE_NAME_ALLOWLIST.size : "all",
     },
@@ -1609,7 +1248,7 @@ async function run({ signal } = {}) {
     crawled,
     allMatched,
     allNew,
-    documentParsingEnabled: documentRuntime.enabled,
+    documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
     summarizeDocumentEvidence: summarizeNoticeDocumentEvidence,
   });
 
@@ -1659,7 +1298,13 @@ async function run({ signal } = {}) {
   console.log(
     `college_name_filter=${COLLEGE_NAME_ALLOWLIST.size > 0 ? [...COLLEGE_NAME_ALLOWLIST].join("|") : "all"}`,
   );
-  console.log("tls_verification=required");
+  console.log("tls_verification=transport_policy_registry");
+  console.log(
+    `tls_insecure_exact_host_source_count=${
+      selectedTransportPolicies.filter((policy) =>
+        policy.tlsMode === "insecure-exact-host").length
+    }`,
+  );
   console.log(`json=${jsonPath}`);
   console.log(`csv=${csvPath}`);
   console.log(`state=${resolvedStatePath}`);
@@ -1673,32 +1318,46 @@ async function run({ signal } = {}) {
 
 if (IS_MAIN) {
   let telemetrySession = null;
-  try {
-    telemetrySession = startCrawlerPerformanceTelemetry({
-      outputDirectory: OUTPUT_DIR,
-      universityGroup: process.env.CRAWLER_UNIVERSITY_GROUP ?? INPUT_ARG.replace(/^db:/, ""),
-      sourceConcurrency: SOURCE_CONCURRENCY,
-      detailConcurrency: DETAIL_CONCURRENCY,
-      hostConcurrency: HOST_CONCURRENCY,
-      timeoutMs: REQUEST_TIMEOUT_MS,
-      retryCount: REQUEST_RETRY_COUNT,
-      retryBackoffMs: REQUEST_RETRY_BACKOFF_MS,
-      retryMaximumDelayMs: REQUEST_RETRY_MAX_DELAY_MS,
-      retryJitterRatio: REQUEST_RETRY_JITTER_RATIO,
-      lookbackDays: LOOKBACK_DAYS,
-      allowUndated: ALLOW_UNDATED,
-      ignoreSeen: IGNORE_SEEN,
-      documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
-    });
-  } catch (error) {
-    console.error(`crawler_telemetry_start_warning=${sanitizeCrawlerError(error)}`);
-  }
+  const startTelemetrySafely = ({ selectedTransportPolicies }) => {
+    if (telemetrySession) return;
+    const maximum = (selector) =>
+      Math.max(...selectedTransportPolicies.map(selector));
+    try {
+      telemetrySession = startCrawlerPerformanceTelemetry({
+        outputDirectory: OUTPUT_DIR,
+        universityGroup:
+          process.env.CRAWLER_UNIVERSITY_GROUP
+          ?? INPUT_ARG.replace(/^(?:db|manifest):/, ""),
+        sourceConcurrency: SOURCE_CONCURRENCY,
+        detailConcurrency: DETAIL_CONCURRENCY,
+        hostConcurrency: HOST_CONCURRENCY,
+        timeoutMs: maximum((policy) => policy.timeoutMs),
+        retryCount: maximum((policy) => policy.retry.count),
+        retryBackoffMs: maximum((policy) => policy.retry.baseDelayMs),
+        retryMaximumDelayMs: maximum((policy) => policy.retry.maximumDelayMs),
+        retryJitterRatio: maximum((policy) => policy.retry.jitterRatio),
+        lookbackDays: LOOKBACK_DAYS,
+        allowUndated: ALLOW_UNDATED,
+        ignoreSeen: IGNORE_SEEN,
+        documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
+      });
+    } catch (error) {
+      console.error(`crawler_telemetry_start_warning=${sanitizeCrawlerError(error)}`);
+    }
+  };
   const finishTelemetrySafely = async (input) => {
     if (!telemetrySession) return;
     try {
       await finishCrawlerPerformanceTelemetry(input);
     } catch (error) {
       console.error(`crawler_telemetry_finish_warning=${sanitizeCrawlerError(error)}`);
+    }
+  };
+  const closeTransportSafely = async () => {
+    try {
+      await MODULE_TRANSPORT_DISPATCHER_POOL.close();
+    } catch (error) {
+      console.error(`crawler_transport_close_warning=${sanitizeCrawlerError(error)}`);
     }
   };
   const controller = new AbortController();
@@ -1708,7 +1367,10 @@ if (IS_MAIN) {
       console.error(`crawler_force_exit_requested=${secondSignal}`);
     },
   });
-  run({ signal: controller.signal })
+  run({
+    signal: controller.signal,
+    onTransportResolved: startTelemetrySafely,
+  })
     .then(async (result) => {
       // Lingering keep-alive sockets (undici/insecure-TLS dispatcher) can keep
       // the event loop alive well after all work is done, especially on
@@ -1716,12 +1378,14 @@ if (IS_MAIN) {
       // process (and any CI job wrapping it) doesn't hang.
       signalHandlers.dispose();
       await finishTelemetrySafely({ crawlerResult: result });
+      await closeTransportSafely();
       process.exit(result.cancelled ? 130 : 0);
     })
     .catch(async (error) => {
       console.error(error);
       signalHandlers.dispose();
       await finishTelemetrySafely({ error });
+      await closeTransportSafely();
       process.exit(1);
     });
 }
