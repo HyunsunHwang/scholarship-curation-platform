@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadSources, mapRawSource, parseSourceInput, readSourceConfigFromCsv, readSourceConfigFromDb } from "../lib/notice-sources-loader.mjs";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 import { readManifestJson, sha256Canonical, validateNoticeSourceManifests } from "../lib/notice-source-manifest-validator.mjs";
@@ -15,6 +14,15 @@ const root = path.resolve("config/notice-sources");
 let passed = 0;
 async function test(name, fn) { try { await fn(); passed += 1; console.log(`ok - ${name}`); } catch (error) { console.error(`not ok - ${name}: ${error.message}`); process.exitCode = 1; } }
 function manifests() { const index = readManifestJson(path.join(root, "manifest-index.json")); return { index, snapshot: readManifestJson(path.join(root, "db-source-id-snapshot.json")), manifests: index.groups.map((entry) => readManifestJson(path.join(root, entry.path))) }; }
+function copyDirectory(source, destination) {
+  fs.mkdirSync(destination, { recursive: true });
+  for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+    const sourcePath = path.join(source, entry.name);
+    const destinationPath = path.join(destination, entry.name);
+    if (entry.isDirectory()) copyDirectory(sourcePath, destinationPath);
+    else fs.copyFileSync(sourcePath, destinationPath);
+  }
+}
 
 await test("manifest input parsing supports selected group", () => assert.deepEqual(parseSourceInput("manifest:ewha"), { mode: "manifest", csvPath: "", universitySlug: "ewha" }));
 await test("actual registry validates and has all groups", () => assert.equal(loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.length, 545));
@@ -123,7 +131,10 @@ await test("Post-Phase L dry-run and apply share manifest exact resolution", () 
 await test("Post-Phase L rejects a disabled manifest source in both paths", () => {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-registry-"));
   const temporaryRoot = path.join(temporary, "notice-sources");
-  fs.cpSync(root, temporaryRoot, { recursive: true });
+  // Node 24.14 on Windows can terminate natively inside fs.cpSync() when the
+  // repository path contains non-ASCII characters. Keep this fixture setup
+  // deterministic with the primitive file APIs used by supported runtimes.
+  copyDirectory(root, temporaryRoot);
   try {
     const filePath = path.join(temporaryRoot, "universities", "ewha.json");
     const manifest = readManifestJson(filePath);

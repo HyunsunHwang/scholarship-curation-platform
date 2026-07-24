@@ -157,6 +157,23 @@ function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
 }
 
+export async function loadTransportPolicyValidationInventory(
+  configuredSources,
+  { loadSourcesImpl = loadSources, sourceMode = "manifest" } = {},
+) {
+  const inventoryMode = sourceMode === "db" ? "db" : "manifest";
+  const completeInventory = await loadSourcesImpl(inventoryMode, { includeDisabled: true });
+  const bySourceId = new Map(
+    completeInventory.sources.map((source) => [source.sourceId, source]),
+  );
+  // Preserve a complete inventory so policy bindings outside the selected
+  // university remain known. Manual DB rollback validates against a full
+  // read-only DB inventory and therefore does not depend on manifest health.
+  for (const source of configuredSources ?? []) bySourceId.set(source.sourceId, source);
+  return [...bySourceId.values()].sort((left, right) =>
+    left.sourceId.localeCompare(right.sourceId));
+}
+
 export function formatFetchError(error) {
   const msg = String(error?.message ?? error);
   const cause = error?.cause;
@@ -625,8 +642,12 @@ async function executeSourceInWorker({
 async function run({ signal, onTransportResolved } = {}) {
   const loaded = await loadSources(INPUT_ARG);
   const configuredSources = loaded.sources;
+  const transportPolicyValidationInventory =
+    await loadTransportPolicyValidationInventory(configuredSources, {
+      sourceMode: loaded.mode,
+    });
   const transportRegistry = loadTransportPolicyRegistry({
-    sources: configuredSources,
+    sources: transportPolicyValidationInventory,
     now: new Date(RUN_AT),
   });
   const transportPolicies = resolveTransportPoliciesForSources({
@@ -797,7 +818,7 @@ async function run({ signal, onTransportResolved } = {}) {
       }
       let detailItems = workerResult?.notices ?? [];
       if (!workerResult) {
-        const listAdapter = getListAdapter(source.adapter);
+        const listAdapter = getListAdapter(source.adapter, source);
         const commonOptions = {
           source,
           inventoryRows,
@@ -843,7 +864,11 @@ async function run({ signal, onTransportResolved } = {}) {
             listUrls: [source.listUrl],
             fetchDetails: false,
           });
-          commonResult.adapter_evidence = getAdapterCapabilityEvidence(source.adapter);
+          commonResult.adapter_evidence = getAdapterCapabilityEvidence(
+            source.adapter,
+            source,
+            commonResult,
+          );
         } else {
           const transportFetchHtml = async (url, request = {}) => (
             await transportClient.fetchHtml(url, {
@@ -936,6 +961,8 @@ async function run({ signal, onTransportResolved } = {}) {
             executionResult?.candidate_detection?.detail_fetch_planned_count ?? 0,
           detail_fetch_completed_count:
             executionResult?.candidate_detection?.detail_fetch_completed_count ?? 0,
+          authoritative_content_available_count:
+            executionResult?.candidate_detection?.authoritative_content_available_count ?? 0,
           detail_fetch_skipped_count:
             executionResult?.candidate_detection?.detail_fetch_skipped_count ?? 0,
           requests_avoided_by_preliminary_filter:
