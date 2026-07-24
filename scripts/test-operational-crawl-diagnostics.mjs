@@ -749,7 +749,8 @@ test("inline section adapter extracts nested sections and preserves resource lin
   const notices = extractInlineSectionNotices(source, html);
   assert.equal(notices.length, 3);
   assert.equal(notices.filter((notice) => /장학/.test(`${notice.title} ${notice.content}`)).length, 2);
-  assert.equal(notices[0].dateText, "2026년 7월 20일");
+  assert.equal(notices[0].dateText, "");
+  assert.equal(notices[0].inlineDateEvidence.some((entry) => entry.role === "application_date"), true);
   assert.equal(notices[0].content.includes(notices[1].title), false);
   assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "supporting_reference"), true);
   assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "application_form"), true);

@@ -24,7 +24,7 @@
           "detailContentSelector": { "type": "string" }, "detailDateSelector": { "type": "string" }, "noticeUrlPattern": { "type": "string" },
           "contentMode": { "type": "string", "enum": ["", "inline_sections"] },
           "detailFetchRequired": { "type": "boolean" }, "detailContentAlreadyAvailable": { "type": "boolean" },
-          "sectionTitleSelector": { "type": "string" }, "sectionBodyBoundary": { "type": "string", "enum": ["", "next_heading"] },
+          "sectionTitleSelector": { "type": "string" }, "sectionBodyBoundary": { "type": "string", "enum": ["", "next_heading"] }, "sectionPublishedDateSelector": { "type": "string" },
           "keywords": { "type": "array", "items": { "type": "string" } }, "adapter": { "type": "string" }, "enabled": { "type": "boolean" }
         }
       }
