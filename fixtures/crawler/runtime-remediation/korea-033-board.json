@@ -1,7 +1,9 @@
 {
   "paging": {
-    "totalRecords": 2,
-    "totalPages": 1
+    "recordsPerPage": 10,
+    "totalRecords": 30,
+    "currentPage": 1,
+    "totalPages": 3
   },
   "boardList": [
     {
@@ -9,14 +11,20 @@
       "title": "Scholarship notice one",
       "content": "<p>Detailed scholarship body one.</p>",
       "createdAt": "2026-07-22 00:00:00",
-      "isNoticed": false
+      "isNoticed": false,
+      "type": "SANITIZED",
+      "views": 0,
+      "attached": false
     },
     {
       "id": 407,
       "title": "Scholarship notice two",
       "content": "<p>Detailed scholarship body two.</p>",
       "createdAt": "2026-07-21 00:00:00",
-      "isNoticed": false
+      "isNoticed": false,
+      "type": "SANITIZED",
+      "views": 0,
+      "attached": false
     }
   ]
 }

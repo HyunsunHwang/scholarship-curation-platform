@@ -1,0 +1,60 @@
+{
+  "schema_version": "json-api-board-live-evidence-v1",
+  "captured_at": "2026-07-24T15:30:26.365Z",
+  "source_id": "korea_033",
+  "probe_policy": {
+    "request_count": 3,
+    "retry_count": 0,
+    "timeout_ms": 25000,
+    "full_response_body_recorded": false
+  },
+  "list_page": {
+    "url": "https://ie.korea.ac.kr/board/scholarship/undergrad",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "final_url": "https://ie.korea.ac.kr/board/scholarship/undergrad",
+    "redirect_chain": []
+  },
+  "api_page": {
+    "url": "https://api.ie.korea.ac.kr/v1/board?type=scholarship-undergraduate&page=1",
+    "http_status": 200,
+    "content_type": "application/json",
+    "final_url": "https://api.ie.korea.ac.kr/v1/board?type=scholarship-undergraduate&page=1",
+    "redirect_chain": [],
+    "top_level_keys": [
+      "paging",
+      "boardList"
+    ],
+    "required_list_path": "boardList",
+    "list_count": 10,
+    "total_pages_path": "paging.totalPages",
+    "total_pages": 3,
+    "api_shape_sha256": "d053c8b15a994dc760e3892d2c2f5d2e7006b24fb08d8bd5acecee779199113d"
+  },
+  "representative_item_contract": {
+    "id_present": true,
+    "title_present": true,
+    "date_present": true,
+    "content_present": true,
+    "is_pinned_present": true,
+    "representative_item_id": "408",
+    "item_key_names": [
+      "attached",
+      "content",
+      "createdAt",
+      "id",
+      "isNoticed",
+      "title",
+      "type",
+      "views"
+    ]
+  },
+  "representative_detail": {
+    "url": "https://ie.korea.ac.kr/board/scholarship/undergrad/408?pageNo=1",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "final_url": "https://ie.korea.ac.kr/board/scholarship/undergrad/408?pageNo=1",
+    "redirect_chain": []
+  },
+  "sensitive_response_body_recorded": false
+}

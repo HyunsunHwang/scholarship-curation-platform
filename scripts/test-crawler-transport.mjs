@@ -816,7 +816,7 @@ await test("declarative JSON API adapter applies manifest URL and field mapping"
   });
   const items = await fetchJsonApiBoardList(source, {
     transportClient: client,
-    maxPages: 2,
+    maxPages: 1,
     maxItems: 10,
     lookbackDays: 31,
     now: fixedNow,
