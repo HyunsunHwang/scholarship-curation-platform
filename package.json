@@ -41,6 +41,7 @@
     "test:crawler-transport": "node scripts/test-crawler-transport.mjs",
     "test:korea-033-json-api-evidence": "node scripts/test-korea-033-json-api-evidence.mjs",
     "test:system-ca-remediation-probe": "node scripts/test-system-ca-remediation-probe.mjs",
+    "test:runtime-hard-failures-probe": "node scripts/test-runtime-hard-failures-probe.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:inline-section-identity": "node scripts/test-inline-section-identity.mjs",
