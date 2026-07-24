@@ -376,13 +376,48 @@ const failedDiagnosticProbeResult = await runCommonCrawlerSource({
     now,
   },
 });
-assert.equal(failedDiagnosticProbeResult.result_status, "partial");
+assert.equal(failedDiagnosticProbeResult.result_status, "success");
 assert.equal(failedDiagnosticProbeResult.notices.length, 0);
-assert.equal(failedDiagnosticProbeResult.item_summary.failed_count, 1);
+assert.equal(failedDiagnosticProbeResult.item_summary.failed_count, 0);
 assert.equal(failedDiagnosticProbeResult.item_summary.successful_count, 0);
 assert.equal(failedDiagnosticProbeResult.item_summary.diagnostic_detail_probe_attempted, 1);
 assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.status, "failed");
 assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.detail_result_status, "network_error");
+
+const failedCandidateDetailResult = await runCommonCrawlerSource({
+  source: { sourceId: "candidate_failure", sourceName: "Candidate failure", listUrl: "https://example.edu/candidate-failure" },
+  inventoryRows: [{ source_id: "candidate_failure" }],
+  strategy: {
+    name: "candidate-failure-fixture",
+    buildListRequest: ({ listUrl }) => ({ url: listUrl, kind: "list" }),
+    parseList: () => [{
+      sourceId: "candidate_failure",
+      sourceName: "Candidate failure",
+      noticeUrl: "https://example.edu/candidate-failure/1",
+      title: "Scholarship application",
+      dateText: "2026.07.20",
+    }],
+    resolveDetailUrl: ({ item }) => item.noticeUrl,
+    buildDetailRequest: ({ item }) => ({ url: item.noticeUrl, kind: "detail" }),
+    normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
+  },
+  fetchHtml: async (_url, request) => {
+    if (request.kind === "detail") throw Object.assign(new Error("HTTP 404"), { status: 404 });
+    return "<html></html>";
+  },
+  fetchDetails: true,
+  candidateDetector: detectScholarshipCandidate,
+  detailFetchPlanner: buildDetailFetchPlan,
+  candidateDetectionOptions: {
+    keywords: DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: 31,
+    allowUndated: false,
+    now,
+  },
+});
+assert.equal(failedCandidateDetailResult.result_status, "partial");
+assert.equal(failedCandidateDetailResult.item_summary.failed_count, 1);
+assert.equal(failedCandidateDetailResult.item_summary.diagnostic_detail_probe_failed_count, 0);
 
 const candidateDiagnostics = buildCandidateDetectionDiagnostics([
   {

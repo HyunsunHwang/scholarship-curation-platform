@@ -703,6 +703,45 @@ await test("central CAU adapter uses injected TransportClient with exact request
   assert.equal(client.evidence().request_attempt_count, 2);
 });
 
+await test("CAU adapter accepts the CMS JSON response despite its text/html header", async () => {
+  const source = {
+    sourceId: "cau_fixture_content_type",
+    sourceName: "CAU fixture content type",
+    universitySlug: "cau",
+    listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
+    baseUrl: "https://www.cau.ac.kr/",
+  };
+  const accepted = [];
+  const client = createTransportClient({
+    source,
+    policy: policy(),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async (_url, options) => {
+      accepted.push(options.headers.accept);
+      if (options.method === "GET") {
+        return response(200, '<form id="sendForm"><input name="MENU_ID" value="100"><input name="SITE_NO" value="2"><input name="BOARD_SEQ" value="3"></form>', { "content-type": "text/html" });
+      }
+      return response(200, JSON.stringify({ data: { list: [] } }), { "content-type": "text/html; charset=utf-8" });
+    },
+  });
+  await fetchCauPortalList(source, { transportClient: client, maxPages: 1 });
+  assert.equal(accepted.at(-1), "*/*");
+});
+
+await test("invalid JSON response is non-retryable", async () => {
+  const client = createTransportClient({
+    source: { sourceId: "json_fixture", listUrl: "https://example.edu/list" },
+    policy: policy({ retry: { count: 2 } }),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => response(200, "<html>not json</html>", { "content-type": "text/html" }),
+  });
+  await assert.rejects(
+    () => client.fetchJson("https://example.edu/list"),
+    (error) => error.code === "json_decode_error",
+  );
+  assert.equal(client.evidence().request_attempt_count, 1);
+});
+
 await test("CAU adapter has no hidden retry", async () => {
   const source = {
     sourceId: "cau_fixture",
