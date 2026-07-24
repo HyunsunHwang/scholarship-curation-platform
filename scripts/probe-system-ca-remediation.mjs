@@ -9,12 +9,16 @@ import {
   resolveEffectiveTransportPolicy,
 } from "../lib/crawler-engine/transport/index.mjs";
 import {
-  DEFAULT_SYSTEM_CA_REMEDIATION_SOURCE_IDS,
   compareSystemCaRemediationEvidence,
   probeSystemCaRemediation,
 } from "../lib/crawler-engine/transport/system-ca-remediation-probe.mjs";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const DEFAULT_SYSTEM_CA_REMEDIATION_SOURCE_IDS = Object.freeze([
+  "skku_009",
+  "skku_013",
+  "yonsei_057",
+]);
 
 function kstDate(now = new Date()) {
   const values = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {
