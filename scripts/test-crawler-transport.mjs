@@ -906,9 +906,14 @@ async function runJsonApiPaginationSource(responses, { maxPages = 3 } = {}) {
 for (const [label, totalPages] of [
   ["missing", undefined],
   ["null", null],
+  ["numeric string", "3"],
+  ["true", true],
+  ["false", false],
   ["string", "abc"],
   ["fraction", 1.5],
   ["zero", 0],
+  ["negative", -1],
+  ["unsafe integer", Number.MAX_SAFE_INTEGER + 1],
 ]) {
   await test(`JSON API pagination ${label} totalPages fails closed without Source retry`, async () => {
     const { client, result } = await runJsonApiPaginationSource([
