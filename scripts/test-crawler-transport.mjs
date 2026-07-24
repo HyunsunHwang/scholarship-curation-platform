@@ -742,6 +742,187 @@ await test("invalid JSON response is non-retryable", async () => {
   assert.equal(client.evidence().request_attempt_count, 1);
 });
 
+await test("strict JSON content type rejects HTML without retrying", async () => {
+  const client = createTransportClient({
+    source: { sourceId: "strict_json_fixture", listUrl: "https://example.edu/list" },
+    policy: policy({ retry: { count: 2 } }),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => response(200, '{"items":[]}', { "content-type": "text/html" }),
+  });
+  await assert.rejects(
+    () => client.fetchJson("https://example.edu/list", {
+      contentTypePolicy: "strict",
+      expectedContentTypes: ["application/json"],
+    }),
+    (error) => error.code === "unexpected_content_type",
+  );
+  assert.equal(client.evidence().request_attempt_count, 1);
+});
+
+await test("body-json policy accepts a JSON body labeled as HTML", async () => {
+  const client = createTransportClient({
+    source: { sourceId: "body_json_fixture", listUrl: "https://example.edu/list" },
+    policy: policy(),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => response(200, '{"items":[]}', { "content-type": "text/html" }),
+  });
+  const result = await client.fetchJson("https://example.edu/list", {
+    contentTypePolicy: "body-json",
+  });
+  assert.deepEqual(result.json, { items: [] });
+});
+
+async function runContentContractSource({
+  code,
+  body = "{}",
+  contentType = "application/json",
+  contentTypePolicy = "body-json",
+  validateJson = () => {},
+}) {
+  const source = {
+    sourceId: `fixture_${code}`,
+    sourceName: `Fixture ${code}`,
+    universitySlug: "fixture",
+    listUrl: "https://example.edu/list",
+  };
+  const client = createTransportClient({
+    source,
+    policy: policy({ retry: { count: 3 } }),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => response(200, body, { "content-type": contentType }),
+  });
+  const adapterExecution = createListAdapterExecution({
+    source,
+    transportClient: client,
+    listAdapter: async (_source, { transportClient }) => {
+      const responseValue = await transportClient.fetchJson(source.listUrl, {
+        retryCount: 0,
+        contentTypePolicy,
+      });
+      validateJson(responseValue.json);
+      return [];
+    },
+  });
+  const result = await runBoundedCrawlerSource({
+    source,
+    inventoryRows: [{ source_id: source.sourceId }],
+    strategy: adapterExecution.strategy,
+    fetchHtml: adapterExecution.fetchHtml,
+    listUrls: [source.listUrl],
+    fetchDetails: false,
+    retryCount: 3,
+    retryBackoffMs: 0,
+    maximumRetryDelayMs: 0,
+    timeoutMs: 1000,
+  });
+  return { client, result };
+}
+
+await test("JSON decode errors do not retry the whole Source", async () => {
+  const { client, result } = await runContentContractSource({
+    code: "json_decode_error",
+    body: "<html>not json</html>",
+    contentType: "text/html",
+  });
+  assert.equal(result.result_status, "parser_error");
+  assert.equal(result.error_code, "json_decode_error");
+  assert.equal(result.total_attempt_count, 1);
+  assert.equal(result.retried, false);
+  assert.equal(result.retry_exhausted, false);
+  assert.equal(client.evidence().request_attempt_count, 1);
+});
+
+await test("JSON shape errors do not retry the whole Source", async () => {
+  const { client, result } = await runContentContractSource({
+    code: "json_shape_mismatch",
+    body: '{"data":{}}',
+    validateJson: (json) => {
+      if (!Array.isArray(json?.data?.list)) {
+        const error = new Error("Missing data.list.");
+        error.code = "json_shape_mismatch";
+        throw error;
+      }
+    },
+  });
+  assert.equal(result.result_status, "parser_error");
+  assert.equal(result.error_code, "json_shape_mismatch");
+  assert.equal(result.total_attempt_count, 1);
+  assert.equal(result.retried, false);
+  assert.equal(result.retry_exhausted, false);
+  assert.equal(client.evidence().request_attempt_count, 1);
+});
+
+await test("unexpected content types do not retry the whole Source", async () => {
+  const { client, result } = await runContentContractSource({
+    code: "unexpected_content_type",
+    body: '{"data":{"list":[]}}',
+    contentType: "text/html",
+    contentTypePolicy: "strict",
+  });
+  assert.equal(result.result_status, "parser_error");
+  assert.equal(result.error_code, "unexpected_content_type");
+  assert.equal(result.total_attempt_count, 1);
+  assert.equal(result.retried, false);
+  assert.equal(result.retry_exhausted, false);
+  assert.equal(client.evidence().request_attempt_count, 1);
+});
+
+await test("transient network errors still retry the whole Source", async () => {
+  const source = {
+    sourceId: "fixture_network_retry",
+    sourceName: "Fixture network retry",
+    universitySlug: "fixture",
+    listUrl: "https://example.edu/list",
+  };
+  let requestCount = 0;
+  const client = createTransportClient({
+    source,
+    policy: policy({ retry: { count: 0 } }),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => {
+      requestCount += 1;
+      if (requestCount === 1) {
+        const error = new Error("reset");
+        error.code = "ECONNRESET";
+        throw error;
+      }
+      return response(200, '{"items":[]}', { "content-type": "application/json" });
+    },
+  });
+  const adapterExecution = createListAdapterExecution({
+    source,
+    transportClient: client,
+    listAdapter: async (_source, { transportClient }) => {
+      await transportClient.fetchJson(source.listUrl, { retryCount: 0 });
+      return [{
+        sourceId: source.sourceId,
+        sourceName: source.sourceName,
+        listUrl: source.listUrl,
+        noticeUrl: "https://example.edu/detail/1",
+        title: "Fixture notice",
+        dateText: "2026-07-24",
+      }];
+    },
+  });
+  const result = await runBoundedCrawlerSource({
+    source,
+    inventoryRows: [{ source_id: source.sourceId }],
+    strategy: adapterExecution.strategy,
+    fetchHtml: adapterExecution.fetchHtml,
+    listUrls: [source.listUrl],
+    fetchDetails: false,
+    retryCount: 3,
+    retryBackoffMs: 0,
+    maximumRetryDelayMs: 0,
+    timeoutMs: 1000,
+  });
+  assert.equal(result.total_attempt_count, 2);
+  assert.equal(result.retried, true);
+  assert.equal(result.recovered_after_retry, true);
+  assert.equal(result.retry_exhausted, false);
+  assert.equal(client.evidence().request_attempt_count, 2);
+});
+
 await test("CAU adapter has no hidden retry", async () => {
   const source = {
     sourceId: "cau_fixture",

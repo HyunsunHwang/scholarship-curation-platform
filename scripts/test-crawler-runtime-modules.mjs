@@ -8,6 +8,7 @@ import {
   CRAWLER_NOTICE_CSV_COLUMNS,
   deterministicCrawlerProjection,
   extractSafeCrawlerErrorEvidence,
+  isContentContractErrorCode,
   isRetryableTransportErrorCode,
   normalizeTransportErrorCode,
   sanitizeCrawlerError,
@@ -56,6 +57,10 @@ test("failure analyzer treats cancellation, empty, and unknown status safely", (
     { reason_code: "socket_reset", source_count: 2 },
     { reason_code: "unexpected_state", source_count: 1 },
   ]);
+  assert.equal(classifyCrawlerFailure({ code: "json_decode_error" }), "parser_error");
+  assert.equal(classifyCrawlerFailure({ code: "json_shape_mismatch" }), "parser_error");
+  assert.equal(classifyCrawlerFailure({ code: "unexpected_content_type" }), "parser_error");
+  assert.equal(isContentContractErrorCode(" JSON_DECODE_ERROR "), true);
 });
 
 test("failure analyzer preserves safe nested transport evidence and aggregates it", () => {
