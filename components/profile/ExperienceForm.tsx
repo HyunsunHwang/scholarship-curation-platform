@@ -4,16 +4,12 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   EXPERIENCE_KINDS,
-  formatSpecDate,
   type ExperienceKind,
   type SpecItem,
 } from "@/lib/profile-spec";
 import { saveExperienceItem } from "@/app/mypage/spec-actions";
-import {
-  polishExperience,
-  type ExperienceCard,
-} from "@/app/mypage/experience-ai-actions";
-import DatePicker from "@/components/profile/DatePicker";
+import YearMonthSelect from "@/components/profile/YearMonthSelect";
+import SkillPicker from "@/components/profile/SkillPicker";
 import {
   PROFILE_FILE_MAX,
   PROFILE_FILE_MAX_BYTES,
@@ -22,6 +18,10 @@ import {
   type SpecFileArtifact,
   type SpecLinkArtifact,
 } from "@/lib/profile-artifacts";
+import {
+  EXPERIENCE_SKILL_MAX,
+  type SkillName,
+} from "@/lib/skills";
 
 const inputClass =
   "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink/35 outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/15";
@@ -31,14 +31,6 @@ const starLabelClass = "block text-xs font-bold text-brand";
 function toDateInputValue(dateStr: string | null): string {
   if (!dateStr) return "";
   return dateStr.slice(0, 10);
-}
-
-function SparkleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 2l1.9 5.3L19 9l-5.1 1.7L12 16l-1.9-5.3L5 9l5.1-1.7L12 2zm7 11l.95 2.65L22.5 16.5l-2.55.85L19 20l-.95-2.65-2.55-.85 2.55-.85L19 13zM5 14l.8 2.2 2.2.8-2.2.8L5 20l-.8-2.2-2.2-.8 2.2-.8L5 14z" />
-    </svg>
-  );
 }
 
 type DraftLink = { id: string; url: string; title: string };
@@ -64,7 +56,6 @@ export default function ExperienceForm({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isPolishing, startPolish] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const [kind, setKind] = useState<ExperienceKind>(initialKind);
@@ -79,6 +70,7 @@ export default function ExperienceForm({
     item?.star_action ?? (item?.star_role ? "" : item?.description ?? "")
   );
   const [result, setResult] = useState(item?.star_result ?? "");
+  const [skills, setSkills] = useState<SkillName[]>(item?.skills ?? []);
 
   const initialLinks: DraftLink[] = (item?.artifacts ?? [])
     .filter((a): a is SpecLinkArtifact => a.kind === "link")
@@ -94,55 +86,14 @@ export default function ExperienceForm({
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [linkDraft, setLinkDraft] = useState({ url: "", title: "" });
 
-  const [card, setCard] = useState<ExperienceCard | null>(null);
-
   const kindDef = EXPERIENCE_KINDS.find((k) => k.type === kind) ?? EXPERIENCE_KINDS[0];
+  const isEducation = kind === "education";
 
   const usedFileSlots = useMemo(
     () => profileFileCount + keptFiles.length + pendingFiles.length,
     [profileFileCount, keptFiles.length, pendingFiles.length]
   );
   const remainingSlots = Math.max(0, PROFILE_FILE_MAX - usedFileSlots);
-
-  function periodText(): string {
-    const start = formatSpecDate(startDate || null);
-    if (!start) return "";
-    if (isCurrent) return `${start} – 진행 중`;
-    const end = formatSpecDate(endDate || null);
-    return end ? `${start} – ${end}` : start;
-  }
-
-  function polish() {
-    setError(null);
-    if (!title.trim() || !role.trim()) {
-      setError("제목과 내가 맡은 역할을 먼저 입력해 주세요.");
-      return;
-    }
-    startPolish(async () => {
-      const res = await polishExperience({
-        item_type: kind,
-        title,
-        organization,
-        period: periodText(),
-        star_role: role,
-        star_action: action,
-        star_result: result,
-      });
-      if ("error" in res) {
-        setError(res.error);
-        return;
-      }
-      setCard(res.card);
-    });
-  }
-
-  function applyCard() {
-    if (!card) return;
-    setRole(card.star_role);
-    if (card.star_action) setAction(card.star_action);
-    if (card.star_result) setResult(card.star_result);
-    setCard(null);
-  }
 
   function addLink() {
     const url = linkDraft.url.trim();
@@ -210,6 +161,7 @@ export default function ExperienceForm({
       fd.set("star_role", role);
       fd.set("star_action", action);
       fd.set("star_result", result);
+      fd.set("skills_json", JSON.stringify(skills));
       fd.set(
         "links_json",
         JSON.stringify(
@@ -235,7 +187,7 @@ export default function ExperienceForm({
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 space-y-4">
+    <form onSubmit={submit} className="space-y-4">
       <div>
         <p className="text-xs text-ink/50">
           <span className="font-semibold text-ink/70">종류</span> — 분류·추천에만
@@ -273,7 +225,9 @@ export default function ExperienceForm({
           onChange={(e) => setTitle(e.target.value)}
           required
           maxLength={120}
-          placeholder="예: AI 고객상담 자동화 인턴"
+          placeholder={
+            isEducation ? "예: 데이터 분석 실무 부트캠프" : "예: AI 고객상담 자동화 인턴"
+          }
           className={inputClass}
         />
       </div>
@@ -292,31 +246,42 @@ export default function ExperienceForm({
         />
       </div>
 
-      <div>
-        <span className={labelClass}>기간</span>
-        <div className="mt-1 space-y-2">
-          <DatePicker
-            ariaLabel="시작 날짜"
-            value={startDate}
-            onChange={setStartDate}
-            placeholder="시작 날짜"
-          />
-          <DatePicker
-            ariaLabel="종료 날짜"
-            value={endDate}
-            onChange={setEndDate}
-            disabled={isCurrent}
-            placeholder="종료 날짜"
-          />
+      <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+        <div>
+          <span className={labelClass}>시작일</span>
+          <div className="mt-1">
+            <YearMonthSelect
+              value={startDate}
+              onChange={setStartDate}
+              yearAriaLabel="시작 연도"
+              monthAriaLabel="시작 월"
+            />
+          </div>
         </div>
-        <label className="mt-2 flex items-center gap-2 text-xs text-ink/60">
+        <div>
+          <span className={labelClass}>종료일</span>
+          <div className="mt-1">
+            <YearMonthSelect
+              value={endDate}
+              onChange={setEndDate}
+              disabled={isCurrent}
+              yearAriaLabel="종료 연도"
+              monthAriaLabel="종료 월"
+            />
+          </div>
+        </div>
+        <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm text-ink/70 hover:border-brand/40">
           <input
             type="checkbox"
             checked={isCurrent}
-            onChange={(e) => setIsCurrent(e.target.checked)}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setIsCurrent(checked);
+              if (checked) setEndDate("");
+            }}
             className="h-3.5 w-3.5 rounded border-gray-300 accent-brand"
           />
-          진행 중
+          진행 중이에요
         </label>
       </div>
 
@@ -328,7 +293,7 @@ export default function ExperienceForm({
 
       <div>
         <label className={starLabelClass} htmlFor="exp-role">
-          내가 맡은 역할 *
+          {isEducation ? "참여 방식·맡은 역할 *" : "내가 맡은 역할 *"}
         </label>
         <input
           id="exp-role"
@@ -336,14 +301,18 @@ export default function ExperienceForm({
           onChange={(e) => setRole(e.target.value)}
           required
           maxLength={200}
-          placeholder="예: 3인 팀 중 프롬프트 설계·검수 담당"
+          placeholder={
+            isEducation
+              ? "예: 수강생으로 참여해 팀 프로젝트의 데이터 전처리 담당"
+              : "예: 3인 팀 중 프롬프트 설계·검수 담당"
+          }
           className={inputClass}
         />
       </div>
 
       <div>
         <label className={starLabelClass} htmlFor="exp-action">
-          구체적으로 어떻게 했나요?
+          {isEducation ? "무엇을 배우고 수행했나요?" : "구체적으로 어떻게 했나요?"}
         </label>
         <textarea
           id="exp-action"
@@ -351,14 +320,18 @@ export default function ExperienceForm({
           onChange={(e) => setAction(e.target.value)}
           maxLength={1000}
           rows={3}
-          placeholder="예: 자주 묻는 문의 300건을 유형화해 GPT 기반 자동 응답 프롬프트를 설계하고, 오답을 주간 리뷰로 개선"
+          placeholder={
+            isEducation
+              ? "예: Python·SQL 실습 후 실제 데이터를 분석하고 대시보드 제작"
+              : "예: 자주 묻는 문의 300건을 유형화해 GPT 기반 자동 응답 프롬프트를 설계하고, 오답을 주간 리뷰로 개선"
+          }
           className={`${inputClass} resize-y`}
         />
       </div>
 
       <div>
         <label className={starLabelClass} htmlFor="exp-result">
-          결과는?{" "}
+          {isEducation ? "수료·성과는?" : "결과는?"}{" "}
           <span className="font-medium text-ink/45">숫자·순위가 있다면 함께</span>
         </label>
         <input
@@ -366,8 +339,29 @@ export default function ExperienceForm({
           value={result}
           onChange={(e) => setResult(e.target.value)}
           maxLength={300}
-          placeholder="예: 1차 응대 자동화율 42% 달성, 평균 응답시간 6분→40초"
+          placeholder={
+            isEducation
+              ? "예: 우수 수료, 최종 프로젝트 1위"
+              : "예: 1차 응대 자동화율 42% 달성, 평균 응답시간 6분→40초"
+          }
           className={inputClass}
+        />
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <span className={labelClass}>사용 스킬</span>
+          <span className="text-[11px] font-medium text-ink/40">
+            선택 · 최대 {EXPERIENCE_SKILL_MAX}개
+          </span>
+        </div>
+        <p className="mb-2 text-[11px] text-ink/45">
+          이 경험에서 실제로 사용했던 스킬을 골라 주세요.
+        </p>
+        <SkillPicker
+          value={skills}
+          onChange={setSkills}
+          max={EXPERIENCE_SKILL_MAX}
         />
       </div>
 
@@ -508,65 +502,6 @@ export default function ExperienceForm({
           </label>
         </div>
       </div>
-
-      {card ? (
-        <div className="rounded-xl border border-brand/25 bg-brand/5 p-4">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-brand">
-            담당자 카드 미리보기
-          </p>
-          <p className="mt-1.5 text-sm font-bold text-ink">{card.headline}</p>
-          <dl className="mt-2 space-y-1 text-sm text-ink/75">
-            <div className="flex gap-2">
-              <dt className="shrink-0 font-semibold text-ink/50">역할</dt>
-              <dd>{card.star_role}</dd>
-            </div>
-            {card.star_action ? (
-              <div className="flex gap-2">
-                <dt className="shrink-0 font-semibold text-ink/50">행동</dt>
-                <dd>{card.star_action}</dd>
-              </div>
-            ) : null}
-            {card.star_result ? (
-              <div className="flex gap-2">
-                <dt className="shrink-0 font-semibold text-ink/50">결과</dt>
-                <dd className="font-semibold text-ink">{card.star_result}</dd>
-              </div>
-            ) : null}
-          </dl>
-          {(links.length > 0 || keptFiles.length + pendingFiles.length > 0) ? (
-            <p className="mt-2 text-xs text-ink/45">
-              첨부 {links.length + keptFiles.length + pendingFiles.length}개도
-              카드에 함께 노출될 예정이에요.
-            </p>
-          ) : null}
-          <div className="mt-3 flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setCard(null)}
-              className="rounded-full px-3 py-1.5 text-xs font-semibold text-ink/55 hover:bg-white"
-            >
-              닫기
-            </button>
-            <button
-              type="button"
-              onClick={applyCard}
-              className="rounded-full bg-brand px-4 py-1.5 text-xs font-semibold text-white hover:bg-brand/85"
-            >
-              이대로 적용
-            </button>
-          </div>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={polish}
-          disabled={isPolishing}
-          className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brand/10 px-4 py-3 text-sm font-semibold text-brand transition-colors hover:bg-brand/15 disabled:opacity-60"
-        >
-          <SparkleIcon className="h-4 w-4" />
-          {isPolishing ? "정리하는 중…" : "AI로 정리하고 담당자 카드 미리보기"}
-        </button>
-      )}
 
       {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 

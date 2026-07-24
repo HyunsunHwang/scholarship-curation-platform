@@ -57,6 +57,7 @@ export type SpecItemType =
   | "certification"
   | "activity"
   | "project"
+  | "education"
   | "language";
 
 // ── Database 타입 ─────────────────────────────────────────────────────────
@@ -210,12 +211,18 @@ export interface Database {
           special_info: SpecialInfoType[] | null;
           parent_occupation: ParentOccupationType[] | null;
           military_status: MilitaryStatusType | null;
-          /** 관심 직무 대분류 태그 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
+          /** 관심 직무 세부 ID (lib/interestCategories). NULL/빈 배열 = 미선택(건너뛰기) */
           interest_categories: string[] | null;
+          /** 관심 산업 대분류 ID (lib/interestIndustries). NULL/빈 = 미선택 */
+          interest_industries: string[] | null;
           // 프로필(스펙) 소개
           headline: string | null;
           bio: string | null;
           skills: string[] | null;
+          /** 공개 프로필 노출 허용 */
+          is_profile_public: boolean;
+          /** 맞춤 장학금·공고 제안 적극 검토 */
+          is_open_to_offers: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -263,9 +270,12 @@ export interface Database {
           parent_occupation?: ParentOccupationType[] | null;
           military_status?: MilitaryStatusType | null;
           interest_categories?: string[] | null;
+          interest_industries?: string[] | null;
           headline?: string | null;
           bio?: string | null;
           skills?: string[] | null;
+          is_profile_public?: boolean;
+          is_open_to_offers?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -291,6 +301,8 @@ export interface Database {
           star_action: string | null;
           /** STAR: 결과·수치 (Result) */
           star_result: string | null;
+          /** 이 경험에서 사용한 스킬 (카탈로그 이름) */
+          skills: string[] | null;
           /** 결과물 첨부 (링크·파일). 담당자 카드/공유 노출용 */
           artifacts: import("@/lib/profile-artifacts").SpecArtifact[];
           sort_order: number;
@@ -310,6 +322,7 @@ export interface Database {
           star_role?: string | null;
           star_action?: string | null;
           star_result?: string | null;
+          skills?: string[] | null;
           artifacts?: import("@/lib/profile-artifacts").SpecArtifact[];
           sort_order?: number;
           created_at?: string;

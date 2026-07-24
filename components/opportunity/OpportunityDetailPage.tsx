@@ -18,9 +18,9 @@ import ContestViewCountIncrementer from "@/components/opportunity/ContestViewCou
 import LiveEngagementBadges from "@/app/scholarships/[id]/LiveEngagementBadges";
 import SiteFooter from "@/components/SiteFooter";
 import {
-  interestCategoryLabel,
-  isInterestCategoryId,
-  type InterestCategoryId,
+  interestJobLabel,
+  isInterestJobId,
+  type InterestJobId,
 } from "@/lib/interestCategories";
 import type { Contest } from "@/lib/database.types";
 import type { AutoCheckState } from "@/lib/scholarship-qualification-match";
@@ -170,8 +170,8 @@ export default async function OpportunityDetailPage({
   });
 
   const interestLabels = (contest.interest_categories ?? [])
-    .filter(isInterestCategoryId)
-    .map((cid: InterestCategoryId) => interestCategoryLabel(cid));
+    .filter(isInterestJobId)
+    .map((cid: InterestJobId) => interestJobLabel(cid));
 
   const detail = contestToScholarshipDetail(contest);
   const stages = (selectionStages ?? []) as SelectionStageDetail[];

@@ -4,6 +4,12 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isSpecItemType, isExperienceType } from "@/lib/profile-spec";
 import { normalizeInterestCategories } from "@/lib/interestCategories";
+import { normalizeInterestIndustries } from "@/lib/interestIndustries";
+import {
+  EXPERIENCE_SKILL_MAX,
+  normalizeSkills,
+  SKILL_MAX,
+} from "@/lib/skills";
 import {
   PROFILE_ARTIFACTS_BUCKET,
   PROFILE_FILE_MAX,
@@ -88,7 +94,7 @@ export type SpecItemInput = {
   start_date?: string;
   end_date?: string;
   is_current?: boolean;
-  /** STAR: 내가 맡은 역할 — 경험 4종(경력·대외활동·프로젝트·수상)에서 필수 */
+  /** STAR: 내가 맡은 역할 — 경험 5종(경력·대외활동·교육·프로젝트·수상)에서 필수 */
   star_role?: string;
   /** STAR: 구체적으로 어떻게 했는지 */
   star_action?: string;
@@ -189,6 +195,7 @@ export async function saveSpecItem(
  * FormData 필드:
  * - id?, item_type, title, organization, start_date, end_date, is_current
  * - star_role, star_action, star_result
+ * - skills_json: string[]
  * - links_json: [{id?, url, title?}]
  * - keep_file_ids_json: string[]  (기존 파일 중 유지할 id)
  * - files: File[] (신규 업로드)
@@ -232,6 +239,19 @@ export async function saveExperienceItem(
   if (starResult && starResult.length > STAR_RESULT_MAX) {
     return { error: `결과는 ${STAR_RESULT_MAX}자 이내로 입력해 주세요.` };
   }
+
+  let skillsInput: unknown = [];
+  try {
+    skillsInput = JSON.parse(String(formData.get("skills_json") ?? "[]"));
+  } catch {
+    return { error: "사용 스킬 형식이 올바르지 않습니다." };
+  }
+  const skills = normalizeSkills(
+    Array.isArray(skillsInput)
+      ? skillsInput.filter((x): x is string => typeof x === "string")
+      : [],
+    EXPERIENCE_SKILL_MAX
+  );
 
   const startDate = normalizeDateInput(String(formData.get("start_date") ?? ""));
   const isCurrent = String(formData.get("is_current") ?? "") === "1";
@@ -307,6 +327,7 @@ export async function saveExperienceItem(
     star_role: starRole,
     star_action: starAction,
     star_result: starResult,
+    skills: skills.length > 0 ? skills : null,
     start_date: startDate,
     end_date: endDate,
     is_current: isCurrent,
@@ -439,6 +460,8 @@ export async function updateProfileIntro(input: {
   headline: string;
   bio: string;
   interest_categories: string[];
+  interest_industries: string[];
+  skills: string[];
 }): Promise<{ ok: true } | { error: string }> {
   const supabase = await createClient();
   const {
@@ -449,6 +472,8 @@ export async function updateProfileIntro(input: {
   const headline = input.headline.trim().slice(0, HEADLINE_MAX) || null;
   const bio = input.bio.trim().slice(0, BIO_MAX) || null;
   const interestCategories = normalizeInterestCategories(input.interest_categories);
+  const interestIndustries = normalizeInterestIndustries(input.interest_industries);
+  const skills = normalizeSkills(input.skills, SKILL_MAX);
 
   const { error } = await supabase
     .from("profiles")
@@ -456,6 +481,8 @@ export async function updateProfileIntro(input: {
       headline,
       bio,
       interest_categories: interestCategories.length > 0 ? interestCategories : null,
+      interest_industries: interestIndustries.length > 0 ? interestIndustries : null,
+      skills: skills.length > 0 ? skills : null,
     })
     .eq("id", user.id);
   if (error) {
@@ -464,5 +491,41 @@ export async function updateProfileIntro(input: {
   }
 
   revalidatePath("/mypage");
+  revalidatePath("/mypage/preview");
+  return { ok: true };
+}
+
+export async function updateProfileVisibilityFlags(input: {
+  is_profile_public?: boolean;
+  is_open_to_offers?: boolean;
+}): Promise<{ ok: true } | { error: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const patch: {
+    is_profile_public?: boolean;
+    is_open_to_offers?: boolean;
+  } = {};
+  if (typeof input.is_profile_public === "boolean") {
+    patch.is_profile_public = input.is_profile_public;
+  }
+  if (typeof input.is_open_to_offers === "boolean") {
+    patch.is_open_to_offers = input.is_open_to_offers;
+  }
+  if (Object.keys(patch).length === 0) {
+    return { error: "변경할 값이 없습니다." };
+  }
+
+  const { error } = await supabase.from("profiles").update(patch).eq("id", user.id);
+  if (error) {
+    console.error("[updateProfileVisibilityFlags]", error.message);
+    return { error: "저장에 실패했습니다." };
+  }
+
+  revalidatePath("/mypage");
+  revalidatePath("/mypage/preview");
   return { ok: true };
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createPortal } from "react-dom";
 import type { SpecItemType } from "@/lib/database.types";
 import {
   SPEC_SECTIONS,
@@ -21,19 +20,46 @@ import {
 } from "@/app/mypage/spec-actions";
 import { countFileArtifacts } from "@/lib/profile-artifacts";
 import ExperienceForm from "@/components/profile/ExperienceForm";
+import InterestJobPicker from "@/components/profile/InterestJobPicker";
+import InterestIndustryPicker from "@/components/profile/InterestIndustryPicker";
+import SkillPicker from "@/components/profile/SkillPicker";
 import DatePicker from "@/components/profile/DatePicker";
 import {
-  INTEREST_CATEGORIES,
   INTEREST_CATEGORY_MAX,
-  interestCategoryLabel,
-  type InterestCategoryId,
+  interestJobLabel,
+  type InterestJobId,
 } from "@/lib/interestCategories";
+import {
+  INTEREST_INDUSTRY_MAX,
+  interestIndustryLabel,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
+import { SKILL_MAX, type SkillName } from "@/lib/skills";
+import {
+  LANGUAGE_EXAM_OPTIONS,
+  LANGUAGE_OPTIONS,
+  LANGUAGE_PROFICIENCY_LEVELS,
+  encodeLanguageScore,
+  parseLanguageScore,
+  proficiencyLabel,
+  type LanguageProficiencyId,
+} from "@/lib/language-spec";
 
 type IntroState = {
   headline: string | null;
   bio: string | null;
-  interest_categories: InterestCategoryId[];
+  interest_categories: InterestJobId[];
+  interest_industries: InterestIndustryId[];
+  skills: SkillName[];
 };
+
+type IntroSection = "bio" | "jobs" | "industries" | "skills";
+
+type InlineEditor =
+  | { kind: "intro"; section: IntroSection }
+  | { kind: "experience"; item: SpecItem | null }
+  | { kind: "spec"; section: SpecSectionDef; item: SpecItem | null }
+  | null;
 
 /** DB 날짜 값 → picker 값 "YYYY-MM-DD" */
 function toDateInputValue(dateStr: string | null): string {
@@ -61,45 +87,276 @@ function PencilIcon({ className }: { className?: string }) {
   );
 }
 
-function Modal({
-  title,
-  onClose,
-  children,
-}: {
-  title: string;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-200 flex items-center justify-center bg-black/45 p-4"
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg font-bold text-ink">{title}</h2>
-        {children}
-      </div>
-    </div>,
-    document.body
-  );
-}
-
 const inputClass =
   "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink/35 outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/15";
 const labelClass = "block text-xs font-semibold text-ink/60";
+
+function LanguageSpecForm({
+  item,
+  onClose,
+}: {
+  item: SpecItem | null;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const parsedScore = parseLanguageScore(item?.description ?? null);
+  const initialLang =
+    item?.title &&
+    (LANGUAGE_OPTIONS as readonly string[]).includes(item.title)
+      ? item.title
+      : item?.title
+        ? "기타"
+        : "영어";
+  const initialProficiency =
+    LANGUAGE_PROFICIENCY_LEVELS.find((l) => l.label === item?.organization)
+      ?.id ?? "daily";
+
+  const [language, setLanguage] = useState(initialLang);
+  const [customLanguage, setCustomLanguage] = useState(
+    initialLang === "기타" && item?.title && item.title !== "기타"
+      ? item.title
+      : ""
+  );
+  const [proficiency, setProficiency] =
+    useState<LanguageProficiencyId>(initialProficiency);
+  const [hasScore, setHasScore] = useState(Boolean(parsedScore));
+  const [exam, setExam] = useState(parsedScore?.exam || "TOEIC");
+  const [customExam, setCustomExam] = useState(
+    parsedScore?.exam &&
+      !(LANGUAGE_EXAM_OPTIONS as readonly string[]).includes(parsedScore.exam)
+      ? parsedScore.exam
+      : ""
+  );
+  const [score, setScore] = useState(parsedScore?.score ?? "");
+  const [startDate, setStartDate] = useState(
+    toDateInputValue(item?.start_date ?? null)
+  );
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const title =
+      language === "기타" ? customLanguage.trim() || "기타" : language;
+    if (!title) {
+      setError("언어를 입력해 주세요.");
+      return;
+    }
+    if (hasScore) {
+      const examName =
+        exam === "기타" ? customExam.trim() || "기타" : exam;
+      if (!examName || !score.trim()) {
+        setError("시험명과 점수를 입력해 주세요.");
+        return;
+      }
+    }
+
+    startTransition(async () => {
+      const description = hasScore
+        ? encodeLanguageScore(
+            exam === "기타" ? customExam.trim() || "기타" : exam,
+            score
+          )
+        : null;
+      const result = await saveSpecItem({
+        id: item?.id,
+        item_type: "language",
+        title,
+        organization: proficiencyLabel(proficiency),
+        description: description ?? "",
+        start_date: hasScore ? startDate : "",
+        end_date: "",
+        is_current: false,
+      });
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      router.refresh();
+      onClose();
+    });
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      className="mt-3 space-y-4 rounded-xl border border-gray-200 bg-beige/40 p-4"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-bold text-ink">
+          {item ? "어학 수정" : "어학 추가"}
+        </h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-sm font-semibold text-ink/45 hover:text-ink"
+          aria-label="닫기"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-x-5 gap-y-3">
+        <div className="min-w-[8rem]">
+          <label className={labelClass} htmlFor="lang-name">
+            언어
+          </label>
+          <select
+            id="lang-name"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className={`${inputClass} mt-1`}
+          >
+            {LANGUAGE_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+          {language === "기타" ? (
+            <input
+              value={customLanguage}
+              onChange={(e) => setCustomLanguage(e.target.value)}
+              maxLength={40}
+              placeholder="언어 이름"
+              className={`${inputClass} mt-1.5`}
+            />
+          ) : null}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <span className={labelClass}>구사 수준</span>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {LANGUAGE_PROFICIENCY_LEVELS.map((level) => {
+              const selected = proficiency === level.id;
+              return (
+                <button
+                  key={level.id}
+                  type="button"
+                  onClick={() => setProficiency(level.id)}
+                  aria-pressed={selected}
+                  className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                    selected
+                      ? "border-brand bg-brand/10 text-brand"
+                      : "border-gray-200 bg-white text-ink/60 hover:border-brand/40"
+                  }`}
+                >
+                  <span
+                    className={`flex h-4 w-4 items-center justify-center rounded-full border ${
+                      selected ? "border-brand" : "border-gray-300"
+                    }`}
+                    aria-hidden
+                  >
+                    {selected ? (
+                      <span className="h-2 w-2 rounded-full bg-brand" />
+                    ) : null}
+                  </span>
+                  {level.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-ink/70">
+        <input
+          type="checkbox"
+          checked={hasScore}
+          onChange={(e) => setHasScore(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 accent-brand"
+        />
+        어학 성적이 있어요
+      </label>
+
+      {hasScore ? (
+        <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={labelClass} htmlFor="lang-exam">
+                시험
+              </label>
+              <select
+                id="lang-exam"
+                value={
+                  (LANGUAGE_EXAM_OPTIONS as readonly string[]).includes(exam)
+                    ? exam
+                    : "기타"
+                }
+                onChange={(e) => setExam(e.target.value)}
+                className={`${inputClass} mt-1`}
+              >
+                {LANGUAGE_EXAM_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              {exam === "기타" ||
+              !(LANGUAGE_EXAM_OPTIONS as readonly string[]).includes(exam) ? (
+                <input
+                  value={customExam || (!(LANGUAGE_EXAM_OPTIONS as readonly string[]).includes(exam) ? exam : "")}
+                  onChange={(e) => {
+                    setExam("기타");
+                    setCustomExam(e.target.value);
+                  }}
+                  maxLength={40}
+                  placeholder="시험 이름"
+                  className={`${inputClass} mt-1.5`}
+                />
+              ) : null}
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="lang-score">
+                점수·등급
+              </label>
+              <input
+                id="lang-score"
+                value={score}
+                onChange={(e) => setScore(e.target.value)}
+                maxLength={40}
+                placeholder="예: 900 / IH / 6.5"
+                className={`${inputClass} mt-1`}
+              />
+            </div>
+          </div>
+          <div>
+            <span className={labelClass}>취득일</span>
+            <div className="mt-1 max-w-xs">
+              <DatePicker
+                ariaLabel="취득일"
+                value={startDate}
+                onChange={setStartDate}
+                placeholder="선택"
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+
+      <div className="flex justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm font-semibold text-ink/60 hover:bg-beige"
+        >
+          취소
+        </button>
+        <button
+          type="submit"
+          disabled={isPending}
+          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85 disabled:opacity-60"
+        >
+          {isPending ? "저장 중…" : "저장"}
+        </button>
+      </div>
+    </form>
+  );
+}
 
 function SpecItemForm({
   section,
@@ -120,6 +377,10 @@ function SpecItemForm({
   const [startDate, setStartDate] = useState(toDateInputValue(item?.start_date ?? null));
   const [endDate, setEndDate] = useState(toDateInputValue(item?.end_date ?? null));
   const [isCurrent, setIsCurrent] = useState(item?.is_current ?? false);
+
+  if (section.type === "language") {
+    return <LanguageSpecForm item={item} onClose={onClose} />;
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -145,10 +406,26 @@ function SpecItemForm({
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 space-y-4">
+    <form
+      onSubmit={submit}
+      className="mt-3 space-y-4 rounded-xl border border-gray-200 bg-beige/40 p-4"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-bold text-ink">
+          {item ? `${section.label} 수정` : section.addLabel}
+        </h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-sm font-semibold text-ink/45 hover:text-ink"
+          aria-label="닫기"
+        >
+          ×
+        </button>
+      </div>
       <div>
         <label className={labelClass} htmlFor="spec-title">
-          {section.label === "어학" ? "시험명·점수 *" : "제목 *"}
+          제목 *
         </label>
         <input
           id="spec-title"
@@ -157,11 +434,9 @@ function SpecItemForm({
           required
           maxLength={120}
           placeholder={
-            section.type === "language"
-              ? "예: TOEIC 900"
-              : section.type === "certification"
-                ? "예: 정보처리기사"
-                : "예: 마케팅 인턴"
+            section.type === "certification"
+              ? "예: 정보처리기사"
+              : "예: 마케팅 인턴"
           }
           className={inputClass}
         />
@@ -259,39 +534,60 @@ function SpecItemForm({
   );
 }
 
-function IntroForm({
-  intro,
+function IntroFormActions({
+  error,
+  isPending,
   onClose,
 }: {
-  intro: IntroState;
+  error: string | null;
+  isPending: boolean;
   onClose: () => void;
 }) {
+  return (
+    <>
+      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+      <div className="flex justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full px-4 py-2 text-sm font-semibold text-ink/60 hover:bg-beige"
+        >
+          취소
+        </button>
+        <button
+          type="submit"
+          disabled={isPending}
+          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85 disabled:opacity-60"
+        >
+          {isPending ? "저장 중…" : "저장"}
+        </button>
+      </div>
+    </>
+  );
+}
+
+function useIntroSave(intro: IntroState, onClose: () => void) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const [headline, setHeadline] = useState(intro.headline ?? "");
-  const [bio, setBio] = useState(intro.bio ?? "");
-  const [interests, setInterests] = useState<InterestCategoryId[]>(
-    intro.interest_categories
-  );
-
-  function toggleInterest(id: InterestCategoryId) {
-    setInterests((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= INTEREST_CATEGORY_MAX) return prev;
-      return [...prev, id];
-    });
-  }
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
+  function save(
+    patch: Partial<{
+      headline: string;
+      bio: string;
+      interest_categories: InterestJobId[];
+      interest_industries: InterestIndustryId[];
+      skills: SkillName[];
+    }>
+  ) {
     setError(null);
     startTransition(async () => {
       const result = await updateProfileIntro({
-        headline,
-        bio,
-        interest_categories: interests,
+        headline: patch.headline ?? intro.headline ?? "",
+        bio: patch.bio ?? intro.bio ?? "",
+        interest_categories: patch.interest_categories ?? intro.interest_categories,
+        interest_industries: patch.interest_industries ?? intro.interest_industries,
+        skills: patch.skills ?? intro.skills,
       });
       if ("error" in result) {
         setError(result.error);
@@ -302,8 +598,28 @@ function IntroForm({
     });
   }
 
+  return { isPending, error, save };
+}
+
+function IntroBioForm({
+  intro,
+  onClose,
+}: {
+  intro: IntroState;
+  onClose: () => void;
+}) {
+  const { isPending, error, save } = useIntroSave(intro, onClose);
+  const [headline, setHeadline] = useState(intro.headline ?? "");
+  const [bio, setBio] = useState(intro.bio ?? "");
+
   return (
-    <form onSubmit={submit} className="mt-4 space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        save({ headline, bio });
+      }}
+      className="mt-3 space-y-4"
+    >
       <div>
         <label className={labelClass} htmlFor="intro-headline">
           한 줄 소개
@@ -331,58 +647,129 @@ function IntroForm({
           className={`${inputClass} resize-y`}
         />
       </div>
-      <div>
-        <div className="mb-2 flex items-center justify-between">
-          <span className={labelClass}>관심 직무</span>
-          <span className="text-[11px] font-medium text-ink/40">
-            {interests.length} / {INTEREST_CATEGORY_MAX}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {INTEREST_CATEGORIES.map(({ id, label }) => {
-            const selected = interests.includes(id);
-            const atLimit = !selected && interests.length >= INTEREST_CATEGORY_MAX;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => toggleInterest(id)}
-                disabled={atLimit}
-                aria-pressed={selected}
-                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                  selected
-                    ? "border-brand bg-brand text-white"
-                    : atLimit
-                      ? "cursor-not-allowed border-gray-100 bg-gray-50 text-ink/30"
-                      : "border-gray-200 bg-white text-ink/70 hover:border-brand/50 hover:text-brand"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
-
-      <div className="flex justify-end gap-2 pt-1">
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-full px-4 py-2 text-sm font-semibold text-ink/60 hover:bg-beige"
-        >
-          취소
-        </button>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand/85 disabled:opacity-60"
-        >
-          {isPending ? "저장 중…" : "저장"}
-        </button>
-      </div>
+      <IntroFormActions error={error} isPending={isPending} onClose={onClose} />
     </form>
+  );
+}
+
+function IntroJobsForm({
+  intro,
+  onClose,
+}: {
+  intro: IntroState;
+  onClose: () => void;
+}) {
+  const { isPending, error, save } = useIntroSave(intro, onClose);
+  const [interests, setInterests] = useState<InterestJobId[]>(
+    intro.interest_categories
+  );
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        save({ interest_categories: interests });
+      }}
+      className="mt-3 space-y-4"
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <span className={labelClass}>관심 직무</span>
+        <span className="text-[11px] font-medium text-ink/40">
+          최대 {INTEREST_CATEGORY_MAX}개
+        </span>
+      </div>
+      <InterestJobPicker
+        value={interests}
+        onChange={setInterests}
+        max={INTEREST_CATEGORY_MAX}
+      />
+      <IntroFormActions error={error} isPending={isPending} onClose={onClose} />
+    </form>
+  );
+}
+
+function IntroIndustriesForm({
+  intro,
+  onClose,
+}: {
+  intro: IntroState;
+  onClose: () => void;
+}) {
+  const { isPending, error, save } = useIntroSave(intro, onClose);
+  const [industries, setIndustries] = useState<InterestIndustryId[]>(
+    intro.interest_industries
+  );
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        save({ interest_industries: industries });
+      }}
+      className="mt-3 space-y-4"
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <span className={labelClass}>관심 산업</span>
+        <span className="text-[11px] font-medium text-ink/40">
+          선택 · 최대 {INTEREST_INDUSTRY_MAX}개
+        </span>
+      </div>
+      <InterestIndustryPicker
+        value={industries}
+        onChange={setIndustries}
+        max={INTEREST_INDUSTRY_MAX}
+      />
+      <IntroFormActions error={error} isPending={isPending} onClose={onClose} />
+    </form>
+  );
+}
+
+function IntroSkillsForm({
+  intro,
+  onClose,
+}: {
+  intro: IntroState;
+  onClose: () => void;
+}) {
+  const { isPending, error, save } = useIntroSave(intro, onClose);
+  const [skills, setSkills] = useState<SkillName[]>(intro.skills);
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        save({ skills });
+      }}
+      className="mt-3 space-y-4"
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <span className={labelClass}>보유 스킬</span>
+        <span className="text-[11px] font-medium text-ink/40">
+          선택 · 최대 {SKILL_MAX}개
+        </span>
+      </div>
+      <SkillPicker value={skills} onChange={setSkills} max={SKILL_MAX} />
+      <IntroFormActions error={error} isPending={isPending} onClose={onClose} />
+    </form>
+  );
+}
+
+function IntroSectionEditButton({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
+      aria-label={label}
+    >
+      <PencilIcon className="h-4 w-4" />
+    </button>
   );
 }
 
@@ -398,12 +785,22 @@ function TrashIcon({ className }: { className?: string }) {
   );
 }
 
-/** 통합 "경험" 섹션의 항목 행: 종류 배지 + STAR(역할/행동/결과) 표시 */
+/** YYYY-MM-DD 문자열 비교용. null/빈 값은 가장 작음(정렬 시 nulls last와 함께 사용). */
+function compareDateDesc(a: string | null, b: string | null): number {
+  if (a === b) return 0;
+  if (!a) return 1;
+  if (!b) return -1;
+  return b.localeCompare(a);
+}
+
+/** 통합 "경험" 섹션의 항목 행: 타임라인 노드 + 종류 배지 + STAR */
 function ExperienceItemRow({
   item,
+  isLast,
   onEdit,
 }: {
   item: SpecItem;
+  isLast: boolean;
   onEdit: () => void;
 }) {
   const router = useRouter();
@@ -429,82 +826,112 @@ function ExperienceItemRow({
   ].filter((l) => l.value);
 
   return (
-    <li className={`group flex gap-3 py-3.5 ${isPending ? "opacity-50" : ""}`}>
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md bg-beige px-2 py-0.5 text-[11px] font-bold text-ink/60">
-            {experienceKindLabel(item.item_type)}
-          </span>
-          <p className="text-sm font-bold text-ink">{item.title}</p>
-        </div>
-        {(item.organization || period) ? (
-          <p className="mt-0.5 text-xs text-ink/50">
-            {[item.organization, period].filter(Boolean).join(" · ")}
-          </p>
-        ) : null}
-        {starLines.length > 0 ? (
-          <dl className="mt-1.5 space-y-0.5">
-            {starLines.map((line) => (
-              <div key={line.label} className="flex gap-2 text-sm leading-relaxed">
-                <dt className="shrink-0 text-xs font-semibold leading-6 text-ink/45">
-                  {line.label}
-                </dt>
-                <dd
-                  className={`whitespace-pre-wrap ${
-                    line.strong ? "font-semibold text-ink" : "text-ink/75"
-                  }`}
-                >
-                  {line.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        ) : item.description ? (
-          <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ink/75">
-            {item.description}
-          </p>
-        ) : null}
-        {item.artifacts?.length ? (
-          <ul className="mt-2 flex flex-wrap gap-1.5">
-            {item.artifacts.map((a) => (
-              <li key={a.id}>
-                <a
-                  href={a.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex max-w-[220px] items-center gap-1.5 truncate rounded-full border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-brand hover:border-brand/40"
-                  title={a.kind === "link" ? a.url : a.name}
-                >
-                  <span className="shrink-0 text-ink/40">
-                    {a.kind === "link" ? "링크" : "파일"}
-                  </span>
-                  <span className="truncate">
-                    {a.kind === "link" ? a.title || a.url : a.name}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
+    <li className={`group relative flex gap-3 ${isPending ? "opacity-50" : ""}`}>
+      {/* 세로 레일 + 노드 */}
+      <div className="relative flex w-4 shrink-0 flex-col items-center">
+        <span
+          className="relative z-1 mt-1.5 h-2.5 w-2.5 rounded-full border-2 border-brand bg-white"
+          aria-hidden
+        />
+        {!isLast ? (
+          <span
+            className="absolute top-4 bottom-0 w-px bg-gray-200"
+            aria-hidden
+          />
         ) : null}
       </div>
-      <div className="flex shrink-0 items-start gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-        <button
-          type="button"
-          onClick={onEdit}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
-          aria-label="수정"
-        >
-          <PencilIcon className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={remove}
-          disabled={isPending}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-red-50 hover:text-red-600"
-          aria-label="삭제"
-        >
-          <TrashIcon className="h-4 w-4" />
-        </button>
+
+      <div className={`min-w-0 flex-1 ${isLast ? "pb-0" : "pb-5"}`}>
+        <div className="flex items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-beige px-2 py-0.5 text-[11px] font-bold text-ink/60">
+                {experienceKindLabel(item.item_type)}
+              </span>
+              <p className="text-sm font-bold text-ink">{item.title}</p>
+            </div>
+            {(item.organization || period) ? (
+              <p className="mt-0.5 text-xs text-ink/50">
+                {[item.organization, period].filter(Boolean).join(" · ")}
+              </p>
+            ) : null}
+            {starLines.length > 0 ? (
+              <dl className="mt-1.5 space-y-0.5">
+                {starLines.map((line) => (
+                  <div key={line.label} className="flex gap-2 text-sm leading-relaxed">
+                    <dt className="shrink-0 text-xs font-semibold leading-6 text-ink/45">
+                      {line.label}
+                    </dt>
+                    <dd
+                      className={`whitespace-pre-wrap ${
+                        line.strong ? "font-semibold text-ink" : "text-ink/75"
+                      }`}
+                    >
+                      {line.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : item.description ? (
+              <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ink/75">
+                {item.description}
+              </p>
+            ) : null}
+            {item.skills.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {item.skills.map((name) => (
+                  <span
+                    key={name}
+                    className="rounded-lg border border-gray-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-ink/65"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+            {item.artifacts?.length ? (
+              <ul className="mt-2 flex flex-wrap gap-1.5">
+                {item.artifacts.map((a) => (
+                  <li key={a.id}>
+                    <a
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex max-w-[220px] items-center gap-1.5 truncate rounded-full border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-brand hover:border-brand/40"
+                      title={a.kind === "link" ? a.url : a.name}
+                    >
+                      <span className="shrink-0 text-ink/40">
+                        {a.kind === "link" ? "링크" : "파일"}
+                      </span>
+                      <span className="truncate">
+                        {a.kind === "link" ? a.title || a.url : a.name}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+          <div className="flex shrink-0 items-start gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+            <button
+              type="button"
+              onClick={onEdit}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
+              aria-label="수정"
+            >
+              <PencilIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={remove}
+              disabled={isPending}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-red-50 hover:text-red-600"
+              aria-label="삭제"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </div>
     </li>
   );
@@ -521,9 +948,11 @@ function SpecItemRow({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const isLanguage = section.type === "language";
   const period = section.hasPeriod
     ? formatSpecPeriod(item)
     : formatSpecDate(item.start_date);
+  const langScore = isLanguage ? parseLanguageScore(item.description) : null;
 
   function remove() {
     if (!window.confirm("이 항목을 삭제할까요?")) return;
@@ -540,19 +969,40 @@ function SpecItemRow({
   return (
     <li className={`group flex gap-3 py-3 ${isPending ? "opacity-50" : ""}`}>
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-beige text-sm font-bold text-ink/50">
-        {(item.organization || item.title).charAt(0)}
+        {item.title.charAt(0)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-bold text-ink">{item.title}</p>
-        {item.organization ? (
-          <p className="text-sm text-ink/60">{item.organization}</p>
-        ) : null}
-        {period ? <p className="mt-0.5 text-xs text-ink/45">{period}</p> : null}
-        {item.description ? (
-          <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ink/75">
-            {item.description}
-          </p>
-        ) : null}
+        {isLanguage ? (
+          <>
+            <p className="text-sm font-bold text-ink">{item.title}</p>
+            <p className="text-sm text-ink/60">
+              {[
+                item.organization,
+                langScore
+                  ? [langScore.exam, langScore.score].filter(Boolean).join(" ")
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+            {period ? (
+              <p className="mt-0.5 text-xs text-ink/45">{period}</p>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <p className="text-sm font-bold text-ink">{item.title}</p>
+            {item.organization ? (
+              <p className="text-sm text-ink/60">{item.organization}</p>
+            ) : null}
+            {period ? <p className="mt-0.5 text-xs text-ink/45">{period}</p> : null}
+            {item.description ? (
+              <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ink/75">
+                {item.description}
+              </p>
+            ) : null}
+          </>
+        )}
       </div>
       <div className="flex shrink-0 items-start gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
         <button
@@ -584,15 +1034,15 @@ export default function ProfileSpecBoard({
   intro: IntroState;
   items: SpecItem[];
 }) {
-  const [editingIntro, setEditingIntro] = useState(false);
-  const [modalState, setModalState] = useState<{
-    section: SpecSectionDef;
-    item: SpecItem | null;
-  } | null>(null);
-  /** 통합 경험(경력·대외활동·프로젝트·수상) 추가/수정 모달 */
-  const [experienceModal, setExperienceModal] = useState<{
-    item: SpecItem | null;
-  } | null>(null);
+  const [editor, setEditor] = useState<InlineEditor>(null);
+
+  function openEditor(next: InlineEditor) {
+    setEditor(next);
+  }
+
+  function closeEditor() {
+    setEditor(null);
+  }
 
   const itemsByType = useMemo(() => {
     const map = new Map<SpecItemType, SpecItem[]>();
@@ -604,9 +1054,19 @@ export default function ProfileSpecBoard({
     return map;
   }, [items]);
 
-  /** 경험 4종을 하나로 합친 목록 (서버 정렬 순서 유지: sort_order → 최신순) */
+  /** 경험 통합 목록: 최신 시작일 위 (nulls last). sort_order는 무시 */
   const experienceItems = useMemo(
-    () => items.filter((item) => isExperienceType(item.item_type)),
+    () =>
+      items
+        .filter((item) => isExperienceType(item.item_type))
+        .slice()
+        .sort((a, b) => {
+          const byStart = compareDateDesc(a.start_date, b.start_date);
+          if (byStart !== 0) return byStart;
+          const byEnd = compareDateDesc(a.end_date, b.end_date);
+          if (byEnd !== 0) return byEnd;
+          return b.id.localeCompare(a.id);
+        }),
     [items]
   );
   const otherSections = SPEC_SECTIONS.filter((s) => !isExperienceType(s.type));
@@ -618,61 +1078,148 @@ export default function ProfileSpecBoard({
   );
 
   const interests = intro.interest_categories;
+  const industries = intro.interest_industries;
+  const skills = intro.skills;
+  const introSection = editor?.kind === "intro" ? editor.section : null;
+  const experienceEditor =
+    editor?.kind === "experience" ? editor : null;
+  const editingExperienceId = experienceEditor?.item?.id ?? null;
 
   return (
     <div className="space-y-4">
       {/* 소개 */}
-      <section className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
+      <section
+        id="profile-intro"
+        className="scroll-mt-24 rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6"
+      >
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-base font-bold text-ink">소개</h2>
-          <button
-            type="button"
-            onClick={() => setEditingIntro(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
-            aria-label="소개 수정"
-          >
-            <PencilIcon className="h-4 w-4" />
-          </button>
+          {introSection !== "bio" ? (
+            <IntroSectionEditButton
+              label="소개 수정"
+              onClick={() => openEditor({ kind: "intro", section: "bio" })}
+            />
+          ) : null}
         </div>
-        {intro.bio ? (
+
+        {introSection === "bio" ? (
+          <IntroBioForm intro={intro} onClose={closeEditor} />
+        ) : intro.bio ? (
           <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink/80">
             {intro.bio}
           </p>
         ) : (
           <button
             type="button"
-            onClick={() => setEditingIntro(true)}
+            onClick={() => openEditor({ kind: "intro", section: "bio" })}
             className="mt-2 text-sm text-ink/45 hover:text-brand"
           >
             아직 소개가 없어요. 나를 한 문단으로 소개해 보세요.
           </button>
         )}
 
-        <h3 className="mt-5 text-sm font-bold text-ink">관심 직무</h3>
-        {interests.length > 0 ? (
+        <div className="mt-5 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-ink">관심 직무</h3>
+          {introSection !== "jobs" ? (
+            <IntroSectionEditButton
+              label="관심 직무 수정"
+              onClick={() => openEditor({ kind: "intro", section: "jobs" })}
+            />
+          ) : null}
+        </div>
+        {introSection === "jobs" ? (
+          <IntroJobsForm intro={intro} onClose={closeEditor} />
+        ) : interests.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {interests.map((id) => (
               <span
                 key={id}
-                className="rounded-full bg-beige px-3 py-1 text-xs font-semibold text-ink/75"
+                className="rounded-xl border border-gray-200 bg-beige px-3 py-1 text-xs font-semibold text-ink/75"
               >
-                {interestCategoryLabel(id)}
+                {interestJobLabel(id)}
               </span>
             ))}
           </div>
         ) : (
           <button
             type="button"
-            onClick={() => setEditingIntro(true)}
+            onClick={() => openEditor({ kind: "intro", section: "jobs" })}
             className="mt-2 text-sm text-ink/45 hover:text-brand"
           >
             관심 직무를 골라 주세요.
           </button>
         )}
+
+        <div className="mt-5 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-ink">관심 산업</h3>
+          {introSection !== "industries" ? (
+            <IntroSectionEditButton
+              label="관심 산업 수정"
+              onClick={() => openEditor({ kind: "intro", section: "industries" })}
+            />
+          ) : null}
+        </div>
+        {introSection === "industries" ? (
+          <IntroIndustriesForm intro={intro} onClose={closeEditor} />
+        ) : industries.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {industries.map((id) => (
+              <span
+                key={id}
+                className="rounded-xl border border-gray-200 bg-beige px-3 py-1 text-xs font-semibold text-ink/75"
+              >
+                {interestIndustryLabel(id)}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => openEditor({ kind: "intro", section: "industries" })}
+            className="mt-2 text-sm text-ink/45 hover:text-brand"
+          >
+            관심 산업을 골라 주세요. (선택)
+          </button>
+        )}
+
+        <div className="mt-5 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-ink">보유 스킬</h3>
+          {introSection !== "skills" ? (
+            <IntroSectionEditButton
+              label="보유 스킬 수정"
+              onClick={() => openEditor({ kind: "intro", section: "skills" })}
+            />
+          ) : null}
+        </div>
+        {introSection === "skills" ? (
+          <IntroSkillsForm intro={intro} onClose={closeEditor} />
+        ) : skills.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {skills.map((name) => (
+              <span
+                key={name}
+                className="rounded-xl border border-gray-200 bg-beige px-3 py-1 text-xs font-semibold text-ink/75"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => openEditor({ kind: "intro", section: "skills" })}
+            className="mt-2 text-sm text-ink/45 hover:text-brand"
+          >
+            보유 스킬을 골라 주세요. (선택)
+          </button>
+        )}
       </section>
 
-      {/* 통합 경험 섹션: 경력·대외활동·프로젝트·수상 */}
-      <section className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
+      {/* 통합 경험 섹션 */}
+      <section
+        id="profile-experience"
+        className="scroll-mt-24 rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6"
+      >
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-bold text-ink">
@@ -684,37 +1231,100 @@ export default function ProfileSpecBoard({
               ) : null}
             </h2>
             <p className="mt-0.5 text-xs text-ink/45">
-              경력 · 대외활동 · 프로젝트 · 수상 — 종류는 분류·추천에만 쓰여요.
+              경력 · 대외활동 · 교육 · 프로젝트 · 수상 — 종류는 분류·추천에만
+              쓰여요.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setExperienceModal({ item: null })}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
-            aria-label="경험 추가"
-            title="경험 추가"
-          >
-            <PlusIcon className="h-4.5 w-4.5" />
-          </button>
+          {!experienceEditor || experienceEditor.item ? (
+            <button
+              type="button"
+              onClick={() => openEditor({ kind: "experience", item: null })}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
+              aria-label="경험 추가"
+              title="경험 추가"
+            >
+              <PlusIcon className="h-4.5 w-4.5" />
+            </button>
+          ) : null}
         </div>
 
-        {experienceItems.length === 0 ? (
+        {experienceEditor && !experienceEditor.item ? (
+          <div className="mt-3 rounded-xl border border-gray-200 bg-beige/40 p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-ink">경험 추가</h3>
+              <button
+                type="button"
+                onClick={closeEditor}
+                className="text-sm font-semibold text-ink/45 hover:text-ink"
+                aria-label="닫기"
+              >
+                ×
+              </button>
+            </div>
+            <ExperienceForm
+              item={null}
+              initialKind="experience"
+              profileFileCount={totalProfileFiles}
+              onClose={closeEditor}
+            />
+          </div>
+        ) : null}
+
+        {experienceItems.length === 0 && !experienceEditor ? (
           <button
             type="button"
-            onClick={() => setExperienceModal({ item: null })}
+            onClick={() => openEditor({ kind: "experience", item: null })}
             className="mt-3 text-sm text-ink/45 hover:text-brand"
           >
-            인턴, 동아리, 프로젝트, 수상까지 — 경험을 한 곳에 기록해 보세요.
+            인턴, 동아리, 교육, 프로젝트, 수상까지 — 경험을 한 곳에 기록해 보세요.
           </button>
         ) : (
-          <ul className="mt-2 divide-y divide-gray-100">
-            {experienceItems.map((item) => (
-              <ExperienceItemRow
-                key={item.id}
-                item={item}
-                onEdit={() => setExperienceModal({ item })}
-              />
-            ))}
+          <ul className="mt-4">
+            {experienceItems.map((item, index) => {
+              if (editingExperienceId === item.id) {
+                return (
+                  <li key={item.id} className="mb-4">
+                    <div className="rounded-xl border border-gray-200 bg-beige/40 p-4">
+                      <div className="mb-1 flex items-center justify-between">
+                        <h3 className="text-sm font-bold text-ink">경험 수정</h3>
+                        <button
+                          type="button"
+                          onClick={closeEditor}
+                          className="text-sm font-semibold text-ink/45 hover:text-ink"
+                          aria-label="닫기"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <ExperienceForm
+                        item={item}
+                        initialKind={
+                          isExperienceType(item.item_type)
+                            ? (item.item_type as ExperienceKind)
+                            : "experience"
+                        }
+                        profileFileCount={
+                          totalProfileFiles - countFileArtifacts(item.artifacts)
+                        }
+                        onClose={closeEditor}
+                      />
+                    </div>
+                  </li>
+                );
+              }
+              const visibleItems = experienceItems.filter(
+                (it) => it.id !== editingExperienceId
+              );
+              const visibleIndex = visibleItems.findIndex((it) => it.id === item.id);
+              return (
+                <ExperienceItemRow
+                  key={item.id}
+                  item={item}
+                  isLast={visibleIndex === visibleItems.length - 1}
+                  onEdit={() => openEditor({ kind: "experience", item })}
+                />
+              );
+            })}
           </ul>
         )}
       </section>
@@ -722,10 +1332,17 @@ export default function ProfileSpecBoard({
       {/* 나머지 스펙 섹션 (자격증·어학) */}
       {otherSections.map((section) => {
         const sectionItems = itemsByType.get(section.type) ?? [];
+        const specEditor =
+          editor?.kind === "spec" && editor.section.type === section.type
+            ? editor
+            : null;
+        const editingId = specEditor?.item?.id ?? null;
+
         return (
           <section
             key={section.type}
-            className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6"
+            id={`profile-${section.type}`}
+            className="scroll-mt-24 rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6"
           >
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-base font-bold text-ink">
@@ -736,80 +1353,66 @@ export default function ProfileSpecBoard({
                   </span>
                 ) : null}
               </h2>
-              <button
-                type="button"
-                onClick={() => setModalState({ section, item: null })}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
-                aria-label={section.addLabel}
-                title={section.addLabel}
-              >
-                <PlusIcon className="h-4.5 w-4.5" />
-              </button>
+              {!specEditor || specEditor.item ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    openEditor({ kind: "spec", section, item: null })
+                  }
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 hover:bg-beige hover:text-ink"
+                  aria-label={section.addLabel}
+                  title={section.addLabel}
+                >
+                  <PlusIcon className="h-4.5 w-4.5" />
+                </button>
+              ) : null}
             </div>
 
-            {sectionItems.length === 0 ? (
+            {specEditor && !specEditor.item ? (
+              <SpecItemForm
+                section={section}
+                item={null}
+                onClose={closeEditor}
+              />
+            ) : null}
+
+            {sectionItems.length === 0 && !specEditor ? (
               <button
                 type="button"
-                onClick={() => setModalState({ section, item: null })}
+                onClick={() =>
+                  openEditor({ kind: "spec", section, item: null })
+                }
                 className="mt-2 text-sm text-ink/45 hover:text-brand"
               >
                 {section.emptyHint}
               </button>
             ) : (
               <ul className="mt-1 divide-y divide-gray-100">
-                {sectionItems.map((item) => (
-                  <SpecItemRow
-                    key={item.id}
-                    item={item}
-                    section={section}
-                    onEdit={() => setModalState({ section, item })}
-                  />
-                ))}
+                {sectionItems.map((item) =>
+                  editingId === item.id ? (
+                    <li key={item.id} className="py-2">
+                      <SpecItemForm
+                        section={section}
+                        item={item}
+                        onClose={closeEditor}
+                      />
+                    </li>
+                  ) : (
+                    <SpecItemRow
+                      key={item.id}
+                      item={item}
+                      section={section}
+                      onEdit={() =>
+                        openEditor({ kind: "spec", section, item })
+                      }
+                    />
+                  )
+                )}
               </ul>
             )}
           </section>
         );
       })}
-
-      {editingIntro ? (
-        <Modal title="소개 수정" onClose={() => setEditingIntro(false)}>
-          <IntroForm intro={intro} onClose={() => setEditingIntro(false)} />
-        </Modal>
-      ) : null}
-
-      {modalState ? (
-        <Modal
-          title={modalState.item ? `${modalState.section.label} 수정` : modalState.section.addLabel}
-          onClose={() => setModalState(null)}
-        >
-          <SpecItemForm
-            section={modalState.section}
-            item={modalState.item}
-            onClose={() => setModalState(null)}
-          />
-        </Modal>
-      ) : null}
-
-      {experienceModal ? (
-        <Modal
-          title={experienceModal.item ? "경험 수정" : "경험 추가"}
-          onClose={() => setExperienceModal(null)}
-        >
-          <ExperienceForm
-            item={experienceModal.item}
-            initialKind={
-              experienceModal.item && isExperienceType(experienceModal.item.item_type)
-                ? (experienceModal.item.item_type as ExperienceKind)
-                : "experience"
-            }
-            profileFileCount={
-              totalProfileFiles -
-              countFileArtifacts(experienceModal.item?.artifacts)
-            }
-            onClose={() => setExperienceModal(null)}
-          />
-        </Modal>
-      ) : null}
     </div>
   );
 }

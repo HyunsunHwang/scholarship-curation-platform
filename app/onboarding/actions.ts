@@ -18,10 +18,16 @@ import type {
 } from "@/lib/database.types";
 import {
   INTEREST_CATEGORY_MAX,
-  isInterestCategoryId,
+  isInterestJobId,
   normalizeInterestCategories,
-  type InterestCategoryId,
+  type InterestJobId,
 } from "@/lib/interestCategories";
+import {
+  INTEREST_INDUSTRY_MAX,
+  isInterestIndustryId,
+  normalizeInterestIndustries,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
 
 const FORM_ENROLLMENT_STATUSES = ["재학", "휴학", "수료/졸업유예"] as const;
 const ADMISSION_TYPES = ["일반입학", "편입학", "재입학"] as const;
@@ -89,8 +95,10 @@ export type OnboardingFormData = {
   special_info: string[];
   parent_occupation: string[];
   military_status: string;
-  /** 관심 직무 대분류 ID (건너뛰기 시 빈 배열). 최대 INTEREST_CATEGORY_MAX개 */
-  interest_categories: InterestCategoryId[];
+  /** 관심 직무 세부 ID (건너뛰기 시 빈 배열). 최대 INTEREST_CATEGORY_MAX개 */
+  interest_categories: InterestJobId[];
+  /** 관심 산업 대분류 ID (건너뛰기 시 빈 배열). 최대 INTEREST_INDUSTRY_MAX개 */
+  interest_industries: InterestIndustryId[];
 };
 
 export async function loadProfile(): Promise<OnboardingFormData | null> {
@@ -206,6 +214,7 @@ export async function loadProfile(): Promise<OnboardingFormData | null> {
     parent_occupation: (profile.parent_occupation as string[]) ?? [],
     military_status: profile.military_status ?? "",
     interest_categories: normalizeInterestCategories(profile.interest_categories),
+    interest_industries: normalizeInterestIndustries(profile.interest_industries),
   };
 }
 
@@ -384,6 +393,10 @@ export async function saveProfile(
         const normalized = normalizeInterestCategories(data.interest_categories);
         return normalized.length > 0 ? normalized : null;
       })(),
+      interest_industries: (() => {
+        const normalized = normalizeInterestIndustries(data.interest_industries);
+        return normalized.length > 0 ? normalized : null;
+      })(),
       is_onboarded: true,
     })
     .eq("id", user.id);
@@ -468,12 +481,18 @@ function validateProfile(data: OnboardingFormData): string | null {
     return "직전학기 이수학점은 0 ~ 30 사이로 입력해주세요.";
   }
 
-  // 관심 직무: 선택 사항. 비어 있어도 OK. 알 수 없는 id / 최대 개수만 검증.
+  // 관심 직무·산업: 선택 사항. 비어 있어도 OK. 알 수 없는 id / 최대 개수만 검증.
   if (data.interest_categories.length > INTEREST_CATEGORY_MAX) {
     return `관심 직무는 최대 ${INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요.`;
   }
-  if (data.interest_categories.some((id) => !isInterestCategoryId(id))) {
+  if (data.interest_categories.some((id) => !isInterestJobId(id))) {
     return "관심 직무 값이 올바르지 않습니다.";
+  }
+  if (data.interest_industries.length > INTEREST_INDUSTRY_MAX) {
+    return `관심 산업은 최대 ${INTEREST_INDUSTRY_MAX}개까지 선택할 수 있어요.`;
+  }
+  if (data.interest_industries.some((id) => !isInterestIndustryId(id))) {
+    return "관심 산업 값이 올바르지 않습니다.";
   }
 
   return null;

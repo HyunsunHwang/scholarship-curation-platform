@@ -5,9 +5,9 @@ import {
   isScholarshipExpired,
 } from "@/lib/scholarship-dates";
 import {
-  interestCategoryLabel,
+  interestJobLabel,
   normalizeInterestCategories,
-  type InterestCategoryId,
+  type InterestJobId,
 } from "@/lib/interestCategories";
 import { fieldCodesForInterest } from "@/lib/interest-field-map";
 import {
@@ -77,7 +77,7 @@ export function rankForYou(items: CardScholarship[]): CardScholarship[] {
 
 function interestOverlapScore(
   item: CardScholarship,
-  interests: InterestCategoryId[]
+  interests: InterestJobId[]
 ): number {
   if (interests.length === 0) return 0;
   const itemInterests = new Set(item.interest_categories ?? []);
@@ -156,7 +156,7 @@ export function popularityScore(item: CardScholarship): number {
 
 function forYouScore(
   item: CardScholarship,
-  interests: InterestCategoryId[],
+  interests: InterestJobId[],
   saved: CardScholarship[],
   recent: CardScholarship[],
   cfKeys: ReadonlySet<string>,
@@ -346,7 +346,7 @@ export function buildTop10(
 
 function itemMatchesInterest(
   item: CardScholarship,
-  interestId: InterestCategoryId
+  interestId: InterestJobId
 ): boolean {
   if ((item.interest_categories ?? []).includes(interestId)) return true;
   const fields = fieldCodesForInterest(interestId);
@@ -367,7 +367,7 @@ export function buildInterestRails(
   const rails: HomeRail[] = [];
 
   for (const interestId of interests) {
-    const label = interestCategoryLabel(interestId);
+    const label = interestJobLabel(interestId);
     const items = finalizeRailItems(
       sortByDeadline(
         catalog.filter((item) => itemMatchesInterest(item, interestId))

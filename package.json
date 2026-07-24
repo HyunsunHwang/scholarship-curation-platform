@@ -18,6 +18,7 @@
     "import:yonsei-notices": "node scripts/import-yonsei-notice-sources.mjs",
     "import:thedream": "node scripts/import-thedream-scholarships.mjs",
     "ingest:thedream": "node scripts/ingest-thedream-to-crawled-notices.mjs",
+    "remap:contest-interest-jobs": "node scripts/remap-contest-interest-jobs.mjs",
     "tune:cau-notices": "node scripts/tune-notice-sources.mjs data/notice-sources-cau.csv data/notice-sources-cau.csv cau_",
     "tune:ewha-notices": "node scripts/tune-notice-sources.mjs data/notice-sources.csv data/notice-sources.csv ewha_",
     "tune:hongik-notices": "node scripts/tune-notice-sources.mjs data/notice-sources-hongik.csv data/notice-sources-hongik.csv hongik_",

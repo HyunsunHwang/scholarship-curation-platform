@@ -5,7 +5,11 @@ import {
   parseOptionalInt,
   parseTextArray,
 } from "@/lib/scholarship-payload";
-import { isInterestCategoryId, type InterestCategoryId } from "@/lib/interestCategories";
+import {
+  INTEREST_CONTEST_MAX,
+  isInterestJobId,
+  type InterestJobId,
+} from "@/lib/interestCategories";
 import type { ContestContentKind } from "@/lib/admin-kinds";
 import { isContestContentKind } from "@/lib/admin-kinds";
 
@@ -13,14 +17,15 @@ export type ContestInsert = Database["public"]["Tables"]["contests"]["Insert"];
 export type ContestSelectionStageInsert =
   Database["public"]["Tables"]["contest_selection_stages"]["Insert"];
 
-function parseInterestCategories(val: string | null): InterestCategoryId[] {
+function parseInterestCategories(val: string | null): InterestJobId[] {
   const items = parseTextArray(val);
-  const seen = new Set<InterestCategoryId>();
-  const out: InterestCategoryId[] = [];
+  const seen = new Set<InterestJobId>();
+  const out: InterestJobId[] = [];
   for (const item of items) {
-    if (!isInterestCategoryId(item) || seen.has(item)) continue;
+    if (!isInterestJobId(item) || seen.has(item)) continue;
     seen.add(item);
     out.push(item);
+    if (out.length >= INTEREST_CONTEST_MAX) break;
   }
   return out;
 }

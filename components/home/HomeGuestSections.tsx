@@ -13,6 +13,7 @@ import {
 } from "@/lib/home-rails";
 import {
   INTEREST_CATEGORIES,
+  expandInterestFilterIds,
   type InterestCategoryId,
 } from "@/lib/interestCategories";
 import { fieldCodesForInterest } from "@/lib/interest-field-map";
@@ -38,7 +39,9 @@ function itemMatchesInterest(
   item: CardScholarship,
   interestId: InterestCategoryId
 ): boolean {
-  if ((item.interest_categories ?? []).includes(interestId)) return true;
+  const jobIds = expandInterestFilterIds([interestId]);
+  const itemJobs = new Set(item.interest_categories ?? []);
+  if (jobIds.some((id) => itemJobs.has(id))) return true;
   const fields = fieldCodesForInterest(interestId);
   if (fields.length === 0) return false;
   return (item.qual_field_codes ?? []).some((f) => fields.includes(f));

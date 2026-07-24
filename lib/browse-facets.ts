@@ -178,7 +178,7 @@ export function supportTypesForBenefitIds(ids: BenefitCategoryId[]): string[] {
 }
 
 export function fieldCodesForInterestIds(
-  ids: InterestCategoryId[]
+  ids: readonly (InterestCategoryId | string)[]
 ): string[] {
   const out: string[] = [];
   const seen = new Set<string>();

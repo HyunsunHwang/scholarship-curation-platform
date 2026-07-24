@@ -26,9 +26,9 @@ import {
   type AutoCheckState,
 } from "@/lib/scholarship-qualification-match";
 import {
-  interestCategoryLabel,
-  isInterestCategoryId,
-  type InterestCategoryId,
+  interestJobLabel,
+  isInterestJobId,
+  type InterestJobId,
 } from "@/lib/interestCategories";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import type { Contest, Database } from "@/lib/database.types";
@@ -103,8 +103,8 @@ async function fetchContestPayload(
     : null;
 
   const interestLabels = (contest.interest_categories ?? [])
-    .filter(isInterestCategoryId)
-    .map((cid: InterestCategoryId) => interestCategoryLabel(cid));
+    .filter(isInterestJobId)
+    .map((cid: InterestJobId) => interestJobLabel(cid));
 
   const detail = contestToScholarshipDetail(contest);
   const benefits = resolveContestBenefits({

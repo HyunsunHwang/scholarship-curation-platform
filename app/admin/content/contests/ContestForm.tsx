@@ -2,7 +2,12 @@
 
 import { useState, useTransition } from "react";
 import type { Contest, SelectionStagePhase } from "@/lib/database.types";
-import { INTEREST_CATEGORIES } from "@/lib/interestCategories";
+import {
+  INTEREST_CONTEST_MAX,
+  normalizeInterestCategories,
+  type InterestJobId,
+} from "@/lib/interestCategories";
+import InterestJobPicker from "@/components/profile/InterestJobPicker";
 import { adminKindLabel } from "@/lib/admin-kinds";
 import type { ContestContentKind } from "@/lib/admin-kinds";
 
@@ -65,24 +70,14 @@ export default function ContestForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  // interest_categories as a Set for toggle logic
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
-    () => new Set(dv.interest_categories ?? [])
+  const [selectedJobs, setSelectedJobs] = useState<InterestJobId[]>(() =>
+    normalizeInterestCategories(dv.interest_categories ?? null, INTEREST_CONTEST_MAX)
   );
 
   // selection stages
   const [stageRows, setStageRows] = useState<SelectionStageRow[]>(() =>
     stageRowsFromDefaults(dv.selection_stages)
   );
-
-  const toggleCategory = (id: string) => {
-    setSelectedCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
 
   const updateStageRow = (rowId: string, patch: Partial<Omit<SelectionStageRow, "id">>) => {
     setStageRows((prev) =>
@@ -97,8 +92,7 @@ export default function ContestForm({
     e.preventDefault();
     setError(null);
     const formData = new FormData(e.currentTarget);
-    // Inject interest_categories as comma-joined string
-    formData.set("interest_categories", Array.from(selectedCategories).join(","));
+    formData.set("interest_categories", selectedJobs.join(","));
     // Inject selection_stages_json
     formData.set(
       "selection_stages_json",
@@ -225,23 +219,14 @@ export default function ContestForm({
           placeholder="예: 개인, 팀, 기업"
         />
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">관심 직무</label>
-          <div className="flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
-            {INTEREST_CATEGORIES.map((cat) => (
-              <label
-                key={cat.id}
-                className="flex items-center gap-1.5 text-sm cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.has(cat.id)}
-                  onChange={() => toggleCategory(cat.id)}
-                  className="rounded"
-                />
-                {cat.label}
-              </label>
-            ))}
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            관심 직무 (세부, 최대 {INTEREST_CONTEST_MAX}개)
+          </label>
+          <InterestJobPicker
+            value={selectedJobs}
+            onChange={setSelectedJobs}
+            max={INTEREST_CONTEST_MAX}
+          />
         </div>
       </Section>
 

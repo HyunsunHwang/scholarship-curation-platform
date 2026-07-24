@@ -6,10 +6,15 @@ import BrandLogo from "@/components/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 import { loadProfile, saveProfile, type OnboardingFormData } from "./actions";
 import {
-  INTEREST_CATEGORIES,
   INTEREST_CATEGORY_MAX,
-  type InterestCategoryId,
+  type InterestJobId,
 } from "@/lib/interestCategories";
+import {
+  INTEREST_INDUSTRY_MAX,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
+import InterestJobPicker from "@/components/profile/InterestJobPicker";
+import InterestIndustryPicker from "@/components/profile/InterestIndustryPicker";
 
 // ── Kakao Postcode 타입 ──────────────────────────────────────────────────
 declare global {
@@ -736,53 +741,49 @@ function Step4({ form, toggleArray, update }: {
   );
 }
 
-// ── Step 5: 관심 직무 (건너뛰기 가능, 최대 5개) ───────────────────────────
-function Step5({ form, toggleInterest }: {
+// ── Step 5: 관심 직무·산업 (건너뛰기 가능) ───────────────────────────────
+function Step5({
+  form,
+  setInterests,
+  setIndustries,
+}: {
   form: OnboardingFormData;
-  toggleInterest: (id: InterestCategoryId) => void;
+  setInterests: (next: InterestJobId[]) => void;
+  setIndustries: (next: InterestIndustryId[]) => void;
 }) {
-  const selectedCount = form.interest_categories.length;
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <div>
         <p className="text-sm text-ink/70">
-          관심 있는 직무를 골라주세요. 공모전·대외활동·교육·장학금 추천에 활용됩니다.
+          관심 직무와 산업을 골라주세요. 공모전·채용·장학금 추천에 활용됩니다.
         </p>
         <p className="mt-1 text-xs text-gray-400">
-          최대 {INTEREST_CATEGORY_MAX}개까지 선택할 수 있어요. 건너뛰어도 인기·마감임박 추천은 받을 수 있습니다.
+          모두 선택 사항이에요. 건너뛰어도 인기·마감임박 추천은 받을 수 있습니다.
         </p>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">관심 직무</span>
-        <span className={`text-xs font-medium ${
-          selectedCount >= INTEREST_CATEGORY_MAX ? "text-brand" : "text-ink/40"
-        }`}>
-          {selectedCount} / {INTEREST_CATEGORY_MAX}
-        </span>
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">관심 직무</span>
+          <span className="text-xs text-ink/40">최대 {INTEREST_CATEGORY_MAX}개</span>
+        </div>
+        <InterestJobPicker
+          value={form.interest_categories}
+          onChange={setInterests}
+          max={INTEREST_CATEGORY_MAX}
+        />
       </div>
-      <div className="flex flex-wrap gap-2">
-        {INTEREST_CATEGORIES.map(({ id, label }) => {
-          const selected = form.interest_categories.includes(id);
-          const atLimit = !selected && selectedCount >= INTEREST_CATEGORY_MAX;
-          return (
-            <button
-              key={id}
-              type="button"
-              onClick={() => toggleInterest(id)}
-              disabled={atLimit}
-              aria-pressed={selected}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all ${
-                selected
-                  ? "border-brand bg-brand text-white"
-                  : atLimit
-                    ? "cursor-not-allowed border-gray-100 bg-gray-50 text-ink/30"
-                    : "border-gray-200 bg-white text-ink/70 hover:border-brand/50 hover:text-brand"
-              }`}
-            >
-              {label}
-            </button>
-          );
-        })}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">관심 산업</span>
+          <span className="text-xs text-ink/40">
+            선택 · 최대 {INTEREST_INDUSTRY_MAX}개
+          </span>
+        </div>
+        <InterestIndustryPicker
+          value={form.interest_industries}
+          onChange={setIndustries}
+          max={INTEREST_INDUSTRY_MAX}
+        />
       </div>
     </div>
   );
@@ -804,6 +805,7 @@ const INITIAL_FORM: OnboardingFormData = {
   income_level: "", household_size: "",
   special_info: [], parent_occupation: [], military_status: "",
   interest_categories: [],
+  interest_industries: [],
 };
 
 function validateStep(step: number, form: OnboardingFormData): string {
@@ -892,18 +894,18 @@ export default function OnboardingPageClient({
     });
   };
 
-  const toggleInterest = (id: InterestCategoryId) => {
-    setForm((prev) => {
-      const selected = prev.interest_categories;
-      if (selected.includes(id)) {
-        return { ...prev, interest_categories: selected.filter((v) => v !== id) };
-      }
-      if (selected.length >= INTEREST_CATEGORY_MAX) return prev;
-      return { ...prev, interest_categories: [...selected, id] };
-    });
+  const setInterests = (next: InterestJobId[]) => {
+    setForm((prev) => ({ ...prev, interest_categories: next }));
     setErrorMsg((prevErr) => {
-      // clear max-limit message when toggling; chips already disable at limit
       if (prevErr.startsWith("관심 직무는 최대")) return "";
+      return prevErr;
+    });
+  };
+
+  const setIndustries = (next: InterestIndustryId[]) => {
+    setForm((prev) => ({ ...prev, interest_industries: next }));
+    setErrorMsg((prevErr) => {
+      if (prevErr.startsWith("관심 산업은 최대")) return "";
       return prevErr;
     });
   };
@@ -934,7 +936,11 @@ export default function OnboardingPageClient({
     }
     setLoading(true);
     const payload = options?.skipInterests
-      ? { ...form, interest_categories: [] as InterestCategoryId[] }
+      ? {
+          ...form,
+          interest_categories: [] as InterestJobId[],
+          interest_industries: [] as InterestIndustryId[],
+        }
       : form;
     const result = await saveProfile(payload, "/matched");
     if (result?.error) { setErrorMsg(result.error); setLoading(false); }
@@ -1021,7 +1027,13 @@ export default function OnboardingPageClient({
             )}
             {step === 2 && <Step3 form={form} update={update} />}
             {step === 3 && <Step4 form={form} toggleArray={toggleArray} update={update} />}
-            {step === 4 && <Step5 form={form} toggleInterest={toggleInterest} />}
+            {step === 4 && (
+              <Step5
+                form={form}
+                setInterests={setInterests}
+                setIndustries={setIndustries}
+              />
+            )}
 
             {errorMsg && (
               <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

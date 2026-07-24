@@ -18,6 +18,7 @@ import {
   supportTypesForBenefitIds,
   type BrowseFacetFilters,
 } from "@/lib/browse-facets";
+import { expandInterestFilterIds } from "@/lib/interestCategories";
 import { applyContestStudentAudienceFilter } from "@/lib/contest-audience";
 
 export type BrowseSort = "latest" | "deadline" | "views" | "scraps";
@@ -178,7 +179,11 @@ function applyContestFacetFilters(
   facets: BrowseFacetFilters
 ) {
   if (facets.interests.length) {
-    query = query.overlaps("interest_categories", facets.interests);
+    // 필터 칩은 대분류 → 세부 id로 펼쳐 공고 태그와 overlaps
+    const jobIds = expandInterestFilterIds(facets.interests);
+    if (jobIds.length) {
+      query = query.overlaps("interest_categories", jobIds);
+    }
   }
   if (facets.benefits.length) {
     const tags = rawBenefitTagsForIds(facets.benefits);

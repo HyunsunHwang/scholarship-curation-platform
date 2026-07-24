@@ -3,6 +3,7 @@ import {
   normalizeArtifacts,
   type SpecArtifact,
 } from "@/lib/profile-artifacts";
+import { normalizeSkills, type SkillName } from "@/lib/skills";
 
 /** 클라이언트에 내려주는 스펙 항목 (user_id 등 제외) */
 export type SpecItem = {
@@ -17,6 +18,7 @@ export type SpecItem = {
   star_role: string | null;
   star_action: string | null;
   star_result: string | null;
+  skills: SkillName[];
   artifacts: SpecArtifact[];
 };
 
@@ -32,21 +34,23 @@ export function coerceSpecItem(row: {
   star_role: string | null;
   star_action: string | null;
   star_result: string | null;
+  skills?: string[] | null;
   artifacts?: unknown;
 }): SpecItem {
   return {
     ...row,
+    skills: normalizeSkills(row.skills ?? null),
     artifacts: normalizeArtifacts(row.artifacts),
   };
 }
 
 // ── 통합 "경험" 섹션 ────────────────────────────────────────────────────────
-// 경력·대외활동·프로젝트·수상은 하나의 경험 폼(STAR)을 공유하고,
+// 경력·대외활동·교육·프로젝트·수상은 하나의 경험 폼(STAR)을 공유하고,
 // 종류는 분류·추천에만 쓰인다. 입력 항목은 동일하다.
 
 export type ExperienceKind = Extract<
   SpecItemType,
-  "experience" | "activity" | "project" | "award"
+  "experience" | "activity" | "education" | "project" | "award"
 >;
 
 export type ExperienceKindDef = {
@@ -59,6 +63,7 @@ export type ExperienceKindDef = {
 export const EXPERIENCE_KINDS: ExperienceKindDef[] = [
   { type: "experience", label: "경력", wherePlaceholder: "예: OO커머스 CX팀" },
   { type: "activity", label: "대외활동", wherePlaceholder: "예: OO 서포터즈 3기" },
+  { type: "education", label: "교육", wherePlaceholder: "예: OO교육원·온라인 플랫폼" },
   { type: "project", label: "프로젝트", wherePlaceholder: "예: 캡스톤디자인 팀" },
   { type: "award", label: "수상", wherePlaceholder: "예: OO공모전 (주최 기관)" },
 ];
@@ -130,14 +135,17 @@ export const SPEC_SECTIONS: SpecSectionDef[] = [
   {
     type: "language",
     label: "어학",
-    addLabel: "어학 성적 추가",
-    emptyHint: "TOEIC, OPIc 등 어학 성적을 기록해 보세요.",
-    orgLabel: "시험/주관사",
+    addLabel: "어학 추가",
+    emptyHint: "구사 언어와 수준, 어학 성적을 기록해 보세요.",
+    orgLabel: "구사 수준",
     hasPeriod: false,
   },
 ];
 
-export const SPEC_ITEM_TYPES = SPEC_SECTIONS.map((s) => s.type);
+export const SPEC_ITEM_TYPES: SpecItemType[] = [
+  ...SPEC_SECTIONS.map((s) => s.type),
+  "education",
+];
 
 export function isSpecItemType(value: string): value is SpecItemType {
   return (SPEC_ITEM_TYPES as string[]).includes(value);
