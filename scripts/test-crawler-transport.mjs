@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 import {
   fetchCauPortalList,
+  fetchJsonApiBoardList,
 } from "../lib/crawler-adapters/index.mjs";
 import {
   runBoundedCrawlerSource,
@@ -783,6 +784,57 @@ await test("CAU adapter requiredListPath fails closed on a changed JSON shape", 
     () => fetchCauPortalList(source, { transportClient: client, maxPages: 1 }),
     (error) => error.code === "json_shape_mismatch",
   );
+});
+
+await test("declarative JSON API adapter applies manifest URL and field mapping", async () => {
+  const source = structuredClone(
+    manifestSources.find((item) => item.sourceId === "korea_033"),
+  );
+  const fixture = fs.readFileSync(
+    path.join(
+      repositoryRoot,
+      "fixtures",
+      "crawler",
+      "runtime-remediation",
+      "korea-033-board.json",
+    ),
+    "utf8",
+  );
+  const requests = [];
+  const client = createTransportClient({
+    source,
+    policy: policy(),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async (url, options) => {
+      requests.push({
+        url: new URL(url).toString(),
+        accept: options.headers.accept,
+        referer: options.headers.referer,
+      });
+      return response(200, fixture, { "content-type": "application/json" });
+    },
+  });
+  const items = await fetchJsonApiBoardList(source, {
+    transportClient: client,
+    maxPages: 2,
+    maxItems: 10,
+    lookbackDays: 31,
+    now: fixedNow,
+  });
+  assert.deepEqual(items.map((item) => item.noticeUrl), [
+    "https://ie.korea.ac.kr/board/scholarship/undergrad/408?pageNo=1",
+    "https://ie.korea.ac.kr/board/scholarship/undergrad/407?pageNo=1",
+  ]);
+  assert.deepEqual(items.map((item) => item.content), [
+    "Detailed scholarship body one.",
+    "Detailed scholarship body two.",
+  ]);
+  assert.deepEqual(requests, [{
+    url: "https://api.ie.korea.ac.kr/v1/board?type=scholarship-undergraduate&page=1",
+    accept: "application/json",
+    referer: source.listUrl,
+  }]);
+  assert.equal(client.evidence().request_attempt_count, 1);
 });
 
 await test("invalid JSON response is non-retryable", async () => {

@@ -38,6 +38,24 @@
               "requiredListPath": {
                 "type": "string",
                 "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+              },
+              "requestUrlTemplate": { "type": "string", "minLength": 1 },
+              "detailUrlTemplate": { "type": "string", "minLength": 1 },
+              "totalPagesPath": {
+                "type": "string",
+                "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+              },
+              "fieldMap": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "title", "date", "content"],
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$" },
+                  "title": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$" },
+                  "date": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$" },
+                  "content": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$" },
+                  "isPinned": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$" }
+                }
               }
             }
           },

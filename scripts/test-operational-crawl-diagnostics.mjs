@@ -1034,6 +1034,98 @@ async function asyncTest(name, fn) {
   console.log(`PASS ${name}`);
 }
 
+await asyncTest("remediated source fixtures extract only verified detail URLs", async () => {
+  const registry = await loadSources("manifest", { includeDisabled: true });
+  const fixtureDirectory = new URL(
+    "../fixtures/crawler/runtime-remediation/",
+    import.meta.url,
+  );
+  const cases = [
+    {
+      sourceId: "cau_072",
+      fixture: "cau-072-list.html",
+      expectedUrls: [
+        "https://philosophy.cau.ac.kr/notices/11111111-1111-4111-8111-111111111111",
+        "https://philosophy.cau.ac.kr/notices/22222222-2222-4222-8222-222222222222",
+      ],
+      rejectedUrls: [
+        "https://philosophy.cau.ac.kr/notices",
+        "https://philosophy.cau.ac.kr/notices?cat=scholarship",
+      ],
+    },
+    {
+      sourceId: "cau_036",
+      fixture: "cau-036-list.html",
+      expectedUrls: [
+        "https://ai.cau.ac.kr/sub07/sub0701.php?category=1&view=detail&no=3491&search=title",
+        "https://ai.cau.ac.kr/sub07/sub0701.php?no=3485&view=detail&category=1",
+      ],
+      rejectedUrls: [
+        "https://ai.cau.ac.kr/sub07/sub0701.php?category=1&view=list",
+        "https://ai.cau.ac.kr/sub07/sub0701.php?category=1&view=detail",
+      ],
+    },
+    {
+      sourceId: "korea_030",
+      fixture: "korea-030-list.html",
+      expectedUrls: [
+        "https://ace.korea.ac.kr/bbs/board.php?bo_table=sub5_2&wr_id=465&sca=scholarship",
+        "https://ace.korea.ac.kr/bbs/board.php?wr_id=446&bo_table=sub5_2",
+      ],
+      rejectedUrls: [
+        "https://ace.korea.ac.kr/bbs/board.php?bo_table=sub5_2",
+        "https://ace.korea.ac.kr/bbs/login.php",
+      ],
+    },
+    {
+      sourceId: "korea_032",
+      fixture: "korea-032-list.html",
+      expectedUrls: [
+        "https://me.korea.ac.kr/community/undernotice_ugd_view.html?no=742&page=1",
+        "https://me.korea.ac.kr/community/undernotice_ugd_view.html?page=1&no=741",
+      ],
+      rejectedUrls: [
+        "https://me.korea.ac.kr/community/undernotice_ugd.html?page=2",
+        "https://me.korea.ac.kr/community/undernotice_ugd_view.html?page=1",
+      ],
+    },
+    {
+      sourceId: "uos_001",
+      fixture: "uos-001-list.html",
+      expectedUrls: [
+        "https://lauos.or.kr/notice?uid=2019&mod=document&pageid=1",
+        "https://lauos.or.kr/notice?mod=document&pageid=1&uid=2018",
+      ],
+      rejectedUrls: [
+        "https://lauos.or.kr/notice?pageid=2",
+        "https://lauos.or.kr/notice?uid=2018",
+      ],
+    },
+  ];
+  for (const fixtureCase of cases) {
+    const source = registry.sources.find((item) => item.sourceId === fixtureCase.sourceId);
+    const html = fs.readFileSync(
+      new URL(fixtureCase.fixture, fixtureDirectory),
+      "utf8",
+    );
+    const items = extractFromList(source, html);
+    assert.deepEqual(
+      items.map((item) => item.noticeUrl),
+      fixtureCase.expectedUrls,
+      fixtureCase.sourceId,
+    );
+    assert.equal(items.length, 2, fixtureCase.sourceId);
+    assert.equal(
+      items.operational_parser_evidence.contaminated_candidate_leak_count,
+      0,
+      fixtureCase.sourceId,
+    );
+    const pattern = new RegExp(source.noticeUrlPattern);
+    assert.equal(fixtureCase.expectedUrls.every((url) => pattern.test(url)), true);
+    assert.equal(fixtureCase.rejectedUrls.every((url) => !pattern.test(url)), true);
+  }
+});
+
 await asyncTest("multi-page evidence aggregates and operational analysis adds no fetches", async () => {
   const source = {
     sourceId: "multi_page",

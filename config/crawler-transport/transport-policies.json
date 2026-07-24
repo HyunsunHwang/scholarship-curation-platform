@@ -1,6 +1,6 @@
 {
   "schemaVersion": "crawler-transport-policy-v1",
-  "registryVersion": "2026-07-24.2",
+  "registryVersion": "2026-07-24.3",
   "userAgentProfiles": {
     "browser-default": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
   },
@@ -95,7 +95,6 @@
         "cau_013",
         "cau_016",
         "cau_069",
-        "cau_072",
         "cau_082",
         "hanyang_009",
         "hanyang_012",

@@ -363,7 +363,7 @@ const failedDiagnosticProbeResult = await runCommonCrawlerSource({
     normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
   },
   fetchHtml: async (_url, request) => {
-    if (request.kind === "detail") throw Object.assign(new Error("HTTP 403"), { status: 403 });
+    if (request.kind === "detail") throw Object.assign(new Error("HTTP 404"), { httpStatus: 404 });
     return "<html></html>";
   },
   fetchDetails: true,
@@ -381,8 +381,47 @@ assert.equal(failedDiagnosticProbeResult.notices.length, 0);
 assert.equal(failedDiagnosticProbeResult.item_summary.failed_count, 0);
 assert.equal(failedDiagnosticProbeResult.item_summary.successful_count, 0);
 assert.equal(failedDiagnosticProbeResult.item_summary.diagnostic_detail_probe_attempted, 1);
+assert.equal(failedDiagnosticProbeResult.item_summary.diagnostic_detail_probe_failed_count, 1);
 assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.status, "failed");
-assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.detail_result_status, "network_error");
+assert.equal(failedDiagnosticProbeResult.diagnostic_detail_probe.detail_result_status, "http_error");
+
+const tlsDiagnosticProbeResult = await runCommonCrawlerSource({
+  source: { sourceId: "probe_tls", sourceName: "Probe TLS", listUrl: "https://example.edu/probe-tls" },
+  inventoryRows: [{ source_id: "probe_tls" }],
+  strategy: {
+    name: "probe-tls-fixture",
+    buildListRequest: ({ listUrl }) => ({ url: listUrl, kind: "list" }),
+    parseList: () => noCandidateItems.map((item) => ({ ...item, noticeUrl: item.noticeUrl.replace("/probe/", "/probe-tls/") })),
+    resolveDetailUrl: ({ item }) => item.noticeUrl,
+    buildDetailRequest: ({ item }) => ({ url: item.noticeUrl, kind: "detail" }),
+    normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
+  },
+  fetchHtml: async (_url, request) => {
+    if (request.kind === "detail") {
+      throw Object.assign(new Error("fetch failed"), {
+        cause: Object.assign(new Error("unable to verify the first certificate"), {
+          code: "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        }),
+      });
+    }
+    return "<html></html>";
+  },
+  fetchDetails: true,
+  candidateDetector: detectScholarshipCandidate,
+  detailFetchPlanner: buildDetailFetchPlan,
+  candidateDetectionOptions: {
+    keywords: DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: 31,
+    allowUndated: false,
+    now,
+  },
+});
+assert.equal(tlsDiagnosticProbeResult.result_status, "success");
+assert.equal(tlsDiagnosticProbeResult.item_summary.failed_count, 0);
+assert.equal(tlsDiagnosticProbeResult.item_summary.diagnostic_detail_probe_failed_count, 1);
+assert.equal(tlsDiagnosticProbeResult.diagnostic_detail_probe.detail_transport_error_code, "UNABLE_TO_VERIFY_LEAF_SIGNATURE");
+assert.equal(tlsDiagnosticProbeResult.diagnostic_detail_probe.detail_transport_error_category, "tls_certificate");
+assert.equal(tlsDiagnosticProbeResult.diagnostic_detail_probe.detail_transport_error_retryable, false);
 
 const failedCandidateDetailResult = await runCommonCrawlerSource({
   source: { sourceId: "candidate_failure", sourceName: "Candidate failure", listUrl: "https://example.edu/candidate-failure" },
@@ -418,6 +457,64 @@ const failedCandidateDetailResult = await runCommonCrawlerSource({
 assert.equal(failedCandidateDetailResult.result_status, "partial");
 assert.equal(failedCandidateDetailResult.item_summary.failed_count, 1);
 assert.equal(failedCandidateDetailResult.item_summary.diagnostic_detail_probe_failed_count, 0);
+
+const combinedCandidateAndProbeFailureResult = await runCommonCrawlerSource({
+  source: { sourceId: "combined_failure", sourceName: "Combined failure", listUrl: "https://example.edu/combined-failure" },
+  inventoryRows: [{ source_id: "combined_failure" }],
+  strategy: {
+    name: "combined-failure-fixture",
+    buildListRequest: ({ listUrl }) => ({ url: listUrl, kind: "list" }),
+    parseList: () => [{
+      sourceId: "combined_failure",
+      sourceName: "Combined failure",
+      noticeUrl: "https://example.edu/combined-failure/candidate",
+      title: "Scholarship application",
+      dateText: "2026.07.20",
+    }, {
+      sourceId: "combined_failure",
+      sourceName: "Combined failure",
+      noticeUrl: "https://example.edu/combined-failure/probe",
+      title: "General event",
+      dateText: "2026.07.20",
+    }],
+    resolveDetailUrl: ({ item }) => item.noticeUrl,
+    buildDetailRequest: ({ item }) => ({ url: item.noticeUrl, kind: "detail" }),
+    normalizeNotice: ({ item, detail }) => ({ ...item, ...detail }),
+  },
+  fetchHtml: async (_url, request) => {
+    if (request.kind === "detail") {
+      throw Object.assign(new Error("HTTP 404"), { httpStatus: 404 });
+    }
+    return "<html></html>";
+  },
+  fetchDetails: true,
+  candidateDetector: detectScholarshipCandidate,
+  detailFetchPlanner: ({ observations, candidateResults }) => ({
+    fetch: [observations[0]],
+    skip: [{
+      observation: observations[1],
+      candidateResult: candidateResults[1],
+      skipReason: "candidate_not_candidate",
+      observationKey: observations[1].noticeUrl,
+    }],
+    diagnosticDetailProbe: {
+      observation: observations[1],
+      observationKey: observations[1].noticeUrl,
+      selectionReason: "last_non_candidate_list_observation",
+    },
+    seenNoticeUrlCount: 0,
+  }),
+  candidateDetectionOptions: {
+    keywords: DEFAULT_SCHOLARSHIP_KEYWORDS,
+    lookbackDays: 31,
+    allowUndated: false,
+    now,
+  },
+});
+assert.equal(combinedCandidateAndProbeFailureResult.result_status, "partial");
+assert.equal(combinedCandidateAndProbeFailureResult.item_summary.failed_count, 1);
+assert.equal(combinedCandidateAndProbeFailureResult.item_summary.diagnostic_detail_probe_failed_count, 1);
+assert.equal(combinedCandidateAndProbeFailureResult.diagnostic_detail_probe.status, "failed");
 
 const candidateDiagnostics = buildCandidateDetectionDiagnostics([
   {

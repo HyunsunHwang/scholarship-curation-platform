@@ -14,7 +14,7 @@ import {
 } from "../lib/notice-source-manifest-validator.mjs";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 
-const MANIFEST_VERSION = "2026-07-24.1";
+const MANIFEST_VERSION = "2026-07-24.2";
 const SOURCE_FIELDS = Object.freeze([
   "sourceId", "universitySlug", "universityId", "collegeId", "departmentId", "orgUnitId",
   "collegeName", "departmentName", "sourceLevel", "sourceName", "listUrl", "baseUrl",

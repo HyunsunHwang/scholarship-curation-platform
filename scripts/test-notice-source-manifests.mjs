@@ -41,9 +41,31 @@ await test("deterministic ordering and hashes", () => { const first = loadNotice
 await test("CSV and manifest preserve canonical crawl fields while manifest can add runtime contracts", () => {
   const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary", "adapterConfig"]);
   const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
-  const csv = readSourceConfigFromCsv("data/notice-sources.csv").map(omitTopology).sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+  const remediatedSourceIds = new Set(["cau_036", "cau_072", "korea_030", "korea_032", "korea_033", "uos_001"]);
+  const runtimeContractFields = new Set([
+    ...topologyFields,
+    "listUrl",
+    "baseUrl",
+    "listItemSelector",
+    "linkSelector",
+    "titleSelector",
+    "dateSelector",
+    "detailContentSelector",
+    "detailDateSelector",
+    "noticeUrlPattern",
+    "adapter",
+  ]);
+  const omitRuntimeContract = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !runtimeContractFields.has(key)));
+  const csv = readSourceConfigFromCsv("data/notice-sources.csv").sort((a, b) => a.sourceId.localeCompare(b.sourceId));
   const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource);
-  assert.deepEqual(manifest.map(omitTopology), csv);
+  assert.deepEqual(manifest.map((source) => source.sourceId), csv.map((source) => source.sourceId));
+  for (let index = 0; index < manifest.length; index += 1) {
+    if (remediatedSourceIds.has(manifest[index].sourceId)) {
+      assert.deepEqual(omitRuntimeContract(manifest[index]), omitRuntimeContract(csv[index]));
+    } else {
+      assert.deepEqual(omitTopology(manifest[index]), omitTopology(csv[index]));
+    }
+  }
   const yonsei010 = manifest.find((source) => source.sourceId === "yonsei_010");
   assert.deepEqual(
     [yonsei010.contentMode, yonsei010.detailFetchRequired, yonsei010.detailContentAlreadyAvailable, yonsei010.sectionTitleSelector, yonsei010.sectionBodyBoundary],
@@ -118,6 +140,26 @@ await test("CAU adapterConfig is required and rejects unknown or untrimmed value
     const changed = structuredClone(fixture);
     const manifest = changed.manifests.find((item) => item.universitySlug === "cau");
     manifest.sources[manifest.sources.findIndex((item) => item.sourceId === source.sourceId)] = value;
+    assert.equal(validateNoticeSourceManifests(changed).valid, false);
+  }
+});
+await test("JSON API adapterConfig is declarative and fails closed when incomplete", () => {
+  const fixture = manifests();
+  const koreaManifest = fixture.manifests.find((manifest) => manifest.universitySlug === "korea");
+  const source = koreaManifest.sources.find((item) => item.sourceId === "korea_033");
+  assert.equal(source.adapter, "json_api_board");
+  assert.equal(source.adapterConfig.requestUrlTemplate.includes("{page}"), true);
+  assert.equal(source.adapterConfig.detailUrlTemplate.includes("{id}"), true);
+  const variants = [
+    (value) => { delete value.adapterConfig.requestUrlTemplate; },
+    (value) => { value.adapterConfig.requestUrlTemplate = "https://api.example.test/board?page={unknown}"; },
+    (value) => { value.adapterConfig.detailUrlTemplate = "not-a-url/{id}"; },
+    (value) => { delete value.adapterConfig.fieldMap.title; },
+  ];
+  for (const mutate of variants) {
+    const changed = structuredClone(fixture);
+    const manifest = changed.manifests.find((item) => item.universitySlug === "korea");
+    mutate(manifest.sources.find((item) => item.sourceId === source.sourceId));
     assert.equal(validateNoticeSourceManifests(changed).valid, false);
   }
 });
