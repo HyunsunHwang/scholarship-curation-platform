@@ -48,6 +48,11 @@ const cau002 = sources.find((source) => source.sourceId === "cau_002");
 const hanyang009 = sources.find((source) => source.sourceId === "hanyang_009");
 const cauPolicy = resolveEffectiveTransportPolicy({ source: cau002, registry, now });
 const hanyangPolicy = resolveEffectiveTransportPolicy({ source: hanyang009, registry, now });
+const systemCaRemediationCases = [
+  ["skku_009", "nano.skku.edu", "skku-009-system-ca"],
+  ["skku_013", "cheme.skku.edu", "skku-013-system-ca"],
+  ["yonsei_057", "ped.yonsei.ac.kr", "yonsei-057-system-ca"],
+];
 
 await test("system CA live evidence is bounded, exact-host, and verification-preserving", () => {
   const expected = [
@@ -87,6 +92,29 @@ await test("all sources resolve and only hanyang_009 is insecure exact-host", ()
   assert.equal(cauPolicy.tlsMode, "system-ca");
   assert.deepEqual(cauPolicy.allowedHosts, ["econ.cau.ac.kr"]);
   assert.equal(cauPolicy.expiresAt, null);
+});
+
+await test("verified remediation sources resolve only their exact system CA host", () => {
+  for (const [sourceId, hostname, bindingId] of systemCaRemediationCases) {
+    const source = sources.find((entry) => entry.sourceId === sourceId);
+    const policy = resolveEffectiveTransportPolicy({ source, registry, now });
+    const binding = rawRegistry.bindings.find((entry) => entry.bindingId === bindingId);
+    assert.equal(policy.tlsMode, "system-ca");
+    assert.equal(policy.bindingId, bindingId);
+    assert.deepEqual(policy.allowedHosts, [hostname]);
+    assert.deepEqual(binding.sourceIds, [sourceId]);
+    assert.deepEqual(binding.allowedHosts, [hostname]);
+    assert.equal(binding.evidenceCommit, "1c03ebc59d198184d18e949230fdc21066964f7c");
+    assert.equal(policy.reason.includes("UNABLE_TO_VERIFY_LEAF_SIGNATURE"), true);
+    assert.throws(
+      () => resolveEffectiveTransportPolicy({
+        source: { ...source, listUrl: `https://other.${hostname}/` },
+        registry,
+        now,
+      }),
+      (error) => error.code === "transport_policy_system_ca_invalid",
+    );
+  }
 });
 
 await test("system-ca bindings require exact host and reason", () => {

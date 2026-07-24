@@ -1,6 +1,6 @@
 {
   "schemaVersion": "crawler-transport-policy-v1",
-  "registryVersion": "2026-07-24.3",
+  "registryVersion": "2026-07-24.4",
   "userAgentProfiles": {
     "browser-default": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
   },
@@ -128,6 +128,36 @@
       "profile": "system-ca",
       "reason": "Use the operating-system trust store while preserving certificate and hostname verification",
       "evidenceCommit": "3d1b60edff05aac27fbfb317ba178cad262f6a5a",
+      "createdAt": "2026-07-24"
+    },
+    {
+      "bindingId": "skku-009-system-ca",
+      "priority": 100,
+      "sourceIds": ["skku_009"],
+      "allowedHosts": ["nano.skku.edu"],
+      "profile": "system-ca",
+      "reason": "Strict Node trust failed with UNABLE_TO_VERIFY_LEAF_SIGNATURE while the operating-system CA store verified the exact hostname.",
+      "evidenceCommit": "1c03ebc59d198184d18e949230fdc21066964f7c",
+      "createdAt": "2026-07-24"
+    },
+    {
+      "bindingId": "skku-013-system-ca",
+      "priority": 100,
+      "sourceIds": ["skku_013"],
+      "allowedHosts": ["cheme.skku.edu"],
+      "profile": "system-ca",
+      "reason": "Strict Node trust failed with UNABLE_TO_VERIFY_LEAF_SIGNATURE while the operating-system CA store verified the exact hostname.",
+      "evidenceCommit": "1c03ebc59d198184d18e949230fdc21066964f7c",
+      "createdAt": "2026-07-24"
+    },
+    {
+      "bindingId": "yonsei-057-system-ca",
+      "priority": 100,
+      "sourceIds": ["yonsei_057"],
+      "allowedHosts": ["ped.yonsei.ac.kr"],
+      "profile": "system-ca",
+      "reason": "Strict Node trust failed with UNABLE_TO_VERIFY_LEAF_SIGNATURE while the operating-system CA store verified the exact hostname.",
+      "evidenceCommit": "1c03ebc59d198184d18e949230fdc21066964f7c",
       "createdAt": "2026-07-24"
     },
     {
