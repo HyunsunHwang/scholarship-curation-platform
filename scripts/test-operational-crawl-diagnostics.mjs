@@ -750,7 +750,7 @@ test("inline section adapter extracts nested sections and preserves resource lin
   assert.equal(notices.length, 3);
   assert.equal(notices.filter((notice) => /장학/.test(`${notice.title} ${notice.content}`)).length, 2);
   assert.equal(notices[0].dateText, "");
-  assert.equal(notices[0].inlineDateEvidence.some((entry) => entry.role === "application_date"), true);
+  assert.equal(notices[0].inlineDateEvidence.some((entry) => entry.role === "application_start_date"), true);
   assert.equal(notices[0].content.includes(notices[1].title), false);
   assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "supporting_reference"), true);
   assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "application_form"), true);
@@ -937,7 +937,8 @@ await asyncTest("inline adapter uses one list request, no detail request, and re
     },
     matchedCount: 2,
   });
-  assert.equal(diagnostic.capability_status, "supported");
+  assert.equal(diagnostic.capability_status, "list_supported_detail_unverified");
+  assert.equal(diagnostic.operational_codes.includes("AUTHORITATIVE_NOTICE_UNDATED"), true);
   assert.equal(diagnostic.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION"), false);
 });
 
@@ -968,7 +969,7 @@ test("navigation links do not contribute inline notice evidence", () => {
   assert.equal(evidence.same_origin_link_count, 0);
 });
 
-test("verified inline adapter makes the same topology supported", () => {
+test("verified but undated inline adapter preserves review evidence", () => {
   const row = analyzeOperationalCrawlerSource({
     source: { sourceId: "inline_adapter", contentMode: "inline_sections" },
     executionResult: {
@@ -980,7 +981,8 @@ test("verified inline adapter makes the same topology supported", () => {
     notices: [{ content: "authoritative inline body" }, { content: "another authoritative inline body" }],
     matchedCount: 1,
   });
-  assert.equal(row.capability_status, "supported");
+  assert.equal(row.capability_status, "list_supported_detail_unverified");
+  assert.equal(row.operational_codes.includes("AUTHORITATIVE_NOTICE_UNDATED"), true);
 });
 
 test("ordinary detail 404 remains a detail failure", () => {

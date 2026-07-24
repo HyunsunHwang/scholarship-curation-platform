@@ -25,6 +25,7 @@
           "contentMode": { "type": "string", "enum": ["", "inline_sections"] },
           "detailFetchRequired": { "type": "boolean" }, "detailContentAlreadyAvailable": { "type": "boolean" },
           "sectionTitleSelector": { "type": "string" }, "sectionBodyBoundary": { "type": "string", "enum": ["", "next_heading"] }, "sectionPublishedDateSelector": { "type": "string" },
+          "undatedCandidatePolicy": { "type": "string", "enum": ["manual_review", "reject", "allow_explicitly"] },
           "keywords": { "type": "array", "items": { "type": "string" } }, "adapter": { "type": "string" }, "enabled": { "type": "boolean" }
         }
       }

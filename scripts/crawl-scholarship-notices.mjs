@@ -55,6 +55,7 @@ import {
   parseScholarshipNoticeDate,
 } from "../lib/detection/scholarship-candidate-detector.mjs";
 import { buildDetailFetchPlan } from "../lib/crawler-engine/detail-fetch-planner.mjs";
+import { buildImmutableCrawlerHandoff } from "../lib/crawler-engine/crawler-handoff.mjs";
 import { buildSourceRegistryDiagnostics } from "../lib/crawler-engine/source-registry-diagnostics.mjs";
 import {
   createCrawlerCheckpointSession,
@@ -356,6 +357,7 @@ function scholarshipCandidateOptions(source) {
       : DEFAULT_SCHOLARSHIP_KEYWORDS,
     lookbackDays: LOOKBACK_DAYS,
     allowUndated: ALLOW_UNDATED,
+    undatedCandidatePolicy: source.undatedCandidatePolicy ?? "manual_review",
     now: new Date(RUN_AT),
   };
 }
@@ -1192,6 +1194,17 @@ async function run({ signal, onTransportResolved } = {}) {
         row.source_id === result.sourceId) ?? null,
     })),
   });
+  const operationalBySourceId = new Map(
+    operationalDiagnostics.source_diagnostics.map((row) => [row.source_id, row]),
+  );
+  const handoffExecutionResults = executionResults.map((result) => ({
+    ...result,
+    operational_diagnostics: operationalBySourceId.get(result.source_id) ?? null,
+  }));
+  const immutableHandoff = buildImmutableCrawlerHandoff({
+    sourceResults: handoffExecutionResults,
+    generatedAt: runFinishedAt,
+  });
   const cancelled = signal?.aborted === true;
   const cancellationReason = cancelled ? cleanText(signal.reason) || "crawler_cancelled" : null;
   const checkpointCancellation = cancelled && checkpointSession
@@ -1255,6 +1268,7 @@ async function run({ signal, onTransportResolved } = {}) {
     executionSummary,
     executionResults,
     operationalDiagnostics,
+    immutableHandoff,
     candidateDetection: candidateDetectionDiagnostics,
     sourceRegistryDiagnostics,
     recovery: checkpointSession ? {
