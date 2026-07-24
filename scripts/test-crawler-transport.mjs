@@ -837,6 +837,106 @@ await test("declarative JSON API adapter applies manifest URL and field mapping"
   assert.equal(client.evidence().request_attempt_count, 1);
 });
 
+function jsonApiBoardPayload(totalPages, boardList = []) {
+  return JSON.stringify({
+    paging: { totalPages },
+    boardList,
+  });
+}
+
+function jsonApiBoardItem(id = 1) {
+  return {
+    id,
+    title: `Scholarship ${id}`,
+    content: `<p>Detail ${id}</p>`,
+    createdAt: "2026-07-23 00:00:00",
+    isNoticed: false,
+  };
+}
+
+async function runJsonApiPaginationSource(responses, { maxPages = 3 } = {}) {
+  const source = structuredClone(manifestSources.find((item) => item.sourceId === "korea_033"));
+  let responseIndex = 0;
+  const client = createTransportClient({
+    source,
+    policy: policy({ retry: { count: 3 } }),
+    dispatcherPool: new FakeDispatcherPool(),
+    fetchImpl: async () => response(
+      200,
+      responses[Math.min(responseIndex++, responses.length - 1)],
+      { "content-type": "application/json" },
+    ),
+  });
+  const adapterExecution = createListAdapterExecution({
+    source,
+    transportClient: client,
+    listAdapter: fetchJsonApiBoardList,
+    adapterOptions: { maxPages, maxItems: 50, now: fixedNow, lookbackDays: 31 },
+  });
+  const result = await runBoundedCrawlerSource({
+    source,
+    inventoryRows: [{ source_id: source.sourceId }],
+    strategy: adapterExecution.strategy,
+    fetchHtml: adapterExecution.fetchHtml,
+    listUrls: [source.listUrl],
+    fetchDetails: false,
+    retryCount: 3,
+    retryBackoffMs: 0,
+    maximumRetryDelayMs: 0,
+    timeoutMs: 1000,
+  });
+  return { adapterExecution, client, result };
+}
+
+for (const [label, totalPages] of [
+  ["missing", undefined],
+  ["null", null],
+  ["string", "abc"],
+  ["fraction", 1.5],
+  ["zero", 0],
+]) {
+  await test(`JSON API pagination ${label} totalPages fails closed without Source retry`, async () => {
+    const { client, result } = await runJsonApiPaginationSource([
+      jsonApiBoardPayload(totalPages, []),
+    ]);
+    assert.equal(result.result_status, "parser_error");
+    assert.equal(result.error_code, "json_shape_mismatch");
+    assert.equal(result.total_attempt_count, 1);
+    assert.equal(result.retried, false);
+    assert.equal(client.evidence().request_attempt_count, 1);
+  });
+}
+
+await test("JSON API pagination smaller than the requested page fails closed", async () => {
+  const { client, result } = await runJsonApiPaginationSource([
+    jsonApiBoardPayload(2, [jsonApiBoardItem(1)]),
+    jsonApiBoardPayload(1, [jsonApiBoardItem(2)]),
+  ]);
+  assert.equal(result.result_status, "parser_error");
+  assert.equal(result.error_code, "json_shape_mismatch");
+  assert.equal(result.total_attempt_count, 1);
+  assert.equal(result.retried, false);
+  assert.equal(client.evidence().request_attempt_count, 2);
+});
+
+await test("JSON API pagination records a bounded maxPages termination", async () => {
+  const { adapterExecution, client, result } = await runJsonApiPaginationSource([
+    jsonApiBoardPayload(5, [jsonApiBoardItem(1)]),
+    jsonApiBoardPayload(5, [jsonApiBoardItem(2)]),
+    jsonApiBoardPayload(5, [jsonApiBoardItem(3)]),
+  ], { maxPages: 3 });
+  assert.notEqual(result.result_status, "parser_error");
+  assert.equal(client.evidence().request_attempt_count, 3);
+  assert.deepEqual(adapterExecution.getAdapterEvidence(), {
+    api_item_count: 3,
+    api_item_missing_content_count: 0,
+    api_item_with_content_count: 3,
+    pagination_bounded_by_max_pages: true,
+    pagination_pages_requested: 3,
+    pagination_total_pages: 5,
+  });
+});
+
 await test("invalid JSON response is non-retryable", async () => {
   const client = createTransportClient({
     source: { sourceId: "json_fixture", listUrl: "https://example.edu/list" },
