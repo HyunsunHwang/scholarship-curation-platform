@@ -132,6 +132,9 @@ await test("CAU adapterConfig is required and rejects unknown or untrimmed value
     (value) => { value.adapterConfig.apiAccept = " */* "; },
     (value) => { value.adapterConfig.jsonContentTypePolicy = "permissive"; },
     (value) => { value.adapterConfig.requiredListPath = "data.list[0]"; },
+    (value) => { delete value.adapterConfig.requestUrlTemplate; },
+    (value) => { value.adapterConfig.requestUrlTemplate = "not-a-url"; },
+    (value) => { value.adapterConfig.detailUrlTemplate = "https://other.example/BoardView.do"; },
     (value) => { value.adapterConfig.unexpected = true; },
   ];
   for (const mutate of variants) {

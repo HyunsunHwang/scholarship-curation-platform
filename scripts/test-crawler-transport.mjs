@@ -129,6 +129,17 @@ function response(status = 200, body = "ok", headers = {}) {
   return new Response(body, { status, headers });
 }
 
+function cauPortalAdapterConfig(overrides = {}) {
+  return {
+    apiAccept: "*/*",
+    jsonContentTypePolicy: "body-json",
+    requiredListPath: "data.list",
+    requestUrlTemplate: "https://www.cau.ac.kr/ajax/FR_SVC/BBSViewList2.do",
+    detailUrlTemplate: "https://www.cau.ac.kr/cms/FR_CON/BoardView.do",
+    ...overrides,
+  };
+}
+
 await test("normal registry loads and resolves every manifest source", () => {
   assert.equal(validationFor(rawRegistry).valid, true);
   const policies = resolveTransportPoliciesForSources({
@@ -662,14 +673,17 @@ await test("central CAU adapter uses injected TransportClient with exact request
     universitySlug: "cau",
     listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
     baseUrl: "https://www.cau.ac.kr/",
+    adapterConfig: cauPortalAdapterConfig(),
   };
   let calls = 0;
+  const requestUrls = [];
   const client = createTransportClient({
     source,
     policy: policy(),
     dispatcherPool: new FakeDispatcherPool(),
-    fetchImpl: async (_url, options) => {
+    fetchImpl: async (url, options) => {
       calls += 1;
+      requestUrls.push(new URL(url).toString());
       if (options.method === "GET") {
         return response(200, [
           '<form id="sendForm">',
@@ -701,6 +715,14 @@ await test("central CAU adapter uses injected TransportClient with exact request
   });
   assert.equal(items.length, 1);
   assert.equal(calls, 2);
+  assert.deepEqual(requestUrls, [
+    source.listUrl,
+    source.adapterConfig.requestUrlTemplate,
+  ]);
+  assert.equal(
+    items[0].noticeUrl,
+    "https://www.cau.ac.kr/cms/FR_CON/BoardView.do?MENU_ID=100&SITE_NO=2&BOARD_SEQ=3&BBS_SEQ=99",
+  );
   assert.equal(client.evidence().request_attempt_count, 2);
 });
 
@@ -724,9 +746,7 @@ await test("CAU adapter accepts the CMS JSON response despite its text/html head
   await fetchCauPortalList(source, { transportClient: client, maxPages: 1 });
   assert.equal(accepted.at(-1), "*/*");
   assert.deepEqual(source.adapterConfig, {
-    apiAccept: "*/*",
-    jsonContentTypePolicy: "body-json",
-    requiredListPath: "data.list",
+    ...cauPortalAdapterConfig(),
   });
 });
 
@@ -736,11 +756,10 @@ await test("CAU adapter strict policy rejects a JSON body labeled as HTML", asyn
     sourceName: "CAU strict fixture",
     universitySlug: "cau",
     listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
-    adapterConfig: {
+    adapterConfig: cauPortalAdapterConfig({
       apiAccept: "application/json",
       jsonContentTypePolicy: "strict",
-      requiredListPath: "data.list",
-    },
+    }),
   };
   const client = createTransportClient({
     source,
@@ -764,11 +783,7 @@ await test("CAU adapter requiredListPath fails closed on a changed JSON shape", 
     sourceName: "CAU shape fixture",
     universitySlug: "cau",
     listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100",
-    adapterConfig: {
-      apiAccept: "*/*",
-      jsonContentTypePolicy: "body-json",
-      requiredListPath: "data.list",
-    },
+    adapterConfig: cauPortalAdapterConfig(),
   };
   const client = createTransportClient({
     source,
@@ -1138,6 +1153,7 @@ await test("CAU adapter has no hidden retry", async () => {
     sourceName: "CAU fixture",
     universitySlug: "cau",
     listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do",
+    adapterConfig: cauPortalAdapterConfig(),
   };
   let calls = 0;
   const client = createTransportClient({
@@ -1162,6 +1178,7 @@ await test("adapter source attempts and physical request attempts remain distinc
     universitySlug: "cau",
     listUrl: "https://www.cau.ac.kr/cms/FR_CON/index.do",
     baseUrl: "https://www.cau.ac.kr/",
+    adapterConfig: cauPortalAdapterConfig(),
   };
   let calls = 0;
   const client = createTransportClient({
