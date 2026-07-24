@@ -37,6 +37,16 @@ assert.equal(detect({
   title: "2026학년도 장학금 선발 안내",
   dateText: "2026.07.20",
 }).classification, "candidate");
+
+const inlineDetailPlan = buildDetailFetchPlan({
+  observations: [{ noticeUrl: "https://drive.google.com/file/d/fixture", title: "External resource" }],
+  candidateResults: [{ classification: "candidate", reasonCodes: ["TITLE_KEYWORD"] }],
+  diagnosticDetailProbeEnabled: false,
+  detailFetchRequired: false,
+});
+assert.equal(inlineDetailPlan.diagnosticDetailProbe, null);
+assert.equal(inlineDetailPlan.fetch.length, 0);
+assert.equal(inlineDetailPlan.skip[0].skipReason, "source_detail_fetch_not_required");
 assert.equal(detect({
   title: "도서관 운영 안내",
   dateText: "2026.07.20",

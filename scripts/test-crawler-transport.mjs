@@ -202,7 +202,7 @@ await test("insecure TLS requires allowedHosts", () => {
 await test("insecure TLS requires a reason", () => {
   const registry = clone(rawRegistry);
   const binding = registry.bindings.find((item) =>
-    item.bindingId === "cau-002-insecure-tls");
+    item.bindingId === "hanyang-009-insecure-tls");
   delete binding.reason;
   expectInvalid(registry, /requires reason/i);
 });
@@ -210,7 +210,7 @@ await test("insecure TLS requires a reason", () => {
 await test("insecure TLS requires expiresAt", () => {
   const registry = clone(rawRegistry);
   const binding = registry.bindings.find((item) =>
-    item.bindingId === "cau-002-insecure-tls");
+    item.bindingId === "hanyang-009-insecure-tls");
   delete binding.expiresAt;
   expectInvalid(registry, /requires expiresAt/i);
 });
@@ -218,7 +218,7 @@ await test("insecure TLS requires expiresAt", () => {
 await test("expired insecure TLS policy fails closed", () => {
   const registry = clone(rawRegistry);
   const binding = registry.bindings.find((item) =>
-    item.bindingId === "cau-002-insecure-tls");
+    item.bindingId === "hanyang-009-insecure-tls");
   binding.expiresAt = "2026-07-23";
   expectInvalid(registry, /expired/i);
 });
@@ -226,7 +226,7 @@ await test("expired insecure TLS policy fails closed", () => {
 await test("insecure TLS source hostname mismatch fails closed", () => {
   const registry = clone(rawRegistry);
   const binding = registry.bindings.find((item) =>
-    item.bindingId === "cau-002-insecure-tls");
+    item.bindingId === "hanyang-009-insecure-tls");
   binding.allowedHosts = ["other.example.com"];
   expectInvalid(registry, /not in allowedHosts/i);
 });
@@ -272,7 +272,7 @@ await test("resolver applies defaults, group profiles, and source bindings", () 
     registry: loadedRegistry,
     now: fixedNow,
   });
-  assert.equal(cauTlsPolicy.tlsMode, "insecure-exact-host");
+  assert.equal(cauTlsPolicy.tlsMode, "system-ca");
   assert.deepEqual(cauTlsPolicy.allowedHosts, ["econ.cau.ac.kr"]);
 });
 
@@ -359,7 +359,7 @@ await test("HTTP source keeps HTTP only with explicit preserve-http policy", () 
 });
 
 await test("dispatcher applies insecure TLS only to the exact HTTPS hostname", async () => {
-  const source = manifestSources.find((item) => item.sourceId === "cau_002");
+  const source = manifestSources.find((item) => item.sourceId === "hanyang_009");
   const selectedPolicy = resolveEffectiveTransportPolicy({
     source,
     registry: loadedRegistry,
@@ -368,7 +368,7 @@ await test("dispatcher applies insecure TLS only to the exact HTTPS hostname", a
   const pool = createTransportDispatcherPool();
   try {
     assert.equal(
-      pool.dispatcherFor("https://econ.cau.ac.kr/list", selectedPolicy)
+      pool.dispatcherFor("https://hyurban.hanyang.ac.kr/list", selectedPolicy)
         .insecureTlsApplied,
       true,
     );
@@ -378,7 +378,7 @@ await test("dispatcher applies insecure TLS only to the exact HTTPS hostname", a
       false,
     );
     assert.equal(
-      pool.dispatcherFor("http://econ.cau.ac.kr/list", selectedPolicy)
+      pool.dispatcherFor("http://hyurban.hanyang.ac.kr/list", selectedPolicy)
         .insecureTlsApplied,
       false,
     );
@@ -580,6 +580,7 @@ await test("HTTPS to HTTP redirect downgrade is blocked", async () => {
     source: strictSource,
     policy: policy({
       protocolMode: "preserve",
+      allowedHttpHosts: ["fixture.example"],
       redirect: { allowHttpsToHttpDowngrade: false },
     }),
     dispatcherPool: new FakeDispatcherPool(),
@@ -872,7 +873,7 @@ await test("HTTP source URL is not upgraded and strict HTTPS remains HTTPS", asy
   };
   await createTransportClient({
     source: httpSource,
-    policy: policy({ protocolMode: "preserve-http" }),
+    policy: policy({ protocolMode: "preserve-http", allowedHttpHosts: ["fixture.example"] }),
     dispatcherPool: new FakeDispatcherPool(),
     fetchImpl,
   }).request(httpSource.listUrl);
@@ -938,6 +939,7 @@ await test("isolated worker executes list and detail with the pre-resolved polic
   };
   const transportPolicy = policy({
     protocolMode: "preserve-http",
+    allowedHttpHosts: ["127.0.0.1"],
     timeoutMs: 2000,
   });
   const worker = new Worker(

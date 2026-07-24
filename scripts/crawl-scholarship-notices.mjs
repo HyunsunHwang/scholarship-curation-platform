@@ -55,6 +55,7 @@ import {
   parseScholarshipNoticeDate,
 } from "../lib/detection/scholarship-candidate-detector.mjs";
 import { buildDetailFetchPlan } from "../lib/crawler-engine/detail-fetch-planner.mjs";
+import { buildImmutableCrawlerHandoff } from "../lib/crawler-engine/crawler-handoff.mjs";
 import { buildSourceRegistryDiagnostics } from "../lib/crawler-engine/source-registry-diagnostics.mjs";
 import {
   createCrawlerCheckpointSession,
@@ -155,6 +156,23 @@ const RUN_AT = new Date().toISOString();
 
 function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+export async function loadTransportPolicyValidationInventory(
+  configuredSources,
+  { loadSourcesImpl = loadSources, sourceMode = "manifest" } = {},
+) {
+  const inventoryMode = sourceMode === "db" ? "db" : "manifest";
+  const completeInventory = await loadSourcesImpl(inventoryMode, { includeDisabled: true });
+  const bySourceId = new Map(
+    completeInventory.sources.map((source) => [source.sourceId, source]),
+  );
+  // Preserve a complete inventory so policy bindings outside the selected
+  // university remain known. Manual DB rollback validates against a full
+  // read-only DB inventory and therefore does not depend on manifest health.
+  for (const source of configuredSources ?? []) bySourceId.set(source.sourceId, source);
+  return [...bySourceId.values()].sort((left, right) =>
+    left.sourceId.localeCompare(right.sourceId));
 }
 
 export function formatFetchError(error) {
@@ -339,6 +357,7 @@ function scholarshipCandidateOptions(source) {
       : DEFAULT_SCHOLARSHIP_KEYWORDS,
     lookbackDays: LOOKBACK_DAYS,
     allowUndated: ALLOW_UNDATED,
+    undatedCandidatePolicy: source.undatedCandidatePolicy ?? "manual_review",
     now: new Date(RUN_AT),
   };
 }
@@ -625,8 +644,12 @@ async function executeSourceInWorker({
 async function run({ signal, onTransportResolved } = {}) {
   const loaded = await loadSources(INPUT_ARG);
   const configuredSources = loaded.sources;
+  const transportPolicyValidationInventory =
+    await loadTransportPolicyValidationInventory(configuredSources, {
+      sourceMode: loaded.mode,
+    });
   const transportRegistry = loadTransportPolicyRegistry({
-    sources: configuredSources,
+    sources: transportPolicyValidationInventory,
     now: new Date(RUN_AT),
   });
   const transportPolicies = resolveTransportPoliciesForSources({
@@ -797,7 +820,7 @@ async function run({ signal, onTransportResolved } = {}) {
       }
       let detailItems = workerResult?.notices ?? [];
       if (!workerResult) {
-        const listAdapter = getListAdapter(source.adapter);
+        const listAdapter = getListAdapter(source.adapter, source);
         const commonOptions = {
           source,
           inventoryRows,
@@ -843,7 +866,11 @@ async function run({ signal, onTransportResolved } = {}) {
             listUrls: [source.listUrl],
             fetchDetails: false,
           });
-          commonResult.adapter_evidence = getAdapterCapabilityEvidence(source.adapter);
+          commonResult.adapter_evidence = getAdapterCapabilityEvidence(
+            source.adapter,
+            source,
+            commonResult,
+          );
         } else {
           const transportFetchHtml = async (url, request = {}) => (
             await transportClient.fetchHtml(url, {
@@ -936,6 +963,8 @@ async function run({ signal, onTransportResolved } = {}) {
             executionResult?.candidate_detection?.detail_fetch_planned_count ?? 0,
           detail_fetch_completed_count:
             executionResult?.candidate_detection?.detail_fetch_completed_count ?? 0,
+          authoritative_content_available_count:
+            executionResult?.candidate_detection?.authoritative_content_available_count ?? 0,
           detail_fetch_skipped_count:
             executionResult?.candidate_detection?.detail_fetch_skipped_count ?? 0,
           requests_avoided_by_preliminary_filter:
@@ -1165,6 +1194,17 @@ async function run({ signal, onTransportResolved } = {}) {
         row.source_id === result.sourceId) ?? null,
     })),
   });
+  const operationalBySourceId = new Map(
+    operationalDiagnostics.source_diagnostics.map((row) => [row.source_id, row]),
+  );
+  const handoffExecutionResults = executionResults.map((result) => ({
+    ...result,
+    operational_diagnostics: operationalBySourceId.get(result.source_id) ?? null,
+  }));
+  const immutableHandoff = buildImmutableCrawlerHandoff({
+    sourceResults: handoffExecutionResults,
+    generatedAt: runFinishedAt,
+  });
   const cancelled = signal?.aborted === true;
   const cancellationReason = cancelled ? cleanText(signal.reason) || "crawler_cancelled" : null;
   const checkpointCancellation = cancelled && checkpointSession
@@ -1228,6 +1268,7 @@ async function run({ signal, onTransportResolved } = {}) {
     executionSummary,
     executionResults,
     operationalDiagnostics,
+    immutableHandoff,
     candidateDetection: candidateDetectionDiagnostics,
     sourceRegistryDiagnostics,
     recovery: checkpointSession ? {

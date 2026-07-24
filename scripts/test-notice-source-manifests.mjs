@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadSources, mapRawSource, parseSourceInput, readSourceConfigFromCsv, readSourceConfigFromDb } from "../lib/notice-sources-loader.mjs";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 import { readManifestJson, sha256Canonical, validateNoticeSourceManifests } from "../lib/notice-source-manifest-validator.mjs";
@@ -15,6 +14,15 @@ const root = path.resolve("config/notice-sources");
 let passed = 0;
 async function test(name, fn) { try { await fn(); passed += 1; console.log(`ok - ${name}`); } catch (error) { console.error(`not ok - ${name}: ${error.message}`); process.exitCode = 1; } }
 function manifests() { const index = readManifestJson(path.join(root, "manifest-index.json")); return { index, snapshot: readManifestJson(path.join(root, "db-source-id-snapshot.json")), manifests: index.groups.map((entry) => readManifestJson(path.join(root, entry.path))) }; }
+function copyDirectory(source, destination) {
+  fs.mkdirSync(destination, { recursive: true });
+  for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
+    const sourcePath = path.join(source, entry.name);
+    const destinationPath = path.join(destination, entry.name);
+    if (entry.isDirectory()) copyDirectory(sourcePath, destinationPath);
+    else fs.copyFileSync(sourcePath, destinationPath);
+  }
+}
 
 await test("manifest input parsing supports selected group", () => assert.deepEqual(parseSourceInput("manifest:ewha"), { mode: "manifest", csvPath: "", universitySlug: "ewha" }));
 await test("actual registry validates and has all groups", () => assert.equal(loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.length, 545));
@@ -30,7 +38,18 @@ await test("missing and malformed manifest files fail closed", () => {
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 });
 await test("deterministic ordering and hashes", () => { const first = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); const second = loadNoticeSourceManifestRegistry({ universitySlug: "cau" }); assert.deepEqual(first.sources.map((source) => source.sourceId), first.sources.map((source) => source.sourceId).slice().sort()); assert.equal(first.fingerprint.manifestSha256, second.fingerprint.manifestSha256); assert.equal(sha256Canonical(first.sources), sha256Canonical(second.sources)); });
-await test("CSV and manifest produce identical canonical SourceConfig rows", () => { const csv = readSourceConfigFromCsv("data/notice-sources.csv").sort((a, b) => a.sourceId.localeCompare(b.sourceId)); const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource); assert.deepEqual(manifest, csv); });
+await test("CSV and manifest preserve canonical crawl fields while manifest can add topology contracts", () => {
+  const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary"]);
+  const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
+  const csv = readSourceConfigFromCsv("data/notice-sources.csv").map(omitTopology).sort((a, b) => a.sourceId.localeCompare(b.sourceId));
+  const manifest = loadNoticeSourceManifestRegistry({ includeDisabled: true }).sources.map(mapRawSource);
+  assert.deepEqual(manifest.map(omitTopology), csv);
+  const yonsei010 = manifest.find((source) => source.sourceId === "yonsei_010");
+  assert.deepEqual(
+    [yonsei010.contentMode, yonsei010.detailFetchRequired, yonsei010.detailContentAlreadyAvailable, yonsei010.sectionTitleSelector, yonsei010.sectionBodyBoundary],
+    ["inline_sections", false, true, "h2, h3", "next_heading"],
+  );
+});
 await test("CSV includeDisabled preserves disabled rows only when requested", () => {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-csv-"));
   const csvPath = path.join(temporary, "sources.csv");
@@ -97,7 +116,7 @@ await test("CSV provenance uses deterministic repository POSIX paths", async () 
   assert.equal(canonicalRepositoryPath(path.join(path.resolve("."), "data", "notice-sources.csv")), "data/notice-sources.csv");
   assert.equal(canonicalRepositoryPath("data/notice-sources.csv"), "data/notice-sources.csv");
   const result = await exportNoticeSourceManifests({ fromCsv: "data/notice-sources.csv", check: true });
-  assert.equal(result.changedFileCount, 0);
+  assert.equal(result.changedFileCount > 0, true); // Manifest-only topology contracts are intentionally not backfilled into legacy CSV.
 });
 await test("Post-Phase L dry-run and apply share manifest exact resolution", () => {
   const input = { source_results: [{ source_key: "ewha_003" }] };
@@ -112,7 +131,10 @@ await test("Post-Phase L dry-run and apply share manifest exact resolution", () 
 await test("Post-Phase L rejects a disabled manifest source in both paths", () => {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "notice-source-registry-"));
   const temporaryRoot = path.join(temporary, "notice-sources");
-  fs.cpSync(root, temporaryRoot, { recursive: true });
+  // Node 24.14 on Windows can terminate natively inside fs.cpSync() when the
+  // repository path contains non-ASCII characters. Keep this fixture setup
+  // deterministic with the primitive file APIs used by supported runtimes.
+  copyDirectory(root, temporaryRoot);
   try {
     const filePath = path.join(temporaryRoot, "universities", "ewha.json");
     const manifest = readManifestJson(filePath);

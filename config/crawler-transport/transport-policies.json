@@ -1,6 +1,6 @@
 {
   "schemaVersion": "crawler-transport-policy-v1",
-  "registryVersion": "2026-07-24.1",
+  "registryVersion": "2026-07-24.2",
   "userAgentProfiles": {
     "browser-default": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
   },
@@ -57,6 +57,9 @@
     },
     "insecure-exact-host": {
       "tlsMode": "insecure-exact-host"
+    },
+    "system-ca": {
+      "tlsMode": "system-ca"
     }
   },
   "bindings": [
@@ -119,15 +122,14 @@
       "createdAt": "2026-07-24"
     },
     {
-      "bindingId": "cau-002-insecure-tls",
+      "bindingId": "cau-002-system-ca",
       "priority": 100,
       "sourceIds": ["cau_002"],
       "allowedHosts": ["econ.cau.ac.kr"],
-      "profile": "insecure-exact-host",
-      "reason": "Verified legacy certificate chain failure on the exact source host",
-      "evidenceCommit": "b5afaf6",
-      "createdAt": "2026-07-24",
-      "expiresAt": "2026-12-31"
+      "profile": "system-ca",
+      "reason": "Use the operating-system trust store while preserving certificate and hostname verification",
+      "evidenceCommit": "3d1b60edff05aac27fbfb317ba178cad262f6a5a",
+      "createdAt": "2026-07-24"
     },
     {
       "bindingId": "hanyang-009-insecure-tls",

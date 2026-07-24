@@ -1,8 +1,19 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { runCommonCrawlerSource } from "../lib/crawler-engine/common-runner.mjs";
+import { buildDetailFetchPlan } from "../lib/crawler-engine/detail-fetch-planner.mjs";
+import { createListAdapterExecution } from "../lib/crawler-engine/list-adapter-strategy.mjs";
+import { loadTransportPolicyRegistry } from "../lib/crawler-engine/transport/index.mjs";
+import { loadSources } from "../lib/notice-sources-loader.mjs";
+import {
+  extractInlineSectionNotices,
+  getAdapterCapabilityEvidence,
+  getListAdapter,
+} from "../lib/crawler-adapters/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
 import {
   OPERATIONAL_COMMON_LIST_SELECTORS,
+  classifyOperationalLinkRole,
   collectOperationalListParserEvidence,
 } from "../lib/crawler-engine/operational-parser-evidence.mjs";
 import {
@@ -18,7 +29,10 @@ import {
   validateOperationalCrawlDiagnostics,
   verifyOperationalDetailTitleIdentity,
 } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
-import { extractFromList } from "./crawl-scholarship-notices.mjs";
+import {
+  extractFromList,
+  loadTransportPolicyValidationInventory,
+} from "./crawl-scholarship-notices.mjs";
 
 let passed = 0;
 function test(name, fn) {
@@ -686,6 +700,301 @@ test("non-candidate diagnostic detail probe makes unreachable details observable
   assert.equal(row.operational_codes.includes("DETAIL_FETCH_FAILED"), true);
 });
 
+test("inline multi-notice topology keeps Drive and form links out of the detail model", () => {
+  const source = {
+    sourceId: "inline_fixture",
+    listUrl: "https://example.test/notices",
+    baseUrl: "https://example.test",
+    contentMode: "inline_sections",
+    detailFetchRequired: false,
+    detailContentAlreadyAvailable: true,
+  };
+  const html = `
+    <h2>Scholarship application</h2><p>${"Detailed scholarship eligibility and application period. ".repeat(4)}</p><a href="https://drive.google.com/file/d/1">Attachment</a>
+    <h2>Scholarship interview</h2><p>${"Detailed scholarship interview schedule and required documents. ".repeat(4)}</p><a href="https://forms.gle/example">Apply</a>
+    <h2>Scholarship result</h2><p>${"Detailed scholarship result announcement and follow-up instructions. ".repeat(4)}</p><a href="https://drive.google.com/file/d/2">Result file</a>`;
+  const evidence = collectOperationalListParserEvidence(source, html, []);
+  assert.equal(extractFromList(source, html).length, 0);
+  assert.equal(evidence.list_page_contains_candidate_body, true);
+  assert.equal(evidence.inline_notice_section_count, 3);
+  assert.equal(evidence.independent_detail_url_count, 0);
+  assert.equal(evidence.attachment_link_count, 1);
+  assert.equal(evidence.external_resource_link_count, 3);
+  const row = analyzeOperationalCrawlerSource({
+    source,
+    executionResult: { result_status: "empty_observed", observed_count: 0, parser_evidence: evidence },
+    notices: [],
+    filterMetrics: { observed_count: 0, keyword_match_count: 0, date_match_count: 0 },
+  });
+  assert.equal(row.content_topology_profiles.includes("INLINE_MULTI_NOTICE_PAGE"), true);
+  assert.equal(row.capability_status, "adapter_required");
+  assert.equal(row.primary_failure_code, "ADAPTER_REQUIRED");
+  assert.equal(row.recommended_action, "implement_inline_section_adapter");
+});
+
+test("inline section adapter extracts nested sections and preserves resource link roles", () => {
+  const source = {
+    sourceId: "yonsei_010",
+    sourceName: "연세대 심리학과",
+    universitySlug: "yonsei",
+    listUrl: "https://psychsci.yonsei.ac.kr/연세심리/공지사항",
+    baseUrl: "https://psychsci.yonsei.ac.kr",
+    contentMode: "inline_sections",
+    detailFetchRequired: false,
+    detailContentAlreadyAvailable: true,
+    sectionTitleSelector: "h2, h3",
+    sectionBodyBoundary: "next_heading",
+  };
+  const html = fs.readFileSync(new URL("../fixtures/crawler/yonsei-inline-sections.html", import.meta.url), "utf8");
+  const notices = extractInlineSectionNotices(source, html);
+  assert.equal(notices.length, 3);
+  assert.equal(notices.filter((notice) => /장학/.test(`${notice.title} ${notice.content}`)).length, 2);
+  assert.equal(notices[0].dateText, "");
+  assert.equal(notices[0].inlineDateEvidence.some((entry) => entry.role === "application_start_date"), true);
+  assert.equal(notices[0].content.includes(notices[1].title), false);
+  assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "supporting_reference"), true);
+  assert.equal(notices[0].inlineSectionLinks.some((link) => link.role === "application_form"), true);
+  assert.equal(notices[2].inlineSectionLinks.some((link) => link.role === "attachment"), true);
+  assert.equal(notices[1].inlineSectionLinks.some((link) => link.role === "same_origin_unknown"), true);
+  assert.equal(notices.every((notice) => notice.noticeUrl.startsWith(`${source.listUrl}#inline-`)), true);
+});
+
+test("same-origin links fail closed unless they have detail or navigation evidence", () => {
+  const source = {
+    listUrl: "https://example.test/notices",
+    baseUrl: "https://example.test",
+  };
+  const html = `
+    <h2>Scholarship notice</h2>
+    <p>${"Authoritative scholarship body without a separate detail page. ".repeat(4)}</p>
+    <a href="/department/program">Program</a>
+    <a href="/notice?articleNo=1">Detail</a>
+    <a href="/index.html">Home</a>`;
+  const evidence = collectOperationalListParserEvidence(source, html, []);
+  assert.equal(evidence.same_origin_unknown_link_count, 1);
+  assert.equal(evidence.detail_like_same_origin_link_count, 1);
+  assert.equal(evidence.navigation_link_count, 1);
+  assert.equal(classifyOperationalLinkRole({
+    href: "/custom/123",
+    text: "Open",
+    source: { ...source, noticeUrlPattern: "/custom/\\d+$" },
+  }), "same_origin_detail");
+});
+
+test("inline topology can be detected without external resource links", () => {
+  const source = {
+    sourceId: "text_only_inline",
+    listUrl: "https://example.test/notices",
+    baseUrl: "https://example.test",
+  };
+  const html = `
+    <h2>2026 scholarship application notice</h2>
+    <div><p>${"Eligibility, application period, required documents, and selection rules are described here. ".repeat(3)}</p></div>
+    <h2>2026 scholarship selection result</h2>
+    <section><p>${"Selection results, payment schedule, and follow-up instructions are described here. ".repeat(3)}</p></section>`;
+  const evidence = collectOperationalListParserEvidence(source, html, []);
+  assert.equal(evidence.external_resource_link_count, 0);
+  assert.equal(evidence.independent_detail_url_count, 0);
+  assert.equal(evidence.inline_notice_section_count, 2);
+  assert.equal(evidence.list_page_contains_candidate_body, true);
+});
+
+test("ordinary prose sections without notice signals do not become inline notices automatically", () => {
+  const source = {
+    sourceId: "ordinary_page",
+    listUrl: "https://example.test/about",
+    baseUrl: "https://example.test",
+  };
+  const html = `
+    <h2>Our mission</h2><p>${"This department introduces its educational mission and general values. ".repeat(4)}</p>
+    <h2>Our history</h2><p>${"This department introduces its history and long-term educational goals. ".repeat(4)}</p>`;
+  const evidence = collectOperationalListParserEvidence(source, html, []);
+  assert.equal(evidence.list_page_contains_candidate_body, false);
+  assert.equal(evidence.inline_notice_section_count, 0);
+});
+
+test("inline identities remain stable when independent sections are reordered", () => {
+  const source = {
+    sourceId: "inline_identity",
+    listUrl: "https://example.test/notices",
+    contentMode: "inline_sections",
+    sectionTitleSelector: "h2",
+    sectionBodyBoundary: "next_heading",
+  };
+  const first = extractInlineSectionNotices(
+    source,
+    `<h2>2026 scholarship A</h2><p>${"Scholarship A body. ".repeat(8)}</p>
+     <h2>2026 scholarship B</h2><p>${"Scholarship B body. ".repeat(8)}</p>`,
+  );
+  const reordered = extractInlineSectionNotices(
+    source,
+    `<h2>2026 scholarship B</h2><p>${"Scholarship B body. ".repeat(8)}</p>
+     <h2>2026 scholarship A</h2><p>${"Scholarship A body. ".repeat(8)}</p>`,
+  );
+  assert.deepEqual(
+    first.map((notice) => [notice.title, notice.noticeUrl]).sort(),
+    reordered.map((notice) => [notice.title, notice.noticeUrl]).sort(),
+  );
+});
+
+test("duplicate inline titles use body fingerprints and remain stable when reordered", () => {
+  const source = {
+    sourceId: "duplicate_inline_identity",
+    listUrl: "https://example.test/notices",
+    contentMode: "inline_sections",
+    sectionTitleSelector: "h2",
+    sectionBodyBoundary: "next_heading",
+  };
+  const bodyA = "First scholarship application body with eligibility details. ".repeat(3);
+  const bodyB = "Second scholarship result body with payment details. ".repeat(3);
+  const first = extractInlineSectionNotices(
+    source,
+    `<h2>2026 scholarship notice</h2><p>${bodyA}</p>
+     <h2>2026 scholarship notice</h2><p>${bodyB}</p>`,
+  );
+  const reordered = extractInlineSectionNotices(
+    source,
+    `<h2>2026 scholarship notice</h2><p>${bodyB}</p>
+     <h2>2026 scholarship notice</h2><p>${bodyA}</p>`,
+  );
+  assert.equal(new Set(first.map((notice) => notice.noticeUrl)).size, 2);
+  assert.deepEqual(
+    first.map((notice) => [notice.content, notice.noticeUrl]).sort(),
+    reordered.map((notice) => [notice.content, notice.noticeUrl]).sort(),
+  );
+});
+
+await asyncTest("inline adapter uses one list request, no detail request, and returns final notices", async () => {
+  const source = {
+    sourceId: "yonsei_010",
+    sourceName: "연세대 심리학과",
+    universitySlug: "yonsei",
+    listUrl: "https://psychsci.yonsei.ac.kr/연세심리/공지사항",
+    baseUrl: "https://psychsci.yonsei.ac.kr",
+    contentMode: "inline_sections",
+    detailFetchRequired: false,
+    detailContentAlreadyAvailable: true,
+    sectionTitleSelector: "h2, h3",
+    sectionBodyBoundary: "next_heading",
+  };
+  const html = fs.readFileSync(new URL("../fixtures/crawler/yonsei-inline-sections.html", import.meta.url), "utf8");
+  const calls = [];
+  const transportClient = {
+    async fetchText(url, request) {
+      calls.push({ url, kind: request.kind });
+      return { text: html };
+    },
+  };
+  const adapter = getListAdapter("", source);
+  const adapterExecution = createListAdapterExecution({
+    source,
+    listAdapter: adapter,
+    transportClient,
+    strategyName: "inline_sections",
+  });
+  const result = await runCommonCrawlerSource({
+    source,
+    inventoryRows: [{ source_id: source.sourceId }],
+    strategy: adapterExecution.strategy,
+    fetchHtml: adapterExecution.fetchHtml,
+    listUrls: [source.listUrl],
+    fetchDetails: false,
+    candidateDetector: (notice) => ({
+      classification: /장학/.test(`${notice.title} ${notice.content}`) ? "candidate" : "not_candidate",
+      eligibleForDetailFetch: /장학/.test(`${notice.title} ${notice.content}`),
+      reasonCodes: [],
+    }),
+    detailFetchPlanner: buildDetailFetchPlan,
+  });
+  assert.equal(calls.length, 1);
+  assert.equal(result.observed_count, 3);
+  assert.equal(result.notices.length, 3);
+  assert.equal(result.item_summary.eligible_count, 3);
+  assert.equal(result.diagnostic_detail_probe, null);
+  assert.equal(result.candidate_detection.detail_fetch_planned_count, 0);
+  assert.equal(result.candidate_detection.detail_fetch_completed_count, 0);
+  assert.equal(result.candidate_detection.authoritative_content_available_count, 3);
+  assert.equal(result.parser_evidence.parser_strategy, "inline_section_adapter");
+  assert.equal(result.parser_evidence.valid_detail_url_count, 0);
+  assert.equal(result.parser_evidence.inline_section_identity_count, 3);
+  assert.equal(result.parser_evidence.inline_notice_section_count, 3);
+  assert.equal(result.parser_evidence.independent_detail_url_count, 0);
+  assert.equal(result.parser_evidence.contaminated_candidate_leak_count, 0);
+  assert.equal(getAdapterCapabilityEvidence("", source, result).adapter_capability_verified, true);
+  const diagnostic = analyzeOperationalCrawlerSource({
+    source,
+    executionResult: {
+      ...result,
+      adapter_evidence: getAdapterCapabilityEvidence("", source, result),
+    },
+    notices: result.notices,
+    filterMetrics: {
+      observed_count: 3,
+      keyword_match_count: 2,
+      date_match_count: 2,
+      matched_count: 2,
+      authoritative_content_available_count: 3,
+    },
+    matchedCount: 2,
+  });
+  assert.equal(diagnostic.capability_status, "list_supported_detail_unverified");
+  assert.equal(diagnostic.operational_codes.includes("AUTHORITATIVE_NOTICE_UNDATED"), true);
+  assert.equal(diagnostic.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION"), false);
+});
+
+test("inline adapter is not verified by declaration alone", () => {
+  const source = { sourceId: "empty_inline", contentMode: "inline_sections" };
+  const unverified = getAdapterCapabilityEvidence("", source, {
+    result_status: "empty_observed",
+    notices: [],
+    parser_evidence: { explicit_empty_state_detected: false },
+  });
+  const verifiedEmpty = getAdapterCapabilityEvidence("", source, {
+    result_status: "empty_observed",
+    notices: [],
+    parser_evidence: { explicit_empty_state_detected: true },
+  });
+  assert.equal(unverified.adapter_capability_verified, false);
+  assert.equal(verifiedEmpty.adapter_capability_verified, true);
+});
+
+test("navigation links do not contribute inline notice evidence", () => {
+  const evidence = collectOperationalListParserEvidence(
+    { sourceId: "navigation_fixture", listUrl: "https://example.test/notices", baseUrl: "https://example.test" },
+    `<header><h2>Scholarship navigation</h2><a href="/notice?articleNo=99">Notice menu</a></header>
+      <h2>Only heading</h2><p>Short text.</p><footer><a href="/notice?articleNo=98">Footer notice</a></footer>`,
+    [],
+  );
+  assert.equal(evidence.list_page_contains_candidate_body, false);
+  assert.equal(evidence.same_origin_link_count, 0);
+});
+
+test("verified but undated inline adapter preserves review evidence", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "inline_adapter", contentMode: "inline_sections" },
+    executionResult: {
+      result_status: "success",
+      observed_count: 2,
+      parser_evidence: { list_page_contains_candidate_body: true, inline_notice_section_count: 2, independent_detail_url_count: 0 },
+      adapter_evidence: { adapter_capability_verified: true, adapter_provides_authoritative_detail: true },
+    },
+    notices: [{ content: "authoritative inline body" }, { content: "another authoritative inline body" }],
+    matchedCount: 1,
+  });
+  assert.equal(row.capability_status, "list_supported_detail_unverified");
+  assert.equal(row.operational_codes.includes("AUTHORITATIVE_NOTICE_UNDATED"), true);
+});
+
+test("ordinary detail 404 remains a detail failure", () => {
+  const row = analyzeOperationalCrawlerSource({
+    source: { sourceId: "ordinary_detail" },
+    executionResult: { result_status: "partial", observed_count: 1, parser_evidence: { valid_detail_url_count: 1 } },
+    notices: [{ detailResultStatus: "http_error", detailFetchError: "HTTP 404" }],
+  });
+  assert.equal(row.capability_status, "list_supported_detail_failed");
+  assert.equal(row.content_topology_profiles.includes("LIST_DETAIL_PAGES"), true);
+});
+
 test("contamination leaks and rate nullability are explicit", () => {
   const contaminated = analyzeOperationalCrawlerSource({
     source: { sourceId: "contaminated" },
@@ -764,6 +1073,17 @@ await asyncTest("multi-page evidence aggregates and operational analysis adds no
   assert.deepEqual(result, runtimeBefore);
 });
 
+await asyncTest("selected university runs validate transport policy against the full registry", async () => {
+  const selected = await loadSources("manifest:yonsei");
+  const inventory = await loadTransportPolicyValidationInventory(selected.sources);
+  assert.equal(selected.sources.length, 59);
+  assert.equal(inventory.length, 545);
+  assert.doesNotThrow(() => loadTransportPolicyRegistry({
+    sources: inventory,
+    now: new Date("2026-07-24T00:00:00.000Z"),
+  }));
+});
+
 test("report keeps existing safety contract while adding operational diagnostics", () => {
   const diagnostics = buildOperationalCrawlDiagnostics({ sources: [] });
   const report = buildCrawlerReport({
@@ -776,6 +1096,61 @@ test("report keeps existing safety contract while adding operational diagnostics
   assert.equal(report.safety.externalLlmCallCount, 0);
   assert.equal("notices" in report.boundedExecution.sources[0], false);
   assert.deepEqual(report.operationalDiagnostics, diagnostics);
+});
+
+test("operational diagnostics v2 CSV exposes topology and adapter evidence additively", () => {
+  const diagnostics = buildOperationalCrawlDiagnostics({
+    sources: [{
+      source: { sourceId: "inline_csv", contentMode: "inline_sections" },
+      executionResult: {
+        strategy: "inline_sections",
+        result_status: "success",
+        observed_count: 1,
+        parser_evidence: {
+          list_candidate_count: 1,
+          inline_notice_section_count: 1,
+          inline_body_char_count: 80,
+          independent_detail_url_count: 0,
+          content_mode_declared: "inline_sections",
+        },
+        adapter_evidence: {
+          adapter_capability_verified: true,
+          adapter_provides_authoritative_detail: true,
+          adapter_extracted_notice_count: 1,
+          detail_fetch_required: false,
+          detail_content_already_available: true,
+        },
+      },
+      notices: [{
+        title: "Scholarship",
+        content: "Authoritative inline scholarship body content.",
+        detailIdentity: { verified: true },
+      }],
+    }],
+  });
+  assert.equal(diagnostics.version, "operational-crawl-diagnostics-v2");
+  const csv = buildOperationalCrawlDiagnosticsCsv(diagnostics);
+  for (const column of [
+    "content_topology_profiles",
+    "inline_notice_section_count",
+    "same_origin_link_count",
+    "cross_origin_link_count",
+    "cross_origin_link_rate",
+    "independent_detail_url_count",
+    "external_resource_link_count",
+    "attachment_link_count",
+    "list_page_contains_candidate_body",
+    "content_mode_declared",
+    "adapter_capability_verified",
+    "detail_fetch_required",
+  ]) {
+    assert.equal(OPERATIONAL_CRAWL_DIAGNOSTIC_CSV_COLUMNS.includes(column), true);
+    assert.equal(csv.split("\r\n")[0].includes(column), true);
+  }
+  const [header, data] = csv.slice(1).split("\r\n");
+  assert.equal(header.split(",").length, data.split(",").length);
+  assert.match(diagnostics.source_diagnostics[0].evidence_summary, /content_topology=/);
+  assert.match(diagnostics.source_diagnostics[0].evidence_summary, /content_mode_declared=/);
 });
 
 console.log(`Operational crawl diagnostics tests: ${passed}/${passed} PASS`);
