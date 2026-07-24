@@ -38,6 +38,7 @@
     "test:engine-phase-2": "node scripts/test-engine-phase-2-resilience-observability.mjs",
     "test:crawler-runtime-modules": "node scripts/test-crawler-runtime-modules.mjs",
     "test:crawler-transport": "node scripts/test-crawler-transport.mjs",
+    "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:crawler-performance-telemetry": "node scripts/test-crawler-performance-telemetry.mjs",
     "test:scholarship-candidate-detector": "node scripts/test-scholarship-candidate-detector.mjs",

@@ -1,5 +1,29 @@
 # Crawler transport policy
 
+## Trust hardening
+
+`strict` is the default TLS policy. `system-ca` is an exact-host policy that
+combines Node's current default CA certificates with the operating-system CA
+store. It keeps certificate-chain, validity-period, and hostname verification
+enabled; it is never an alias for `rejectUnauthorized: false`.
+
+`insecure-exact-host` is the sole verification-disable exception. It requires
+an exact lowercase `allowedHosts` entry, a reason, evidence, and an expiry.
+Redirects and HTTP requests do not inherit either `system-ca` or insecure TLS
+trust. Currently only `hanyang_009` / `hyurban.hanyang.ac.kr` uses that
+temporary insecure exception. `cau_002` uses `system-ca` for
+`econ.cau.ac.kr`.
+
+`preserve-http` permits HTTP only for exact entries in `allowedHttpHosts`. For
+an HTTP list source, the resolver deterministically derives its own list host;
+other HTTP hosts, including cross-host redirects, detail URLs, attachments,
+and probes, are rejected before fetch. HTTPS remains subject to the normal
+strict checks.
+
+The deprecated `CRAWL_ALLOW_INSECURE_TLS_HOSTS` input can only name an already
+approved insecure exact-host exception. It cannot turn a `system-ca` source
+into an insecure source.
+
 ## 책임 경계
 
 장학 공고 Source 설정은 수집 대상과 parser/adapter를 정의하고,
