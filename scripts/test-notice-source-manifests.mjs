@@ -9,6 +9,7 @@ import { buildCrawlerReport } from "../lib/crawler-engine/runtime-diagnostics/re
 import { canonicalRepositoryPath, exportNoticeSourceManifests } from "./export-notice-source-manifests.mjs";
 import { compareCanonicalSources } from "./compare-notice-source-manifests-with-db.mjs";
 import { resolveInputWithManifestRegistry } from "../lib/post-phase-l/source-resolver.mjs";
+import { applyListParserProfile, loadListParserProfiles } from "../lib/crawler-engine/list-parser-profiles.mjs";
 
 const root = path.resolve("config/notice-sources");
 let passed = 0;
@@ -116,12 +117,30 @@ await test("duplicate IDs, invalid URL, regex, prefix, slug, adapter, required e
     (value) => { value.manifests[0].sources[0].sourceId = "cau_001"; },
     (value) => { value.manifests[0].sources[0].universitySlug = "cau"; },
     (value) => { value.manifests[0].sources[0].adapter = "unknown"; },
+    (value) => { value.manifests[0].sources[0].listParserProfile = "unknown_profile"; },
     (value) => { value.manifests[0].sources[0].sourceName = ""; },
     (value) => { value.manifests[0].sources[0].unexpected = true; },
     (value) => { value.manifests[0].schemaVersion = "wrong"; },
     (value) => { value.snapshot.sourceIds = value.snapshot.sourceIds.filter((id) => id !== source.sourceId); },
   ];
   for (const mutate of variants) { const value = structuredClone(fixture); mutate(value); assert.equal(validateNoticeSourceManifests(value).valid, false); }
+});
+await test("list parser profiles are fail-closed and direct source fields take priority", () => {
+  const applied = applyListParserProfile({
+    sourceId: "fixture_001", listParserProfile: "gnuboard_wr_id",
+    listItemSelector: ".explicit-row",
+  });
+  assert.equal(applied.listItemSelector, ".explicit-row");
+  assert.equal(applied.linkSelector, "a[href*='wr_id=']");
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "list-parser-profile-"));
+  const invalidPattern = path.join(temporary, "invalid.json");
+  const duplicate = path.join(temporary, "duplicate.json");
+  try {
+    fs.writeFileSync(invalidPattern, JSON.stringify({ schemaVersion: "crawler-list-parser-profiles-v1", profiles: [{ profileId: "bad", noticeUrlPattern: "[" }] }), "utf8");
+    fs.writeFileSync(duplicate, JSON.stringify({ schemaVersion: "crawler-list-parser-profiles-v1", profiles: [{ profileId: "same" }, { profileId: "same" }] }), "utf8");
+    assert.throws(() => loadListParserProfiles({ filePath: invalidPattern, reload: true }), /invalid noticeUrlPattern/);
+    assert.throws(() => loadListParserProfiles({ filePath: duplicate, reload: true }), /must be unique/);
+  } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 });
 await test("CAU adapterConfig is required and rejects unknown or untrimmed values", () => {
   const fixture = manifests();

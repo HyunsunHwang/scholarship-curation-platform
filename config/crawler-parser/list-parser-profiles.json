@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "crawler-list-parser-profiles-v1",
+  "profiles": [
+    {
+      "profileId": "gnuboard_wr_id",
+      "listItemSelector": "table tbody tr, .board-list li",
+      "linkSelector": "a[href*='wr_id=']",
+      "titleSelector": "a[href*='wr_id=']",
+      "dateSelector": "td:last-child, time",
+      "noticeUrlPattern": "(?:[?&]bo_table=[^&#]+.*[?&]wr_id=\\d+|[?&]wr_id=\\d+.*[?&]bo_table=[^&#]+)"
+    },
+    {
+      "profileId": "hanyang_front_notice",
+      "listItemSelector": "ul.board-default-list li",
+      "linkSelector": "a[href]",
+      "titleSelector": "span.subject",
+      "dateSelector": ".datetime",
+      "noticeUrlPattern": "notice-view\\?id=\\d+"
+    },
+    {
+      "profileId": "kboard_document",
+      "listItemSelector": "table tbody tr, .kboard-list li",
+      "linkSelector": "a[href*='mod=document'][href*='uid=']",
+      "titleSelector": "a[href*='mod=document'][href*='uid=']",
+      "dateSelector": "td:last-child, time",
+      "noticeUrlPattern": "(?:[?&]mod=document.*[?&]uid=\\d+|[?&]uid=\\d+.*[?&]mod=document)"
+    }
+  ]
+}
