@@ -147,7 +147,57 @@ test("common-board extraction excludes navigation links and records complete par
   assert.equal(evidence.raw_navigation_count, 1);
   assert.equal(evidence.contaminated_candidate_count >= 1, true);
   assert.equal(evidence.contaminated_candidate_leak_count, 0);
+  assert.equal(evidence.candidate_navigation_leak_count, 0);
   assert.equal(evidence.parser_fallback_recovered, true);
+});
+
+test("normal board candidate URL overlap in a sidebar is evidence, not contamination", () => {
+  const source = {
+    sourceId: "overlap_fixture", sourceName: "Fixture",
+    listUrl: "https://example.test/notices", baseUrl: "https://example.test",
+  };
+  const items = extractFromList(source, [
+    "<table class='board'><tr><td><a href='/notice?articleNo=123'>Scholarship notice</a></td></tr></table>",
+    "<aside class='recent-posts'><a href='/notice?articleNo=123'>Scholarship notice</a></aside>",
+  ].join(""));
+  const evidence = items.operational_parser_evidence;
+  assert.equal(items.length, 1);
+  assert.equal(evidence.candidate_navigation_leak_count, 0);
+  assert.equal(evidence.navigation_url_overlap_count, 1);
+  const diagnostic = analyzeOperationalCrawlerSource({
+    source,
+    executionResult: { result_status: "success", observed_count: 1, parser_evidence: evidence },
+    notices: [{ content: "A sufficiently long authoritative detail body.", detailIdentity: { verified: true } }],
+    matchedCount: 1,
+  });
+  assert.equal(diagnostic.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION"), false);
+});
+
+test("detail URLs with page query outside pagination containers remain candidates", () => {
+  const source = {
+    sourceId: "page_detail_fixture", sourceName: "Fixture",
+    listUrl: "https://example.test/notices?page=1", baseUrl: "https://example.test",
+    noticeUrlPattern: "id=\\d+",
+  };
+  const items = extractFromList(source,
+    "<main><a href='/notice/view?id=123&page=1'>Detail with page evidence</a></main>");
+  assert.equal(items.length, 1);
+  assert.equal(items[0].__crawlerCandidateProvenance.inside_pagination_container, false);
+  assert.equal(items.operational_parser_evidence.filtered_pagination_anchor_count, 0);
+});
+
+test("heuristic extraction prefilters navigation anchors before candidate creation", () => {
+  const source = {
+    sourceId: "navigation_prefilter_fixture", sourceName: "Fixture",
+    listUrl: "https://example.test/notices", baseUrl: "https://example.test",
+  };
+  const items = extractFromList(source, [
+    "<nav><a href='/notice?articleNo=999'>Menu notice</a></nav>",
+    "<main><a href='/notice?articleNo=123'>Board notice</a></main>",
+  ].join(""));
+  assert.deepEqual(items.map((item) => item.noticeUrl), ["https://example.test/notice?articleNo=123"]);
+  assert.equal(items.operational_parser_evidence.filtered_navigation_anchor_count, 1);
+  assert.equal(items.operational_parser_evidence.candidate_navigation_leak_count, 0);
 });
 
 test("configured selectors take priority and heuristic fallback remains available", () => {
@@ -1022,7 +1072,7 @@ test("ordinary detail 404 remains a detail failure", () => {
   assert.equal(row.content_topology_profiles.includes("LIST_DETAIL_PAGES"), true);
 });
 
-test("contamination leaks and rate nullability are explicit", () => {
+test("selected navigation leaks trigger contamination while URL overlap does not", () => {
   const contaminated = analyzeOperationalCrawlerSource({
     source: { sourceId: "contaminated" },
     executionResult: {
@@ -1035,7 +1085,8 @@ test("contamination leaks and rate nullability are explicit", () => {
         date_extract_count: 0,
         valid_detail_url_count: 1,
         contaminated_candidate_count: 3,
-        contaminated_candidate_leak_count: 1,
+        candidate_navigation_leak_count: 1,
+        navigation_url_overlap_count: 0,
       },
     },
     notices: [{ content: "Long detail content for contamination verification.", detailIdentity: { verified: true } }],
@@ -1045,6 +1096,21 @@ test("contamination leaks and rate nullability are explicit", () => {
   assert.equal(contaminated.capability_status, "config_or_selector_fix");
   assert.equal(contaminated.metrics.title_extract_rate, 1);
   assert.equal(contaminated.metrics.date_extract_rate, 0);
+
+  const overlapOnly = analyzeOperationalCrawlerSource({
+    source: { sourceId: "overlap_only" },
+    executionResult: {
+      result_status: "success", observed_count: 1,
+      parser_evidence: {
+        parser_strategy: "heuristic_anchor", list_candidate_count: 1,
+        title_extract_count: 1, valid_detail_url_count: 1,
+        candidate_navigation_leak_count: 0, navigation_url_overlap_count: 3,
+      },
+    },
+    notices: [{ content: "Long detail content for overlap verification.", detailIdentity: { verified: true } }],
+    matchedCount: 1,
+  });
+  assert.equal(overlapOnly.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION"), false);
 
   const unobserved = analyzeOperationalCrawlerSource({
     source: { sourceId: "unobserved_rates" },
