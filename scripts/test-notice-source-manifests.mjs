@@ -42,7 +42,10 @@ await test("deterministic ordering and hashes", () => { const first = loadNotice
 await test("CSV and manifest preserve canonical crawl fields while manifest can add runtime contracts", () => {
   const topologyFields = new Set(["contentMode", "detailFetchRequired", "detailContentAlreadyAvailable", "sectionTitleSelector", "sectionBodyBoundary", "detailTitleSelector", "adapterConfig"]);
   const omitTopology = (source) => Object.fromEntries(Object.entries(source).filter(([key]) => !topologyFields.has(key)));
-  const remediatedSourceIds = new Set(["cau_036", "cau_072", "korea_030", "korea_032", "korea_033", "uos_001"]);
+  const remediatedSourceIds = new Set([
+    "cau_036", "cau_072", "hanyang_011", "hanyang_013",
+    "korea_030", "korea_032", "korea_033", "uos_001",
+  ]);
   const runtimeContractFields = new Set([
     ...topologyFields,
     "listUrl",
@@ -132,6 +135,11 @@ await test("list parser profiles are fail-closed and direct source fields take p
   });
   assert.equal(applied.listItemSelector, ".explicit-row");
   assert.equal(applied.linkSelector, "a[href*='wr_id=']");
+  assert.deepEqual(applied.__crawlerListParserProfile, {
+    profileId: "gnuboard_wr_id",
+    appliedFields: ["linkSelector", "titleSelector", "dateSelector", "noticeUrlPattern"],
+  });
+  assert.equal(Object.keys(applied).includes("__crawlerListParserProfile"), false);
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "list-parser-profile-"));
   const invalidPattern = path.join(temporary, "invalid.json");
   const duplicate = path.join(temporary, "duplicate.json");

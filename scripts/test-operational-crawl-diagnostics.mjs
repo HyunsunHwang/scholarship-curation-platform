@@ -11,6 +11,7 @@ import {
   getListAdapter,
 } from "../lib/crawler-adapters/index.mjs";
 import { createGenericHtmlStrategy } from "../lib/crawler-engine/generic-html-strategy.mjs";
+import { applyListParserProfile } from "../lib/crawler-engine/list-parser-profiles.mjs";
 import {
   OPERATIONAL_COMMON_LIST_SELECTORS,
   classifyOperationalLinkRole,
@@ -151,6 +152,40 @@ test("common-board extraction excludes navigation links and records complete par
   assert.equal(evidence.parser_fallback_recovered, true);
 });
 
+test("strict truncated list titles verify one long matching detail title only", () => {
+  const identity = verifyOperationalDetailTitleIdentity(
+    "2026학년도 2학기 국가장학금 신청 안내...",
+    ["2026학년도 2학기 국가장학금 신청 안내 및 제출 서류"],
+  );
+  assert.equal(identity.verified, true);
+  assert.equal(identity.comparison_mode, "list_title_truncated_prefix");
+});
+
+test("truncated title identity rejects short prefixes and collisions", () => {
+  assert.equal(
+    verifyOperationalDetailTitleIdentity("장학금 신...", ["장학금 신청 안내"]).verified,
+    false,
+  );
+  assert.equal(
+    verifyOperationalDetailTitleIdentity("2026학년도 장학금 안내...", [
+      "2026학년도 장학금 안내 신청",
+      "2026학년도 장학금 안내 선발 결과",
+    ]).verified,
+    false,
+  );
+});
+
+test("full list-title attributes take precedence over truncated visible text", () => {
+  const source = {
+    sourceId: "full_title_attribute_fixture", sourceName: "Fixture",
+    listUrl: "https://example.test/notices", baseUrl: "https://example.test",
+    listItemSelector: ".row", linkSelector: "a[href]", titleSelector: "a[href]",
+  };
+  const items = extractFromList(source,
+    "<div class='row'><a href='/notice?articleNo=123' title='2026학년도 2학기 국가장학금 신청 안내'>2026학년도 2학기 국가장학금 신...</a></div>");
+  assert.equal(items[0].title, "2026학년도 2학기 국가장학금 신청 안내");
+});
+
 test("normal board candidate URL overlap in a sidebar is evidence, not contamination", () => {
   const source = {
     sourceId: "overlap_fixture", sourceName: "Fixture",
@@ -220,6 +255,25 @@ test("configured selectors take priority and heuristic fallback remains availabl
   assert.deepEqual(heuristic.map((item) => item.title), ["Heuristic notice"]);
   assert.equal(heuristic.operational_parser_evidence.parser_strategy, "heuristic_anchor");
   assert.equal(heuristic.operational_parser_evidence.fallback_scan_used, true);
+});
+
+test("manifest-selected parser profiles are distinguishable from direct selectors", () => {
+  const source = applyListParserProfile({
+    sourceId: "profile_fixture",
+    sourceName: "Fixture",
+    listUrl: "https://example.test/board.php?bo_table=notice",
+    baseUrl: "https://example.test",
+    listParserProfile: "gnuboard_wr_id",
+  });
+  const items = extractFromList(source, [
+    "<table><tbody><tr><td><a href='/board.php?bo_table=notice&wr_id=123'>Profile notice</a></td><td>2026-07-26</td></tr></tbody></table>",
+    "<nav><a href='/board.php?bo_table=notice'>Board menu</a></nav>",
+  ].join(""));
+  const evidence = items.operational_parser_evidence;
+  assert.equal(items.length, 1);
+  assert.equal(evidence.parser_strategy, "parser_profile");
+  assert.equal(evidence.list_parser_profile, "gnuboard_wr_id");
+  assert.equal(evidence.profile_applied, true);
 });
 
 test("operational diagnostics use existing execution evidence only", () => {
@@ -1216,6 +1270,31 @@ await asyncTest("remediated source fixtures extract only verified detail URLs", 
     const pattern = new RegExp(source.noticeUrlPattern);
     assert.equal(fixtureCase.expectedUrls.every((url) => pattern.test(url)), true);
     assert.equal(fixtureCase.rejectedUrls.every((url) => !pattern.test(url)), true);
+  }
+});
+
+await asyncTest("Hanyang hCode board fixtures preserve titles, dates, and strict truncated identity", async () => {
+  const registry = await loadSources("manifest:hanyang");
+  const fixtureDirectory = new URL(
+    "../fixtures/crawler-list-parser-profiles/hcode_idx_board/",
+    import.meta.url,
+  );
+  const strategy = createGenericHtmlStrategy({ parseListHtml: extractFromList });
+  for (const sourceId of ["hanyang_011", "hanyang_013"]) {
+    const source = registry.sources.find((item) => item.sourceId === sourceId);
+    const expected = JSON.parse(fs.readFileSync(new URL(`${sourceId}-expected.json`, fixtureDirectory), "utf8"));
+    const items = extractFromList(source, fs.readFileSync(new URL(`${sourceId}-list.html`, fixtureDirectory), "utf8"));
+    assert.equal(items.length, 3, sourceId);
+    assert.equal(items.every((item) => item.dateText), true, sourceId);
+    assert.equal(expected.expectedCandidateUrls.every((needle) => items.some((item) => item.noticeUrl.includes(needle))), true, sourceId);
+    assert.equal(items.every((item) => item.noticeUrl.includes("page=view") && item.noticeUrl.includes("idx=")), true, sourceId);
+    const identityModes = items.map((item, index) => strategy.parseDetail({
+      source,
+      item,
+      html: fs.readFileSync(new URL(`${sourceId}-detail-${index + 1}.html`, fixtureDirectory), "utf8"),
+    }).detailIdentity);
+    assert.deepEqual(identityModes.map((identity) => identity.comparison_mode), expected.detailIdentity, sourceId);
+    assert.equal(identityModes.every((identity) => identity.verified), true, sourceId);
   }
 });
 
