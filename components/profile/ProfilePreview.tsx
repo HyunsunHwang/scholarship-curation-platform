@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   experienceKindLabel,
   formatSpecPeriod,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/interestIndustries";
 import type { SkillName } from "@/lib/skills";
 import { parseLanguageScore } from "@/lib/language-spec";
+import ProfileAvatar from "@/components/ProfileAvatar";
 
 function compareDateDesc(a: string | null, b: string | null): number {
   if (a === b) return 0;
@@ -31,6 +33,8 @@ export default function ProfilePreview({
   industries,
   skills,
   items,
+  avatarUrl = null,
+  bannerUrl = null,
 }: {
   name: string;
   headline: string | null;
@@ -41,6 +45,8 @@ export default function ProfilePreview({
   industries: InterestIndustryId[];
   skills: SkillName[];
   items: SpecItem[];
+  avatarUrl?: string | null;
+  bannerUrl?: string | null;
 }) {
   const experienceItems = items
     .filter((item) => isExperienceType(item.item_type))
@@ -55,14 +61,39 @@ export default function ProfilePreview({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">{name}</h1>
-        {headline ? (
-          <p className="mt-1 text-sm font-medium text-ink/75">{headline}</p>
-        ) : null}
-        <div className="mt-1.5 space-y-0.5 text-sm text-ink/55">
-          {schoolLine ? <p>{schoolLine}</p> : null}
-          {statusLine ? <p>{statusLine}</p> : null}
+      <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white">
+        <div className="relative h-24 sm:h-28">
+          {bannerUrl ? (
+            <Image
+              src={bannerUrl}
+              alt=""
+              fill
+              sizes="(max-width: 672px) 100vw, 672px"
+              className="object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-linear-to-r from-brand via-brand to-peach" />
+          )}
+        </div>
+        <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+          <div className="-mt-10 sm:-mt-12">
+            <ProfileAvatar
+              src={avatarUrl}
+              alt={name || "프로필"}
+              className="h-20 w-20 border-4 border-white sm:h-24 sm:w-24"
+              sizes="96px"
+            />
+          </div>
+          <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-ink">
+            {name}
+          </h1>
+          {headline ? (
+            <p className="mt-1 text-sm font-medium text-ink/75">{headline}</p>
+          ) : null}
+          <div className="mt-1.5 space-y-0.5 text-sm text-ink/55">
+            {schoolLine ? <p>{schoolLine}</p> : null}
+            {statusLine ? <p>{statusLine}</p> : null}
+          </div>
         </div>
       </section>
 

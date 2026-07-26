@@ -10,6 +10,7 @@ export type HomeProfileBundle = {
     school_name: string | null;
     school_location: string | null;
     address: string | null;
+    avatar_url: string | null;
   } | null;
   urgentBookmarkCount: number;
 };
@@ -24,7 +25,7 @@ export const getCachedHomeProfileBundle = cache(
       supabase
         .from("profiles")
         .select(
-          "is_onboarded, name, role, interest_categories, school_name, school_location, address"
+          "is_onboarded, name, role, interest_categories, school_name, school_location, address, avatar_url"
         )
         .eq("id", userId)
         .single(),

@@ -376,6 +376,17 @@ export default async function AdminDashboardPage() {
             <p className="mt-1 text-sm text-gray-600">사이트 로고 등 기본 설정을 변경합니다.</p>
           </Link>
         </li>
+        <li>
+          <Link
+            href="/corporate"
+            className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:border-brand/30 hover:shadow-md"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">기업 서비스</h2>
+            <p className="mt-1 text-sm text-gray-600">
+              기업용 인터페이스를 미리봅니다. (관리자 전용)
+            </p>
+          </Link>
+        </li>
       </ul>
     </div>
   );

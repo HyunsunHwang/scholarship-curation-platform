@@ -223,6 +223,10 @@ export interface Database {
           is_profile_public: boolean;
           /** 맞춤 장학금·공고 제안 적극 검토 */
           is_open_to_offers: boolean;
+          /** 프로필 사진 공개 URL */
+          avatar_url: string | null;
+          /** 마이페이지 배너 공개 URL */
+          banner_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -276,6 +280,8 @@ export interface Database {
           skills?: string[] | null;
           is_profile_public?: boolean;
           is_open_to_offers?: boolean;
+          avatar_url?: string | null;
+          banner_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };

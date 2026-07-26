@@ -57,6 +57,7 @@ export default async function LibrarySavedPage() {
           currentUser={user}
           currentUserRole={navContext.role}
           currentUserName={navContext.name}
+          currentUserAvatarUrl={navContext.avatarUrl}
           urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
       </HomeSearchRoot>

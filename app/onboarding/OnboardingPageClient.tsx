@@ -195,28 +195,76 @@ function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
 }
 
 // ── 스텝 인디케이터 ───────────────────────────────────────────────────────
-function StepIndicator({ current, steps }: { current: number; steps: string[] }) {
+function StepIndicator({
+  current,
+  steps,
+  onSelect,
+}: {
+  current: number;
+  steps: string[];
+  /** 기본 정보 수정 시 단계 클릭 이동 */
+  onSelect?: (index: number) => void;
+}) {
+  const clickable = Boolean(onSelect);
+
   return (
     <div className="mb-8 flex items-center justify-center">
-      {steps.map((step, i) => (
-        <div key={step} className="flex items-center">
-          <div className="flex flex-col items-center gap-1">
-            <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${
-              i < current ? "bg-brand text-white"
-              : i === current ? "bg-brand text-white ring-4 ring-brand/20"
-              : "bg-gray-100 text-ink/50"
-            }`}>
-              {i < current ? "✓" : i + 1}
+      {steps.map((step, i) => {
+        const isCurrent = i === current;
+        const isDone = i < current;
+        const circleClass = isDone || isCurrent
+          ? "bg-brand text-white"
+          : "bg-gray-100 text-ink/50";
+        const labelClass = isCurrent
+          ? "text-brand"
+          : isDone
+            ? "text-ink/70"
+            : "text-ink/40";
+
+        const content = (
+          <>
+            <div
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${circleClass} ${
+                isCurrent ? "ring-4 ring-brand/20" : ""
+              } ${clickable && !isCurrent ? "group-hover:ring-4 group-hover:ring-brand/15" : ""}`}
+            >
+              {isDone && !clickable ? "✓" : i + 1}
             </div>
-            <span className={`hidden text-xs font-medium sm:block ${
-              i === current ? "text-brand" : i < current ? "text-ink/70" : "text-ink/40"
-            }`}>{step}</span>
+            <span
+              className={`hidden text-center text-[11px] font-medium whitespace-nowrap sm:block ${labelClass}`}
+            >
+              {step}
+            </span>
+          </>
+        );
+
+        return (
+          <div key={step} className="flex shrink-0 items-center">
+            {clickable ? (
+              <button
+                type="button"
+                onClick={() => onSelect?.(i)}
+                aria-current={isCurrent ? "step" : undefined}
+                aria-label={`${step} 단계로 이동`}
+                className="group flex w-[4.5rem] flex-col items-center gap-1 rounded-lg py-1 transition-colors hover:bg-cream/80 sm:w-[5rem]"
+              >
+                {content}
+              </button>
+            ) : (
+              <div className="flex w-[4.5rem] flex-col items-center gap-1 sm:w-[5rem]">
+                {content}
+              </div>
+            )}
+            {i < steps.length - 1 && (
+              <div
+                className={`mb-4 h-0.5 w-3 shrink-0 transition-all sm:w-5 ${
+                  isDone ? "bg-brand" : "bg-gray-200"
+                }`}
+              />
+            )}
           </div>
-          {i < steps.length - 1 && (
-            <div className={`mx-2 mb-4 h-0.5 w-10 transition-all sm:w-16 ${i < current ? "bg-brand" : "bg-gray-200"}`} />
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -924,7 +972,17 @@ export default function OnboardingPageClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmit = async (options?: { skipInterests?: boolean }) => {
+  const handleJumpToStep = (index: number) => {
+    if (index === step) return;
+    setErrorMsg("");
+    setStep(index);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = async (options?: {
+    skipInterests?: boolean;
+    redirectTo?: string;
+  }) => {
     for (let i = 0; i < STEPS.length - 1; i += 1) {
       const err = validateStep(i, form);
       if (err) {
@@ -942,8 +1000,14 @@ export default function OnboardingPageClient({
           interest_industries: [] as InterestIndustryId[],
         }
       : form;
-    const result = await saveProfile(payload, "/matched");
+    const redirectTo =
+      options?.redirectTo ?? (isEditing ? "/mypage" : "/matched");
+    const result = await saveProfile(payload, redirectTo);
     if (result?.error) { setErrorMsg(result.error); setLoading(false); }
+  };
+
+  const handleSaveAndExit = () => {
+    void handleSubmit({ redirectTo: "/mypage" });
   };
 
   if (profileLoading) {
@@ -1009,7 +1073,11 @@ export default function OnboardingPageClient({
             )}
           </div>
 
-          <StepIndicator current={step} steps={STEPS} />
+          <StepIndicator
+            current={step}
+            steps={STEPS}
+            onSelect={isEditing ? handleJumpToStep : undefined}
+          />
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
             <h2 className="mb-6 text-lg font-bold text-ink">{STEPS[step]}</h2>
@@ -1061,6 +1129,16 @@ export default function OnboardingPageClient({
                   </button>
                 )}
               </div>
+              {isEditing && step < STEPS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={handleSaveAndExit}
+                  disabled={loading}
+                  className="w-full rounded-lg border border-gray-200 py-2.5 text-sm font-semibold text-ink/70 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "저장 중..." : "저장 및 나가기"}
+                </button>
+              ) : null}
               {step === STEPS.length - 1 && !isEditing && (
                 <button
                   type="button"

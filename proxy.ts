@@ -17,7 +17,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/matched") ||
     pathname.startsWith("/mypage") ||
-    pathname.startsWith("/admin");
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/corporate");
 
   if (!requiresSessionCheck) {
     return NextResponse.next({ request });

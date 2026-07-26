@@ -1,0 +1,59 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+soongsil_001,soongsil,,,91000,university,숭실대 SSU:catch 공지(전체),https://scatch.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://scatch.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_002,soongsil,,,91000,university,숭실대 SSU:catch 장학공지,https://scatch.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/?category=%EC%9E%A5%ED%95%99,https://scatch.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,대학본부 장학 카테고리
+soongsil_003,soongsil,경영대학,,91034,college,숭실대 경영대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_004,soongsil,경제통상대학,,91029,college,숭실대 경제통상대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_005,soongsil,공과대학,,91039,college,숭실대 공과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_006,soongsil,법과대학,,91019,college,숭실대 법과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인(학과 보드 사용)
+soongsil_007,soongsil,베어드학부대학,,91056,college,숭실대 베어드학부대학 공지,https://ssubaird.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://ssubaird.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+soongsil_008,soongsil,사회과학대학,,91022,college,숭실대 사회과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_009,soongsil,인문대학,,91001,college,숭실대 인문대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_010,soongsil,자연과학대학,,91013,college,숭실대 자연과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_011,soongsil,자유전공학부,,91055,college,숭실대 자유전공학부 장학,https://sls.ssu.ac.kr/%ED%95%99%EB%B6%80%EC%86%8C%EC%8B%9D/%EC%9E%A5%ED%95%99/,https://sls.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+soongsil_012,soongsil,AI대학,,91054,college,숭실대 AI대학 공지,https://ai.ssu.ac.kr/board/notice,https://ai.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+soongsil_013,soongsil,IT대학,,91046,college,숭실대 IT대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+soongsil_014,soongsil,경영대학,경영학부,91035,department,숭실대 경영학부 공지,https://biz.ssu.ac.kr/bbs/list.do?bId=BBS_03_NOTICE,https://biz.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_015,soongsil,경영대학,금융학부,91038,department,숭실대 금융학부 행정공지,https://finance.ssu.ac.kr/%EA%B2%8C%EC%8B%9C%ED%8C%90/%ED%96%89%EC%A0%95%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://finance.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_016,soongsil,경영대학,벤처중소기업학과,91036,department,숭실대 벤처중소기업학과 공지,https://ensb.ssu.ac.kr/%ED%95%99%EB%B6%80%EC%95%8C%EB%A6%BC/%ED%95%99%EB%B6%80%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://ensb.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_017,soongsil,경영대학,회계학과,91037,department,숭실대 회계학과 행정공지,https://accounting.ssu.ac.kr/%EA%B2%8C%EC%8B%9C%ED%8C%90/%ED%96%89%EC%A0%95%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://accounting.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_018,soongsil,경제통상대학,경제학과,91030,department,숭실대 경제학과 공지,https://eco.ssu.ac.kr/bbs/board.php?bo_table=notice,https://eco.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_019,soongsil,경제통상대학,국제무역학과,91033,department,숭실대 국제무역학과 공지,https://itrans.ssu.ac.kr/community/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://itrans.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_020,soongsil,경제통상대학,글로벌통상학과,91031,department,숭실대 글로벌통상학과 공지,https://gtrade.ssu.ac.kr/%ED%95%99%EB%B6%80%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://gtrade.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_021,soongsil,경제통상대학,금융경제학과,91032,department,숭실대 금융경제학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_022,soongsil,공과대학,건축학부,91045,department,숭실대 건축학부 공지,https://soar.ssu.ac.kr/news/notice/,https://soar.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_023,soongsil,공과대학,기계공학부,91043,department,숭실대 기계공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_024,soongsil,공과대학,산업·정보시스템공학과,91044,department,숭실대 산업·정보시스템공학과 공지,https://iise.ssu.ac.kr/cummunity/notice/,https://iise.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,사이트 경로 철자 cummunity
+soongsil_025,soongsil,공과대학,신소재공학과,91041,department,숭실대 신소재공학과 공지,https://materials.ssu.ac.kr/bbs/board.php?tbl=bbs51,https://materials.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_026,soongsil,공과대학,전기공학부,91042,department,숭실대 전기공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_027,soongsil,공과대학,화학공학과,91040,department,숭실대 화학공학과 학부공지,http://chemeng.ssu.ac.kr/sub/sub03_01.php,http://chemeng.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_028,soongsil,법과대학,국제법무학과,91021,department,숭실대 국제법무학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_029,soongsil,법과대학,법학과,91020,department,숭실대 법학과 학과공지,https://law.ssu.ac.kr/menu5/m5sub3/,https://law.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_030,soongsil,사회과학대학,사회복지학부,91023,department,숭실대 사회복지학부 공지,https://mysoongsil.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD-2/%ED%95%99%EB%B6%80-%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://mysoongsil.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_031,soongsil,사회과학대학,언론홍보학과,91027,department,숭실대 언론홍보학과 학부공지,https://masscom.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/%ED%95%99%EB%B6%80%EA%B3%B5%EC%A7%80/,https://masscom.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_032,soongsil,사회과학대학,정보사회학과,91026,department,숭실대 정보사회학과 공지,http://inso.ssu.ac.kr/sub/sub04_01.php?boardid=notice&mode=list,http://inso.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_033,soongsil,사회과학대학,정치외교학과,91025,department,숭실대 정치외교학과 공지,https://politics.ssu.ac.kr/%ED%95%99%EA%B3%BC%EA%B3%B5%EC%A7%80/%ED%95%99%EB%B6%80-%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://politics.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_034,soongsil,사회과학대학,평생교육학과,91028,department,숭실대 평생교육학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_035,soongsil,사회과학대학,행정학부,91024,department,숭실대 행정학부 공지,https://pubad.ssu.ac.kr/%EC%A0%95%EB%B3%B4%EA%B4%91%EC%9E%A5/%ED%95%99%EB%B6%80-%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://pubad.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_036,soongsil,인문대학,국어국문학과,91003,department,숭실대 국어국문학과 공지,https://korlan.ssu.ac.kr/%ED%95%99%EA%B3%BC%EC%82%AC%EB%AC%B4%EC%8B%A4%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://korlan.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_037,soongsil,인문대학,기독교학과,91002,department,숭실대 기독교학과 공지,https://docs.ssu.ac.kr/%ED%95%99%EA%B3%BC%EC%82%AC%EB%AC%B4%EC%8B%A4%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://docs.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_038,soongsil,인문대학,독어독문학과,91005,department,숭실대 독어독문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_039,soongsil,인문대학,불어불문학과,91006,department,숭실대 불어불문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_040,soongsil,인문대학,사학과,91010,department,숭실대 사학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_041,soongsil,인문대학,스포츠학부,91012,department,숭실대 스포츠학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_042,soongsil,인문대학,영어영문학과,91004,department,숭실대 영어영문학과 공지,https://englan.ssu.ac.kr/%ED%95%99%EA%B3%BC%EC%82%AC%EB%AC%B4%EC%8B%A4%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://englan.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_043,soongsil,인문대학,예술창작학부,91011,department,숭실대 예술창작학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_044,soongsil,인문대학,일어일문학과,91008,department,숭실대 일어일문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_045,soongsil,인문대학,중어중문학과,91007,department,숭실대 중어중문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_046,soongsil,인문대학,철학과,91009,department,숭실대 철학과 공지,https://philo.ssu.ac.kr/%ED%95%99%EA%B3%BC%EC%82%AC%EB%AC%B4%EC%8B%A4%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://philo.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_047,soongsil,자연과학대학,물리학과,91015,department,숭실대 물리학과 공지,https://physics.ssu.ac.kr/%EA%B2%8C%EC%8B%9C%ED%8C%90/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://physics.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_048,soongsil,자연과학대학,수학과,91014,department,숭실대 수학과 학과공지,https://math.ssu.ac.kr/?page_id=977,https://math.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_049,soongsil,자연과학대학,의생명시스템학부,91018,department,숭실대 의생명시스템학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_050,soongsil,자연과학대학,정보통계·보험수리학과,91017,department,숭실대 정보통계·보험수리학과 공지,https://stat.ssu.ac.kr/notice.html?category=1,https://stat.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_051,soongsil,자연과학대학,화학과,91016,department,숭실대 화학과 공지,https://chem.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://chem.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_052,soongsil,IT대학,글로벌미디어학부,91049,department,숭실대 글로벌미디어학부 공지,https://media.ssu.ac.kr/board/notices,https://media.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_053,soongsil,IT대학,미디어경영학과,91052,department,숭실대 미디어경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_054,soongsil,IT대학,소프트웨어학부,91050,department,숭실대 소프트웨어학부 학사공지,https://sw.ssu.ac.kr/bbs/board.php?bo_table=notice,https://sw.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_055,soongsil,IT대학,전자정보공학부,91048,department,숭실대 전자정보공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+soongsil_056,soongsil,IT대학,정보보호학과,91053,department,숭실대 정보보호학과 공지,https://sec.ssu.ac.kr/bbs/board.php?bo_table=notice,https://sec.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_057,soongsil,IT대학,컴퓨터학부,91047,department,숭실대 컴퓨터학부 학사공지,https://cse.ssu.ac.kr/bbs/board.php?bo_table=notice,https://cse.ssu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+soongsil_058,soongsil,IT대학,AI융합학부,91051,department,숭실대 AI융합학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인

@@ -29,7 +29,7 @@ export default async function ProfilePreviewPage() {
     supabase
       .from("profiles")
       .select(
-        "name, headline, bio, interest_categories, interest_industries, skills, school_name, department, academic_year, enrollment_status, is_profile_public"
+        "name, headline, bio, interest_categories, interest_industries, skills, school_name, department, academic_year, enrollment_status, is_profile_public, avatar_url, banner_url"
       )
       .eq("id", user.id)
       .single(),
@@ -69,6 +69,7 @@ export default async function ProfilePreviewPage() {
           currentUser={user}
           currentUserRole={navContext.role}
           currentUserName={profile?.name ?? navContext.name}
+          currentUserAvatarUrl={profile?.avatar_url ?? navContext.avatarUrl}
           urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
       </HomeSearchRoot>
@@ -108,6 +109,8 @@ export default async function ProfilePreviewPage() {
             industries={industries}
             skills={skills}
             items={items}
+            avatarUrl={profile?.avatar_url ?? null}
+            bannerUrl={profile?.banner_url ?? null}
           />
         </div>
       </main>

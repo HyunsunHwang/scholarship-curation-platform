@@ -53,6 +53,7 @@ export default async function BrowsePage({
             currentUser={user}
             currentUserRole={navContext.role}
             currentUserName={navContext.name}
+            currentUserAvatarUrl={navContext.avatarUrl}
             urgentBookmarkCount={navContext.urgentBookmarkCount}
           />
         </HomeSearchRoot>
@@ -92,6 +93,7 @@ export default async function BrowsePage({
           currentUser={user}
           currentUserRole={navContext.role}
           currentUserName={navContext.name}
+          currentUserAvatarUrl={navContext.avatarUrl}
           urgentBookmarkCount={navContext.urgentBookmarkCount}
         />
       </HomeSearchRoot>

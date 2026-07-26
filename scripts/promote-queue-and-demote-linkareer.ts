@@ -21,6 +21,10 @@ import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { contestBenefitStorageLabels } from "../lib/benefit-categories";
 import {
+  INTEREST_CONTEST_MAX,
+  normalizeInterestCategories,
+} from "../lib/interestCategories";
+import {
   formatAndExtractContestNotice,
   type NoticeDraftStage,
 } from "../lib/notice-extraction";
@@ -676,9 +680,13 @@ async function promoteQueue(
       apply_types: asStringArray(draft.apply_types).length
         ? asStringArray(draft.apply_types)
         : null,
-      interest_categories: asStringArray(draft.interest_categories).length
-        ? asStringArray(draft.interest_categories)
-        : null,
+      interest_categories: (() => {
+        const normalized = normalizeInterestCategories(
+          asStringArray(draft.interest_categories),
+          INTEREST_CONTEST_MAX
+        );
+        return normalized.length ? normalized : null;
+      })(),
       required_documents: asStringArray(
         extracted?.draft.required_documents?.length
           ? extracted.draft.required_documents

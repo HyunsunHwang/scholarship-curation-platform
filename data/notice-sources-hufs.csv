@@ -1,0 +1,93 @@
+source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+hufs_001,hufs,,,1153,university,한국외대 학생지원·장학팀 공지,https://dep.hufs.ac.kr/student/12767/subview.do,https://dep.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 미러
+hufs_002,hufs,,,1153,university,한국외대 학사공지,https://www.hufs.ac.kr/hufs/11282/subview.do,https://www.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_003,hufs,,,1153,university,한국외대 장학공지,https://www.hufs.ac.kr/hufs/11283/subview.do,https://www.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,대학본부 장학; [서울]/[글로벌]/[공통] 태그
+hufs_004,hufs,경상대학,,1231,college,한국외대 경상대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_005,hufs,경영대학,,1189,college,한국외대 경영대학 공지,https://biz.hufs.ac.kr/biz/7862/subview.do,https://biz.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_006,hufs,공과대학,,1226,college,한국외대 공과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_007,hufs,국가전략언어대학,,1208,college,한국외대 국가전략언어대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_008,hufs,국제학부,,1199,college,한국외대 국제학부 공지,https://hufsdis.hufs.ac.kr/hufsdis/m05_s01.do,https://hufsdis.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_009,hufs,기후변화융합학부,,1238,college,한국외대 기후변화융합학부,https://cc.hufs.ac.kr/cc/m05_s01.do,https://cc.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 공지 보드 확인
+hufs_010,hufs,바이오메디컬공학부,,1237,college,한국외대 바이오메디컬공학부 공지,https://bme.hufs.ac.kr/bme/4298/subview.do,https://bme.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_011,hufs,사범대학,,1190,college,한국외대 사범대학 공지사항,https://eduhufs.hufs.ac.kr/bbs/eduhufs/695/artclList.do,https://eduhufs.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_012,hufs,사회과학대학,,1182,college,한국외대 사회과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_013,hufs,상경대학,,1186,college,한국외대 상경대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인(경제학부 보드와 분리)
+hufs_014,hufs,서양어대학,,1158,college,한국외대 서양어대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_015,hufs,아시아언어문화대학,,1167,college,한국외대 아시아언어문화대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_016,hufs,영어대학,,1154,college,한국외대 영어대학 공지,https://builder.hufs.ac.kr/user/boardList.action?boardId=115271510&page=1,https://builder.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 builder CMS
+hufs_017,hufs,융합인재대학,,1234,college,한국외대 융합인재대학 공지,https://ingenium.hufs.ac.kr/ingenium/5076/subview.do,https://ingenium.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_018,hufs,인문대학,,1204,college,한국외대 인문대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_019,hufs,일본학대학,,1179,college,한국외대 일본학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_020,hufs,자연과학대학,,1219,college,한국외대 자연과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_021,hufs,자유전공학부(글로벌),,1239,college,한국외대 자유전공학부(글로벌) 공지,https://dep.hufs.ac.kr/gomd/7271/subview.do,https://dep.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_022,hufs,자유전공학부(서울),,1203,college,한국외대 자유전공학부(서울),https://somd.hufs.ac.kr/somd/m05_s01.do,https://somd.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 서울 전용 공지 확인
+hufs_023,hufs,중국학대학,,1176,college,한국외대 중국학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 공지 보드 미확인
+hufs_024,hufs,AI융합대학(글로벌),,1236,college,한국외대 AI융합대학(글로벌)/Finance&AI 공지,https://aifinance.hufs.ac.kr/aifinance/m05_s01.do,https://aifinance.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_025,hufs,AI융합대학,,1196,college,한국외대 AI융합대학(서울),,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인(학부 보드와 분리)
+hufs_026,hufs,Culture & Technology융합대학,,1235,college,한국외대 Culture & Technology융합대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+hufs_027,hufs,KFL학부,,1202,college,한국외대 KFL학부 공지,https://hufskfl.hufs.ac.kr/hufskfl/m05_s01.do,https://hufskfl.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_028,hufs,LD학부,,1200,college,한국외대 LD학부 공지,https://ld.hufs.ac.kr/ld/m05_s01.do,https://ld.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_029,hufs,LT학부,,1201,college,한국외대 LT학부 공지,https://lt.hufs.ac.kr/lt/11012/subview.do,https://lt.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+hufs_030,hufs,경상대학,국제금융학과,1233,department,한국외대 국제금융학과,https://if.hufs.ac.kr/if/5187/subview.do,https://if.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_031,hufs,경상대학,Global Business & Technology학부,1232,department,한국외대 GBT학부,https://gbt.hufs.ac.kr/gbt/6322/subview.do,https://gbt.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_032,hufs,공과대학,산업경영공학과,1230,department,한국외대 산업경영공학과,https://ime.hufs.ac.kr/ime/m05_s01.do,https://ime.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_033,hufs,공과대학,전자공학부,1229,department,한국외대 전자공학부,https://semi.hufs.ac.kr/semi/m05_s01.do,https://semi.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_034,hufs,공과대학,정보통신공학과,1228,department,한국외대 정보통신공학과,https://ice.hufs.ac.kr/ice/1009/subview.do,https://ice.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_035,hufs,공과대학,컴퓨터공학부,1227,department,한국외대 컴퓨터공학부 공지,https://computer.hufs.ac.kr/computer/10058/subview.do,https://computer.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_036,hufs,국가전략언어대학,그리스·불가리아학과,1214,department,한국외대 그리스·불가리아학과,https://gb.hufs.ac.kr/gb/m05_s01.do,https://gb.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_037,hufs,국가전략언어대학,루마니아학과,1210,department,한국외대 루마니아학과,https://romania.hufs.ac.kr/romania/3336/subview.do,https://romania.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_038,hufs,국가전략언어대학,세르비아·크로아티아학과,1213,department,한국외대 세르비아·크로아티아학과,https://serbiacroatia.hufs.ac.kr/yugo/11474/subview.do,https://serbiacroatia.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_039,hufs,국가전략언어대학,아프리카학부,1216,department,한국외대 아프리카학부,https://hufsafrica.hufs.ac.kr/africa/5294/subview.do,https://hufsafrica.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_040,hufs,국가전략언어대학,우크라이나학과,1217,department,한국외대 우크라이나학과,https://ukraine.hufs.ac.kr/ukraine/5396/subview.do,https://ukraine.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_041,hufs,국가전략언어대학,중앙아시아학과,1215,department,한국외대 중앙아시아학과,https://centralasia.hufs.ac.kr/centralasia/m03_s04.do,https://centralasia.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_042,hufs,국가전략언어대학,체코·슬로바키아어과,1211,department,한국외대 체코·슬로바키아어과 공지,https://czechandslovak.hufs.ac.kr/czechandslovak/8128/subview.do,https://czechandslovak.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_043,hufs,국가전략언어대학,폴란드학과,1209,department,한국외대 폴란드학과,https://polski.hufs.ac.kr/polski/5527/subview.do,https://polski.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_044,hufs,국가전략언어대학,한국학과,1218,department,한국외대 한국학과,https://koreanstudies.hufs.ac.kr/koreanstudies/5226/subview.do,https://koreanstudies.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_045,hufs,국가전략언어대학,헝가리학과,1212,department,한국외대 헝가리학과,https://hungary.hufs.ac.kr/hungary/m05_s01.do,https://hungary.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_046,hufs,사범대학,독일어교육과,1194,department,한국외대 독일어교육과 공지,https://germanedu.hufs.ac.kr/bbs/germanedu/770/artclList.do,https://germanedu.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_047,hufs,사범대학,영어교육과,1191,department,한국외대 영어교육과 공지,https://hufsee.hufs.ac.kr/bbs/hufsee/442/artclList.do,https://hufsee.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_048,hufs,사범대학,중국어교육과,1195,department,한국외대 중국어교육과 공지,https://cle.hufs.ac.kr/bbs/cle/516/artclList.do,https://cle.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_049,hufs,사범대학,프랑스어교육과,1193,department,한국외대 프랑스어교육과 공지,https://fe.hufs.ac.kr/bbs/fe/859/artclList.do,https://fe.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_050,hufs,사범대학,한국어교육과,1192,department,한국외대 한국어교육과 공지,https://hufskle.hufs.ac.kr/bbs/hufskle/852/artclList.do,https://hufskle.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_051,hufs,사회과학대학,미디어커뮤니케이션학부,1185,department,한국외대 미컴 공지,https://commu.hufs.ac.kr/bbs/commu/866/artclList.do,https://commu.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_052,hufs,사회과학대학,정치외교학과,1183,department,한국외대 정치외교학과 공지,https://hufspol.hufs.ac.kr/hufspol/m05_s01.do,https://hufspol.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_053,hufs,사회과학대학,행정학과,1184,department,한국외대 행정학과 공지,https://hufspa.hufs.ac.kr/hufspa/4603/subview.do,https://hufspa.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_054,hufs,상경대학,경제학부,1187,department,한국외대 경제학부 자료실/장학,https://econ.hufs.ac.kr/bbs/econ/709/artclList.do,https://econ.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,일반공지 board 710은 별도 URL이나 미러 성격 → 709만 유지
+hufs_055,hufs,상경대학,국제통상학과,1188,department,한국외대 국제통상학과 공지,https://iel.hufs.ac.kr/iel/m05_s01.do,https://iel.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_056,hufs,서양어대학,네덜란드어과,1165,department,한국외대 네덜란드어과 공지,https://neds.hufs.ac.kr/bbs/neds/412/artclList.do,https://neds.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_057,hufs,서양어대학,노어과,1161,department,한국외대 노어과 공지,https://hufsrussia.hufs.ac.kr/hufsrussia/2419/subview.do,https://hufsrussia.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_058,hufs,서양어대학,독일어과,1160,department,한국외대 독일어과 공지,https://deutsch.hufs.ac.kr/deutsch/4807/subview.do,https://deutsch.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_059,hufs,서양어대학,스칸디나비아어과,1166,department,한국외대 스칸디나비아어과 공지,https://scan.hufs.ac.kr/bbs/hufsscan/364/artclList.do,https://scan.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_060,hufs,서양어대학,스페인어과,1162,department,한국외대 스페인어과 공지,https://hufspain.hufs.ac.kr/hufspain/4773/subview.do,https://hufspain.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_061,hufs,서양어대학,이탈리아어과,1163,department,한국외대 이탈리아어과 공지,https://italiano.hufs.ac.kr/bbs/italiano/643/artclList.do,https://italiano.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_062,hufs,서양어대학,포르투갈어과,1164,department,한국외대 포르투갈어과 공지,https://portuguese.hufs.ac.kr/bbs/portuguese/901/artclList.do,https://portuguese.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_063,hufs,서양어대학,프랑스어학부,1159,department,한국외대 프랑스어학부 공지,https://hufsfr.hufs.ac.kr/bbs/hufsfr/922/artclList.do,https://hufsfr.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_064,hufs,아시아언어문화대학,말레이·인도네시아어과,1168,department,한국외대 마인어과 공지,https://hufsmain.hufs.ac.kr/malayindo/m05_s01.do,https://hufsmain.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_065,hufs,아시아언어문화대학,몽골어과,1175,department,한국외대 몽골어과 공지,https://mongolian.hufs.ac.kr/bbs/mongolian/523/artclList.do,https://mongolian.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_066,hufs,아시아언어문화대학,베트남어과,1171,department,한국외대 베트남어과 공지,https://vietnamese.hufs.ac.kr/bbs/vietnamese/894/artclList.do,https://vietnamese.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_067,hufs,아시아언어문화대학,아랍어과,1169,department,한국외대 아랍어과 공지,https://arab.hufs.ac.kr/bbs/arab/449/artclList.do,https://arab.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_068,hufs,아시아언어문화대학,인도어과,1172,department,한국외대 인도어과 공지,https://india.hufs.ac.kr/bbs/india/798/artclList.do,https://india.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_069,hufs,아시아언어문화대학,태국학과,1170,department,한국외대 태국학과 공지,https://thai.hufs.ac.kr/thai/m05_s01.do,https://thai.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_070,hufs,아시아언어문화대학,튀르키예·아제르바이잔학과,1173,department,한국외대 튀아제어과 공지,https://turkazeri.hufs.ac.kr/bbs/turkazeri/553/artclList.do,https://turkazeri.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_071,hufs,아시아언어문화대학,페르시아어·이란학과,1174,department,한국외대 이란학과 공지,https://iran.hufs.ac.kr/bbs/iran/887/artclList.do,https://iran.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_072,hufs,영어대학,영미문학·문화학과,1156,department,한국외대 영미문학·문화 학과공지,https://elc.hufs.ac.kr/hufselc/m05_s01.do,https://elc.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_073,hufs,영어대학,영어통번역학과,1157,department,한국외대 EICC 학과공지,https://eicc.hufs.ac.kr/eicc/2366/subview.do,https://eicc.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_074,hufs,영어대학,ELLT학과,1155,department,한국외대 ELLT 공지,https://ellt.hufs.ac.kr/bbs/ellt/929/artclList.do,https://ellt.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_075,hufs,인문대학,사학과,1206,department,한국외대 사학과,https://history.hufs.ac.kr/history/5736/subview.do,https://history.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_076,hufs,인문대학,언어인지과학과,1207,department,한국외대 언어인지과학과 공지,https://linguistics.hufs.ac.kr/linguistics/m05_s01.do,https://linguistics.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_077,hufs,인문대학,철학과,1205,department,한국외대 철학과,https://philosophy.hufs.ac.kr/philosophy/notice.do,https://philosophy.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_078,hufs,일본학대학,융합일본지역학부,1181,department,한국외대 융합일본지역 공지,https://hufsjp.hufs.ac.kr/hufsjp2/4637/subview.do,https://hufsjp.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_079,hufs,일본학대학,일본언어문화학부,1180,department,한국외대 일본언어문화 공지,https://hufsjp1.hufs.ac.kr/hufsjp/m05_s01.do,https://hufsjp1.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_080,hufs,자연과학대학,생명공학과,1224,department,한국외대 생명공학과,https://bio.hufs.ac.kr/bio/8514/subview.do,https://bio.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_081,hufs,자연과학대학,수학과,1220,department,한국외대 수학과 공지,https://math.hufs.ac.kr/math/2991/subview.do,https://math.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_082,hufs,자연과학대학,전자물리학과,1222,department,한국외대 전자물리학과,https://physics.hufs.ac.kr/physics/m05_s01.do,https://physics.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_083,hufs,자연과학대학,통계학과,1221,department,한국외대 통계학과,https://stat.hufs.ac.kr/stat/2453/subview.do,https://stat.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_084,hufs,자연과학대학,화학과,1225,department,한국외대 화학과,https://chemistry.hufs.ac.kr/chemistry/m06_s01.do,https://chemistry.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_085,hufs,자연과학대학,환경학과,1223,department,한국외대 환경학과,https://envi.hufs.ac.kr/envi/5148/subview.do,https://envi.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_086,hufs,중국학대학,중국언어문화학부,1177,department,한국외대 중국언어문화 공지,https://chufs1.hufs.ac.kr/chufs/3838/subview.do,https://chufs1.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_087,hufs,중국학대학,중국외교통상학부,1178,department,한국외대 중국외교통상 공지,https://chufs2.hufs.ac.kr/chufs2/m05_s01.do,https://chufs2.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_088,hufs,AI융합대학,Language & AI융합학부,1197,department,한국외대 Language&AI 공지,https://langai.hufs.ac.kr/langai/m05_s01.do,https://langai.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_089,hufs,AI융합대학,Social Science & AI융합학부,1198,department,한국외대 Social Science & AI융합학부 장학공지,https://ssai.hufs.ac.kr/ssai/13462/subview.do,https://ssai.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,학부 장학공지 전용 탭; 장학 게시글 확인
+hufs_090,hufs,Culture & Technology융합대학,디지털콘텐츠학부,1240,department,한국외대 디지털콘텐츠학부 공지,https://dicon.hufs.ac.kr/dicon/10896/subview.do,https://dicon.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_091,hufs,Culture & Technology융합대학,투어리즘&웰니스학부,1241,department,한국외대 투어리즘&웰니스학부 공지,https://tw.hufs.ac.kr/tw/m05_s01.do,https://tw.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+hufs_092,hufs,Culture & Technology융합대학,글로벌스포츠산업학부,1242,department,한국외대 글로벌스포츠산업학부 공지,https://sport.hufs.ac.kr/sport/2262/subview.do,https://sport.hufs.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,

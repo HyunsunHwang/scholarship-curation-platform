@@ -13,6 +13,8 @@ type Props = {
   imageClassName?: string;
   /** LCP용 — 홈 헤더 등 첫 화면에서만 true */
   priority?: boolean;
+  /** 로고 클릭 시 이동 경로 (기본: 학생 홈) */
+  href?: string;
 };
 
 /**
@@ -24,12 +26,13 @@ export default function BrandLogo({
   className,
   imageClassName = "object-contain object-left",
   priority = false,
+  href = "/",
 }: Props) {
   const src = logoSrc?.trim() || "/brand-logo-ko.png";
 
   return (
     <Link
-      href="/"
+      href={href}
       className={twMerge(
         "inline-flex shrink-0 items-center justify-center overflow-visible h-4 max-h-4 max-w-[min(64px,calc(100vw-12rem))] sm:h-4 sm:max-h-4 sm:max-w-[min(72px,calc(100vw-13rem))] md:h-4.5 md:max-h-4.5 md:max-w-18",
         className

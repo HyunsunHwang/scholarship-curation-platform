@@ -15,6 +15,7 @@ type AirbnbHeaderProps = {
   isLoggedIn: boolean;
   isAdmin: boolean;
   profileTitle: string;
+  profileAvatarUrl?: string | null;
   urgentBookmarkCount: number;
   /** 호환용 — 헤더는 로고·메인탭·검색만 표시 */
   variant?: "expandable" | "compact";
@@ -191,11 +192,13 @@ function UserActions({
   isLoggedIn,
   isAdmin,
   profileTitle,
+  profileAvatarUrl,
   onComingSoon,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
   profileTitle: string;
+  profileAvatarUrl?: string | null;
   onComingSoon: (label: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -229,6 +232,15 @@ function UserActions({
 
   return (
     <div className="relative flex shrink-0 items-center gap-1 sm:gap-2">
+      {isAdmin ? (
+        <Link
+          href="/corporate"
+          className="hidden rounded-full border border-brand px-3 py-1.5 text-sm font-semibold text-brand transition-colors hover:bg-brand/10 sm:inline-flex"
+        >
+          기업 서비스
+        </Link>
+      ) : null}
+
       {isLoggedIn ? (
         <button
           type="button"
@@ -295,6 +307,7 @@ function UserActions({
               />
             </svg>
             <ProfileAvatar
+              src={profileAvatarUrl}
               alt={profileTitle}
               className="h-7 w-7"
               sizes="28px"
@@ -331,14 +344,24 @@ function UserActions({
                 프로필
               </Link>
               {isAdmin ? (
-                <Link
-                  href="/admin"
-                  role="menuitem"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige"
-                >
-                  관리자
-                </Link>
+                <>
+                  <Link
+                    href="/admin"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige"
+                  >
+                    관리자
+                  </Link>
+                  <Link
+                    href="/corporate"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige sm:hidden"
+                  >
+                    기업 서비스
+                  </Link>
+                </>
               ) : null}
               <div className="my-1 border-t border-gray-100" />
               <form action={logout}>
@@ -363,6 +386,7 @@ export default function AirbnbHeader({
   isLoggedIn,
   isAdmin,
   profileTitle,
+  profileAvatarUrl,
 }: AirbnbHeaderProps) {
   const pathname = usePathname();
   const blendWithHero = pathname === "/";
@@ -471,6 +495,7 @@ export default function AirbnbHeader({
               isLoggedIn={isLoggedIn}
               isAdmin={isAdmin}
               profileTitle={profileTitle}
+              profileAvatarUrl={profileAvatarUrl}
               onComingSoon={setComingSoon}
             />
           </div>
