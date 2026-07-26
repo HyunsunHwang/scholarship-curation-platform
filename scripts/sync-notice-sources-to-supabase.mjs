@@ -5,8 +5,14 @@
 //   node scripts/sync-notice-sources-to-supabase.mjs --apply      # upsert
 //   node scripts/sync-notice-sources-to-supabase.mjs --apply --prune
 //     # CSV에 없는 source_id는 enabled=false 로 비활성화 (삭제하지 않음)
+//   node scripts/sync-notice-sources-to-supabase.mjs --only=snu,hufs --apply --prune
 //
-// 입력 우선순위는 merge-notice-source-configs.mjs 와 동일:
+// Canonical per-uni CSV:
+//   source_id,university_slug,college_name,department_name,org_unit_id,source_level,
+//   source_name,list_url,base_url,...,adapter,enabled,notes
+//   (list_url 없는 행은 DB NOT NULL 제약으로 sync에서 skip)
+//
+// 입력:
 //   ewha ← notice-sources.csv
 //   나머지 ← notice-sources-{uni}.csv
 //
@@ -22,20 +28,72 @@ const root = path.resolve(__dirname, "..");
 
 const APPLY = process.argv.includes("--apply");
 const PRUNE = process.argv.includes("--prune");
+const onlyArg = process.argv.find((a) => a.startsWith("--only="));
+const ONLY = onlyArg
+  ? new Set(
+      onlyArg
+        .slice("--only=".length)
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean),
+    )
+  : null;
 const SUMMARY_PATH =
   process.env.NOTICE_SOURCES_SYNC_SUMMARY ??
   "exports/notices/quality/notice-sources-sync-latest.json";
 
+/** Canonical per-uni schema (final): source_id..enabled,notes (+ optional legacy id cols). */
 const SOURCES = [
-  { file: "data/notice-sources.csv", includePrefixes: ["ewha_"] },
-  { file: "data/notice-sources-uos.csv", includePrefixes: ["uos_"] },
-  { file: "data/notice-sources-cau.csv", includePrefixes: ["cau_"] },
-  { file: "data/notice-sources-hanyang.csv", includePrefixes: ["hanyang_"] },
-  { file: "data/notice-sources-hongik.csv", includePrefixes: ["hongik_"] },
-  { file: "data/notice-sources-khu.csv", includePrefixes: ["khu_"] },
-  { file: "data/notice-sources-korea.csv", includePrefixes: ["korea_"] },
-  { file: "data/notice-sources-skku.csv", includePrefixes: ["skku_"] },
-  { file: "data/notice-sources-yonsei.csv", includePrefixes: ["yonsei_"] },
+  { file: "data/notice-sources.csv", includePrefixes: ["ewha_"], slug: "ewha" },
+  { file: "data/notice-sources-uos.csv", includePrefixes: ["uos_"], slug: "uos" },
+  { file: "data/notice-sources-cau.csv", includePrefixes: ["cau_"], slug: "cau" },
+  {
+    file: "data/notice-sources-hanyang.csv",
+    includePrefixes: ["hanyang_"],
+    slug: "hanyang",
+  },
+  {
+    file: "data/notice-sources-hongik.csv",
+    includePrefixes: ["hongik_"],
+    slug: "hongik",
+  },
+  { file: "data/notice-sources-khu.csv", includePrefixes: ["khu_"], slug: "khu" },
+  {
+    file: "data/notice-sources-korea.csv",
+    includePrefixes: ["korea_"],
+    slug: "korea",
+  },
+  {
+    file: "data/notice-sources-skku.csv",
+    includePrefixes: ["skku_"],
+    slug: "skku",
+  },
+  {
+    file: "data/notice-sources-yonsei.csv",
+    includePrefixes: ["yonsei_"],
+    slug: "yonsei",
+  },
+  { file: "data/notice-sources-snu.csv", includePrefixes: ["snu_"], slug: "snu" },
+  {
+    file: "data/notice-sources-hufs.csv",
+    includePrefixes: ["hufs_"],
+    slug: "hufs",
+  },
+  {
+    file: "data/notice-sources-sogang.csv",
+    includePrefixes: ["sogang_"],
+    slug: "sogang",
+  },
+  {
+    file: "data/notice-sources-konkuk.csv",
+    includePrefixes: ["konkuk_"],
+    slug: "konkuk",
+  },
+  {
+    file: "data/notice-sources-dongguk.csv",
+    includePrefixes: ["dongguk_"],
+    slug: "dongguk",
+  },
 ];
 
 const LEVELS = new Set(["university", "college", "department"]);
@@ -237,6 +295,7 @@ function readRows(filePath, includePrefixes, warnings) {
       keywords: nullIfEmpty(cells[index.keywords]),
       adapter: nullIfEmpty(cells[index.adapter]),
       enabled: toBool(cells[index.enabled], true),
+      notes: nullIfEmpty(cells[index.notes]),
       university_id: toBigintOrNull(
         cells[index.university_id],
         "university_id",
@@ -264,9 +323,11 @@ function mergeFromCsv(warnings) {
   const merged = [];
   const seen = new Set();
   for (const source of SOURCES) {
+    if (ONLY && source.slug && !ONLY.has(source.slug)) continue;
     const rows = readRows(source.file, source.includePrefixes, warnings);
     for (const row of rows) {
       if (seen.has(row.source_id)) continue;
+      if (ONLY && !ONLY.has(row.university_slug)) continue;
       seen.add(row.source_id);
       merged.push(row);
     }
@@ -312,7 +373,7 @@ async function main() {
   };
 
   console.log(
-    `[sync-notice-sources] rows=${rows.length} apply=${APPLY} prune=${PRUNE}`,
+    `[sync-notice-sources] rows=${rows.length} apply=${APPLY} prune=${PRUNE} only=${ONLY ? [...ONLY].join(",") : "all"}`,
   );
   console.log("[sync-notice-sources] by slug:", bySlug);
   if (warnings.length) {
@@ -384,9 +445,11 @@ async function main() {
 
   if (PRUNE) {
     const keep = new Set(rows.map((r) => r.source_id));
-    const { data: existing, error } = await supabase
-      .from("notice_sources")
-      .select("source_id,enabled");
+    let query = supabase.from("notice_sources").select("source_id,enabled,university_slug");
+    if (ONLY) {
+      query = query.in("university_slug", [...ONLY]);
+    }
+    const { data: existing, error } = await query;
     if (error) {
       console.error("[sync-notice-sources] prune select failed:", error.message);
       process.exit(1);

@@ -1,0 +1,100 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+snu_001,snu,,,3,university,서울대 학생처 일반공지,https://student.snu.ac.kr/%EC%86%8C%EC%8B%9D%C2%B7%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/?category1=%EC%9D%BC%EB%B0%98%EA%B3%B5%EC%A7%80&mod=list,https://student.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,본부 학생처 일반공지 카테고리
+snu_002,snu,간호대학,,56,college,서울대 간호대학 공지사항,https://nursing.snu.ac.kr/board/notice,https://nursing.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 간호학과를 college 차원에서 통합 관리
+snu_003,snu,경영대학,,57,college,서울대 경영대학 공지사항,https://cba.snu.ac.kr/newsroom/notice,https://cba.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 경영학과를 college 차원에서 통합 관리
+snu_004,snu,공과대학,,58,college,서울대 공과대학 공지사항,https://eng.snu.ac.kr/communication/notice/notice,https://eng.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_005,snu,농업생명과학대학,,59,college,서울대 농업생명과학대학 공지사항,https://cals.snu.ac.kr/board/notice,https://cals.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,일반공지; 장학은 /board/scholarship
+snu_006,snu,농업생명과학대학,,59,college,서울대 농업생명과학대학 장학알림,https://cals.snu.ac.kr/board/scholarship,https://cals.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 전용 게시판; 일반공지는 /board/notice 후보
+snu_007,snu,미술대학,,60,college,서울대 미술대학 공지사항,https://art.snu.ac.kr/category/college-of-fine-arts/?cate=&catemenu=Notice&type=major,https://art.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_009,snu,사범대학,,61,college,서울대 사범대학 공지사항,https://edu.snu.ac.kr/category/board_17_gn_ldca7if5_20201130072915/,https://edu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_010,snu,사회과학대학,,54,college,서울대 사회과학대학 공지사항,https://social.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://social.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_012,snu,생활과학대학,,62,college,서울대 생활과학대학 공지사항,https://che.snu.ac.kr/category/board-35-GN-EKIrl47t-20210226142951/,https://che.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,전용 list (메인 대체)
+snu_014,snu,수의과대학,,63,college,서울대 수의과대학 공지사항,https://vet.snu.ac.kr/category/board-3-BL-8Piv9u51-20211029154329/,https://vet.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 수의예과·수의학과를 college 차원에서 통합 관리
+snu_015,snu,약학대학,,64,college,서울대 약학대학 공지사항,https://snupharm.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://snupharm.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 약학계열을 college 차원에서 통합 관리
+snu_017,snu,음악대학,,65,college,서울대 음악대학 공지사항,https://music.snu.ac.kr/notice,https://music.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,전용 list
+snu_018,snu,의과대학,,66,college,서울대 의과대학 공지사항,https://medicine.snu.ac.kr/fnt/nac/selectNoticeList.do?bbsId=BBSMSTR_000000000001,https://medicine.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 의예과·의학과를 college 차원에서 통합 관리
+snu_019,snu,인문대학,,53,college,서울대 인문대학 공지사항,https://humanities.snu.ac.kr/community/notice,https://humanities.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_020,snu,자연과학대학,,55,college,서울대 자연과학대학 공지사항,https://science.snu.ac.kr/news/announcement,https://science.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_021,snu,첨단융합학부,,67,college,서울대 첨단융합학부 장학공지,https://snuti.snu.ac.kr/category/board-215-GN-OcL5Jdr2-20240910123644/,https://snuti.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 장학 전용 게시판
+snu_022,snu,치의학대학원,,68,college,서울대 치의학대학원 공지사항,https://dentistry.snu.ac.kr/fnt/nac/selectNoticeList.do?bbsId=BBS_0000000000001,https://dentistry.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 치의학과를 college 차원에서 통합 관리
+snu_024,snu,학부대학,,52,college,서울대 학부대학 공지사항,https://snuc.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://snuc.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,snuc.snu.ac.kr 단과대 보드
+snu_027,snu,공과대학,건설환경도시공학부,401,department,서울대 건설환경도시공학부 장학금,https://cee.snu.ac.kr/bbs/board.php?bo_table=sub6_2,https://cee.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학금 전용 게시판; 현행 도메인 cee.snu.ac.kr (구 cuee)
+snu_028,snu,공과대학,건축학과,402,department,서울대 건축학과 공지사항,https://architecture.snu.ac.kr/posts/notice,https://architecture.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_029,snu,공과대학,기계공학부,404,department,서울대 기계공학부 공통 공지사항,https://me.snu.ac.kr/%EA%B3%B5%ED%86%B5-%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://me.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_030,snu,공과대학,산업공학과,405,department,서울대 산업공학과 공지사항,https://ie.snu.ac.kr/notice/,https://ie.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 카테고리 포함
+snu_031,snu,공과대학,에너지자원공학과,406,department,서울대 에너지자원공학과 공지사항,https://ere.snu.ac.kr/bbs/board.php?bo_table=sub5_1,https://ere.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_032,snu,공과대학,원자핵공학과,407,department,서울대 원자핵공학과 공지사항,https://nucleng.snu.ac.kr/community/notice,https://nucleng.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_033,snu,공과대학,재료공학부,408,department,서울대 재료공학부 공지사항,https://mse.snu.ac.kr/snumse-main/notice/notice/all/,https://mse.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,전체 공지; important 보드도 존재
+snu_034,snu,공과대학,전기·정보공학부,409,department,서울대 전기·정보공학부 학사 공지,https://ece.snu.ac.kr/community/academics,https://ece.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,학사 게시판; 장학이 별도 보드일 수 있음
+snu_035,snu,공과대학,조선해양공학과,410,department,서울대 조선해양공학과 공지사항,https://naoe.snu.ac.kr/news/notice,https://naoe.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_036,snu,공과대학,컴퓨터공학부,411,department,서울대 컴퓨터공학부 공지사항,https://cse.snu.ac.kr/community/notice,https://cse.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,영문 경로 /en/community/notice 도 존재; 한글 경로 우선
+snu_037,snu,공과대학,항공우주공학과,412,department,서울대 항공우주공학과 공지사항,https://aerospace.snu.ac.kr/board/notice,https://aerospace.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_038,snu,공과대학,화학생물공학부,413,department,서울대 화학생물공학부 공통 공지,https://cbe.snu.ac.kr/cbe/bbs/BMSR00058/list.do?menuNo=300052,https://cbe.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,학부 전용은 BMSR00059
+snu_039,snu,농업생명과학대학,농경제사회학부,414,department,서울대 농경제사회학부 공지사항,https://aerd.snu.ac.kr/category/notice/,https://aerd.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_040,snu,농업생명과학대학,바이오시스템·소재학부,415,department,서울대 바이오시스템·소재학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학부 공통 공지 URL 미확인; 바이오시스템공학전공 단독 보드는 대체 소스로 사용하지 않음
+snu_041,snu,농업생명과학대학,산림과학부,416,department,서울대 산림과학부 공지사항,https://forestry.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://forestry.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,갱신 빈도 낮을 수 있음
+snu_042,snu,농업생명과학대학,스마트시스템과학과,417,department,서울대 스마트시스템과학과 공지사항,http://smsys.snu.ac.kr/bbs/board.php?bo_table=s4_1,http://smsys.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_043,snu,농업생명과학대학,식물생산과학부,418,department,서울대 식물생산과학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학부 전용 공지 URL 없음; 농업생명과학대학 공지에서 처리
+snu_044,snu,농업생명과학대학,식품·동물생명공학부,419,department,서울대 식품·동물생명공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학부 공통 공지 URL 미확인; 동물생명공학 계열 보드는 대체 소스로 사용하지 않음
+snu_045,snu,농업생명과학대학,응용생물화학부,420,department,서울대 응용생물화학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학부 전용 공지 URL 없음; 농업생명과학대학 공지에서 처리
+snu_046,snu,농업생명과학대학,조경·지역시스템공학부,421,department,서울대 조경·지역시스템공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학부 전용 공지 URL 없음; 농업생명과학대학 공지에서 처리
+snu_047,snu,미술대학,공예과,422,department,서울대 공예과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 미술대학 공지에서 처리
+snu_048,snu,미술대학,동양화과,423,department,서울대 동양화과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 미술대학 공지에서 처리
+snu_049,snu,미술대학,디자인과,424,department,서울대 디자인과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 미술대학 공지에서 처리
+snu_050,snu,미술대학,서양화과,425,department,서울대 서양화과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 미술대학 공지에서 처리
+snu_051,snu,미술대학,조소과,426,department,서울대 조소과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 미술대학 공지에서 처리
+snu_052,snu,사범대학,교육학과,427,department,서울대 교육학과 장학공지,https://learning.snu.ac.kr/category/board-145-gn-21cy9zma-20230719133949/,https://learning.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_053,snu,사범대학,국어교육과,428,department,서울대 국어교육과 학부 공지,https://koredu.snu.ac.kr/category/board-204-GN-4va4w7vW-20230919175332/,https://koredu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_055,snu,사범대학,물리교육과,430,department,서울대 물리교육과 공지사항,https://physed.snu.ac.kr/category/board-227-GN-qJ5IA05I-20231207222837/,https://physed.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_056,snu,사범대학,불어교육과,431,department,서울대 불어교육과 학부 공지사항,https://french.snu.ac.kr/category/board-258-GN-bph9LsJw-20231228143420/,https://french.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_057,snu,사범대학,사회교육과,432,department,서울대 사회교육과 공지사항,https://socialedu.snu.ac.kr/sub_notice/notice.php,https://socialedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_058,snu,사범대학,생물교육과,433,department,서울대 생물교육과 공지사항,https://biologyedu.snu.ac.kr/category/board-62-GN-R8t115bH-20210421170820/,https://biologyedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_059,snu,사범대학,수학교육과,434,department,서울대 수학교육과 공지사항,https://mathed.snu.ac.kr/category/board-255-gn-3a9gntr6-20231221224058/,https://mathed.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_060,snu,사범대학,역사교육과,435,department,서울대 역사교육과 일반공지,https://histoedu.snu.ac.kr/category/board-226-GN-uBTzB056-20231120132156/,https://histoedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_061,snu,사범대학,영어교육과,436,department,서울대 영어교육과 학부 공지사항,https://engedu.snu.ac.kr/05_sub/5c_sub01.php?b_name=undergraduate_notice&mode=list,https://engedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_062,snu,사범대학,윤리교육과,437,department,서울대 윤리교육과 학부공지,https://ethics.snu.ac.kr/sub_notice/board02.php,https://ethics.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_063,snu,사범대학,지구과학교육과,438,department,서울대 지구과학교육과 공지사항,https://earthedu.snu.ac.kr/category/board-251-GN-RymXw102-20231221142227/,https://earthedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_064,snu,사범대학,지리교육과,439,department,서울대 지리교육과 학부 게시판,https://geoedu.snu.ac.kr/category/%ED%95%99%EB%B6%80-%EA%B2%8C%EC%8B%9C%ED%8C%90/,https://geoedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_065,snu,사범대학,체육교육과,440,department,서울대 체육교육과 장학공지,https://sports.snu.ac.kr/category/board-185-GN-duSk47Lw-20230828174816/,https://sports.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_066,snu,사범대학,화학교육과,441,department,서울대 화학교육과 장학공지,https://chemedu.snu.ac.kr/category/board-256-GN-Js2eG19W-20231230174158/,https://chemedu.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_067,snu,사회과학대학,경제학부,384,department,서울대 경제학부 공지사항,https://econ.snu.ac.kr/announcement/notice,https://econ.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_068,snu,사회과학대학,사회복지학과,385,department,서울대 사회복지학과 장학금소식,https://socialwelfare.snu.ac.kr/89,https://socialwelfare.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학금소식 전용 게시판
+snu_070,snu,사회과학대학,사회학과,386,department,서울대 사회학과 학부 공지,https://sociology.snu.ac.kr/category/undergraduate/,https://sociology.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_071,snu,사회과학대학,심리학과,387,department,서울대 심리학과 공지사항,https://psych.snu.ac.kr/bbs/board.php?tbl=bbs61,https://psych.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_073,snu,사회과학대학,언론정보학과,388,department,서울대 언론정보학과 공지사항,https://communication.snu.ac.kr/category/board_7_GN_13vY9brE_20201130092750/,https://communication.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_074,snu,사회과학대학,인류학과,389,department,서울대 인류학과 장학공지,https://anthropology.or.kr/04_notice/notice02.htm,https://anthropology.or.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 게시판; 비 snu 도메인 anthropology.or.kr
+snu_076,snu,사회과학대학,정치외교학부,390,department,서울대 정치외교학부 공지,https://psir.snu.ac.kr/event/notice,https://psir.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_077,snu,사회과학대학,지리학과,391,department,서울대 지리학과 공지사항,https://geog.snu.ac.kr/bbs/board.php?tbl=bbs61,https://geog.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_078,snu,생활과학대학,소비자학전공,442,department,서울대 소비자학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,전공 전용 공지 URL 없음; 생활과학대학 공지에서 처리
+snu_079,snu,생활과학대학,식품영양학과,443,department,서울대 식품영양학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 생활과학대학 공지에서 처리
+snu_080,snu,생활과학대학,아동가족학전공,444,department,서울대 아동가족학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,전공 전용 공지 URL 없음; 생활과학대학 공지에서 처리
+snu_081,snu,생활과학대학,의류학과,445,department,서울대 의류학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 생활과학대학 공지에서 처리
+snu_085,snu,음악대학,관현악과,448,department,서울대 관현악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_086,snu,음악대학,국악과,449,department,서울대 국악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_087,snu,음악대학,성악과,450,department,서울대 성악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_088,snu,음악대학,음악학과,451,department,서울대 음악학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_089,snu,음악대학,작곡과,452,department,서울대 작곡과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_090,snu,음악대학,피아노과,453,department,서울대 피아노과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,학과 전용 공지 URL 없음; 음악대학 공지에서 처리
+snu_093,snu,인문대학,고고미술사학과,370,department,서울대 고고미술사학과 공지사항,https://archaeology-arthistory.or.kr:6043/?c=user&mcd=sad0001,https://archaeology-arthistory.or.kr:6043,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,비 snu 도메인 활성 보드
+snu_095,snu,인문대학,국어국문학과,371,department,서울대 국어국문학과 장학,https://korean.snu.ac.kr/category/board_3_gn_44wycjtw_20201202131822/,https://korean.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 전용 탭
+snu_096,snu,인문대학,노어노문학과,372,department,서울대 노어노문학과 장학공지,https://russian.snu.ac.kr/category/board-31-GN-0Cph9vw0-20210222203607/,https://russian.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_097,snu,인문대학,독어독문학과,373,department,서울대 독어독문학과 공지사항,https://german.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://german.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_098,snu,인문대학,미학과,374,department,서울대 미학과 공지사항,https://meehak.snu.ac.kr/category/board-3-BL-8Piv9u51-20211029154329/,https://meehak.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_099,snu,인문대학,불어불문학과,375,department,서울대 불어불문학과 공지사항,https://www.snufrance.com/home/opsquare/notice.asp,https://www.snufrance.com,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,비 snu 도메인; france.snu.ac.kr 미사용
+snu_100,snu,인문대학,서어서문학과,376,department,서울대 서어서문학과 학과공지,https://spanish.snu.ac.kr/category/notice/,https://spanish.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_101,snu,인문대학,아시아언어문명학부,377,department,서울대 아시아언어문명학부 공지사항,https://asia.snu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/,https://asia.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_102,snu,인문대학,언어학과,378,department,서울대 언어학과 장학공지,https://linguist.snu.ac.kr/category/board_9_GN_M7awPnIm_20201130121347/,https://linguist.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_103,snu,인문대학,역사학부,379,department,서울대 역사학부 장학공지,https://history.snu.ac.kr/scholarship/,https://history.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 게시판
+snu_105,snu,인문대학,영어영문학과,380,department,서울대 영어영문학과 공지,https://english.snu.ac.kr/category/board_10_GN_9Fb7DO6t_20201130130441/,https://english.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_106,snu,인문대학,종교학과,381,department,서울대 종교학과 장학정보,https://religion.snu.ac.kr/?page_id=2818,https://religion.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 전용 게시판
+snu_107,snu,인문대학,중어중문학과,382,department,서울대 중어중문학과 장학공지,https://snucll.snu.ac.kr/category/board-270-GN-G6vfHS9D-20240521155731/,https://snucll.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학공지 전용 탭
+snu_108,snu,인문대학,철학과,383,department,서울대 철학과 공지사항,https://phil.snu.ac.kr/board/html/menu6/sub06_list.html,https://phil.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,현행 공식 호스트 phil.snu.ac.kr; 일반공지에 장학 카테고리 게시글 포함
+snu_110,snu,자연과학대학,물리학전공,392,department,서울대 물리천문학부(물리) 공지사항,https://physics.snu.ac.kr/boards/notice,https://physics.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_111,snu,자연과학대학,생명과학부,393,department,서울대 생명과학부 장학안내,https://biosci.snu.ac.kr/board/scholarship,https://biosci.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학안내 전용 게시판
+snu_112,snu,자연과학대학,수리과학부,394,department,서울대 수리과학부 공지사항,https://www.math.snu.ac.kr/bbs/board.php?bo_table=Math_Notice,https://www.math.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_113,snu,자연과학대학,지구환경과학부,395,department,서울대 지구환경과학부 공지사항,https://sees.snu.ac.kr/community/notice,https://sees.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_115,snu,자연과학대학,천문학전공,396,department,서울대 천문학전공 공지사항,https://astron.snu.ac.kr/category/board-119-GN-P0jDKZki-20220806085836/,https://astron.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_116,snu,자연과학대학,통계학과,397,department,서울대 통계학과 공지사항,https://stat.snu.ac.kr/category/board-18-gn-969abdbt-20210204013659/,https://stat.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_117,snu,자연과학대학,화학부,398,department,서울대 화학부 공지사항,https://chem.snu.ac.kr/community/notice,https://chem.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+snu_120,snu,학부대학,광역,368,department,서울대 학부대학 광역,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,광역 전용 공지 URL 없음; 학부대학 공지에서 처리
+snu_121,snu,학부대학,자유전공학부,369,department,서울대 자유전공학부 공지사항,https://cls.snu.ac.kr/notice/,https://cls.snu.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,

@@ -1,0 +1,84 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+dongguk_001,dongguk,,,12,university,동국대 장학센터 근로장학공고,https://scholarship.dongguk.edu/article/notice/list,https://scholarship.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_002,dongguk,,,12,university,동국대 WISE 장학/봉사,https://wise.dongguk.ac.kr/article/servicenotice/list,https://wise.dongguk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,경주 WISE 캠퍼스
+dongguk_003,dongguk,,,12,university,동국대 일반공지,https://www.dongguk.edu/article/GENERALNOTICES/list,https://www.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_004,dongguk,,,12,university,동국대 학사공지,https://www.dongguk.edu/article/HAKSANOTICE/list,https://www.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_005,dongguk,,,12,university,동국대 장학공지,https://www.dongguk.edu/article/JANGHAKNOTICE/list,https://www.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,서울 본교 학부 장학
+dongguk_006,dongguk,경영대학,,194,college,동국대 경영대학 학사공지,https://sba.dongguk.edu/article/notice/list,https://sba.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_007,dongguk,경찰사법대학,,193,college,동국대 경찰사법대학 공지,https://justice.dongguk.edu/article/notice/list,https://justice.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+dongguk_008,dongguk,공과대학,,196,college,동국대 공과대학 공지,https://engineer.dongguk.edu/article/notice1/list,https://engineer.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_009,dongguk,문과대학,,189,college,동국대 문과대학 공지,https://liberal.dongguk.edu/article/notice/list,https://liberal.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_010,dongguk,미래융합대학,,201,college,동국대 미래융합대학 공지,https://fc.dongguk.edu/bbs/data/list.do?menu_idx=128,https://fc.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_011,dongguk,바이오시스템대학,,195,college,동국대 바이오시스템대학 공지,https://life.dongguk.edu/article/notice/list,https://life.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_012,dongguk,법과대학,,191,college,동국대 법과대학 학부 공지,https://law.dongguk.edu/article/notice1/list,https://law.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+dongguk_013,dongguk,불교대학,,188,college,동국대 불교대학 공지,https://bs.dongguk.edu/article/notice/list,https://bs.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_014,dongguk,사범대학,,198,college,동국대 사범대학 공지,https://edu.dongguk.edu/article/notice/list,https://edu.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_015,dongguk,사회과학대학,,192,college,동국대 사회과학대학 공지,https://social.dongguk.edu/article/notice/list,https://social.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_016,dongguk,약학대학,,200,college,동국대 약학대학 공지,https://pharm.dongguk.edu/article/notice/list,https://pharm.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+dongguk_017,dongguk,열린전공학부,,202,college,동국대 열린전공학부 공지,https://open.dongguk.edu/article/notice/list,https://open.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_018,dongguk,예술대학,,199,college,동국대 예술대학 공지,https://art.dongguk.edu/article/notice/list,https://art.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_019,dongguk,이과대학,,190,college,동국대 이과대학 공지,https://science.dongguk.edu/article/notice/list,https://science.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_020,dongguk,첨단융합대학,,197,college,동국대 첨단융합대학 공지,https://ai.dongguk.edu/article/notice/list,https://ai.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_021,dongguk,경영대학,경영대학(무전공),1037,department,동국대 경영대학(무전공),,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_022,dongguk,경영대학,경영정보학과,1038,department,동국대 경영정보학과 학사공지,https://mis.dongguk.edu/article/news/list,https://mis.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_023,dongguk,경영대학,경영학과,1039,department,동국대 경영학과 공지,https://mgt.dongguk.edu/article/notice/list,https://mgt.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_024,dongguk,경영대학,회계학과,1040,department,동국대 회계학과 학사공지,https://acc.dongguk.edu/article/notice1/list,https://acc.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_025,dongguk,공과대학,건설환경공학과,1045,department,동국대 건설환경공학과 공지,https://civil.dongguk.edu/article/notice/list,https://civil.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_026,dongguk,공과대학,건축공학전공,1046,department,동국대 건축공학부 학부공지,https://archi.dongguk.edu/article/info1/list,https://archi.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,건축학전공과 동일 사이트
+dongguk_027,dongguk,공과대학,건축학전공,1047,department,동국대 건축학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_028,dongguk,공과대학,기계로봇에너지공학과,1048,department,동국대 기계로봇에너지공학과 공지,https://mecha.dongguk.edu/article/notice/list,https://mecha.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_029,dongguk,공과대학,산업시스템공학과,1049,department,동국대 산업시스템공학과 공지,https://ise.dongguk.edu/article/notice1/list,https://ise.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_030,dongguk,공과대학,에너지신소재공학과,1050,department,동국대 에너지신소재공학과 공지,https://me.dongguk.edu/article/notice/list,https://me.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_031,dongguk,공과대학,전자전기공학부,1051,department,동국대 전자전기공학부 공지,https://dee.dongguk.edu/article/notice1/list,https://dee.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_032,dongguk,공과대학,정보통신공학과,1052,department,동국대 정보통신공학과 공지,https://ice.dongguk.edu/article/notice/list,https://ice.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_033,dongguk,공과대학,화공생물공학과,1053,department,동국대 화공생물공학과 공지,https://chembioeng.dongguk.edu/article/notice1/list,https://chembioeng.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_034,dongguk,문과대학,국어국문·문예창작학부,1015,department,동국대 국어국문·문예창작학부 공지,https://kor-cre.dongguk.edu/article/notice2/list,https://kor-cre.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_035,dongguk,문과대학,사학과,1016,department,동국대 사학과 공지,https://history.dongguk.edu/article/notice/list,https://history.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_036,dongguk,문과대학,영어영문학부,1017,department,동국대 영어영문학부 공지,https://english.dongguk.edu/article/notice1/list,https://english.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_037,dongguk,문과대학,일본학과,1018,department,동국대 일본학과 공지,https://dj.dongguk.edu/article/notice/list,https://dj.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_038,dongguk,문과대학,중어중문학과,1019,department,동국대 중어중문학과 공지,https://china.dongguk.edu/article/notice/list,https://china.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_039,dongguk,문과대학,철학과,1020,department,동국대 철학과 공지,https://sophia.dongguk.edu/article/notice/list,https://sophia.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_040,dongguk,미래융합대학,글로벌무역학과,1074,department,동국대 글로벌무역학과 게시판,https://gt.dongguk.edu/bbs/data/list.do?menu_idx=58,https://gt.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_041,dongguk,미래융합대학,범죄학과,1075,department,동국대 범죄학과 공지,https://criminology.dongguk.edu/article/notice/list,https://criminology.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_042,dongguk,미래융합대학,사회복지상담학과,1076,department,동국대 사회복지상담학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_043,dongguk,바이오시스템대학,생명과학과,1041,department,동국대 생명과학과 공지,https://lifescience.dongguk.edu/article/notice/list,https://lifescience.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_044,dongguk,바이오시스템대학,식품바이오융합공학과,1042,department,동국대 식품바이오융합공학과 공지,https://food.dongguk.edu/article/notice/list,https://food.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_045,dongguk,바이오시스템대학,융합환경과학과,1043,department,동국대 융합환경과학과 공지,https://env.dongguk.edu/article/notice/list,https://env.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_046,dongguk,바이오시스템대학,의생명공학과,1044,department,동국대 의생명공학과 학사공지,https://mbt.dongguk.edu/article/notice1/list,https://mbt.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_047,dongguk,불교대학,문화유산학과,1013,department,동국대 문화유산학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_048,dongguk,불교대학,불교학부,1014,department,동국대 불교학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_049,dongguk,사범대학,가정교육과,1058,department,동국대 가정교육과 공지,https://homeedu.dongguk.edu/article/notice/list,https://homeedu.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_050,dongguk,사범대학,교육학과,1059,department,동국대 교육학과 공지,https://education.dongguk.edu/article/news2/list,https://education.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_051,dongguk,사범대학,국어교육과,1060,department,동국대 국어교육과 공지,https://duce.dongguk.edu/article/notice/list,https://duce.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_052,dongguk,사범대학,수학교육과,1061,department,동국대 수학교육과 공지,https://dume.dongguk.edu/article/notice/list,https://dume.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_053,dongguk,사범대학,역사교육과,1062,department,동국대 역사교육과 공지,https://historyedu.dongguk.edu/article/notice2/list,https://historyedu.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_054,dongguk,사범대학,지리교육과,1063,department,동국대 지리교육과 공지,https://geoedu.dongguk.edu/article/notice/list,https://geoedu.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_055,dongguk,사범대학,체육교육과,1064,department,동국대 체육교육과 공지,https://pe.dongguk.edu/article/notice/list,https://pe.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_056,dongguk,사회과학대학,경제학과,1026,department,동국대 경제학과 공지,https://econ.dongguk.edu/article/notice/list,https://econ.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_057,dongguk,사회과학대학,광고홍보학과,1027,department,동국대 광고홍보학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_058,dongguk,사회과학대학,국제통상학과,1028,department,동국대 국제통상학과 공지,https://itrade.dongguk.edu/article/notice/list,https://itrade.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_059,dongguk,사회과학대학,미디어커뮤니케이션학전공,1029,department,동국대 미컴전공 학사공지,https://comm.dongguk.edu/article/notice1/list,https://comm.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_060,dongguk,사회과학대학,북한학전공,1030,department,동국대 북한학전공 공지,https://nk.dongguk.edu/article/notice/list,https://nk.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_061,dongguk,사회과학대학,사회복지학과,1031,department,동국대 사회복지학과 공지,https://welfare.dongguk.edu/article/notice/list,https://welfare.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_062,dongguk,사회과학대학,사회학전공,1032,department,동국대 사회학전공 공지,https://sociology.dongguk.edu/article/notice/list,https://sociology.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_063,dongguk,사회과학대학,식품산업관리학과,1033,department,동국대 식품산업관리학과 공지,https://foodindus.dongguk.edu/article/notice1/list,https://foodindus.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_064,dongguk,사회과학대학,정치외교학전공,1034,department,동국대 정치외교학전공 공지,https://politics.dongguk.edu/article/notice2/list,https://politics.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_065,dongguk,사회과학대학,행정학전공,1035,department,동국대 행정학전공 공지,https://pa.dongguk.edu/article/notice/list,https://pa.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_066,dongguk,열린전공학부,열린전공학부(인문),1077,department,동국대 열린전공학부(인문),,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_067,dongguk,열린전공학부,열린전공학부(자연),1078,department,동국대 열린전공학부(자연),,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_068,dongguk,예술대학,불교미술전공,1065,department,동국대 미술학부 공지,https://aart.dongguk.edu/article/notice/list,https://aart.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,미술학부 공통 보드를 불교미술전공에 1회만 배정
+dongguk_069,dongguk,예술대학,서양화전공,1066,department,동국대 서양화전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_070,dongguk,예술대학,스포츠문화학과,1067,department,동국대 스포츠문화학과 공지,https://sports.dongguk.edu/article/notice/list,https://sports.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_071,dongguk,예술대학,연극학부,1068,department,동국대 연극학부 공지,https://theatre.dongguk.edu/article/notice/list,https://theatre.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_072,dongguk,예술대학,영화영상학과,1069,department,동국대 영화영상학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_073,dongguk,예술대학,조소전공,1070,department,동국대 조소전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_074,dongguk,예술대학,한국음악과,1071,department,동국대 한국음악과 공지,https://kmart.dongguk.edu/article/notice/list,https://kmart.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_075,dongguk,예술대학,한국화전공,1072,department,동국대 한국화전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+dongguk_076,dongguk,이과대학,물리학과,1021,department,동국대 물리·반도체과학부(물리학과) 공지,https://physemi.dongguk.edu/article/notice2/list,https://physemi.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 물리학과 사이트
+dongguk_077,dongguk,이과대학,수학과,1022,department,동국대 수학과 공지,https://math.dongguk.edu/article/notice/list,https://math.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_078,dongguk,이과대학,통계학과,1023,department,동국대 통계학과 학부게시판,https://stat.dongguk.edu/article/board1/list,https://stat.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_079,dongguk,이과대학,화학과,1024,department,동국대 화학과 공지,https://chem.dongguk.edu/article/notice/list,https://chem.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_080,dongguk,첨단융합대학,시스템반도체학부,1054,department,동국대 시스템반도체학부 공지,https://semicon.dongguk.edu/article/notice1/list,https://semicon.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_081,dongguk,첨단융합대학,의료인공지능공학과,1055,department,동국대 의료인공지능공학과 학사공지,https://medai.dongguk.edu/article/notice/list,https://medai.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_082,dongguk,첨단융합대학,지능형네트워크융합학과,1056,department,동국대 지능형네트워크융합학과 학사공지,https://dinc.dongguk.edu/article/notice/list,https://dinc.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+dongguk_083,dongguk,첨단융합대학,컴퓨터·AI학부,1057,department,동국대 컴퓨터·AI학부 공지,https://cs.dongguk.edu/article/notice/list,https://cs.dongguk.edu,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,

@@ -1,0 +1,104 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+konkuk_001,konkuk,,,11,university,건국대 글로컬 학사공지,https://www.kku.ac.kr/cms/FR_CON/index.do?MENU_ID=1740,https://www.kku.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,글로컬(충주) 캠퍼스
+konkuk_002,konkuk,,,11,university,건국대 글로컬 장학공지,https://www.kku.ac.kr/cms/FR_CON/index.do?MENU_ID=1750,https://www.kku.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,글로컬(충주) 캠퍼스
+konkuk_003,konkuk,,,11,university,건국대 학사공지,https://www.konkuk.ac.kr/bbs/konkuk/234/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,서울캠퍼스
+konkuk_004,konkuk,,,11,university,건국대 장학공지,https://www.konkuk.ac.kr/bbs/konkuk/235/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,서울캠퍼스; 장학복지팀
+konkuk_005,konkuk,,,11,university,건국대 학생공지,https://www.konkuk.ac.kr/bbs/konkuk/238/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,서울캠퍼스
+konkuk_006,konkuk,,,11,university,건국대 일반공지,https://www.konkuk.ac.kr/bbs/konkuk/240/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,서울캠퍼스
+konkuk_007,konkuk,건축대학,,177,college,건국대 건축대학 일반공지,https://www.konkuk.ac.kr/bbs/caku/397/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_008,konkuk,경영대학,,180,college,건국대 경영대학 공지,https://www.konkuk.ac.kr/bbs/kbs/437/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_009,konkuk,공과대학,,178,college,건국대 공과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인(전공별 구학부 보드 존재)
+konkuk_010,konkuk,문과대학,,175,college,건국대 문과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+konkuk_011,konkuk,부동산과학원,,181,college,건국대 부동산과학원,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,독립학부; 단과대 공지 보드 미확인
+konkuk_012,konkuk,사범대학,,186,college,건국대 사범대학 공지,https://www.konkuk.ac.kr/bbs/edu/507/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_013,konkuk,사회과학대학,,179,college,건국대 사회과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+konkuk_014,konkuk,상허교양대학,,187,college,건국대 KU자유전공학부/상허교양 공지,https://www.konkuk.ac.kr/bbs/kusls/5876/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+konkuk_015,konkuk,생명과학대학,,183,college,건국대 생명과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+konkuk_016,konkuk,수의과대학,,184,college,건국대 수의과대학 장학금 공지,https://www.konkuk.ac.kr/bbs/vet/949/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,일반공지 board 948은 별도
+konkuk_017,konkuk,예술디자인대학,,185,college,건국대 예술디자인대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+konkuk_018,konkuk,융합과학기술원,,182,college,건국대 융합과학기술원 공지,https://www.konkuk.ac.kr/bbs/sicte/455/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_019,konkuk,이과대학,,176,college,건국대 이과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+konkuk_020,konkuk,건축대학,건축공학전공,940,department,건국대 건축공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_021,konkuk,건축대학,건축학전공(5년제),941,department,건국대 건축학전공(5년제),,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_022,konkuk,경영대학,경영학과,980,department,건국대 경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_023,konkuk,경영대학,기술경영학과,981,department,건국대 기술경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_024,konkuk,공과대학,공과대학자유전공학부,944,department,건국대 공과대학자유전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_025,konkuk,공과대학,기후·에너지환경전공,945,department,건국대 기후·에너지환경전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_026,konkuk,공과대학,디지털신호처리제어전공,946,department,건국대 디지털신호처리제어전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_027,konkuk,공과대학,디지털혁신전공,947,department,건국대 디지털혁신전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_028,konkuk,공과대학,로봇전공,948,department,건국대 로봇전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_029,konkuk,공과대학,미래에너지전공,949,department,건국대 미래에너지전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_030,konkuk,공과대학,미래자동차전공,950,department,건국대 미래자동차전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_031,konkuk,공과대학,바이오머티어리얼스전공,951,department,건국대 바이오머티어리얼스전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_032,konkuk,공과대학,바이오프로세스전공,952,department,건국대 바이오프로세스전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_033,konkuk,공과대학,반도체·에너지재료전공,953,department,건국대 반도체·에너지재료전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_034,konkuk,공과대학,벤처창업전공,954,department,건국대 벤처창업전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_035,konkuk,공과대학,비즈니스애널리틱스전공,955,department,건국대 비즈니스애널리틱스전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_036,konkuk,공과대학,산업융합전공,956,department,건국대 산업융합전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_037,konkuk,공과대학,스마트시티전공,958,department,건국대 스마트시티전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_038,konkuk,공과대학,스마트운행체공학전공,959,department,건국대 스마트운행체공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_039,konkuk,공과대학,스마트팩토리전공,960,department,건국대 스마트팩토리전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_040,konkuk,공과대학,스마트ICT융합전공,957,department,건국대 스마트ICT융합전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_041,konkuk,공과대학,시스템소프트웨어전공,961,department,건국대 컴퓨터공학부(구) 학과공지,https://www.konkuk.ac.kr/bbs/cse/775/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 컴퓨터공학부 보드; DB는 전공단위
+konkuk_042,konkuk,공과대학,실감미디어전공,962,department,건국대 실감미디어전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_043,konkuk,공과대학,에너지AI전공,963,department,건국대 에너지AI전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_044,konkuk,공과대학,에코화공생명전공,964,department,건국대 화공생명에너지(구) 학과공지,https://www.konkuk.ac.kr/bbs/chemeng/409/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 화학공학부 보드
+konkuk_045,konkuk,공과대학,인공지능전공,965,department,건국대 인공지능전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_046,konkuk,공과대학,지속가능인프라전공,966,department,건국대 지속가능인프라전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_047,konkuk,공과대학,첨단융합기계전공,967,department,건국대 기계·로봇·자동차(구) 학과공지,https://www.konkuk.ac.kr/bbs/me/403/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 기계공학부 보드
+konkuk_048,konkuk,공과대학,첨단화공소재전공,968,department,건국대 첨단화공소재전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_049,konkuk,공과대학,친환경·고분자재료전공,969,department,건국대 친환경·고분자재료전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_050,konkuk,공과대학,통신및네트워크전공,970,department,건국대 전기전자공학부(구) 학과공지,https://www.konkuk.ac.kr/bbs/ee/407/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,구 전기전자공학부 보드
+konkuk_051,konkuk,공과대학,풀스택개발전공,971,department,건국대 풀스택개발전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_052,konkuk,공과대학,항공우주공학전공,972,department,건국대 기계항공(MAE) 공지,https://www.konkuk.ac.kr/bbs/mae/405/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_053,konkuk,공과대학,화장품공학전공,973,department,건국대 화장품공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_054,konkuk,공과대학,e-모빌리티전공,942,department,건국대 e-모빌리티전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_055,konkuk,공과대학,RF/집적회로및반도체전공,943,department,건국대 RF/집적회로및반도체전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_056,konkuk,문과대학,국어국문학과,927,department,건국대 국어국문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_057,konkuk,문과대학,문과대학자유전공학부,928,department,건국대 문과대학자유전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_058,konkuk,문과대학,문화콘텐츠학과,929,department,건국대 문화콘텐츠학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_059,konkuk,문과대학,미디어커뮤니케이션학과,930,department,건국대 미디어커뮤니케이션학과 공지,https://www.konkuk.ac.kr/bbs/comm/375/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_060,konkuk,문과대학,사학과,931,department,건국대 사학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_061,konkuk,문과대학,영어영문학과,932,department,건국대 영어영문학과 공지,https://www.konkuk.ac.kr/bbs/english/347/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_062,konkuk,문과대학,중어중문학과,933,department,건국대 중어중문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_063,konkuk,문과대학,지리학학과,934,department,건국대 지리학학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_064,konkuk,문과대학,철학과,935,department,건국대 철학과 공지,https://www.konkuk.ac.kr/bbs/philo/356/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_065,konkuk,사범대학,교육공학과,1006,department,건국대 교육공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_066,konkuk,사범대학,수학교육과,1007,department,건국대 수학교육과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_067,konkuk,사범대학,영어교육과,1008,department,건국대 영어교육과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_068,konkuk,사범대학,음악교육과,1009,department,건국대 음악교육과 학과소식,https://www.konkuk.ac.kr/bbs/music/503/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_069,konkuk,사범대학,일어교육과,1010,department,건국대 일어교육과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_070,konkuk,사범대학,체육교육과,1011,department,건국대 체육교육과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_071,konkuk,사회과학대학,경제학과,974,department,건국대 경제학과 장학 공지,https://www.konkuk.ac.kr/bbs/econ/809/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,학사공지 board 423은 별도 URL
+konkuk_072,konkuk,사회과학대학,국제무역학과,975,department,건국대 국제무역학과 공지,https://www.konkuk.ac.kr/bbs/itrade/429/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_073,konkuk,사회과학대학,사회과학대학융합전공학부,976,department,건국대 사회과학대학융합전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_074,konkuk,사회과학대학,응용통계학과,977,department,건국대 응용통계학과 학부 공지,https://www.konkuk.ac.kr/bbs/stat/431/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_075,konkuk,사회과학대학,정치외교학과,978,department,건국대 정치외교학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_076,konkuk,사회과학대학,행정학과,979,department,건국대 행정학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_077,konkuk,생명과학대학,동물자원전공,989,department,건국대 동물자원전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_078,konkuk,생명과학대학,산림조경전공,990,department,건국대 산림조경전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_079,konkuk,생명과학대학,생명과학대학자유전공학부,991,department,건국대 생명과학대학자유전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_080,konkuk,생명과학대학,생명과학특성학과,992,department,건국대 생명과학특성학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_081,konkuk,생명과학대학,식량자원과학과,993,department,건국대 식량자원과학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_082,konkuk,생명과학대학,식품과학전공,994,department,건국대 식품과학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_083,konkuk,생명과학대학,식품유통전공,995,department,건국대 식품유통전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_084,konkuk,생명과학대학,환경보건전공,996,department,건국대 환경보건전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_085,konkuk,수의과대학,수의예과,997,department,건국대 수의예과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_086,konkuk,수의과대학,수의학과,998,department,건국대 수의학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_087,konkuk,예술디자인대학,리빙디자인학과,999,department,건국대 리빙디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_088,konkuk,예술디자인대학,매체연기학과,1000,department,건국대 매체연기학과 공지,https://www.konkuk.ac.kr/bbs/mediaacting/493/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_089,konkuk,예술디자인대학,산업디자인학과,1001,department,건국대 산업디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_090,konkuk,예술디자인대학,영상학과,1002,department,건국대 영상학과 공지,https://www.konkuk.ac.kr/bbs/movingimages/491/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_091,konkuk,예술디자인대학,의상디자인학과,1003,department,건국대 의상디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_092,konkuk,예술디자인대학,커뮤니케이션디자인학과,1004,department,건국대 커뮤니케이션디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_093,konkuk,예술디자인대학,현대미술학과,1005,department,건국대 현대미술학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_094,konkuk,융합과학기술원,시스템생명공학과,983,department,건국대 시스템생명공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_095,konkuk,융합과학기술원,융합과학기술원자유전공학부,984,department,건국대 융합과학기술원자유전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_096,konkuk,융합과학기술원,융합생명공학과,985,department,건국대 융합생명공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_097,konkuk,융합과학기술원,의생명공학전공,986,department,건국대 의생명공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_098,konkuk,융합과학기술원,줄기세포재생공학전공,987,department,건국대 줄기세포재생공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_099,konkuk,융합과학기술원,첨단동물생명공학전공,988,department,건국대 첨단동물생명공학전공,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_100,konkuk,이과대학,물리학과,936,department,건국대 물리학과 공지,https://www.konkuk.ac.kr/bbs/phys/393/artclList.do,https://www.konkuk.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+konkuk_101,konkuk,이과대학,수학과,937,department,건국대 수학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_102,konkuk,이과대학,이과대학자유전공학부,938,department,건국대 이과대학자유전공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인
+konkuk_103,konkuk,이과대학,화학과,939,department,건국대 화학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 보드 미확인

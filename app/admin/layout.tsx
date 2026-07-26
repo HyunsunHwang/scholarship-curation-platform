@@ -15,6 +15,7 @@ const opsNav = [
 const systemNav = [
   { href: "/admin/users", label: "사용자" },
   { href: "/admin/settings", label: "설정" },
+  { href: "/corporate", label: "기업 서비스" },
 ] as const;
 
 export default async function AdminLayout({

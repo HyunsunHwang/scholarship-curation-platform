@@ -391,7 +391,7 @@ function SpecItemForm({
         item_type: section.type,
         title,
         organization,
-        description,
+        description: section.type === "certification" ? "" : description,
         start_date: startDate,
         end_date: endDate,
         is_current: section.hasPeriod ? isCurrent : false,
@@ -497,20 +497,22 @@ function SpecItemForm({
         </div>
       )}
 
-      <div>
-        <label className={labelClass} htmlFor="spec-desc">
-          설명
-        </label>
-        <textarea
-          id="spec-desc"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          maxLength={1000}
-          rows={3}
-          placeholder="담당 업무, 성과 등을 적어 주세요."
-          className={`${inputClass} resize-y`}
-        />
-      </div>
+      {section.type !== "certification" ? (
+        <div>
+          <label className={labelClass} htmlFor="spec-desc">
+            설명
+          </label>
+          <textarea
+            id="spec-desc"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={1000}
+            rows={3}
+            placeholder="담당 업무, 성과 등을 적어 주세요."
+            className={`${inputClass} resize-y`}
+          />
+        </div>
+      ) : null}
 
       {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
 
@@ -996,7 +998,7 @@ function SpecItemRow({
               <p className="text-sm text-ink/60">{item.organization}</p>
             ) : null}
             {period ? <p className="mt-0.5 text-xs text-ink/45">{period}</p> : null}
-            {item.description ? (
+            {section.type !== "certification" && item.description ? (
               <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-ink/75">
                 {item.description}
               </p>

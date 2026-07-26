@@ -232,6 +232,15 @@ function UserActions({
 
   return (
     <div className="relative flex shrink-0 items-center gap-1 sm:gap-2">
+      {isAdmin ? (
+        <Link
+          href="/corporate"
+          className="hidden rounded-full border border-brand px-3 py-1.5 text-sm font-semibold text-brand transition-colors hover:bg-brand/10 sm:inline-flex"
+        >
+          기업 서비스
+        </Link>
+      ) : null}
+
       {isLoggedIn ? (
         <button
           type="button"
@@ -335,14 +344,24 @@ function UserActions({
                 프로필
               </Link>
               {isAdmin ? (
-                <Link
-                  href="/admin"
-                  role="menuitem"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige"
-                >
-                  관리자
-                </Link>
+                <>
+                  <Link
+                    href="/admin"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige"
+                  >
+                    관리자
+                  </Link>
+                  <Link
+                    href="/corporate"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full px-4 py-2.5 text-left text-sm text-brand hover:bg-beige sm:hidden"
+                  >
+                    기업 서비스
+                  </Link>
+                </>
               ) : null}
               <div className="my-1 border-t border-gray-100" />
               <form action={logout}>

@@ -1,0 +1,61 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+sookmyung_001,sookmyung,,,93000,university,숙명여대 주요공지(전체),https://www.sookmyung.ac.kr/kr/news/important-notice.do,https://www.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_002,sookmyung,,,93000,university,숙명여대 주요공지(장학),https://www.sookmyung.ac.kr/kr/news/important-notice.do?mode=list&srCategoryId=46,https://www.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,대학본부 장학 카테고리
+sookmyung_003,sookmyung,경상대학,,93039,college,숙명여대 경상대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_004,sookmyung,공과대학,,93018,college,숙명여대 공과대학 공지,https://eng.sookmyung.ac.kr/eng/5629/subview.do,https://eng.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_005,sookmyung,글로벌서비스학부,,93055,college,숙명여대 글로벌서비스학부 공지,https://global.sookmyung.ac.kr/notice/,https://global.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+sookmyung_006,sookmyung,문과대학,,93001,college,숙명여대 문과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_007,sookmyung,미디어학부,,93057,college,숙명여대 미디어학부 공지,https://home.sookmyung.ac.kr/media/11598/subview.do,https://home.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+sookmyung_008,sookmyung,미술대학,,93048,college,숙명여대 미술대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_009,sookmyung,법과대학,,93038,college,숙명여대 법과대학 공지,https://law.sookmyung.ac.kr/law/board/notice.do,https://law.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+sookmyung_010,sookmyung,사회과학대학,,93032,college,숙명여대 사회과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_011,sookmyung,생활과학대학,,93027,college,숙명여대 생활과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_012,sookmyung,순헌칼리지,,93058,college,숙명여대 순헌칼리지,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,"독립학부; 자유전공학부, 전용 보드 미확인"
+sookmyung_013,sookmyung,약학대학,,93047,college,숙명여대 약학대학 자유게시판,https://pharmacy.sookmyung.ac.kr/pharmacy/10477/subview.do,https://pharmacy.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 장학 게시 확인
+sookmyung_014,sookmyung,영어영문학부,,93056,college,숙명여대 영어영문학부 공지,https://english.sookmyung.ac.kr/smpr/board/notice.do,https://english.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+sookmyung_015,sookmyung,음악대학,,93042,college,숙명여대 음악대학 주요공지,https://music.sookmyung.ac.kr/45,https://music.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_016,sookmyung,이과대학,,93011,college,숙명여대 이과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sookmyung_017,sookmyung,한류국제대학,,93054,college,숙명여대 한류국제대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,"독립학부; 구 글로벌융합대학, 전용 보드 미확인"
+sookmyung_018,sookmyung,경상대학,경영학부,93040,department,숙명여대 경영학부 공지,https://biz.sookmyung.ac.kr/swubusiness/community/notice.do,https://biz.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_019,sookmyung,경상대학,경제학부,93041,department,숙명여대 경제학부 공지,https://econ.sookmyung.ac.kr/econ/community/notice.do,https://econ.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_020,sookmyung,공과대학,기계시스템학부,93019,department,숙명여대 기계시스템학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_021,sookmyung,공과대학,기초공학부,93021,department,숙명여대 기초공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_022,sookmyung,공과대학,소프트웨어학부,93022,department,숙명여대 소프트웨어학부(데이터사이언스) 공지,https://eng.sookmyung.ac.kr/software/5910/subview.do,https://eng.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,데이터사이언스전공 보드
+sookmyung_023,sookmyung,공과대학,신소재물리학부,93026,department,숙명여대 신소재물리학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_024,sookmyung,공과대학,인공지능공학부,93024,department,숙명여대 인공지능공학부 공지,https://aie.sookmyung.ac.kr/it/department/notice.do?mode=list,https://aie.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_025,sookmyung,공과대학,지능형전자시스템학부,93025,department,숙명여대 지능형전자시스템학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_026,sookmyung,공과대학,화공생명공학부,93020,department,숙명여대 화공생명공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_027,sookmyung,공과대학,ICT융합공학부,93023,department,숙명여대 ICT융합공학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_028,sookmyung,문과대학,교육학부,93009,department,숙명여대 교육학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_029,sookmyung,문과대학,독일언어·문화학과,93006,department,숙명여대 독일언어·문화학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_030,sookmyung,문과대학,문헌정보학과,93008,department,숙명여대 문헌정보학과 공지,https://lis.sookmyung.ac.kr/lis/7032/subview.do,https://lis.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_031,sookmyung,문과대학,문화관광외식학부,93010,department,숙명여대 문화관광외식학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_032,sookmyung,문과대학,역사문화학과,93003,department,숙명여대 역사문화학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_033,sookmyung,문과대학,일본학과,93007,department,숙명여대 일본학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_034,sookmyung,문과대학,중어중문학부,93005,department,숙명여대 중어중문학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_035,sookmyung,문과대학,프랑스언어·문화학과,93004,department,숙명여대 프랑스언어·문화학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_036,sookmyung,문과대학,한국어문학부,93002,department,숙명여대 한국어문학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_037,sookmyung,미술대학,공예과,93052,department,숙명여대 공예과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_038,sookmyung,미술대학,산업디자인과,93050,department,숙명여대 산업디자인과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_039,sookmyung,미술대학,시각·영상디자인과,93049,department,숙명여대 시각·영상디자인과 News,https://smvd.sookmyung.ac.kr/news,https://smvd.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_040,sookmyung,미술대학,환경디자인과,93051,department,숙명여대 환경디자인과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_041,sookmyung,미술대학,회화과,93053,department,숙명여대 회화과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_042,sookmyung,사회과학대학,사회심리학과,93037,department,숙명여대 사회심리학과 공지,https://socpsy.sookmyung.ac.kr/blog/categories/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD,https://socpsy.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_043,sookmyung,사회과학대학,소비자경제학과,93036,department,숙명여대 소비자경제학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_044,sookmyung,사회과학대학,정치외교학과,93033,department,숙명여대 정치외교학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_045,sookmyung,사회과학대학,행정학과,93034,department,숙명여대 행정학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_046,sookmyung,사회과학대학,홍보광고학과,93035,department,숙명여대 홍보광고학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_047,sookmyung,생활과학대학,가족자원경영학과,93028,department,숙명여대 가족자원경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_048,sookmyung,생활과학대학,식품영양학과,93031,department,숙명여대 식품영양학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_049,sookmyung,생활과학대학,아동복지학부,93029,department,숙명여대 아동복지학부 공지,https://childwelfare.sookmyung.ac.kr/childwelfare/community/notice.do,https://childwelfare.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_050,sookmyung,생활과학대학,의류학과,93030,department,숙명여대 의류학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_051,sookmyung,음악대학,관현악과,93044,department,숙명여대 관현악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_052,sookmyung,음악대학,성악과,93045,department,숙명여대 성악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_053,sookmyung,음악대학,작곡과,93046,department,숙명여대 작곡과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_054,sookmyung,음악대학,피아노과,93043,department,숙명여대 피아노과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_055,sookmyung,이과대학,무용과,93017,department,숙명여대 무용과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_056,sookmyung,이과대학,생명시스템학부,93013,department,숙명여대 생명시스템학부 공지,https://bio.sookmyung.ac.kr/bio/community/notice.do,https://bio.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_057,sookmyung,이과대학,수학과,93014,department,숙명여대 수학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_058,sookmyung,이과대학,체육교육과,93016,department,숙명여대 체육교육과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sookmyung_059,sookmyung,이과대학,통계학과,93015,department,숙명여대 통계학과 공지,https://stat.sookmyung.ac.kr/bbs/board.php?bo_table=notice,https://stat.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sookmyung_060,sookmyung,이과대학,화학과,93012,department,숙명여대 화학과 공지,https://chem.sookmyung.ac.kr/chem/community/notice.do,https://chem.sookmyung.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,

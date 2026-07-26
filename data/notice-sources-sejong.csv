@@ -1,0 +1,62 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+sejong_001,sejong,,,92000,university,세종대 장학공지(board),https://board.sejong.ac.kr/boardlist.do?bbsConfigFK=338,https://board.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,동일 보드 미러
+sejong_002,sejong,,,92000,university,세종대 학사공지,https://www.sejong.ac.kr/kor/intro/notice3.do?mode=list,https://www.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_003,sejong,,,92000,university,세종대 장학공지,https://www.sejong.ac.kr/kor/intro/notice7.do?mode=list,https://www.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,대학본부 장학
+sejong_004,sejong,경영경제대학,,92011,college,세종대 경영경제대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_005,sejong,공과대학,,92040,college,세종대 공과대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_006,sejong,대양휴머니티칼리지,,92058,college,세종대 자유전공학부/대양휴머니티 학부공지,https://classic.sejong.ac.kr/classic/liberal/notice.do,https://classic.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부; 자유전공학부 보드
+sejong_007,sejong,사회과학대학,,92007,college,세종대 사회과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_008,sejong,생명과학대학,,92023,college,세종대 생명과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_009,sejong,예체능대학,,92051,college,세종대 예체능대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_010,sejong,인공지능융합대학,,92026,college,세종대 인공지능융합대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_011,sejong,인문과학대학,,92001,college,세종대 인문과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_012,sejong,자연과학대학,,92019,college,세종대 자연과학대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_013,sejong,호텔관광대학,,92014,college,세종대 호텔관광대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 전용 보드 미확인
+sejong_014,sejong,경영경제대학,경영학부,92012,department,세종대 경영학부 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=1086&wslID=mnadpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_015,sejong,경영경제대학,경제학과,92013,department,세종대 경제학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=443&wslID=entdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_016,sejong,공과대학,건설환경공학과,92043,department,세종대 건설환경공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_017,sejong,공과대학,건축공학과,92041,department,세종대 건축공학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=2061&wslID=constdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_018,sejong,공과대학,건축학과,92042,department,세종대 건축학과 공지,https://www.architecture.sejong.ac.kr/notice,https://www.architecture.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_019,sejong,공과대학,국방AI융합시스템공학과,92050,department,세종대 국방AI융합시스템공학과 공지,https://dse.sejong.ac.kr/bbs/notice,https://dse.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_020,sejong,공과대학,기계공학과,92046,department,세종대 기계공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_021,sejong,공과대학,나노신소재공학과,92047,department,세종대 나노신소재공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_022,sejong,공과대학,양자원자력공학과,92048,department,세종대 양자원자력공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_023,sejong,공과대학,에너지자원공학과,92045,department,세종대 에너지자원공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_024,sejong,공과대학,우주항공시스템공학부,92049,department,세종대 우주항공 채용/공모전/장학생,https://ae.sejong.ac.kr/bbs/sub5_5,https://ae.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,장학 관련 보드 우선
+sejong_025,sejong,공과대학,환경융합공학과,92044,department,세종대 환경융합공학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=1936&wslID=eegdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_026,sejong,사회과학대학,미디어커뮤니케이션학과,92009,department,세종대 미디어커뮤니케이션학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_027,sejong,사회과학대학,법학과,92010,department,세종대 법학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_028,sejong,사회과학대학,행정학과,92008,department,세종대 행정학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_029,sejong,생명과학대학,생명시스템학부,92024,department,세종대 생명시스템학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_030,sejong,생명과학대학,스마트생명산업융합학과,92025,department,세종대 스마트생명산업융합학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_031,sejong,예체능대학,무용과,92056,department,세종대 무용과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_032,sejong,예체능대학,영화예술학과,92057,department,세종대 영화예술학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_033,sejong,예체능대학,음악과,92054,department,세종대 음악과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_034,sejong,예체능대학,체육학과,92055,department,세종대 체육학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_035,sejong,예체능대학,패션디자인학과,92053,department,세종대 패션디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_036,sejong,예체능대학,회화과,92052,department,세종대 회화과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_037,sejong,인공지능융합대학,국방AI로봇융합공학과,92039,department,세종대 국방AI로봇융합공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_038,sejong,인공지능융합대학,반도체시스템공학과,92028,department,세종대 반도체시스템공학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=2239&wslID=sse,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_039,sejong,인공지능융합대학,사이버국방학과,92038,department,세종대 사이버국방학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_040,sejong,인공지능융합대학,양자지능정보학과,92036,department,세종대 양자지능정보학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_041,sejong,인공지능융합대학,인공지능데이터사이언스학과,92031,department,세종대 인공지능데이터사이언스학과 공지,https://dept.sejong.ac.kr/aidsdpt/board/notice.do,https://dept.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_042,sejong,인공지능융합대학,정보보호학과,92030,department,세종대 정보보호학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=2424&wslID=isdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_043,sejong,인공지능융합대학,지능정보융합학과,92033,department,세종대 지능정보융합학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_044,sejong,인공지능융합대학,지능IoT학과,92037,department,세종대 지능IoT학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_045,sejong,인공지능융합대학,창의소프트학부,92035,department,세종대 창의소프트학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_046,sejong,인공지능융합대학,컴퓨터공학과,92029,department,세종대 컴퓨터공학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=487&wslID=cedpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_047,sejong,인공지능융합대학,콘텐츠소프트웨어학과,92034,department,세종대 콘텐츠소프트웨어학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=1126&wslID=digitdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_048,sejong,인공지능융합대학,AI로봇학과,92032,department,세종대 AI로봇학과 공지,https://air.sejong.ac.kr/bbs/notice,https://air.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_049,sejong,인공지능융합대학,AI융합전자공학과,92027,department,세종대 AI융합전자공학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=2113&wslID=electrodpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_050,sejong,인문과학대학,교육학과,92005,department,세종대 교육학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_051,sejong,인문과학대학,국어국문학과,92002,department,세종대 국어국문학과 공지,https://dept.sejong.ac.kr/kordpt/board/notice.do,https://dept.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_052,sejong,인문과학대학,국제학부,92003,department,세종대 국제학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_053,sejong,인문과학대학,글로벌인재학부,92006,department,세종대 글로벌인재학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_054,sejong,인문과학대학,역사학과,92004,department,세종대 역사학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=517&wslID=histdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_055,sejong,자연과학대학,물리천문학과,92021,department,세종대 물리천문학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=1909&wslID=phyastrodpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_056,sejong,자연과학대학,수학통계학과,92020,department,세종대 수학통계학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=587&wslID=appmath,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_057,sejong,자연과학대학,화학과,92022,department,세종대 화학과 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=637&wslID=chemdpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+sejong_058,sejong,호텔관광대학,조리서비스경영학과,92017,department,세종대 조리서비스경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_059,sejong,호텔관광대학,호텔관광외식경영학부,92015,department,세종대 호텔관광경영 공지,https://home.sejong.ac.kr/bbs/bbslist.do?bbsid=1731&wslID=hoteldpt,https://home.sejong.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,호텔관광경영학과 레거시 보드
+sejong_060,sejong,호텔관광대학,호텔외식관광프랜차이즈경영학과,92016,department,세종대 호텔외식관광프랜차이즈경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+sejong_061,sejong,호텔관광대학,호텔외식비즈니스학과,92018,department,세종대 호텔외식비즈니스학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인

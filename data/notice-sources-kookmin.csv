@@ -1,0 +1,70 @@
+﻿source_id,university_slug,college_name,department_name,org_unit_id,source_level,source_name,list_url,base_url,list_item_selector,link_selector,title_selector,date_selector,detail_content_selector,detail_date_selector,notice_url_pattern,keywords,adapter,enabled,notes
+kookmin_001,kookmin,,,90000,university,국민대 학사공지,https://www.kookmin.ac.kr/user/kmuNews/notice/4/index.do,https://www.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_002,kookmin,,,90000,university,국민대 장학공지,https://www.kookmin.ac.kr/user/kmuNews/notice/7/index.do,https://www.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,대학본부 장학
+kookmin_003,kookmin,건축대학,,90061,college,국민대 건축대학 공지,https://archi.kookmin.ac.kr/life/notice/,https://archi.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+kookmin_004,kookmin,경상대학,,90017,college,국민대 경상대학 공지,https://kyungsang.kookmin.ac.kr/community/board/notice/,https://kyungsang.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_005,kookmin,경영대학,,90020,college,국민대 경영대학 공지,https://biz.kookmin.ac.kr/community/notice/,https://biz.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_006,kookmin,공과대학,,90027,college,국민대 공과대학 장학공지,https://engineering.kookmin.ac.kr/engineering/intro/notification_scholarship.do,https://engineering.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_007,kookmin,과학기술대학,,90042,college,국민대 과학기술대학 공지,https://cst.kookmin.ac.kr/community/notice/,https://cst.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,2027 바이오/양자 개편 시 보드 재확인
+kookmin_008,kookmin,교양대학,,90067,college,국민대 교양대학,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,독립학부; 전용 보드 미확인(본부 미러만 확인)
+kookmin_009,kookmin,글로벌인문·지역대학,,90001,college,국민대 글로벌인문·지역대학 공지,https://cha.kookmin.ac.kr/community/college/notice/,https://cha.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_010,kookmin,미래융합대학,,90066,college,국민대 미래융합대학 공지,https://kmu-cts.kookmin.ac.kr/kmu-cts/etc/sitemap016.do,https://kmu-cts.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+kookmin_011,kookmin,법과대학,,90014,college,국민대 법과대학 공지,https://law.kookmin.ac.kr/law/etc-board/notice01.do,https://law.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_012,kookmin,사회과학대학,,90006,college,국민대 사회과학대학 공지,https://social.kookmin.ac.kr/social/menu/social_notice.do,https://social.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,활동 저조 가능
+kookmin_013,kookmin,소프트웨어융합대학,,90058,college,국민대 소프트웨어융합대학 SW학사공지,https://cs.kookmin.ac.kr/news/notice/,https://cs.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_014,kookmin,예술대학,,90050,college,국민대 예술대학 공지,https://art.kookmin.ac.kr/community/notice/,https://art.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_015,kookmin,자동차모빌리티대학,,90062,college,국민대 자동차모빌리티대학 학사공지,https://auto.kookmin.ac.kr/board/notice/,https://auto.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_016,kookmin,조형대학,,90032,college,국민대 조형대학 학사공지,https://design.kookmin.ac.kr/community/notice/,https://design.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_017,kookmin,체육대학,,90054,college,국민대 체육대학 공지,https://sport.kookmin.ac.kr/sports/notice/notice01.do,https://sport.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_018,kookmin,KMU International Business School,,90026,college,국민대 KIBS 공지,https://kibs.kookmin.ac.kr/notice/,https://kibs.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,독립학부
+kookmin_019,kookmin,경상대학,경제학과,90018,department,국민대 경제학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_020,kookmin,경상대학,국제통상학과,90019,department,국민대 국제통상학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_021,kookmin,경영대학,경영정보학부,90022,department,국민대 경영정보학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_022,kookmin,경영대학,경영학부,90021,department,국민대 경영학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_023,kookmin,경영대학,기업경영학부,90024,department,국민대 기업경영학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_024,kookmin,경영대학,회계세무학과,90025,department,국민대 회계세무학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_025,kookmin,경영대학,AI빅데이터융합경영학과,90023,department,국민대 AI빅데이터융합경영학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_026,kookmin,공과대학,건설시스템공학부,90030,department,국민대 건설시스템공학부 학부공지,https://cms.kookmin.ac.kr/cee/bbs/notice.do,https://cms.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_027,kookmin,공과대학,기계공학부,90029,department,국민대 기계공학부 학부공지,https://me.kookmin.ac.kr/mech/bbs/notice.do,https://me.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_028,kookmin,공과대학,신소재공학부,90028,department,국민대 신소재공학부 학부공지,https://cms.kookmin.ac.kr/mse/bbs/notice.do,https://cms.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_029,kookmin,공과대학,전자공학부,90031,department,국민대 전자공학부 학부공지,https://ee.kookmin.ac.kr/community/board/notice/,https://ee.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_030,kookmin,과학기술대학,나노전자물리학과,90045,department,국민대 나노전자물리학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_031,kookmin,과학기술대학,산림환경시스템학과,90043,department,국민대 산림환경시스템학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_032,kookmin,과학기술대학,식품영양학과,90048,department,국민대 식품영양학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_033,kookmin,과학기술대학,융합바이오공학과,90049,department,국민대 융합바이오공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_034,kookmin,과학기술대학,응용화학부,90046,department,국민대 응용화학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_035,kookmin,과학기술대학,임산생명공학과,90044,department,국민대 임산생명공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_036,kookmin,과학기술대학,정보보안암호수학과,90047,department,국민대 정보보안암호수학과 학과공지,https://cns.kookmin.ac.kr/cns/notice/notice.do,https://cns.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_037,kookmin,글로벌인문·지역대학,영어영문학부,90003,department,국민대 영어영문학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_038,kookmin,글로벌인문·지역대학,중어중문학과,90004,department,국민대 중어중문학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_039,kookmin,글로벌인문·지역대학,한국어문학부,90002,department,국민대 한국어문학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_040,kookmin,글로벌인문·지역대학,한국역사학과,90005,department,국민대 한국역사학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_041,kookmin,법과대학,기업융합법학과,90016,department,국민대 기업융합법학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_042,kookmin,법과대학,법학부,90015,department,국민대 법학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_043,kookmin,사회과학대학,교육학과,90011,department,국민대 교육학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_044,kookmin,사회과학대학,동아시아국제학부,90013,department,국민대 동아시아국제학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_045,kookmin,사회과학대학,러시아·유라시아학과,90012,department,국민대 러시아·유라시아학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_046,kookmin,사회과학대학,미디어·광고학부,90010,department,국민대 미디어·광고학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_047,kookmin,사회과학대학,사회학과,90009,department,국민대 사회학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_048,kookmin,사회과학대학,정치외교학과,90008,department,국민대 정치외교학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_049,kookmin,사회과학대학,행정학과,90007,department,국민대 행정학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_050,kookmin,소프트웨어융합대학,소프트웨어학부,90059,department,국민대 소프트웨어학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 SW학사공지와 URL 중복 방지로 공란
+kookmin_051,kookmin,소프트웨어융합대학,인공지능학부,90060,department,국민대 인공지능학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,단과대 SW학사공지와 URL 중복 방지로 공란
+kookmin_052,kookmin,예술대학,공연예술학부,90053,department,국민대 공연예술학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_053,kookmin,예술대학,미술학부,90052,department,국민대 미술학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_054,kookmin,예술대학,음악학부,90051,department,국민대 음악학부,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_055,kookmin,자동차모빌리티대학,미래모빌리티학과,90065,department,국민대 미래모빌리티학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_056,kookmin,자동차모빌리티대학,자동차공학과,90063,department,국민대 자동차공학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_057,kookmin,자동차모빌리티대학,자동차IT융합학과,90064,department,국민대 자동차IT융합학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_058,kookmin,조형대학,공간디자인학과,90038,department,국민대 공간디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_059,kookmin,조형대학,공업디자인학과,90033,department,국민대 공업디자인학과 공지,https://id.kookmin.ac.kr/id/intro/notice.do,https://id.kookmin.ac.kr,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,true,
+kookmin_060,kookmin,조형대학,금속공예학과,90035,department,국민대 금속공예학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_061,kookmin,조형대학,도자공예학과,90036,department,국민대 도자공예학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_062,kookmin,조형대학,시각디자인학과,90034,department,국민대 시각디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_063,kookmin,조형대학,영상디자인학과,90039,department,국민대 영상디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_064,kookmin,조형대학,의상디자인학과,90037,department,국민대 의상디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_065,kookmin,조형대학,자동차·운송디자인학과,90040,department,국민대 자동차·운송디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_066,kookmin,조형대학,AI디자인학과,90041,department,국민대 AI디자인학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_067,kookmin,체육대학,스포츠건강재활학과,90057,department,국민대 스포츠건강재활학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_068,kookmin,체육대학,스포츠교육학과,90055,department,국민대 스포츠교육학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
+kookmin_069,kookmin,체육대학,스포츠산업레저학과,90056,department,국민대 스포츠산업레저학과,,,,,,,,,,장학|장학금|학자금|등록금|scholarship|tuition|fellowship,,false,공지 URL 미확인
