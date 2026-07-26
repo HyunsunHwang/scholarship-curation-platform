@@ -12,7 +12,7 @@ import { searchTalent } from "@/lib/corporate/talent-search";
 
 const SORT_TABS: { value: TalentSort; label: string }[] = [
   { value: "recent", label: "최근 업데이트 순" },
-  { value: "completeness", label: "프로필 완성도 순" },
+  { value: "completeness", label: "적합도 순" },
 ];
 
 export default async function CorporateTalentExplorePage({

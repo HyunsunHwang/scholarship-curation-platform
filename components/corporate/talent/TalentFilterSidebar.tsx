@@ -3,8 +3,10 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  CAREER_LEVEL_OPTIONS,
   ENROLLMENT_STATUS_OPTIONS,
   JOB_CATEGORY_OPTIONS,
+  JOB_SEEKING_OPTIONS,
   SCHOOL_CATEGORY_OPTIONS,
   YEAR_OPTIONS,
 } from "@/lib/corporate/talent-params";
@@ -28,12 +30,11 @@ const chipActive = "border-brand bg-brand/10 text-brand";
 
 type SectionId =
   | "jobs"
+  | "career"
   | "workStatus"
   | "industries"
   | "skills"
-  | "year"
-  | "status"
-  | "school";
+  | "education";
 
 /** 선택 요약 칩 (사이드바에 항상 노출, 클릭 시 제거) */
 type SummaryChip = { key: string; label: string; onRemove: () => void };
@@ -167,10 +168,11 @@ export default function TalentFilterSidebar() {
     year: getList("year"),
     status: getList("status"),
     jobs: getList("jobs"),
+    career: getList("career"),
     industries: getList("industries"),
     skills: getList("skills"),
-    intern: searchParams.get("intern") === "1",
     offers: searchParams.get("offers") === "1",
+    noEmployed: searchParams.get("no_employed") === "1",
   };
 
   function apply(mutate: (params: URLSearchParams) => void) {
@@ -250,10 +252,11 @@ export default function TalentFilterSidebar() {
     selected.year.length +
     selected.status.length +
     selected.jobs.length +
+    selected.career.length +
     selected.industries.length +
     selected.skills.length +
-    (selected.intern ? 1 : 0) +
-    (selected.offers ? 1 : 0);
+    (selected.offers ? 1 : 0) +
+    (selected.noEmployed ? 1 : 0);
 
   const filteredSkills = useMemo(() => {
     const q = skillQuery.trim().toLowerCase();
@@ -292,45 +295,44 @@ export default function TalentFilterSidebar() {
     onRemove: () => toggleListValue("skills", skill),
   }));
 
-  const yearSummaryChips: SummaryChip[] = selected.year.map((value) => ({
+  const educationSummaryChips: SummaryChip[] = [
+    ...selected.year.map((value) => ({
+      key: `year:${value}`,
+      label:
+        YEAR_OPTIONS.find((o) => String(o.value) === value)?.label ?? value,
+      onRemove: () => toggleListValue("year", value),
+    })),
+    ...selected.status.map((status) => ({
+      key: `status:${status}`,
+      label: status,
+      onRemove: () => toggleListValue("status", status),
+    })),
+    ...selected.school.map((category) => ({
+      key: `school:${category}`,
+      label: category,
+      onRemove: () => toggleListValue("school", category),
+    })),
+  ];
+
+  const educationActiveCount =
+    selected.year.length + selected.status.length + selected.school.length;
+
+  const careerSummaryChips: SummaryChip[] = selected.career.map((value) => ({
     key: value,
     label:
-      YEAR_OPTIONS.find((o) => String(o.value) === value)?.label ?? value,
-    onRemove: () => toggleListValue("year", value),
+      CAREER_LEVEL_OPTIONS.find((o) => o.value === value)?.label ?? value,
+    onRemove: () => toggleListValue("career", value),
   }));
 
-  const statusSummaryChips: SummaryChip[] = selected.status.map((status) => ({
-    key: status,
-    label: status,
-    onRemove: () => toggleListValue("status", status),
+  const workStatusSummaryChips: SummaryChip[] = JOB_SEEKING_OPTIONS.filter(
+    (opt) =>
+      (opt.key === "offers" && selected.offers) ||
+      (opt.key === "no_employed" && selected.noEmployed),
+  ).map((opt) => ({
+    key: opt.key,
+    label: opt.label,
+    onRemove: () => toggleFlag(opt.key),
   }));
-
-  const schoolSummaryChips: SummaryChip[] = selected.school.map((category) => ({
-    key: category,
-    label: category,
-    onRemove: () => toggleListValue("school", category),
-  }));
-
-  const workStatusSummaryChips: SummaryChip[] = [
-    ...(selected.offers
-      ? [
-          {
-            key: "offers",
-            label: "제안 환영",
-            onRemove: () => toggleFlag("offers"),
-          },
-        ]
-      : []),
-    ...(selected.intern
-      ? [
-          {
-            key: "intern",
-            label: "인턴·경력 경험 보유",
-            onRemove: () => toggleFlag("intern"),
-          },
-        ]
-      : []),
-  ];
 
   return (
     <aside className="relative w-full shrink-0 rounded-xl border border-gray-200 bg-white p-4 lg:w-64">
@@ -414,31 +416,61 @@ export default function TalentFilterSidebar() {
         </FlyoutSection>
 
         <FlyoutSection
+          title="경력"
+          activeCount={selected.career.length}
+          onReset={() => clearKeys("career")}
+          summaryChips={careerSummaryChips}
+          {...sectionProps("career")}
+        >
+          <div className="flex flex-wrap gap-1.5">
+            {CAREER_LEVEL_OPTIONS.map((opt) => {
+              const active = selected.career.includes(opt.value);
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => toggleListValue("career", opt.value)}
+                  className={`${chipBase} ${active ? chipActive : chipIdle}`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </FlyoutSection>
+
+        <FlyoutSection
           title="구직 상태"
-          activeCount={(selected.intern ? 1 : 0) + (selected.offers ? 1 : 0)}
-          onReset={() => clearKeys("intern", "offers")}
+          activeCount={
+            (selected.offers ? 1 : 0) + (selected.noEmployed ? 1 : 0)
+          }
+          onReset={() => clearKeys("offers", "no_employed")}
           summaryChips={workStatusSummaryChips}
           {...sectionProps("workStatus")}
         >
-          <div className="space-y-2.5">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-ink/80">
-              <input
-                type="checkbox"
-                checked={selected.offers}
-                onChange={() => toggleFlag("offers")}
-                className="h-4 w-4 rounded border-gray-300 accent-brand"
-              />
-              제안 환영 인재만
-            </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-ink/80">
-              <input
-                type="checkbox"
-                checked={selected.intern}
-                onChange={() => toggleFlag("intern")}
-                className="h-4 w-4 rounded border-gray-300 accent-brand"
-              />
-              인턴·경력 경험 보유
-            </label>
+          <div className="flex flex-wrap gap-2">
+            {JOB_SEEKING_OPTIONS.map((opt) => {
+              const checked =
+                opt.key === "offers" ? selected.offers : selected.noEmployed;
+              return (
+                <label
+                  key={opt.key}
+                  className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                    checked
+                      ? "border-brand bg-brand/10 text-brand"
+                      : "border-gray-200 bg-white text-ink/80 hover:border-brand/40"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggleFlag(opt.key)}
+                    className="h-4 w-4 rounded border-gray-300 accent-brand"
+                  />
+                  {opt.label}
+                </label>
+              );
+            })}
           </div>
         </FlyoutSection>
 
@@ -521,75 +553,68 @@ export default function TalentFilterSidebar() {
         </FlyoutSection>
 
         <FlyoutSection
-          title="학년"
-          activeCount={selected.year.length}
-          onReset={() => clearKeys("year")}
-          summaryChips={yearSummaryChips}
-          {...sectionProps("year")}
+          title="학력"
+          activeCount={educationActiveCount}
+          onReset={() => clearKeys("year", "status", "school")}
+          summaryChips={educationSummaryChips}
+          {...sectionProps("education")}
         >
-          <div className="flex flex-wrap gap-1.5">
-            {YEAR_OPTIONS.map((opt) => {
-              const value = String(opt.value);
-              const active = selected.year.includes(value);
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => toggleListValue("year", value)}
-                  className={`${chipBase} ${active ? chipActive : chipIdle}`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
-        </FlyoutSection>
-
-        <FlyoutSection
-          title="재학 상태"
-          activeCount={selected.status.length}
-          onReset={() => clearKeys("status")}
-          summaryChips={statusSummaryChips}
-          {...sectionProps("status")}
-        >
-          <div className="flex flex-wrap gap-1.5">
-            {ENROLLMENT_STATUS_OPTIONS.map((status) => {
-              const active = selected.status.includes(status);
-              return (
-                <button
-                  key={status}
-                  type="button"
-                  onClick={() => toggleListValue("status", status)}
-                  className={`${chipBase} ${active ? chipActive : chipIdle}`}
-                >
-                  {status}
-                </button>
-              );
-            })}
-          </div>
-        </FlyoutSection>
-
-        <FlyoutSection
-          title="학교 유형"
-          activeCount={selected.school.length}
-          onReset={() => clearKeys("school")}
-          summaryChips={schoolSummaryChips}
-          {...sectionProps("school")}
-        >
-          <div className="flex flex-wrap gap-1.5">
-            {SCHOOL_CATEGORY_OPTIONS.map((category) => {
-              const active = selected.school.includes(category);
-              return (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => toggleListValue("school", category)}
-                  className={`${chipBase} ${active ? chipActive : chipIdle}`}
-                >
-                  {category}
-                </button>
-              );
-            })}
+          <div className="space-y-5">
+            <div>
+              <p className="mb-2 text-xs font-semibold text-ink/50">학년</p>
+              <div className="flex flex-wrap gap-1.5">
+                {YEAR_OPTIONS.map((opt) => {
+                  const value = String(opt.value);
+                  const active = selected.year.includes(value);
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => toggleListValue("year", value)}
+                      className={`${chipBase} ${active ? chipActive : chipIdle}`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-xs font-semibold text-ink/50">재학 상태</p>
+              <div className="flex flex-wrap gap-1.5">
+                {ENROLLMENT_STATUS_OPTIONS.map((status) => {
+                  const active = selected.status.includes(status);
+                  return (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => toggleListValue("status", status)}
+                      className={`${chipBase} ${active ? chipActive : chipIdle}`}
+                    >
+                      {status}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-xs font-semibold text-ink/50">학교 유형</p>
+              <div className="flex flex-wrap gap-1.5">
+                {SCHOOL_CATEGORY_OPTIONS.map((category) => {
+                  const active = selected.school.includes(category);
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => toggleListValue("school", category)}
+                      className={`${chipBase} ${active ? chipActive : chipIdle}`}
+                    >
+                      {category}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </FlyoutSection>
       </div>

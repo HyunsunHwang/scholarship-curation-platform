@@ -6,12 +6,12 @@ function Badge({
   tone,
 }: {
   children: React.ReactNode;
-  tone: "brand" | "amber" | "sky";
+  tone: "brand" | "sky" | "violet";
 }) {
   const tones = {
     brand: "bg-brand/10 text-brand",
-    amber: "bg-amber-100 text-amber-700",
     sky: "bg-sky-100 text-sky-700",
+    violet: "bg-violet-100 text-violet-700",
   } as const;
   return (
     <span
@@ -101,10 +101,8 @@ export default function TalentCard({ talent }: { talent: TalentCardData }) {
 
           <div className="mt-2 flex flex-wrap gap-1.5">
             {talent.isOpenToOffers ? <Badge tone="brand">제안 환영</Badge> : null}
-            {talent.isProfileComplete ? (
-              <Badge tone="amber">프로필 충실</Badge>
-            ) : null}
-            {talent.isRecentlyActive ? <Badge tone="sky">최근 활동</Badge> : null}
+            <Badge tone="violet">{talent.activeAgo}</Badge>
+            <Badge tone="sky">{talent.updatedAgo}</Badge>
           </div>
 
           {talent.headline ? (
@@ -113,7 +111,10 @@ export default function TalentCard({ talent }: { talent: TalentCardData }) {
             </p>
           ) : null}
 
-          {talent.highlights.length > 0 || talent.skills.length > 0 ? (
+          {talent.highlights.length > 0 ||
+          talent.certifications.length > 0 ||
+          talent.languages.length > 0 ||
+          talent.skills.length > 0 ? (
             <dl className="mt-3 space-y-1.5 border-t border-gray-100 pt-3">
               {talent.highlights.map((h, i) => (
                 <div key={i} className="flex items-baseline gap-2 text-sm">
@@ -131,16 +132,46 @@ export default function TalentCard({ talent }: { talent: TalentCardData }) {
                   </dd>
                 </div>
               ))}
+              {talent.certifications.length > 0 ? (
+                <div className="flex items-baseline gap-2 text-sm">
+                  <dt className="w-14 shrink-0 text-xs font-semibold text-ink/40">
+                    자격증
+                  </dt>
+                  <dd className="min-w-0 truncate text-ink/80">
+                    {talent.certifications.join(" · ")}
+                    {talent.certOverflow > 0 ? (
+                      <span className="text-ink/40">
+                        {" · "}+{talent.certOverflow}
+                      </span>
+                    ) : null}
+                  </dd>
+                </div>
+              ) : null}
+              {talent.languages.length > 0 ? (
+                <div className="flex items-baseline gap-2 text-sm">
+                  <dt className="w-14 shrink-0 text-xs font-semibold text-ink/40">
+                    언어
+                  </dt>
+                  <dd className="min-w-0 truncate text-ink/80">
+                    {talent.languages.join(" · ")}
+                    {talent.languageOverflow > 0 ? (
+                      <span className="text-ink/40">
+                        {" · "}+{talent.languageOverflow}
+                      </span>
+                    ) : null}
+                  </dd>
+                </div>
+              ) : null}
               {talent.skills.length > 0 ? (
                 <div className="flex items-baseline gap-2 text-sm">
                   <dt className="w-14 shrink-0 text-xs font-semibold text-ink/40">
                     스킬
                   </dt>
                   <dd className="min-w-0 truncate text-ink/80">
-                    {talent.skills.join("  ")}
+                    {talent.skills.join(" · ")}
                     {talent.skillOverflow > 0 ? (
                       <span className="text-ink/40">
-                        {"  "}+{talent.skillOverflow}
+                        {" · "}+{talent.skillOverflow}
                       </span>
                     ) : null}
                   </dd>
@@ -161,10 +192,6 @@ export default function TalentCard({ talent }: { talent: TalentCardData }) {
               ))}
             </div>
           ) : null}
-
-          <p className="mt-3 text-xs text-ink/40">
-            프로필 완성도 {talent.completenessPercent}% · {talent.updatedAgo}
-          </p>
         </div>
       </div>
     </article>

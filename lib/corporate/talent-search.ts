@@ -41,14 +41,18 @@ export type TalentCardData = {
   schoolLine: string;
   yearStatusLine: string;
   isOpenToOffers: boolean;
-  isProfileComplete: boolean;
-  isRecentlyActive: boolean;
   highlights: TalentHighlight[];
+  certifications: string[];
+  certOverflow: number;
+  languages: string[];
+  languageOverflow: number;
   skills: string[];
   skillOverflow: number;
   interestJobLabels: string[];
-  completenessPercent: number;
+  /** 예: "오늘 업데이트", "3일 전 업데이트" */
   updatedAgo: string;
+  /** 예: "2시간 전 활동" — 현재는 profile.updated_at 기준 */
+  activeAgo: string;
 };
 
 export type TalentSearchResult = {
@@ -84,13 +88,21 @@ function formatPeriod(
   return endLabel ? `${startLabel} ~ ${endLabel}` : startLabel;
 }
 
-function formatUpdatedAgo(updatedAt: string): string {
-  const diffMs = Date.now() - new Date(updatedAt).getTime();
-  const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
-  if (days <= 0) return "오늘 업데이트";
-  if (days < 7) return `${days}일 전 업데이트`;
-  if (days < 30) return `${Math.floor(days / 7)}주 전 업데이트`;
-  return `${Math.floor(days / 30)}개월 전 업데이트`;
+/** 상대 시각 라벨 — suffix는 "업데이트" | "활동" */
+function formatRelativeAgo(
+  isoDate: string,
+  suffix: "업데이트" | "활동",
+): string {
+  const diffMs = Math.max(0, Date.now() - new Date(isoDate).getTime());
+  const minutes = Math.floor(diffMs / (60 * 1000));
+  if (minutes < 1) return `방금 ${suffix}`;
+  if (minutes < 60) return `${minutes}분 전 ${suffix}`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}시간 전 ${suffix}`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return days === 1 ? `어제 ${suffix}` : `${days}일 전 ${suffix}`;
+  if (days < 30) return `${Math.floor(days / 7)}주 전 ${suffix}`;
+  return `${Math.floor(days / 30)}개월 전 ${suffix}`;
 }
 
 type SpecRow = {
@@ -106,39 +118,45 @@ type SpecRow = {
   sort_order: number;
 };
 
-/** 카드 하이라이트 우선순위 — 그룹바이의 경력/성과/연구 줄에 대응 */
+/** 카드 하이라이트 우선순위 — 경력/성과 줄. 자격증·언어는 별도 목록으로 처리 */
 const HIGHLIGHT_PRIORITY: SpecItemType[] = [
   "experience",
   "award",
   "project",
   "activity",
-  "certification",
-  "language",
 ];
 
-function highlightKindLabel(type: SpecItemType): string {
-  if (type === "certification") return "자격증";
-  if (type === "language") return "언어";
-  return experienceKindLabel(type);
-}
+/** 스킬·자격증·언어 카드에 노출할 최대 개수 (초과분은 +N) */
+const TAG_VISIBLE = 4;
 
 function pickHighlights(items: SpecRow[]): TalentHighlight[] {
   const highlights: TalentHighlight[] = [];
   for (const type of HIGHLIGHT_PRIORITY) {
     const item = items.find((i) => i.item_type === type);
     if (!item) continue;
-    const titleOnly = type === "certification" || type === "language";
     highlights.push({
-      kindLabel: highlightKindLabel(type),
+      kindLabel: experienceKindLabel(type),
       title: item.title,
-      organization: titleOnly ? null : item.organization,
-      period: titleOnly
-        ? null
-        : formatPeriod(item.start_date, item.end_date, item.is_current),
+      organization: item.organization,
+      period: formatPeriod(item.start_date, item.end_date, item.is_current),
     });
     if (highlights.length >= 3) break;
   }
   return highlights;
+}
+
+function pickTaggedTitles(
+  items: SpecRow[],
+  type: "certification" | "language",
+): { titles: string[]; overflow: number } {
+  const titles = items
+    .filter((i) => i.item_type === type)
+    .map((i) => i.title.trim())
+    .filter(Boolean);
+  return {
+    titles: titles.slice(0, TAG_VISIBLE),
+    overflow: Math.max(0, titles.length - TAG_VISIBLE),
+  };
 }
 
 export async function searchTalent(
@@ -162,7 +180,7 @@ export async function searchTalent(
     query = query.in("academic_year", filters.years);
   if (filters.statuses.length > 0)
     query = query.in("enrollment_status", filters.statuses);
-  if (filters.openToOffers) query = query.eq("is_open_to_offers", true);
+  if (filters.activelySeeking) query = query.eq("is_open_to_offers", true);
   if (filters.skills.length > 0)
     query = query.overlaps("skills", filters.skills);
   if (filters.industries.length > 0)
@@ -197,9 +215,6 @@ export async function searchTalent(
     }, new Map<string, SpecRow[]>());
   }
 
-  const RECENT_ACTIVE_MS = 7 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-
   let candidates = profiles.map((profile) => {
     const items = specByUser.get(profile.id) ?? [];
     const interestJobs = (profile.interest_categories ?? []).filter(
@@ -232,9 +247,23 @@ export async function searchTalent(
     return { profile, items, interestJobs, skills, completeness };
   });
 
-  if (filters.hasInternship) {
-    candidates = candidates.filter(({ items }) =>
-      items.some((i) => i.item_type === "experience"),
+  // 신입/경력 — 둘 다 고르면 전체와 동일하므로 스킵
+  const wantNew = filters.careerLevels.includes("new");
+  const wantExp = filters.careerLevels.includes("exp");
+  if (wantNew !== wantExp) {
+    candidates = candidates.filter(({ items }) => {
+      const hasExperience = items.some((i) => i.item_type === "experience");
+      return wantExp ? hasExperience : !hasExperience;
+    });
+  }
+
+  // 재직중 제외 — 현재 진행 중인 경력(experience + is_current)이 있는 인재 제외
+  if (filters.excludeEmployed) {
+    candidates = candidates.filter(
+      ({ items }) =>
+        !items.some(
+          (i) => i.item_type === "experience" && i.is_current === true,
+        ),
     );
   }
 
@@ -278,6 +307,8 @@ export async function searchTalent(
       );
 
       const bioSummary = profile.bio?.trim().replace(/\s+/g, " ") ?? "";
+      const certifications = pickTaggedTitles(specItems, "certification");
+      const languages = pickTaggedTitles(specItems, "language");
 
       return {
         id: profile.id,
@@ -289,15 +320,17 @@ export async function searchTalent(
         schoolLine: schoolParts.join(" · "),
         yearStatusLine: yearStatusParts.join(" · "),
         isOpenToOffers: profile.is_open_to_offers,
-        isProfileComplete: completeness.percent >= 70,
-        isRecentlyActive:
-          now - new Date(profile.updated_at).getTime() <= RECENT_ACTIVE_MS,
         highlights: pickHighlights(specItems),
-        skills: skills.slice(0, 4),
-        skillOverflow: Math.max(0, skills.length - 4),
+        certifications: certifications.titles,
+        certOverflow: certifications.overflow,
+        languages: languages.titles,
+        languageOverflow: languages.overflow,
+        skills: skills.slice(0, TAG_VISIBLE),
+        skillOverflow: Math.max(0, skills.length - TAG_VISIBLE),
         interestJobLabels: interestJobs.slice(0, 3).map(interestJobLabel),
-        completenessPercent: completeness.percent,
-        updatedAgo: formatUpdatedAgo(profile.updated_at),
+        updatedAgo: formatRelativeAgo(profile.updated_at, "업데이트"),
+        // 로그인/세션 활동 시각이 생기면 교체. 당분간 프로필 갱신 시각을 활동 프록시로 사용.
+        activeAgo: formatRelativeAgo(profile.updated_at, "활동"),
       };
     },
   );

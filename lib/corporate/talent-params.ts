@@ -22,6 +22,9 @@ export const TALENT_PAGE_SIZE = 10;
 
 export type TalentSort = "recent" | "completeness";
 
+/** 프로필 경력(experience) 유무 기준 — new=없음, exp=있음 */
+export type TalentCareerLevel = "new" | "exp";
+
 export type TalentFilters = {
   schoolCategories: SchoolCategoryType[];
   years: number[];
@@ -33,11 +36,20 @@ export type TalentFilters = {
   jobs: string[];
   industries: InterestIndustryId[];
   skills: string[];
-  hasInternship: boolean;
-  openToOffers: boolean;
+  /** 신입/경력 — 둘 다 또는 없음이면 미적용 */
+  careerLevels: TalentCareerLevel[];
+  /** 적극 구직중 — profiles.is_open_to_offers */
+  activelySeeking: boolean;
+  /** 재직중 제외 — experience.is_current 인 항목이 없는 인재만 */
+  excludeEmployed: boolean;
   sort: TalentSort;
   page: number;
 };
+
+export const JOB_SEEKING_OPTIONS = [
+  { key: "offers" as const, label: "적극 구직중" },
+  { key: "no_employed" as const, label: "재직중 제외" },
+] as const;
 
 export const SCHOOL_CATEGORY_OPTIONS: SchoolCategoryType[] = [
   "4년제",
@@ -64,6 +76,18 @@ export const ENROLLMENT_STATUS_OPTIONS: EnrollmentStatusType[] = [
 ];
 
 export const JOB_CATEGORY_OPTIONS = INTEREST_CATEGORIES;
+
+export const CAREER_LEVEL_OPTIONS: {
+  value: TalentCareerLevel;
+  label: string;
+}[] = [
+  { value: "new", label: "신입" },
+  { value: "exp", label: "경력" },
+];
+
+const CAREER_LEVEL_SET: ReadonlySet<string> = new Set(
+  CAREER_LEVEL_OPTIONS.map((o) => o.value),
+);
 
 const SKILL_SET: ReadonlySet<string> = new Set(SKILL_CATALOG);
 const SCHOOL_CATEGORY_SET: ReadonlySet<string> = new Set(
@@ -94,6 +118,17 @@ export function parseTalentSearchParams(raw: RawSearchParams): TalentFilters {
   const sortRaw = Array.isArray(raw.sort) ? raw.sort[0] : raw.sort;
   const pageRaw = Number(Array.isArray(raw.page) ? raw.page[0] : raw.page);
 
+  let careerLevels = readList(raw, "career").filter(
+    (v): v is TalentCareerLevel => CAREER_LEVEL_SET.has(v),
+  );
+  // 구 URL `intern=1` → 경력 보유와 동일하게 취급
+  if (
+    careerLevels.length === 0 &&
+    (Array.isArray(raw.intern) ? raw.intern[0] : raw.intern) === "1"
+  ) {
+    careerLevels = ["exp"];
+  }
+
   return {
     schoolCategories: readList(raw, "school").filter((v): v is SchoolCategoryType =>
       SCHOOL_CATEGORY_SET.has(v),
@@ -107,8 +142,12 @@ export function parseTalentSearchParams(raw: RawSearchParams): TalentFilters {
     ),
     industries: readList(raw, "industries").filter(isInterestIndustryId),
     skills: readList(raw, "skills").filter((v) => SKILL_SET.has(v)),
-    hasInternship: (Array.isArray(raw.intern) ? raw.intern[0] : raw.intern) === "1",
-    openToOffers: (Array.isArray(raw.offers) ? raw.offers[0] : raw.offers) === "1",
+    careerLevels,
+    activelySeeking:
+      (Array.isArray(raw.offers) ? raw.offers[0] : raw.offers) === "1",
+    excludeEmployed:
+      (Array.isArray(raw.no_employed) ? raw.no_employed[0] : raw.no_employed) ===
+      "1",
     sort: sortRaw === "completeness" ? "completeness" : "recent",
     page: Number.isInteger(pageRaw) && pageRaw >= 1 ? pageRaw : 1,
   };
@@ -130,8 +169,10 @@ export function talentFiltersToQuery(
   if (merged.industries.length)
     params.set("industries", merged.industries.join(","));
   if (merged.skills.length) params.set("skills", merged.skills.join(","));
-  if (merged.hasInternship) params.set("intern", "1");
-  if (merged.openToOffers) params.set("offers", "1");
+  if (merged.careerLevels.length)
+    params.set("career", merged.careerLevels.join(","));
+  if (merged.activelySeeking) params.set("offers", "1");
+  if (merged.excludeEmployed) params.set("no_employed", "1");
   if (merged.sort !== "recent") params.set("sort", merged.sort);
   if (merged.page > 1) params.set("page", String(merged.page));
 
@@ -147,7 +188,8 @@ export function hasActiveTalentFilters(filters: TalentFilters): boolean {
     filters.jobs.length > 0 ||
     filters.industries.length > 0 ||
     filters.skills.length > 0 ||
-    filters.hasInternship ||
-    filters.openToOffers
+    filters.careerLevels.length > 0 ||
+    filters.activelySeeking ||
+    filters.excludeEmployed
   );
 }
