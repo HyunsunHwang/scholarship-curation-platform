@@ -15,6 +15,7 @@ type AirbnbHeaderProps = {
   isLoggedIn: boolean;
   isAdmin: boolean;
   profileTitle: string;
+  profileAvatarUrl?: string | null;
   urgentBookmarkCount: number;
   /** 호환용 — 헤더는 로고·메인탭·검색만 표시 */
   variant?: "expandable" | "compact";
@@ -191,11 +192,13 @@ function UserActions({
   isLoggedIn,
   isAdmin,
   profileTitle,
+  profileAvatarUrl,
   onComingSoon,
 }: {
   isLoggedIn: boolean;
   isAdmin: boolean;
   profileTitle: string;
+  profileAvatarUrl?: string | null;
   onComingSoon: (label: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -295,6 +298,7 @@ function UserActions({
               />
             </svg>
             <ProfileAvatar
+              src={profileAvatarUrl}
               alt={profileTitle}
               className="h-7 w-7"
               sizes="28px"
@@ -363,6 +367,7 @@ export default function AirbnbHeader({
   isLoggedIn,
   isAdmin,
   profileTitle,
+  profileAvatarUrl,
 }: AirbnbHeaderProps) {
   const pathname = usePathname();
   const blendWithHero = pathname === "/";
@@ -471,6 +476,7 @@ export default function AirbnbHeader({
               isLoggedIn={isLoggedIn}
               isAdmin={isAdmin}
               profileTitle={profileTitle}
+              profileAvatarUrl={profileAvatarUrl}
               onComingSoon={setComingSoon}
             />
           </div>

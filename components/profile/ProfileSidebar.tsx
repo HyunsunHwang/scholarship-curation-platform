@@ -197,7 +197,7 @@ export default function ProfileSidebar({
           {segments.map((done, i) => (
             <span
               key={i}
-              className={`h-1.5 flex-1 rounded-full ${done ? "bg-brand" : "bg-gray-100"}`}
+              className={`h-2 flex-1 rounded-full ${done ? "bg-[#8019de]" : "bg-gray-100"}`}
             />
           ))}
         </div>

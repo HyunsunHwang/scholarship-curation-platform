@@ -190,6 +190,7 @@ export default async function ScholarshipDetailPage({
             currentUser={user}
             currentUserRole={navContext.role}
             currentUserName={navContext.name}
+            currentUserAvatarUrl={navContext.avatarUrl}
             urgentBookmarkCount={navContext.urgentBookmarkCount}
           />
         </HomeSearchRoot>

@@ -7,12 +7,14 @@ export default async function SpotifyTopNav({
   currentUser,
   currentUserRole,
   currentUserName,
+  currentUserAvatarUrl,
   urgentBookmarkCount: urgentBookmarkCountProp,
   variant = "expandable",
 }: {
   currentUser?: User | null;
   currentUserRole?: string | null;
   currentUserName?: string | null;
+  currentUserAvatarUrl?: string | null;
   urgentBookmarkCount?: number;
   /** 호환용 prop — 헤더 UI는 variant와 무관하게 동일 */
   variant?: "expandable" | "compact";
@@ -31,38 +33,52 @@ export default async function SpotifyTopNav({
 
   const siteSettings = await siteSettingsPromise;
 
-  let profile: { role: string; name: string | null } | null =
-    currentUserRole !== undefined || currentUserName !== undefined
-      ? { role: currentUserRole ?? "", name: currentUserName ?? null }
-      : null;
+  const needsProfileQuery =
+    Boolean(user) &&
+    (currentUserRole === undefined ||
+      currentUserName === undefined ||
+      currentUserAvatarUrl === undefined);
+  const needsUrgentQuery =
+    Boolean(user) && urgentBookmarkCountProp === undefined;
+
+  let role = currentUserRole ?? "";
+  let name = currentUserName ?? null;
+  let avatarUrl = currentUserAvatarUrl ?? null;
   let urgentBookmarkCount = urgentBookmarkCountProp ?? 0;
 
-  if (user && (!profile || urgentBookmarkCountProp === undefined)) {
+  if (needsProfileQuery || needsUrgentQuery) {
     supabase ??= await createClient();
     const [profileResult, urgentCountResult] = await Promise.all([
-      profile
-        ? Promise.resolve({ data: profile })
-        : supabase
+      needsProfileQuery
+        ? supabase
             .from("profiles")
-            .select("role, name")
-            .eq("id", user.id)
-            .single(),
-      urgentBookmarkCountProp !== undefined
-        ? Promise.resolve({ data: urgentBookmarkCountProp, error: null })
-        : supabase.rpc("get_urgent_bookmark_count", {
-            p_user_id: user.id,
+            .select("role, name, avatar_url")
+            .eq("id", user!.id)
+            .single()
+        : Promise.resolve({ data: null, error: null }),
+      needsUrgentQuery
+        ? supabase.rpc("get_urgent_bookmark_count", {
+            p_user_id: user!.id,
             p_deadline_days: 6,
-          }),
+          })
+        : Promise.resolve({ data: urgentBookmarkCount, error: null }),
     ]);
-    profile = profileResult.data;
-    if (!urgentCountResult.error) {
+
+    if (profileResult.data) {
+      if (currentUserRole === undefined) role = profileResult.data.role ?? "";
+      if (currentUserName === undefined) name = profileResult.data.name ?? null;
+      if (currentUserAvatarUrl === undefined) {
+        avatarUrl = profileResult.data.avatar_url ?? null;
+      }
+    }
+    if (!urgentCountResult.error && needsUrgentQuery) {
       urgentBookmarkCount = Number(urgentCountResult.data ?? 0);
     }
   }
 
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = role === "admin";
   const headerLogoSrc = getHeaderLogoSrc(siteSettings);
-  const profileTitle = profile?.name ?? user?.email ?? "프로필";
+  const profileTitle = name ?? user?.email ?? "프로필";
 
   return (
     <AirbnbHeader
@@ -70,6 +86,7 @@ export default async function SpotifyTopNav({
       isLoggedIn={Boolean(user)}
       isAdmin={isAdmin}
       profileTitle={profileTitle}
+      profileAvatarUrl={avatarUrl}
       urgentBookmarkCount={urgentBookmarkCount}
       variant={variant}
     />

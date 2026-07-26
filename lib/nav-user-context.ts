@@ -4,6 +4,7 @@ import { getCachedHomeProfileBundle } from "@/lib/home-profile-bundle";
 export type NavUserContext = {
   role: string | null;
   name: string | null;
+  avatarUrl: string | null;
   urgentBookmarkCount: number;
 };
 
@@ -15,7 +16,7 @@ export async function resolveNavUserContext(
   user: User | null | undefined
 ): Promise<NavUserContext> {
   if (!user) {
-    return { role: null, name: null, urgentBookmarkCount: 0 };
+    return { role: null, name: null, avatarUrl: null, urgentBookmarkCount: 0 };
   }
 
   const { profile, urgentBookmarkCount } = await getCachedHomeProfileBundle(
@@ -25,6 +26,7 @@ export async function resolveNavUserContext(
   return {
     role: profile?.role ?? null,
     name: profile?.name ?? null,
+    avatarUrl: profile?.avatar_url ?? null,
     urgentBookmarkCount,
   };
 }
