@@ -1314,6 +1314,14 @@ test("operational diagnostics v2 CSV exposes topology and adapter evidence addit
     }],
   });
   assert.equal(diagnostics.version, "operational-crawl-diagnostics-v2");
+  assert.equal(
+    diagnostics.metric_semantics.contaminated_candidate_leak_count,
+    "selected_candidate_navigation_leak",
+  );
+  assert.equal(
+    diagnostics.metric_semantics.navigation_url_overlap_count,
+    "duplicate_url_observed_in_navigation",
+  );
   const csv = buildOperationalCrawlDiagnosticsCsv(diagnostics);
   for (const column of [
     "content_topology_profiles",
