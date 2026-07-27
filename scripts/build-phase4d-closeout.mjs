@@ -7,7 +7,12 @@ import { buildPhase4FullCaptureDryRun } from "../lib/crawler-engine/runtime-diag
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const git = (args) => execFileSync("git", ["-C", root, ...args], { encoding: "utf8" }).trim();
-const runTest = (script) => execFileSync("npm.cmd", ["run", script], { cwd: root, stdio: "pipe", encoding: "utf8" });
+const TEST_SCRIPTS = {
+  "test:phase4-full-capture-dry-run": "scripts/test-phase4-full-capture-dry-run.mjs",
+  "test:phase4-full-capture-execution-contract": "scripts/test-phase4-full-capture-execution-contract.mjs",
+  "test:phase4-resume-contract": "scripts/test-phase4-resume-contract.mjs",
+};
+const runTest = (script) => execFileSync(process.execPath, [TEST_SCRIPTS[script]], { cwd: root, stdio: "pipe", encoding: "utf8" });
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const implementationCodeSha = git(["rev-parse", "HEAD"]);
 if (git(["status", "--porcelain", "--untracked-files=no"]) || execFileSync("git", ["-C", root, "diff", "--check"], { encoding: "utf8" }).trim()) throw new Error("phase4d_closeout_requires_clean_implementation_tree");
