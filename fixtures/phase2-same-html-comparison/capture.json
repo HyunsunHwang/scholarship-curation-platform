@@ -1,0 +1,12 @@
+{
+  "source_id": "fixture_001",
+  "capture_id": "fixture-capture-001",
+  "requested_url": "https://example.test/notices",
+  "final_url": "https://example.test/notices",
+  "captured_at": "2026-07-27T00:00:00.000Z",
+  "content_type": "text/html; charset=utf-8",
+  "charset": "utf-8",
+  "response_byte_count": 271,
+  "redirect_chain": [],
+  "html": "<html><body><nav><a href=\"/notice?id=999\">메뉴</a></nav><table class=\"board\"><tr><td class=\"title\"><a href=\"/notice?id=123#top\">장학 공지</a></td><td class=\"date\">2026-07-27</td></tr></table><div class=\"pagination\"><a href=\"/notice?page=2\">2</a></div></body></html>"
+}

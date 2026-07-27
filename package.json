@@ -48,6 +48,8 @@
     "test:phase2-operational-analyzer": "node scripts/test-phase2-operational-analyzer.mjs",
     "test:phase2-candidate-comparison": "node scripts/test-phase2-candidate-comparison.mjs",
     "build:phase2-candidate-comparison": "node scripts/build-phase2-candidate-comparison-evidence.mjs",
+    "test:phase2-same-html-comparison": "node scripts/test-phase2-same-html-comparison.mjs",
+    "build:phase2-same-html-comparison": "node scripts/build-phase2-same-html-comparison.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:inline-section-identity": "node scripts/test-inline-section-identity.mjs",
