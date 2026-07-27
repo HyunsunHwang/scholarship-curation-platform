@@ -56,6 +56,7 @@
     "build:phase3-parser-remediation-clusters": "node scripts/build-phase3-parser-remediation-clusters.mjs",
     "test:phase4-capture-orchestration": "node scripts/test-phase4-capture-orchestration.mjs",
     "test:phase4-capture-pilot": "node scripts/test-phase4-capture-pilot.mjs",
+    "test:phase4-capture-artifacts": "node scripts/test-phase4-capture-artifacts.mjs",
     "run:phase4-same-html-capture-pilot": "node scripts/run-phase4-same-html-capture-pilot.mjs",
     "test:phase4-capture-pilot-report": "node scripts/test-phase4-capture-pilot-report.mjs",
     "build:phase4-capture-pilot-report": "node scripts/build-phase4-capture-pilot-report.mjs",

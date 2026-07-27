@@ -8,10 +8,10 @@ const rootDirectory = await fs.mkdtemp(path.join(os.tmpdir(), "phase4-pilot-"));
 const directory = path.join(rootDirectory, "artifacts");
 let calls = 0;
 const registry = { fingerprint: { mode: "manifest", sourceCount: PHASE4_PILOT_SOURCES.length }, sources: PHASE4_PILOT_SOURCES.map(({ sourceId }) => ({ sourceId, sourceName: sourceId, listUrl: `https://example.test/${sourceId}`, enabled: true })) };
-const runner = async ({ onResult, resume }) => {
+const runner = async ({ artifactWriter, resume }) => {
   calls += 1;
   const row = { source_id: "cau_003", capture_status: resume ? "resume_skipped" : "capture_success", evidence_status: "insufficient_evidence", list_fetch_count: resume ? 0 : 1, request_attempt_count: 0 };
-  await onResult(row);
+  if (!resume) await artifactWriter.commit({ schema_version: "phase4-capture-artifact-v1", source_id: row.source_id, run_identity: "fake" });
   return { source_count: PHASE4_PILOT_SOURCES.length, results: [row], checkpoint: { summary: {} } };
 };
 try {

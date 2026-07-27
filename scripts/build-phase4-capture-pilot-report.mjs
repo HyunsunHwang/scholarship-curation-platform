@@ -16,6 +16,13 @@ export function buildPhase4CapturePilotReport(pilotSummary) {
     blocking_reason: row.blocking_reason,
     list_fetch_count: row.list_fetch_count,
     request_attempt_count: row.request_attempt_count,
+    artifact: row.artifact ? {
+      artifact_status: row.artifact.artifact_status,
+      artifact_path: row.artifact.artifact_path,
+      artifact_sha256: row.artifact.artifact_sha256,
+      artifact_schema_version: row.artifact.artifact_schema_version,
+      capture_contract_version: row.artifact.capture_contract_version,
+    } : null,
     capture: row.capture ? {
       requested_url: row.capture.requested_url,
       final_url: row.capture.final_url,
@@ -38,6 +45,9 @@ export function buildPhase4CapturePilotReport(pilotSummary) {
   const comparisonRows = rows.filter((row) => row.same_html_comparison);
   return {
     schema_version: "phase4-capture-pilot-report-v1",
+    run_identity: pilotSummary.run_identity ?? null,
+    capture_contract_version: pilotSummary.contract?.capture_contract_version ?? null,
+    contract_fingerprint: pilotSummary.contract_fingerprint ?? null,
     pilot_source_count: rows.length,
     capture_status_counts: countBy(rows, "capture_status"),
     evidence_status_counts: countBy(rows, "evidence_status"),

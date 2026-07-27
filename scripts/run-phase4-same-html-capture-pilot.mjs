@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import crypto from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
@@ -34,6 +35,74 @@ function parseArgs(argv) {
 async function writeNewJson(filePath, value) {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", flag: "wx" });
+}
+
+function sha256(value) { return crypto.createHash("sha256").update(value).digest("hex"); }
+
+export function createPhase4CaptureArtifactWriter(directory) {
+  const capturesDirectory = path.join(directory, "captures");
+  const artifactPathFor = (sourceId) => path.join(capturesDirectory, `${sourceId}.json`);
+  return {
+    async commit(artifact) {
+      const finalPath = artifactPathFor(artifact.source_id);
+      const temporaryPath = `${finalPath}.tmp-${process.pid}-${crypto.randomBytes(6).toString("hex")}`;
+      let handle = null;
+      try {
+        await fs.mkdir(capturesDirectory, { recursive: true });
+        try { await fs.access(finalPath); throw new Error("artifact_already_exists"); } catch (error) { if (error?.message === "artifact_already_exists") throw error; if (error?.code !== "ENOENT") throw error; }
+        handle = await fs.open(temporaryPath, "wx");
+        await handle.writeFile(`${JSON.stringify(artifact, null, 2)}\n`, "utf8");
+        await handle.sync(); await handle.close(); handle = null;
+        await fs.rename(temporaryPath, finalPath);
+        const bytes = await fs.readFile(finalPath);
+        const parsed = JSON.parse(bytes.toString("utf8"));
+        if (parsed.schema_version !== artifact.schema_version || parsed.source_id !== artifact.source_id || parsed.run_identity !== artifact.run_identity) throw new Error("artifact_schema_or_source_mismatch");
+        return { artifact_committed: true, artifact_path: finalPath, artifact_sha256: sha256(bytes) };
+      } catch (error) {
+        try { await handle?.close(); } catch {}
+        try { await fs.unlink(temporaryPath); } catch {}
+        error.code ??= error.message === "artifact_already_exists" ? "artifact_already_exists" : "artifact_commit_failure";
+        throw error;
+      }
+    },
+    async verify(metadata, expected) {
+      try {
+        const bytes = await fs.readFile(metadata.artifact_path);
+        if (sha256(bytes) !== metadata.artifact_sha256) return false;
+        const artifact = JSON.parse(bytes.toString("utf8"));
+        return artifact.schema_version === metadata.artifact_schema_version
+          && artifact.capture_contract_version === metadata.capture_contract_version
+          && artifact.source_id === expected.sourceId
+          && artifact.run_identity === expected.runIdentity
+          && artifact.contract_fingerprint === expected.contractFingerprint
+          && (metadata.capture_id == null || artifact.capture?.capture_id === metadata.capture_id);
+      } catch { return false; }
+    },
+    async recover({ sourceId, runIdentity, contractFingerprint }) {
+      const finalPath = artifactPathFor(sourceId);
+      try {
+        const bytes = await fs.readFile(finalPath);
+        const artifact = JSON.parse(bytes.toString("utf8"));
+        if (artifact.schema_version !== "phase4-capture-artifact-v1" || artifact.source_id !== sourceId || artifact.run_identity !== runIdentity || artifact.contract_fingerprint !== contractFingerprint) return null;
+        return {
+          source_id: sourceId,
+          capture_id: artifact.capture?.capture_id ?? null,
+          capture_status: artifact.capture_status,
+          evidence_status: artifact.evidence_status,
+          next_phase_queue: artifact.next_phase_queue,
+          blocking_reason: artifact.blocking_reason,
+          artifact_status: "committed",
+          artifact_path: finalPath,
+          artifact_sha256: sha256(bytes),
+          artifact_schema_version: artifact.schema_version,
+          capture_contract_version: artifact.capture_contract_version,
+        };
+      } catch (error) {
+        if (error?.code === "ENOENT") return null;
+        throw error;
+      }
+    },
+  };
 }
 
 async function exists(filePath) {
@@ -75,10 +144,7 @@ export async function runPhase4CapturePilot({
     hostConcurrency: 1,
     timeoutMs: 25_000,
     retryCount: 1,
-    onResult: async (row) => {
-      if (row.capture_status === "resume_skipped") return;
-      await writeNewJson(path.join(directory, "captures", `${row.source_id}.json`), row);
-    },
+    artifactWriter: createPhase4CaptureArtifactWriter(directory),
   });
   await writeNewJson(path.join(directory, summaryName), {
     ...result,
