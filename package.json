@@ -57,6 +57,7 @@
     "test:phase4-capture-orchestration": "node scripts/test-phase4-capture-orchestration.mjs",
     "test:phase4-capture-pilot": "node scripts/test-phase4-capture-pilot.mjs",
     "test:phase4-capture-artifacts": "node scripts/test-phase4-capture-artifacts.mjs",
+    "test:phase4-capture-artifact-validator": "node scripts/test-phase4-capture-artifact-validator.mjs",
     "run:phase4-same-html-capture-pilot": "node scripts/run-phase4-same-html-capture-pilot.mjs",
     "test:phase4-capture-pilot-report": "node scripts/test-phase4-capture-pilot-report.mjs",
     "build:phase4-capture-pilot-report": "node scripts/build-phase4-capture-pilot-report.mjs",

@@ -4,6 +4,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadNoticeSourceManifestRegistry } from "../lib/notice-source-manifest-loader.mjs";
 import { runPhase4SameHtmlCapture } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-orchestration.mjs";
+import {
+  PHASE4_CAPTURE_ARTIFACT_SCHEMA_VERSION,
+  validatePhase4ArtifactMetadata,
+  validatePhase4CaptureArtifact,
+} from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-artifact-validator.mjs";
 
 // Deliberately varied list contracts: table/query, KBoard, event-handler, generic,
 // likely inline/external, API-backed SPA, and a known externally problematic source.
@@ -48,15 +53,16 @@ export function createPhase4CaptureArtifactWriter(directory) {
       const temporaryPath = `${finalPath}.tmp-${process.pid}-${crypto.randomBytes(6).toString("hex")}`;
       let handle = null;
       try {
+        const canonical = validatePhase4CaptureArtifact(artifact, { expected: { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint } });
         await fs.mkdir(capturesDirectory, { recursive: true });
-        try { await fs.access(finalPath); throw new Error("artifact_already_exists"); } catch (error) { if (error?.message === "artifact_already_exists") throw error; if (error?.code !== "ENOENT") throw error; }
         handle = await fs.open(temporaryPath, "wx");
-        await handle.writeFile(`${JSON.stringify(artifact, null, 2)}\n`, "utf8");
+        await handle.writeFile(`${JSON.stringify(canonical, null, 2)}\n`, "utf8");
         await handle.sync(); await handle.close(); handle = null;
-        await fs.rename(temporaryPath, finalPath);
+        try { await fs.link(temporaryPath, finalPath); } catch (error) { if (error?.code === "EEXIST") error.code = "artifact_already_exists"; throw error; }
+        await fs.unlink(temporaryPath);
         const bytes = await fs.readFile(finalPath);
         const parsed = JSON.parse(bytes.toString("utf8"));
-        if (parsed.schema_version !== artifact.schema_version || parsed.source_id !== artifact.source_id || parsed.run_identity !== artifact.run_identity) throw new Error("artifact_schema_or_source_mismatch");
+        validatePhase4CaptureArtifact(parsed, { expected: { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint } });
         return { artifact_committed: true, artifact_path: finalPath, artifact_sha256: sha256(bytes) };
       } catch (error) {
         try { await handle?.close(); } catch {}
@@ -67,15 +73,12 @@ export function createPhase4CaptureArtifactWriter(directory) {
     },
     async verify(metadata, expected) {
       try {
+        const normalizedMetadata = validatePhase4ArtifactMetadata(metadata, expected);
         const bytes = await fs.readFile(metadata.artifact_path);
-        if (sha256(bytes) !== metadata.artifact_sha256) return false;
+        if (sha256(bytes) !== normalizedMetadata.artifact_sha256) return false;
         const artifact = JSON.parse(bytes.toString("utf8"));
-        return artifact.schema_version === metadata.artifact_schema_version
-          && artifact.capture_contract_version === metadata.capture_contract_version
-          && artifact.source_id === expected.sourceId
-          && artifact.run_identity === expected.runIdentity
-          && artifact.contract_fingerprint === expected.contractFingerprint
-          && (metadata.capture_id == null || artifact.capture?.capture_id === metadata.capture_id);
+        validatePhase4CaptureArtifact(artifact, { expected, metadata: normalizedMetadata });
+        return true;
       } catch { return false; }
     },
     async recover({ sourceId, runIdentity, contractFingerprint }) {
@@ -83,20 +86,22 @@ export function createPhase4CaptureArtifactWriter(directory) {
       try {
         const bytes = await fs.readFile(finalPath);
         const artifact = JSON.parse(bytes.toString("utf8"));
-        if (artifact.schema_version !== "phase4-capture-artifact-v1" || artifact.source_id !== sourceId || artifact.run_identity !== runIdentity || artifact.contract_fingerprint !== contractFingerprint) return null;
-        return {
+        const canonical = validatePhase4CaptureArtifact(artifact, { expected: { sourceId, runIdentity, contractFingerprint } });
+        return validatePhase4ArtifactMetadata({
           source_id: sourceId,
-          capture_id: artifact.capture?.capture_id ?? null,
-          capture_status: artifact.capture_status,
-          evidence_status: artifact.evidence_status,
-          next_phase_queue: artifact.next_phase_queue,
-          blocking_reason: artifact.blocking_reason,
+          capture_id: canonical.capture?.capture_id ?? null,
+          capture_status: canonical.capture_status,
+          evidence_status: canonical.evidence_status,
+          next_phase_queue: canonical.next_phase_queue,
+          blocking_reason: canonical.blocking_reason,
           artifact_status: "committed",
           artifact_path: finalPath,
           artifact_sha256: sha256(bytes),
-          artifact_schema_version: artifact.schema_version,
-          capture_contract_version: artifact.capture_contract_version,
-        };
+          artifact_schema_version: PHASE4_CAPTURE_ARTIFACT_SCHEMA_VERSION,
+          capture_contract_version: canonical.capture_contract_version,
+          run_identity: canonical.run_identity,
+          contract_fingerprint: canonical.contract_fingerprint,
+        }, { sourceId, runIdentity, contractFingerprint });
       } catch (error) {
         if (error?.code === "ENOENT") return null;
         throw error;
