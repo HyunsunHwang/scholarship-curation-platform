@@ -21,7 +21,7 @@ const artifact = {
   blocking_reason: "ECONNRESET",
   list_fetch_count: 1,
   request_attempt_count: 1,
-  transport_evidence: {},
+  transport_evidence: { request_attempt_count: 1 },
   contract,
 };
 try {

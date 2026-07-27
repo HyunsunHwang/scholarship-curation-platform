@@ -7,6 +7,7 @@ import {
   phase4ArtifactSha256,
   validatePhase4CaptureArtifact,
 } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-artifact-validator.mjs";
+import { buildPhase4CaptureArtifact } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-orchestration.mjs";
 
 const sourceId = "source_001";
 const bytes = Buffer.from("<html><body>notice</body></html>");
@@ -33,10 +34,34 @@ for (const [label, mutation] of [
   ["unexpected comparison", { same_html_comparison: {} }],
   ["contract tamper", { contract: { ...contract, code_sha: "tampered" } }],
 ]) assert.throws(() => check({ ...valid, ...mutation }), /artifact|capture|contract|checkpoint/i, label);
-const transport = { ...valid, capture_status: "transport_failure", capture: null, treatment: null, same_html_comparison: null, next_phase_queue: "transport_recovery", blocking_reason: "ECONNRESET", transport_evidence: {} };
+const transport = { ...valid, capture_status: "transport_failure", capture: null, treatment: null, same_html_comparison: null, next_phase_queue: "transport_recovery", blocking_reason: "ECONNRESET", transport_evidence: { request_attempt_count: 1 } };
 check(transport);
 assert.throws(() => check({ ...transport, capture }), /transport-failure/i);
+assert.throws(() => check({ ...transport, transport_evidence: null }), /transport-failure|transport_evidence/i);
+assert.throws(() => check({ ...transport, transport_evidence: { request_attempt_count: 2 } }), /attempt/i);
+const blocked = { ...transport, capture_status: "blocked_external", next_phase_queue: "external_retry", blocking_reason: "http_403" };
+check(blocked);
+assert.throws(() => check({ ...blocked, transport_evidence: null }), /blocked-external|transport_evidence/i);
+assert.throws(() => check({ ...valid, source_id: "other_source" }), /source ID mismatch/i);
+assert.throws(() => check({ ...valid, capture: { ...capture, source_id: "other_source" } }), /source ID does not match/i);
+assert.throws(() => check({ ...valid, contract: { ...contract, sources: [{ ...contract.sources[0], source_id: "other_source" }] } }), /contract/i);
+assert.throws(() => check({ ...valid, transport_evidence: { request_attempt_count: 9 } }), /transport evidence/i);
 const invalid = { ...valid, capture_status: "invalid_content", evidence_status: "insufficient_evidence", next_phase_queue: "capture_content_validation", blocking_reason: "non_html_content_type", treatment: null, capture: { ...capture, content_type: "application/json" } };
 check(invalid);
 assert.throws(() => check({ ...invalid, treatment: {} }), /invalid-content/i);
-console.log("phase4_capture_artifact_validator_tests_passed=18");
+const builtTransport = buildPhase4CaptureArtifact({
+  result: { source_id: sourceId, capture_status: "transport_failure", evidence_status: "insufficient_evidence", next_phase_queue: "transport_recovery", blocking_reason: "ECONNRESET", list_fetch_count: 1, request_attempt_count: 1, transport_evidence: { request_attempt_count: 1 } },
+  runIdentity: valid.run_identity,
+  contractFingerprint: fingerprint,
+  contract,
+});
+assert.deepEqual(builtTransport.transport_evidence, { request_attempt_count: 1 });
+assert.equal(builtTransport.capture, null);
+const builtSuccess = buildPhase4CaptureArtifact({
+  result: { source_id: sourceId, capture_status: "capture_success", evidence_status: "insufficient_evidence", next_phase_queue: "historical_control_reconciliation", blocking_reason: "historical_control_config_unavailable", list_fetch_count: 1, request_attempt_count: 1, capture, treatment: {} },
+  runIdentity: valid.run_identity,
+  contractFingerprint: fingerprint,
+  contract,
+});
+assert.deepEqual(builtSuccess.transport_evidence, capture.transport_evidence);
+console.log("phase4_capture_artifact_validator_tests_passed=28");

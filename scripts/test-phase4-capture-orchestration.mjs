@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runPhase4SameHtmlCapture } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-orchestration.mjs";
+import { validatePhase4CaptureArtifact } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-artifact-validator.mjs";
 
 const html = Buffer.from('<table><tr><td><a href="/notice?id=7">장학 공지</a></td><td>2026-07-27</td></tr></table>', "utf8");
 const source = Object.freeze({ sourceId: "pilot_001", sourceName: "Pilot", listUrl: "https://example.edu/notice", baseUrl: "https://example.edu", enabled: true, adapter: "", listItemSelector: "table tr", linkSelector: "a[href]", titleSelector: "a[href]", dateSelector: "td:last-child", noticeUrlPattern: "[?&]id=\\d+", listParserProfile: "" });
@@ -22,14 +23,16 @@ function artifactWriter() {
   const artifacts = new Map();
   return {
     async commit(artifact) {
-      const value = JSON.stringify(artifact);
-      const metadata = { artifact_committed: true, artifact_path: artifact.source_id, artifact_sha256: crypto.createHash("sha256").update(value).digest("hex") };
-      artifacts.set(artifact.source_id, { artifact, metadata });
+      const canonical = validatePhase4CaptureArtifact(artifact, { expected: { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint } });
+      const value = JSON.stringify(canonical);
+      const metadata = { artifact_committed: true, artifact_path: canonical.source_id, artifact_sha256: crypto.createHash("sha256").update(value).digest("hex") };
+      artifacts.set(canonical.source_id, { artifact: canonical, metadata });
       return metadata;
     },
     async verify(metadata, expected) {
       const found = artifacts.get(expected.sourceId);
-      return Boolean(found && found.metadata.artifact_sha256 === metadata.artifact_sha256 && found.artifact.run_identity === expected.runIdentity && found.artifact.contract_fingerprint === expected.contractFingerprint && found.artifact.source_id === expected.sourceId);
+      if (!found || found.metadata.artifact_sha256 !== metadata.artifact_sha256) return false;
+      try { validatePhase4CaptureArtifact(found.artifact, { expected }); return true; } catch { return false; }
     },
     async recover(expected) {
       const found = artifacts.get(expected.sourceId);

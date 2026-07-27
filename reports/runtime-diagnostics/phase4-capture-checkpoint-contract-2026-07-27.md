@@ -19,3 +19,9 @@ Subsequent Phase 4 runs use `phase4-capture-contract-v2`. A Source is resume-ski
 The validator enforces the permitted status/evidence/queue combinations, canonical contract fingerprint, exact journal metadata agreement, and capture provenance. A `capture_success` artifact can be either comparison-ready or historical-control-unavailable; those are separate states.
 
 Artifacts are published create-only: a synced temporary file is exclusively hard-linked to the final path, so a concurrent or pre-existing final artifact fails rather than being overwritten. Commit and recovery are deliberately separate paths. Existing pilot evidence remains unchanged, and historical-control reconstruction or actual comparison has not started.
+
+## Transport-terminal provenance
+
+`transport_failure` and `blocked_external` are valid terminal artifacts when the capture request itself did not produce a capture object. Their root `transport_evidence` is required and its `request_attempt_count` must exactly match the artifact count; `capture`, treatment, and comparison are null under the current transport contract. These states are distinct from `artifact_commit_failure`: a transport terminal artifact that validates, publishes, re-reads, and verifies remains a transport result.
+
+Transport terminal artifacts are not generic crawler-success checkpoint entries. They are nevertheless recorded in the Phase 4 journal and may be verified and skipped during a resume of the identical run contract, avoiding a duplicate fetch. Historical-control reconstruction and real pilot comparisons remain out of scope.
