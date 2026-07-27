@@ -1425,4 +1425,30 @@ test("operational diagnostics v2 CSV exposes topology and adapter evidence addit
   assert.match(diagnostics.source_diagnostics[0].evidence_summary, /content_mode_declared=/);
 });
 
+test("phase 2 canonical taxonomy accepts current statuses and rejects legacy statuses", () => {
+  const diagnosticsFor = (phase2Status) => {
+    const diagnostics = buildOperationalCrawlDiagnostics({
+      sources: [{
+        source: { sourceId: "phase2_taxonomy_fixture", sourceName: "Fixture" },
+        executionResult: {
+          result_status: "success",
+          parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 },
+        },
+        notices: [{ content: "A sufficiently long detail body for the diagnostics fixture.", detailIdentity: { verified: true } }],
+        matchedCount: 1,
+      }],
+    });
+    diagnostics.source_diagnostics[0].phase2_status = phase2Status;
+    return diagnostics;
+  };
+  for (const status of ["blocked_external", "blocked_insufficient_authoritative_evidence", "list_url_correction_required"]) {
+    assert.equal(validateOperationalCrawlDiagnostics(diagnosticsFor(status)).valid, true);
+  }
+  for (const status of ["manual_review_required", "source_unreachable", "list_url_corrected"]) {
+    const validation = validateOperationalCrawlDiagnostics(diagnosticsFor(status));
+    assert.equal(validation.valid, false);
+    assert.ok(validation.errors.includes("invalid_phase2_status"));
+  }
+});
+
 console.log(`Operational crawl diagnostics tests: ${passed}/${passed} PASS`);

@@ -42,11 +42,11 @@ function cmsFamily(source, treatment) {
 
 function evidenceSummary(control, treatment, phase2Analysis) {
   const metrics = treatment?.metrics ?? {};
-  if (phase2Analysis.phase2_status === "configured_selector_applied") return "Paired candidate-diff evidence and detail identity verify the configured selector contract.";
+  if (phase2Analysis.phase2_status === "configured_selector_applied") return "Paired candidate-diff evidence verifies the configured selector contract; detail identity status is reported separately.";
   if (phase2Analysis.phase2_status === "adapter_required") return "Runtime diagnostics identified an inline or adapter-only topology; no selector is asserted without an authoritative static list contract.";
-  if (phase2Analysis.phase2_status === "source_unreachable") return `Paired control and treatment both ended ${treatment?.runtime_result_status}; this is retained as an external access limitation.`;
+  if (phase2Analysis.phase2_status === "blocked_external") return `Paired runtime evidence is externally blocked (${treatment?.runtime_result_status ?? "unknown"}).`;
   if (phase2Analysis.phase2_status === "verified_heuristic_safe") return `Paired candidate-diff evidence had zero selected navigation leaks and ${metrics.detail_identity_verified_count} verified detail identities.`;
-  return `Zero selected navigation leaks, but only ${metrics.detail_identity_verified_count ?? 0} verified detail identities in bounded evidence; authoritative list/detail contract still needs review.`;
+  return `Analyzer status=${phase2Analysis.phase2_status}; blocking_reason=${phase2Analysis.blocking_reason ?? "none"}; detail_identity_status=${phase2Analysis.detail_identity_status}.`;
 }
 
 function loadRecallProofDirectory(directory) {
@@ -119,7 +119,6 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
       profile_applied: Boolean(treatmentItem.parser_evidence?.profile_applied),
       list_url_changed: false,
       external_access_failure: isPairedExternalFailure(controlItem, treatmentItem),
-      review_category: finalState === "manual_review_required" ? manualReviewCategory(treatmentItem) : null,
       analysis_valid: phase2Analysis.analysis_valid,
       analysis_codes: phase2Analysis.analysis_codes,
       phase2_status: phase2Analysis.phase2_status,
