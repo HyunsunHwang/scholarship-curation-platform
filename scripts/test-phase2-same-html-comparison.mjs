@@ -40,6 +40,16 @@ assert.equal(parsedByRuntime.treatment.parser_config.list_item_selector, "table.
 assert.equal(parsedByRuntime.candidate_comparison.common_candidate_keys.length, 1);
 assert.equal(parsedByRuntime.control.parser_evidence.filtered_navigation_anchor_count, 0);
 
+const isolatedCalls = [];
+const isolated = buildPhase2SameHtmlComparison({
+  capture, controlConfig, treatmentConfig,
+  controlParser: ({ htmlBytes }) => { isolatedCalls.push(["control", htmlBytes]); const rows = []; Object.defineProperty(rows, "operational_parser_evidence", { value: { parser_strategy: "historical_control" } }); return rows; },
+  treatmentParser: ({ htmlBytes }) => { isolatedCalls.push(["treatment", htmlBytes]); const rows = []; Object.defineProperty(rows, "operational_parser_evidence", { value: { parser_strategy: "current_treatment" } }); return rows; },
+});
+assert.equal(isolated.control.parser_evidence.parser_strategy, "historical_control");
+assert.equal(isolated.treatment.parser_evidence.parser_strategy, "current_treatment");
+assert.strictEqual(isolatedCalls[0][1], isolatedCalls[1][1]);
+
 const mismatch = { ...capture, html_sha256: "0".repeat(64) };
 assert.throws(() => buildPhase2SameHtmlComparison({ capture: mismatch, controlConfig, treatmentConfig }), /does not match/);
 assert.throws(() => buildPhase2SameHtmlComparison({ capture, controlConfig: { ...controlConfig, sourceId: "other" }, treatmentConfig }), /source ID/);
@@ -57,4 +67,4 @@ const analyzed = analyzePhase2ParserRemediation({
   candidateComparison: first.candidate_comparison,
 });
 assert.equal(analyzed.candidate_recall_status, "verified");
-console.log("phase2_same_html_comparison_tests_passed=8");
+console.log("phase2_same_html_comparison_tests_passed=11");

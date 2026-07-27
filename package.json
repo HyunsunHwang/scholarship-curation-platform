@@ -62,6 +62,8 @@
     "run:phase4-same-html-capture-pilot": "node scripts/run-phase4-same-html-capture-pilot.mjs",
     "test:phase4-capture-pilot-report": "node scripts/test-phase4-capture-pilot-report.mjs",
     "build:phase4-capture-pilot-report": "node scripts/build-phase4-capture-pilot-report.mjs",
+    "test:phase4b-offline-pilot": "node scripts/test-phase4b-offline-pilot.mjs",
+    "build:phase4b-offline-pilot": "node scripts/build-phase4b-offline-pilot.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:inline-section-identity": "node scripts/test-inline-section-identity.mjs",

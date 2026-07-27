@@ -1,0 +1,238 @@
+{
+  "schema_version": "phase4b-offline-pilot-v1",
+  "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+  "sources": [
+    {
+      "source_id": "cau_003",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "57ab6ac5964ea9eeb55bca018fd1367c8ab87459fb44aedc9e95e5492917eafc",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://iadpr.cau.ac.kr",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": "a[href]",
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+          "notice_url_pattern": null,
+          "source_id": "cau_003",
+          "title_selector": null
+        },
+        "source_config_sha256": "a270f62a80c56a68aa15ce732717cd9524904618611e691c55140114b0f5768f"
+      }
+    },
+    {
+      "source_id": "cau_004",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "e6a930cbe1f05b77c946ac0f737f6fedf411d0fa63edd6c1ccea0d5c81ce58c5",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://log.cau.ac.kr",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": "a[href]",
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "https://log.cau.ac.kr/dm/dm_1.php",
+          "notice_url_pattern": null,
+          "source_id": "cau_004",
+          "title_selector": null
+        },
+        "source_config_sha256": "e046649183469cf85c875a723bd2aa9e8a14c83faf336b345fb00006d8ad685b"
+      }
+    },
+    {
+      "source_id": "cau_013",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "2fc01965f87c9582f2ae76b0fcbe214f5d1d2886ba7b44198ed376731e00f08e",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "http://cauese.co.kr",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": "a[href]",
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4",
+          "notice_url_pattern": null,
+          "source_id": "cau_013",
+          "title_selector": null
+        },
+        "source_config_sha256": "0c6af882280eff0d1d099b0cf965c5470bc5339cfea3a8ae5c8ee25c96ce77f9"
+      }
+    },
+    {
+      "source_id": "hanyang_011",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "1e76cbecc8088d14eebd2f0c45c643cba363cbe030797d5f8508dec087b3a0a5",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://ie.hanyang.ac.kr",
+          "content_mode": null,
+          "date_selector": "td:nth-child(5)",
+          "link_selector": "td.alignLeft a[href]",
+          "list_item_selector": "table.board_table tbody tr",
+          "list_parser_profile": null,
+          "list_url": "https://ie.hanyang.ac.kr/index.php?hCode=BOARD&bo_idx=1",
+          "notice_url_pattern": "(?:[?&]page=view.*[?&]idx=\\d+|[?&]idx=\\d+.*[?&]page=view)",
+          "source_id": "hanyang_011",
+          "title_selector": "td.alignLeft a[href]"
+        },
+        "source_config_sha256": "547fd9bdd52056b6734659a0b4541e6af508237ebb3f79a3148bb0541ed1a53e"
+      }
+    },
+    {
+      "source_id": "korea_033",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "256fb46195fa1aedbadd575b6c7a6851c615d1360318a879dee3ede78b7456f3",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": "json_api_board",
+          "base_url": "https://ie.korea.ac.kr",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": null,
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "https://ie.korea.ac.kr/board/scholarship/undergrad",
+          "notice_url_pattern": "^https://ie\\.korea\\.ac\\.kr/board/scholarship/undergrad/\\d+(?:\\?[^#]*)?$",
+          "source_id": "korea_033",
+          "title_selector": null
+        },
+        "source_config_sha256": "01be6965b67a28d848ef5f3952b7bbd45e97db101e0bcc63903565ceda77d15d"
+      }
+    },
+    {
+      "source_id": "korea_060",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "4fed6f8f649dbde97ec1b6b9d900e25a1f8522d6d19b5e1645be1e11555eb809",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://security.korea.ac.kr",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": "a[href]",
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "https://security.korea.ac.kr/m06_01",
+          "notice_url_pattern": null,
+          "source_id": "korea_060",
+          "title_selector": null
+        },
+        "source_config_sha256": "a060aeb23b811b8b175ad9d9135d112de5dead694c5fa8ce93d5c2a837f7bbca"
+      }
+    },
+    {
+      "source_id": "skku_042",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "f787db875a9c592196cef140778aa4eed525562ed7b67a55d8a369c1df4af242",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://does.skku.edu",
+          "content_mode": null,
+          "date_selector": null,
+          "link_selector": "a[href]",
+          "list_item_selector": null,
+          "list_parser_profile": null,
+          "list_url": "https://does.skku.edu/notice",
+          "notice_url_pattern": null,
+          "source_id": "skku_042",
+          "title_selector": null
+        },
+        "source_config_sha256": "82a0e1932a29b57b3759ed377cf752165d18a108cbe0e41a71ac4176938686c2"
+      }
+    },
+    {
+      "source_id": "uos_001",
+      "control_status": "control_restored",
+      "control_provenance": {
+        "control_parser_code_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+        "control_parser_code_path": "lib/crawler-engine/crawler-list-parser.mjs",
+        "control_parser_contract_version": "historical-manifest-generic-list-parser-v1",
+        "control_reference_commit": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+        "control_reference_report": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+        "control_selection_reason": "tested_code_base_sha recorded by the tracked Phase 0 runtime input snapshot",
+        "control_source_config_path": "config/notice-sources",
+        "reconstruction_result_hash": "f8acfa523e3eff0b65922b11d95d3e9dab6bd5b502a0aa16624ad3d114ea879d",
+        "reconstruction_tool_version": "phase4b-offline-pilot-v1",
+        "source_config": {
+          "adapter": null,
+          "base_url": "https://lauos.or.kr",
+          "content_mode": null,
+          "date_selector": "td.kboard-list-date",
+          "link_selector": "td.kboard-list-title a[href*=\"uid=\"][href*=\"mod=document\"]",
+          "list_item_selector": "table tbody tr",
+          "list_parser_profile": null,
+          "list_url": "https://lauos.or.kr/notice",
+          "notice_url_pattern": "^https://lauos\\.or\\.kr/notice\\?(?=[^#]*\\bmod=document(?:&|$))(?=[^#]*\\buid=\\d+(?:&|$))[^#]*$",
+          "source_id": "uos_001",
+          "title_selector": ".kboard-default-cut-strings"
+        },
+        "source_config_sha256": "3fe8d31b0a235e26fe8c148ca815d8e207d6b3207eff4e355b55f63a97974cd8"
+      }
+    }
+  ]
+}
