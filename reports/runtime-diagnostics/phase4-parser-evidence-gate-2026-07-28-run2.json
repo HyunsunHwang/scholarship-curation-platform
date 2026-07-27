@@ -1,0 +1,27 @@
+{
+  "schema_version": "phase4-parser-evidence-gate-v1",
+  "supersedes_report": "reports/runtime-diagnostics/phase4-parser-evidence-gate-2026-07-28.json",
+  "supersession_reason": "the prior report inferred comparison absence from the sanitized public summary instead of reconciling authoritative private artifacts",
+  "implementation_code_sha": "199d55e57f3702b366eee37f9226e55271e089d9",
+  "capture_contract_fingerprint": "bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "run_identity": "phase4-capture-bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "accounting": {
+    "artifact_count": 87,
+    "capture_success_count": 77,
+    "transport_lane_count": 10,
+    "ready_for_fixture_count": 77,
+    "ready_for_fixture_comparison_missing_count": 0,
+    "same_html_comparison_present_count": 77,
+    "candidate_comparison_basic_contract_valid_count": 77
+  },
+  "gate": {
+    "private_reconciliation_completed": true,
+    "parser_action_classification_completed": false,
+    "reason": "The authoritative private artifacts establish comparison presence and basic count contracts. Full nested validation, sanitized candidate classification, and action evidence loading remain required before parser action classification."
+  },
+  "safety": {
+    "raw_html_tracked": false,
+    "private_absolute_path_tracked": false,
+    "private_artifacts_modified": false
+  }
+}
