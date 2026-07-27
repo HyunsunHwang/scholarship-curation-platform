@@ -23,10 +23,25 @@ assert.equal(prepared.orchestrationArgs.controlConfigs, prepared.historicalContr
 assert.equal(prepared.orchestrationArgs.artifactWriter.commit instanceof Function, true);
 assert.equal(prepared.orchestrationArgs.artifactWriter.verify instanceof Function, true);
 assert.equal(prepared.orchestrationArgs.artifactWriter.recover instanceof Function, true);
+const livePolicies = prepared.orchestrationArgs.transportPolicyResolver({
+  sources: prepared.sources,
+  registry: prepared.transportRegistry,
+  timeoutMs: prepared.plan.transport_policy.request_timeout_ms,
+  retryCount: prepared.plan.transport_policy.retry_count,
+});
+assert.equal(livePolicies, prepared.resolvedTransportPolicies);
+assert.deepEqual(
+  Object.fromEntries([...livePolicies].map(([sourceId, policy]) => [sourceId, policy.policyFingerprint])),
+  Object.fromEntries(prepared.contract.sources.map((source) => [source.source_id, source.resolved_transport_policy_fingerprint])),
+);
+assert.throws(
+  () => prepared.orchestrationArgs.transportPolicyResolver({ sources: prepared.sources.slice(1) }),
+  (error) => error?.code === "phase4_transport_policy_source_set_mismatch",
+);
 let calls = 0;
 await assert.rejects(
   () => executePreparedPhase4FullCapture({ ...prepared, orchestration: async () => { calls += 1; } }),
   (error) => error?.code === "phase4_live_release_code_sha_mismatch",
 );
 assert.equal(calls, 0);
-console.log("phase4_full_capture_execution_contract_tests_passed=10");
+console.log("phase4_full_capture_execution_contract_tests_passed=13");
