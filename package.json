@@ -44,6 +44,7 @@
     "test:runtime-hard-failures-probe": "node scripts/test-runtime-hard-failures-probe.mjs",
     "test:verified-source-parser-remediation-inventory": "node scripts/test-verified-source-parser-remediation-inventory.mjs",
     "test:phase2-parser-remediation-baseline": "node scripts/test-phase2-parser-remediation-baseline.mjs",
+    "test:phase2-parser-remediation-baseline-integration": "node scripts/test-phase2-parser-remediation-baseline-integration.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
     "test:inline-section-identity": "node scripts/test-inline-section-identity.mjs",

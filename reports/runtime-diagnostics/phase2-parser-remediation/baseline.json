@@ -12,7 +12,16 @@
     "dbSnapshotSha256": "615cb4e672021585217d01a3905492c8ee6b5271448458e3bdb92018bc35db49",
     "commitSha": "b9bf5002703e0e131bade45a88f561bb46cb389a"
   },
-  "historical_target_definition": "Historical LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor before semantics correction",
+  "runtime_input_provenance": {
+    "original_runtime_report_path": ".tmp/runtime-analysis/main-post-merge-20260727/scholarship-notices-latest.json",
+    "runtime_report_sha256": "13c5feba99182c96da48d075d57aad207d436a912bdbd724163c8b29c1fc2801",
+    "historical_target_report_path": "reports/runtime-diagnostics/verified-source-parser-remediation-2026-07-25.json",
+    "historical_target_report_sha256": "0a31c3db626e9cf0182241fde5a85053864de87deeb321bd72cf6868c3e2d612",
+    "tested_code_base_sha": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+    "run_at": "2026-07-27T08:01:04.472Z",
+    "capture_scope": "The 87 source_diagnostics selected by the historical pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor target definition."
+  },
+  "historical_target_definition": "pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor",
   "target_count": 87,
   "targets": [
     {

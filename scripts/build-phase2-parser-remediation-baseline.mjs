@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPORT = path.join(ROOT, "reports", "runtime-diagnostics", "verified-source-parser-remediation-2026-07-25.json");
-const DEFAULT_RUNTIME_REPORT = path.join(ROOT, ".tmp", "runtime-analysis", "main-post-merge-20260727", "scholarship-notices-latest.json");
 const OUTPUT_DIRECTORY = path.join(ROOT, "reports", "runtime-diagnostics", "phase2-parser-remediation");
+const DEFAULT_RUNTIME_SNAPSHOT = path.join(OUTPUT_DIRECTORY, "runtime-input-snapshot.json");
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
@@ -35,7 +35,20 @@ export function buildPhase2Baseline({ historicalReport, runtimeReport }) {
     throw new Error("Phase 2 historical target set must contain exactly 87 unique Sources");
   }
 
-  const diagnostics = runtimeReport.operationalDiagnostics.source_diagnostics;
+  const runtimeInput = runtimeReport.operationalDiagnostics
+    ? {
+      sourceRegistry: runtimeReport.sourceRegistry,
+      runAt: runtimeReport.runAt,
+      sourceDiagnostics: runtimeReport.operationalDiagnostics.source_diagnostics,
+      provenance: null,
+    }
+    : {
+      sourceRegistry: runtimeReport.source_registry,
+      runAt: runtimeReport.run_at ?? runtimeReport.provenance?.run_at,
+      sourceDiagnostics: runtimeReport.source_diagnostics,
+      provenance: runtimeReport.provenance,
+    };
+  const diagnostics = runtimeInput.sourceDiagnostics;
   const diagnosticById = new Map(diagnostics.map((item) => [item.source_id, item]));
   const current = targetSources.map((target) => {
     const diagnostic = diagnosticById.get(target.source_id);
@@ -55,9 +68,10 @@ export function buildPhase2Baseline({ historicalReport, runtimeReport }) {
 
   return {
     schema_version: "phase2-parser-remediation-baseline-v1",
-    generated_at: runtimeReport.runAt,
-    source_registry: runtimeReport.sourceRegistry,
-    historical_target_definition: "Historical LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor before semantics correction",
+    generated_at: runtimeInput.runAt,
+    source_registry: runtimeInput.sourceRegistry,
+    runtime_input_provenance: runtimeInput.provenance,
+    historical_target_definition: historicalReport.target_definition,
     target_count: targetSources.length,
     targets: current,
     current_summary: {
@@ -76,15 +90,25 @@ export function buildPhase2Baseline({ historicalReport, runtimeReport }) {
   };
 }
 
-function markdown(baseline) {
+export function renderPhase2BaselineMarkdown(baseline) {
   return `# Phase 2 parser remediation baseline\n\n- Historical targets: ${baseline.target_count}\n- Current selected navigation leaks: ${baseline.current_summary.selected_navigation_leak_source_count}\n- Current navigation URL overlap Sources: ${baseline.current_summary.navigation_url_overlap_source_count}\n\n## Contract audit\n\n${baseline.audit_findings.map((finding) => `- ${finding}`).join("\n")}\n\n## Current capability status\n\n${Object.entries(baseline.current_summary.capability_status_counts).map(([status, count]) => `- ${status}: ${count}`).join("\n")}\n`;
 }
 
+export function buildPhase2BaselineArtifacts({ historicalReport, runtimeReport }) {
+  const baseline = buildPhase2Baseline({ historicalReport, runtimeReport });
+  const targetSources = {
+    schema_version: "phase2-target-sources-v1",
+    target_count: baseline.target_count,
+    targets: baseline.targets.map(({ runtime_result_status, capability_status, primary_failure_code, operational_codes, parser_strategy, candidate_navigation_leak_count, navigation_url_overlap_count, detail_identity_verified_count, ...target }) => target),
+  };
+  return { baseline, targetSources, markdown: renderPhase2BaselineMarkdown(baseline) };
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const runtimePath = process.argv[2] ? path.resolve(process.argv[2]) : DEFAULT_RUNTIME_REPORT;
-  const baseline = buildPhase2Baseline({ historicalReport: readJson(TARGET_REPORT), runtimeReport: readJson(runtimePath) });
-  writeJson(path.join(OUTPUT_DIRECTORY, "target-sources.json"), { schema_version: "phase2-target-sources-v1", target_count: baseline.target_count, targets: baseline.targets.map(({ runtime_result_status, capability_status, primary_failure_code, operational_codes, parser_strategy, candidate_navigation_leak_count, navigation_url_overlap_count, detail_identity_verified_count, ...target }) => target) });
-  writeJson(path.join(OUTPUT_DIRECTORY, "baseline.json"), baseline);
-  fs.writeFileSync(path.join(OUTPUT_DIRECTORY, "baseline.md"), markdown(baseline), "utf8");
-  console.log(`target_sources=${baseline.target_count}`);
+  const runtimePath = process.argv[2] ? path.resolve(process.argv[2]) : DEFAULT_RUNTIME_SNAPSHOT;
+  const artifacts = buildPhase2BaselineArtifacts({ historicalReport: readJson(TARGET_REPORT), runtimeReport: readJson(runtimePath) });
+  writeJson(path.join(OUTPUT_DIRECTORY, "target-sources.json"), artifacts.targetSources);
+  writeJson(path.join(OUTPUT_DIRECTORY, "baseline.json"), artifacts.baseline);
+  fs.writeFileSync(path.join(OUTPUT_DIRECTORY, "baseline.md"), artifacts.markdown, "utf8");
+  console.log(`target_sources=${artifacts.baseline.target_count}`);
 }
