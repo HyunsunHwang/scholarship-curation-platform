@@ -12,6 +12,6 @@ Phase-2 status interpretation and evidence invariants now belong to the operatio
 
 Deterministic same-HTML control/treatment candidate comparison evidence now requires identical HTML SHA-256 values and produces fail-closed candidate arithmetic. The analyzer consumes the resulting evidence directly; no second final-status system is introduced.
 
-## Later stages
+## Stage 3 — clustering in progress
 
-Cluster unresolved Sources by DOM and URL-identity structure, then apply fixture-first selector, profile, URL, or adapter remediations only where evidence supports it.
+Cluster unresolved Sources by audited same-HTML DOM and URL-identity structure. A Source without same-capture evidence is explicitly queued for capture; it is never promoted to a safe parser cluster. Only a later fixture-first remediation stage may apply selectors, profiles, URLs, or adapters.
