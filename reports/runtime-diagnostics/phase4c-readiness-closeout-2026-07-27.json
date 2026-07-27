@@ -1,0 +1,161 @@
+{
+  "schema_version": "phase4c-preflight-v1",
+  "ready_for_87_capture": true,
+  "blocking_reasons": [],
+  "authority": {
+    "authority_validation_status": "pass",
+    "control_commit_sha": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+    "control_parser_blob_sha": "9996f060911dce1cbbd4304fb088ae3815eaddc8",
+    "control_profile_blob_sha": "66bfd48002bc420e763b8cd79589c2d0d6e2c055",
+    "control_manifest_loader_blob_sha": "ff0d70c84bdb3ab74dcb6081113fba1263a23ed9",
+    "control_manifest_sha256": "1cddfa699a37cbf1a29cdf0896eceeede6f9246b3da173de221cf49d3970bb4e",
+    "control_index_sha256": "09531daec02ca0129e1bf869748b5a8749ad9785894fd4fa9a3d6fa469aa6ae4",
+    "control_source_count": 545,
+    "authority_snapshot_path": "reports/runtime-diagnostics/phase2-parser-remediation/runtime-input-snapshot.json",
+    "authority_snapshot_sha256": "2518bc19fd8fc511c310953cd61c12c0177718250b98e2c214c4762346e53715",
+    "historical_target_report_sha256": "0a31c3db626e9cf0182241fde5a85053864de87deeb321bd72cf6868c3e2d612"
+  },
+  "private_retention": {
+    "private_root_configured": true,
+    "private_root_writable": true,
+    "private_root_git_ignored": true,
+    "create_only_supported": true,
+    "hardlink_publish_supported": true,
+    "exclusive_publish_test": "pass",
+    "private_index_schema_version": "phase4-private-artifact-index-v1",
+    "private_index_writer": "pass",
+    "private_index_readback": "pass",
+    "raw_body_tracked": false,
+    "local_absolute_path_tracked": false
+  },
+  "phase4b_closeout": {
+    "raw_verified": 8,
+    "control_authority_validated": 8,
+    "control_parser_success": 8,
+    "treatment_parser_success": 8,
+    "comparison_input_invariant_success": 8,
+    "comparison_output_invariant_success": 8,
+    "comparison_no_change": 8,
+    "comparison_behavior_changed": 0,
+    "cluster_input_count": 8,
+    "cluster_success": 8,
+    "transport_recovery": 1,
+    "taxonomy_unclassified_error_count": 0,
+    "network_fetch_count": 0,
+    "sources": [
+      {
+        "source_id": "cau_003",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "cau_003",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "cau_004",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "cau_004",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "cau_013",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "cau_013",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "hanyang_011",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "hanyang_011",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "korea_033",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "korea_033",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "korea_060",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "korea_060",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "skku_042",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "skku_042",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      },
+      {
+        "source_id": "uos_001",
+        "execution_status": "comparison_ready",
+        "failed_stage": null,
+        "error_code": null,
+        "error_summary": null
+      },
+      {
+        "source_id": "uos_001",
+        "execution_status": "raw_capture_failure",
+        "failed_stage": "raw_capture",
+        "error_code": "stage_failure",
+        "error_summary": "raw capture failure"
+      }
+    ]
+  },
+  "network_fetch_count": 0
+}

@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { validatePhase4PrivateArtifactRoot } from "../lib/crawler-engine/runtime-diagnostics/phase4-private-artifact-retention.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -6,4 +7,7 @@ const argv = process.argv.slice(2); const value = (name) => { const index = argv
 const privateRoot = value("--private-artifact-root") ?? process.env.PHASE4_PRIVATE_ARTIFACT_ROOT; const checkpoint = value("--checkpoint");
 if (!privateRoot || !checkpoint) throw new Error("Phase 4 full capture requires --private-artifact-root and --checkpoint.");
 validatePhase4PrivateArtifactRoot({ repositoryRoot: root, privateArtifactRoot: path.resolve(root, privateRoot), runIdentity: "phase4-full-capture-preflight" });
+const readinessPath = path.join(root, "reports", "runtime-diagnostics", "phase4c-readiness-closeout-2026-07-27.json");
+if (!fs.existsSync(readinessPath)) throw new Error("Phase 4 full capture requires the tracked Phase 4C readiness report.");
+if (JSON.parse(fs.readFileSync(readinessPath, "utf8")).ready_for_87_capture !== true) throw new Error("Phase 4C readiness is not satisfied; full capture is blocked.");
 const error = new Error("phase4_full_capture_not_enabled: this commit only prepares the fail-closed preflight and never starts network capture."); error.code = "phase4_full_capture_not_enabled"; throw error;
