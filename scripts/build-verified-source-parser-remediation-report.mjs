@@ -147,7 +147,7 @@ function markdown(report) {
     ...report.inventory.map((item) => `| ${item.source_id} | ${item.final_state} | ${item.parser_strategy_after ?? "n/a"} | ${item.detail_identity_verified_count} | ${item.remaining_limitation ?? "—"} |`),
     "",
   ];
-  return `${lines.join("\n")}\n`;
+  return lines.join("\n");
 }
 
 export function buildReport({ targetInventory, controlReport, treatmentReport, sources, git }) {

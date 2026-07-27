@@ -1,11 +1,11 @@
 {
   "schema_version": "verified-source-parser-remediation-v1",
-  "generated_at": "2026-07-27T07:10:27.820Z",
+  "generated_at": "2026-07-27T07:12:20.273Z",
   "git": {
     "base_branch": "fix/navigation-contamination-diagnostic",
     "base_sha": "70771aaeee89f74fb10ee10dff46cb8b3170cd38",
     "branch": "fix/verified-source-parser-remediation-v2",
-    "head_sha": "e9588d75c5fd836b93e1f64ea2a7cc304cc347cf"
+    "head_sha": "75b9d1583509f6ba8e8300bafef39c449af0f973"
   },
   "target_definition": "pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor",
   "summary": {

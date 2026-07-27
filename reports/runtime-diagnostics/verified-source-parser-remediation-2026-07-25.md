@@ -1,7 +1,7 @@
 # Verified source parser remediation — 2026-07-25
 
 - Base branch: `fix/navigation-contamination-diagnostic` (70771aaeee89f74fb10ee10dff46cb8b3170cd38)
-- Branch: `fix/verified-source-parser-remediation-v2` (e9588d75c5fd836b93e1f64ea2a7cc304cc347cf)
+- Branch: `fix/verified-source-parser-remediation-v2` (75b9d1583509f6ba8e8300bafef39c449af0f973)
 - Target sources: 87; classified: 87.
 - A/B paired execution: 545 Sources each; no database read/write, production access, or external LLM calls.
 
@@ -113,4 +113,3 @@
 | yonsei_026 | manual_review_required | heuristic_anchor | 1 | Need authoritative list/detail identity evidence before selector, profile, or URL changes. |
 | yonsei_036 | manual_review_required | heuristic_anchor | 0 | Need authoritative list/detail identity evidence before selector, profile, or URL changes. |
 | yonsei_057 | manual_review_required | heuristic_anchor | 0 | Need authoritative list/detail identity evidence before selector, profile, or URL changes. |
-
