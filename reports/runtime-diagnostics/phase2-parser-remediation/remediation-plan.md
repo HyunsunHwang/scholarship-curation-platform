@@ -12,6 +12,13 @@ Phase-2 status interpretation and evidence invariants now belong to the operatio
 
 Deterministic same-HTML control/treatment candidate comparison evidence now requires identical HTML SHA-256 values and produces fail-closed candidate arithmetic. The analyzer consumes the resulting evidence directly; no second final-status system is introduced.
 
-## Stage 3 — clustering in progress
+## Stage 3 — structural clustering framework in progress
 
-Cluster unresolved Sources by audited same-HTML DOM and URL-identity structure. A Source without same-capture evidence is explicitly queued for capture; it is never promoted to a safe parser cluster. Only a later fixture-first remediation stage may apply selectors, profiles, URLs, or adapters.
+The framework groups only audited same-HTML evidence under `phase3-structural-cluster-v1`.
+Its structural signature contains normalized DOM candidate family and provenance, parser strategy/origin, list/link/title/date selector presence, normalized node-locator templates, navigation/pagination membership, parser profile or adapter family, content topology, and origin-free URL-identity shapes (pathname template, query keys, identity hints, path shape, fragment handling, and extraction mode).
+
+The signature deliberately excludes Source identity, university/origin, runtime result, capture time/hash/ID, recall result, and evidence completeness. Therefore Sources with the same structure but different recall evidence share a cluster; their individual evidence state remains in the member record.
+
+All same-capture provenance and candidate-comparison arithmetic, candidate identity, classification, URL-array, and comparison-hash contracts are fail-closed before clustering. A Source without a capture remains in the separate `capture_required` list with the `same_html_capture` queue; it never receives an inferred structural signature or safe state.
+
+The tracked 87-Source baseline has a fixed regression result of `0 clustered / 87 capture required` until authoritative captures are added. Actual 87-Source bounded capture collection and fixture-first selector, profile, URL, or adapter remediation remain unfinished and are the next separate stage.

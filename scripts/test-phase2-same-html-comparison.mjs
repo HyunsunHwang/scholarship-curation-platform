@@ -36,6 +36,7 @@ const parsedByRuntime = buildPhase2SameHtmlComparison({ capture, controlConfig, 
 assert.equal(parsedByRuntime.control.candidates.length, 1);
 assert.equal(parsedByRuntime.control.candidates[0].noticeUrl, "https://example.test/notice?id=123#top");
 assert.match(parsedByRuntime.control.candidates[0].provenance.candidate_node_fingerprint, /configured_selector/);
+assert.equal(parsedByRuntime.treatment.parser_config.list_item_selector, "table.board tr");
 assert.equal(parsedByRuntime.candidate_comparison.common_candidate_keys.length, 1);
 assert.equal(parsedByRuntime.control.parser_evidence.filtered_navigation_anchor_count, 0);
 
