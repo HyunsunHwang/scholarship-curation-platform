@@ -49,12 +49,17 @@ function evidenceSummary(control, treatment, phase2Analysis) {
   return `Zero selected navigation leaks, but only ${metrics.detail_identity_verified_count ?? 0} verified detail identities in bounded evidence; authoritative list/detail contract still needs review.`;
 }
 
-function manualReviewCategory(treatment) {
-  const codes = treatment?.operational_codes ?? [];
-  if (codes.includes("DETAIL_IDENTITY_UNVERIFIED")) return "insufficient_detail_identity";
-  if (codes.includes("PAGINATION_UNVERIFIED")) return "cms_profile_not_verified";
-  if (codes.includes("DETAIL_URL_UNVERIFIED")) return "official_list_url_unverified";
-  return "cms_profile_not_verified";
+function loadRecallProofDirectory(directory) {
+  if (!fs.existsSync(directory)) return {};
+  const entries = fs.readdirSync(directory).filter((name) => name.endsWith(".json")).sort();
+  const proofs = {};
+  for (const name of entries) {
+    const proof = readJson(path.join(directory, name));
+    const sourceId = String(proof.source_id ?? path.basename(name, ".json").replace(/-candidate-diff$/, "")).trim();
+    if (!sourceId || proofs[sourceId]) throw new Error(`Invalid or duplicate recall proof: ${name}`);
+    proofs[sourceId] = proof;
+  }
+  return proofs;
 }
 
 function identityMetrics(metrics) {
@@ -117,23 +122,38 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
       review_category: finalState === "manual_review_required" ? manualReviewCategory(treatmentItem) : null,
       analysis_valid: phase2Analysis.analysis_valid,
       analysis_codes: phase2Analysis.analysis_codes,
+      phase2_status: phase2Analysis.phase2_status,
+      list_parser_contract_status: phase2Analysis.list_parser_contract_status,
+      candidate_recall_status: phase2Analysis.candidate_recall_status,
+      detail_identity_status: phase2Analysis.detail_identity_status,
+      pagination_status: phase2Analysis.pagination_status,
+      runtime_accessibility_status: phase2Analysis.runtime_accessibility_status,
+      next_action: phase2Analysis.next_action,
+      next_phase_queue: phase2Analysis.next_phase_queue,
+      blocking_reason: phase2Analysis.blocking_reason,
       evidence_summary: evidenceSummary(controlItem, treatmentItem, phase2Analysis),
-      remaining_limitation: finalState === "manual_review_required" ? "Need authoritative list/detail identity evidence before selector, profile, or URL changes." : null,
+      remaining_limitation: phase2Analysis.blocking_reason,
     };
   });
 }
 
 export function validateInventory(inventory, expectedCount = 87) {
-  const allowed = new Set(["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied", "list_url_corrected", "adapter_required", "manual_review_required", "source_unreachable"]);
+  const allowed = new Set(["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied", "list_url_correction_required", "adapter_required", "blocked_external", "blocked_insufficient_authoritative_evidence"]);
   if (inventory.length !== expectedCount) throw new Error(`Expected ${expectedCount} remediation sources, got ${inventory.length}`);
   const ids = new Set(inventory.map((item) => item.source_id));
   if (ids.size !== inventory.length) throw new Error("Remediation inventory has duplicate source_id values");
   for (const item of inventory) {
-    if (!allowed.has(item.final_state)) throw new Error(`${item.source_id}: invalid final_state ${item.final_state}`);
+    if (!allowed.has(item.final_state) || item.final_state !== item.phase2_status) throw new Error(`${item.source_id}: invalid final_state`);
     if (!item.evidence_summary) throw new Error(`${item.source_id}: evidence_summary is required`);
-    if (item.final_state === "configured_selector_applied" && item.candidate_recall_verified !== true) throw new Error(`${item.source_id}: configured selector requires recall proof`);
-    if ((item.removed_real_notice_count ?? 0) > 0) throw new Error(`${item.source_id}: removed real notice`);
-    if ((item.removed_unresolved_count ?? 0) > 0) throw new Error(`${item.source_id}: removed unresolved URL`);
+    if (item.analysis_valid === false && ["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)) throw new Error(`${item.source_id}: invalid analysis success terminal`);
+    if (item.candidate_recall_status === "verified" && item.candidate_recall_verified !== true) throw new Error(`${item.source_id}: verified recall invariant`);
+    if (["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)
+      && ((item.removed_real_notice_count ?? 0) > 0 || (item.removed_unresolved_count ?? 0) > 0 || (item.added_false_positive_count ?? 0) > 0)) throw new Error(`${item.source_id}: terminal parser evidence invariant`);
+    if (["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)
+      && item.candidate_recall_status !== "verified") throw new Error(`${item.source_id}: terminal recall invariant`);
+    if (item.phase2_status === "configured_selector_applied" && item.list_parser_contract_status !== "verified") throw new Error(`${item.source_id}: configured selector invariant`);
+    if (item.phase2_status === "parser_profile_applied" && item.list_parser_contract_status !== "verified") throw new Error(`${item.source_id}: parser profile invariant`);
+    if (!item.next_action || !item.next_phase_queue || (item.phase2_status === "blocked_external" && item.next_phase_queue !== "external_retry")) throw new Error(`${item.source_id}: next action invariant`);
     if ((item.fixture_identity_verified_count ?? 0) > (item.fixture_identity_case_count ?? 0)) throw new Error(`${item.source_id}: fixture identity invariant failed`);
     if ((item.runtime_identity_verified_count ?? 0) > (item.runtime_identity_attempted_count ?? 0)) throw new Error(`${item.source_id}: runtime identity invariant failed`);
   }
@@ -214,7 +234,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const targetInventory = readJson(path.join(ROOT, ".tmp", "menu-contamination-remediation", "source-inventory.json"));
   const controlReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "control", "scholarship-notices-latest.json"));
   const treatmentReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "treatment", "scholarship-notices-latest.json"));
-  const recallProof = Object.fromEntries(["hanyang_011", "hanyang_013"].map((sourceId) => [sourceId, readJson(path.join(ROOT, ".tmp", "hanyang-recall-proof", `${sourceId}-candidate-diff.json`))]));
+  const recallProof = loadRecallProofDirectory(path.join(ROOT, ".tmp", "hanyang-recall-proof"));
   const git = { base_branch: "fix/navigation-contamination-diagnostic", base_sha: process.env.BASE_SHA ?? "70771aa", tested_code_sha: process.env.TESTED_CODE_SHA ?? null, report_input_control_sha: process.env.CONTROL_SHA ?? controlReport.sourceRegistry.commitSha ?? null, report_input_treatment_sha: process.env.TREATMENT_SHA ?? treatmentReport.sourceRegistry.commitSha ?? null, report_generated_at: new Date().toISOString(), recall_proof: recallProof };
   const report = buildReport({ targetInventory, controlReport, treatmentReport, sources: readManifestSources(), git });
   validateInventory(report.inventory, 87);

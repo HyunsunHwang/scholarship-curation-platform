@@ -14,11 +14,13 @@ const proof = {
 };
 const output = buildReport({ targetInventory: target, controlReport: control, treatmentReport: treatment, sources: { [source.sourceId]: source }, git: { recall_proof: { [source.sourceId]: proof } } });
 assert.equal(output.inventory[0].final_state, "verified_heuristic_safe");
+assert.equal(output.inventory[0].next_action, "collect_pagination_evidence");
+assert.equal(output.inventory[0].next_phase_queue, "pagination_verification");
 const noProof = buildReport({ targetInventory: target, controlReport: control, treatmentReport: treatment, sources: { [source.sourceId]: source }, git: {} });
-assert.equal(noProof.inventory[0].final_state, "manual_review_required");
+assert.equal(noProof.inventory[0].final_state, "blocked_insufficient_authoritative_evidence");
 assert.throws(() => validateInventory([], 1), /Expected 1/);
-const configured = { ...output.inventory[0], source_id: "hanyang_011", final_state: "configured_selector_applied", candidate_recall_verified: false };
-assert.throws(() => validateInventory([configured], 1), /requires recall proof/);
-assert.throws(() => validateInventory([{ ...output.inventory[0], removed_real_notice_count: 1 }], 1), /removed real notice/);
+const configured = { ...output.inventory[0], source_id: "hanyang_011", final_state: "configured_selector_applied", phase2_status: "configured_selector_applied", candidate_recall_verified: false, candidate_recall_status: "unverified" };
+assert.throws(() => validateInventory([configured], 1), /terminal recall invariant/);
+assert.throws(() => validateInventory([{ ...output.inventory[0], removed_real_notice_count: 1 }], 1), /terminal parser evidence invariant/);
 assert.throws(() => validateInventory([{ ...output.inventory[0], fixture_identity_case_count: 1, fixture_identity_verified_count: 2 }], 1), /fixture identity invariant/);
 console.log("verified_source_parser_remediation_inventory_tests_passed=6");

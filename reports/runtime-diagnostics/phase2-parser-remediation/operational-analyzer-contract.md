@@ -12,7 +12,17 @@ The crawler and parser record observations; the operational analyzer interprets 
 
 `analysis_valid`, `phase2_status`, parser-contract, recall, detail-identity, pagination, runtime-accessibility, `next_action`, `next_phase_queue`, `blocking_reason`, and analysis codes are analyzer-owned fields. Contradictory evidence yields `analysis_valid=false` with `ANALYZER_EVIDENCE_CONTRADICTION`.
 
-Ordinary runtime diagnostics have no paired candidate comparison and therefore record `phase2_status=not_evaluated`. The paired remediation report supplies explicit comparison evidence; without it, candidate recall remains unverified and the Source remains `manual_review_required`.
+Ordinary runtime diagnostics have no paired candidate comparison and therefore record `phase2_status=not_evaluated`. The paired remediation report supplies explicit comparison evidence; without it, candidate recall remains unverified and the terminal projection is `blocked_insufficient_authoritative_evidence`.
+
+## Canonical phase-2 state model
+
+- List parser contract: `verified`, `limited_evidence`, `invalid`, `not_observed`, `blocked_external`.
+- Candidate recall: `verified`, `unverified`, `invalid`, `not_evaluated`.
+- Detail identity: `verified`, `partially_verified`, `unverified`, `not_observed`, `not_required`, `blocked_external`.
+- Pagination: `verified`, `unverified`, `not_applicable`, `blocked_external`.
+- Runtime accessibility: `reachable`, `intermittent`, `blocked_external`, `transport_failure`, `not_evaluated`.
+
+The final remediation projection is one of `verified_heuristic_safe`, `parser_profile_applied`, `configured_selector_applied`, `list_url_correction_required`, `adapter_required`, `blocked_external`, or `blocked_insufficient_authoritative_evidence`. `manual_review_required` is not a terminal phase-2 outcome.
 
 ## Prohibited interpretations
 
