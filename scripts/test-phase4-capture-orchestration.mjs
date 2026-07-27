@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { runPhase4SameHtmlCapture } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-orchestration.mjs";
+import { createPhase4CaptureJournal, runPhase4SameHtmlCapture } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-orchestration.mjs";
 import { validatePhase4CaptureArtifact } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-artifact-validator.mjs";
 
 const html = Buffer.from('<table><tr><td><a href="/notice?id=7">장학 공지</a></td><td>2026-07-27</td></tr></table>', "utf8");
@@ -149,7 +149,16 @@ try {
     assert.equal(first.run_identity, second.run_identity);
     assert.deepEqual(first.results.map((row) => row.source_id), ["pilot_001", "pilot_002"]);
   }
-  console.log("phase4 capture orchestration: 11 tests passed");
+  {
+    const checkpointPath = path.join(temporary, "monotonic.json");
+    const journal = await createPhase4CaptureJournal({ checkpointPath, resume: false, runIdentity: "phase4-test-monotonic", contractFingerprint: "f".repeat(64), sourceIds: ["cau_079", "korea_053"] });
+    await Promise.all(["cau_079", "korea_053"].map((sourceId) => journal.recordArtifact(sourceId, { source_id: sourceId, capture_status: "capture_success" })));
+    await journal.flush();
+    await assert.rejects(() => journal.recordAttempt("cau_079", { source_id: "cau_079", attempt_status: "incomplete" }), (error) => error?.code === "phase4_journal_terminal_already_committed");
+    assert.equal(Object.keys(journal.snapshot().attempts).length, 0);
+    assert.equal(Object.keys(journal.snapshot().terminal_artifacts).length, 2);
+  }
+  console.log("phase4 capture orchestration: 12 tests passed");
 } finally {
   await fs.rm(temporary, { recursive: true, force: true });
 }
