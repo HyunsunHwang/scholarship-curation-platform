@@ -52,6 +52,7 @@
     "build:phase2-same-html-comparison": "node scripts/build-phase2-same-html-comparison.mjs",
     "test:phase3-parser-remediation-clusters": "node scripts/test-phase3-parser-remediation-clusters.mjs",
     "test:phase3-parser-remediation-clusters-integration": "node scripts/test-phase3-parser-remediation-clusters-integration.mjs",
+    "test:phase3-production-parser-clustering": "node scripts/test-phase3-production-parser-clustering.mjs",
     "build:phase3-parser-remediation-clusters": "node scripts/build-phase3-parser-remediation-clusters.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
