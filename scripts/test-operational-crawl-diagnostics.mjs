@@ -1451,4 +1451,15 @@ test("phase 2 canonical taxonomy accepts current statuses and rejects legacy sta
   }
 });
 
+test("capture evidence separates no parser delta from transport recovery", () => {
+  const source = { sourceId: "action_fixture", sourceName: "Fixture" };
+  const base = { source, executionResult: { result_status: "success", parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 } }, notices: [{ title: "Notice", noticeUrl: "https://fixture.test/1", content: "A sufficiently long fixture body for diagnostic evidence.", detailIdentity: { verified: true } }], matchedCount: 1 };
+  const equivalent = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "capture_success", same_html_comparison: { candidate_comparison: { control_candidate_count: 1, treatment_candidate_count: 1, removed_candidate_count: 0, added_candidate_count: 0 } } } });
+  assert.equal(equivalent.action_class, "no_action");
+  assert.equal(equivalent.evidence_basis, "same_html_delta");
+  const transport = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "transport_failure" } });
+  assert.equal(transport.action_class, "transport_recovery");
+  assert.equal(transport.evidence_basis, "capture_transport_evidence");
+});
+
 console.log(`Operational crawl diagnostics tests: ${passed}/${passed} PASS`);
