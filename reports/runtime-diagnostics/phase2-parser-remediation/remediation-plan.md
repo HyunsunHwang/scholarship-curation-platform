@@ -8,9 +8,9 @@ Freeze the historical 87-source target set, generate a current baseline from the
 
 Phase-2 status interpretation and evidence invariants now belong to the operational analyzer. The report generator supplies paired evidence but no longer assigns Source-ID-based final states or defaults candidate recall to verified. The existing crawler observation contract remains unchanged.
 
-## Stage 2 — after Stage 1
+## Stage 2 — completed
 
-Add deterministic same-HTML control/treatment candidate comparison evidence, then pass that evidence to the analyzer rather than creating another final-status system.
+Deterministic same-HTML control/treatment candidate comparison evidence now requires identical HTML SHA-256 values and produces fail-closed candidate arithmetic. The analyzer consumes the resulting evidence directly; no second final-status system is introduced.
 
 ## Later stages
 

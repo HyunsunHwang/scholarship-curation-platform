@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { analyzePhase2ParserRemediation } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
+import { buildPhase2CandidateComparison } from "../lib/crawler-engine/runtime-diagnostics/phase2-candidate-comparison.mjs";
 
 const source = { sourceId: "fixture_001", sourceName: "Fixture", universitySlug: "fixture" };
 const comparison = {
@@ -37,6 +38,19 @@ assert.equal(verified.list_parser_contract_status, "verified");
 assert.equal(verified.detail_identity_status, "verified");
 assert.equal(verified.pagination_status, "unverified");
 assert.equal(verified.next_phase_queue, "pagination_verification");
+
+const generatedComparison = buildPhase2CandidateComparison({
+  sourceId: source.sourceId,
+  control: { html_sha256: "c".repeat(64), candidates: [{ noticeUrl: "https://example.test/1", disposition: "real_notice" }] },
+  treatment: { html_sha256: "c".repeat(64), candidates: [{ noticeUrl: "https://example.test/1", disposition: "real_notice" }] },
+});
+const generatedEvidence = analyzePhase2ParserRemediation({
+  source,
+  controlDiagnostic: diagnostic(),
+  treatmentDiagnostic: diagnostic(),
+  candidateComparison: generatedComparison,
+});
+assert.equal(generatedEvidence.candidate_recall_status, "verified");
 
 const noProof = analyzePhase2ParserRemediation({
   source,
