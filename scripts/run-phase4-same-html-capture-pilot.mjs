@@ -44,17 +44,26 @@ async function writeNewJson(filePath, value) {
 
 function sha256(value) { return crypto.createHash("sha256").update(value).digest("hex"); }
 
+export function resolveExpectedPhase4ArtifactPath({ runDirectory, sourceId } = {}) {
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(String(sourceId ?? ""))) { const error = new Error("Invalid Phase 4 artifact source ID."); error.code = "checkpoint_artifact_path_mismatch"; throw error; }
+  const run = path.resolve(runDirectory); const captures = path.resolve(run, "captures"); const artifact = path.resolve(captures, `${sourceId}.json`);
+  if (path.relative(run, captures) !== "captures" || path.relative(captures, artifact) !== `${sourceId}.json`) { const error = new Error("Phase 4 artifact path escapes its canonical capture directory."); error.code = "checkpoint_artifact_path_mismatch"; throw error; }
+  return { runDirectory: run, capturesDirectory: captures, artifactPath: artifact };
+}
+
+async function assertNotSymlink(filePath, code) { if ((await fs.lstat(filePath)).isSymbolicLink()) { const error = new Error("Phase 4 artifact path may not be a symlink."); error.code = code; throw error; } }
+
 export function createPhase4CaptureArtifactWriter(directory) {
-  const capturesDirectory = path.join(directory, "captures");
-  const artifactPathFor = (sourceId) => path.join(capturesDirectory, `${sourceId}.json`);
+  const root = path.resolve(directory);
+  const artifactPathFor = (sourceId) => resolveExpectedPhase4ArtifactPath({ runDirectory: root, sourceId });
   return {
     async commit(artifact) {
-      const finalPath = artifactPathFor(artifact.source_id);
+      const { capturesDirectory, artifactPath: finalPath } = artifactPathFor(artifact.source_id);
       const temporaryPath = `${finalPath}.tmp-${process.pid}-${crypto.randomBytes(6).toString("hex")}`;
       let handle = null;
       try {
         const canonical = validatePhase4CaptureArtifact(artifact, { expected: { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint } });
-        await fs.mkdir(capturesDirectory, { recursive: true });
+        await fs.mkdir(capturesDirectory, { recursive: true }); await assertNotSymlink(root, "checkpoint_artifact_symlink"); await assertNotSymlink(capturesDirectory, "private_artifact_captures_symlink");
         handle = await fs.open(temporaryPath, "wx");
         await handle.writeFile(`${JSON.stringify(canonical, null, 2)}\n`, "utf8");
         await handle.sync(); await handle.close(); handle = null;
@@ -74,7 +83,10 @@ export function createPhase4CaptureArtifactWriter(directory) {
     async verify(metadata, expected) {
       try {
         const normalizedMetadata = validatePhase4ArtifactMetadata(metadata, expected);
-        const bytes = await fs.readFile(metadata.artifact_path);
+        const { capturesDirectory, artifactPath } = artifactPathFor(expected.sourceId);
+        if (path.resolve(normalizedMetadata.artifact_path) !== artifactPath) { const error = new Error("Artifact metadata path is not canonical."); error.code = "checkpoint_artifact_path_mismatch"; throw error; }
+        await assertNotSymlink(root, "checkpoint_artifact_symlink"); await assertNotSymlink(capturesDirectory, "private_artifact_captures_symlink"); await assertNotSymlink(artifactPath, "checkpoint_artifact_symlink");
+        const bytes = await fs.readFile(artifactPath);
         if (sha256(bytes) !== normalizedMetadata.artifact_sha256) return false;
         const artifact = JSON.parse(bytes.toString("utf8"));
         validatePhase4CaptureArtifact(artifact, { expected, metadata: normalizedMetadata });
@@ -82,8 +94,9 @@ export function createPhase4CaptureArtifactWriter(directory) {
       } catch { return false; }
     },
     async recover({ sourceId, runIdentity, contractFingerprint }) {
-      const finalPath = artifactPathFor(sourceId);
+      const { capturesDirectory, artifactPath: finalPath } = artifactPathFor(sourceId);
       try {
+        await assertNotSymlink(root, "checkpoint_artifact_symlink"); await assertNotSymlink(capturesDirectory, "private_artifact_captures_symlink"); await assertNotSymlink(finalPath, "checkpoint_artifact_symlink");
         const bytes = await fs.readFile(finalPath);
         const artifact = JSON.parse(bytes.toString("utf8"));
         const canonical = validatePhase4CaptureArtifact(artifact, { expected: { sourceId, runIdentity, contractFingerprint } });

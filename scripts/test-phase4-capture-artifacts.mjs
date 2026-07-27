@@ -31,6 +31,8 @@ try {
   const committed = concurrent.find((result) => result.status === "fulfilled").value;
   const metadata = { ...committed, source_id: artifact.source_id, capture_id: null, capture_status: artifact.capture_status, evidence_status: artifact.evidence_status, next_phase_queue: artifact.next_phase_queue, blocking_reason: artifact.blocking_reason, artifact_status: "committed", artifact_schema_version: artifact.schema_version, capture_contract_version: artifact.capture_contract_version, run_identity: artifact.run_identity, contract_fingerprint: artifact.contract_fingerprint };
   assert.equal(await writer.verify(metadata, { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint }), true);
+  assert.equal(await writer.verify({ ...metadata, artifact_path: path.join(root, "outside.json") }, { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint }), false);
+  assert.equal(await writer.verify({ ...metadata, artifact_path: path.join(root, "captures", "other_001.json") }, { sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint }), false);
   const recovered = await writer.recover({ sourceId: artifact.source_id, runIdentity: artifact.run_identity, contractFingerprint: artifact.contract_fingerprint });
   assert.equal(recovered.artifact_sha256, committed.artifact_sha256);
   await assert.rejects(() => writer.commit(artifact), (error) => error?.code === "artifact_already_exists");
