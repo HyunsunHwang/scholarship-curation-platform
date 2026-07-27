@@ -10,4 +10,8 @@ const treatment = report(diagnostic("success", "valid_zero_candidates", { candid
 const output = buildReport({ targetInventory: target, controlReport: control, treatmentReport: treatment, sources: { [source.sourceId]: source }, git: {} });
 assert.equal(output.inventory[0].final_state, "verified_heuristic_safe");
 assert.throws(() => validateInventory([], 1), /Expected 1/);
-console.log("verified_source_parser_remediation_inventory_tests_passed=2");
+const configured = { ...output.inventory[0], source_id: "hanyang_011", final_state: "configured_selector_applied", candidate_recall_verified: false };
+assert.throws(() => validateInventory([configured], 1), /requires recall proof/);
+assert.throws(() => validateInventory([{ ...output.inventory[0], removed_real_notice_count: 1 }], 1), /removed real notice/);
+assert.throws(() => validateInventory([{ ...output.inventory[0], fixture_identity_case_count: 1, fixture_identity_verified_count: 2 }], 1), /fixture identity invariant/);
+console.log("verified_source_parser_remediation_inventory_tests_passed=5");

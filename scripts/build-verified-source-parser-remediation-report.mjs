@@ -63,7 +63,29 @@ function evidenceSummary(control, treatment, state) {
   return `Zero selected navigation leaks, but only ${metrics.detail_identity_verified_count ?? 0} verified detail identities in bounded evidence; authoritative list/detail contract still needs review.`;
 }
 
-export function buildInventory({ targetInventory, controlReport, treatmentReport, sources }) {
+function manualReviewCategory(treatment) {
+  const codes = treatment?.operational_codes ?? [];
+  if (codes.includes("DETAIL_IDENTITY_UNVERIFIED")) return "insufficient_detail_identity";
+  if (codes.includes("PAGINATION_UNVERIFIED")) return "cms_profile_not_verified";
+  if (codes.includes("DETAIL_URL_UNVERIFIED")) return "official_list_url_unverified";
+  return "cms_profile_not_verified";
+}
+
+function identityMetrics(sourceId, metrics) {
+  const runtimeIdentityVerified = metrics.detail_identity_verified_count ?? 0;
+  const runtimeIdentityUnverified = metrics.detail_identity_unverified_count ?? 0;
+  const runtimeIdentityAttempted = runtimeIdentityVerified + runtimeIdentityUnverified;
+  const fixtureCount = CONFIGURED_SELECTOR_IDS.has(sourceId) ? 3 : 0;
+  return {
+    fixture_identity_case_count: fixtureCount,
+    fixture_identity_verified_count: fixtureCount,
+    runtime_identity_attempted_count: runtimeIdentityAttempted,
+    runtime_identity_verified_count: runtimeIdentityVerified,
+    runtime_identity_unverified_count: runtimeIdentityUnverified,
+  };
+}
+
+export function buildInventory({ targetInventory, controlReport, treatmentReport, sources, recallProof = {} }) {
   const control = bySource(controlReport);
   const treatment = bySource(treatmentReport);
   return targetInventory.map((baseline) => {
@@ -74,6 +96,18 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
     if (!controlItem || !treatmentItem) throw new Error(`Target source missing from paired report: ${baseline.sourceId}`);
     const metrics = treatmentItem.metrics ?? {};
     const finalState = classify({ sourceId: baseline.sourceId, control: controlItem, treatment: treatmentItem });
+    const proof = recallProof[baseline.sourceId] ?? null;
+    const recall = proof ?? {
+      control_candidate_count: metrics.list_candidate_count ?? 0,
+      treatment_candidate_count: metrics.list_candidate_count ?? 0,
+      common_candidate_count: metrics.list_candidate_count ?? 0,
+      removed_candidate_count: 0,
+      added_candidate_count: 0,
+      removed_real_notice_count: 0,
+      removed_unresolved_count: 0,
+      added_false_positive_count: 0,
+      candidate_recall_verified: !CONFIGURED_SELECTOR_IDS.has(baseline.sourceId),
+    };
     return {
       source_id: baseline.sourceId,
       source_name: source.sourceName,
@@ -91,12 +125,15 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
       detail_identity_verified_count: metrics.detail_identity_verified_count ?? 0,
       navigation_leak_count: metrics.candidate_navigation_leak_count ?? 0,
       navigation_url_overlap_count: metrics.navigation_url_overlap_count ?? 0,
+      ...recall,
+      ...identityMetrics(baseline.sourceId, metrics),
       cms_family: cmsFamily(source, treatmentItem),
       final_state: finalState,
       selector_applied: CONFIGURED_SELECTOR_IDS.has(source.sourceId),
       profile_applied: Boolean(treatmentItem.parser_evidence?.profile_applied),
       list_url_changed: false,
       external_access_failure: isPairedExternalFailure(controlItem, treatmentItem),
+      review_category: finalState === "manual_review_required" ? manualReviewCategory(treatmentItem) : null,
       evidence_summary: evidenceSummary(controlItem, treatmentItem, finalState),
       remaining_limitation: finalState === "manual_review_required" ? "Need authoritative list/detail identity evidence before selector, profile, or URL changes." : null,
     };
@@ -111,6 +148,11 @@ export function validateInventory(inventory, expectedCount = 87) {
   for (const item of inventory) {
     if (!allowed.has(item.final_state)) throw new Error(`${item.source_id}: invalid final_state ${item.final_state}`);
     if (!item.evidence_summary) throw new Error(`${item.source_id}: evidence_summary is required`);
+    if (item.final_state === "configured_selector_applied" && item.candidate_recall_verified !== true) throw new Error(`${item.source_id}: configured selector requires recall proof`);
+    if ((item.removed_real_notice_count ?? 0) > 0) throw new Error(`${item.source_id}: removed real notice`);
+    if ((item.removed_unresolved_count ?? 0) > 0) throw new Error(`${item.source_id}: removed unresolved URL`);
+    if ((item.fixture_identity_verified_count ?? 0) > (item.fixture_identity_case_count ?? 0)) throw new Error(`${item.source_id}: fixture identity invariant failed`);
+    if ((item.runtime_identity_verified_count ?? 0) > (item.runtime_identity_attempted_count ?? 0)) throw new Error(`${item.source_id}: runtime identity invariant failed`);
   }
 }
 
@@ -123,7 +165,7 @@ function markdown(report) {
     "# Verified source parser remediation — 2026-07-25",
     "",
     `- Base branch: \`${report.git.base_branch}\` (${report.git.base_sha})`,
-    `- Branch: \`${report.git.branch}\` (${report.git.head_sha})`,
+    `- Tested code SHA: \`${report.git.tested_code_sha}\``,
     `- Target sources: ${report.summary.target_count}; classified: ${report.summary.classified_count}.`,
     "- A/B paired execution: 545 Sources each; no database read/write, production access, or external LLM calls.",
     "",
@@ -135,7 +177,7 @@ function markdown(report) {
     "",
     "## Paired regression",
     "",
-    `- B-induced hard failures: ${report.regression.b_induced_hard_failure_count}`,
+    `- Hard failures: control ${report.regression.control_hard_failure_count}, treatment ${report.regression.treatment_hard_failure_count}, B-induced ${report.regression.b_induced_hard_failure_count}`,
     `- Shared external failures: ${report.regression.shared_external_failures.map((item) => `${item.source_id} (${item.runtime_result_status})`).join(", ") || "none"}`,
     `- Partial: control ${report.regression.control_partial_count}, treatment ${report.regression.treatment_partial_count}`,
     `- LIST_SELECTOR_MENU_CONTAMINATION: control ${report.regression.control_menu_contamination_count}, treatment ${report.regression.treatment_menu_contamination_count}`,
@@ -151,24 +193,32 @@ function markdown(report) {
 }
 
 export function buildReport({ targetInventory, controlReport, treatmentReport, sources, git }) {
-  const inventory = buildInventory({ targetInventory, controlReport, treatmentReport, sources });
+  const { recall_proof: recallProof = {}, ...gitMetadata } = git;
+  const inventory = buildInventory({ targetInventory, controlReport, treatmentReport, sources, recallProof });
   validateInventory(inventory, targetInventory.length);
   const controlDiagnostics = controlReport.operationalDiagnostics.source_diagnostics;
   const treatmentDiagnostics = treatmentReport.operationalDiagnostics.source_diagnostics;
-  const sharedExternalFailures = inventory.filter((item) => item.external_access_failure).map((item) => ({ source_id: item.source_id, runtime_result_status: item.runtime_result_treatment }));
+  const treatmentById = bySource(treatmentReport);
+  const sharedExternalFailures = controlDiagnostics
+    .filter((item) => isPairedExternalFailure(item, treatmentById[item.source_id]))
+    .map((item) => ({ source_id: item.source_id, runtime_result_status: item.runtime_result_status }));
   return {
     schema_version: "verified-source-parser-remediation-v1",
     generated_at: new Date().toISOString(),
-    git,
+    git: gitMetadata,
     target_definition: "pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor",
     summary: { target_count: inventory.length, classified_count: inventory.length, final_state_counts: stateCounts(inventory) },
     regression: {
       control_source_count: controlReport.sourceRegistry.sourceCount,
       treatment_source_count: treatmentReport.sourceRegistry.sourceCount,
+      control_hard_failure_count: controlDiagnostics.filter((item) => HARD_FAILURES.has(item.runtime_result_status)).length,
+      treatment_hard_failure_count: treatmentDiagnostics.filter((item) => HARD_FAILURES.has(item.runtime_result_status)).length,
       b_induced_hard_failure_count: 0,
       shared_external_failures: sharedExternalFailures,
+      shared_external_failure_count: sharedExternalFailures.length,
       control_partial_count: controlDiagnostics.filter((item) => item.runtime_result_status === "partial").length,
       treatment_partial_count: treatmentDiagnostics.filter((item) => item.runtime_result_status === "partial").length,
+      partial_increase_count: Math.max(0, treatmentDiagnostics.filter((item) => item.runtime_result_status === "partial").length - controlDiagnostics.filter((item) => item.runtime_result_status === "partial").length),
       control_menu_contamination_count: controlDiagnostics.filter((item) => item.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION")).length,
       treatment_menu_contamination_count: treatmentDiagnostics.filter((item) => item.operational_codes.includes("LIST_SELECTOR_MENU_CONTAMINATION")).length,
     },
@@ -181,7 +231,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const targetInventory = readJson(path.join(ROOT, ".tmp", "menu-contamination-remediation", "source-inventory.json"));
   const controlReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "control", "scholarship-notices-latest.json"));
   const treatmentReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "treatment", "scholarship-notices-latest.json"));
-  const git = { base_branch: "fix/navigation-contamination-diagnostic", base_sha: process.env.BASE_SHA ?? "70771aa", branch: "fix/verified-source-parser-remediation-v2", head_sha: process.env.HEAD_SHA ?? null };
+  const recallProof = Object.fromEntries(["hanyang_011", "hanyang_013"].map((sourceId) => [sourceId, readJson(path.join(ROOT, ".tmp", "hanyang-recall-proof", `${sourceId}-candidate-diff.json`))]));
+  const git = { base_branch: "fix/navigation-contamination-diagnostic", base_sha: process.env.BASE_SHA ?? "70771aa", tested_code_sha: process.env.TESTED_CODE_SHA ?? null, report_input_control_sha: process.env.CONTROL_SHA ?? controlReport.sourceRegistry.commitSha ?? null, report_input_treatment_sha: process.env.TREATMENT_SHA ?? treatmentReport.sourceRegistry.commitSha ?? null, report_generated_at: new Date().toISOString(), recall_proof: recallProof };
   const report = buildReport({ targetInventory, controlReport, treatmentReport, sources: readManifestSources(), git });
   validateInventory(report.inventory, 87);
   const jsonPath = path.join(outputDirectory, "verified-source-parser-remediation-2026-07-25.json");

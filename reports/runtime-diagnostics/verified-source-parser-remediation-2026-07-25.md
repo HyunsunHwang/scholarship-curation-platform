@@ -1,7 +1,7 @@
 # Verified source parser remediation — 2026-07-25
 
 - Base branch: `fix/navigation-contamination-diagnostic` (70771aaeee89f74fb10ee10dff46cb8b3170cd38)
-- Branch: `fix/verified-source-parser-remediation-v2` (75b9d1583509f6ba8e8300bafef39c449af0f973)
+- Tested code SHA: `e9588d75c5fd836b93e1f64ea2a7cc304cc347cf`
 - Target sources: 87; classified: 87.
 - A/B paired execution: 545 Sources each; no database read/write, production access, or external LLM calls.
 
@@ -17,8 +17,8 @@
 
 ## Paired regression
 
-- B-induced hard failures: 0
-- Shared external failures: skku_013 (http_error)
+- Hard failures: control 2, treatment 2, B-induced 0
+- Shared external failures: hanyang_014 (network_error), skku_013 (http_error)
 - Partial: control 1, treatment 0
 - LIST_SELECTOR_MENU_CONTAMINATION: control 0, treatment 0
 
