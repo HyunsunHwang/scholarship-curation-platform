@@ -26,7 +26,7 @@ assert.equal(prepared.orchestrationArgs.artifactWriter.recover instanceof Functi
 let calls = 0;
 await assert.rejects(
   () => executePreparedPhase4FullCapture({ ...prepared, orchestration: async () => { calls += 1; } }),
-  (error) => error?.code === "phase4_full_capture_execution_not_released",
+  (error) => error?.code === "phase4_live_release_code_sha_mismatch",
 );
 assert.equal(calls, 0);
 console.log("phase4_full_capture_execution_contract_tests_passed=10");

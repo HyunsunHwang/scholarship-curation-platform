@@ -71,6 +71,7 @@
     "test:phase4-full-capture-execution-contract": "node scripts/test-phase4-full-capture-execution-contract.mjs",
     "test:phase4-resume-contract": "node scripts/test-phase4-resume-contract.mjs",
     "test:phase4-resume-integration": "node scripts/test-phase4-resume-integration.mjs",
+    "test:phase4-live-release": "node scripts/test-phase4-live-release.mjs",
     "build:phase4-full-capture-dry-run": "node scripts/build-phase4-full-capture-dry-run.mjs",
     "build:phase4d-closeout": "node scripts/build-phase4d-closeout.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
