@@ -69,6 +69,7 @@
     "run:phase4-full-capture": "node scripts/run-phase4-full-capture.mjs",
     "test:phase4-full-capture-dry-run": "node scripts/test-phase4-full-capture-dry-run.mjs",
     "test:phase4-full-capture-execution-contract": "node scripts/test-phase4-full-capture-execution-contract.mjs",
+    "test:phase4-resume-contract": "node scripts/test-phase4-resume-contract.mjs",
     "build:phase4-full-capture-dry-run": "node scripts/build-phase4-full-capture-dry-run.mjs",
     "test:crawler-transport-hardening": "node scripts/test-crawler-transport-hardening.mjs",
     "test:operational-crawl-diagnostics": "node scripts/test-operational-crawl-diagnostics.mjs",
