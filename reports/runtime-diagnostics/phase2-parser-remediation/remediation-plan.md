@@ -4,9 +4,9 @@
 
 Freeze the historical 87-source target set, generate a current baseline from the 545-source post-merge runtime report, and document the existing analyzer/report boundary defects. No crawler, parser, manifest, profile, or source URL behavior changes occur in this stage.
 
-## Stage 1 — next
+## Stage 1 — completed
 
-Move phase-2 status interpretation and evidence invariants into the operational analyzer. Remove report-generator defaults that claim candidate recall without diff evidence. Preserve the existing crawler observation contract.
+Phase-2 status interpretation and evidence invariants now belong to the operational analyzer. The report generator supplies paired evidence but no longer assigns Source-ID-based final states or defaults candidate recall to verified. The existing crawler observation contract remains unchanged.
 
 ## Stage 2 — after Stage 1
 

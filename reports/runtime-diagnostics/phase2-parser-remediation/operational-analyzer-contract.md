@@ -8,9 +8,11 @@ The crawler and parser record observations; the operational analyzer interprets 
 - `navigation_url_overlap_count`: a retained candidate URL also appears in navigation. This is evidence only, never contamination by itself.
 - Candidate recall is `verified` only with paired candidate-diff evidence showing no removed real or unknown notice and no added false positive.
 
-## Phase 2 analyzer output planned for phase 1
+## Phase 2 analyzer output
 
-`analysis_valid`, `phase2_status`, parser-contract, recall, detail-identity, pagination, runtime-accessibility, `next_action`, `next_phase_queue`, `blocking_reason`, and operational codes will be analyzer-owned fields. Contradictory evidence must yield `analysis_valid=false` with `ANALYZER_EVIDENCE_CONTRADICTION` or `ANALYZER_INVARIANT_VIOLATION`.
+`analysis_valid`, `phase2_status`, parser-contract, recall, detail-identity, pagination, runtime-accessibility, `next_action`, `next_phase_queue`, `blocking_reason`, and analysis codes are analyzer-owned fields. Contradictory evidence yields `analysis_valid=false` with `ANALYZER_EVIDENCE_CONTRADICTION`.
+
+Ordinary runtime diagnostics have no paired candidate comparison and therefore record `phase2_status=not_evaluated`. The paired remediation report supplies explicit comparison evidence; without it, candidate recall remains unverified and the Source remains `manual_review_required`.
 
 ## Prohibited interpretations
 
