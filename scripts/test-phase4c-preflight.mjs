@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadPhase4AuthoritySnapshot, validatePhase4ControlAuthority } from "../lib/crawler-engine/runtime-diagnostics/phase4-control-authority.mjs";
 import { validatePhase4PrivateArtifactRoot, createPhase4PrivateArtifactIndex } from "../lib/crawler-engine/runtime-diagnostics/phase4-private-artifact-retention.mjs";
-import { PHASE4C_EXECUTION_STATUSES, phase4CFailure, buildPhase4CPreflight } from "../lib/crawler-engine/runtime-diagnostics/phase4c-preflight.mjs";
+import { PHASE4C_EXECUTION_STATUSES, phase4CFailure, buildPhase4CPreflight, buildPhase4CSourceOutcomes } from "../lib/crawler-engine/runtime-diagnostics/phase4c-preflight.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const localRoot = path.join(root, ".tmp", "phase4c-test-private"); fs.rmSync(localRoot, { recursive: true, force: true });
 try {
@@ -20,5 +20,7 @@ try {
   assert.equal(Object.keys(stages).length + 1, PHASE4C_EXECUTION_STATUSES.length);
   for (const [stage, status] of Object.entries(stages)) { const row = phase4CFailure({ sourceId: "x", stage, error: Object.assign(new Error("C:\\secret\\raw"), { code: "x" }) }); assert.equal(row.execution_status, status); assert.ok(row.failed_stage); }
   const result = await buildPhase4CPreflight({ repositoryRoot: root, privateArtifactRoot: localRoot, rawCaptureDirectory: path.join(root, ".tmp/runtime-analysis/phase4-capture-pilot-20260727-v3/captures"), pilotReportPath: path.join(root, "reports/runtime-diagnostics/phase4-capture-pilot-2026-07-27-run2.json") }); assert.equal(result.ready_for_87_capture, true); assert.equal(result.network_fetch_count, 0); assert.equal(result.phase4b_closeout.comparison_no_change, 8); assert.doesNotMatch(JSON.stringify(result), /html_base64|[A-Za-z]:\\/);
+  assert.equal(result.phase4b_closeout.sources.length, 8); assert.equal(new Set(result.phase4b_closeout.sources.map((row) => row.source_id)).size, 8); assert.equal(result.phase4b_closeout.offline_failure_count, 0); assert.equal(result.phase4b_closeout.transport_terminals.length, 1);
+  assert.throws(() => buildPhase4CSourceOutcomes({ pilotSourceIds: ["a", "hanyang_014"], inventory: [{ source_id: "a", raw_capture_status: "raw_capture_verified", capture_status: "capture_success", html_sha256: "0".repeat(64), response_byte_count: 1, report_match: true }, { source_id: "hanyang_014", capture_status: "transport_failure", next_phase_queue: "transport_recovery" }], comparisons: [{ source_id: "a" }], reconciliations: [{ source_id: "a", execution_status: "treatment_parser_failure" }] }), /Conflicting/);
   console.log("phase4c_preflight_tests_passed=10");
 } finally { fs.rmSync(localRoot, { recursive: true, force: true }); }
