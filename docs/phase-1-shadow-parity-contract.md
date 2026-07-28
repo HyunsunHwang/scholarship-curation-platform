@@ -1,8 +1,8 @@
 # Shadow Parity Contract — Legacy vs Normalized Graph
 
-Status: preparation only  
-Phase: ready for Phase 1 design/implementation  
-Safety: no production dual-write, no DB apply, no scheduled cutover in this document
+Status: implemented locally (dry-run)
+Phase: Phase 1 local shadow parity
+Safety: no production dual-write, no DB apply, no scheduled cutover
 
 ## Goal
 
@@ -11,17 +11,31 @@ Compare the same crawler artifact through:
 ```text
 legacy path
   crawler artifact
-  → clean/merge
-  → scripts/ingest-notices-to-supabase.mjs
-  → crawled_notices
+  → clean/merge CSV view
+  → legacy notice rows (DB upsert NOT executed)
 
 normalized shadow path
-  crawler handoff / artifact
+  crawler handoff
+  → handoff→graph adapter
   → normalized graph plan (dry-run)
-  → optional isolated non-production apply later
 ```
 
-Phase 0 only prepares the contract. It does not execute shadow writes.
+## Runtime entrypoints
+
+```text
+npm run test:shadow-parity
+npm run run:shadow-parity-dry-run
+```
+
+Core modules:
+
+- `lib/post-phase-l/handoff-to-graph-adapter.mjs`
+- `lib/post-phase-l/legacy-notice-artifact.mjs`
+- `lib/post-phase-l/shadow-parity.mjs`
+- `scripts/run-shadow-parity-dry-run.mjs`
+- `fixtures/shadow-parity/`
+
+Reports are written under `reports/shadow-parity/` by the dry-run runner.
 
 ## Required inputs
 
@@ -59,6 +73,11 @@ field_mismatch
 identity_mapping_review
 ```
 
+Known current divergence worth tracking:
+
+- Legacy ingest dedupes by `notice_url` globally, so different sources sharing one URL collapse to one legacy row.
+- Normalized graph keeps one Notice per `(source_id, identity_key)`, so the same URL may produce `normalized_only` rows.
+
 Suggested hard blockers before any scheduled cutover discussion:
 
 - unsupported identity kinds generated
@@ -74,10 +93,10 @@ Suggested hard blockers before any scheduled cutover discussion:
 - creating analysis jobs from shadow revisions
 - public scholarships projection
 
-## Recommended Phase 1 deliverables
+## Phase 1 deliverable status
 
-1. dry-run adapter: handoff → `buildNormalizedGraphPlan`
-2. fixture corpus from representative crawler artifacts
-3. parity report JSON + markdown summary
-4. replay idempotency proof for the same artifact
-5. no production write path enabled by default
+1. dry-run adapter: handoff → `buildNormalizedGraphPlan` — implemented
+2. fixture corpus from representative crawler artifacts — implemented
+3. parity report JSON + markdown summary — implemented
+4. replay idempotency proof for the same artifact — implemented
+5. no production write path enabled by default — implemented
