@@ -167,6 +167,7 @@ export type LAnalysisRun = {
   id: string;
   job_id: string;
   attempt_number: number;
+  run_role: string;
   provider: string;
   model: string;
   request_id: string | null;
@@ -245,6 +246,9 @@ export type LScholarshipProgram = {
   id: string;
   canonical_name: string;
   normalized_name: string;
+  normalized_organization: string;
+  identity_discriminator: string;
+  identity_key: string;
   operating_organization: string | null;
   funding_organization: string | null;
   description: string | null;
@@ -285,10 +289,25 @@ export type LScholarshipCycle = {
   canonical_status: string;
   publication_status: string;
   idempotency_key: string;
+  revision_identity_key: string;
+  cycle_identity_key: string | null;
   created_from_proposal_id: string;
   created_by: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type LAnalysisRoutingDecision = {
+  id: string;
+  job_id: string;
+  economy_run_id: string | null;
+  escalation_run_id: string | null;
+  selected_run_id: string | null;
+  selected_result_id: string | null;
+  reason_codes: Json;
+  policy_version: string;
+  decision_fingerprint: string;
+  created_at: string;
 };
 
 export type LProgramCycleProposal = {
@@ -371,6 +390,7 @@ export interface PostPhaseLDatabase {
       notice_analysis_results: Table<LAnalysisResult>;
       notice_analysis_evidence: Table<LAnalysisEvidence>;
       notice_analysis_review_events: Table<LAnalysisReviewEvent>;
+      notice_analysis_routing_decisions: Table<LAnalysisRoutingDecision>;
       scholarship_programs: Table<LScholarshipProgram>;
       scholarship_program_aliases: Table<LScholarshipProgramAlias>;
       scholarship_cycles: Table<LScholarshipCycle>;

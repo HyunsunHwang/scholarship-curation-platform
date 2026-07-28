@@ -1,0 +1,25 @@
+{
+  "policy_version": "analysis-model-policy-v1",
+  "pricing_version": "anthropic-public-pricing-2025-05",
+  "currency": "USD",
+  "roles": {
+    "economy": {
+      "provider": "anthropic",
+      "model": "claude-3-5-haiku-20241022",
+      "input_micros_per_million_tokens": 800000,
+      "output_micros_per_million_tokens": 4000000
+    },
+    "baseline": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514",
+      "input_micros_per_million_tokens": 3000000,
+      "output_micros_per_million_tokens": 15000000
+    },
+    "escalation": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514",
+      "input_micros_per_million_tokens": 3000000,
+      "output_micros_per_million_tokens": 15000000
+    }
+  }
+}
