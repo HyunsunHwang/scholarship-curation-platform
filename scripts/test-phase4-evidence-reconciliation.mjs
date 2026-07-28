@@ -31,4 +31,4 @@ assert.equal(result.accounting.artifact_file_count, 1); assert.equal(result.sour
 await fs.appendFile(path.join(run, "captures", `${sourceId}.json`), " ");
 await assert.rejects(() => reconcilePhase4Evidence({ runDirectory: run, expectedSourceIds: [sourceId], runIdentity, contractFingerprint: artifact.contract_fingerprint }), { code: "phase4_reconciliation_artifact_sha_mismatch" });
 await fs.rm(root, { recursive: true, force: true });
-console.log("Phase 4 evidence reconciliation tests: 4/4 passed");
+console.log("Phase 4 evidence reconciliation tests: 6/6 passed");
