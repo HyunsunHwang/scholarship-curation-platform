@@ -372,6 +372,79 @@ export type LCrawlRun = {
   created_at: string;
 };
 
+export type LAnalysisPilotRun = {
+  id: string;
+  namespace: string;
+  pilot_version: string;
+  target_project_ref: string;
+  status: string;
+  current_stage: string;
+  prompt_version: string;
+  schema_version: string;
+  model_policy_version: string;
+  manifest_fingerprint: string;
+  max_jobs: number;
+  max_runs: number;
+  max_escalations: number;
+  budget_limit_micros: number;
+  reserved_cost_micros: number;
+  actual_cost_micros: number | null;
+  usage_status: string;
+  created_at: string;
+  smoke_started_at: string | null;
+  smoke_completed_at: string | null;
+  expansion_approved_at: string | null;
+  completed_at: string | null;
+  metadata: Json;
+};
+
+export type LAnalysisPilotRunJob = {
+  pilot_run_id: string;
+  job_id: string;
+  execution_order: number;
+  stage: string;
+  expected_revision_id: string;
+  expected_input_fingerprint: string;
+  member_status: string;
+  claimed_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+};
+
+export type LAnalysisProviderUsageReceipt = {
+  id: string;
+  job_id: string;
+  pilot_run_id: string;
+  attempt_number: number;
+  run_role: string;
+  provider: string;
+  model: string;
+  provider_request_id: string | null;
+  input_token_count: number | null;
+  output_token_count: number | null;
+  cached_input_token_count: number | null;
+  estimated_cost_micros: number;
+  actual_cost_micros: number | null;
+  usage_status: string;
+  pricing_version: string;
+  received_at: string;
+  request_fingerprint: string;
+  response_fingerprint: string | null;
+  safe_diagnostics: Json;
+  created_at: string;
+};
+
+export type LAnalysisPilotCostReservation = {
+  pilot_run_id: string;
+  job_id: string;
+  attempt_number: number;
+  run_role: string;
+  estimated_cost_micros: number;
+  reservation_status: string;
+  created_at: string;
+  reconciled_at: string | null;
+};
+
 export interface PostPhaseLDatabase {
   public: {
     Tables: {
@@ -391,6 +464,10 @@ export interface PostPhaseLDatabase {
       notice_analysis_evidence: Table<LAnalysisEvidence>;
       notice_analysis_review_events: Table<LAnalysisReviewEvent>;
       notice_analysis_routing_decisions: Table<LAnalysisRoutingDecision>;
+      notice_analysis_pilot_runs: Table<LAnalysisPilotRun>;
+      notice_analysis_pilot_run_jobs: Table<LAnalysisPilotRunJob>;
+      notice_analysis_provider_usage_receipts: Table<LAnalysisProviderUsageReceipt>;
+      notice_analysis_pilot_cost_reservations: Table<LAnalysisPilotCostReservation>;
       scholarship_programs: Table<LScholarshipProgram>;
       scholarship_program_aliases: Table<LScholarshipProgramAlias>;
       scholarship_cycles: Table<LScholarshipCycle>;
@@ -495,6 +572,52 @@ export interface PostPhaseLDatabase {
           p_run: Json;
         };
         Returns: Json;
+      };
+      create_or_register_notice_analysis_pilot_run: {
+        Args: { p_pilot_run: Json; p_members: Json };
+        Returns: LAnalysisPilotRun;
+      };
+      claim_notice_analysis_pilot_job: {
+        Args: {
+          p_pilot_run_id: string;
+          p_stage: string;
+          p_worker_id: string;
+          p_lease_seconds?: number;
+        };
+        Returns: LAnalysisJob[];
+      };
+      reserve_notice_analysis_pilot_cost: {
+        Args: {
+          p_pilot_run_id: string;
+          p_job_id: string;
+          p_worker_id: string;
+          p_attempt_number: number;
+          p_run_role: string;
+          p_estimated_cost_micros: number;
+        };
+        Returns: LAnalysisPilotRun;
+      };
+      record_notice_analysis_provider_usage: {
+        Args: {
+          p_job_id: string;
+          p_pilot_run_id: string;
+          p_worker_id: string;
+          p_receipt: Json;
+        };
+        Returns: LAnalysisProviderUsageReceipt;
+      };
+      finish_notice_analysis_pilot_member: {
+        Args: {
+          p_pilot_run_id: string;
+          p_job_id: string;
+          p_worker_id: string;
+          p_member_status: string;
+        };
+        Returns: LAnalysisPilotRun;
+      };
+      approve_notice_analysis_pilot_expansion: {
+        Args: { p_pilot_run_id: string };
+        Returns: LAnalysisPilotRun;
       };
       record_notice_analysis_review: {
         Args: {
