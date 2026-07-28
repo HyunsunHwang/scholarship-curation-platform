@@ -1,5 +1,13 @@
 # Analysis pilot control-plane contract
 
+## Status
+
+This control plane is frozen after the failed five-case v2 pilot. See
+[`five-case-live-pilot-v2-closeout.md`](five-case-live-pilot-v2-closeout.md) for the
+authoritative outcome and the minimum critical-risk policy for future LLM work. This
+document preserves the historical contract; it does not authorize repair, retry, reset,
+re-registration, expansion, or live provider execution.
+
 The durable analysis engine is shared; queue selection is not.
 
 Global workers use `claim_notice_analysis_jobs`. Pilot workers require a durable

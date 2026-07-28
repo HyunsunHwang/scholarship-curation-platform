@@ -1,5 +1,17 @@
 # Non-Production Analysis Pilot Control Plane
 
+## Current status: frozen
+
+The five-case v2 live pilot is closed. Its authoritative outcome, preserved evidence, and
+the reduced policy for any future LLM work are in
+[`five-case-live-pilot-v2-closeout.md`](five-case-live-pilot-v2-closeout.md). Do not use
+this historical runbook to register, retry, reset, re-register, expand, or otherwise
+execute that pilot. Live provider execution remains disabled and control-plane remediation
+is deferred.
+
+The remainder records the implementation contract that existed before closeout; it is not
+an operational instruction for the closed cohort.
+
 This runbook applies only to the isolated Post-Phase L sandbox
 `hrayfvdggbhfmmzfblly`. The production ref `synwudnxdkybwihwmtak` is denied by the
 target guard. Migration, registration, smoke, and expansion are operator actions; repository
