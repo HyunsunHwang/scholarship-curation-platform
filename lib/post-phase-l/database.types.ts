@@ -224,6 +224,23 @@ export type LAnalysisEvidence = {
   created_at: string;
 };
 
+export type LAnalysisReviewEvent = {
+  id: string;
+  result_id: string;
+  notice_id: string;
+  revision_id: string;
+  reviewer_id: string;
+  decision: string;
+  original_result_fingerprint: string;
+  corrected_output: Json | null;
+  effective_output: Json | null;
+  correction_fingerprint: string | null;
+  reason: string | null;
+  event_idempotency_key: string;
+  reviewed_at: string;
+  created_at: string;
+};
+
 export type LCrawlRun = {
   id: string;
   idempotency_key: string;
@@ -256,6 +273,7 @@ export interface PostPhaseLDatabase {
       notice_analysis_runs: Table<LAnalysisRun>;
       notice_analysis_results: Table<LAnalysisResult>;
       notice_analysis_evidence: Table<LAnalysisEvidence>;
+      notice_analysis_review_events: Table<LAnalysisReviewEvent>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -294,6 +312,34 @@ export interface PostPhaseLDatabase {
           p_retry_delay_seconds?: number;
         };
         Returns: LAnalysisJob;
+      };
+      claim_notice_analysis_job_by_revision: {
+        Args: {
+          p_revision_id: string;
+          p_worker_id: string;
+          p_lease_seconds?: number;
+        };
+        Returns: LAnalysisJob;
+      };
+      finalize_notice_analysis_success: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_run: Json;
+          p_result: Json;
+          p_evidence: Json;
+        };
+        Returns: Json;
+      };
+      record_notice_analysis_review: {
+        Args: {
+          p_result_id: string;
+          p_decision: string;
+          p_corrected_output: Json | null;
+          p_reason: string | null;
+          p_event_idempotency_key: string;
+        };
+        Returns: LAnalysisReviewEvent;
       };
     };
     Enums: { [_ in never]: never };

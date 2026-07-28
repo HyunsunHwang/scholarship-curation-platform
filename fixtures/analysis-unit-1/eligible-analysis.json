@@ -1,0 +1,163 @@
+{
+  "revision": {
+    "id": "11111111-1111-5111-8111-111111111111",
+    "notice_id": "22222222-2222-5222-8222-222222222222",
+    "title": "2026 미래인재 장학금 신규 모집",
+    "body": "미래대학교는 2026학년도 미래인재 장학금 신규 지원자를 모집합니다. 지원 대상은 미래대학교 재학생이며 직전 학기 성적 3.0 이상이어야 합니다. 장학금은 등록금 200만원을 지원합니다. 신청 기간은 2026년 8월 1일부터 2026년 8월 15일까지입니다. 제출 서류는 신청서와 성적증명서이며 온라인 장학 시스템에서 신청합니다.",
+    "normalized_payload": {
+      "candidate_classification": "candidate",
+      "notice_type": "new_recruitment",
+      "published_date": "2026-07-28"
+    }
+  },
+  "notice": {
+    "id": "22222222-2222-5222-8222-222222222222",
+    "source_id": "fixture_001",
+    "canonical_url": "https://example.test/notices/2026-scholarship"
+  },
+  "assets": [],
+  "source": {
+    "source_id": "fixture_001",
+    "source_name": "미래대학교 학생지원팀",
+    "scholarship_dedicated": true
+  },
+  "candidate_classification": "candidate",
+  "notice_type": "new_recruitment",
+  "privacy_status": "clear",
+  "provider_response": {
+    "lineage": {
+      "notice_id": "22222222-2222-5222-8222-222222222222",
+      "revision_id": "11111111-1111-5111-8111-111111111111"
+    },
+    "notice_classification": "new_recruitment",
+    "program": {
+      "name": "미래인재 장학금",
+      "confidence": 0.98
+    },
+    "cycle": {
+      "name": "2026학년도",
+      "confidence": 0.95
+    },
+    "organizations": [
+      {
+        "name": "미래대학교",
+        "role": "operator",
+        "confidence": 0.98
+      }
+    ],
+    "benefits": [
+      {
+        "type": "tuition",
+        "amount_text": "등록금 200만원",
+        "confidence": 0.99
+      }
+    ],
+    "application": {
+      "start_date": {
+        "value": "2026-08-01",
+        "status": "confirmed"
+      },
+      "end_date": {
+        "value": "2026-08-15",
+        "status": "confirmed"
+      },
+      "method": "온라인 장학 시스템",
+      "url_or_path": null
+    },
+    "eligibility_conditions": [
+      "미래대학교 재학생",
+      "직전 학기 성적 3.0 이상"
+    ],
+    "target_scope": {
+      "universities": ["미래대학교"],
+      "majors": [],
+      "grades": [],
+      "enrollment_statuses": ["재학생"]
+    },
+    "required_documents": ["신청서", "성적증명서"],
+    "important_cautions": [],
+    "unresolved_fields": ["application.url_or_path"],
+    "evidence": [
+      {
+        "field_path": "program.name",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "미래인재 장학금",
+        "confidence": 0.98
+      },
+      {
+        "field_path": "cycle.name",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "2026학년도",
+        "confidence": 0.95
+      },
+      {
+        "field_path": "organizations[0]",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "미래대학교",
+        "confidence": 0.98
+      },
+      {
+        "field_path": "benefits[0]",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "등록금 200만원",
+        "confidence": 0.99
+      },
+      {
+        "field_path": "application.start_date",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "2026년 8월 1일",
+        "confidence": 0.99
+      },
+      {
+        "field_path": "application.end_date",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "2026년 8월 15일",
+        "confidence": 0.99
+      },
+      {
+        "field_path": "application.method",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "온라인 장학 시스템",
+        "confidence": 0.95
+      },
+      {
+        "field_path": "eligibility_conditions",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "지원 대상은 미래대학교 재학생이며 직전 학기 성적 3.0 이상",
+        "confidence": 0.98
+      },
+      {
+        "field_path": "target_scope",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "미래대학교 재학생",
+        "confidence": 0.98
+      },
+      {
+        "field_path": "required_documents",
+        "source_kind": "body_text",
+        "source_id": "11111111-1111-5111-8111-111111111111",
+        "locator": "body",
+        "quote": "제출 서류는 신청서와 성적증명서",
+        "confidence": 0.98
+      }
+    ]
+  }
+}
