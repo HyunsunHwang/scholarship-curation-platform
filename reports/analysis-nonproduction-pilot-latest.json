@@ -1,7 +1,7 @@
 {
   "report_version": "analysis-nonproduction-pilot-v1",
-  "generated_at": "2026-07-28T12:18:17.203Z",
-  "status": "blocked",
+  "generated_at": "2026-07-28T12:46:32.961Z",
+  "status": "ready_for_operator_execution",
   "stage": "preflight",
   "stage_model": {
     "new_phase_or_unit_created": false,
@@ -10,8 +10,8 @@
   "target_environment": {
     "project_name": "scholarship-curation-post-phase-l",
     "expected_project_ref": "hrayfvdggbhfmmzfblly",
-    "exact_target_guard_passed": false,
-    "production_ref_detected": true,
+    "exact_target_guard_passed": true,
+    "production_ref_detected": false,
     "production_access_count": 0,
     "credential_source_category": "existing_local_environment_only",
     "secret_values_printed": false
@@ -40,13 +40,10 @@
     "database_connection_attempted": false,
     "database_snapshot_completed": false,
     "database_drift_checked": false,
-    "missing_environment_variables": [
-      "POST_PHASE_L_TARGET_PROJECT_REF",
-      "SUPABASE_SERVICE_ROLE_KEY"
-    ],
+    "missing_environment_variables": [],
     "credential_presence": {
-      "service_role": false,
-      "anthropic_api": false
+      "service_role": true,
+      "anthropic_api": true
     },
     "missing_explicit_flags": []
   },
@@ -79,12 +76,5 @@
     "legacy_schedule_changed": false,
     "secrets_committed_or_printed": false
   },
-  "blockers": [
-    "target_project_ref_missing",
-    "target_url_ref_mismatch",
-    "target_project_url_mismatch",
-    "forbidden_production_ref_detected",
-    "credential_missing:POST_PHASE_L_TARGET_PROJECT_REF",
-    "credential_missing:SUPABASE_SERVICE_ROLE_KEY"
-  ]
+  "blockers": []
 }
