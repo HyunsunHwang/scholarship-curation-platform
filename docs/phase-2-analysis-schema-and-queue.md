@@ -1,7 +1,7 @@
 # Phase 2 — Analysis Schema and Durable Queue
 
-Status: implemented as contracts + pure logic (not applied to DB, no worker)  
-Depends on: Phase 0 identity gate, Phase 1 shadow parity gate  
+Status: Phase 2-B hardened contracts + pure logic (not applied to DB, no worker)
+Depends on: Phase 0 identity gate, Phase 1 shadow parity gate
 Safety: no migration apply, no DB write, no Claude/LLM call, no scheduled cutover
 
 ## Data flow
@@ -9,7 +9,7 @@ Safety: no migration apply, no DB write, no Claude/LLM call, no scheduled cutove
 ```text
 Notice
 → durable Revision (+ Assets)
-→ readiness evaluator
+→ readiness evaluator (fail-closed)
 → job reconciliation planner
 → notice_analysis_jobs
 → (Phase 3) Claude worker claim/lease
@@ -19,6 +19,16 @@ Notice
 → admin semantic review
 → later Program/Cycle proposal only
 ```
+
+Phase 3 completion order:
+
+```text
+store run
+→ store validated result (+ evidence)
+→ complete_notice_analysis_job
+```
+
+Completion without a validated lineage-correct result is rejected.
 
 ## Revision readiness
 
@@ -30,6 +40,7 @@ Statuses:
 ready
 waiting_for_assets
 excluded_not_candidate
+excluded_notice_type
 excluded_result_or_roster
 excluded_multiple_programs
 excluded_low_text_quality
@@ -39,7 +50,40 @@ blocked_invalid_payload
 budget_deferred
 ```
 
-Default ready requires scholarship candidate/dedicated source, new recruitment, usable body or attachment text, acceptable Korean quality, no multi-program suspicion, no roster/result, no privacy block.
+### Positive candidate gate
+
+Eligible only when:
+
+```text
+candidate_classification = candidate
+OR
+source is scholarship_dedicated
+```
+
+Missing/unknown candidate without dedicated source → `excluded_not_candidate` / `CANDIDATE_NOT_CONFIRMED`.
+
+### New recruitment only
+
+Initial pilot allows `ready` only for:
+
+```text
+notice_type = new_recruitment
+```
+
+Other types (correction, extension, cancellation, unknown, …) → `excluded_notice_type` / `NOTICE_TYPE_NOT_NEW_RECRUITMENT`.
+
+### Attachment quality
+
+Readiness evaluates attachment extracted text length, replacement-character ratio, and usable Korean text. Body-only or attachment-only can be ready when usable; broken/short attachment-only inputs are not ready.
+
+### Privacy fail-closed
+
+```text
+not_scanned → provider blocked
+clear → provider allowed
+redacted → provider allowed
+blocked → provider blocked
+```
 
 ## Job / run / result / evidence roles
 
@@ -51,6 +95,7 @@ Default ready requires scholarship candidate/dedicated source, new recruitment, 
 | `notice_analysis_evidence` | Field-level locators into revision/asset text |
 
 SQL: `supabase/post-phase-l/004_notice_analysis_schema.sql`
+Wrapped in `begin` / environment guard / dependency checks / `commit`.
 
 ## Logical uniqueness
 
@@ -64,16 +109,24 @@ revision_id
 + input_fingerprint
 ```
 
-Reason: analysis contract identity belongs on the job. Provider/model belong on runs so Claude baseline and later low-cost shadow attempts can share one job contract history.
+Also unique `idempotency_key` and composite `(id, notice_id, revision_id)` for result lineage FKs.
 
-Also unique `idempotency_key` derived from the same fields.
+Runs unique `(id, job_id)`. Results enforce:
+
+```text
+(run_id, job_id) → runs(id, job_id)
+(job_id, notice_id, revision_id) → jobs(id, notice_id, revision_id)
+```
+
+Input fingerprint lives on the job. Reconciler completed-result checks join `result → job.input_fingerprint` (option B; results do not store input_fingerprint).
 
 ## Retry policy
 
 ```text
 retryable_failed + attempt_count < max_attempts → retry_existing_job
-attempt_count >= max_attempts → terminal, no auto retry
+attempt_count >= max_attempts → mark_terminal_max_attempts
 succeeded same contract → no_action_completed
+claim requires attempt_count < max_attempts
 ```
 
 ## Lease policy
@@ -89,11 +142,14 @@ fail_notice_analysis_job(job_id, worker_id, error_code, error_message, retryable
 Rules:
 
 - claim uses `FOR UPDATE SKIP LOCKED`
-- expired leased/running rows are reclaimable
+- auto-claim statuses: `pending`, `retryable_failed` only
+- `budget_deferred` is never auto-claimed; must be explicitly released to `pending`
+- expired leased/running rows are reclaimable when `attempt_count < max_attempts`
+- complete/fail require matching owner, status leased/running, and `lease_expires_at > now()`
+- complete additionally requires a validated result with matching job/run/notice/revision lineage
 - completed/terminal/cancelled/superseded are not reclaimable
-- wrong lease owner cannot complete/fail
 
-Pure simulator: `lib/analysis/analysis-job-lease.mjs`
+Pure simulator: `lib/analysis/analysis-job-lease.mjs` (parity with SQL claimable statuses).
 
 ## Raw response retention
 
@@ -115,15 +171,11 @@ latency_ms
 request_id
 ```
 
-`budget_deferred` is a future-compatible job/readiness status. Enforcement is not implemented in Phase 2.
+`budget_deferred` is a job/readiness status. Reconciler returns `defer_budget`. Auto claim does not include it. Enforcement/release belongs after Phase 3.
 
 ## Privacy state
 
-Placeholder contract: `lib/analysis/analysis-privacy-contract.mjs`
-
-```text
-not_scanned | clear | redacted | blocked
-```
+Contract: `lib/analysis/analysis-privacy-contract.mjs`
 
 Full detector/masking is deferred to the analysis input builder phase.
 
@@ -139,12 +191,12 @@ Review decision events stay human-only (`actor_type=admin_user`). Model output n
 
 ## Phase 3 worker entry conditions
 
-Enter Phase 3 only after verifying on the remote branch:
+Enter Phase 3 only after remote verification of:
 
-- migration DDL and uniqueness
-- lease RPCs
-- readiness/reconcile fixtures green
-- no desire to call Claude until queue contracts are accepted
+- migration DDL, uniqueness, lineage FKs
+- lease RPCs including expiry and validated-result completion
+- fail-closed readiness fixtures green
+- local JSON/normalized graph evidence worker path preferred before admin UI
 
 ## Provider contract note
 

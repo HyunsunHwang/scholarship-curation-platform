@@ -2,6 +2,34 @@
 -- Additive only. Do not apply automatically; target environment guard remains operator-owned.
 -- Depends on Post-Phase L graph tables from 002_post_phase_l_normalized_graph.sql.
 
+begin;
+
+do $$
+begin
+  if to_regclass('public.post_phase_l_environment_guard') is null then
+    raise exception 'Post-Phase L environment guard is required';
+  end if;
+
+  perform public.post_phase_l_assert_environment();
+
+  if to_regclass('public.ingestion_notices') is null then
+    raise exception 'ingestion_notices is required';
+  end if;
+  if to_regclass('public.ingestion_notice_revisions') is null then
+    raise exception 'ingestion_notice_revisions is required';
+  end if;
+  if to_regclass('public.ingestion_notice_assets') is null then
+    raise exception 'ingestion_notice_assets is required';
+  end if;
+  if to_regprocedure('public.is_admin()') is null then
+    raise exception 'public.is_admin() is required';
+  end if;
+  if to_regprocedure('public.set_updated_at()') is null then
+    raise exception 'public.set_updated_at() is required';
+  end if;
+end
+$$;
+
 create table if not exists public.notice_analysis_jobs (
   id uuid primary key,
   notice_id uuid not null references public.ingestion_notices(id) on delete cascade,
@@ -43,12 +71,14 @@ create table if not exists public.notice_analysis_jobs (
   cancelled_at timestamptz,
   metadata jsonb not null default '{}'::jsonb,
   unique (idempotency_key),
-  unique (revision_id, analysis_kind, prompt_version, schema_version, input_fingerprint)
+  unique (revision_id, analysis_kind, prompt_version, schema_version, input_fingerprint),
+  unique (id, notice_id, revision_id)
 );
 
+-- Auto-claim queue excludes budget_deferred (requires explicit release to pending).
 create index if not exists notice_analysis_jobs_pending_queue_idx
   on public.notice_analysis_jobs(status, available_at, priority desc, created_at)
-  where status in ('pending', 'retryable_failed', 'budget_deferred');
+  where status in ('pending', 'retryable_failed');
 
 create index if not exists notice_analysis_jobs_lease_idx
   on public.notice_analysis_jobs(lease_expires_at, status)
@@ -60,6 +90,7 @@ create index if not exists notice_analysis_jobs_revision_idx
 create index if not exists notice_analysis_jobs_notice_idx
   on public.notice_analysis_jobs(notice_id, created_at desc);
 
+drop trigger if exists notice_analysis_jobs_set_updated_at on public.notice_analysis_jobs;
 create trigger notice_analysis_jobs_set_updated_at
 before update on public.notice_analysis_jobs
 for each row execute function public.set_updated_at();
@@ -113,7 +144,8 @@ create table if not exists public.notice_analysis_runs (
   raw_response jsonb,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
-  unique (job_id, attempt_number)
+  unique (job_id, attempt_number),
+  unique (id, job_id)
 );
 
 create index if not exists notice_analysis_runs_job_idx
@@ -124,10 +156,10 @@ create index if not exists notice_analysis_runs_provider_created_idx
 
 create table if not exists public.notice_analysis_results (
   id uuid primary key default gen_random_uuid(),
-  job_id uuid not null references public.notice_analysis_jobs(id) on delete cascade,
-  run_id uuid not null references public.notice_analysis_runs(id) on delete cascade,
-  notice_id uuid not null references public.ingestion_notices(id) on delete cascade,
-  revision_id uuid not null references public.ingestion_notice_revisions(id) on delete cascade,
+  job_id uuid not null,
+  run_id uuid not null,
+  notice_id uuid not null,
+  revision_id uuid not null,
   result_status text not null check (
     result_status in ('validated', 'rejected', 'superseded')
   ),
@@ -140,7 +172,14 @@ create table if not exists public.notice_analysis_results (
   created_at timestamptz not null default now(),
   superseded_at timestamptz,
   unique (run_id),
-  unique (run_id, result_fingerprint)
+  unique (run_id, result_fingerprint),
+  foreign key (job_id) references public.notice_analysis_jobs(id) on delete cascade,
+  foreign key (run_id) references public.notice_analysis_runs(id) on delete cascade,
+  foreign key (notice_id) references public.ingestion_notices(id) on delete cascade,
+  foreign key (revision_id) references public.ingestion_notice_revisions(id) on delete cascade,
+  foreign key (run_id, job_id) references public.notice_analysis_runs(id, job_id),
+  foreign key (job_id, notice_id, revision_id)
+    references public.notice_analysis_jobs(id, notice_id, revision_id)
 );
 
 create index if not exists notice_analysis_results_revision_idx
@@ -221,6 +260,7 @@ before update or delete on public.notice_analysis_evidence
 for each row execute function public.notice_analysis_block_evidence_mutation();
 
 -- Lease claim RPC: pending/retryable/expired leases only.
+-- budget_deferred is never auto-claimed; attempt_count must be below max_attempts.
 create or replace function public.claim_notice_analysis_jobs(
   p_worker_id text,
   p_limit integer default 1,
@@ -243,14 +283,17 @@ begin
   with candidates as (
     select j.id
     from public.notice_analysis_jobs j
-    where (
-        j.status in ('pending', 'retryable_failed', 'budget_deferred')
-        and j.available_at <= now()
-      )
-      or (
-        j.status in ('leased', 'running')
-        and j.lease_expires_at is not null
-        and j.lease_expires_at <= now()
+    where j.attempt_count < j.max_attempts
+      and (
+        (
+          j.status in ('pending', 'retryable_failed')
+          and j.available_at <= now()
+        )
+        or (
+          j.status in ('leased', 'running')
+          and j.lease_expires_at is not null
+          and j.lease_expires_at <= now()
+        )
       )
     order by j.priority desc, j.available_at asc, j.created_at asc
     for update skip locked
@@ -284,7 +327,28 @@ set search_path = public
 as $$
 declare
   row public.notice_analysis_jobs;
+  validated_count integer;
 begin
+  select count(*)::integer
+  into validated_count
+  from public.notice_analysis_results r
+  join public.notice_analysis_runs run
+    on run.id = r.run_id
+   and run.job_id = r.job_id
+  where r.job_id = p_job_id
+    and r.result_status = 'validated'
+    and exists (
+      select 1
+      from public.notice_analysis_jobs j
+      where j.id = r.job_id
+        and j.notice_id = r.notice_id
+        and j.revision_id = r.revision_id
+    );
+
+  if coalesce(validated_count, 0) < 1 then
+    raise exception 'complete_notice_analysis_job_rejected_missing_validated_result';
+  end if;
+
   update public.notice_analysis_jobs
   set
     status = 'succeeded',
@@ -295,6 +359,8 @@ begin
   where id = p_job_id
     and leased_by = p_worker_id
     and status in ('leased', 'running')
+    and lease_expires_at is not null
+    and lease_expires_at > now()
   returning * into row;
 
   if row.id is null then
@@ -327,6 +393,8 @@ begin
   where id = p_job_id
     and leased_by = p_worker_id
     and status in ('leased', 'running')
+    and lease_expires_at is not null
+    and lease_expires_at > now()
   for update;
 
   if terminal is null then
@@ -402,3 +470,5 @@ revoke all on function public.fail_notice_analysis_job(uuid, text, text, text, b
 grant execute on function public.claim_notice_analysis_jobs(text, integer, integer) to service_role;
 grant execute on function public.complete_notice_analysis_job(uuid, text) to service_role;
 grant execute on function public.fail_notice_analysis_job(uuid, text, text, text, boolean, integer) to service_role;
+
+commit;
