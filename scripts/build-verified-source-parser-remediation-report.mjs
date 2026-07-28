@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { analyzePhase2ParserRemediation } from "../lib/crawler-engine/runtime-diagnostics/index.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const HARD_FAILURES = new Set(["network_error", "timeout", "http_error", "parser_error", "configuration_error", "source_resolution_error", "unsupported"]);
-const CONFIGURED_SELECTOR_IDS = new Set(["hanyang_011", "hanyang_013"]);
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
@@ -34,51 +34,41 @@ function isPairedExternalFailure(control, treatment) {
     && control?.runtime_result_status === treatment?.runtime_result_status;
 }
 
-function classify({ sourceId, control, treatment }) {
-  const metrics = treatment?.metrics ?? {};
-  if (CONFIGURED_SELECTOR_IDS.has(sourceId)) return "configured_selector_applied";
-  if (treatment?.capability_status === "adapter_required") return "adapter_required";
-  if (isPairedExternalFailure(control, treatment)) return "source_unreachable";
-  if (
-    treatment?.runtime_result_status === "success"
-    && Number(metrics.candidate_navigation_leak_count ?? 0) === 0
-    && Number(metrics.detail_identity_verified_count ?? 0) >= 3
-  ) return "verified_heuristic_safe";
-  return "manual_review_required";
-}
-
 function cmsFamily(source, treatment) {
-  if (CONFIGURED_SELECTOR_IDS.has(source.sourceId)) return "hanyang_hcode_idx_board";
   if (treatment?.capability_status === "adapter_required") return "adapter_or_inline_structure";
   if (source.listParserProfile) return source.listParserProfile;
   return source.adapter || "generic_html_heuristic";
 }
 
-function evidenceSummary(control, treatment, state) {
+function evidenceSummary(control, treatment, phase2Analysis) {
   const metrics = treatment?.metrics ?? {};
-  if (state === "configured_selector_applied") return "Minimal official list/detail fixtures verify the configured hCode row, URL, date, and strict title identity contract.";
-  if (state === "adapter_required") return "Runtime diagnostics identified an inline or adapter-only topology; no selector is asserted without an authoritative static list contract.";
-  if (state === "source_unreachable") return `Paired control and treatment both ended ${treatment?.runtime_result_status}; this is retained as an external access limitation.`;
-  if (state === "verified_heuristic_safe") return `Heuristic candidates had zero selected navigation leaks and ${metrics.detail_identity_verified_count} verified detail identities.`;
-  return `Zero selected navigation leaks, but only ${metrics.detail_identity_verified_count ?? 0} verified detail identities in bounded evidence; authoritative list/detail contract still needs review.`;
+  if (phase2Analysis.phase2_status === "configured_selector_applied") return "Paired candidate-diff evidence verifies the configured selector contract; detail identity status is reported separately.";
+  if (phase2Analysis.phase2_status === "adapter_required") return "Runtime diagnostics identified an inline or adapter-only topology; no selector is asserted without an authoritative static list contract.";
+  if (phase2Analysis.phase2_status === "blocked_external") return `Paired runtime evidence is externally blocked (${treatment?.runtime_result_status ?? "unknown"}).`;
+  if (phase2Analysis.phase2_status === "verified_heuristic_safe") return `Paired candidate-diff evidence had zero selected navigation leaks and ${metrics.detail_identity_verified_count} verified detail identities.`;
+  return `Analyzer status=${phase2Analysis.phase2_status}; blocking_reason=${phase2Analysis.blocking_reason ?? "none"}; detail_identity_status=${phase2Analysis.detail_identity_status}.`;
 }
 
-function manualReviewCategory(treatment) {
-  const codes = treatment?.operational_codes ?? [];
-  if (codes.includes("DETAIL_IDENTITY_UNVERIFIED")) return "insufficient_detail_identity";
-  if (codes.includes("PAGINATION_UNVERIFIED")) return "cms_profile_not_verified";
-  if (codes.includes("DETAIL_URL_UNVERIFIED")) return "official_list_url_unverified";
-  return "cms_profile_not_verified";
+function loadRecallProofDirectory(directory) {
+  if (!fs.existsSync(directory)) return {};
+  const entries = fs.readdirSync(directory).filter((name) => name.endsWith(".json")).sort();
+  const proofs = {};
+  for (const name of entries) {
+    const proof = readJson(path.join(directory, name));
+    const sourceId = String(proof.source_id ?? path.basename(name, ".json").replace(/-candidate-diff$/, "")).trim();
+    if (!sourceId || proofs[sourceId]) throw new Error(`Invalid or duplicate recall proof: ${name}`);
+    proofs[sourceId] = proof;
+  }
+  return proofs;
 }
 
-function identityMetrics(sourceId, metrics) {
+function identityMetrics(metrics) {
   const runtimeIdentityVerified = metrics.detail_identity_verified_count ?? 0;
   const runtimeIdentityUnverified = metrics.detail_identity_unverified_count ?? 0;
   const runtimeIdentityAttempted = runtimeIdentityVerified + runtimeIdentityUnverified;
-  const fixtureCount = CONFIGURED_SELECTOR_IDS.has(sourceId) ? 3 : 0;
   return {
-    fixture_identity_case_count: fixtureCount,
-    fixture_identity_verified_count: fixtureCount,
+    fixture_identity_case_count: 0,
+    fixture_identity_verified_count: 0,
     runtime_identity_attempted_count: runtimeIdentityAttempted,
     runtime_identity_verified_count: runtimeIdentityVerified,
     runtime_identity_unverified_count: runtimeIdentityUnverified,
@@ -95,19 +85,15 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
     const treatmentItem = treatment[baseline.sourceId];
     if (!controlItem || !treatmentItem) throw new Error(`Target source missing from paired report: ${baseline.sourceId}`);
     const metrics = treatmentItem.metrics ?? {};
-    const finalState = classify({ sourceId: baseline.sourceId, control: controlItem, treatment: treatmentItem });
     const proof = recallProof[baseline.sourceId] ?? null;
-    const recall = proof ?? {
-      control_candidate_count: metrics.list_candidate_count ?? 0,
-      treatment_candidate_count: metrics.list_candidate_count ?? 0,
-      common_candidate_count: metrics.list_candidate_count ?? 0,
-      removed_candidate_count: 0,
-      added_candidate_count: 0,
-      removed_real_notice_count: 0,
-      removed_unresolved_count: 0,
-      added_false_positive_count: 0,
-      candidate_recall_verified: !CONFIGURED_SELECTOR_IDS.has(baseline.sourceId),
-    };
+    const phase2Analysis = analyzePhase2ParserRemediation({
+      source,
+      controlDiagnostic: controlItem,
+      treatmentDiagnostic: treatmentItem,
+      candidateComparison: proof,
+    });
+    const recall = phase2Analysis.candidate_recall;
+    const finalState = phase2Analysis.phase2_status;
     return {
       source_id: baseline.sourceId,
       source_name: source.sourceName,
@@ -126,31 +112,47 @@ export function buildInventory({ targetInventory, controlReport, treatmentReport
       navigation_leak_count: metrics.candidate_navigation_leak_count ?? 0,
       navigation_url_overlap_count: metrics.navigation_url_overlap_count ?? 0,
       ...recall,
-      ...identityMetrics(baseline.sourceId, metrics),
+      ...identityMetrics(metrics),
       cms_family: cmsFamily(source, treatmentItem),
       final_state: finalState,
-      selector_applied: CONFIGURED_SELECTOR_IDS.has(source.sourceId),
+      selector_applied: phase2Analysis.parser_contract.mode === "configured_selector",
       profile_applied: Boolean(treatmentItem.parser_evidence?.profile_applied),
       list_url_changed: false,
       external_access_failure: isPairedExternalFailure(controlItem, treatmentItem),
-      review_category: finalState === "manual_review_required" ? manualReviewCategory(treatmentItem) : null,
-      evidence_summary: evidenceSummary(controlItem, treatmentItem, finalState),
-      remaining_limitation: finalState === "manual_review_required" ? "Need authoritative list/detail identity evidence before selector, profile, or URL changes." : null,
+      analysis_valid: phase2Analysis.analysis_valid,
+      analysis_codes: phase2Analysis.analysis_codes,
+      phase2_status: phase2Analysis.phase2_status,
+      list_parser_contract_status: phase2Analysis.list_parser_contract_status,
+      candidate_recall_status: phase2Analysis.candidate_recall_status,
+      detail_identity_status: phase2Analysis.detail_identity_status,
+      pagination_status: phase2Analysis.pagination_status,
+      runtime_accessibility_status: phase2Analysis.runtime_accessibility_status,
+      next_action: phase2Analysis.next_action,
+      next_phase_queue: phase2Analysis.next_phase_queue,
+      blocking_reason: phase2Analysis.blocking_reason,
+      evidence_summary: evidenceSummary(controlItem, treatmentItem, phase2Analysis),
+      remaining_limitation: phase2Analysis.blocking_reason,
     };
   });
 }
 
 export function validateInventory(inventory, expectedCount = 87) {
-  const allowed = new Set(["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied", "list_url_corrected", "adapter_required", "manual_review_required", "source_unreachable"]);
+  const allowed = new Set(["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied", "list_url_correction_required", "adapter_required", "blocked_external", "blocked_insufficient_authoritative_evidence"]);
   if (inventory.length !== expectedCount) throw new Error(`Expected ${expectedCount} remediation sources, got ${inventory.length}`);
   const ids = new Set(inventory.map((item) => item.source_id));
   if (ids.size !== inventory.length) throw new Error("Remediation inventory has duplicate source_id values");
   for (const item of inventory) {
-    if (!allowed.has(item.final_state)) throw new Error(`${item.source_id}: invalid final_state ${item.final_state}`);
+    if (!allowed.has(item.final_state) || item.final_state !== item.phase2_status) throw new Error(`${item.source_id}: invalid final_state`);
     if (!item.evidence_summary) throw new Error(`${item.source_id}: evidence_summary is required`);
-    if (item.final_state === "configured_selector_applied" && item.candidate_recall_verified !== true) throw new Error(`${item.source_id}: configured selector requires recall proof`);
-    if ((item.removed_real_notice_count ?? 0) > 0) throw new Error(`${item.source_id}: removed real notice`);
-    if ((item.removed_unresolved_count ?? 0) > 0) throw new Error(`${item.source_id}: removed unresolved URL`);
+    if (item.analysis_valid === false && ["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)) throw new Error(`${item.source_id}: invalid analysis success terminal`);
+    if (item.candidate_recall_status === "verified" && item.candidate_recall_verified !== true) throw new Error(`${item.source_id}: verified recall invariant`);
+    if (["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)
+      && ((item.removed_real_notice_count ?? 0) > 0 || (item.removed_unresolved_count ?? 0) > 0 || (item.added_false_positive_count ?? 0) > 0)) throw new Error(`${item.source_id}: terminal parser evidence invariant`);
+    if (["verified_heuristic_safe", "configured_selector_applied", "parser_profile_applied"].includes(item.phase2_status)
+      && item.candidate_recall_status !== "verified") throw new Error(`${item.source_id}: terminal recall invariant`);
+    if (item.phase2_status === "configured_selector_applied" && item.list_parser_contract_status !== "verified") throw new Error(`${item.source_id}: configured selector invariant`);
+    if (item.phase2_status === "parser_profile_applied" && item.list_parser_contract_status !== "verified") throw new Error(`${item.source_id}: parser profile invariant`);
+    if (!item.next_action || !item.next_phase_queue || (item.phase2_status === "blocked_external" && item.next_phase_queue !== "external_retry")) throw new Error(`${item.source_id}: next action invariant`);
     if ((item.fixture_identity_verified_count ?? 0) > (item.fixture_identity_case_count ?? 0)) throw new Error(`${item.source_id}: fixture identity invariant failed`);
     if ((item.runtime_identity_verified_count ?? 0) > (item.runtime_identity_attempted_count ?? 0)) throw new Error(`${item.source_id}: runtime identity invariant failed`);
   }
@@ -231,7 +233,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const targetInventory = readJson(path.join(ROOT, ".tmp", "menu-contamination-remediation", "source-inventory.json"));
   const controlReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "control", "scholarship-notices-latest.json"));
   const treatmentReport = readJson(path.join(ROOT, ".tmp", "runtime-analysis", "paired-parser-remediation", "treatment", "scholarship-notices-latest.json"));
-  const recallProof = Object.fromEntries(["hanyang_011", "hanyang_013"].map((sourceId) => [sourceId, readJson(path.join(ROOT, ".tmp", "hanyang-recall-proof", `${sourceId}-candidate-diff.json`))]));
+  const recallProof = loadRecallProofDirectory(path.join(ROOT, ".tmp", "hanyang-recall-proof"));
   const git = { base_branch: "fix/navigation-contamination-diagnostic", base_sha: process.env.BASE_SHA ?? "70771aa", tested_code_sha: process.env.TESTED_CODE_SHA ?? null, report_input_control_sha: process.env.CONTROL_SHA ?? controlReport.sourceRegistry.commitSha ?? null, report_input_treatment_sha: process.env.TREATMENT_SHA ?? treatmentReport.sourceRegistry.commitSha ?? null, report_generated_at: new Date().toISOString(), recall_proof: recallProof };
   const report = buildReport({ targetInventory, controlReport, treatmentReport, sources: readManifestSources(), git });
   validateInventory(report.inventory, 87);

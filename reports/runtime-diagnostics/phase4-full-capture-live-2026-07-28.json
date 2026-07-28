@@ -1,0 +1,740 @@
+{
+  "schema_version": "phase4-full-capture-live-v1",
+  "implementation_code_sha": "199d55e57f3702b366eee37f9226e55271e089d9",
+  "repository_branch": "fix/crawler-phase2-parser-remediation",
+  "contract_fingerprint": "bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "derived_run_identity": "phase4-capture-bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "execution": {
+    "target_source_count": 87,
+    "host_concurrency": 2,
+    "retry_count": 1,
+    "source_concurrency": 4,
+    "timeout_ms": 25000,
+    "logical_list_fetch_budget": 87,
+    "detail_fetch_count": 0,
+    "pagination_fetch_count": 0
+  },
+  "accounting": {
+    "result_count": 87,
+    "capture_success_count": 77,
+    "blocked_external_count": 1,
+    "transport_failure_count": 9,
+    "invalid_content_count": 0,
+    "artifact_commit_failure_count": 0,
+    "terminal_artifact_count": 87,
+    "incomplete_attempt_count": 0,
+    "verified_artifact_count": 87,
+    "remaining_source_count": 0
+  },
+  "comparison": {
+    "ready_for_fixture_count": 77,
+    "historical_control_reconciliation_count": 0
+  },
+  "next_phase_queue_counts": {
+    "external_retry": 1,
+    "fixture_first_parser_remediation": 77,
+    "transport_recovery": 9
+  },
+  "blocking_reason_counts": {
+    "capture_request_failed": 10,
+    "none": 77
+  },
+  "sources": [
+    {
+      "source_id": "cau_004",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "bd904da4bb06b53692c7c4eb3ad583ae3bba743bccad56eb1d53f84724c26533"
+    },
+    {
+      "source_id": "cau_009",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "74658a5e003e45488eb122c10ebf990bc281aab6677fa8bde92f03848c124606"
+    },
+    {
+      "source_id": "cau_013",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cadfcd74b859d70209a5a0b42df4a9dedae1c11506f2546ffa6b9602e22c029f"
+    },
+    {
+      "source_id": "cau_017",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "537fbb25a2aaea300a454ac653fbe8b115d034fa461e0334ac21c54dfb25ff4e"
+    },
+    {
+      "source_id": "cau_021",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "8a7f2b3f0511c7c1d719b0ad8a291d96747c03e31fe72a4acfee0fe7c41d25ed"
+    },
+    {
+      "source_id": "cau_022",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "06a8a3ec3476e45edd3b22267c202375d4805f84f6f49197d20b647b2097d471"
+    },
+    {
+      "source_id": "cau_023",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "7c72143644da9161b0fba9321f23430305bb31305259b2051a9a116077f90b12"
+    },
+    {
+      "source_id": "cau_024",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "1830bb719a3b1a6fc6bb0ed927a04d9fa8a466a0cabf162d77a079383b2e6add"
+    },
+    {
+      "source_id": "cau_025",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "58d967a44ed6a9523d827efd581cfb3a7f4ca9b09b527eb88516c4456781275a"
+    },
+    {
+      "source_id": "cau_026",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "696f30cc1fb7241187f8fed53e62afe5fb8bfcc9aa9be429468bb9df6432e861"
+    },
+    {
+      "source_id": "cau_030",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "9f91dc4ffe36b919e0db69b74a06dcb1ef78447c042618f5c5f1c753516d9a65"
+    },
+    {
+      "source_id": "cau_037",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "27925454deb8d358286e6beae22fd9a45233e705e747e68bb9d7a6c9905a03c6"
+    },
+    {
+      "source_id": "cau_038",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cd6622f586ffb7fa778e455c84c4ef16628f856862ef5b66f273a2c39c22daf1"
+    },
+    {
+      "source_id": "cau_041",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "e61d55894d34495c7c3c8ccd7614640bb0a276e71b4682742e1ce5d3a09f4210"
+    },
+    {
+      "source_id": "cau_065",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "019a1c6fb40a0a149483913b3a1ba7e7e292ede3db373b3fe50fcccf9deeb961"
+    },
+    {
+      "source_id": "cau_068",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "b606456f8f542782cb4fbc26476ee4e70f617febe56200cde24a5d1788298228"
+    },
+    {
+      "source_id": "cau_070",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "d3ee84f8d892bd6a213e26d32d021fe76b28ce30b671e63e563ad93c3f5f0341"
+    },
+    {
+      "source_id": "cau_074",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "a493074677978570820bf5548de86ac01e86806da472ed6bb2a7b36d851e2788"
+    },
+    {
+      "source_id": "cau_075",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f4052e39362093fb104a083a0906b79e008038ffdff49710bf0916d9cf506848"
+    },
+    {
+      "source_id": "cau_078",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "c0311c884ced29f8048314183ccc80d76e859fb672cb8f5796d20c6e50d6fac4"
+    },
+    {
+      "source_id": "cau_079",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "6d3f3c04e3205e907779d8a62c09de4845165113960e6f377f6ebb72879d032d"
+    },
+    {
+      "source_id": "cau_080",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "66c070545fa19fa438f09d7b97f83e0e394f834fe34cf4fff47537d887635ce1"
+    },
+    {
+      "source_id": "ewha_008",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "8d07e435d68bcc04101d805c4ba36d01762473ce145f80c828f2a2e8f42ceca6"
+    },
+    {
+      "source_id": "hanyang_006",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "ad0fe97b45a49241651db59a2d2342e74231d21815dfb1192f3a02f2ac9eaf15"
+    },
+    {
+      "source_id": "hanyang_010",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "0697e8b7e5d284b2f2b1adfe48fc5e51798539c5b25c2e121253a47ee157fe8b"
+    },
+    {
+      "source_id": "hanyang_011",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "ddba8e31f13a6b6e20d8dd241079f5bccf11928aa04844723d4db62a98322c0b"
+    },
+    {
+      "source_id": "hanyang_013",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "b568cbe08b487169c60faa42d4264384255e97e295926777d74d1d9180aeffa8"
+    },
+    {
+      "source_id": "hanyang_017",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "0124b17f22a3355d56c6f15613b2b446d8b8148a1850a09c5ca5af2af414e44f"
+    },
+    {
+      "source_id": "hanyang_018",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "b62078c1898a7ad425befd983771d95142ae6825cf41911eff1712ed992bc83c"
+    },
+    {
+      "source_id": "hanyang_019",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "b6c7e03b2cc033408b9dbb03a83429bfe4261f9ee9f5f58e5a6c67d5f847a718"
+    },
+    {
+      "source_id": "hanyang_022",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cae636962f1033e3293bfd610b728b7ef79afdbb32fa322e1b140bfe307b647a"
+    },
+    {
+      "source_id": "hanyang_025",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "6974c10dd3ea8f8141d1e56f984deca3cd69107149b3fba188d69d2c8a6021aa"
+    },
+    {
+      "source_id": "hanyang_033",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "26001b0533e815eb5a2616a96cee430a15f6f6055a5b08b140042f42a180b3e3"
+    },
+    {
+      "source_id": "hanyang_034",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "285f1cfcde32666bd79cc28f73354b2c56bf3e5800cdda2236ac55ef348cdca1"
+    },
+    {
+      "source_id": "hanyang_035",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "e61f33aabeda6790141b112bb527a09bd1bad940cfb6e29ea2a6d447b7950e5e"
+    },
+    {
+      "source_id": "hanyang_036",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "351fafe41af79ed90d93e9d8ab0dc68e9b8677a590f0a39100913ecd6756d386"
+    },
+    {
+      "source_id": "hanyang_038",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "0c789fc3e9072e8d60149f7480f14bda1848d7da5f07503b4f0a816ac8ea1b9a"
+    },
+    {
+      "source_id": "hanyang_039",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "d209e9753cd22be5843ab090ea75bc28b95324bbf28fd877eb8ca343d32a17f5"
+    },
+    {
+      "source_id": "hanyang_040",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "d4ad4a9e0c1f697f5e3dcc2058d1e1d757ad7d250f483e026e9f475e5207b4dd"
+    },
+    {
+      "source_id": "hanyang_061",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "e8c152d71055812e3fbc9c93cc669c0ec3cf3f1415873bfa6832e40ea77e405f"
+    },
+    {
+      "source_id": "hanyang_062",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "65e71022393be50534976298717107cd4af9432f7521ebc937efa297a537fb64"
+    },
+    {
+      "source_id": "hanyang_063",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "9aa4ad947463993c23d0b7ecab0470f04e01e23927471e66253d7f14869b961a"
+    },
+    {
+      "source_id": "hanyang_064",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "5462671714017b6bdb78bdf188ecf1ef7c466524b8d80b00b241ebe798ad9d93"
+    },
+    {
+      "source_id": "hanyang_065",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f887b095ccad305ea054d563cf76305fe522843f00aa594b915321fa4b72f663"
+    },
+    {
+      "source_id": "hanyang_066",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "224c98c0b016e0688f241bab02f5ce3d1a2f7ad843f37d95a06bfa2d19edad6b"
+    },
+    {
+      "source_id": "hanyang_068",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "4ecdfc893fa417e8026b401af5acaba440966a75ad222baf4d21a90a56e83ff2"
+    },
+    {
+      "source_id": "hanyang_070",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cc9ef77e60b529be8d5b503e0d2863f3a56042566f96020c9bcbc4bf087068ab"
+    },
+    {
+      "source_id": "hanyang_071",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "c1ca2bc76e904ce8d70bbcccce8f996783eb5c6a12b5bc246a5cc0cf217fd07e"
+    },
+    {
+      "source_id": "hanyang_072",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "bdc239623dc55c16bbff2870a15704f7ad6aaacebdf058f4202a806f75e0e605"
+    },
+    {
+      "source_id": "hanyang_074",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f6b0caeb53549165e8c1d832b7117e0c559a61be50f465981b50aebf05a217de"
+    },
+    {
+      "source_id": "hanyang_075",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "45fe3b8138fab2a4d6cd9ff7079bb6838417e553746a305f1fc37b21086c3e33"
+    },
+    {
+      "source_id": "hanyang_076",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "16f15a0ddc625de87de49ebe90f51bfdaec7a2a4a021e8df0e802b817a9cbd2e"
+    },
+    {
+      "source_id": "hanyang_077",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f78273bd176a86940b617ec861f066b75d7a160bc2049edd0f5b112a67aa2c69"
+    },
+    {
+      "source_id": "hanyang_079",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "06deac6a6aa273fead2b47724d0755ac0fd0caf5a5f5f0f1521e278eb10892e5"
+    },
+    {
+      "source_id": "hanyang_080",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "c66e8531aa13404f91db471e70e287bd8d9d6deeacd7d314a1171e3c6c1065c2"
+    },
+    {
+      "source_id": "hanyang_081",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "6bfcad5ddd2efdd47a17bc737f42779b6058e14360c42b507e32912f643f3492"
+    },
+    {
+      "source_id": "hanyang_082",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "719eadf1b8545825b0895c9bf02861566201be3f44c822382ff8a587c52543fe"
+    },
+    {
+      "source_id": "hanyang_083",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "c5f6e2453d552ce14e71fff65bae4a38750e4a154a5c4d8683e09aec9c8eb7ef"
+    },
+    {
+      "source_id": "hongik_024",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f0d1ba332b4d6dbfd100d2717979649f9efd8e60e27323411072ddad0ce74433"
+    },
+    {
+      "source_id": "khu_123",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "b7300ab812969836b49e151e89e298d8dd03925cf6522022618756715a4b25f4"
+    },
+    {
+      "source_id": "khu_132",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "44d76848e56b01e66f4d56f626bd8bd369692d2534a78b0bc9e25f60e7139f5c"
+    },
+    {
+      "source_id": "korea_001",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "f760fcf29614207ac37fe53ceb3d9119df82e419a448446989503679fb60ab38"
+    },
+    {
+      "source_id": "korea_031",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "b3801c57f9e9c52be67df26199b1d3c6327f56bf5d9cb3240303e331340427d8"
+    },
+    {
+      "source_id": "korea_034",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "77ca49056097bffb64400761eb80bb34cce3b2d3fa24343d84a8e2cee1152bb6"
+    },
+    {
+      "source_id": "korea_036",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "a958ef4f17f462027b7c079fd8db5e906d2cef79277868a761b6471c08bea1e5"
+    },
+    {
+      "source_id": "korea_037",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "1849f61ff2be4f75cc1bcc7e2d6a2c9e941ffdd2c7424b00f7677232c0edefc6"
+    },
+    {
+      "source_id": "korea_053",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "9af4d696beecd07fb400746527f7f1413500f2c67ac2a4a10d66fe8e7885188f"
+    },
+    {
+      "source_id": "korea_054",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "5dbda51a375b6b0652de7a8f2ba3d6628e801e56eed4fc2d84ecaef0bd2c3b3e"
+    },
+    {
+      "source_id": "korea_055",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cc6feda0057dee451f77d0b7d5899188b15f139d892692a7df33ae5ac4bd7e56"
+    },
+    {
+      "source_id": "korea_056",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "a474bdfd63a28ee7abc691eaebd432093c2e0e175b3f3c568740eaf722e3e771"
+    },
+    {
+      "source_id": "korea_057",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "ce6444180ce9b449441af196e32529175853b77ad22fc6554743d8c62b928c8c"
+    },
+    {
+      "source_id": "korea_058",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "6babe38068fa8319b3f3366528217f09c4f7c44ca5344689e33992fa2bf6e86d"
+    },
+    {
+      "source_id": "korea_060",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "ccef4944def1e6ba2649237e2fcf9300700fb0c777630784cf1dbfbfbc1ee4de"
+    },
+    {
+      "source_id": "korea_062",
+      "capture_status": "transport_failure",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "transport_recovery",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "97fe786d75da3ff2e21c3382595365494d36103fedc9558abbba779764b38a0b"
+    },
+    {
+      "source_id": "korea_069",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "6b3d6c69df8d9a9b737a11399e785fae46b195a9a9692dd6f2fa8e7516077ab1"
+    },
+    {
+      "source_id": "korea_070",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "1eac64076cc14c5dee32f1da5af2713f7b0277c30803003647dcc18ca0014eb5"
+    },
+    {
+      "source_id": "korea_076",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "231a66c350dfc6f76cd2eaa15bf08c1ff28dd9d89bbd66740c5bea7af745ce55"
+    },
+    {
+      "source_id": "skku_009",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "62fb69ecc4cfbc90e51375f82a7c2fc28f8c67ee2ec1191d1bd1d40a63c584ac"
+    },
+    {
+      "source_id": "skku_013",
+      "capture_status": "blocked_external",
+      "evidence_status": "insufficient_evidence",
+      "next_phase_queue": "external_retry",
+      "blocking_reason": "capture_request_failed",
+      "artifact_sha256": "3a22090ac68b7e7ee037e2679857f9c50b9fd191af64861acb347ba6f37e2413"
+    },
+    {
+      "source_id": "skku_042",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "5b59c8216f3400c74c583fde5026bda22fc3ae566485dcdff07fa91099713bea"
+    },
+    {
+      "source_id": "skku_059",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "fee2f205d4d87c8d864f93d979f7b223a8ea2e8f9cb961ec748d03e4d3a11f90"
+    },
+    {
+      "source_id": "uos_045",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "78fced1b32ad14ff66b69220e9f78b4f26ca25105b3b18de05d074fbd7c647f2"
+    },
+    {
+      "source_id": "yonsei_022",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "751ae4ac580eb40ce9a1268cce16cd71bba81e6466d5e90a235b097f18c77016"
+    },
+    {
+      "source_id": "yonsei_024",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "54e350d3204b8b473efec4dc731aea7bc8a026cfecce8e302155bd593214a8db"
+    },
+    {
+      "source_id": "yonsei_026",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "cd06d4646f45749cc1799af1ee18f0156b90c9d61f5b406112560cbeab027d63"
+    },
+    {
+      "source_id": "yonsei_036",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "9cfa3055f1a67c8cf4119f7e5609cb13401faab9fcf7791588785862b57a7d2a"
+    },
+    {
+      "source_id": "yonsei_057",
+      "capture_status": "capture_success",
+      "evidence_status": "ready_for_fixture",
+      "next_phase_queue": "fixture_first_parser_remediation",
+      "blocking_reason": null,
+      "artifact_sha256": "49037c00fde062b7c5cdb6ea6261467cb6fa749f671541f964c73257d708c079"
+    }
+  ]
+}

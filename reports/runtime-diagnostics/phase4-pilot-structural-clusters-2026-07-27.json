@@ -1,0 +1,1250 @@
+{
+  "capture_evidence_count": 8,
+  "cluster_version": "phase3-structural-cluster-v1",
+  "clusters": [
+    {
+      "cluster_id": "phase3_05900691b4ca479e",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "korea_033-10ffe1774a22eafa84c0b08e",
+            "final_url": "https://ie.korea.ac.kr/board/scholarship/undergrad",
+            "html_sha256": "386e9889eadb9f5a93a58917b294167e5dac772ba0dbf4e86434e06607f0f9bc",
+            "requested_url": "https://ie.korea.ac.kr/board/scholarship/undergrad"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": "json_api_board",
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [],
+            "candidate_origins": [],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": false,
+            "link_roles": [],
+            "link_selector": null,
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "korea_033"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": "json_api_board",
+        "candidate_locator_templates": [],
+        "candidate_origins": [],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": false,
+        "link_roles": [],
+        "link_selector_present": false,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "korea_033"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": "json_api_board",
+          "candidate_locator_templates": [],
+          "candidate_origins": [],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": false,
+          "link_roles": [],
+          "link_selector_present": false,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": []
+      },
+      "structural_signature_sha256": "05900691b4ca479e9731295a8c47b7e783e96227b8f4fd334cf421c3d9e91682"
+    },
+    {
+      "cluster_id": "phase3_5d586577fa39a73c",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "generic_anchor"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "cau_004-ca84c23de3f384c8e0570fc5",
+            "final_url": "https://log.cau.ac.kr/dm/dm_1.php",
+            "html_sha256": "aeb3fa7ae267969b82a55b6dbeead7018ff871a8fbadb51fbf886465298ec291",
+            "requested_url": "https://log.cau.ac.kr/dm/dm_1.php"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "heuristic_anchor:https://log.cau.ac.kr/am/am_1.php",
+              "heuristic_anchor:https://log.cau.ac.kr/bm/bm_2.php",
+              "heuristic_anchor:https://log.cau.ac.kr/cm/cm_1.php",
+              "heuristic_anchor:https://log.cau.ac.kr/dm/dm_2.php",
+              "heuristic_anchor:https://log.cau.ac.kr/dm/dm_3.php",
+              "heuristic_anchor:https://log.cau.ac.kr/dm/dm_4.php",
+              "heuristic_anchor:https://log.cau.ac.kr/dm/dm_5.php",
+              "heuristic_anchor:https://log.cau.ac.kr/em/em_1.php"
+            ],
+            "candidate_origins": [
+              "heuristic_anchor"
+            ],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": false,
+            "link_roles": [
+              "same_origin_unknown"
+            ],
+            "link_selector": "a[href]",
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "cau_004"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "heuristic_anchor"
+        ],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [
+          "generic_anchor"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": false,
+        "link_roles": [
+          "same_origin_unknown"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "cau_004"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "heuristic_anchor"
+          ],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [
+            "generic_anchor"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": false,
+          "link_roles": [
+            "same_origin_unknown"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/am/am_1.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/am/am_1.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/bm/bm_2.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/bm/bm_2.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/cm/cm_1.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/cm/cm_1.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/dm/dm_2.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/dm/dm_2.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/dm/dm_3.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/dm/dm_3.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/dm/dm_4.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/dm/dm_4.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/dm/dm_5.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/dm/dm_5.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/em/em_1.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/em/em_1.php\",\"query_parameter_keys\":[]}"
+        ]
+      },
+      "structural_signature_sha256": "5d586577fa39a73c7ae5835679685f4d9ba7d4e67dee7a4d9fb2900abe317b54"
+    },
+    {
+      "cluster_id": "phase3_5f12f60c1c65cb7a",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "table_row"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "uos_001-a3d25e37692b8fe23d40fe9f",
+            "final_url": "https://lauos.or.kr/notice",
+            "html_sha256": "35f0cd7fb996b52ae5938117cb1928678a011b71740d6e95eddb5a71de2484c2",
+            "requested_url": "https://lauos.or.kr/notice"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "configured_selector:https://lauos.or.kr/notice?uid=1965&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=1967&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=1971&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=1972&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=1974&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=1976&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2003&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2004&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2009&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2016&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2018&mod=document&pageid=1",
+              "configured_selector:https://lauos.or.kr/notice?uid=2019&mod=document&pageid=1"
+            ],
+            "candidate_origins": [
+              "configured_selector"
+            ],
+            "configured_list_selector": "table tbody tr",
+            "content_topology_profile": null,
+            "date_selector": "td.kboard-list-date",
+            "independent_detail_url_present": true,
+            "inline_notice_detected": false,
+            "link_roles": [
+              "same_origin_detail"
+            ],
+            "link_selector": "td.kboard-list-title a[href*=\"uid=\"][href*=\"mod=document\"]",
+            "list_item_selector": "table tbody tr",
+            "list_parser_profile": null,
+            "matched_list_selector": "table tbody tr",
+            "parser_strategy": "configured_selector",
+            "profile_applied": false,
+            "title_selector": ".kboard-default-cut-strings"
+          },
+          "source_id": "uos_001"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "configured_selector"
+        ],
+        "configured_selector_applied": true,
+        "content_topology_profile": null,
+        "date_selector_present": true,
+        "dom_families": [
+          "table_row"
+        ],
+        "independent_detail_url_present": true,
+        "inline_notice_detected": false,
+        "link_roles": [
+          "same_origin_detail"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": true,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "configured_selector",
+        "title_selector_present": true
+      },
+      "source_count": 1,
+      "source_ids": [
+        "uos_001"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "configured_selector"
+          ],
+          "configured_selector_applied": true,
+          "content_topology_profile": null,
+          "date_selector_present": true,
+          "dom_families": [
+            "table_row"
+          ],
+          "independent_detail_url_present": true,
+          "inline_notice_detected": false,
+          "link_roles": [
+            "same_origin_detail"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": true,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "configured_selector",
+          "title_selector_present": true
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/notice?mod&pageid&uid\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[\"uid\"],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/notice\",\"query_parameter_keys\":[\"mod\",\"pageid\",\"uid\"]}"
+        ]
+      },
+      "structural_signature_sha256": "5f12f60c1c65cb7ae4937dc59bcedf45c9665b5998c136bbe732726ff1ea8bcd"
+    },
+    {
+      "cluster_id": "phase3_641f5bba177eda94",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "inline_section"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "cau_013-cdbeb1ffdc4542a43993e06d",
+            "final_url": "http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4",
+            "html_sha256": "fba28ddc5984613985ddc9afaf253c31bc98007903fc5518ec5c7e13f1740320",
+            "requested_url": "http://cauese.co.kr/%EC%BB%A4%EB%AE%A4%EB%8B%88%ED%8B%B0/?term=4"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "heuristic_anchor:http://cauese.co.kr/%eb%8c%80%ed%95%9c%ec%a0%84%ea%b8%b0%ec%82%b0%ec%97%85%ec%97%b0%ed%95%a9%ed%9a%8c%eb%af%b8%eb%9e%98%ec%9b%90%ec%9e%90%eb%a0%a5-%ec%84%a4%ea%b3%84%eb%a5%bc-%ec%9c%84%ed%95%9c-kepic-%ea%b5%90%ec%9c%a1/",
+              "heuristic_anchor:http://cauese.co.kr/%ec%99%b8%ea%b5%ad%ec%9d%b8-%ec%9c%a0%ed%95%99%ec%83%9d-%eb%93%b1%eb%a1%9d%ea%b8%88-%eb%82%a9%eb%b6%80-%ea%b4%80%eb%a0%a8-%ec%9c%a0%ec%9d%98%ec%82%ac%ed%95%ad-%ec%95%88%eb%82%b4-2/",
+              "heuristic_anchor:http://cauese.co.kr/%ec%a0%95%eb%b3%b4%eb%b3%b4%ed%98%b8-%eb%ac%b4%ea%b8%b0%eb%a0%a5%ec%a6%9d-%ec%95%88%eb%82%b4/",
+              "heuristic_anchor:http://cauese.co.kr/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0/",
+              "heuristic_anchor:http://cauese.co.kr/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0/?term=10",
+              "heuristic_anchor:http://cauese.co.kr/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0/?term=4",
+              "heuristic_anchor:http://cauese.co.kr/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0/?term=5",
+              "heuristic_anchor:http://cauese.co.kr/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0/?term=6",
+              "heuristic_anchor:http://cauese.co.kr/%ed%95%9c%ec%96%91%eb%8c%80%ed%95%99%ea%b5%902026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ea%b5%b0-e%eb%9f%ac%eb%8b%9d-%ec%b0%b8%ec%97%ac-%ec%9a%94%ec%b2%ad-%eb%b0%8f-%ec%88%98%ea%b0%95/",
+              "heuristic_anchor:http://cauese.co.kr/2026%eb%85%84%eb%8f%84-%ea%b5%ad%ed%9a%8c-%eb%8c%80%ed%95%99%ec%9b%90%ec%83%9d-%ec%95%84%ec%b9%b4%eb%8d%b0%eb%af%b82%ec%b0%a8-%ec%8b%a4%ec%8b%9c-%ec%95%88%eb%82%b4/",
+              "heuristic_anchor:http://cauese.co.kr/2026%eb%85%84-%eb%8c%80%ed%95%9c%eb%af%bc%ea%b5%ad-%ec%9d%b8%ec%9e%ac%ec%83%81-%ed%99%8d%eb%b3%b4/",
+              "heuristic_anchor:http://cauese.co.kr/2026%eb%85%84-8%ec%9b%94-%ed%95%99%eb%b6%80-%ec%a1%b8%ec%97%85%eb%8c%80%ec%83%81%ec%9e%90-%ec%a1%b8%ec%97%85%ec%82%ac%ec%a0%95-%eb%b0%8f-%ed%95%99%ec%82%ac%ed%95%99%ec%9c%84%ec%b7%a8%eb%93%9d/",
+              "heuristic_anchor:http://cauese.co.kr/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ec%88%98%ea%b0%95%ec%8b%a0%ec%b2%ad%ed%95%99%eb%b6%80-%ec%9d%bc%ec%a0%95-%ec%95%88%eb%82%b4/",
+              "heuristic_anchor:http://cauese.co.kr/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ed%9c%b4%ed%95%99-%eb%b3%b5%ed%95%99-%ec%8b%a0%ec%b2%ad-%ec%95%88%eb%82%b4/",
+              "heuristic_anchor:http://cauese.co.kr/2026-%ec%a3%bc%eb%af%b8%eb%9e%98%ec%99%80%eb%8f%84%ec%a0%84-%ec%8b%a0%ec%9e%85-%eb%b0%8f-%ea%b2%bd%eb%a0%a5%ec%82%ac%ec%9b%90-%ec%b1%84%ec%9a%a9-%ec%95%88%eb%82%b4/",
+              "heuristic_anchor:http://cauese.co.kr/2026-1%ed%95%99%ea%b8%b0-%ec%a0%84%ea%b3%b5%eb%b0%b0%ec%a0%95-%ec%8b%a0%ec%b2%ad/",
+              "heuristic_anchor:http://cauese.co.kr/2026/07/06/",
+              "heuristic_anchor:http://cauese.co.kr/2026/07/14/",
+              "heuristic_anchor:http://cauese.co.kr/2026/07/15/",
+              "heuristic_anchor:http://cauese.co.kr/2026/07/21/",
+              "heuristic_anchor:http://cauese.co.kr/2026/07/22/",
+              "heuristic_anchor:http://cauese.co.kr/7%ec%9b%94-15%ec%9d%bc-24%ec%8b%9c%ea%b9%8c%ec%a7%80%ec%a0%9c%ec%b6%9c2026%eb%85%84%eb%8f%84-%ed%98%b8%eb%b0%98-%ec%9d%b4%eb%85%b8%eb%b2%a0%ec%9d%b4%ec%85%98-%ed%95%98%eb%b0%98%ea%b8%b0-%ec%9e%a5/",
+              "heuristic_anchor:http://cauese.co.kr/category/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad/",
+              "heuristic_anchor:http://cauese.co.kr/category/%ec%a4%91%ec%9a%94%ea%b3%b5%ec%a7%80/"
+            ],
+            "candidate_origins": [
+              "heuristic_anchor"
+            ],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": true,
+            "link_roles": [
+              "application_form",
+              "same_origin_unknown"
+            ],
+            "link_selector": "a[href]",
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "cau_013"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "heuristic_anchor"
+        ],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [
+          "inline_section"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": true,
+        "link_roles": [
+          "application_form",
+          "same_origin_unknown"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "cau_013"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "heuristic_anchor"
+          ],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [
+            "inline_section"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": true,
+          "link_roles": [
+            "application_form",
+            "same_origin_unknown"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%eb%8c%80%ed%95%9c%ec%a0%84%ea%b8%b0%ec%82%b0%ec%97%85%ec%97%b0%ed%95%a9%ed%9a%8c%eb%af%b8%eb%9e%98%ec%9b%90%ec%9e%90%eb%a0%a5-%ec%84%a4%ea%b3%84%eb%a5%bc-%ec%9c%84%ed%95%9c-kepic-%ea%b5%90%ec%9c%a1\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%eb%8c%80%ed%95%9c%ec%a0%84%ea%b8%b0%ec%82%b0%ec%97%85%ec%97%b0%ed%95%a9%ed%9a%8c%eb%af%b8%eb%9e%98%ec%9b%90%ec%9e%90%eb%a0%a5-%ec%84%a4%ea%b3%84%eb%a5%bc-%ec%9c%84%ed%95%9c-kepic-%ea%b5%90%ec%9c%a1\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%ec%99%b8%ea%b5%ad%ec%9d%b8-%ec%9c%a0%ed%95%99%ec%83%9d-%eb%93%b1%eb%a1%9d%ea%b8%88-%eb%82%a9%eb%b6%80-%ea%b4%80%eb%a0%a8-%ec%9c%a0%ec%9d%98%ec%82%ac%ed%95%ad-%ec%95%88%eb%82%b4-2\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%ec%99%b8%ea%b5%ad%ec%9d%b8-%ec%9c%a0%ed%95%99%ec%83%9d-%eb%93%b1%eb%a1%9d%ea%b8%88-%eb%82%a9%eb%b6%80-%ea%b4%80%eb%a0%a8-%ec%9c%a0%ec%9d%98%ec%82%ac%ed%95%ad-%ec%95%88%eb%82%b4-2\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%ec%a0%95%eb%b3%b4%eb%b3%b4%ed%98%b8-%eb%ac%b4%ea%b8%b0%eb%a0%a5%ec%a6%9d-%ec%95%88%eb%82%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%ec%a0%95%eb%b3%b4%eb%b3%b4%ed%98%b8-%eb%ac%b4%ea%b8%b0%eb%a0%a5%ec%a6%9d-%ec%95%88%eb%82%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0?term\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%ec%bb%a4%eb%ae%a4%eb%8b%88%ed%8b%b0\",\"query_parameter_keys\":[\"term\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/%ed%95%9c%ec%96%91%eb%8c%80%ed%95%99%ea%b5%902026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ea%b5%b0-e%eb%9f%ac%eb%8b%9d-%ec%b0%b8%ec%97%ac-%ec%9a%94%ec%b2%ad-%eb%b0%8f-%ec%88%98%ea%b0%95\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/%ed%95%9c%ec%96%91%eb%8c%80%ed%95%99%ea%b5%902026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ea%b5%b0-e%eb%9f%ac%eb%8b%9d-%ec%b0%b8%ec%97%ac-%ec%9a%94%ec%b2%ad-%eb%b0%8f-%ec%88%98%ea%b0%95\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026%eb%85%84%eb%8f%84-%ea%b5%ad%ed%9a%8c-%eb%8c%80%ed%95%99%ec%9b%90%ec%83%9d-%ec%95%84%ec%b9%b4%eb%8d%b0%eb%af%b82%ec%b0%a8-%ec%8b%a4%ec%8b%9c-%ec%95%88%eb%82%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026%eb%85%84%eb%8f%84-%ea%b5%ad%ed%9a%8c-%eb%8c%80%ed%95%99%ec%9b%90%ec%83%9d-%ec%95%84%ec%b9%b4%eb%8d%b0%eb%af%b82%ec%b0%a8-%ec%8b%a4%ec%8b%9c-%ec%95%88%eb%82%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026%eb%85%84-%eb%8c%80%ed%95%9c%eb%af%bc%ea%b5%ad-%ec%9d%b8%ec%9e%ac%ec%83%81-%ed%99%8d%eb%b3%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026%eb%85%84-%eb%8c%80%ed%95%9c%eb%af%bc%ea%b5%ad-%ec%9d%b8%ec%9e%ac%ec%83%81-%ed%99%8d%eb%b3%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026%eb%85%84-8%ec%9b%94-%ed%95%99%eb%b6%80-%ec%a1%b8%ec%97%85%eb%8c%80%ec%83%81%ec%9e%90-%ec%a1%b8%ec%97%85%ec%82%ac%ec%a0%95-%eb%b0%8f-%ed%95%99%ec%82%ac%ed%95%99%ec%9c%84%ec%b7%a8%eb%93%9d\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026%eb%85%84-8%ec%9b%94-%ed%95%99%eb%b6%80-%ec%a1%b8%ec%97%85%eb%8c%80%ec%83%81%ec%9e%90-%ec%a1%b8%ec%97%85%ec%82%ac%ec%a0%95-%eb%b0%8f-%ed%95%99%ec%82%ac%ed%95%99%ec%9c%84%ec%b7%a8%eb%93%9d\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ec%88%98%ea%b0%95%ec%8b%a0%ec%b2%ad%ed%95%99%eb%b6%80-%ec%9d%bc%ec%a0%95-%ec%95%88%eb%82%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ec%88%98%ea%b0%95%ec%8b%a0%ec%b2%ad%ed%95%99%eb%b6%80-%ec%9d%bc%ec%a0%95-%ec%95%88%eb%82%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ed%9c%b4%ed%95%99-%eb%b3%b5%ed%95%99-%ec%8b%a0%ec%b2%ad-%ec%95%88%eb%82%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026%ed%95%99%eb%85%84%eb%8f%84-2%ed%95%99%ea%b8%b0-%ed%9c%b4%ed%95%99-%eb%b3%b5%ed%95%99-%ec%8b%a0%ec%b2%ad-%ec%95%88%eb%82%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026-%ec%a3%bc%eb%af%b8%eb%9e%98%ec%99%80%eb%8f%84%ec%a0%84-%ec%8b%a0%ec%9e%85-%eb%b0%8f-%ea%b2%bd%eb%a0%a5%ec%82%ac%ec%9b%90-%ec%b1%84%ec%9a%a9-%ec%95%88%eb%82%b4\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026-%ec%a3%bc%eb%af%b8%eb%9e%98%ec%99%80%eb%8f%84%ec%a0%84-%ec%8b%a0%ec%9e%85-%eb%b0%8f-%ea%b2%bd%eb%a0%a5%ec%82%ac%ec%9b%90-%ec%b1%84%ec%9a%a9-%ec%95%88%eb%82%b4\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/2026-1%ed%95%99%ea%b8%b0-%ec%a0%84%ea%b3%b5%eb%b0%b0%ec%a0%95-%ec%8b%a0%ec%b2%ad\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/2026-1%ed%95%99%ea%b8%b0-%ec%a0%84%ea%b3%b5%eb%b0%b0%ec%a0%95-%ec%8b%a0%ec%b2%ad\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/7%ec%9b%94-15%ec%9d%bc-24%ec%8b%9c%ea%b9%8c%ec%a7%80%ec%a0%9c%ec%b6%9c2026%eb%85%84%eb%8f%84-%ed%98%b8%eb%b0%98-%ec%9d%b4%eb%85%b8%eb%b2%a0%ec%9d%b4%ec%85%98-%ed%95%98%eb%b0%98%ea%b8%b0-%ec%9e%a5\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/7%ec%9b%94-15%ec%9d%bc-24%ec%8b%9c%ea%b9%8c%ec%a7%80%ec%a0%9c%ec%b6%9c2026%eb%85%84%eb%8f%84-%ed%98%b8%eb%b0%98-%ec%9d%b4%eb%85%b8%eb%b2%a0%ec%9d%b4%ec%85%98-%ed%95%98%eb%b0%98%ea%b8%b0-%ec%9e%a5\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/category/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/category/%ea%b3%b5%ec%a7%80%ec%82%ac%ed%95%ad\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/category/%ec%a4%91%ec%9a%94%ea%b3%b5%ec%a7%80\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/category/%ec%a4%91%ec%9a%94%ea%b3%b5%ec%a7%80\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/{number}/{number}/{number}\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"numeric_path_segment\",\"pathname_template\":\"/{number}/{number}/{number}\",\"query_parameter_keys\":[]}"
+        ]
+      },
+      "structural_signature_sha256": "641f5bba177eda94613402ea97b8f58564a23889c704f1d4c1691b142750f84f"
+    },
+    {
+      "cluster_id": "phase3_6eb941414151b1bd",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "generic_anchor"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "cau_003-bbf203fea4772aef472e27b0",
+            "final_url": "https://iadpr.cau.ac.kr/fm/fm_1.php",
+            "html_sha256": "206ab0e25ea222e45fce42f020d0e82e8e9150b903157cbe5ff47bf075760047",
+            "requested_url": "https://iadpr.cau.ac.kr/fm/fm_1.php"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [],
+            "candidate_origins": [],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": false,
+            "link_roles": [],
+            "link_selector": "a[href]",
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "cau_003"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [
+          "generic_anchor"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": false,
+        "link_roles": [],
+        "link_selector_present": true,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "cau_003"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [
+            "generic_anchor"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": false,
+          "link_roles": [],
+          "link_selector_present": true,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/fm/fm_1.php?p_idx&p_mode\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[\"p_idx\"],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/fm/fm_1.php\",\"query_parameter_keys\":[\"p_idx\",\"p_mode\"]}"
+        ]
+      },
+      "structural_signature_sha256": "6eb941414151b1bdec3730f6a0dd6a1f5bd20f443418f9b8325f2d5eedcf6e58"
+    },
+    {
+      "cluster_id": "phase3_b6273a530cd3d229",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "table_row"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "hanyang_011-c2d8e2437e92d3b66282f522",
+            "final_url": "https://ie.hanyang.ac.kr/index.php?hCode=BOARD&bo_idx=1",
+            "html_sha256": "96f6ff4b4feb14dc437a3148db8ba2888170756da8b22267844cc6c879c690fe",
+            "requested_url": "https://ie.hanyang.ac.kr/index.php?hCode=BOARD&bo_idx=1"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=1772&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=1796&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2160&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2580&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2628&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2642&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2649&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=267&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2674&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2688&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2700&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2746&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2753&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2771&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2785&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2793&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2795&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2796&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2798&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2799&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2800&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2805&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2812&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2815&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2817&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2825&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2831&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2838&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2839&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2842&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2847&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2848&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2849&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2852&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2853&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2859&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2868&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2870&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2871&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2872&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2873&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2874&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2876&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2877&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2879&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2880&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2881&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2891&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2892&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2893&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2894&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2895&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2896&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2897&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2898&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2904&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2905&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2908&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2909&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2912&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2913&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2914&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2915&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2916&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2917&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2918&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2923&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2925&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2926&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2928&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2929&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2930&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2945&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2947&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2950&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2954&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2956&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2960&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2961&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2966&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2967&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2968&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2970&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2971&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2973&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2975&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2976&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2977&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2982&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2983&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2984&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2985&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2986&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2987&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=2988&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=4&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=5&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=605&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=&idx=82&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2673&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2675&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2676&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2679&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2701&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2703&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2741&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2744&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2751&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2754&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2759&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2767&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2769&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2775&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2781&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2787&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2844&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2846&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2850&hCode=BOARD&bo_idx=1&sfl=&stx=",
+              "configured_selector:https://ie.hanyang.ac.kr/index.php?page=view&pg=1&idx=2860&hCode=BOARD&bo_idx=1&sfl=&stx="
+            ],
+            "candidate_origins": [
+              "configured_selector"
+            ],
+            "configured_list_selector": "table.board_table tbody tr",
+            "content_topology_profile": null,
+            "date_selector": "td:nth-child(5)",
+            "independent_detail_url_present": false,
+            "inline_notice_detected": false,
+            "link_roles": [
+              "application_form",
+              "same_origin_navigation"
+            ],
+            "link_selector": "td.alignLeft a[href]",
+            "list_item_selector": "table.board_table tbody tr",
+            "list_parser_profile": null,
+            "matched_list_selector": "table.board_table tbody tr",
+            "parser_strategy": "configured_selector",
+            "profile_applied": false,
+            "title_selector": "td.alignLeft a[href]"
+          },
+          "source_id": "hanyang_011"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "configured_selector"
+        ],
+        "configured_selector_applied": true,
+        "content_topology_profile": null,
+        "date_selector_present": true,
+        "dom_families": [
+          "table_row"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": false,
+        "link_roles": [
+          "application_form",
+          "same_origin_navigation"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": true,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "configured_selector",
+        "title_selector_present": true
+      },
+      "source_count": 1,
+      "source_ids": [
+        "hanyang_011"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "configured_selector"
+          ],
+          "configured_selector_applied": true,
+          "content_topology_profile": null,
+          "date_selector_present": true,
+          "dom_families": [
+            "table_row"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": false,
+          "link_roles": [
+            "application_form",
+            "same_origin_navigation"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": true,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "configured_selector",
+          "title_selector_present": true
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/index.php?bo_idx&hCode&idx&page&pg&sfl&stx\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[\"bo_idx\",\"idx\"],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/index.php\",\"query_parameter_keys\":[\"bo_idx\",\"hCode\",\"idx\",\"page\",\"pg\",\"sfl\",\"stx\"]}"
+        ]
+      },
+      "structural_signature_sha256": "b6273a530cd3d229503d6b63966f64a3c00e1d0447aa4450ee12c444a78abf8f"
+    },
+    {
+      "cluster_id": "phase3_e3651e8b9b72540c",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "generic_anchor"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "skku_042-58ed3443f1a9762aebb526fe",
+            "final_url": "https://does.skku.edu/notice",
+            "html_sha256": "6d433e6d8d885773c143a9b734a468110408940706a0666ea2257b84febba867",
+            "requested_url": "https://does.skku.edu/notice"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "heuristic_anchor:https://does.skku.edu/graduate/admission",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/ai-economics",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/ai-systems",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/catalysis",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/conversion",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/semiconductor",
+              "heuristic_anchor:https://does.skku.edu/graduate/research/storage"
+            ],
+            "candidate_origins": [
+              "heuristic_anchor"
+            ],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": false,
+            "link_roles": [
+              "application_form",
+              "same_origin_unknown"
+            ],
+            "link_selector": "a[href]",
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "skku_042"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "heuristic_anchor"
+        ],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [
+          "generic_anchor"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": false,
+        "link_roles": [
+          "application_form",
+          "same_origin_unknown"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "skku_042"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "heuristic_anchor"
+          ],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [
+            "generic_anchor"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": false,
+          "link_roles": [
+            "application_form",
+            "same_origin_unknown"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/admission\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/admission\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/ai-economics\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/ai-economics\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/ai-systems\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/ai-systems\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/catalysis\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/catalysis\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/conversion\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/conversion\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/semiconductor\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/semiconductor\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/graduate/research/storage\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/graduate/research/storage\",\"query_parameter_keys\":[]}"
+        ]
+      },
+      "structural_signature_sha256": "e3651e8b9b72540c80852fb1b1461e9a5ab31f00d63fb019b80e66ca7b4cf003"
+    },
+    {
+      "cluster_id": "phase3_f8443332b95e02d0",
+      "cluster_version": "phase3-structural-cluster-v1",
+      "dom_family": [
+        "inline_section"
+      ],
+      "evidence_status_counts": {
+        "ready_for_fixture": 1
+      },
+      "members": [
+        {
+          "blocking_reason": null,
+          "capture_provenance": {
+            "capture_id": "korea_060-296aba72b321571260b4d962",
+            "final_url": "https://security.korea.ac.kr/m06_01",
+            "html_sha256": "14fe685a39ea016df6d11de4056aee92fa6d2736a972c21ebc1ff492febd24d4",
+            "requested_url": "https://security.korea.ac.kr/m06_01"
+          },
+          "evidence_status": "ready_for_fixture",
+          "next_action": "collect_authoritative_fixture",
+          "next_phase_queue": "fixture_first_parser_remediation",
+          "raw_dom_evidence": {
+            "adapter_id": null,
+            "candidate_dom_locators": [],
+            "candidate_node_fingerprints": [
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/board.php?bo_table=m06_01&sop=and&sst=wr_datetime&sod=desc&sfl=&stx=&sca=&page=1",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/board.php?bo_table=m06_01&sop=and&sst=wr_hit&sod=desc&sfl=&stx=&sca=&page=1",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/login.php?url=%2Fm06_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m01_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m01_01_04",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m01_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m01_05",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_01_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_01_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_01_03",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_01_04",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_02_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_02_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_02_03",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_02_04",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_02_05",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_03",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m02_04",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_03_01_1",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_03_01_2",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_03_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m03_04",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m04_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m04_02_01_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m05_01",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m05_02",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/page.php?hid=m05_03",
+              "heuristic_anchor:https://security.korea.ac.kr/bbs/register.php",
+              "heuristic_anchor:https://security.korea.ac.kr/board.php?bo_table=m06_01&sca=",
+              "heuristic_anchor:https://security.korea.ac.kr/en",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EA%B2%B8%EC%9E%84%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EC%82%B0%ED%95%99%ED%98%91%EB%A0%A5%EC%A4%91%EC%A0%90%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EC%97%AD%EB%8C%80%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EC%97%B0%EA%B5%AC%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EC%A0%84%EC%9E%84%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%EC%B4%88%EB%B9%99%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_03?sca=%ED%8A%B9%EC%9E%84%EA%B5%90%EC%88%98",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_04?sca=%EA%B8%B0%ED%9A%8D%EC%8B%A4",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_04?sca=%EB%8C%80%ED%95%99%EC%9B%90%E2%80%A2%ED%95%99%EB%B6%80",
+              "heuristic_anchor:https://security.korea.ac.kr/m01_04?sca=%EC%97%B0%EA%B5%AC%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m04_03",
+              "heuristic_anchor:https://security.korea.ac.kr/m04_03?sca=%EB%B6%84%EC%95%BC%EB%B3%84+%EC%8B%A4%EC%A0%81",
+              "heuristic_anchor:https://security.korea.ac.kr/m04_03?sca=%EC%9D%B4%EC%A0%84+%EA%B0%80%EB%8A%A5+%EA%B8%B0%EC%88%A0",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/1719",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/1867",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2683",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2698",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2711",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2774",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2983",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/2993",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3000",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3005",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3006",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3010",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3011",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3013",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3014",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3015",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3016",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3017",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3019",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3020",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3021",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3022",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3023",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3024",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3025",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3026",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3027",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01/3028",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%C2%B7%EB%8D%B0%EC%9D%B4%ED%84%B0+%EC%A0%84%EB%9E%B5+%EC%B5%9C%EA%B3%A0%EC%9C%84%EA%B3%BC%EC%A0%95",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%82%AC%EC%9D%B4%EB%B2%84%EA%B5%AD%EB%B0%A9%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%82%AC%EC%9D%B4%EB%B2%84%EB%B3%B4%EC%95%88+%EA%B3%A0%EC%9C%84%EC%A0%84%EB%AC%B8%EA%B0%80%EA%B3%BC%EC%A0%95",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%ED%95%99%EB%B6%80",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%9C%B5%ED%95%A9%EB%B3%B4%EC%95%88%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%9D%BC%EB%B0%98%EB%8C%80%ED%95%99%EC%9B%90+%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%95%88%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%97%B0%EA%B5%AC%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_01?sca=KU%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0%EA%B5%90%EC%9A%B0%ED%9A%8C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EC%82%AC%EC%9D%B4%EB%B2%84%EA%B5%AD%EB%B0%A9%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%ED%95%99%EB%B6%80",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EC%9D%BC%EB%B0%98%EB%8C%80%ED%95%99%EC%9B%90+%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%95%88%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_02?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%97%B0%EA%B5%AC%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EC%82%AC%EC%9D%B4%EB%B2%84%EA%B5%AD%EB%B0%A9%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%ED%95%99%EB%B6%80",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EC%9D%BC%EB%B0%98%EB%8C%80%ED%95%99%EC%9B%90+%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%95%88%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%97%B0%EA%B5%AC%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_03?sca=KU%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0%EA%B5%90%EC%9A%B0%ED%9A%8C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04?sca=%EC%86%8C%EA%B0%9C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04?sca=%EC%8B%A4%EC%A0%81%EC%86%8C%EA%B0%9C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04?sca=%ED%8F%AC%EC%8A%A4%ED%84%B0",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04?sca=%ED%96%89%EC%82%AC%EA%B2%B0%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_04?sca=%ED%96%89%EC%82%AC%EC%95%88%EB%82%B4",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_06",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_06?sca=%EA%B5%90%EC%9B%90%EC%B4%88%EB%B9%99",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_06?sca=%EB%A6%AC%ED%81%AC%EB%A3%A8%ED%8C%85",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_06?sca=%ED%98%84%EC%9E%A5%EC%8B%A4%EC%8A%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_06?sca=%ED%99%8D%EB%B3%B4",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07?sca=%EA%B5%90%EC%88%98+%EC%9D%B8%ED%84%B0%EB%B7%B0",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07?sca=%EA%B5%90%EC%88%98+%EC%BB%AC%EB%9F%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07?sca=%EB%B3%B4%EB%8F%84%EC%9E%90%EB%A3%8C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07?sca=%EC%96%B8%EB%A1%A0%EC%97%90%EC%84%9C+%EB%B3%B8+KU%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_07?sca=KU%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0+%EC%86%8C%EC%8B%9D",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%ED%95%99%EB%B6%80",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EC%9C%B5%ED%95%A9%EB%B3%B4%EC%95%88%EC%9C%B5%ED%95%A9%EC%A0%84%EA%B3%B5",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EC%9D%BC%EB%B0%98%EB%8C%80%ED%95%99%EC%9B%90+%EC%A0%95%EB%B3%B4%EB%B3%B4%EC%95%88%ED%95%99%EA%B3%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_08?sca=%EC%A0%95%EB%B3%B4%EB%B3%B4%ED%98%B8%EB%8C%80%ED%95%99%EC%9B%90",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%EA%B5%90%EC%88%98%EC%A0%80%EC%97%AD%EC%84%9C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%EB%8C%80%ED%95%99%EC%9B%90%EB%B3%B4",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%EC%82%AC%EC%9D%B4%EB%B2%84%EA%B5%AD%EB%B0%A9%EB%B0%9C%EC%A0%84%EB%B0%B1%EC%84%9C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%EC%97%B0%EA%B5%AC%EB%B3%B4%EA%B3%A0%EC%84%9C",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%ED%96%89%EC%82%AC%EC%9E%90%EB%A3%8C%EC%A7%91",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=%ED%99%8D%EB%B3%B4%EA%B0%84%ED%96%89%EB%AC%BC",
+              "heuristic_anchor:https://security.korea.ac.kr/m06_09?sca=KU%EC%82%AC%EC%9D%B4%EB%B2%84%EA%B5%AD%EB%B0%A9%EB%A7%A4%EA%B1%B0%EC%A7%84",
+              "heuristic_anchor:https://www.korea.ac.kr/ko/590/subview.do?_ga=2.113328199.1705776133.1731989621-1241260308.1512437662"
+            ],
+            "candidate_origins": [
+              "heuristic_anchor"
+            ],
+            "configured_list_selector": null,
+            "content_topology_profile": null,
+            "date_selector": null,
+            "independent_detail_url_present": false,
+            "inline_notice_detected": true,
+            "link_roles": [
+              "application_form",
+              "same_origin_detail",
+              "same_origin_navigation",
+              "same_origin_unknown",
+              "unknown_external"
+            ],
+            "link_selector": "a[href]",
+            "list_item_selector": null,
+            "list_parser_profile": null,
+            "matched_list_selector": null,
+            "parser_strategy": "heuristic_anchor",
+            "profile_applied": false,
+            "title_selector": null
+          },
+          "source_id": "korea_060"
+        }
+      ],
+      "normalized_dom_signature": {
+        "adapter_family": null,
+        "candidate_locator_templates": [],
+        "candidate_origins": [
+          "heuristic_anchor"
+        ],
+        "configured_selector_applied": false,
+        "content_topology_profile": null,
+        "date_selector_present": false,
+        "dom_families": [
+          "inline_section"
+        ],
+        "independent_detail_url_present": false,
+        "inline_notice_detected": true,
+        "link_roles": [
+          "application_form",
+          "same_origin_detail",
+          "same_origin_navigation",
+          "same_origin_unknown",
+          "unknown_external"
+        ],
+        "link_selector_present": true,
+        "list_selector_present": false,
+        "navigation_container_member_present": false,
+        "pagination_container_member_present": false,
+        "parser_profile_applied": false,
+        "parser_profile_family": null,
+        "parser_strategy": "heuristic_anchor",
+        "title_selector_present": false
+      },
+      "source_count": 1,
+      "source_ids": [
+        "korea_060"
+      ],
+      "structural_signature": {
+        "normalized_dom_signature": {
+          "adapter_family": null,
+          "candidate_locator_templates": [],
+          "candidate_origins": [
+            "heuristic_anchor"
+          ],
+          "configured_selector_applied": false,
+          "content_topology_profile": null,
+          "date_selector_present": false,
+          "dom_families": [
+            "inline_section"
+          ],
+          "independent_detail_url_present": false,
+          "inline_notice_detected": true,
+          "link_roles": [
+            "application_form",
+            "same_origin_detail",
+            "same_origin_navigation",
+            "same_origin_unknown",
+            "unknown_external"
+          ],
+          "link_selector_present": true,
+          "list_selector_present": false,
+          "navigation_container_member_present": false,
+          "pagination_container_member_present": false,
+          "parser_profile_applied": false,
+          "parser_profile_family": null,
+          "parser_strategy": "heuristic_anchor",
+          "title_selector_present": false
+        },
+        "url_identity_signatures": [
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/bbs/board.php?bo_table&page&sca&sfl&sod&sop&sst&stx\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/bbs/board.php\",\"query_parameter_keys\":[\"bo_table\",\"page\",\"sca\",\"sfl\",\"sod\",\"sop\",\"sst\",\"stx\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/bbs/login.php?url\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/bbs/login.php\",\"query_parameter_keys\":[\"url\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/bbs/page.php?hid\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/bbs/page.php\",\"query_parameter_keys\":[\"hid\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/bbs/register.php\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/bbs/register.php\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/board.php?bo_table&sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/board.php\",\"query_parameter_keys\":[\"bo_table\",\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/en\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/en\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/ko/{number}/subview.do?_ga\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"numeric_path_segment\",\"pathname_template\":\"/ko/{number}/subview.do\",\"query_parameter_keys\":[\"_ga\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m01_03?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m01_03\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m01_04?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m01_04\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m04_03\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m04_03\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m04_03?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m04_03\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_01/{number}\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"numeric_path_segment\",\"pathname_template\":\"/m06_01/{number}\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_01?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_01\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_02\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_02\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_02?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_02\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_03\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_03\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_03?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_03\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_04\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_04\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_04?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_04\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_06\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_06\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_06?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_06\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_07\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_07\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_07?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_07\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_08\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_08\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_08?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_08\",\"query_parameter_keys\":[\"sca\"]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_09\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_09\",\"query_parameter_keys\":[]}",
+          "{\"absolute_or_relative\":\"absolute_url\",\"detail_url_pattern_family\":\"/m06_09?sca\",\"extraction_method\":\"absolute_url\",\"fragment_removed\":false,\"identity_parameter_hints\":[],\"path_parameter_shape\":\"none\",\"pathname_template\":\"/m06_09\",\"query_parameter_keys\":[\"sca\"]}"
+        ]
+      },
+      "structural_signature_sha256": "f8443332b95e02d02f549f0bc869d05b83ada09528160bc3444b3b059ffe570a"
+    }
+  ],
+  "schema_version": "phase3-parser-remediation-clusters-v2",
+  "summary": {
+    "capture_required_source_count": 0,
+    "clustered_source_count": 8,
+    "evidence_reconciliation_required_source_count": 0,
+    "ready_for_fixture_source_count": 8
+  },
+  "target_count": 8,
+  "unclustered": []
+}

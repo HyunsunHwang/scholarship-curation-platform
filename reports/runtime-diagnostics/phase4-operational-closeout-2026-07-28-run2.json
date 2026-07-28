@@ -1,0 +1,963 @@
+{
+  "schema_version": "phase4-operational-closeout-v2",
+  "generated_at": "2026-07-28T01:15:19.426Z",
+  "generator_code_sha": "a275580d7472a2433f67867f587a67faee175fd24529e11819d05e1082fb2c90",
+  "runtime_report": "scholarship-notices-20260728.json",
+  "runtime_report_sha256": "20c625731b57d102967fd59279c00340466562db973cf6fecdb517e4e48494ca",
+  "reconciliation_report": "phase4-parser-evidence-gate-2026-07-28-run6.json",
+  "reconciliation_report_sha256": "ceecee61f633176cb8ef4bc8c951fdc04883f192d778458a3f40902460eb0212",
+  "reconciliation_sha256": "7feabcd5a9b3873e948d084fcb6e4c5312e778a022af406be41fc86e1c03d352",
+  "run_identity": "phase4-capture-bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "contract_fingerprint": "bce3990e0d29984b74eceeefc52d0238555f30ecf6fe486a915b9e286f1d6c40",
+  "source_accounting": {
+    "manifest_source_count": 545,
+    "runtime_diagnostic_source_count": 545,
+    "unique_runtime_source_count": 545,
+    "runtime_duplicate_count": 0,
+    "missing_manifest_source_count": 0,
+    "unexpected_runtime_source_count": 0,
+    "target_source_count": 87,
+    "target_duplicate_count": 0,
+    "target_missing_count": 0
+  },
+  "target_action_class_counts": [
+    {
+      "action_class": "no_action",
+      "source_count": 77
+    },
+    {
+      "action_class": "transport_recovery",
+      "source_count": 10
+    }
+  ],
+  "target_evidence_basis_counts": [
+    {
+      "evidence_basis": "capture_transport_evidence",
+      "source_count": 10
+    },
+    {
+      "evidence_basis": "same_html_delta",
+      "source_count": 77
+    }
+  ],
+  "transport_lane": [
+    {
+      "source_id": "cau_022",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "cau_023",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "cau_025",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "cau_030",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "cau_041",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "hanyang_010",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "hanyang_013",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "hanyang_025",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "korea_062",
+      "normalized_transport_failure": "unknown_transport_failure"
+    },
+    {
+      "source_id": "skku_013",
+      "normalized_transport_failure": "unknown_transport_failure"
+    }
+  ],
+  "full_action_class_counts": [
+    {
+      "action_class": "configuration_review",
+      "source_count": 3
+    },
+    {
+      "action_class": "no_action",
+      "source_count": 260
+    },
+    {
+      "action_class": "source_url_review",
+      "source_count": 2
+    },
+    {
+      "action_class": "transport_recovery",
+      "source_count": 10
+    },
+    {
+      "action_class": "unresolved",
+      "source_count": 270
+    }
+  ],
+  "full_evidence_basis_counts": [
+    {
+      "evidence_basis": "capture_transport_evidence",
+      "source_count": 10
+    },
+    {
+      "evidence_basis": "runtime_failure",
+      "source_count": 458
+    },
+    {
+      "evidence_basis": "same_html_delta",
+      "source_count": 77
+    }
+  ],
+  "runtime_operational_summary": {
+    "source_count": 545,
+    "supported_source_count": 2,
+    "manual_review_source_count": 249,
+    "capability_status_counts": [
+      {
+        "capability_status": "adapter_required",
+        "source_count": 4
+      },
+      {
+        "capability_status": "config_or_selector_fix",
+        "source_count": 1
+      },
+      {
+        "capability_status": "list_supported_detail_unverified",
+        "source_count": 52
+      },
+      {
+        "capability_status": "manual_review_required",
+        "source_count": 249
+      },
+      {
+        "capability_status": "posts_found_no_scholarship",
+        "source_count": 186
+      },
+      {
+        "capability_status": "supported",
+        "source_count": 2
+      },
+      {
+        "capability_status": "valid_zero_candidates",
+        "source_count": 51
+      }
+    ],
+    "primary_failure_code_counts": [
+      {
+        "failure_code": "ADAPTER_REQUIRED",
+        "source_count": 4
+      },
+      {
+        "failure_code": "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+        "source_count": 4
+      },
+      {
+        "failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+        "source_count": 89
+      },
+      {
+        "failure_code": "DETAIL_URL_UNVERIFIED",
+        "source_count": 183
+      },
+      {
+        "failure_code": "FILTERED_OUT_BY_DATE",
+        "source_count": 10
+      },
+      {
+        "failure_code": "PAGINATION_UNVERIFIED",
+        "source_count": 3
+      },
+      {
+        "failure_code": "UNKNOWN_NEEDS_MANUAL_REVIEW",
+        "source_count": 248
+      },
+      {
+        "failure_code": "URL_RESOLUTION_FAILED",
+        "source_count": 2
+      }
+    ],
+    "operational_code_counts": [
+      {
+        "operational_code": "ADAPTER_REQUIRED",
+        "source_count": 4
+      },
+      {
+        "operational_code": "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+        "source_count": 4
+      },
+      {
+        "operational_code": "DETAIL_IDENTITY_UNVERIFIED",
+        "source_count": 90
+      },
+      {
+        "operational_code": "DETAIL_URL_UNVERIFIED",
+        "source_count": 186
+      },
+      {
+        "operational_code": "FILTERED_OUT_BY_DATE",
+        "source_count": 52
+      },
+      {
+        "operational_code": "FILTERED_OUT_BY_KEYWORD",
+        "source_count": 186
+      },
+      {
+        "operational_code": "INLINE_NOTICE_STRUCTURE_DETECTED",
+        "source_count": 4
+      },
+      {
+        "operational_code": "MANUAL_BROWSER_NETWORK_REQUIRED",
+        "source_count": 1
+      },
+      {
+        "operational_code": "PAGINATION_UNVERIFIED",
+        "source_count": 71
+      },
+      {
+        "operational_code": "UNKNOWN_NEEDS_MANUAL_REVIEW",
+        "source_count": 248
+      },
+      {
+        "operational_code": "URL_RESOLUTION_FAILED",
+        "source_count": 2
+      },
+      {
+        "operational_code": "ZERO_RECENT_NOTICES",
+        "source_count": 1
+      }
+    ],
+    "access_profile_counts": [
+      {
+        "access_profile": "JSON_XHR_API",
+        "source_count": 2
+      },
+      {
+        "access_profile": "LEGACY_CHARSET",
+        "source_count": 7
+      },
+      {
+        "access_profile": "SERVER_RENDERED_WITH_PAGINATION",
+        "source_count": 71
+      },
+      {
+        "access_profile": "STATIC_HTML_EVENT_URL",
+        "source_count": 163
+      },
+      {
+        "access_profile": "STATIC_HTML_HREF",
+        "source_count": 291
+      },
+      {
+        "access_profile": "UNKNOWN_NEEDS_MANUAL_REVIEW",
+        "source_count": 247
+      }
+    ],
+    "content_topology_profile_counts": [
+      {
+        "content_topology_profile": "EXTERNAL_LINKS_ARE_SUPPORTING_RESOURCES",
+        "source_count": 2
+      },
+      {
+        "content_topology_profile": "INLINE_MULTI_NOTICE_PAGE",
+        "source_count": 4
+      },
+      {
+        "content_topology_profile": "LIST_DETAIL_PAGES",
+        "source_count": 291
+      },
+      {
+        "content_topology_profile": "LIST_PAGE_CONTAINS_AUTHORITATIVE_DETAIL",
+        "source_count": 4
+      },
+      {
+        "content_topology_profile": "UNKNOWN_CONTENT_TOPOLOGY",
+        "source_count": 250
+      }
+    ],
+    "candidate_detection_status_counts": [
+      {
+        "candidate_detection_status": "candidate_detection_undetermined",
+        "source_count": 52
+      },
+      {
+        "candidate_detection_status": "crawl_failed_before_candidate_detection",
+        "source_count": 241
+      },
+      {
+        "candidate_detection_status": "success_no_scholarship_candidate",
+        "source_count": 186
+      },
+      {
+        "candidate_detection_status": "success_with_skipped_non_candidates",
+        "source_count": 53
+      },
+      {
+        "candidate_detection_status": "zero_observation_unverified",
+        "source_count": 13
+      }
+    ],
+    "action_class_counts": [
+      {
+        "action_class": "configuration_review",
+        "source_count": 3
+      },
+      {
+        "action_class": "no_action",
+        "source_count": 260
+      },
+      {
+        "action_class": "source_url_review",
+        "source_count": 2
+      },
+      {
+        "action_class": "transport_recovery",
+        "source_count": 10
+      },
+      {
+        "action_class": "unresolved",
+        "source_count": 270
+      }
+    ],
+    "evidence_basis_counts": [
+      {
+        "evidence_basis": "capture_transport_evidence",
+        "source_count": 10
+      },
+      {
+        "evidence_basis": "runtime_failure",
+        "source_count": 458
+      },
+      {
+        "evidence_basis": "same_html_delta",
+        "source_count": 77
+      }
+    ]
+  },
+  "target_sources": [
+    {
+      "source_id": "cau_004",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "cau_009",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified"
+    },
+    {
+      "source_id": "cau_013",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "adapter_required"
+    },
+    {
+      "source_id": "cau_017",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "cau_021",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_022",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_023",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_024",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_025",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_026",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_030",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_037",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_038",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "cau_041",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_065",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_068",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_070",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_074",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_075",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_078",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "cau_079",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "cau_080",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "ewha_008",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_006",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_010",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_011",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified"
+    },
+    {
+      "source_id": "hanyang_013",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_017",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "hanyang_018",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified"
+    },
+    {
+      "source_id": "hanyang_019",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_022",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_025",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_033",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_034",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_035",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_036",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_038",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_039",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_040",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_061",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_062",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_063",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_064",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_065",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_066",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_068",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_070",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_071",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_072",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_074",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_075",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_076",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_077",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_079",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_080",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "hanyang_081",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_082",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hanyang_083",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "hongik_024",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship"
+    },
+    {
+      "source_id": "khu_123",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "khu_132",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates"
+    },
+    {
+      "source_id": "korea_001",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified"
+    },
+    {
+      "source_id": "korea_031",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_034",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_036",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_037",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_053",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_054",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_055",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_056",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_057",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_058",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_060",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_062",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_069",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_070",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "korea_076",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "skku_009",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "skku_013",
+      "action_class": "transport_recovery",
+      "evidence_basis": "capture_transport_evidence",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "skku_042",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "skku_059",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "uos_045",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "yonsei_022",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "yonsei_024",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "yonsei_026",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "yonsei_036",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    },
+    {
+      "source_id": "yonsei_057",
+      "action_class": "no_action",
+      "evidence_basis": "same_html_delta",
+      "runtime_result_status": "network_error",
+      "capability_status": "manual_review_required"
+    }
+  ],
+  "validation": {
+    "operational_diagnostics_valid": true,
+    "summary_distribution_valid": true,
+    "source_set_valid": true,
+    "target_accounting_valid": true
+  }
+}

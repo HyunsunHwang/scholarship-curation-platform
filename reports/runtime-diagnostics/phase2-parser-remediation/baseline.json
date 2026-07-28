@@ -1,0 +1,1917 @@
+{
+  "schema_version": "phase2-parser-remediation-baseline-v1",
+  "generated_at": "2026-07-27T08:01:04.472Z",
+  "source_registry": {
+    "mode": "manifest",
+    "schemaVersion": "notice-source-manifest-v1",
+    "manifestVersion": "2026-07-26.1",
+    "universitySlug": null,
+    "sourceCount": 545,
+    "manifestSha256": "1cddfa699a37cbf1a29cdf0896eceeede6f9246b3da173de221cf49d3970bb4e",
+    "indexSha256": "09531daec02ca0129e1bf869748b5a8749ad9785894fd4fa9a3d6fa469aa6ae4",
+    "dbSnapshotSha256": "615cb4e672021585217d01a3905492c8ee6b5271448458e3bdb92018bc35db49",
+    "commitSha": "b9bf5002703e0e131bade45a88f561bb46cb389a"
+  },
+  "runtime_input_provenance": {
+    "original_runtime_report_path": ".tmp/runtime-analysis/main-post-merge-20260727/scholarship-notices-latest.json",
+    "runtime_report_sha256": "13c5feba99182c96da48d075d57aad207d436a912bdbd724163c8b29c1fc2801",
+    "historical_target_report_path": "reports/runtime-diagnostics/verified-source-parser-remediation-2026-07-25.json",
+    "historical_target_report_sha256": "0a31c3db626e9cf0182241fde5a85053864de87deeb321bd72cf6868c3e2d612",
+    "tested_code_base_sha": "b9bf5002703e0e131bade45a88f561bb46cb389a",
+    "run_at": "2026-07-27T08:01:04.472Z",
+    "capture_scope": "The 87 source_diagnostics selected by the historical pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor target definition."
+  },
+  "historical_target_definition": "pre-remediation LIST_SELECTOR_MENU_CONTAMINATION with heuristic_anchor",
+  "target_count": 87,
+  "targets": [
+    {
+      "source_id": "cau_004",
+      "university_slug": "cau",
+      "source_name": "중앙대 국제물류학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 8,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_009",
+      "university_slug": "cau",
+      "source_name": "중앙대 건설환경플랜트공학전공",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 26,
+      "detail_identity_verified_count": 2
+    },
+    {
+      "source_id": "cau_013",
+      "university_slug": "cau",
+      "source_name": "중앙대 에너지시스템공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "adapter_required",
+      "primary_failure_code": "ADAPTER_REQUIRED",
+      "operational_codes": [
+        "ADAPTER_REQUIRED",
+        "INLINE_NOTICE_STRUCTURE_DETECTED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 2
+    },
+    {
+      "source_id": "cau_017",
+      "university_slug": "cau",
+      "source_name": "중앙대 화학공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 23,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_021",
+      "university_slug": "cau",
+      "source_name": "중앙대 체육교육과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 8,
+      "detail_identity_verified_count": 2
+    },
+    {
+      "source_id": "cau_022",
+      "university_slug": "cau",
+      "source_name": "중앙대 공공인재학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 22,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_023",
+      "university_slug": "cau",
+      "source_name": "중앙대 도시계획·부동산학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 27,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_024",
+      "university_slug": "cau",
+      "source_name": "중앙대 미디어커뮤니케이션학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 18,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_025",
+      "university_slug": "cau",
+      "source_name": "중앙대 문헌정보학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 14,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_026",
+      "university_slug": "cau",
+      "source_name": "중앙대 사회복지학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 26,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_030",
+      "university_slug": "cau",
+      "source_name": "중앙대 정치국제학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 27,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_037",
+      "university_slug": "cau",
+      "source_name": "중앙대 소프트웨어학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 22,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_038",
+      "university_slug": "cau",
+      "source_name": "중앙대 약학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 10,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_041",
+      "university_slug": "cau",
+      "source_name": "중앙대 TV방송연예전공",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_065",
+      "university_slug": "cau",
+      "source_name": "중앙대 국어국문학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "FILTERED_OUT_BY_DATE",
+      "operational_codes": [
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 2
+    },
+    {
+      "source_id": "cau_068",
+      "university_slug": "cau",
+      "source_name": "중앙대 역사학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 22,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_070",
+      "university_slug": "cau",
+      "source_name": "중앙대 일본어문학전공",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_074",
+      "university_slug": "cau",
+      "source_name": "중앙대 물리학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 19,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_075",
+      "university_slug": "cau",
+      "source_name": "중앙대 생명과학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_078",
+      "university_slug": "cau",
+      "source_name": "중앙대 간호학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 35,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_079",
+      "university_slug": "cau",
+      "source_name": "중앙대 융합공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "cau_080",
+      "university_slug": "cau",
+      "source_name": "중앙대 지능형반도체공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "ewha_008",
+      "university_slug": "ewha",
+      "source_name": "이화여대 화공신소재공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "FILTERED_OUT_BY_DATE",
+      "operational_codes": [
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 25
+    },
+    {
+      "source_id": "hanyang_006",
+      "university_slug": "hanyang",
+      "source_name": "한양대 건축공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_010",
+      "university_slug": "hanyang",
+      "source_name": "한양대 반도체공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 10,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_011",
+      "university_slug": "hanyang",
+      "source_name": "한양대 산업공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "PAGINATION_UNVERIFIED",
+      "operational_codes": [
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "configured_selector",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 0,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "hanyang_013",
+      "university_slug": "hanyang",
+      "source_name": "한양대 신소재공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "configured_selector",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 0,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_017",
+      "university_slug": "hanyang",
+      "source_name": "한양대 융합전자공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 9,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_018",
+      "university_slug": "hanyang",
+      "source_name": "한양대 자원환경공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 16,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_019",
+      "university_slug": "hanyang",
+      "source_name": "한양대 전기·생체공학부(바이오메디컬공학)",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 18,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_022",
+      "university_slug": "hanyang",
+      "source_name": "한양대 데이터사이언스학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 26,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_025",
+      "university_slug": "hanyang",
+      "source_name": "한양대 컴퓨터소프트웨어학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_033",
+      "university_slug": "hanyang",
+      "source_name": "한양대 관광학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_034",
+      "university_slug": "hanyang",
+      "source_name": "한양대 미디어커뮤니케이션학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_035",
+      "university_slug": "hanyang",
+      "source_name": "한양대 사회학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 3,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_036",
+      "university_slug": "hanyang",
+      "source_name": "한양대 정치외교학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_038",
+      "university_slug": "hanyang",
+      "source_name": "한양대 식품영양학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_039",
+      "university_slug": "hanyang",
+      "source_name": "한양대 실내건축디자인학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_040",
+      "university_slug": "hanyang",
+      "source_name": "한양대 의류학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 3,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_061",
+      "university_slug": "hanyang",
+      "source_name": "한양대 물리학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_062",
+      "university_slug": "hanyang",
+      "source_name": "한양대 생명과학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_063",
+      "university_slug": "hanyang",
+      "source_name": "한양대 수학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_064",
+      "university_slug": "hanyang",
+      "source_name": "한양대 화학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 3,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_065",
+      "university_slug": "hanyang",
+      "source_name": "한양대 정책학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 25,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_066",
+      "university_slug": "hanyang",
+      "source_name": "한양대 행정학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 17,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_068",
+      "university_slug": "hanyang",
+      "source_name": "한양대 학생지원팀 장학안내(서울캠퍼스)",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+      "operational_codes": [
+        "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_070",
+      "university_slug": "hanyang",
+      "source_name": "한양대 간호대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 36,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_071",
+      "university_slug": "hanyang",
+      "source_name": "한양대 사회과학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 3,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_072",
+      "university_slug": "hanyang",
+      "source_name": "한양대 자연과학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 3,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_074",
+      "university_slug": "hanyang",
+      "source_name": "한양대 경제금융대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "FILTERED_OUT_BY_DATE",
+      "operational_codes": [
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 7,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "hanyang_075",
+      "university_slug": "hanyang",
+      "source_name": "한양대 생활과학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_076",
+      "university_slug": "hanyang",
+      "source_name": "한양대 국제대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 7,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_077",
+      "university_slug": "hanyang",
+      "source_name": "한양대 기술혁신대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_079",
+      "university_slug": "hanyang",
+      "source_name": "한양대 예술·체육대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 19,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_080",
+      "university_slug": "hanyang",
+      "source_name": "한양대 음악대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_081",
+      "university_slug": "hanyang",
+      "source_name": "한양대 의과대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 10,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_082",
+      "university_slug": "hanyang",
+      "source_name": "한양대 인문과학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "hanyang_083",
+      "university_slug": "hanyang",
+      "source_name": "한양대 한양인터칼리지학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 33,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "hongik_024",
+      "university_slug": "hongik",
+      "source_name": "홍익대 디자인학부(시각디자인전공)",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+      "operational_codes": [
+        "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "khu_123",
+      "university_slug": "khu",
+      "source_name": "경희대 의과대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 11,
+      "detail_identity_verified_count": 2
+    },
+    {
+      "source_id": "khu_132",
+      "university_slug": "khu",
+      "source_name": "경희대 체육대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "korea_001",
+      "university_slug": "korea",
+      "source_name": "고려대 경영학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 25,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_031",
+      "university_slug": "korea",
+      "source_name": "고려대 건축학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 11,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_034",
+      "university_slug": "korea",
+      "source_name": "고려대 전기전자공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+      "operational_codes": [
+        "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE",
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_036",
+      "university_slug": "korea",
+      "source_name": "고려대 반도체공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_037",
+      "university_slug": "korea",
+      "source_name": "고려대 차세대통신학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_053",
+      "university_slug": "korea",
+      "source_name": "고려대 바이오의공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 8,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_054",
+      "university_slug": "korea",
+      "source_name": "고려대 바이오시스템의과학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 7,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_055",
+      "university_slug": "korea",
+      "source_name": "고려대 보건환경융합과학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 7,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_056",
+      "university_slug": "korea",
+      "source_name": "고려대 보건정책관리학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 7,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_057",
+      "university_slug": "korea",
+      "source_name": "고려대 미디어대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 12,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_058",
+      "university_slug": "korea",
+      "source_name": "고려대 심리학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_060",
+      "university_slug": "korea",
+      "source_name": "고려대 스마트보안학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "adapter_required",
+      "primary_failure_code": "ADAPTER_REQUIRED",
+      "operational_codes": [
+        "ADAPTER_REQUIRED",
+        "INLINE_NOTICE_STRUCTURE_DETECTED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 101,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "korea_062",
+      "university_slug": "korea",
+      "source_name": "고려대 스마트모빌리티학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 11,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_069",
+      "university_slug": "korea",
+      "source_name": "고려대 공과대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 12,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_070",
+      "university_slug": "korea",
+      "source_name": "고려대 이과대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 6,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "korea_076",
+      "university_slug": "korea",
+      "source_name": "고려대 보건과학대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 10,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "skku_009",
+      "university_slug": "skku",
+      "source_name": "성균관대 나노공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 18,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "skku_013",
+      "university_slug": "skku",
+      "source_name": "성균관대 화학공학부",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "http_error",
+      "capability_status": "manual_review_required",
+      "primary_failure_code": "UNKNOWN_NEEDS_MANUAL_REVIEW",
+      "operational_codes": [
+        "UNKNOWN_NEEDS_MANUAL_REVIEW"
+      ],
+      "parser_strategy": null,
+      "candidate_navigation_leak_count": null,
+      "navigation_url_overlap_count": null,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "skku_042",
+      "university_slug": "skku",
+      "source_name": "성균관대 에너지학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "posts_found_no_scholarship",
+      "primary_failure_code": "DETAIL_URL_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_URL_UNVERIFIED",
+        "FILTERED_OUT_BY_KEYWORD"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "skku_059",
+      "university_slug": "skku",
+      "source_name": "성균관대 생명과학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 8,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "uos_045",
+      "university_slug": "uos",
+      "source_name": "시립대 경영대학",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "list_supported_detail_unverified",
+      "primary_failure_code": "PAGINATION_UNVERIFIED",
+      "operational_codes": [
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 4,
+      "detail_identity_verified_count": 5
+    },
+    {
+      "source_id": "yonsei_022",
+      "university_slug": "yonsei",
+      "source_name": "연세대 물리학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 32,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "yonsei_024",
+      "university_slug": "yonsei",
+      "source_name": "연세대 지구시스템과학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE",
+        "PAGINATION_UNVERIFIED"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 5,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "yonsei_026",
+      "university_slug": "yonsei",
+      "source_name": "연세대 대기과학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "FILTERED_OUT_BY_DATE",
+      "operational_codes": [
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 1,
+      "detail_identity_verified_count": 1
+    },
+    {
+      "source_id": "yonsei_036",
+      "university_slug": "yonsei",
+      "source_name": "연세대 디스플레이융합공학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 21,
+      "detail_identity_verified_count": 0
+    },
+    {
+      "source_id": "yonsei_057",
+      "university_slug": "yonsei",
+      "source_name": "연세대 체육교육학과",
+      "historical_selection": {
+        "primary_failure_code": "LIST_SELECTOR_MENU_CONTAMINATION",
+        "parser_strategy": "heuristic_anchor",
+        "meaning": "Historical target: prior diagnostics conflated selected-node navigation leakage with navigation URL overlap."
+      },
+      "runtime_result_status": "success",
+      "capability_status": "valid_zero_candidates",
+      "primary_failure_code": "DETAIL_IDENTITY_UNVERIFIED",
+      "operational_codes": [
+        "DETAIL_IDENTITY_UNVERIFIED",
+        "FILTERED_OUT_BY_DATE"
+      ],
+      "parser_strategy": "heuristic_anchor",
+      "candidate_navigation_leak_count": 0,
+      "navigation_url_overlap_count": 2,
+      "detail_identity_verified_count": 0
+    }
+  ],
+  "current_summary": {
+    "runtime_result_status_counts": {
+      "success": 86,
+      "http_error": 1
+    },
+    "capability_status_counts": {
+      "posts_found_no_scholarship": 32,
+      "list_supported_detail_unverified": 12,
+      "adapter_required": 2,
+      "valid_zero_candidates": 40,
+      "manual_review_required": 1
+    },
+    "primary_failure_code_counts": {
+      "DETAIL_URL_UNVERIFIED": 29,
+      "DETAIL_IDENTITY_UNVERIFIED": 46,
+      "ADAPTER_REQUIRED": 2,
+      "FILTERED_OUT_BY_DATE": 4,
+      "PAGINATION_UNVERIFIED": 2,
+      "DETAIL_CONTENT_EMPTY_OR_BOILERPLATE": 3,
+      "UNKNOWN_NEEDS_MANUAL_REVIEW": 1
+    },
+    "selected_navigation_leak_source_count": 0,
+    "navigation_url_overlap_source_count": 84
+  },
+  "audit_findings": [
+    "The crawler evidence distinguishes candidate_navigation_leak_count from navigation_url_overlap_count.",
+    "The remediation report generator currently derives final_state outside the operational analyzer, so phase 1 must move final phase2 interpretation into analyzer output.",
+    "The remediation report generator defaults candidate_recall_verified for non-configured sources without candidate-diff evidence; phase 1 must remove that optimistic default.",
+    "Current operational capability_status still permits manual_review_required; phase 1 must introduce the phase2 terminal status model without changing crawler observation semantics."
+  ]
+}

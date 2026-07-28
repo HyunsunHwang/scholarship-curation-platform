@@ -1,0 +1,12 @@
+{
+  "sourceId": "fixture_001",
+  "sourceName": "Fixture",
+  "universitySlug": "fixture",
+  "listUrl": "https://example.test/notices",
+  "baseUrl": "https://example.test",
+  "listItemSelector": "table.board tr",
+  "linkSelector": "td.title a[href]",
+  "titleSelector": "td.title a[href]",
+  "dateSelector": "td.date",
+  "noticeUrlPattern": "[?&]id=\\d+"
+}

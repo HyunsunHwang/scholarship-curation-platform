@@ -21,7 +21,9 @@ import {
   OPERATIONAL_ACCESS_PROFILES,
   OPERATIONAL_CAPABILITY_STATUSES,
   OPERATIONAL_CRAWL_DIAGNOSTIC_CSV_COLUMNS,
+  OPERATIONAL_CRAWL_CODES,
   analyzeOperationalCrawlerSource,
+  classifyOperationalAction,
   buildCrawlerReport,
   buildOperationalCrawlDiagnostics,
   buildOperationalCrawlDiagnosticsCsv,
@@ -1423,6 +1425,97 @@ test("operational diagnostics v2 CSV exposes topology and adapter evidence addit
   assert.equal(header.split(",").length, data.split(",").length);
   assert.match(diagnostics.source_diagnostics[0].evidence_summary, /content_topology=/);
   assert.match(diagnostics.source_diagnostics[0].evidence_summary, /content_mode_declared=/);
+});
+
+test("phase 2 canonical taxonomy accepts current statuses and rejects legacy statuses", () => {
+  const diagnosticsFor = (phase2Status) => {
+    const diagnostics = buildOperationalCrawlDiagnostics({
+      sources: [{
+        source: { sourceId: "phase2_taxonomy_fixture", sourceName: "Fixture" },
+        executionResult: {
+          result_status: "success",
+          parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 },
+        },
+        notices: [{ content: "A sufficiently long detail body for the diagnostics fixture.", detailIdentity: { verified: true } }],
+        matchedCount: 1,
+      }],
+    });
+    diagnostics.source_diagnostics[0].phase2_status = phase2Status;
+    return diagnostics;
+  };
+  for (const status of ["blocked_external", "blocked_insufficient_authoritative_evidence", "list_url_correction_required"]) {
+    assert.equal(validateOperationalCrawlDiagnostics(diagnosticsFor(status)).valid, true);
+  }
+  for (const status of ["manual_review_required", "source_unreachable", "list_url_corrected"]) {
+    const validation = validateOperationalCrawlDiagnostics(diagnosticsFor(status));
+    assert.equal(validation.valid, false);
+    assert.ok(validation.errors.includes("invalid_phase2_status"));
+  }
+});
+
+test("capture evidence separates no parser delta from transport recovery", () => {
+  const source = { sourceId: "action_fixture", sourceName: "Fixture" };
+  const base = { source, executionResult: { result_status: "success", parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 } }, notices: [{ title: "Notice", noticeUrl: "https://fixture.test/1", content: "A sufficiently long fixture body for diagnostic evidence.", detailIdentity: { verified: true } }], matchedCount: 1 };
+  const equivalent = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "capture_success", comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: { control_candidate_count: 1, treatment_candidate_count: 1, common_candidate_count: 1, removed_candidate_count: 0, added_candidate_count: 0, removed_real_notice_count: 0, removed_unresolved_count: 0, added_false_positive_count: 0, candidate_recall_verified: true } } } });
+  assert.equal(equivalent.action_class, "no_action");
+  assert.equal(equivalent.evidence_basis, "same_html_delta");
+  const transport = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "transport_failure" } });
+  assert.equal(transport.action_class, "transport_recovery");
+  assert.equal(transport.evidence_basis, "capture_transport_evidence");
+});
+
+test("action taxonomy fails closed and preserves CSV accounting", () => {
+  const comparison = (overrides = {}) => ({
+    control_candidate_count: 1,
+    treatment_candidate_count: 1,
+    common_candidate_count: 1,
+    removed_candidate_count: 0,
+    added_candidate_count: 0,
+    removed_real_notice_count: 0,
+    removed_unresolved_count: 0,
+    added_false_positive_count: 0,
+    candidate_recall_verified: true,
+    ...overrides,
+  });
+  const route = (status, codes = [], remediationEvidence = undefined) => {
+    const action = classifyOperationalAction({ status, codes, remediationEvidence });
+    return { action_class: action.action_class, evidence_basis: action.evidence_basis };
+  };
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison() } }), { action_class: "no_action", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison({ candidate_recall_verified: false }) } }), { action_class: "unresolved", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison({ control_candidate_count: 1, treatment_candidate_count: 0, common_candidate_count: 0, removed_candidate_count: 1, removed_real_notice_count: 1, candidate_recall_verified: false }) } }), { action_class: "parser_remediation", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { capture_status: "transport_failure" }), { action_class: "transport_recovery", evidence_basis: "capture_transport_evidence" });
+  assert.deepEqual(route("supported", [], { capture_status: "blocked_external" }), { action_class: "transport_recovery", evidence_basis: "capture_transport_evidence" });
+  assert.deepEqual(route("supported", [OPERATIONAL_CRAWL_CODES.URL_RESOLUTION_FAILED]), { action_class: "source_url_review", evidence_basis: "runtime_failure" });
+  for (const code of [
+    OPERATIONAL_CRAWL_CODES.CONFIG_OR_SELECTOR_MISMATCH,
+    OPERATIONAL_CRAWL_CODES.LIST_SELECTOR_ZERO_MATCHES,
+    OPERATIONAL_CRAWL_CODES.LIST_SELECTOR_MENU_CONTAMINATION,
+    OPERATIONAL_CRAWL_CODES.ADAPTER_REQUIRED,
+  ]) assert.deepEqual(route("supported", [code]), { action_class: "configuration_review", evidence_basis: "runtime_failure" });
+  for (const code of [
+    OPERATIONAL_CRAWL_CODES.DETAIL_FETCH_FAILED,
+    OPERATIONAL_CRAWL_CODES.MANUAL_BROWSER_NETWORK_REQUIRED,
+    OPERATIONAL_CRAWL_CODES.UNKNOWN_NEEDS_MANUAL_REVIEW,
+  ]) assert.deepEqual(route("manual_review_required", [code]), { action_class: "unresolved", evidence_basis: "runtime_failure" });
+  assert.deepEqual(route("list_supported_detail_failed", []), { action_class: "unresolved", evidence_basis: "runtime_failure" });
+  assert.deepEqual(route("valid_zero_candidates", []), { action_class: "no_action", evidence_basis: "runtime_failure" });
+
+  const diagnostics = buildOperationalCrawlDiagnostics({
+    sources: [{ source: { sourceId: "action_csv", sourceName: "Fixture" }, executionResult: { result_status: "success", parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 } }, notices: [], matchedCount: 0 }],
+  });
+  const csv = buildOperationalCrawlDiagnosticsCsv(diagnostics);
+  const columns = csv.slice(1).split("\r\n")[0].split(",");
+  assert.deepEqual(columns.slice(columns.indexOf("capability_status"), columns.indexOf("capability_status") + 3), ["capability_status", "action_class", "evidence_basis"]);
+  assert.equal(diagnostics.summary.evidence_basis_counts.reduce((sum, row) => sum + row.source_count, 0), 1);
+  diagnostics.source_diagnostics[0].capability_status = "manual_review_required";
+  diagnostics.source_diagnostics[0].action_class = "no_action";
+  diagnostics.source_diagnostics[0].evidence_basis = "runtime_failure";
+  diagnostics.summary.action_class_counts = [{ action_class: "no_action", source_count: 1 }];
+  diagnostics.summary.evidence_basis_counts = [{ evidence_basis: "runtime_failure", source_count: 1 }];
+  const validation = validateOperationalCrawlDiagnostics(diagnostics);
+  assert.equal(validation.valid, false);
+  assert.ok(validation.errors.includes("invalid_capability_action_combination"));
 });
 
 console.log(`Operational crawl diagnostics tests: ${passed}/${passed} PASS`);
