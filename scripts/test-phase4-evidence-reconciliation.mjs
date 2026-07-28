@@ -1,0 +1,34 @@
+import assert from "node:assert/strict";
+import crypto from "node:crypto";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { reconcilePhase4Evidence } from "../lib/crawler-engine/runtime-diagnostics/phase4-evidence-reconciliation.mjs";
+import { canonicalPhase4ArtifactJson } from "../lib/crawler-engine/runtime-diagnostics/phase4-capture-artifact-validator.mjs";
+
+const sha = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const runIdentity = "phase4-capture-test";
+const fingerprint = "a".repeat(64);
+const sourceId = "cau_004";
+const root = await fs.mkdtemp(path.join(os.tmpdir(), "phase4-reconciliation-"));
+const run = path.join(root, "run");
+await fs.mkdir(path.join(run, "captures"), { recursive: true });
+const artifact = { schema_version: "phase4-capture-artifact-v1", run_identity: runIdentity, capture_contract_version: "phase4-capture-contract-v2", contract_fingerprint: fingerprint, source_id: sourceId, capture_status: "transport_failure", evidence_status: "insufficient_evidence", next_phase_queue: "transport_recovery", blocking_reason: "timeout", list_fetch_count: 1, request_attempt_count: 1, transport_evidence: { request_attempt_count: 1, error_code: "ETIMEDOUT" }, capture: null, treatment: null, same_html_comparison: null, contract: { sources: [{ source_id: sourceId, source_config_sha256: "b".repeat(64) }], code_sha: "test" } };
+// Contract fingerprint must bind the canonical contract, so construct it after the object.
+artifact.contract_fingerprint = sha(canonicalPhase4ArtifactJson(artifact.contract));
+const raw = Buffer.from(`${JSON.stringify(artifact, null, 2)}\n`);
+await fs.writeFile(path.join(run, "captures", `${sourceId}.json`), raw);
+const artifactSha = sha(raw);
+const journal = { schema_version: "phase4-capture-checkpoint-v1", run_identity: runIdentity, contract_fingerprint: artifact.contract_fingerprint, source_ids: [sourceId], attempts: {}, terminal_artifacts: { [sourceId]: { source_id: sourceId, capture_status: "transport_failure", evidence_status: "insufficient_evidence", next_phase_queue: "transport_recovery", blocking_reason: "timeout", artifact_status: "committed", artifact_path: path.join(run, "captures", `${sourceId}.json`), artifact_sha256: artifactSha, artifact_schema_version: "phase4-capture-artifact-v1", capture_contract_version: "phase4-capture-contract-v2", run_identity: runIdentity, contract_fingerprint: artifact.contract_fingerprint } } };
+const index = { run_identity: runIdentity, contract_fingerprint: artifact.contract_fingerprint, source_count: 1, artifact_count: 1, created_source_ids: [sourceId], terminal_source_ids: [sourceId], artifacts: [{ source_id: sourceId, artifact_relative_path: `captures/${sourceId}.json`, artifact_sha256: artifactSha }] };
+await fs.writeFile(path.join(run, "checkpoint.json.phase4-capture.json"), JSON.stringify(journal));
+await fs.writeFile(path.join(run, "checkpoint.json"), "{}");
+await fs.writeFile(path.join(run, "private-artifact-index.json"), JSON.stringify(index));
+const summary = { run_identity: runIdentity, contract_fingerprint: artifact.contract_fingerprint, accounting: { terminal_artifact_count: 1, incomplete_attempt_count: 0 }, private_index_sha256: sha(await fs.readFile(path.join(run, "private-artifact-index.json")),), journal_sha256: sha(await fs.readFile(path.join(run, "checkpoint.json.phase4-capture.json")),), checkpoint_sha256: sha(await fs.readFile(path.join(run, "checkpoint.json")),) };
+await fs.writeFile(path.join(run, "private-run-summary.json"), JSON.stringify(summary));
+const result = await reconcilePhase4Evidence({ runDirectory: run, expectedSourceIds: [sourceId], runIdentity, contractFingerprint: artifact.contract_fingerprint });
+assert.equal(result.accounting.artifact_file_count, 1); assert.equal(result.sources[0].artifact_file_sha256, artifactSha); assert.equal(result.sources[0].normalized_transport_failure, "connect_timeout");
+await fs.appendFile(path.join(run, "captures", `${sourceId}.json`), " ");
+await assert.rejects(() => reconcilePhase4Evidence({ runDirectory: run, expectedSourceIds: [sourceId], runIdentity, contractFingerprint: artifact.contract_fingerprint }), { code: "phase4_reconciliation_artifact_sha_mismatch" });
+await fs.rm(root, { recursive: true, force: true });
+console.log("Phase 4 evidence reconciliation tests: 4/4 passed");

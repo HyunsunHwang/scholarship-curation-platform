@@ -1456,7 +1456,7 @@ test("phase 2 canonical taxonomy accepts current statuses and rejects legacy sta
 test("capture evidence separates no parser delta from transport recovery", () => {
   const source = { sourceId: "action_fixture", sourceName: "Fixture" };
   const base = { source, executionResult: { result_status: "success", parser_evidence: { parser_strategy: "heuristic_anchor", candidate_navigation_leak_count: 0 } }, notices: [{ title: "Notice", noticeUrl: "https://fixture.test/1", content: "A sufficiently long fixture body for diagnostic evidence.", detailIdentity: { verified: true } }], matchedCount: 1 };
-  const equivalent = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "capture_success", same_html_comparison: { candidate_comparison: { control_candidate_count: 1, treatment_candidate_count: 1, common_candidate_count: 1, removed_candidate_count: 0, added_candidate_count: 0, removed_real_notice_count: 0, removed_unresolved_count: 0, added_false_positive_count: 0, candidate_recall_verified: true } } } });
+  const equivalent = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "capture_success", comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: { control_candidate_count: 1, treatment_candidate_count: 1, common_candidate_count: 1, removed_candidate_count: 0, added_candidate_count: 0, removed_real_notice_count: 0, removed_unresolved_count: 0, added_false_positive_count: 0, candidate_recall_verified: true } } } });
   assert.equal(equivalent.action_class, "no_action");
   assert.equal(equivalent.evidence_basis, "same_html_delta");
   const transport = analyzeOperationalCrawlerSource({ ...base, remediationEvidence: { capture_status: "transport_failure" } });
@@ -1481,9 +1481,9 @@ test("action taxonomy fails closed and preserves CSV accounting", () => {
     const action = classifyOperationalAction({ status, codes, remediationEvidence });
     return { action_class: action.action_class, evidence_basis: action.evidence_basis };
   };
-  assert.deepEqual(route("supported", [], { same_html_comparison: { candidate_comparison: comparison() } }), { action_class: "no_action", evidence_basis: "same_html_delta" });
-  assert.deepEqual(route("supported", [], { same_html_comparison: { candidate_comparison: comparison({ candidate_recall_verified: false }) } }), { action_class: "unresolved", evidence_basis: "same_html_delta" });
-  assert.deepEqual(route("supported", [], { same_html_comparison: { candidate_comparison: comparison({ control_candidate_count: 1, treatment_candidate_count: 0, common_candidate_count: 0, removed_candidate_count: 1, removed_real_notice_count: 1, candidate_recall_verified: false }) } }), { action_class: "parser_remediation", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison() } }), { action_class: "no_action", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison({ candidate_recall_verified: false }) } }), { action_class: "unresolved", evidence_basis: "same_html_delta" });
+  assert.deepEqual(route("supported", [], { comparison_validation_status: "exact_valid", same_html_comparison: { candidate_comparison: comparison({ control_candidate_count: 1, treatment_candidate_count: 0, common_candidate_count: 0, removed_candidate_count: 1, removed_real_notice_count: 1, candidate_recall_verified: false }) } }), { action_class: "parser_remediation", evidence_basis: "same_html_delta" });
   assert.deepEqual(route("supported", [], { capture_status: "transport_failure" }), { action_class: "transport_recovery", evidence_basis: "capture_transport_evidence" });
   assert.deepEqual(route("supported", [], { capture_status: "blocked_external" }), { action_class: "transport_recovery", evidence_basis: "capture_transport_evidence" });
   assert.deepEqual(route("supported", [OPERATIONAL_CRAWL_CODES.URL_RESOLUTION_FAILED]), { action_class: "source_url_review", evidence_basis: "runtime_failure" });
