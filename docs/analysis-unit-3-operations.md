@@ -4,55 +4,94 @@ Unit 3 keeps normalized ingestion, semantic analysis, canonical Program/Cycle ap
 and the legacy scheduled ingest as separate boundaries. It does not activate a production
 schedule or publish canonical Cycles automatically.
 
-## Identity contract
+## Active model policy
 
-Program identity is the SHA-256 fingerprint of the server-derived normalized canonical
-name, normalized operating organization, and a minimal discriminator. A missing
-organization uses the stable `organization-unknown` sentinel. The DB trigger recalculates
-all derived fields on name or organization edits, takes an advisory transaction lock, and
-enforces a unique identity key. A collision is a review conflict; it is never an automatic
-merge.
+Policy file: `config/analysis-model-policy-v1.json`
 
-Cycle identity has two guards: `(Program, source Revision)` is always unique, and a semantic
-cycle fingerprint is unique only when year plus term or a complete application date range
-makes the identity clear. Same-label ambiguous cases stay in review.
+| Role | Model | Pricing version |
+| --- | --- | --- |
+| economy | `claude-haiku-4-5-20251001` | `anthropic-public-pricing-2026-07` |
+| baseline | `claude-sonnet-4-6` | same |
+| escalation | `claude-sonnet-4-6` | same |
 
-## Model and routing contract
+Retired identifiers (`claude-3-5-haiku-20241022`, `claude-sonnet-4-20250514`) are removed.
+Unknown model overrides fail before provider calls. Pricing-unknown models are never treated as zero cost.
 
-Policy roles are stable names (`economy`, `baseline`, `escalation`) and are separate from
-versioned provider model IDs. Pricing is stored with the policy. An unknown model/pricing
-combination blocks before a provider call.
+## Identity canonical string contract
 
-The economy role runs first. Schema/evidence failure, critical missing or low-confidence
-fields, suspected multiple programs, attachment-heavy inputs, and retryable failures may
-trigger one bounded escalation. Both runs and results remain addressable. The routing
-decision records the selected run/result and reason codes. A failed escalation does not
-replace an otherwise valid economy result.
+JS (`lib/analysis/scholarship-identity.mjs`) and SQL (`007_analysis_routing_and_identity_hardening.sql`) share:
 
-Budgets are checked before each call: maximum jobs, runs, escalations, per-run cost, and
-daily cost. The default routed worker is replay-only, performs no DB write and no live
-provider call. `--live` requires `--allow-live-provider` and runs only the bounded fixture
-path. `--db` requires `--allow-db-write`; persistence remains blocked until migration 007
-is applied and a non-production pilot is explicitly approved.
+```text
+v1|program|<normalized_name>|<normalized_organization>|<discriminator>
+v1|cycle-revision|<program_id>|<revision_id>
+v1|cycle-clear|<program_id>|<cycle_year>|<term>|<start>|<end>
+```
+
+Normalization removes whitespace/punctuation and lowercases. Missing organization uses `organization-unknown`.
+
+## Migration compatibility
+
+Apply order on guarded Post-Phase-L non-production targets:
+
+```text
+004 → 005 → 006 → 007
+```
+
+007 changes:
+
+- `notice_analysis_runs` unique key → `(job_id, attempt_number, run_role)`
+- replaces `finalize_notice_analysis_success` with run_role-aware conflict target
+- adds `finalize_notice_analysis_routing` atomic persistence RPC
+- adds `notice_analysis_routing_decisions`
+
+DB smoke skipped when credentials are unavailable; static/in-memory contract tests still run.
+
+## Routed persistence flow
+
+```text
+claim job → lease
+→ economy run/result/evidence
+→ optional escalation run/result/evidence
+→ routing decision
+→ job succeeded (only when selected validated run/result exists)
+```
+
+In-memory contract: `lib/analysis/analysis-routed-persistence.mjs`
+DB RPC: `finalize_notice_analysis_routing`
+Bounded consumer: `lib/analysis/analysis-db-consumer.mjs`
 
 ## Commands
 
 ```bash
 npm run test:analysis-unit-3
-npm run analysis:routed-worker
-npm run analysis:evaluate -- --gold reports/analysis-gold-dataset.jsonl
-npm run analysis:evaluate -- --gold gold.jsonl --candidates replay.jsonl --name economy-v1
-npm run analysis:operations -- --fixture reports/analysis-operations.json
+
+node scripts/run-routed-analysis-worker.mjs \
+  --mode mock \
+  --fixture fixtures/analysis-unit-1/eligible-analysis.json
+
+node scripts/run-routed-analysis-worker.mjs \
+  --mode bounded-live-fixture \
+  --fixture fixtures/analysis-unit-1/eligible-analysis.json \
+  --allow-live-provider
+
+node scripts/run-routed-analysis-worker.mjs \
+  --mode bounded-db-consumer \
+  --limit 3 \
+  --daily-budget-micros 2000000 \
+  --allow-db-queue \
+  --allow-live-provider
 ```
 
-`analysis:evaluate` reports field-level exact matches and missing values independently,
-plus schema, evidence and lineage validity, token counts, estimated cost, latency, and
-escalation count. It deliberately does not reduce quality to one “accuracy” number.
+`--allow-db-queue` and `--allow-live-provider` are explicit. Default mock/replay performs no DB writes.
 
-## Database rollout
+## Budget and evaluation
 
-Apply `004`, `005`, `006`, then
-`007_analysis_routing_and_identity_hardening.sql` only to an explicitly guarded
-Post-Phase-L non-production target. The migration enables RLS on routing decisions,
-allows admin reads, grants service-role operation, and revokes public/anonymous access.
-No production application or schedule change is part of this unit.
+Budget guard reserves estimated cost before calls and records actual token-based cost after calls.
+Evaluation (`analysis-evaluation.mjs`) reports schema, lineage, evidence validation rate, token/cost/latency metrics.
+
+## Production cutover blockers
+
+- migration 007 not applied on target
+- no production schedule activation
+- no automatic canonical approval/publication
+- admin review remains human-only

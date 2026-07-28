@@ -454,6 +454,22 @@ export interface PostPhaseLDatabase {
         };
         Returns: Json;
       };
+      finalize_notice_analysis_routing: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_economy_run: Json;
+          p_economy_result: Json;
+          p_economy_evidence: Json;
+          p_escalation_run: Json;
+          p_escalation_result: Json;
+          p_escalation_evidence: Json;
+          p_decision: Json;
+          p_selected_run_id: string;
+          p_selected_result_id: string;
+        };
+        Returns: Json;
+      };
       record_notice_analysis_review: {
         Args: {
           p_result_id: string;

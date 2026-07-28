@@ -29,6 +29,7 @@ set normalized_name = public.scholarship_identity_normalize(canonical_name),
       'organization-unknown'
     ),
     identity_key = encode(digest(
+      'v1|program|' ||
       public.scholarship_identity_normalize(canonical_name) || '|' ||
       coalesce(nullif(public.scholarship_identity_normalize(operating_organization), ''),
         'organization-unknown') || '|' ||
@@ -56,7 +57,7 @@ begin
     nullif(public.scholarship_identity_normalize(new.identity_discriminator), ''), 'default'
   );
   new.identity_key := encode(digest(
-    new.normalized_name || '|' || new.normalized_organization || '|' ||
+    'v1|program|' || new.normalized_name || '|' || new.normalized_organization || '|' ||
     new.identity_discriminator, 'sha256'
   ), 'hex');
   perform pg_advisory_xact_lock(hashtextextended(new.identity_key, 0));
@@ -75,13 +76,15 @@ alter table public.scholarship_cycles
   add column if not exists cycle_identity_key text;
 
 update public.scholarship_cycles
-set revision_identity_key = encode(digest(program_id::text || '|' || source_revision_id::text, 'sha256'), 'hex'),
+set revision_identity_key = encode(digest(
+  'v1|cycle-revision|' || program_id::text || '|' || source_revision_id::text, 'sha256'
+), 'hex'),
     cycle_identity_key = case
       when cycle_year is not null
        and (nullif(public.scholarship_identity_normalize(academic_term), '') is not null
          or (application_start_at is not null and application_end_at is not null))
       then encode(digest(
-        program_id::text || '|' || cycle_year::text || '|' ||
+        'v1|cycle-clear|' || program_id::text || '|' || cycle_year::text || '|' ||
         coalesce(nullif(public.scholarship_identity_normalize(academic_term), ''), '-') || '|' ||
         coalesce(application_start_at::text, '-') || '|' || coalesce(application_end_at::text, '-'),
         'sha256'), 'hex')
@@ -99,14 +102,14 @@ create or replace function public.scholarship_cycle_identity_derived()
 returns trigger language plpgsql set search_path = public as $$
 begin
   new.revision_identity_key := encode(digest(
-    new.program_id::text || '|' || new.source_revision_id::text, 'sha256'
+    'v1|cycle-revision|' || new.program_id::text || '|' || new.source_revision_id::text, 'sha256'
   ), 'hex');
   new.cycle_identity_key := case
     when new.cycle_year is not null
      and (nullif(public.scholarship_identity_normalize(new.academic_term), '') is not null
        or (new.application_start_at is not null and new.application_end_at is not null))
     then encode(digest(
-      new.program_id::text || '|' || new.cycle_year::text || '|' ||
+      'v1|cycle-clear|' || new.program_id::text || '|' || new.cycle_year::text || '|' ||
       coalesce(nullif(public.scholarship_identity_normalize(new.academic_term), ''), '-') || '|' ||
       coalesce(new.application_start_at::text, '-') || '|' ||
       coalesce(new.application_end_at::text, '-'), 'sha256'
@@ -176,5 +179,418 @@ create policy notice_analysis_routing_decisions_admin_select
 revoke all on public.notice_analysis_routing_decisions from public, anon, authenticated;
 grant select on public.notice_analysis_routing_decisions to authenticated;
 grant all on public.notice_analysis_routing_decisions to service_role;
+
+create or replace function public.finalize_notice_analysis_success(
+  p_job_id uuid,
+  p_worker_id text,
+  p_run jsonb,
+  p_result jsonb,
+  p_evidence jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  job_row public.notice_analysis_jobs;
+  run_id uuid := (p_run->>'id')::uuid;
+  result_id uuid := (p_result->>'id')::uuid;
+  evidence_row jsonb;
+  inserted_evidence integer := 0;
+  run_role text := coalesce(nullif(p_run->>'run_role', ''), 'baseline');
+begin
+  select * into job_row
+  from public.notice_analysis_jobs
+  where id = p_job_id
+  for update;
+
+  if job_row.id is null
+     or job_row.leased_by is distinct from p_worker_id
+     or job_row.status not in ('leased', 'running')
+     or job_row.lease_expires_at is null
+     or job_row.lease_expires_at <= now() then
+    raise exception 'finalize_notice_analysis_success_rejected_lease';
+  end if;
+
+  if p_run->>'job_id' is distinct from p_job_id::text
+     or p_result->>'job_id' is distinct from p_job_id::text
+     or p_result->>'notice_id' is distinct from job_row.notice_id::text
+     or p_result->>'revision_id' is distinct from job_row.revision_id::text
+     or p_result->>'run_id' is distinct from run_id::text then
+    raise exception 'finalize_notice_analysis_success_rejected_lineage';
+  end if;
+
+  if p_run->>'status' <> 'succeeded'
+     or p_run->>'validation_status' <> 'validated'
+     or nullif(p_run->>'finished_at', '') is null
+     or p_result->>'result_status' <> 'validated' then
+    raise exception 'finalize_notice_analysis_success_rejected_validation';
+  end if;
+
+  insert into public.notice_analysis_runs (
+    id, job_id, attempt_number, run_role, provider, model, request_id, status,
+    started_at, finished_at, latency_ms, input_token_count, output_token_count,
+    cached_input_token_count, estimated_cost_micros, currency_code,
+    prompt_version, schema_version, input_fingerprint, response_fingerprint,
+    validation_status, error_code, error_message, raw_response_retention_until,
+    raw_response, metadata, created_at
+  ) values (
+    run_id, p_job_id, (p_run->>'attempt_number')::integer, run_role,
+    p_run->>'provider', p_run->>'model', p_run->>'request_id', p_run->>'status',
+    (p_run->>'started_at')::timestamptz, (p_run->>'finished_at')::timestamptz,
+    (p_run->>'latency_ms')::integer, (p_run->>'input_token_count')::integer,
+    (p_run->>'output_token_count')::integer,
+    (p_run->>'cached_input_token_count')::integer,
+    (p_run->>'estimated_cost_micros')::bigint,
+    coalesce(p_run->>'currency_code', 'USD'),
+    p_run->>'prompt_version', p_run->>'schema_version',
+    p_run->>'input_fingerprint', p_run->>'response_fingerprint',
+    p_run->>'validation_status', p_run->>'error_code', p_run->>'error_message',
+    (p_run->>'raw_response_retention_until')::timestamptz,
+    p_run->'raw_response', coalesce(p_run->'metadata', '{}'::jsonb),
+    coalesce((p_run->>'created_at')::timestamptz, now())
+  )
+  on conflict (job_id, attempt_number, run_role) do nothing;
+
+  insert into public.notice_analysis_results (
+    id, job_id, run_id, notice_id, revision_id, result_status,
+    analysis_schema_version, structured_result, result_fingerprint,
+    validation_errors, confidence_summary, requires_human_review, created_at
+  ) values (
+    result_id, p_job_id, run_id, job_row.notice_id, job_row.revision_id,
+    'validated', p_result->>'analysis_schema_version',
+    p_result->'structured_result', p_result->>'result_fingerprint',
+    coalesce(p_result->'validation_errors', '[]'::jsonb),
+    coalesce(p_result->'confidence_summary', '{}'::jsonb),
+    true, coalesce((p_result->>'created_at')::timestamptz, now())
+  )
+  on conflict (run_id) do nothing;
+
+  for evidence_row in
+    select value from jsonb_array_elements(coalesce(p_evidence, '[]'::jsonb))
+  loop
+    if evidence_row->>'result_id' is distinct from result_id::text
+       or evidence_row->>'source_revision_id' is distinct from job_row.revision_id::text then
+      raise exception 'finalize_notice_analysis_success_rejected_evidence_lineage';
+    end if;
+    insert into public.notice_analysis_evidence (
+      id, result_id, field_path, evidence_kind, source_revision_id,
+      source_asset_id, source_locator, quoted_text, normalized_value,
+      confidence, evidence_fingerprint, created_at
+    ) values (
+      (evidence_row->>'id')::uuid, result_id, evidence_row->>'field_path',
+      evidence_row->>'evidence_kind', job_row.revision_id,
+      nullif(evidence_row->>'source_asset_id', '')::uuid,
+      evidence_row->>'source_locator', evidence_row->>'quoted_text',
+      evidence_row->'normalized_value', (evidence_row->>'confidence')::numeric,
+      evidence_row->>'evidence_fingerprint',
+      coalesce((evidence_row->>'created_at')::timestamptz, now())
+    )
+    on conflict (result_id, field_path, evidence_fingerprint) do nothing;
+    inserted_evidence := inserted_evidence + 1;
+  end loop;
+
+  update public.notice_analysis_jobs
+  set status = 'succeeded', completed_at = now(), updated_at = now(),
+      leased_by = null, lease_expires_at = null
+  where id = p_job_id;
+
+  return jsonb_build_object(
+    'job_id', p_job_id,
+    'run_id', run_id,
+    'result_id', result_id,
+    'evidence_count', inserted_evidence,
+    'status', 'succeeded'
+  );
+end;
+$$;
+
+create or replace function public.finalize_notice_analysis_routing(
+  p_job_id uuid,
+  p_worker_id text,
+  p_economy_run jsonb,
+  p_economy_result jsonb,
+  p_economy_evidence jsonb,
+  p_escalation_run jsonb,
+  p_escalation_result jsonb,
+  p_escalation_evidence jsonb,
+  p_decision jsonb,
+  p_selected_run_id uuid,
+  p_selected_result_id uuid
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  job_row public.notice_analysis_jobs;
+  evidence_row jsonb;
+begin
+  select * into job_row
+  from public.notice_analysis_jobs
+  where id = p_job_id
+  for update;
+
+  if job_row.id is null
+     or job_row.leased_by is distinct from p_worker_id
+     or job_row.status not in ('leased', 'running')
+     or job_row.lease_expires_at is null
+     or job_row.lease_expires_at <= now() then
+    raise exception 'finalize_notice_analysis_routing_rejected_lease';
+  end if;
+
+  if p_selected_run_id is null or p_selected_result_id is null then
+    raise exception 'finalize_notice_analysis_routing_rejected_missing_selection';
+  end if;
+
+  if p_economy_run is not null and p_economy_result is not null then
+    insert into public.notice_analysis_runs (
+      id, job_id, attempt_number, run_role, provider, model, request_id, status,
+      started_at, finished_at, latency_ms, input_token_count, output_token_count,
+      cached_input_token_count, estimated_cost_micros, currency_code,
+      prompt_version, schema_version, input_fingerprint, response_fingerprint,
+      validation_status, error_code, error_message, raw_response_retention_until,
+      raw_response, metadata, created_at
+    ) values (
+      (p_economy_run->>'id')::uuid, p_job_id,
+      (p_economy_run->>'attempt_number')::integer,
+      coalesce(nullif(p_economy_run->>'run_role', ''), 'economy'),
+      p_economy_run->>'provider', p_economy_run->>'model',
+      p_economy_run->>'request_id', p_economy_run->>'status',
+      (p_economy_run->>'started_at')::timestamptz,
+      (p_economy_run->>'finished_at')::timestamptz,
+      (p_economy_run->>'latency_ms')::integer,
+      (p_economy_run->>'input_token_count')::integer,
+      (p_economy_run->>'output_token_count')::integer,
+      (p_economy_run->>'cached_input_token_count')::integer,
+      (p_economy_run->>'estimated_cost_micros')::bigint,
+      coalesce(p_economy_run->>'currency_code', 'USD'),
+      p_economy_run->>'prompt_version', p_economy_run->>'schema_version',
+      p_economy_run->>'input_fingerprint', p_economy_run->>'response_fingerprint',
+      p_economy_run->>'validation_status', p_economy_run->>'error_code',
+      p_economy_run->>'error_message',
+      (p_economy_run->>'raw_response_retention_until')::timestamptz,
+      p_economy_run->'raw_response', coalesce(p_economy_run->'metadata', '{}'::jsonb),
+      coalesce((p_economy_run->>'created_at')::timestamptz, now())
+    )
+    on conflict (job_id, attempt_number, run_role) do nothing;
+
+    insert into public.notice_analysis_results (
+      id, job_id, run_id, notice_id, revision_id, result_status,
+      analysis_schema_version, structured_result, result_fingerprint,
+      validation_errors, confidence_summary, requires_human_review, created_at
+    ) values (
+      (p_economy_result->>'id')::uuid, p_job_id,
+      (p_economy_run->>'id')::uuid, job_row.notice_id, job_row.revision_id,
+      p_economy_result->>'result_status',
+      p_economy_result->>'analysis_schema_version',
+      p_economy_result->'structured_result',
+      p_economy_result->>'result_fingerprint',
+      coalesce(p_economy_result->'validation_errors', '[]'::jsonb),
+      coalesce(p_economy_result->'confidence_summary', '{}'::jsonb),
+      true, coalesce((p_economy_result->>'created_at')::timestamptz, now())
+    )
+    on conflict (run_id) do nothing;
+
+    for evidence_row in
+      select value from jsonb_array_elements(coalesce(p_economy_evidence, '[]'::jsonb))
+    loop
+      insert into public.notice_analysis_evidence (
+        id, result_id, field_path, evidence_kind, source_revision_id,
+        source_asset_id, source_locator, quoted_text, normalized_value,
+        confidence, evidence_fingerprint, created_at
+      ) values (
+        (evidence_row->>'id')::uuid,
+        (p_economy_result->>'id')::uuid,
+        evidence_row->>'field_path', evidence_row->>'evidence_kind',
+        job_row.revision_id,
+        nullif(evidence_row->>'source_asset_id', '')::uuid,
+        evidence_row->>'source_locator', evidence_row->>'quoted_text',
+        evidence_row->'normalized_value', (evidence_row->>'confidence')::numeric,
+        evidence_row->>'evidence_fingerprint',
+        coalesce((evidence_row->>'created_at')::timestamptz, now())
+      )
+      on conflict (result_id, field_path, evidence_fingerprint) do nothing;
+    end loop;
+  elsif p_economy_run is not null then
+    insert into public.notice_analysis_runs (
+      id, job_id, attempt_number, run_role, provider, model, request_id, status,
+      started_at, finished_at, latency_ms, input_token_count, output_token_count,
+      cached_input_token_count, estimated_cost_micros, currency_code,
+      prompt_version, schema_version, input_fingerprint, response_fingerprint,
+      validation_status, error_code, error_message, raw_response_retention_until,
+      raw_response, metadata, created_at
+    ) values (
+      (p_economy_run->>'id')::uuid, p_job_id,
+      (p_economy_run->>'attempt_number')::integer,
+      coalesce(nullif(p_economy_run->>'run_role', ''), 'economy'),
+      p_economy_run->>'provider', p_economy_run->>'model',
+      p_economy_run->>'request_id', p_economy_run->>'status',
+      (p_economy_run->>'started_at')::timestamptz,
+      (p_economy_run->>'finished_at')::timestamptz,
+      (p_economy_run->>'latency_ms')::integer,
+      (p_economy_run->>'input_token_count')::integer,
+      (p_economy_run->>'output_token_count')::integer,
+      (p_economy_run->>'cached_input_token_count')::integer,
+      (p_economy_run->>'estimated_cost_micros')::bigint,
+      coalesce(p_economy_run->>'currency_code', 'USD'),
+      p_economy_run->>'prompt_version', p_economy_run->>'schema_version',
+      p_economy_run->>'input_fingerprint', p_economy_run->>'response_fingerprint',
+      p_economy_run->>'validation_status', p_economy_run->>'error_code',
+      p_economy_run->>'error_message',
+      (p_economy_run->>'raw_response_retention_until')::timestamptz,
+      p_economy_run->'raw_response', coalesce(p_economy_run->'metadata', '{}'::jsonb),
+      coalesce((p_economy_run->>'created_at')::timestamptz, now())
+    )
+    on conflict (job_id, attempt_number, run_role) do nothing;
+  end if;
+
+  if p_escalation_run is not null and p_escalation_result is not null then
+    insert into public.notice_analysis_runs (
+      id, job_id, attempt_number, run_role, provider, model, request_id, status,
+      started_at, finished_at, latency_ms, input_token_count, output_token_count,
+      cached_input_token_count, estimated_cost_micros, currency_code,
+      prompt_version, schema_version, input_fingerprint, response_fingerprint,
+      validation_status, error_code, error_message, raw_response_retention_until,
+      raw_response, metadata, created_at
+    ) values (
+      (p_escalation_run->>'id')::uuid, p_job_id,
+      (p_escalation_run->>'attempt_number')::integer,
+      coalesce(nullif(p_escalation_run->>'run_role', ''), 'escalation'),
+      p_escalation_run->>'provider', p_escalation_run->>'model',
+      p_escalation_run->>'request_id', p_escalation_run->>'status',
+      (p_escalation_run->>'started_at')::timestamptz,
+      (p_escalation_run->>'finished_at')::timestamptz,
+      (p_escalation_run->>'latency_ms')::integer,
+      (p_escalation_run->>'input_token_count')::integer,
+      (p_escalation_run->>'output_token_count')::integer,
+      (p_escalation_run->>'cached_input_token_count')::integer,
+      (p_escalation_run->>'estimated_cost_micros')::bigint,
+      coalesce(p_escalation_run->>'currency_code', 'USD'),
+      p_escalation_run->>'prompt_version', p_escalation_run->>'schema_version',
+      p_escalation_run->>'input_fingerprint', p_escalation_run->>'response_fingerprint',
+      p_escalation_run->>'validation_status', p_escalation_run->>'error_code',
+      p_escalation_run->>'error_message',
+      (p_escalation_run->>'raw_response_retention_until')::timestamptz,
+      p_escalation_run->'raw_response', coalesce(p_escalation_run->'metadata', '{}'::jsonb),
+      coalesce((p_escalation_run->>'created_at')::timestamptz, now())
+    )
+    on conflict (job_id, attempt_number, run_role) do nothing;
+
+    insert into public.notice_analysis_results (
+      id, job_id, run_id, notice_id, revision_id, result_status,
+      analysis_schema_version, structured_result, result_fingerprint,
+      validation_errors, confidence_summary, requires_human_review, created_at
+    ) values (
+      (p_escalation_result->>'id')::uuid, p_job_id,
+      (p_escalation_run->>'id')::uuid, job_row.notice_id, job_row.revision_id,
+      p_escalation_result->>'result_status',
+      p_escalation_result->>'analysis_schema_version',
+      p_escalation_result->'structured_result',
+      p_escalation_result->>'result_fingerprint',
+      coalesce(p_escalation_result->'validation_errors', '[]'::jsonb),
+      coalesce(p_escalation_result->'confidence_summary', '{}'::jsonb),
+      true, coalesce((p_escalation_result->>'created_at')::timestamptz, now())
+    )
+    on conflict (run_id) do nothing;
+
+    for evidence_row in
+      select value from jsonb_array_elements(coalesce(p_escalation_evidence, '[]'::jsonb))
+    loop
+      insert into public.notice_analysis_evidence (
+        id, result_id, field_path, evidence_kind, source_revision_id,
+        source_asset_id, source_locator, quoted_text, normalized_value,
+        confidence, evidence_fingerprint, created_at
+      ) values (
+        (evidence_row->>'id')::uuid,
+        (p_escalation_result->>'id')::uuid,
+        evidence_row->>'field_path', evidence_row->>'evidence_kind',
+        job_row.revision_id,
+        nullif(evidence_row->>'source_asset_id', '')::uuid,
+        evidence_row->>'source_locator', evidence_row->>'quoted_text',
+        evidence_row->'normalized_value', (evidence_row->>'confidence')::numeric,
+        evidence_row->>'evidence_fingerprint',
+        coalesce((evidence_row->>'created_at')::timestamptz, now())
+      )
+      on conflict (result_id, field_path, evidence_fingerprint) do nothing;
+    end loop;
+  elsif p_escalation_run is not null then
+    insert into public.notice_analysis_runs (
+      id, job_id, attempt_number, run_role, provider, model, request_id, status,
+      started_at, finished_at, latency_ms, input_token_count, output_token_count,
+      cached_input_token_count, estimated_cost_micros, currency_code,
+      prompt_version, schema_version, input_fingerprint, response_fingerprint,
+      validation_status, error_code, error_message, raw_response_retention_until,
+      raw_response, metadata, created_at
+    ) values (
+      (p_escalation_run->>'id')::uuid, p_job_id,
+      (p_escalation_run->>'attempt_number')::integer,
+      coalesce(nullif(p_escalation_run->>'run_role', ''), 'escalation'),
+      p_escalation_run->>'provider', p_escalation_run->>'model',
+      p_escalation_run->>'request_id', p_escalation_run->>'status',
+      (p_escalation_run->>'started_at')::timestamptz,
+      (p_escalation_run->>'finished_at')::timestamptz,
+      (p_escalation_run->>'latency_ms')::integer,
+      (p_escalation_run->>'input_token_count')::integer,
+      (p_escalation_run->>'output_token_count')::integer,
+      (p_escalation_run->>'cached_input_token_count')::integer,
+      (p_escalation_run->>'estimated_cost_micros')::bigint,
+      coalesce(p_escalation_run->>'currency_code', 'USD'),
+      p_escalation_run->>'prompt_version', p_escalation_run->>'schema_version',
+      p_escalation_run->>'input_fingerprint', p_escalation_run->>'response_fingerprint',
+      p_escalation_run->>'validation_status', p_escalation_run->>'error_code',
+      p_escalation_run->>'error_message',
+      (p_escalation_run->>'raw_response_retention_until')::timestamptz,
+      p_escalation_run->'raw_response', coalesce(p_escalation_run->'metadata', '{}'::jsonb),
+      coalesce((p_escalation_run->>'created_at')::timestamptz, now())
+    )
+    on conflict (job_id, attempt_number, run_role) do nothing;
+  end if;
+
+  if not exists (
+    select 1 from public.notice_analysis_results r
+    join public.notice_analysis_runs run on run.id = r.run_id and run.job_id = r.job_id
+    where r.id = p_selected_result_id
+      and run.id = p_selected_run_id
+      and r.job_id = p_job_id
+      and r.result_status = 'validated'
+      and run.status = 'succeeded'
+      and run.validation_status = 'validated'
+      and run.finished_at is not null
+  ) then
+    raise exception 'finalize_notice_analysis_routing_rejected_selection';
+  end if;
+
+  insert into public.notice_analysis_routing_decisions (
+    id, job_id, economy_run_id, escalation_run_id, selected_run_id,
+    selected_result_id, reason_codes, policy_version, decision_fingerprint, created_at
+  ) values (
+    (p_decision->>'id')::uuid, p_job_id,
+    nullif(p_decision->>'economy_run_id', '')::uuid,
+    nullif(p_decision->>'escalation_run_id', '')::uuid,
+    p_selected_run_id, p_selected_result_id,
+    coalesce(p_decision->'reason_codes', '[]'::jsonb),
+    p_decision->>'policy_version', p_decision->>'decision_fingerprint',
+    coalesce((p_decision->>'created_at')::timestamptz, now())
+  )
+  on conflict (job_id) do nothing;
+
+  update public.notice_analysis_jobs
+  set status = 'succeeded', completed_at = now(), updated_at = now(),
+      leased_by = null, lease_expires_at = null
+  where id = p_job_id;
+
+  return jsonb_build_object('job_id', p_job_id, 'status', 'succeeded');
+end;
+$$;
+
+revoke all on function public.finalize_notice_analysis_routing(
+  uuid, text, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid, uuid
+) from public;
+grant execute on function public.finalize_notice_analysis_routing(
+  uuid, text, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid, uuid
+) to service_role;
 
 commit;

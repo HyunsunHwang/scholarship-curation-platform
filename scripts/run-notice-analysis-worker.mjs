@@ -87,7 +87,7 @@ async function persistOutcome(client, workerId, outcome) {
   if (outcome.run) {
     const { error: runError } = await client.from("notice_analysis_runs").upsert(
       outcome.run,
-      { onConflict: "job_id,attempt_number", ignoreDuplicates: true },
+      { onConflict: "job_id,attempt_number,run_role", ignoreDuplicates: true },
     );
     if (runError) throw new Error(`analysis_failed_run_persist_failed:${runError.message}`);
   }
