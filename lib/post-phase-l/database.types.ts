@@ -133,6 +133,97 @@ export type LEffectiveDecision = {
   updated_at: string;
 };
 
+export type LAnalysisJob = {
+  id: string;
+  notice_id: string;
+  revision_id: string;
+  status: string;
+  priority: number;
+  analysis_kind: string;
+  provider_policy: string;
+  model_policy: string;
+  prompt_version: string;
+  schema_version: string;
+  input_fingerprint: string;
+  idempotency_key: string;
+  readiness_status: string;
+  readiness_reason_codes: Json;
+  attempt_count: number;
+  max_attempts: number;
+  available_at: string;
+  leased_at: string | null;
+  lease_expires_at: string | null;
+  leased_by: string | null;
+  last_error_code: string | null;
+  last_error_message: string | null;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  metadata: Json;
+};
+
+export type LAnalysisRun = {
+  id: string;
+  job_id: string;
+  attempt_number: number;
+  provider: string;
+  model: string;
+  request_id: string | null;
+  status: string;
+  started_at: string;
+  finished_at: string | null;
+  latency_ms: number | null;
+  input_token_count: number | null;
+  output_token_count: number | null;
+  cached_input_token_count: number | null;
+  estimated_cost_micros: number | null;
+  currency_code: string;
+  prompt_version: string;
+  schema_version: string;
+  input_fingerprint: string;
+  response_fingerprint: string | null;
+  validation_status: string;
+  error_code: string | null;
+  error_message: string | null;
+  raw_response_retention_until: string | null;
+  raw_response: Json | null;
+  metadata: Json;
+  created_at: string;
+};
+
+export type LAnalysisResult = {
+  id: string;
+  job_id: string;
+  run_id: string;
+  notice_id: string;
+  revision_id: string;
+  result_status: string;
+  analysis_schema_version: string;
+  structured_result: Json;
+  result_fingerprint: string;
+  validation_errors: Json;
+  confidence_summary: Json;
+  requires_human_review: boolean;
+  created_at: string;
+  superseded_at: string | null;
+};
+
+export type LAnalysisEvidence = {
+  id: string;
+  result_id: string;
+  field_path: string;
+  evidence_kind: string;
+  source_revision_id: string | null;
+  source_asset_id: string | null;
+  source_locator: string | null;
+  quoted_text: string | null;
+  normalized_value: Json | null;
+  confidence: number | null;
+  evidence_fingerprint: string;
+  created_at: string;
+};
+
 export type LCrawlRun = {
   id: string;
   idempotency_key: string;
@@ -161,6 +252,10 @@ export interface PostPhaseLDatabase {
       review_items: Table<LReviewItem>;
       review_decision_events: Table<LReviewEvent>;
       review_effective_decisions: Table<LEffectiveDecision>;
+      notice_analysis_jobs: Table<LAnalysisJob>;
+      notice_analysis_runs: Table<LAnalysisRun>;
+      notice_analysis_results: Table<LAnalysisResult>;
+      notice_analysis_evidence: Table<LAnalysisEvidence>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -173,6 +268,32 @@ export interface PostPhaseLDatabase {
           p_scholarship_id?: number | null;
         };
         Returns: Json;
+      };
+      claim_notice_analysis_jobs: {
+        Args: {
+          p_worker_id: string;
+          p_limit?: number;
+          p_lease_seconds?: number;
+        };
+        Returns: LAnalysisJob[];
+      };
+      complete_notice_analysis_job: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+        };
+        Returns: LAnalysisJob;
+      };
+      fail_notice_analysis_job: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_error_code: string;
+          p_error_message: string;
+          p_retryable?: boolean;
+          p_retry_delay_seconds?: number;
+        };
+        Returns: LAnalysisJob;
       };
     };
     Enums: { [_ in never]: never };

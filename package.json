@@ -84,6 +84,7 @@
     "test:phase-0-identity-schema-alignment": "node scripts/test-phase-0-identity-schema-alignment.mjs",
     "test:shadow-parity": "node scripts/test-shadow-parity.mjs",
     "run:shadow-parity-dry-run": "node scripts/run-shadow-parity-dry-run.mjs --all",
+    "test:phase-2-analysis-queue": "node scripts/test-phase-2-analysis-queue.mjs",
     "test:crawler-handoff-contract": "node scripts/test-crawler-handoff-contract.mjs",
     "test:crawler-performance-telemetry": "node scripts/test-crawler-performance-telemetry.mjs",
     "test:scholarship-candidate-detector": "node scripts/test-scholarship-candidate-detector.mjs",
