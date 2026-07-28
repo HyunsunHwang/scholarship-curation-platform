@@ -1,107 +1,150 @@
-# Non-Production L Sandbox Live-Pilot Remediation
+# Non-Production Analysis Pilot Control Plane
 
-This is not a new Phase or Unit. It remediates defects found after Units 1–3 were exercised
-against the isolated `scholarship-curation-post-phase-l` project
-(`hrayfvdggbhfmmzfblly`). Production (`synwudnxdkybwihwmtak`) remains denied.
+This runbook applies only to the isolated Post-Phase L sandbox
+`hrayfvdggbhfmmzfblly`. The production ref `synwudnxdkybwihwmtak` is denied by the
+target guard. Migration, registration, smoke, and expansion are operator actions; repository
+tests do not connect to Supabase or Anthropic.
 
-## Observed defects and root causes
+## Execution boundaries
 
-The first five-case pilot eagerly leased five jobs and incremented all five attempts before
-the sequential worker started the first provider call. A process stop therefore consumed
-attempts for four untouched jobs. The first provider response also failed the strict
-schema/evidence contract. The prompt described JSON informally, while the Messages request
-did not use Anthropic structured outputs. Finally, the both-invalid routing path called the
-job failure RPC without first persisting its failed provider runs.
+- `bounded-db-consumer` remains the global analysis worker. Never use it for a pilot.
+- `bounded-pilot-consumer` can claim only immutable members of one durable pilot run.
+- `run-analysis-nonproduction-pilot.mjs` is report-only.
+- Environment files are never auto-discovered. Every operator command explicitly uses
+  `node --env-file=.env.post-phase-l.local`.
+- The environment must contain the exact target ref and URL, apply confirmation for writes,
+  and `POST_PHASE_L_ALLOW_DB_READ`, `POST_PHASE_L_ALLOW_DB_WRITE`, or
+  `POST_PHASE_L_ALLOW_LIVE_PROVIDER` as appropriate.
+- Existing five-case-v2 jobs are registered, not reseeded or reset.
 
-The remediation makes `limit=5` a total processing ceiling: the consumer claims exactly one
-job, renews only its own finite lease before each provider run, finishes that job, then
-claims the next. A crash can therefore leave at most one leased attempt.
+## 1. Apply migration 009
 
-Anthropic requests now use `output_config.format` with the repository JSON Schema, supported
-by the active Claude Haiku 4.5 and Sonnet 4.6 models. The prompt names the required semantic
-and evidence paths, while the local validator remains strict. Safe parsing additionally
-accepts a JSON code fence or explanatory wrapper for stored/replay outputs; malformed,
-missing, unsupported, or ungrounded content still fails validation. See the
-[official structured outputs contract](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+The operator applies
+`supabase/post-phase-l/009_analysis_pilot_control_plane.sql` in the approved sandbox SQL
+Editor or approved transaction transport. Codex must not apply it. Migration 009 adds the
+pilot run, immutable member manifest, provider usage receipt, exact pilot claim, member
+completion, and expansion approval contracts.
 
-## Failed-run and lease audit
+## 2. Read-only schema verification
 
-Migration `008_live_pilot_failed_run_and_lease_hardening.sql` adds:
+Run `supabase/post-phase-l/verify_analysis_nonproduction_pilot.sql` in the same sandbox.
+Every table/function presence, RLS, and privilege result must be true. It uses the actual
+guard columns `id` and `automatic_public_publish_enabled`.
 
-- `record_notice_analysis_run_audit`: idempotently records every completed provider run by
-  `(job_id, attempt_number, run_role)` before the job failure transition;
-- `renew_notice_analysis_job_lease`: lets only the current, unexpired lease owner extend a
-  lease, bounded to 60–600 seconds.
-
-Failed audit rows retain model, status, validation status, token counts, cost, latency,
-fingerprint, error code, missing paths, top-level response keys, and evidence count. They
-never retain the prompt, safe input body, API key, or raw provider response. A conflicting
-replay raises `failed_run_audit_conflict`.
-
-The provider timeout is 45 seconds. The worker renews to at least 180 seconds immediately
-before economy and escalation calls. A crash does not create an infinite lease; normal
-expiry and reclaim behavior remains intact.
-
-## Operator sequence
-
-The preflight runner is report-only. It does not apply SQL, seed a cohort, consume the
-queue, or call Anthropic.
+## 3. Preview and register the existing v2 cohort
 
 ```bash
-npm run analysis:nonproduction-pilot -- --stage preflight
+node --env-file=.env.post-phase-l.local \
+  scripts/register-analysis-live-pilot-v2.mjs \
+  --allow-nonproduction-db-read
 ```
 
-Apply migration 008 through the approved non-production SQL transport, then run the
-read-only verification SQL:
-
-```text
-supabase/post-phase-l/008_live_pilot_failed_run_and_lease_hardening.sql
-supabase/post-phase-l/verify_analysis_nonproduction_pilot.sql
-```
-
-Seed a new deterministic synthetic namespace. This does not modify or reset the original
-failed jobs:
+Review the exact five IDs, smoke job, revisions, input fingerprints, and manifest
+fingerprint. Registration is the only allowed write:
 
 ```bash
-npm run analysis:pilot-v2:seed -- --allow-nonproduction-db-write
+node --env-file=.env.post-phase-l.local \
+  scripts/register-analysis-live-pilot-v2.mjs \
+  --allow-nonproduction-db-read \
+  --allow-nonproduction-db-write \
+  --register-pilot-run \
+  --pilot-budget-micros 500000
 ```
 
-Run the bounded live consumer manually:
+The RPC refuses registration unless all five jobs are pending, attempt zero, unleased,
+without runs or routing decisions, and match the namespace, revision, and input fingerprint.
+It never modifies the analysis job rows.
+
+## 4. One-case smoke
+
+First run the report-only preflight with the explicit environment:
 
 ```bash
-npm run analysis:routed-worker -- \
-  --mode bounded-db-consumer \
-  --limit 5 \
-  --max-runs 10 \
-  --max-escalations 5 \
-  --run-budget-micros 500000 \
+node --env-file=.env.post-phase-l.local \
+  scripts/run-analysis-nonproduction-pilot.mjs --stage preflight
+```
+
+Then run exactly one smoke member:
+
+```bash
+node --env-file=.env.post-phase-l.local \
+  scripts/run-routed-analysis-worker.mjs \
+  --mode bounded-pilot-consumer \
+  --pilot-run-id <PILOT_RUN_ID> \
+  --pilot-stage smoke \
+  --limit 1 \
+  --max-runs 2 \
+  --max-escalations 1 \
   --pilot-budget-micros 500000 \
   --allow-nonproduction-db-write \
   --allow-db-queue \
   --allow-live-provider
 ```
 
-Read back only bounded audit fields:
+The worker reads the durable manifest before provider use. Its DB claim is
+`claim_notice_analysis_pilot_job`; pilot mode never calls the global claim RPC. A provider
+response is followed immediately by an idempotent usage receipt before JSON/schema,
+lineage, evidence, and business-completeness processing. Missing usage remains `null` with
+`usage_status=missing`, moves the pilot to reconciliation, and prevents the next claim.
+
+## 5. Smoke verification and expansion
 
 ```bash
-npm run analysis:pilot-v2:verify -- --allow-nonproduction-db-read
+node --env-file=.env.post-phase-l.local \
+  scripts/verify-analysis-live-pilot-v2.mjs \
+  --allow-nonproduction-db-read \
+  --pilot-run-id <PILOT_RUN_ID>
 ```
 
-Do not rerun automatically when any job is `leased` with an unexpired lease, when a routing
-replay reports a conflict, or when the pilot reaches 5 jobs, 10 runs, 5 escalations, or
-500000 micros. `retryable_failed` waits for `available_at`; `terminal_failed` requires
-operator diagnosis; `budget_deferred` requires a new explicit budget decision; expired
-leases may be reclaimed normally. A succeeded routing replay must not call the provider.
+Confirm exactly one attempt, four untouched members, a recorded usage receipt with
+reconciled actual cost, safe run audit, validated result, evidence, routing decision, and
+cleared lease. Public, canonical, projection, and publication writes must remain zero.
 
-## Rollback and evidence retention
+Only then execute:
 
-Pilot rows are audit evidence and have no automatic cleanup command. Do not decrement
-attempts, reset statuses, delete jobs/runs/results/decisions, or reuse the original
-five-case namespace. If migration 008 functions themselves must be removed, use only:
-
-```text
-supabase/post-phase-l/908_live_pilot_remediation_function_rollback.sql
+```sql
+select public.approve_notice_analysis_pilot_expansion('<PILOT_RUN_ID>'::uuid);
 ```
 
-That bounded rollback preserves every analysis row. Production scheduling, legacy ingest,
-semantic approval, canonical approval, projection, and publication are unchanged.
+The RPC independently checks smoke success, validated result, evidence, routing decision,
+recorded usage, reconciled cost, and budget.
+
+## 6. Four-case expansion and final verification
+
+```bash
+node --env-file=.env.post-phase-l.local \
+  scripts/run-routed-analysis-worker.mjs \
+  --mode bounded-pilot-consumer \
+  --pilot-run-id <PILOT_RUN_ID> \
+  --pilot-stage expansion \
+  --limit 4 \
+  --max-runs 8 \
+  --max-escalations 4 \
+  --pilot-budget-micros 500000 \
+  --allow-nonproduction-db-write \
+  --allow-db-queue \
+  --allow-live-provider
+```
+
+Run the same verifier afterward. Expansion claims one exact member at a time.
+
+## Diagnostics and reconciliation
+
+Safe diagnostics include request ID, model, content block types, stop reason, response
+fingerprint, JSON parse state, top-level keys, validation code/path, evidence count, token
+usage, and usage status. They exclude API keys, prompts, notice/attachment bodies, and raw
+provider responses.
+
+Stop on target mismatch, missing pilot ID, manifest/revision/input mismatch, unexpected job,
+more than one smoke claim, unapproved expansion, missing or unreconciled usage, budget
+exhaustion, audit/finalize failure, routing conflict, active lease, success replay conflict,
+or any raw-response persistence attempt. Do not reset attempts or convert a failure to
+success during reconciliation.
+
+## Bounded rollback
+
+If 009 must be removed, the operator may apply
+`supabase/post-phase-l/909_analysis_pilot_control_plane_rollback.sql`. It drops only 009
+functions and pilot-control-plane tables. It does not delete or modify analysis
+jobs/runs/results/evidence/routing, v1/v2 audit data, canonical data, projections, or
+production scheduling.

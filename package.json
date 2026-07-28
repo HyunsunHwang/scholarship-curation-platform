@@ -95,6 +95,8 @@
     "analysis:nonproduction-pilot": "node scripts/run-analysis-nonproduction-pilot.mjs",
     "test:analysis-nonproduction-pilot": "node scripts/test-analysis-nonproduction-pilot.mjs",
     "test:analysis-live-pilot-remediation": "node scripts/test-analysis-live-pilot-remediation.mjs",
+    "test:analysis-pilot-control-plane": "node scripts/test-analysis-pilot-control-plane.mjs",
+    "analysis:pilot-v2:register": "node scripts/register-analysis-live-pilot-v2.mjs",
     "analysis:pilot-v2:seed": "node scripts/seed-analysis-live-pilot-v2.mjs",
     "analysis:pilot-v2:verify": "node scripts/verify-analysis-live-pilot-v2.mjs",
     "analysis:worker": "node scripts/run-notice-analysis-worker.mjs",

@@ -2,11 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { createClient } from "@supabase/supabase-js";
-import { assertPostPhaseLTarget } from "../lib/post-phase-l/target-guard.mjs";
+import {
+  assertExplicitOperatorEnvironment,
+  assertOperatorCliFlags,
+} from "../lib/post-phase-l/operator-environment.mjs";
 import { executeRoutedAnalysisJob } from "../lib/analysis/analysis-routing.mjs";
 import { createBudgetGuard } from "../lib/analysis/model-routing-policy.mjs";
 import {
   runBoundedDbConsumer,
+  runBoundedPilotConsumer,
   validateBoundedDbConsumerPreflight,
 } from "../lib/analysis/analysis-db-consumer.mjs";
 import { createReplayProvider } from "../lib/analysis/analysis-worker-core.mjs";
@@ -27,17 +31,12 @@ function args(argv) {
   return result;
 }
 
-function loadEnv() {
-  if (typeof process.loadEnvFile === "function" && fs.existsSync(".env.local")) {
-    process.loadEnvFile(".env.local");
-  }
-}
-
 function dbClient() {
-  const guard = assertPostPhaseLTarget({
-    POST_PHASE_L_TARGET_PROJECT_REF: process.env.POST_PHASE_L_TARGET_PROJECT_REF,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  }, { requireApply: true });
+  const guard = assertExplicitOperatorEnvironment(process.env, {
+    requireApply: true,
+    permissions: ["write"],
+    requireServiceRole: true,
+  });
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required");
   return createClient(guard.target_project_url, key, {
@@ -118,17 +117,22 @@ async function runMockOrFixture(options) {
 }
 
 async function main() {
-  loadEnv();
   const options = args(process.argv.slice(2));
   const mode = String(options.mode ?? "mock");
   if (mode === "mock" || mode === "bounded-live-fixture") {
     await runMockOrFixture({ ...options, mode: mode === "mock" ? "mock" : "bounded-live-fixture" });
     return;
   }
-  if (mode !== "bounded-db-consumer") throw new Error("unsupported_mode");
+  if (!["bounded-db-consumer", "bounded-pilot-consumer"].includes(mode)) {
+    throw new Error("unsupported_mode");
+  }
   if (!options["allow-nonproduction-db-write"]) {
     throw new Error("--allow-nonproduction-db-write is required");
   }
+  assertOperatorCliFlags(options, {
+    write: true,
+    liveProvider: Boolean(options["allow-live-provider"]),
+  });
   if (!options["allow-db-queue"]) throw new Error("--allow-db-queue is required");
   const preflight = validateBoundedDbConsumerPreflight({
     live: Boolean(options["allow-live-provider"]),
@@ -136,11 +140,48 @@ async function main() {
   });
   const client = dbClient();
   const workerId = `routed-analysis-${process.pid}`;
-  const limit = Math.max(1, Math.min(Number(options.limit ?? 3), 5));
-  const result = await runBoundedDbConsumer({
+  const pilotMode = mode === "bounded-pilot-consumer";
+  const pilotRunId = pilotMode ? String(options["pilot-run-id"] ?? "") : null;
+  const pilotStage = pilotMode ? String(options["pilot-stage"] ?? "") : null;
+  if (pilotMode && !pilotRunId) throw new Error("--pilot-run-id is required");
+  if (pilotMode && !["smoke", "expansion"].includes(pilotStage)) {
+    throw new Error("--pilot-stage smoke|expansion is required");
+  }
+  const requiredLimit = pilotStage === "smoke" ? 1 : pilotStage === "expansion" ? 4 : null;
+  const limit = pilotMode
+    ? Number(options.limit ?? requiredLimit)
+    : Math.max(1, Math.min(Number(options.limit ?? 3), 5));
+  if (pilotMode && limit !== requiredLimit) {
+    throw new Error(`pilot_limit_must_equal:${requiredLimit}`);
+  }
+  let manifest = null;
+  if (pilotMode) {
+    const [{ data: pilot, error: pilotError }, { data: members, error: memberError }] =
+      await Promise.all([
+        client.from("notice_analysis_pilot_runs")
+          .select("id,status,current_stage,manifest_fingerprint,target_project_ref,usage_status")
+          .eq("id", pilotRunId).single(),
+        client.from("notice_analysis_pilot_run_jobs")
+          .select("job_id,stage,expected_revision_id,expected_input_fingerprint,execution_order")
+          .eq("pilot_run_id", pilotRunId).eq("stage", pilotStage).order("execution_order"),
+      ]);
+    if (pilotError || memberError) throw new Error("pilot_manifest_preflight_failed");
+    if (pilot.target_project_ref !== guardProjectRef()) {
+      throw new Error("pilot_target_project_ref_mismatch");
+    }
+    if (["missing", "unreconciled"].includes(pilot.usage_status)) {
+      throw new Error("pilot_usage_reconciliation_required");
+    }
+    if (members.length !== requiredLimit) throw new Error("pilot_manifest_member_count_mismatch");
+    manifest = { pilot, members };
+  }
+  const consumer = pilotMode ? runBoundedPilotConsumer : runBoundedDbConsumer;
+  const result = await consumer({
     client,
     workerId,
     limit,
+    pilotRunId,
+    pilotStage,
     live: preflight.mode === "live",
     replayResponse: preflight.replayResponse,
     budgetOptions: {
@@ -157,9 +198,16 @@ async function main() {
     mode,
     writes_performed: true,
     provider_calls_live: preflight.mode === "live",
+    pilot_run_id: pilotRunId,
+    pilot_stage: pilotStage,
+    manifest_fingerprint: manifest?.pilot?.manifest_fingerprint ?? null,
     ...result,
   }, null, 2));
   if (result.summaries.some((row) => !row.ok)) process.exitCode = 1;
+}
+
+function guardProjectRef() {
+  return String(process.env.POST_PHASE_L_TARGET_PROJECT_REF ?? "").trim();
 }
 
 main().catch((error) => {

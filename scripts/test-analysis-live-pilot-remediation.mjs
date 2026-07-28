@@ -238,6 +238,8 @@ assert.match(workerSource, /Math\.min\(Number\(options\.limit \?\? 3\), 5\)/);
 const seedSource = fs.readFileSync("scripts/seed-analysis-live-pilot-v2.mjs", "utf8");
 assert.match(seedSource, /five-case-live-pilot-v2/);
 assert.match(seedSource, /privacy_basis: "synthetic_fixture"/);
-assert.match(seedSource, /assertPostPhaseLTarget\(process\.env, \{ requireApply: true \}\)/);
+assert.match(seedSource, /assertExplicitOperatorEnvironment\(process\.env/);
+assert.match(seedSource, /requireApply: true/);
+assert.doesNotMatch(seedSource, /loadEnvFile/);
 
 console.log("analysis_live_pilot_remediation=pass");
