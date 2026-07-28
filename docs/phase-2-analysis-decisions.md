@@ -29,16 +29,25 @@ Chosen composite FK approach over dropping notice/revision columns:
 
 Keeps revision-scoped admin queries while preventing mismatched lineage inserts.
 
-## Completion requires validated result
+## Completion requires validated successful run
 
-`complete_notice_analysis_job` rejects with `complete_notice_analysis_job_rejected_missing_validated_result` unless a validated result exists for the same job/run/notice/revision lineage. Phase 3 must persist result before calling complete.
+`complete_notice_analysis_job` rejects with:
 
-## Fail-closed readiness (Phase 2-B)
+- `complete_notice_analysis_job_rejected_missing_validated_result` when no validated result exists
+- `complete_notice_analysis_job_rejected_run_not_validated` when a result exists but the linked run is not `status=succeeded` + `validation_status=validated` + `finished_at`
+
+JS lease simulator accepts `runs` and enforces the same contract.
+
+Phase 3 must persist a successful validated run and result before calling complete.
+
+## Fail-closed readiness (Phase 2-B / 2-C)
 
 - positive candidate gate (`candidate` OR scholarship-dedicated)
 - `new_recruitment` only
 - privacy `clear|redacted` required for provider eligibility (`not_scanned` blocks)
 - attachment extracted-text quality participates in readiness
+- reconciler does not default missing `notice_type` to `new_recruitment`
+- reconciler does not default missing `privacy_status` to `clear`
 
 ## Queue claim parity (Phase 2-B)
 

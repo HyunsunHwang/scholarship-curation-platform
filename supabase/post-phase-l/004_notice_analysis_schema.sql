@@ -327,14 +327,12 @@ set search_path = public
 as $$
 declare
   row public.notice_analysis_jobs;
-  validated_count integer;
+  result_count integer;
+  validated_run_count integer;
 begin
   select count(*)::integer
-  into validated_count
+  into result_count
   from public.notice_analysis_results r
-  join public.notice_analysis_runs run
-    on run.id = r.run_id
-   and run.job_id = r.job_id
   where r.job_id = p_job_id
     and r.result_status = 'validated'
     and exists (
@@ -345,8 +343,31 @@ begin
         and j.revision_id = r.revision_id
     );
 
-  if coalesce(validated_count, 0) < 1 then
+  if coalesce(result_count, 0) < 1 then
     raise exception 'complete_notice_analysis_job_rejected_missing_validated_result';
+  end if;
+
+  select count(*)::integer
+  into validated_run_count
+  from public.notice_analysis_results r
+  join public.notice_analysis_runs run
+    on run.id = r.run_id
+   and run.job_id = r.job_id
+  where r.job_id = p_job_id
+    and r.result_status = 'validated'
+    and run.status = 'succeeded'
+    and run.validation_status = 'validated'
+    and run.finished_at is not null
+    and exists (
+      select 1
+      from public.notice_analysis_jobs j
+      where j.id = r.job_id
+        and j.notice_id = r.notice_id
+        and j.revision_id = r.revision_id
+    );
+
+  if coalesce(validated_run_count, 0) < 1 then
+    raise exception 'complete_notice_analysis_job_rejected_run_not_validated';
   end if;
 
   update public.notice_analysis_jobs

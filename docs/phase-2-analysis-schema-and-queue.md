@@ -1,6 +1,6 @@
 # Phase 2 — Analysis Schema and Durable Queue
 
-Status: Phase 2-B hardened contracts + pure logic (not applied to DB, no worker)
+Status: Phase 2-C entry-gate hardened contracts + pure logic (not applied to DB, no worker)
 Depends on: Phase 0 identity gate, Phase 1 shadow parity gate
 Safety: no migration apply, no DB write, no Claude/LLM call, no scheduled cutover
 
@@ -23,12 +23,12 @@ Notice
 Phase 3 completion order:
 
 ```text
-store run
+store run (status=succeeded, validation_status=validated, finished_at set)
 → store validated result (+ evidence)
 → complete_notice_analysis_job
 ```
 
-Completion without a validated lineage-correct result is rejected.
+Completion requires both a validated result and a matching successful validated run. Missing result and incomplete/non-validated run are distinct rejection errors.
 
 ## Revision readiness
 
@@ -84,6 +84,17 @@ clear → provider allowed
 redacted → provider allowed
 blocked → provider blocked
 ```
+
+### Reconciler defaults (Phase 2-C)
+
+Reconciler does **not** invent missing fields:
+
+```text
+missing notice_type → unknown → excluded_notice_type
+missing privacy_status → not_scanned → excluded_privacy_risk
+```
+
+Phase 3 workers must pass explicit `notice_type` and privacy `clear|redacted` evidence.
 
 ## Job / run / result / evidence roles
 
@@ -146,7 +157,9 @@ Rules:
 - `budget_deferred` is never auto-claimed; must be explicitly released to `pending`
 - expired leased/running rows are reclaimable when `attempt_count < max_attempts`
 - complete/fail require matching owner, status leased/running, and `lease_expires_at > now()`
-- complete additionally requires a validated result with matching job/run/notice/revision lineage
+- complete additionally requires:
+  - validated result with matching job/notice/revision lineage
+  - linked run with `status=succeeded`, `validation_status=validated`, and `finished_at` set
 - completed/terminal/cancelled/superseded are not reclaimable
 
 Pure simulator: `lib/analysis/analysis-job-lease.mjs` (parity with SQL claimable statuses).

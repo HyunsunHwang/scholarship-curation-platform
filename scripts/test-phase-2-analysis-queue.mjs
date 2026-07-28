@@ -62,6 +62,17 @@ function validatedResultFor(job, runId = "run-1") {
   };
 }
 
+function succeededRunFor(job, runId = "run-1", overrides = {}) {
+  return {
+    id: runId,
+    job_id: job.id,
+    status: "succeeded",
+    validation_status: "validated",
+    finished_at: "2026-07-28T05:00:30.000Z",
+    ...overrides,
+  };
+}
+
 const sql = fs.readFileSync(
   path.resolve("supabase/post-phase-l/004_notice_analysis_schema.sql"),
   "utf8",
@@ -231,6 +242,7 @@ const sql = fs.readFileSync(
   assert.equal(reclaim.claimed[0].leased_by, "worker-b");
   const completed = completeNoticeAnalysisJob({
     jobs: reclaim.jobs,
+    runs: [succeededRunFor(reclaim.claimed[0])],
     results: [validatedResultFor(reclaim.claimed[0])],
     jobId: reclaim.claimed[0].id,
     workerId: "worker-b",
@@ -384,6 +396,7 @@ const sql = fs.readFileSync(
   });
   const stale = completeNoticeAnalysisJob({
     jobs: claimed.jobs,
+    runs: [succeededRunFor(claimed.claimed[0])],
     results: [validatedResultFor(claimed.claimed[0])],
     jobId: claimed.claimed[0].id,
     workerId: "worker-a",
@@ -421,6 +434,7 @@ const sql = fs.readFileSync(
   assert.equal(reclaim.claimed.length, 1);
   const prevComplete = completeNoticeAnalysisJob({
     jobs: reclaim.jobs,
+    runs: [succeededRunFor(reclaim.claimed[0])],
     results: [validatedResultFor(reclaim.claimed[0])],
     jobId: reclaim.claimed[0].id,
     workerId: "worker-a",
@@ -430,6 +444,7 @@ const sql = fs.readFileSync(
   assert.equal(prevComplete.reason, "lease_owner_mismatch");
   const okComplete = completeNoticeAnalysisJob({
     jobs: reclaim.jobs,
+    runs: [succeededRunFor(reclaim.claimed[0])],
     results: [validatedResultFor(reclaim.claimed[0])],
     jobId: reclaim.claimed[0].id,
     workerId: "worker-b",
@@ -499,6 +514,150 @@ const sql = fs.readFileSync(
   assert.match(claimWhere, /j\.attempt_count < j\.max_attempts/);
 }
 
+// Case 30 — Reconciler notice type 누락
+{
+  const plan = reconcileAnalysisJobs({
+    ...eligibleInput(),
+    notice_type: undefined,
+  });
+  assertAction(plan, "skip_not_eligible");
+  assert.equal(plan.readiness.status, "excluded_notice_type");
+  assert.ok(plan.readiness.reason_codes.includes("NOTICE_TYPE_NOT_NEW_RECRUITMENT"));
+}
+
+// Case 31 — Reconciler privacy 상태 누락
+{
+  const plan = reconcileAnalysisJobs({
+    ...eligibleInput(),
+    privacy_status: undefined,
+  });
+  assertAction(plan, "skip_not_eligible");
+  assert.equal(plan.readiness.status, "excluded_privacy_risk");
+  assert.ok(plan.readiness.reason_codes.includes("PRIVACY_NOT_SCANNED"));
+}
+
+// Case 32 — Validated result + 미완료 run
+{
+  const job = reconcileAnalysisJobs(eligibleInput()).job;
+  const claimed = claimNoticeAnalysisJobs({
+    jobs: [job],
+    workerId: "worker-a",
+    now: "2026-07-28T05:00:00.000Z",
+    leaseSeconds: 300,
+  });
+  const rejected = completeNoticeAnalysisJob({
+    jobs: claimed.jobs,
+    runs: [succeededRunFor(claimed.claimed[0], "run-1", {
+      status: "started",
+      validation_status: "not_validated",
+      finished_at: null,
+    })],
+    results: [validatedResultFor(claimed.claimed[0])],
+    jobId: claimed.claimed[0].id,
+    workerId: "worker-a",
+    now: "2026-07-28T05:01:00.000Z",
+  });
+  assert.equal(rejected.ok, false);
+  assert.equal(
+    rejected.reason,
+    "complete_notice_analysis_job_rejected_run_not_validated",
+  );
+}
+
+// Case 33 — Validated result + schema만 통과한 run
+{
+  const job = reconcileAnalysisJobs(eligibleInput()).job;
+  const claimed = claimNoticeAnalysisJobs({
+    jobs: [job],
+    workerId: "worker-a",
+    now: "2026-07-28T05:00:00.000Z",
+    leaseSeconds: 300,
+  });
+  for (const validationStatus of ["validated", "schema_invalid"]) {
+    const rejected = completeNoticeAnalysisJob({
+      jobs: claimed.jobs,
+      runs: [succeededRunFor(claimed.claimed[0], "run-1", {
+        status: "schema_valid",
+        validation_status: validationStatus,
+        finished_at: "2026-07-28T05:00:30.000Z",
+      })],
+      results: [validatedResultFor(claimed.claimed[0])],
+      jobId: claimed.claimed[0].id,
+      workerId: "worker-a",
+      now: "2026-07-28T05:01:00.000Z",
+    });
+    assert.equal(rejected.ok, false, validationStatus);
+    assert.equal(
+      rejected.reason,
+      "complete_notice_analysis_job_rejected_run_not_validated",
+      validationStatus,
+    );
+  }
+}
+
+// Case 34 — Result run ID 불일치
+{
+  const job = reconcileAnalysisJobs(eligibleInput()).job;
+  const claimed = claimNoticeAnalysisJobs({
+    jobs: [job],
+    workerId: "worker-a",
+    now: "2026-07-28T05:00:00.000Z",
+    leaseSeconds: 300,
+  });
+  const rejected = completeNoticeAnalysisJob({
+    jobs: claimed.jobs,
+    runs: [{
+      id: "run-B",
+      job_id: "other-job-id",
+      status: "succeeded",
+      validation_status: "validated",
+      finished_at: "2026-07-28T05:00:30.000Z",
+    }],
+    results: [validatedResultFor(claimed.claimed[0], "run-B")],
+    jobId: claimed.claimed[0].id,
+    workerId: "worker-a",
+    now: "2026-07-28T05:01:00.000Z",
+  });
+  assert.equal(rejected.ok, false);
+  assert.equal(
+    rejected.reason,
+    "complete_notice_analysis_job_rejected_run_not_validated",
+  );
+}
+
+// Case 35 — 완전히 검증된 run/result
+{
+  const job = reconcileAnalysisJobs(eligibleInput()).job;
+  const claimed = claimNoticeAnalysisJobs({
+    jobs: [job],
+    workerId: "worker-a",
+    now: "2026-07-28T05:00:00.000Z",
+    leaseSeconds: 300,
+  });
+  const ok = completeNoticeAnalysisJob({
+    jobs: claimed.jobs,
+    runs: [succeededRunFor(claimed.claimed[0])],
+    results: [validatedResultFor(claimed.claimed[0])],
+    jobId: claimed.claimed[0].id,
+    workerId: "worker-a",
+    now: "2026-07-28T05:01:00.000Z",
+  });
+  assert.equal(ok.ok, true);
+  assert.equal(ok.job.status, "succeeded");
+}
+
+// SQL completion RPC requires succeeded + validated run
+{
+  const completeRpc = sql.match(
+    /create or replace function public\.complete_notice_analysis_job[\s\S]*?end;\s*\$\$;/,
+  )?.[0] ?? "";
+  assert.match(completeRpc, /run\.status = 'succeeded'/);
+  assert.match(completeRpc, /run\.validation_status = 'validated'/);
+  assert.match(completeRpc, /run\.finished_at is not null/);
+  assert.match(completeRpc, /complete_notice_analysis_job_rejected_run_not_validated/);
+  assert.match(completeRpc, /complete_notice_analysis_job_rejected_missing_validated_result/);
+}
+
 // Fingerprints deterministic
 {
   const revision = revisionFixture();
@@ -559,4 +718,4 @@ const sql = fs.readFileSync(
   assertAction(resultOnly, "no_action_completed");
 }
 
-console.log("PASS phase 2-B analysis queue contract remediation");
+console.log("PASS phase 2-C worker entry gate remediation");
