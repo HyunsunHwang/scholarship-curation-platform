@@ -61,6 +61,7 @@
     "test:phase4-evidence-reconciliation": "node scripts/test-phase4-evidence-reconciliation.mjs",
     "test:phase4-action-evidence-loader": "node scripts/test-phase4-action-evidence-loader.mjs",
     "build:phase4-evidence-reconciliation": "node scripts/build-phase4-parser-evidence-reconciliation.mjs",
+    "build:phase4-operational-closeout": "node scripts/build-phase4-operational-closeout.mjs",
     "test:phase4-capture-real-writer-integration": "node scripts/test-phase4-capture-real-writer-integration.mjs",
     "run:phase4-same-html-capture-pilot": "node scripts/run-phase4-same-html-capture-pilot.mjs",
     "test:phase4-capture-pilot-report": "node scripts/test-phase4-capture-pilot-report.mjs",
