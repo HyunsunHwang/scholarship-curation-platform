@@ -1,0 +1,53 @@
+{
+  "id": "candidate-excluded-diagnostic",
+  "generated_at": "2026-07-28T04:00:00.000Z",
+  "idempotency_key": "shadow-parity-candidate-excluded-diagnostic",
+  "source_results": [
+    {
+      "source_id": "parity_diag_001",
+      "source_name": "Parity Diagnostic Source",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "일반 학사 공지",
+          "body": "장학 키워드가 없는 일반 학사 일정 안내입니다. diagnostic observation으로만 보존합니다.",
+          "notice_url": "https://uni.example/board/view?articleNo=900",
+          "canonical_url": "https://uni.example/board/view?articleNo=900",
+          "external_article_id": "articleNo:900",
+          "notice_posted_at": "2026-07-19",
+          "raw_date_text": "2026-07-19",
+          "date_text": "2026-07-19",
+          "attachment_metadata": [],
+          "application_links": [],
+          "candidate_classification": "not_candidate",
+          "candidate_reason_codes": ["scholarship_keyword_not_found"],
+          "diagnostic_observation": true,
+          "downstream_eligibility": "excluded",
+          "identity_stability": "strong"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_diag_001",
+      "source_name": "Parity Diagnostic Source",
+      "title": "일반 학사 공지",
+      "notice_url": "https://uni.example/board/view?articleNo=900",
+      "notice_posted_at": "2026-07-19",
+      "date_text": "2026-07-19",
+      "content": "장학 키워드가 없는 일반 학사 일정 안내입니다. diagnostic observation으로만 보존합니다.",
+      "attachment_metadata": [],
+      "application_links": [],
+      "candidate_classification": "not_candidate",
+      "diagnostic_observation": true,
+      "downstream_eligibility": "excluded"
+    }
+  ],
+  "expected": {
+    "classification": "explained_difference",
+    "reason_codes": ["IDENTITY_MODEL_DIFFERENCE", "CANDIDATE_EXCLUDED_BOTH_PATHS"],
+    "publication_eligible": false
+  }
+}

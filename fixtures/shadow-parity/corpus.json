@@ -1,21 +1,23 @@
 {
   "schema_version": "shadow-parity-fixture-corpus-v1",
+  "required_case_ids": [
+    "external-article-id",
+    "canonical-url-only",
+    "inline-multi-section",
+    "cross-source-same-url",
+    "attachment-and-application-link",
+    "missing-or-uncertain-date",
+    "candidate-excluded-diagnostic",
+    "body-and-inline-evidence-preservation"
+  ],
   "cases": [
-    {
-      "id": "external-article-id",
-      "path": "cases/external-article-id.json"
-    },
-    {
-      "id": "canonical-url-only",
-      "path": "cases/canonical-url-only.json"
-    },
-    {
-      "id": "inline-multi-section",
-      "path": "cases/inline-multi-section.json"
-    },
-    {
-      "id": "cross-source-same-url",
-      "path": "cases/cross-source-same-url.json"
-    }
+    { "id": "external-article-id", "path": "cases/external-article-id.json" },
+    { "id": "canonical-url-only", "path": "cases/canonical-url-only.json" },
+    { "id": "inline-multi-section", "path": "cases/inline-multi-section.json" },
+    { "id": "cross-source-same-url", "path": "cases/cross-source-same-url.json" },
+    { "id": "attachment-and-application-link", "path": "cases/attachment-and-application-link.json" },
+    { "id": "missing-or-uncertain-date", "path": "cases/missing-or-uncertain-date.json" },
+    { "id": "candidate-excluded-diagnostic", "path": "cases/candidate-excluded-diagnostic.json" },
+    { "id": "body-and-inline-evidence-preservation", "path": "cases/body-and-inline-evidence-preservation.json" }
   ]
 }

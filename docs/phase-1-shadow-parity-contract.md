@@ -1,6 +1,6 @@
 # Shadow Parity Contract — Legacy vs Normalized Graph
 
-Status: implemented locally (dry-run)
+Status: Phase 1 Gate implemented locally (dry-run)
 Phase: Phase 1 local shadow parity
 Safety: no production dual-write, no DB apply, no scheduled cutover
 
@@ -20,6 +20,8 @@ normalized shadow path
   → normalized graph plan (dry-run)
 ```
 
+This is a Gate for shadow parity quality. It is **not** scheduled cutover.
+
 ## Runtime entrypoints
 
 ```text
@@ -35,68 +37,155 @@ Core modules:
 - `scripts/run-shadow-parity-dry-run.mjs`
 - `fixtures/shadow-parity/`
 
-Reports are written under `reports/shadow-parity/` by the dry-run runner.
+## Formal classifications
 
-## Required inputs
-
-- immutable crawler handoff (`crawler-handoff-v1`) or equivalent notice rows
-- legacy daily CSV/JSON artifact used by current scheduled ingest
-- source identity (`source_id`)
-- generated-at / run identity for reproducibility
-
-## Minimum comparison fields
-
-| Field | Legacy source | Normalized source | Compare rule |
-| --- | --- | --- | --- |
-| source | `source_id` / university group | `ingestion_notices.source_id` | exact |
-| notice count | distinct legacy notice URLs | distinct `(source_id, identity_key)` | count + set diff |
-| title | CSV/title column | revision.title | normalized whitespace |
-| published date | `notice_posted_at` / raw date | occurrence/revision date evidence | presence + parsed equality when both parse |
-| canonical URL | notice URL normalized | `canonical_url` | canonicalize then exact |
-| body presence | body non-empty | revision.body non-empty | boolean |
-| body quality | length/heuristic if available | `body_quality_status` | presence + coarse bucket |
-| attachment count | attachment metadata length | `ingestion_notice_assets` count | integer |
-| application link | extracted links if present | section/application links in payload | set compare |
-| candidate classification | crawler candidate fields if present | handoff candidate_classification | exact |
-| Notice identity | legacy URL uniqueness | `identity_kind` + `identity_key` | report mapping |
-| duplicate count | repeated URLs in artifact | repeated identity keys / alias conflicts | count |
-
-## Pass / fail framing for a later shadow gate
-
-A shadow gate should report, not auto-cut over:
+External report classification is exactly one of:
 
 ```text
-matched
-legacy_only
-normalized_only
-field_mismatch
-identity_mapping_review
+exact_match
+explained_difference
+blocking_mismatch
+not_comparable
 ```
 
-Known current divergence worth tracking:
+Optional internal detail:
 
-- Legacy ingest dedupes by `notice_url` globally, so different sources sharing one URL collapse to one legacy row.
-- Normalized graph keeps one Notice per `(source_id, identity_key)`, so the same URL may produce `normalized_only` rows.
+```json
+{
+  "classification": "blocking_mismatch",
+  "detail_status": "field_mismatch",
+  "reason_codes": ["TITLE_MISMATCH"]
+}
+```
 
-Suggested hard blockers before any scheduled cutover discussion:
+### exact_match
 
-- unsupported identity kinds generated
-- alias uniqueness conflicts inside one source
-- review-state overwrite risk on replay
-- missing section evidence for inline_section sources
-- environment guard bypass
+User-meaningful corresponding fields match and no explained model-difference reason remains.
 
-## Explicitly out of scope until a later phase
+### explained_difference
 
-- replacing `npm run ingest:notices`
-- writing `ingestion_*` tables from scheduled workflow
-- creating analysis jobs from shadow revisions
-- public scholarships projection
+Approved model difference. Required reason codes include:
 
-## Phase 1 deliverable status
+```text
+INLINE_SECTIONS_COLLAPSED_TO_PAGE_NOTICE
+LEGACY_GLOBAL_URL_DEDUPE_COLLAPSE
+GRAPH_ONLY_PROVENANCE
+GRAPH_SEPARATE_ASSET_ENTITY
+IDENTITY_MODEL_DIFFERENCE
+DATE_PRESENCE_ALIGNED_MISSING_OR_UNPARSED
+CANDIDATE_EXCLUDED_BOTH_PATHS
+```
 
-1. dry-run adapter: handoff → `buildNormalizedGraphPlan` — implemented
-2. fixture corpus from representative crawler artifacts — implemented
-3. parity report JSON + markdown summary — implemented
-4. replay idempotency proof for the same artifact — implemented
-5. no production write path enabled by default — implemented
+### blocking_mismatch
+
+Must be zero before any scheduled cutover discussion:
+
+```text
+LEGACY_NOTICE_MISSING
+NORMALIZED_NOTICE_MISSING
+TITLE_MISMATCH
+PUBLISHED_DATE_MISMATCH
+CANONICAL_URL_MISMATCH
+BODY_LOSS
+ATTACHMENT_LOSS
+APPLICATION_LINK_LOSS
+SOURCE_OWNERSHIP_MISMATCH
+DUPLICATE_NORMALIZED_NOTICE
+CANDIDATE_ELIGIBILITY_MISMATCH
+UNSUPPORTED_IDENTITY_KIND
+INLINE_SECTION_EVIDENCE_LOSS
+FABRICATED_DATE
+```
+
+### not_comparable
+
+No direct corresponding concept in one path. Do not force into exact/explained.
+
+## Legacy global URL dedupe
+
+Legacy ingest dedupes by `notice_url` globally. Different sources sharing one URL collapse to one legacy row.
+
+Shadow parity treats the graph-only surviving source row as:
+
+```text
+classification = explained_difference
+reason_codes = [LEGACY_GLOBAL_URL_DEDUPE_COLLAPSE]
+```
+
+This is **not** a Gate blocker when the reason code is present and accurate.
+
+## Gate summary fields
+
+```text
+input_case_count
+legacy_row_count
+normalized_notice_count
+exact_match_count
+explained_difference_count
+blocking_mismatch_count
+not_comparable_count
+missing_legacy_count
+missing_graph_count
+duplicate_legacy_count
+duplicate_graph_notice_count
+unsupported_identity_kind_count
+inline_section_evidence_loss_count
+deterministic_rerun_match
+```
+
+Gate PASS requires:
+
+```text
+blocking_mismatch_count = 0
+missing_legacy_count = 0
+missing_graph_count = 0
+duplicate_graph_notice_count = 0
+unsupported_identity_kind_count = 0
+inline_section_evidence_loss_count = 0
+deterministic_rerun_match = true
+```
+
+## Deterministic payload vs execution metadata
+
+Report envelope:
+
+```json
+{
+  "parity": {
+    "schema_version": "...",
+    "summary": {},
+    "comparisons": []
+  },
+  "execution_metadata": {
+    "generated_at": "...",
+    "output_directory": "..."
+  }
+}
+```
+
+`deterministic_rerun_match` is computed by running handoff, graph plan, legacy projection, and canonical parity payload twice, then comparing canonical payload/hash. Execution metadata is excluded from that comparison.
+
+## Required fixture cohort (8)
+
+```text
+external-article-id
+canonical-url-only
+inline-multi-section
+cross-source-same-url
+attachment-and-application-link
+missing-or-uncertain-date
+candidate-excluded-diagnostic
+body-and-inline-evidence-preservation
+```
+
+## Phase 1 PASS conditions
+
+- required 8 fixtures present
+- approved four classifications in use
+- explained differences are reason-coded
+- blocking mismatch 0
+- no body/attachment/application/section evidence loss counted as blocking
+- full rerun deterministic
+- Phase 0 regressions green
+- no DB / network / LLM calls
+- no scheduled cutover claimed

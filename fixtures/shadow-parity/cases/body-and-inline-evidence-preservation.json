@@ -1,0 +1,75 @@
+{
+  "id": "body-and-inline-evidence-preservation",
+  "generated_at": "2026-07-28T04:00:00.000Z",
+  "idempotency_key": "shadow-parity-body-and-inline-evidence-preservation",
+  "source_results": [
+    {
+      "source_id": "parity_evidence_001",
+      "source_name": "Parity Evidence Source",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "Evidence section alpha",
+          "body": "Alpha section body text must survive into normalized inline section evidence without loss.",
+          "notice_url": "https://uni.example/evidence/page#alpha",
+          "original_url": "https://uni.example/evidence/page#alpha",
+          "canonical_url": "https://uni.example/evidence/page",
+          "inline_section_id": "alpha",
+          "section_order": 0,
+          "inline_section_links": [
+            { "url": "https://forms.example/alpha", "role": "application_form", "label": "Alpha apply" }
+          ],
+          "inline_date_evidence": [
+            { "role": "application_start_date", "rawText": "2026-08-01" }
+          ],
+          "attachment_metadata": [
+            { "url": "https://files.example/alpha.pdf", "name": "alpha.pdf" }
+          ],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        },
+        {
+          "title": "Evidence section beta",
+          "body": "Beta section body text must also survive with order, title, text, and links preserved.",
+          "notice_url": "https://uni.example/evidence/page#beta",
+          "original_url": "https://uni.example/evidence/page#beta",
+          "canonical_url": "https://uni.example/evidence/page",
+          "inline_section_id": "beta",
+          "section_order": 1,
+          "inline_section_links": [
+            { "url": "https://forms.example/beta", "role": "application_form", "label": "Beta apply" }
+          ],
+          "attachment_metadata": [],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_evidence_001",
+      "source_name": "Parity Evidence Source",
+      "title": "Evidence section alpha",
+      "notice_url": "https://uni.example/evidence/page",
+      "content": "Alpha section body text must survive into normalized inline section evidence without loss.",
+      "attachment_metadata": [
+        { "url": "https://files.example/alpha.pdf", "name": "alpha.pdf" }
+      ],
+      "application_links": [
+        { "url": "https://forms.example/alpha", "role": "application_form" },
+        { "url": "https://forms.example/beta", "role": "application_form" }
+      ],
+      "candidate_classification": "candidate"
+    }
+  ],
+  "expected": {
+    "classification": "explained_difference",
+    "reason_codes": [
+      "INLINE_SECTIONS_COLLAPSED_TO_PAGE_NOTICE",
+      "IDENTITY_MODEL_DIFFERENCE"
+    ],
+    "inline_section_count": 2
+  }
+}
