@@ -241,6 +241,103 @@ export type LAnalysisReviewEvent = {
   created_at: string;
 };
 
+export type LScholarshipProgram = {
+  id: string;
+  canonical_name: string;
+  normalized_name: string;
+  operating_organization: string | null;
+  funding_organization: string | null;
+  description: string | null;
+  status: string;
+  created_from_proposal_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LScholarshipProgramAlias = {
+  id: string;
+  program_id: string;
+  alias: string;
+  normalized_alias: string;
+  alias_kind: string;
+  source_proposal_id: string | null;
+  created_at: string;
+};
+
+export type LScholarshipCycle = {
+  id: string;
+  program_id: string;
+  cycle_label: string;
+  cycle_year: number | null;
+  academic_term: string | null;
+  application_start_at: string | null;
+  application_end_at: string | null;
+  benefits: Json;
+  eligibility: Json;
+  target_scope: Json | null;
+  required_documents: Json;
+  application_method: string | null;
+  application_url: string | null;
+  source_detail_url: string | null;
+  source_notice_id: string;
+  source_revision_id: string;
+  canonical_status: string;
+  publication_status: string;
+  idempotency_key: string;
+  created_from_proposal_id: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LProgramCycleProposal = {
+  id: string;
+  analysis_result_id: string;
+  analysis_review_event_id: string;
+  notice_id: string;
+  revision_id: string;
+  proposed_program: Json;
+  proposed_cycle: Json;
+  suggested_existing_program_id: string | null;
+  suggested_existing_cycle_id: string | null;
+  duplicate_candidates: Json;
+  evidence_snapshot: Json;
+  source_snapshot: Json;
+  confidence: Json;
+  proposal_fingerprint: string;
+  status: string;
+  canonical_program_id: string | null;
+  canonical_cycle_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LProposalReviewEvent = {
+  id: string;
+  proposal_id: string;
+  decision: string;
+  actor_id: string;
+  program_id: string | null;
+  cycle_id: string | null;
+  program_patch: Json;
+  cycle_patch: Json;
+  reason: string | null;
+  event_idempotency_key: string;
+  created_at: string;
+};
+
+export type LProjectionLink = {
+  id: string;
+  cycle_id: string;
+  scholarship_id: number;
+  source_kind: string;
+  projection_status: string;
+  projection_fingerprint: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type LCrawlRun = {
   id: string;
   idempotency_key: string;
@@ -274,6 +371,12 @@ export interface PostPhaseLDatabase {
       notice_analysis_results: Table<LAnalysisResult>;
       notice_analysis_evidence: Table<LAnalysisEvidence>;
       notice_analysis_review_events: Table<LAnalysisReviewEvent>;
+      scholarship_programs: Table<LScholarshipProgram>;
+      scholarship_program_aliases: Table<LScholarshipProgramAlias>;
+      scholarship_cycles: Table<LScholarshipCycle>;
+      scholarship_program_cycle_proposals: Table<LProgramCycleProposal>;
+      scholarship_proposal_review_events: Table<LProposalReviewEvent>;
+      scholarship_projection_links: Table<LProjectionLink>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -340,6 +443,26 @@ export interface PostPhaseLDatabase {
           p_event_idempotency_key: string;
         };
         Returns: LAnalysisReviewEvent;
+      };
+      approve_scholarship_program_cycle_proposal: {
+        Args: {
+          p_proposal_id: string;
+          p_decision: string;
+          p_existing_program_id: string | null;
+          p_existing_cycle_id: string | null;
+          p_program_patch: Json;
+          p_cycle_patch: Json;
+          p_reason: string | null;
+          p_event_idempotency_key: string;
+        };
+        Returns: Json;
+      };
+      project_scholarship_cycle: {
+        Args: {
+          p_cycle_id: string;
+          p_projection_fingerprint: string;
+        };
+        Returns: Json;
       };
     };
     Enums: { [_ in never]: never };

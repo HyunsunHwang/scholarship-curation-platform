@@ -10,6 +10,7 @@ const opsNav = [
   { href: "/admin/review", label: "검수 큐" },
   { href: "/admin/crawler-review", label: "Crawler diagnostics" },
   { href: "/admin/analysis-review", label: "Semantic analysis" },
+  { href: "/admin/program-cycle-proposals", label: "Program/Cycle" },
   { href: "/admin/content", label: "콘텐츠" },
 ] as const;
 
