@@ -5,6 +5,9 @@ This runbook applies only to the isolated Post-Phase L sandbox
 target guard. Migration, registration, smoke, and expansion are operator actions; repository
 tests do not connect to Supabase or Anthropic.
 
+Migration 009 is still unapplied as of this repository revision. Database-native
+verification and concurrency checks remain operator gates.
+
 ## Execution boundaries
 
 - `bounded-db-consumer` remains the global analysis worker. Never use it for a pilot.
@@ -16,6 +19,9 @@ tests do not connect to Supabase or Anthropic.
   and `POST_PHASE_L_ALLOW_DB_READ`, `POST_PHASE_L_ALLOW_DB_WRITE`, or
   `POST_PHASE_L_ALLOW_LIVE_PROVIDER` as appropriate.
 - Existing five-case-v2 jobs are registered, not reseeded or reset.
+- A live path requires both `--allow-live-provider` and
+  `POST_PHASE_L_ALLOW_LIVE_PROVIDER=true`. Either one alone is rejected before DB client or
+  provider construction. Fixture/replay paths do not require the live permission.
 
 ## 1. Apply migration 009
 
@@ -53,7 +59,10 @@ node --env-file=.env.post-phase-l.local \
 
 The RPC refuses registration unless all five jobs are pending, attempt zero, unleased,
 without runs or routing decisions, and match the namespace, revision, and input fingerprint.
-It never modifies the analysis job rows.
+It independently recalculates the canonical manifest fingerprint. An identical replay
+returns the existing pilot; any namespace, version, member, policy, schema, prompt, budget,
+metadata, or optional ID difference raises `pilot_registration_replay_conflict`. It never
+modifies the analysis job rows.
 
 ## 4. One-case smoke
 
@@ -86,6 +95,15 @@ The worker reads the durable manifest before provider use. Its DB claim is
 response is followed immediately by an idempotent usage receipt before JSON/schema,
 lineage, evidence, and business-completeness processing. Missing usage remains `null` with
 `usage_status=missing`, moves the pilot to reconciliation, and prevents the next claim.
+The worker loads all five members—not only the requested stage—and verifies their
+fingerprint before claim. The claim RPC repeats that verification before member status,
+attempt, or lease mutation.
+
+The live command is valid only when `.env.post-phase-l.local` also contains:
+
+```text
+POST_PHASE_L_ALLOW_LIVE_PROVIDER=true
+```
 
 ## 5. Smoke verification and expansion
 
@@ -135,11 +153,26 @@ fingerprint, JSON parse state, top-level keys, validation code/path, evidence co
 usage, and usage status. They exclude API keys, prompts, notice/attachment bodies, and raw
 provider responses.
 
+If a provider response arrives but its usage receipt cannot be persisted, the outcome is
+`provider_usage_persistence_failed`: no escalation call, routing decision, or finalization
+is allowed. The member and pilot move to `reconciliation_required`, and the existing cost
+reservation remains reserved. Missing provider usage follows the same conservative
+no-escalation policy because its cost is unknown; actual cost remains `null`.
+
+The canonical manifest starts with `pilot-manifest-v1`, sorts members by
+`execution_order ASC`, and UTF-8 byte-length-prefixes these values in order:
+`execution_order`, `stage`, `job_id`, `expected_revision_id`, and
+`expected_input_fingerprint`. SHA-256 of that string is checked by the JS helper, SQL
+registration helper, worker preflight, and claim boundary.
+
 Stop on target mismatch, missing pilot ID, manifest/revision/input mismatch, unexpected job,
 more than one smoke claim, unapproved expansion, missing or unreconciled usage, budget
 exhaustion, audit/finalize failure, routing conflict, active lease, success replay conflict,
 or any raw-response persistence attempt. Do not reset attempts or convert a failure to
 success during reconciliation.
+
+Repository tests validate a shared golden vector. The verifier contains the equivalent SQL
+golden-vector query, which the operator must run after applying 009.
 
 ## Bounded rollback
 

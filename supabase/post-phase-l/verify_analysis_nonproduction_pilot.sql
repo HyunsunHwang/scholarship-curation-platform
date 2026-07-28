@@ -58,6 +58,9 @@ with required(signature) as (
     ('record_notice_analysis_run_audit(uuid,text,jsonb)'),
     ('renew_notice_analysis_job_lease(uuid,text,integer)'),
     ('create_or_register_notice_analysis_pilot_run(jsonb,jsonb)'),
+    ('notice_analysis_pilot_manifest_serialize(jsonb)'),
+    ('notice_analysis_pilot_manifest_fingerprint(jsonb)'),
+    ('notice_analysis_pilot_stored_manifest_fingerprint(uuid)'),
     ('claim_notice_analysis_pilot_job(uuid,text,text,integer)'),
     ('record_notice_analysis_provider_usage(uuid,uuid,text,jsonb)'),
     ('reserve_notice_analysis_pilot_cost(uuid,uuid,text,integer,text,bigint)'),
@@ -69,6 +72,24 @@ with required(signature) as (
 select signature, to_regprocedure('public.' || signature) is not null as present
 from required
 order by signature;
+
+select public.notice_analysis_pilot_manifest_fingerprint(
+  $manifest$[
+    {"execution_order":1,"stage":"smoke","job_id":"00000000-0000-4000-8000-000000000001","expected_revision_id":"10000000-0000-4000-8000-000000000001","expected_input_fingerprint":"1111111111111111111111111111111111111111111111111111111111111111"},
+    {"execution_order":2,"stage":"expansion","job_id":"00000000-0000-4000-8000-000000000002","expected_revision_id":"10000000-0000-4000-8000-000000000002","expected_input_fingerprint":"2222222222222222222222222222222222222222222222222222222222222222"},
+    {"execution_order":3,"stage":"expansion","job_id":"00000000-0000-4000-8000-000000000003","expected_revision_id":"10000000-0000-4000-8000-000000000003","expected_input_fingerprint":"3333333333333333333333333333333333333333333333333333333333333333"},
+    {"execution_order":4,"stage":"expansion","job_id":"00000000-0000-4000-8000-000000000004","expected_revision_id":"10000000-0000-4000-8000-000000000004","expected_input_fingerprint":"4444444444444444444444444444444444444444444444444444444444444444"},
+    {"execution_order":5,"stage":"expansion","job_id":"00000000-0000-4000-8000-000000000005","expected_revision_id":"10000000-0000-4000-8000-000000000005","expected_input_fingerprint":"5555555555555555555555555555555555555555555555555555555555555555"}
+  ]$manifest$::jsonb
+) = 'b116bb8ce8219b23609384da348d098f85a5e6730854e03c275c6de31c009f10'
+  as pilot_manifest_golden_vector_match;
+
+select
+  pilot.id as pilot_run_id,
+  public.notice_analysis_pilot_stored_manifest_fingerprint(pilot.id)
+    = pilot.manifest_fingerprint as stored_manifest_fingerprint_match
+from public.notice_analysis_pilot_runs pilot
+order by pilot.created_at;
 
 select
   c.relname as table_name,

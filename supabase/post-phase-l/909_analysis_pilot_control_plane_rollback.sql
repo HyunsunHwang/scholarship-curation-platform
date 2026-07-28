@@ -8,6 +8,9 @@ drop function if exists public.record_notice_analysis_provider_usage(uuid,uuid,t
 drop function if exists public.reserve_notice_analysis_pilot_cost(uuid,uuid,text,integer,text,bigint);
 drop function if exists public.claim_notice_analysis_pilot_job(uuid,text,text,integer);
 drop function if exists public.create_or_register_notice_analysis_pilot_run(jsonb,jsonb);
+drop function if exists public.notice_analysis_pilot_stored_manifest_fingerprint(uuid);
+drop function if exists public.notice_analysis_pilot_manifest_fingerprint(jsonb);
+drop function if exists public.notice_analysis_pilot_manifest_serialize(jsonb);
 drop table if exists public.notice_analysis_provider_usage_receipts;
 drop table if exists public.notice_analysis_pilot_cost_reservations;
 drop table if exists public.notice_analysis_pilot_run_jobs;

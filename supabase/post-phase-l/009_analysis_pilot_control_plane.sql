@@ -132,6 +132,53 @@ create table public.notice_analysis_pilot_cost_reservations (
   primary key (job_id, attempt_number, run_role)
 );
 
+create or replace function public.notice_analysis_pilot_manifest_serialize(p_members jsonb)
+returns text
+language sql immutable strict parallel safe
+set search_path = public
+as $$
+  select 'pilot-manifest-v1' || coalesce(string_agg(
+    octet_length((member->>'execution_order')::integer::text)::text || ':' ||
+      (member->>'execution_order')::integer::text ||
+    octet_length(member->>'stage')::text || ':' || (member->>'stage') ||
+    octet_length(member->>'job_id')::text || ':' || (member->>'job_id') ||
+    octet_length(member->>'expected_revision_id')::text || ':' ||
+      (member->>'expected_revision_id') ||
+    octet_length(member->>'expected_input_fingerprint')::text || ':' ||
+      (member->>'expected_input_fingerprint'),
+    '' order by (member->>'execution_order')::integer
+  ), '')
+  from jsonb_array_elements(p_members) member
+$$;
+
+create or replace function public.notice_analysis_pilot_manifest_fingerprint(p_members jsonb)
+returns text
+language sql immutable strict parallel safe
+set search_path = public
+as $$
+  select encode(digest(public.notice_analysis_pilot_manifest_serialize(p_members), 'sha256'), 'hex')
+$$;
+
+create or replace function public.notice_analysis_pilot_stored_manifest_fingerprint(
+  p_pilot_run_id uuid
+)
+returns text
+language sql stable
+set search_path = public
+as $$
+  select public.notice_analysis_pilot_manifest_fingerprint(
+    coalesce(jsonb_agg(jsonb_build_object(
+      'execution_order', member.execution_order,
+      'stage', member.stage,
+      'job_id', member.job_id::text,
+      'expected_revision_id', member.expected_revision_id::text,
+      'expected_input_fingerprint', member.expected_input_fingerprint
+    ) order by member.execution_order), '[]'::jsonb)
+  )
+  from public.notice_analysis_pilot_run_jobs member
+  where member.pilot_run_id = p_pilot_run_id
+$$;
+
 create or replace function public.create_or_register_notice_analysis_pilot_run(
   p_pilot_run jsonb,
   p_members jsonb
@@ -143,6 +190,8 @@ declare
   member jsonb;
   member_count integer;
   smoke_count integer;
+  computed_fingerprint text;
+  stored_fingerprint text;
 begin
   perform public.post_phase_l_assert_environment();
   if p_pilot_run->>'target_project_ref' <> 'hrayfvdggbhfmmzfblly' then
@@ -157,6 +206,46 @@ begin
   where m->>'stage' = 'smoke';
   if member_count <> 5 or smoke_count <> 1 then
     raise exception 'pilot_manifest_requires_exactly_five_members_and_one_smoke';
+  end if;
+  computed_fingerprint := public.notice_analysis_pilot_manifest_fingerprint(p_members);
+  if computed_fingerprint <> p_pilot_run->>'manifest_fingerprint' then
+    raise exception 'pilot_manifest_fingerprint_mismatch';
+  end if;
+
+  select * into pilot
+  from public.notice_analysis_pilot_runs p
+  where p.namespace = p_pilot_run->>'namespace'
+    and p.pilot_version = p_pilot_run->>'pilot_version'
+  for update;
+  if pilot.id is null then
+    select * into pilot
+    from public.notice_analysis_pilot_runs p
+    where p.manifest_fingerprint = computed_fingerprint
+    for update;
+  end if;
+  if pilot.id is not null then
+    stored_fingerprint :=
+      public.notice_analysis_pilot_stored_manifest_fingerprint(pilot.id);
+    if pilot.namespace <> p_pilot_run->>'namespace'
+       or pilot.pilot_version <> p_pilot_run->>'pilot_version'
+       or pilot.target_project_ref <> p_pilot_run->>'target_project_ref'
+       or pilot.prompt_version <> p_pilot_run->>'prompt_version'
+       or pilot.schema_version <> p_pilot_run->>'schema_version'
+       or pilot.model_policy_version <> p_pilot_run->>'model_policy_version'
+       or pilot.manifest_fingerprint <> computed_fingerprint
+       or stored_fingerprint <> computed_fingerprint
+       or pilot.max_jobs <> 5
+       or pilot.max_runs <> (p_pilot_run->>'max_runs')::integer
+       or pilot.max_escalations <> (p_pilot_run->>'max_escalations')::integer
+       or pilot.budget_limit_micros <> (p_pilot_run->>'budget_limit_micros')::bigint
+       or pilot.metadata <> coalesce(p_pilot_run->'metadata', '{}'::jsonb)
+       or (
+         nullif(p_pilot_run->>'id', '') is not null
+         and pilot.id <> (p_pilot_run->>'id')::uuid
+       ) then
+      raise exception 'pilot_registration_replay_conflict';
+    end if;
+    return pilot;
   end if;
 
   for member in select value from jsonb_array_elements(p_members)
@@ -193,15 +282,12 @@ begin
     p_pilot_run->>'namespace', p_pilot_run->>'pilot_version',
     p_pilot_run->>'target_project_ref', 'smoke_ready', 'smoke',
     p_pilot_run->>'prompt_version', p_pilot_run->>'schema_version',
-    p_pilot_run->>'model_policy_version', p_pilot_run->>'manifest_fingerprint',
+    p_pilot_run->>'model_policy_version', computed_fingerprint,
     5, (p_pilot_run->>'max_runs')::integer,
     (p_pilot_run->>'max_escalations')::integer,
     (p_pilot_run->>'budget_limit_micros')::bigint,
     coalesce(p_pilot_run->'metadata', '{}'::jsonb)
-  )
-  on conflict (manifest_fingerprint) do update
-    set manifest_fingerprint = excluded.manifest_fingerprint
-  returning * into pilot;
+  ) returning * into pilot;
 
   for member in select value from jsonb_array_elements(p_members)
   loop
@@ -215,6 +301,11 @@ begin
     )
     on conflict (pilot_run_id, job_id) do nothing;
   end loop;
+  stored_fingerprint :=
+    public.notice_analysis_pilot_stored_manifest_fingerprint(pilot.id);
+  if stored_fingerprint <> computed_fingerprint then
+    raise exception 'pilot_manifest_fingerprint_mismatch';
+  end if;
   return pilot;
 end
 $$;
@@ -240,6 +331,10 @@ begin
   if pilot.id is null then raise exception 'pilot_run_not_found'; end if;
   if pilot.target_project_ref <> 'hrayfvdggbhfmmzfblly' then
     raise exception 'pilot_target_project_ref_mismatch';
+  end if;
+  if public.notice_analysis_pilot_stored_manifest_fingerprint(pilot.id)
+      <> pilot.manifest_fingerprint then
+    raise exception 'pilot_manifest_fingerprint_mismatch';
   end if;
   if pilot.usage_status in ('missing', 'unreconciled')
      or pilot.status in ('blocked', 'reconciliation_required', 'failed', 'cancelled') then

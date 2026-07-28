@@ -577,6 +577,18 @@ export interface PostPhaseLDatabase {
         Args: { p_pilot_run: Json; p_members: Json };
         Returns: LAnalysisPilotRun;
       };
+      notice_analysis_pilot_manifest_serialize: {
+        Args: { p_members: Json };
+        Returns: string;
+      };
+      notice_analysis_pilot_manifest_fingerprint: {
+        Args: { p_members: Json };
+        Returns: string;
+      };
+      notice_analysis_pilot_stored_manifest_fingerprint: {
+        Args: { p_pilot_run_id: string };
+        Returns: string;
+      };
       claim_notice_analysis_pilot_job: {
         Args: {
           p_pilot_run_id: string;

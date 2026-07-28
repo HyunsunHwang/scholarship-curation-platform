@@ -1,10 +1,10 @@
-import { createHash } from "node:crypto";
 import process from "node:process";
 import { createClient } from "@supabase/supabase-js";
 import {
   assertExplicitOperatorEnvironment,
   operatorEnvironmentSummary,
 } from "../lib/post-phase-l/operator-environment.mjs";
+import { fingerprintPilotManifest } from "../lib/analysis/analysis-pilot-manifest.mjs";
 
 const NAMESPACE = "five-case-live-pilot-v2";
 const JOB_IDS = [
@@ -25,10 +25,6 @@ function parseArgs(argv) {
     if (result[current.slice(2)] !== true) index += 1;
   }
   return result;
-}
-
-function sha256(value) {
-  return createHash("sha256").update(String(value)).digest("hex");
 }
 
 const options = parseArgs(process.argv.slice(2));
@@ -86,7 +82,7 @@ const members = orderedJobs.map((job, index) => ({
   expected_revision_id: job.revision_id,
   expected_input_fingerprint: job.input_fingerprint,
 }));
-const manifestFingerprint = sha256(JSON.stringify(members));
+const manifestFingerprint = fingerprintPilotManifest(members);
 const pilot = {
   namespace: NAMESPACE,
   pilot_version: "v2-control-plane-1",

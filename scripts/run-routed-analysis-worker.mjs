@@ -4,6 +4,7 @@ import process from "node:process";
 import { createClient } from "@supabase/supabase-js";
 import {
   assertExplicitOperatorEnvironment,
+  assertLiveProviderDoubleGate,
   assertOperatorCliFlags,
 } from "../lib/post-phase-l/operator-environment.mjs";
 import { executeRoutedAnalysisJob } from "../lib/analysis/analysis-routing.mjs";
@@ -18,6 +19,7 @@ import { buildAnalysisInput } from "../lib/analysis/analysis-input-builder.mjs";
 import { stableAnalysisUuid } from "../lib/analysis/analysis-identifiers.mjs";
 import { callAnthropic } from "../lib/analysis/anthropic-provider.mjs";
 import { persistRoutedSuccessInMemory } from "../lib/analysis/analysis-routed-persistence.mjs";
+import { assertPilotManifestPreflight } from "../lib/analysis/analysis-pilot-manifest.mjs";
 
 function args(argv) {
   const result = {};
@@ -31,10 +33,10 @@ function args(argv) {
   return result;
 }
 
-function dbClient() {
+function dbClient({ live = false } = {}) {
   const guard = assertExplicitOperatorEnvironment(process.env, {
     requireApply: true,
-    permissions: ["write"],
+    permissions: live ? ["write", "liveProvider"] : ["write"],
     requireServiceRole: true,
   });
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -66,9 +68,7 @@ function fixtureJob(fixture) {
 
 async function runMockOrFixture(options) {
   const live = options.mode === "bounded-live-fixture";
-  if (live && !options["allow-live-provider"]) {
-    throw new Error("--allow-live-provider is required");
-  }
+  assertLiveProviderDoubleGate(options, process.env, { live });
   const fixture = JSON.parse(fs.readFileSync(
     path.resolve(String(options.fixture ?? "fixtures/analysis-unit-1/eligible-analysis.json")),
     "utf8",
@@ -131,14 +131,15 @@ async function main() {
   }
   assertOperatorCliFlags(options, {
     write: true,
-    liveProvider: Boolean(options["allow-live-provider"]),
   });
+  const live = Boolean(options["allow-live-provider"]);
+  assertLiveProviderDoubleGate(options, process.env, { live });
   if (!options["allow-db-queue"]) throw new Error("--allow-db-queue is required");
   const preflight = validateBoundedDbConsumerPreflight({
-    live: Boolean(options["allow-live-provider"]),
+    live,
     fixturePath: options.fixture ? path.resolve(String(options.fixture)) : null,
   });
-  const client = dbClient();
+  const client = dbClient({ live });
   const workerId = `routed-analysis-${process.pid}`;
   const pilotMode = mode === "bounded-pilot-consumer";
   const pilotRunId = pilotMode ? String(options["pilot-run-id"] ?? "") : null;
@@ -163,7 +164,7 @@ async function main() {
           .eq("id", pilotRunId).single(),
         client.from("notice_analysis_pilot_run_jobs")
           .select("job_id,stage,expected_revision_id,expected_input_fingerprint,execution_order")
-          .eq("pilot_run_id", pilotRunId).eq("stage", pilotStage).order("execution_order"),
+          .eq("pilot_run_id", pilotRunId).order("execution_order"),
       ]);
     if (pilotError || memberError) throw new Error("pilot_manifest_preflight_failed");
     if (pilot.target_project_ref !== guardProjectRef()) {
@@ -172,8 +173,10 @@ async function main() {
     if (["missing", "unreconciled"].includes(pilot.usage_status)) {
       throw new Error("pilot_usage_reconciliation_required");
     }
-    if (members.length !== requiredLimit) throw new Error("pilot_manifest_member_count_mismatch");
-    manifest = { pilot, members };
+    const checkedManifest = assertPilotManifestPreflight({
+      pilot, members, stage: pilotStage,
+    });
+    manifest = { pilot, ...checkedManifest };
   }
   const consumer = pilotMode ? runBoundedPilotConsumer : runBoundedDbConsumer;
   const result = await consumer({
