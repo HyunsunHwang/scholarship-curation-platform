@@ -75,10 +75,21 @@ const graph = buildNormalizedGraphPlan({
   run: { idempotency_key: "inline-identity-fixture" },
   source_results: [{ source_key: source.sourceId, source_id: source.sourceId, notices: result.notices }],
 }, { generatedAt: "2026-07-24T00:00:00.000Z" });
-assert.equal(graph.tables.ingestion_notices.length, 3);
-assert.equal(new Set(graph.tables.ingestion_notices.map((row) => row.id)).size, 3);
-assert.ok(graph.tables.ingestion_notices.every((row) => row.identity_kind === "inline_section_id"));
+// Crawler may still emit one observation per section, but formal Notice identity is
+// page-scoped: one canonical page → one Notice, with sections preserved as evidence.
+assert.equal(graph.tables.ingestion_notices.length, 1);
+assert.equal(graph.tables.ingestion_notices[0].identity_kind, "canonical_detail_url");
+assert.equal(
+  graph.tables.ingestion_notice_revisions[0].normalized_payload.inline_sections.length,
+  3,
+);
+assert.equal(new Set(graph.tables.ingestion_notices.map((row) => row.id)).size, 1);
+assert.ok(graph.tables.ingestion_notices.every((row) => row.identity_kind !== "inline_section_id"));
 assert.equal(new Set(graph.tables.ingestion_notice_url_aliases.map((row) => row.id)).size, graph.tables.ingestion_notice_url_aliases.length);
+assert.equal(
+  new Set(graph.tables.ingestion_notice_url_aliases.map((row) => `${row.source_id}|${row.normalized_url_hash}`)).size,
+  graph.tables.ingestion_notice_url_aliases.length,
+);
 
 const revised = structuredClone(result.notices);
 revised[0].body = `${revised[0].body} Editorial body correction.`;
