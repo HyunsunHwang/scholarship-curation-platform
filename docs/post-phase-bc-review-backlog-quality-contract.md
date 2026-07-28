@@ -12,6 +12,35 @@ Current upstream review pages read from `crawled_notices` and preserve their exi
 
 No new UI is built because an admin surface needs agreed storage, lifecycle, and reviewer actions first. A fixture-backed contract lets that design be reviewed without coupling policy to an irreversible schema or UI choice.
 
+## Main Repository Implementation Note (2026-07-29)
+
+The existing administrator queue is the compatibility read model:
+`app/admin/review/page.tsx` reads `crawled_notices`, and the scholarship detail route
+reads one `crawled_notices` row. `promoteNotice` creates the linked legacy
+`scholarships` row before changing the crawl row from `new` to `promoted`; public
+surfaces require `is_verified=true` and `list_on_home=true`.
+
+The normalized graph is already connected only through the narrow
+`lib/post-phase-l/admin-review.ts` adapter. In the approved L environment it supplies
+canonical URL, occurrence, revision body-quality status, assets, aliases, review events,
+and a fail-closed projection preview to the existing scholarship detail screen. Outside
+that environment the adapter intentionally reports inactive, so the legacy row has no
+stored duplicate or body-quality fields.
+
+The main risks are therefore: a reviewer cannot see a uniform quality reason in the
+compatibility screen; a short or unreadable body can be promoted with public toggles;
+and a duplicate indication from the graph could be missed outside its evidence panel.
+`no_assets` must remain a signal, not a correctness failure. Contests, education, and
+activities share a separate `crawled_contests` flow and are out of scope.
+
+The minimal implementation reuses the existing detail form and graph adapter. It adds a
+pure compatibility policy adapter derived from the existing title, original URL, body, image
+metadata, and exact same-URL legacy notices; it exposes its reasons in the scholarship
+review detail; and it forces review-required or incomplete-evidence promotions to remain
+unverified and off the home list. A duplicate or graph-quality state is handled only as an
+explicit human review decision, never by an automatic merge. No migration is justified:
+these are derived read-model signals and the canonical graph already owns durable evidence.
+
 ## Read-Model Shape
 
 Each backlog row has the future admin-facing fields: `source_id`, `source_key_snapshot`, `canonical_key`, `title`, `original_url`, `normalized_url`, `published_at`, `body_text`, `body_text_length`, `has_assets`, `asset_count`, `no_assets`, `body_quality`, `duplicate_status`, `review_status`, `blocker_status`, `quality_status`, `recommended_action`, `target_summary`, `keyword_summary`, `evidence_json`, `latest_run_id`, `latest_batch_label`, `created_at`, and `updated_at`.

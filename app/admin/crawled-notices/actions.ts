@@ -11,6 +11,10 @@ import {
 } from "@/lib/notice-extraction";
 import { applyPostPhaseLReviewDecision } from "@/lib/post-phase-l/review-actions";
 import { isPostPhaseLEnvironment } from "@/lib/post-phase-l/runtime";
+import {
+  applyNoticePromotionSafety,
+  evaluateNoticeReviewSafety,
+} from "@/lib/review/notice-review-safety.mjs";
 
 function normalizeRejectTag(reviewNote?: string) {
   const note = (reviewNote ?? "").trim();
@@ -81,7 +85,7 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
 
   const { data: reviewRow, error: reviewRowError } = await supabase
     .from("crawled_notices")
-    .select("status, scholarship_id")
+    .select("status, scholarship_id, title, notice_url, body, image_urls")
     .eq("id", noticeId)
     .single();
   if (reviewRowError) return { error: reviewRowError.message };
@@ -89,12 +93,27 @@ export async function promoteNotice(noticeId: number, formData: FormData) {
     return { error: "이미 처리된 공고는 다시 장학금으로 등록할 수 없습니다." };
   }
 
-  const payload = buildScholarshipPayload(formData);
+  const { data: sameUrlNotices, error: duplicateEvidenceError } = await supabase
+    .from("crawled_notices")
+    .select("id")
+    .eq("notice_url", reviewRow.notice_url)
+    .neq("id", noticeId)
+    .limit(1);
+
   const lEnvironment = isPostPhaseLEnvironment();
-  if (lEnvironment) {
-    payload.is_verified = false;
-    payload.list_on_home = false;
-  }
+  const safety = evaluateNoticeReviewSafety({
+    title: reviewRow.title,
+    originalUrl: reviewRow.notice_url,
+    body: reviewRow.body,
+    imageUrls: reviewRow.image_urls,
+    duplicateSuspected: (sameUrlNotices?.length ?? 0) > 0,
+    duplicateEvidenceUnavailable: Boolean(duplicateEvidenceError),
+  });
+  const payload = applyNoticePromotionSafety(buildScholarshipPayload(formData), {
+    originalUrl: reviewRow.notice_url,
+    safety,
+    postPhaseLEnvironment: lEnvironment,
+  });
 
   const { data: inserted, error } = await supabase
     .from("scholarships")

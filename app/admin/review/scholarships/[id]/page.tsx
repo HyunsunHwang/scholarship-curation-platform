@@ -17,6 +17,7 @@ import {
   type LegacyNoticeSnapshot,
 } from "@/lib/post-phase-l/admin-review";
 import { isPostPhaseLEnvironment } from "@/lib/post-phase-l/runtime";
+import { evaluateNoticeReviewSafety } from "@/lib/review/notice-review-safety.mjs";
 import PostPhaseLReviewEvidence from "./PostPhaseLReviewEvidence";
 
 export const maxDuration = 60;
@@ -132,6 +133,21 @@ export default async function ReviewScholarshipNoticePage({
     supabase,
     notice as LegacyNoticeSnapshot,
   );
+  const { data: sameUrlNotices, error: duplicateEvidenceError } = await supabase
+    .from("crawled_notices")
+    .select("id, title, status")
+    .eq("notice_url", notice.notice_url)
+    .neq("id", notice.id)
+    .order("first_seen_at", { ascending: false })
+    .limit(3);
+  const reviewSafety = evaluateNoticeReviewSafety({
+    title: notice.title,
+    originalUrl: notice.notice_url,
+    body: notice.body,
+    imageUrls: notice.image_urls,
+    duplicateSuspected: (sameUrlNotices?.length ?? 0) > 0,
+    duplicateEvidenceUnavailable: Boolean(duplicateEvidenceError),
+  });
 
   if (notice.status !== "new") {
     return (
@@ -239,6 +255,33 @@ export default async function ReviewScholarshipNoticePage({
       </div>
 
       <PostPhaseLReviewEvidence evidence={lEvidence} />
+
+      <section className={`mb-6 border-y px-4 py-4 text-sm ${
+        reviewSafety.requiresAdminReview
+          ? "border-amber-200 bg-amber-50 text-amber-950"
+          : "border-sky-200 bg-sky-50 text-sky-950"
+      }`} aria-label="검토 품질 및 공개 안전 상태">
+        <p className="font-semibold">검토 품질 및 공개 안전 상태</p>
+        <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-3 sm:text-sm">
+          <div><dt className="font-medium">본문 품질</dt><dd>{reviewSafety.bodyQuality}</dd></div>
+          <div><dt className="font-medium">첨부</dt><dd>{reviewSafety.hasAssets ? `${reviewSafety.assetCount}건` : "없음 (품질 신호)"}</dd></div>
+          <div><dt className="font-medium">사용자 공개</dt><dd>{reviewSafety.publicPublicationAllowed ? "검수 후 설정 가능" : "검수 보류 — 공개 플래그 강제 해제"}</dd></div>
+        </dl>
+        {reviewSafety.reasons.length > 0 ? (
+          <p className="mt-3 leading-6">검토 사유: {reviewSafety.reasons.join(", ")}</p>
+        ) : (
+          <p className="mt-3 leading-6">현재 legacy evidence에서 자동 공개를 막는 품질 사유는 없습니다. 원문 URL과 검수 판단은 등록 시에도 보존됩니다.</p>
+        )}
+        {reviewSafety.requiresAdminReview ? (
+          <p className="mt-2 leading-6">등록해도 `is_verified`와 홈 노출은 자동으로 꺼집니다. 원문 근거를 보완한 뒤 별도 관리자 판단으로 공개 여부를 결정하세요.</p>
+        ) : null}
+        {sameUrlNotices && sameUrlNotices.length > 0 ? (
+          <p className="mt-2 leading-6">관련 공지 (동일 원문 URL): {sameUrlNotices.map((item) => `#${item.id} ${item.status}`).join(", ")}</p>
+        ) : null}
+        {duplicateEvidenceError ? (
+          <p className="mt-2 leading-6">관련 공지 근거를 확인하지 못했습니다. 공개 안전을 위해 evidence_incomplete 상태로 보류합니다.</p>
+        ) : null}
+      </section>
 
       <section className="mb-6 border-y border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-950" aria-label="현재 검토 lifecycle">
         <p className="font-semibold">{lEnvironment ? "L append-only review lifecycle" : "현재 compatibility lifecycle"}</p>
