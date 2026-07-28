@@ -480,6 +480,22 @@ export interface PostPhaseLDatabase {
         };
         Returns: LAnalysisJob;
       };
+      renew_notice_analysis_job_lease: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_lease_seconds?: number;
+        };
+        Returns: LAnalysisJob;
+      };
+      record_notice_analysis_run_audit: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_run: Json;
+        };
+        Returns: Json;
+      };
       record_notice_analysis_review: {
         Args: {
           p_result_id: string;

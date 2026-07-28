@@ -37,7 +37,7 @@ function dbClient() {
   const guard = assertPostPhaseLTarget({
     POST_PHASE_L_TARGET_PROJECT_REF: process.env.POST_PHASE_L_TARGET_PROJECT_REF,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-  }, { requireApply: false });
+  }, { requireApply: true });
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required");
   return createClient(guard.target_project_url, key, {
@@ -126,6 +126,9 @@ async function main() {
     return;
   }
   if (mode !== "bounded-db-consumer") throw new Error("unsupported_mode");
+  if (!options["allow-nonproduction-db-write"]) {
+    throw new Error("--allow-nonproduction-db-write is required");
+  }
   if (!options["allow-db-queue"]) throw new Error("--allow-db-queue is required");
   const preflight = validateBoundedDbConsumerPreflight({
     live: Boolean(options["allow-live-provider"]),
@@ -133,7 +136,7 @@ async function main() {
   });
   const client = dbClient();
   const workerId = `routed-analysis-${process.pid}`;
-  const limit = Math.max(1, Math.min(Number(options.limit ?? 3), 10));
+  const limit = Math.max(1, Math.min(Number(options.limit ?? 3), 5));
   const result = await runBoundedDbConsumer({
     client,
     workerId,
@@ -142,10 +145,12 @@ async function main() {
     replayResponse: preflight.replayResponse,
     budgetOptions: {
       maxJobs: limit,
-      maxRuns: Number(options["max-runs"] ?? limit * 2),
-      maxEscalations: Number(options["max-escalations"] ?? limit),
+      maxRuns: Math.min(Number(options["max-runs"] ?? limit * 2), 10),
+      maxEscalations: Math.min(Number(options["max-escalations"] ?? limit), 5),
       runBudgetMicros: Number(options["run-budget-micros"] ?? 500_000),
-      dailyBudgetMicros: Number(options["daily-budget-micros"] ?? 2_000_000),
+      dailyBudgetMicros: Number(
+        options["pilot-budget-micros"] ?? options["daily-budget-micros"] ?? 500_000,
+      ),
     },
   });
   console.log(JSON.stringify({

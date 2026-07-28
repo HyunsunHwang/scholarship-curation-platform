@@ -51,6 +51,8 @@ with required(signature) as (
     ('finalize_notice_analysis_success(uuid,text,jsonb,jsonb,jsonb)'),
     ('finalize_notice_analysis_routing(uuid,text,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,uuid)'),
     ('defer_notice_analysis_job_for_budget(uuid,text,jsonb,text,bigint)'),
+    ('record_notice_analysis_run_audit(uuid,text,jsonb)'),
+    ('renew_notice_analysis_job_lease(uuid,text,integer)'),
     ('record_notice_analysis_review(uuid,text,jsonb,text,text)'),
     ('approve_scholarship_program_cycle_proposal(uuid,text,uuid,uuid,jsonb,jsonb,text,text)')
 )

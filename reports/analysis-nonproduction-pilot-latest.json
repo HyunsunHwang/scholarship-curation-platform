@@ -67,6 +67,18 @@
     "provider_runs": 0,
     "actual_cost_micros": 0
   },
+  "remediation": {
+    "status": "prepared_not_executed",
+    "migration": "008_live_pilot_failed_run_and_lease_hardening.sql",
+    "pilot_namespace": "five-case-live-pilot-v2",
+    "claim_strategy": "one_job_at_a_time",
+    "lease_renewal_seconds": 180,
+    "provider_timeout_seconds": 45,
+    "failed_run_audit": true,
+    "structured_output": "output_config.format.json_schema",
+    "anthropic_calls_by_codex": 0,
+    "database_calls_by_codex": 0
+  },
   "safety": {
     "production_db_access": 0,
     "production_db_write": 0,
