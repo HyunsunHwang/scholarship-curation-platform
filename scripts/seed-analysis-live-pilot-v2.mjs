@@ -1,8 +1,7 @@
-import fs from "node:fs";
 import process from "node:process";
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { assertPostPhaseLTarget } from "../lib/post-phase-l/target-guard.mjs";
+import { assertExplicitOperatorEnvironment } from "../lib/post-phase-l/operator-environment.mjs";
 import { stableAnalysisUuid } from "../lib/analysis/analysis-identifiers.mjs";
 import { reconcileAnalysisJobs } from "../lib/analysis/analysis-job-reconciler.mjs";
 
@@ -23,12 +22,6 @@ function args(argv) {
   return new Set(argv.filter((value) => value.startsWith("--")).map((value) => value.slice(2)));
 }
 
-function loadEnv() {
-  if (typeof process.loadEnvFile === "function" && fs.existsSync(".env.local")) {
-    process.loadEnvFile(".env.local");
-  }
-}
-
 async function insertIgnore(client, table, rows, onConflict) {
   const { error } = await client.from(table).upsert(rows, {
     onConflict,
@@ -37,12 +30,15 @@ async function insertIgnore(client, table, rows, onConflict) {
   if (error) throw new Error(`pilot_v2_seed_failed:${table}:${error.code ?? "db_error"}`);
 }
 
-loadEnv();
 const flags = args(process.argv.slice(2));
 if (!flags.has("allow-nonproduction-db-write")) {
   throw new Error("--allow-nonproduction-db-write is required");
 }
-const guard = assertPostPhaseLTarget(process.env, { requireApply: true });
+const guard = assertExplicitOperatorEnvironment(process.env, {
+  requireApply: true,
+  permissions: ["write"],
+  requireServiceRole: true,
+});
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required");
 const client = createClient(guard.target_project_url, process.env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },

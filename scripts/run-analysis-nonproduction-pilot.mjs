@@ -18,6 +18,8 @@ const MIGRATIONS = [
   "005_notice_analysis_review_and_finalize.sql",
   "006_program_cycle_canonical_and_projection.sql",
   "007_analysis_routing_and_identity_hardening.sql",
+  "008_live_pilot_failed_run_and_lease_hardening.sql",
+  "009_analysis_pilot_control_plane.sql",
 ];
 
 function parseArgs(argv) {
@@ -30,12 +32,6 @@ function parseArgs(argv) {
     if (result[key] !== true) index += 1;
   }
   return result;
-}
-
-function loadLocalEnvironment() {
-  if (typeof process.loadEnvFile === "function" && fs.existsSync(".env.local")) {
-    process.loadEnvFile(".env.local");
-  }
 }
 
 function executablePresent(name) {
@@ -158,7 +154,8 @@ function buildReport(stage, options) {
       economy_model: modelPolicy.roles.economy.model,
       escalation_model: modelPolicy.roles.escalation.model,
       provider_runs: 0,
-      actual_cost_micros: 0,
+      actual_cost_micros: null,
+      usage_status: "not_started",
     },
     safety: {
       production_db_access: 0,
@@ -174,7 +171,6 @@ function buildReport(stage, options) {
 }
 
 function main() {
-  loadLocalEnvironment();
   const options = parseArgs(process.argv.slice(2));
   const stage = String(options.stage ?? "preflight");
   if (!["preflight", "fixture-db-smoke", "live-pilot"].includes(stage)) {

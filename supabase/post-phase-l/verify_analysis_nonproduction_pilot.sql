@@ -1,13 +1,13 @@
--- Read-only verification for analysis migrations 004 through 007.
+-- Read-only verification for analysis migrations 004 through 009.
 -- Run only after verify_post_phase_l_schema.sql on the exact L sandbox.
 begin transaction read only;
 
 select
   project_ref = 'hrayfvdggbhfmmzfblly' as exact_project_ref,
   environment_kind = 'non_production' as non_production,
-  automatic_publication_enabled = false as automatic_publication_disabled
+  automatic_public_publish_enabled = false as automatic_publication_disabled
 from public.post_phase_l_environment_guard
-where singleton = 1;
+where id = 1;
 
 with required(name) as (
   values
@@ -21,7 +21,11 @@ with required(name) as (
     ('scholarship_program_cycle_proposals'),
     ('scholarship_proposal_review_events'),
     ('scholarship_projection_links'),
-    ('notice_analysis_routing_decisions')
+    ('notice_analysis_routing_decisions'),
+    ('notice_analysis_pilot_runs'),
+    ('notice_analysis_pilot_run_jobs'),
+    ('notice_analysis_provider_usage_receipts'),
+    ('notice_analysis_pilot_cost_reservations')
 )
 select name, to_regclass('public.' || name) is not null as present
 from required
@@ -53,6 +57,12 @@ with required(signature) as (
     ('defer_notice_analysis_job_for_budget(uuid,text,jsonb,text,bigint)'),
     ('record_notice_analysis_run_audit(uuid,text,jsonb)'),
     ('renew_notice_analysis_job_lease(uuid,text,integer)'),
+    ('create_or_register_notice_analysis_pilot_run(jsonb,jsonb)'),
+    ('claim_notice_analysis_pilot_job(uuid,text,text,integer)'),
+    ('record_notice_analysis_provider_usage(uuid,uuid,text,jsonb)'),
+    ('reserve_notice_analysis_pilot_cost(uuid,uuid,text,integer,text,bigint)'),
+    ('finish_notice_analysis_pilot_member(uuid,uuid,text,text)'),
+    ('approve_notice_analysis_pilot_expansion(uuid)'),
     ('record_notice_analysis_review(uuid,text,jsonb,text,text)'),
     ('approve_scholarship_program_cycle_proposal(uuid,text,uuid,uuid,jsonb,jsonb,text,text)')
 )
@@ -80,7 +90,11 @@ where n.nspname = 'public'
     'scholarship_cycles',
     'scholarship_program_cycle_proposals',
     'scholarship_proposal_review_events',
-    'scholarship_projection_links'
+    'scholarship_projection_links',
+    'notice_analysis_pilot_runs',
+    'notice_analysis_pilot_run_jobs',
+    'notice_analysis_provider_usage_receipts',
+    'notice_analysis_pilot_cost_reservations'
   )
 order by c.relname;
 
@@ -98,6 +112,26 @@ select
     'anon',
     'public.finalize_notice_analysis_routing(uuid,text,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,uuid)',
     'EXECUTE'
-  ) as anon_finalize_execute_revoked;
+  ) as anon_finalize_execute_revoked,
+  has_function_privilege(
+    'service_role',
+    'public.claim_notice_analysis_pilot_job(uuid,text,text,integer)',
+    'EXECUTE'
+  ) as service_role_pilot_claim_execute,
+  not has_function_privilege(
+    'anon',
+    'public.record_notice_analysis_provider_usage(uuid,uuid,text,jsonb)',
+    'EXECUTE'
+  ) as anon_usage_receipt_execute_revoked,
+  not has_table_privilege(
+    'service_role',
+    'public.notice_analysis_pilot_run_jobs',
+    'INSERT,UPDATE,DELETE'
+  ) as service_role_pilot_membership_direct_write_blocked,
+  not has_table_privilege(
+    'service_role',
+    'public.notice_analysis_provider_usage_receipts',
+    'INSERT,UPDATE,DELETE'
+  ) as service_role_usage_receipt_direct_write_blocked;
 
 rollback;
