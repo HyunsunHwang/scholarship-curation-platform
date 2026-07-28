@@ -1,0 +1,90 @@
+{
+  "report_version": "analysis-nonproduction-pilot-v1",
+  "generated_at": "2026-07-28T12:18:17.203Z",
+  "status": "blocked",
+  "stage": "preflight",
+  "stage_model": {
+    "new_phase_or_unit_created": false,
+    "work_name": "Non-Production L Sandbox: Migration, Fixture Smoke, and Five-Case Live Pilot"
+  },
+  "target_environment": {
+    "project_name": "scholarship-curation-post-phase-l",
+    "expected_project_ref": "hrayfvdggbhfmmzfblly",
+    "exact_target_guard_passed": false,
+    "production_ref_detected": true,
+    "production_access_count": 0,
+    "credential_source_category": "existing_local_environment_only",
+    "secret_values_printed": false
+  },
+  "preflight": {
+    "local_file_inventory": {
+      "migrations": {
+        "001_post_phase_l_compatibility_baseline.sql": true,
+        "002_post_phase_l_normalized_graph.sql": true,
+        "003_post_phase_l_pilot_seed.sql": true,
+        "004_notice_analysis_schema.sql": true,
+        "005_notice_analysis_review_and_finalize.sql": true,
+        "006_program_cycle_canonical_and_projection.sql": true,
+        "007_analysis_routing_and_identity_hardening.sql": true
+      },
+      "verify_schema": true,
+      "verify_analysis_pilot": true,
+      "bounded_data_rollback": true,
+      "schema_rollback": true
+    },
+    "tooling": {
+      "node": true,
+      "psql": false,
+      "supabase_cli": false
+    },
+    "database_connection_attempted": false,
+    "database_snapshot_completed": false,
+    "database_drift_checked": false,
+    "missing_environment_variables": [
+      "POST_PHASE_L_TARGET_PROJECT_REF",
+      "SUPABASE_SERVICE_ROLE_KEY"
+    ],
+    "credential_presence": {
+      "service_role": false,
+      "anthropic_api": false
+    },
+    "missing_explicit_flags": []
+  },
+  "migrations": {
+    "applied": [],
+    "transaction_status": "not_started",
+    "verification_status": "not_started"
+  },
+  "fixture_db_smoke": {
+    "status": "not_started",
+    "cases_executed": 0
+  },
+  "live_pilot": {
+    "status": "not_started",
+    "max_jobs": 5,
+    "max_runs": 10,
+    "max_escalations": 5,
+    "pilot_budget_micros": null,
+    "economy_model": "claude-haiku-4-5-20251001",
+    "escalation_model": "claude-sonnet-4-6",
+    "provider_runs": 0,
+    "actual_cost_micros": 0
+  },
+  "safety": {
+    "production_db_access": 0,
+    "production_db_write": 0,
+    "public_write": 0,
+    "canonical_approval": 0,
+    "automatic_semantic_approval": 0,
+    "legacy_schedule_changed": false,
+    "secrets_committed_or_printed": false
+  },
+  "blockers": [
+    "target_project_ref_missing",
+    "target_url_ref_mismatch",
+    "target_project_url_mismatch",
+    "forbidden_production_ref_detected",
+    "credential_missing:POST_PHASE_L_TARGET_PROJECT_REF",
+    "credential_missing:SUPABASE_SERVICE_ROLE_KEY"
+  ]
+}

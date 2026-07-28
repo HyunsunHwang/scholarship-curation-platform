@@ -92,6 +92,8 @@
     "analysis:evaluate": "node scripts/evaluate-analysis-models.mjs",
     "analysis:routed-worker": "node scripts/run-routed-analysis-worker.mjs",
     "analysis:operations": "node scripts/report-analysis-operations.mjs",
+    "analysis:nonproduction-pilot": "node scripts/run-analysis-nonproduction-pilot.mjs",
+    "test:analysis-nonproduction-pilot": "node scripts/test-analysis-nonproduction-pilot.mjs",
     "analysis:worker": "node scripts/run-notice-analysis-worker.mjs",
     "analysis:gold:export": "node scripts/export-analysis-gold-dataset.mjs",
     "analysis:proposal": "node scripts/create-program-cycle-proposal.mjs",
