@@ -1,0 +1,21 @@
+{
+  "schema_version": "shadow-parity-fixture-corpus-v1",
+  "cases": [
+    {
+      "id": "external-article-id",
+      "path": "cases/external-article-id.json"
+    },
+    {
+      "id": "canonical-url-only",
+      "path": "cases/canonical-url-only.json"
+    },
+    {
+      "id": "inline-multi-section",
+      "path": "cases/inline-multi-section.json"
+    },
+    {
+      "id": "cross-source-same-url",
+      "path": "cases/cross-source-same-url.json"
+    }
+  ]
+}

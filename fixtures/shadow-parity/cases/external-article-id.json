@@ -1,0 +1,52 @@
+{
+  "id": "external-article-id",
+  "generated_at": "2026-07-28T03:00:00.000Z",
+  "idempotency_key": "shadow-parity-external-article-id",
+  "source_results": [
+    {
+      "source_id": "parity_ext_001",
+      "source_name": "Parity External Source",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "2026 교내 장학금 모집",
+          "body": "본문 텍스트가 충분히 길어서 품질 판정을 통과하는 장학 모집 안내입니다. 신청 기간과 자격 요건을 확인하세요.",
+          "notice_url": "https://uni.example/board/view?articleNo=42",
+          "canonical_url": "https://uni.example/board/view?articleNo=42",
+          "external_article_id": "articleNo:42",
+          "notice_posted_at": "2026-07-20",
+          "raw_date_text": "2026-07-20",
+          "date_text": "2026-07-20",
+          "attachment_metadata": [
+            { "url": "https://files.example/guide-42.pdf", "name": "guide.pdf" }
+          ],
+          "application_links": [
+            { "url": "https://forms.example/apply-42", "role": "application_form" }
+          ],
+          "candidate_classification": "candidate",
+          "candidate_reason_codes": ["keyword_and_date_within_range"],
+          "identity_stability": "strong"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_ext_001",
+      "source_name": "Parity External Source",
+      "title": "2026 교내 장학금 모집",
+      "notice_url": "https://uni.example/board/view?articleNo=42",
+      "notice_posted_at": "2026-07-20",
+      "date_text": "2026-07-20",
+      "content": "본문 텍스트가 충분히 길어서 품질 판정을 통과하는 장학 모집 안내입니다. 신청 기간과 자격 요건을 확인하세요.",
+      "attachment_metadata": [
+        { "url": "https://files.example/guide-42.pdf", "name": "guide.pdf" }
+      ],
+      "application_links": [
+        { "url": "https://forms.example/apply-42", "role": "application_form" }
+      ],
+      "candidate_classification": "candidate"
+    }
+  ]
+}

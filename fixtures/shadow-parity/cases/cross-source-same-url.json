@@ -1,0 +1,71 @@
+{
+  "id": "cross-source-same-url",
+  "generated_at": "2026-07-28T03:00:00.000Z",
+  "idempotency_key": "shadow-parity-cross-source-same-url",
+  "source_results": [
+    {
+      "source_id": "parity_share_a",
+      "source_name": "Parity Share A",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "Shared notice from source A",
+          "body": "Source A body text that is long enough for body quality classification in the shadow parity fixture.",
+          "notice_url": "https://shared.example/notice/1",
+          "canonical_url": "https://shared.example/notice/1",
+          "notice_posted_at": "2026-07-22",
+          "raw_date_text": "2026-07-22",
+          "date_text": "2026-07-22",
+          "attachment_metadata": [],
+          "application_links": [],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        }
+      ]
+    },
+    {
+      "source_id": "parity_share_b",
+      "source_name": "Parity Share B",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "Shared notice from source B",
+          "body": "Source B body text that is long enough for body quality classification in the shadow parity fixture.",
+          "notice_url": "https://shared.example/notice/1",
+          "canonical_url": "https://shared.example/notice/1",
+          "notice_posted_at": "2026-07-22",
+          "raw_date_text": "2026-07-22",
+          "date_text": "2026-07-22",
+          "attachment_metadata": [],
+          "application_links": [],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_share_a",
+      "source_name": "Parity Share A",
+      "title": "Shared notice from source A",
+      "notice_url": "https://shared.example/notice/1",
+      "notice_posted_at": "2026-07-22",
+      "date_text": "2026-07-22",
+      "content": "Source A body text that is long enough for body quality classification in the shadow parity fixture.",
+      "candidate_classification": "candidate"
+    },
+    {
+      "source_group": "parity",
+      "source_id": "parity_share_b",
+      "source_name": "Parity Share B",
+      "title": "Shared notice from source B",
+      "notice_url": "https://shared.example/notice/1",
+      "notice_posted_at": "2026-07-22",
+      "date_text": "2026-07-22",
+      "content": "Source B body text that is long enough for body quality classification in the shadow parity fixture.",
+      "candidate_classification": "candidate"
+    }
+  ]
+}

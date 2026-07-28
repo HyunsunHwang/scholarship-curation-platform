@@ -1,0 +1,42 @@
+{
+  "id": "canonical-url-only",
+  "generated_at": "2026-07-28T03:00:00.000Z",
+  "idempotency_key": "shadow-parity-canonical-url-only",
+  "source_results": [
+    {
+      "source_id": "parity_url_001",
+      "source_name": "Parity URL Source",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "학과 장학 안내",
+          "body": "외부 article id 없이 canonical URL만으로 식별되는 학과 장학 안내 본문입니다. 자세한 내용은 첨부파일을 참고하세요.",
+          "notice_url": "https://uni.example/dept/notice/99",
+          "canonical_url": "https://uni.example/dept/notice/99",
+          "notice_posted_at": "2026-07-21",
+          "raw_date_text": "2026-07-21",
+          "date_text": "2026-07-21",
+          "attachment_metadata": [],
+          "application_links": [],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_url_001",
+      "source_name": "Parity URL Source",
+      "title": "학과 장학 안내",
+      "notice_url": "https://uni.example/dept/notice/99",
+      "notice_posted_at": "2026-07-21",
+      "date_text": "2026-07-21",
+      "content": "외부 article id 없이 canonical URL만으로 식별되는 학과 장학 안내 본문입니다. 자세한 내용은 첨부파일을 참고하세요.",
+      "attachment_metadata": [],
+      "application_links": [],
+      "candidate_classification": "candidate"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "inline-multi-section",
+  "generated_at": "2026-07-28T03:00:00.000Z",
+  "idempotency_key": "shadow-parity-inline-multi-section",
+  "source_results": [
+    {
+      "source_id": "parity_inline_001",
+      "source_name": "Parity Inline Source",
+      "result_status": "success",
+      "notices": [
+        {
+          "title": "Section 1 scholarship",
+          "body": "Section 1 body with enough text for preservation and review quality checks in the fixture.",
+          "notice_url": "https://uni.example/inline/notices#section-1",
+          "original_url": "https://uni.example/inline/notices#section-1",
+          "canonical_url": "https://uni.example/inline/notices",
+          "inline_section_id": "section-1",
+          "inline_section_links": [
+            { "url": "https://forms.example/1", "role": "application_form" }
+          ],
+          "attachment_metadata": [
+            { "url": "https://files.example/1.pdf", "name": "file-1" }
+          ],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        },
+        {
+          "title": "Section 2 scholarship",
+          "body": "Section 2 body with enough text for preservation and review quality checks in the fixture.",
+          "notice_url": "https://uni.example/inline/notices#section-2",
+          "original_url": "https://uni.example/inline/notices#section-2",
+          "canonical_url": "https://uni.example/inline/notices",
+          "inline_section_id": "section-2",
+          "inline_section_links": [
+            { "url": "https://forms.example/2", "role": "application_form" }
+          ],
+          "attachment_metadata": [
+            { "url": "https://files.example/2.pdf", "name": "file-2" }
+          ],
+          "candidate_classification": "candidate",
+          "identity_stability": "strong"
+        },
+        {
+          "title": "Section 3 scholarship",
+          "body": "Section 3 body with enough text for preservation and review quality checks in the fixture.",
+          "notice_url": "https://uni.example/inline/notices#section-3",
+          "original_url": "https://uni.example/inline/notices#section-3",
+          "canonical_url": "https://uni.example/inline/notices",
+          "inline_section_id": "section-3",
+          "inline_section_links": [
+            { "url": "https://forms.example/3", "role": "application_form" }
+          ],
+          "attachment_metadata": [
+            { "url": "https://files.example/3.pdf", "name": "file-3" }
+          ],
+          "candidate_classification": "candidate",
+          "identity_stability": "weak"
+        }
+      ]
+    }
+  ],
+  "legacy_records": [
+    {
+      "source_group": "parity",
+      "source_id": "parity_inline_001",
+      "source_name": "Parity Inline Source",
+      "title": "Section 1 scholarship",
+      "notice_url": "https://uni.example/inline/notices",
+      "content": "Section 1 body with enough text for preservation and review quality checks in the fixture.",
+      "attachment_metadata": [
+        { "url": "https://files.example/1.pdf", "name": "file-1" },
+        { "url": "https://files.example/2.pdf", "name": "file-2" },
+        { "url": "https://files.example/3.pdf", "name": "file-3" }
+      ],
+      "application_links": [
+        { "url": "https://forms.example/1", "role": "application_form" },
+        { "url": "https://forms.example/2", "role": "application_form" },
+        { "url": "https://forms.example/3", "role": "application_form" }
+      ],
+      "candidate_classification": "candidate"
+    }
+  ]
+}
