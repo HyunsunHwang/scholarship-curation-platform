@@ -41,3 +41,7 @@ notice bodies, attachment bodies, credentials, and connection strings are prohib
 
 Migration 009 has not been applied by Codex. The SQL golden vector, concurrency behavior,
 RLS, and privileges must be verified in the sandbox before registration.
+
+The approved sandbox prerequisite is `pgcrypto` in the `extensions` schema. Migration 009
+calls `extensions.digest(text,text)` and `pg_catalog.encode(bytea,text)` explicitly and
+fails fast if the extension schema or digest overload is absent.

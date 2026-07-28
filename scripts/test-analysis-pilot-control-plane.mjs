@@ -47,6 +47,20 @@ const registrationSource = fs.readFileSync(
   "scripts/register-analysis-live-pilot-v2.mjs", "utf8",
 );
 
+matches(migration, /extension\.extname = 'pgcrypto'/);
+matches(migration, /namespace\.nspname = 'extensions'/);
+matches(migration, /to_regprocedure\('extensions\.digest\(text,text\)'\) is null/);
+matches(migration, /extensions\.digest\(/);
+matches(migration, /pg_catalog\.encode\(/);
+doesNotMatch(migration, /(?<!extensions\.)digest\(/);
+equal(
+  migration.indexOf("pgcrypto_digest_text_signature_missing")
+    < migration.indexOf(
+      "create or replace function public.notice_analysis_pilot_manifest_fingerprint",
+    ),
+  true,
+);
+
 const safeEnv = {
   POST_PHASE_L_TARGET_PROJECT_REF: "hrayfvdggbhfmmzfblly",
   SUPABASE_URL: "https://hrayfvdggbhfmmzfblly.supabase.co",

@@ -10,6 +10,19 @@ begin
      or to_regclass('public.notice_analysis_routing_decisions') is null then
     raise exception 'Post-Phase L migrations 001 through 008 are required';
   end if;
+  if not exists (
+    select 1
+    from pg_catalog.pg_extension extension
+    join pg_catalog.pg_namespace namespace
+      on namespace.oid = extension.extnamespace
+    where extension.extname = 'pgcrypto'
+      and namespace.nspname = 'extensions'
+  ) then
+    raise exception 'pgcrypto_extension_schema_mismatch:extensions_required';
+  end if;
+  if to_regprocedure('extensions.digest(text,text)') is null then
+    raise exception 'pgcrypto_digest_text_signature_missing';
+  end if;
 end
 $$;
 
@@ -156,7 +169,13 @@ returns text
 language sql immutable strict parallel safe
 set search_path = public
 as $$
-  select encode(digest(public.notice_analysis_pilot_manifest_serialize(p_members), 'sha256'), 'hex')
+  select pg_catalog.encode(
+    extensions.digest(
+      public.notice_analysis_pilot_manifest_serialize(p_members),
+      'sha256'
+    ),
+    'hex'
+  )
 $$;
 
 create or replace function public.notice_analysis_pilot_stored_manifest_fingerprint(

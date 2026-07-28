@@ -8,6 +8,11 @@ tests do not connect to Supabase or Anthropic.
 Migration 009 is still unapplied as of this repository revision. Database-native
 verification and concurrency checks remain operator gates.
 
+The approved sandbox must have `pgcrypto` installed in the `extensions` schema with
+`extensions.digest(text,text)`. Migration 009 fails before helper creation if that exact
+extension schema or overload is missing. This is intentionally sandbox-specific rather
+than a dynamic search-path fallback.
+
 ## Execution boundaries
 
 - `bounded-db-consumer` remains the global analysis worker. Never use it for a pilot.
