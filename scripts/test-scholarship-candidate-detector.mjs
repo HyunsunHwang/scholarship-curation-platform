@@ -133,6 +133,9 @@ const candidateResults = observations.map((observation, index) => ({
 const plan = buildDetailFetchPlan({ observations, candidateResults });
 assert.equal(plan.fetch.length, 5);
 assert.equal(plan.skip.length, 95);
+const cappedPlan = buildDetailFetchPlan({ observations, candidateResults, maxCandidates: 3 });
+assert.equal(cappedPlan.fetch.length, 3);
+assert.equal(cappedPlan.skip.filter((entry) => entry.skipReason === "candidate_limit_reached").length, 2);
 assert.equal(
   buildDetailFetchPlan({
     observations: [observations[0]],

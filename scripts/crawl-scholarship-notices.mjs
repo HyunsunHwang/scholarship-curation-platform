@@ -95,6 +95,13 @@ const DOCUMENT_OCR_TIMEOUT_MS = Math.max(1, Number(process.env.CRAWL_DOCUMENT_OC
 const LOOKBACK_DAYS = Number(process.env.CRAWL_LOOKBACK_DAYS ?? 31);
 const ALLOW_UNDATED = process.env.CRAWL_ALLOW_UNDATED === "true";
 const MAX_ITEMS_PER_SOURCE = Number(process.env.CRAWL_MAX_ITEMS_PER_SOURCE ?? 150);
+const MAX_CANDIDATES_PER_SOURCE_INPUT = Number(
+  process.env.CRAWL_MAX_CANDIDATES_PER_SOURCE ?? MAX_ITEMS_PER_SOURCE,
+);
+const MAX_CANDIDATES_PER_SOURCE = Number.isFinite(MAX_CANDIDATES_PER_SOURCE_INPUT)
+  && MAX_CANDIDATES_PER_SOURCE_INPUT >= 0
+  ? Math.min(MAX_ITEMS_PER_SOURCE, Math.floor(MAX_CANDIDATES_PER_SOURCE_INPUT))
+  : MAX_ITEMS_PER_SOURCE;
 const MAX_PAGES_PER_SOURCE = Math.max(
   1,
   Math.min(5, Number(process.env.CRAWL_MAX_PAGES_PER_SOURCE ?? 1)),
@@ -538,6 +545,7 @@ async function executeSourceInWorker({
         lookbackDays: LOOKBACK_DAYS,
         allowUndated: ALLOW_UNDATED,
         maxItems: MAX_ITEMS_PER_SOURCE,
+        maxCandidates: MAX_CANDIDATES_PER_SOURCE,
         maxPages: MAX_PAGES_PER_SOURCE,
         fetchDetails: DETAIL_FETCH_ENABLED,
         timeoutMs: transportPolicy.timeoutMs,
@@ -758,6 +766,7 @@ async function run({ signal, onTransportResolved } = {}) {
       fetch_details: DETAIL_FETCH_ENABLED,
       document_parsing_enabled: DOCUMENT_PARSING_ENABLED,
       maximum_items_per_source: MAX_ITEMS_PER_SOURCE,
+      maximum_candidates_per_source: MAX_CANDIDATES_PER_SOURCE,
       maximum_pages_per_source: MAX_PAGES_PER_SOURCE,
       lookback_days: LOOKBACK_DAYS,
       allow_undated: ALLOW_UNDATED,
@@ -843,7 +852,10 @@ async function run({ signal, onTransportResolved } = {}) {
           candidateDetector: detectScholarshipCandidate,
           detailFetchPlanner: buildDetailFetchPlan,
           candidateDetectionOptions: scholarshipCandidateOptions(source),
-          detailFetchPlannerOptions: { seenNoticeUrls: Object.keys(seen) },
+          detailFetchPlannerOptions: {
+            seenNoticeUrls: Object.keys(seen),
+            maxCandidates: MAX_CANDIDATES_PER_SOURCE,
+          },
         };
         let commonResult;
         if (listAdapter) {
@@ -1248,6 +1260,7 @@ async function run({ signal, onTransportResolved } = {}) {
       hostMinimumIntervalMs: HOST_MIN_INTERVAL_MS,
       ignoreSeen: IGNORE_SEEN,
       maxItemsPerSource: MAX_ITEMS_PER_SOURCE,
+      maxCandidatesPerSource: MAX_CANDIDATES_PER_SOURCE,
       maxPagesPerSource: MAX_PAGES_PER_SOURCE,
       documentParsingEnabled: DOCUMENT_PARSING_ENABLED,
       documentCacheDirectory: DOCUMENT_PARSING_ENABLED
