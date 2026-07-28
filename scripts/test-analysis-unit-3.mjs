@@ -26,10 +26,15 @@ import {
   summarizeOperations,
 } from "../lib/analysis/analysis-evaluation.mjs";
 import {
+  deferJobForBudgetInMemory,
   persistBaselineSuccessInMemory,
   persistRoutedSuccessInMemory,
   validateRoutingLineage,
 } from "../lib/analysis/analysis-routed-persistence.mjs";
+import {
+  runBoundedDbConsumer,
+  validateBoundedDbConsumerPreflight,
+} from "../lib/analysis/analysis-db-consumer.mjs";
 import { executeAnalysisJob } from "../lib/analysis/analysis-worker-core.mjs";
 
 const fixture = JSON.parse(fs.readFileSync("fixtures/analysis-unit-1/eligible-analysis.json", "utf8"));
@@ -273,8 +278,13 @@ const baseJob = leasedJob(built.input_fingerprint);
     now: "2026-07-28T05:30:00.000Z",
   });
   assert.equal(replay.ok, true);
+  assert.equal(replay.replayed, true);
+  assert.equal(replay.result?.replayed, true);
+  assert.equal(replay.result?.status, "succeeded");
   assert.equal(replay.state.runs.length, 1);
   assert.equal(replay.state.decisions.length, 1);
+  assert.equal(replay.state.results.length, 1);
+  assert.equal(replay.state.evidence.length, first.state.evidence.length);
   const wrongWorker = persistRoutedSuccessInMemory({
     state: { jobs: [baseJob], runs: [], results: [], evidence: [], decisions: [] },
     job: baseJob,
@@ -291,6 +301,188 @@ const baseJob = leasedJob(built.input_fingerprint);
     decision: routed.decision,
     selected: routed.selected,
   }).ok, true);
+}
+
+// Test 8b — Replay conflict
+{
+  const routed = await executeRoutedAnalysisJob({
+    job: baseJob,
+    revision: fixture.revision,
+    notice: fixture.notice,
+    assets: fixture.assets,
+    source: fixture.source,
+    privacy_status: fixture.privacy_status,
+    economyProvider: createReplayProvider(fixture.provider_response),
+    escalationProvider: createReplayProvider(fixture.provider_response),
+    budget: createBudgetGuard(),
+  });
+  const first = persistRoutedSuccessInMemory({
+    state: { jobs: [baseJob], runs: [], results: [], evidence: [], decisions: [] },
+    job: baseJob,
+    workerId: "worker-a",
+    routedOutcome: routed,
+    now: "2026-07-28T05:30:00.000Z",
+  });
+  const conflict = persistRoutedSuccessInMemory({
+    state: first.state,
+    job: { ...baseJob, status: "succeeded", leased_by: null, lease_expires_at: null },
+    workerId: "worker-a",
+    routedOutcome: {
+      ...routed,
+      decision: { ...routed.decision, decision_fingerprint: "a".repeat(64) },
+    },
+    now: "2026-07-28T05:30:00.000Z",
+  });
+  assert.equal(conflict.ok, false);
+  assert.equal(conflict.reason, "routing_decision_conflict");
+}
+
+// Test 8c — SQL routed replay contract order
+{
+  const fnStart = migration007.indexOf("create or replace function public.finalize_notice_analysis_routing");
+  const fnBody = migration007.slice(fnStart);
+  const decisionLookup = fnBody.indexOf("from public.notice_analysis_routing_decisions");
+  const replayReturn = fnBody.indexOf("'replayed', true");
+  const leaseReject = fnBody.indexOf("finalize_notice_analysis_routing_rejected_lease");
+  assert.ok(decisionLookup >= 0);
+  assert.ok(replayReturn >= 0);
+  assert.ok(leaseReject >= 0);
+  assert.ok(decisionLookup < leaseReject);
+  assert.ok(replayReturn < leaseReject);
+  assert.match(migration007, /routing_decision_conflict/);
+  assert.match(migration007, /defer_notice_analysis_job_for_budget/);
+  assert.match(migration007, /status = 'budget_deferred'/);
+}
+
+// Test 8d — Budget defer transition
+{
+  const job = leasedJob(built.input_fingerprint, "-budget");
+  const deferred = deferJobForBudgetInMemory({
+    state: { jobs: [job] },
+    job,
+    workerId: "worker-a",
+    reasonCodes: ["daily_budget_exceeded"],
+    estimatedCostMicros: 999,
+    now: "2026-07-28T05:30:00.000Z",
+  });
+  assert.equal(deferred.ok, true);
+  assert.equal(deferred.job.status, "budget_deferred");
+  assert.equal(deferred.job.last_error_code, "budget_deferred");
+  assert.equal(deferred.job.leased_by, null);
+  assert.equal(deferred.job.lease_expires_at, null);
+  assert.equal(deferred.job.completed_at, null);
+  const replay = deferJobForBudgetInMemory({
+    state: deferred.state,
+    job: deferred.job,
+    workerId: "worker-a",
+    now: "2026-07-28T05:30:00.000Z",
+  });
+  assert.equal(replay.ok, true);
+  assert.equal(replay.replayed, true);
+}
+
+// Test 8e — Budget defer lease safety
+{
+  const job = leasedJob(built.input_fingerprint, "-budget-lease");
+  assert.equal(deferJobForBudgetInMemory({
+    state: { jobs: [job] },
+    job,
+    workerId: "worker-b",
+    now: "2026-07-28T05:30:00.000Z",
+  }).reason, "lease_owner_mismatch");
+  const expired = {
+    ...leasedJob(built.input_fingerprint, "-budget-expired"),
+    lease_expires_at: "2026-07-28T04:00:00.000Z",
+  };
+  assert.equal(deferJobForBudgetInMemory({
+    state: { jobs: [expired] },
+    job: expired,
+    workerId: "worker-a",
+    now: "2026-07-28T05:30:00.000Z",
+  }).reason, "lease_expired");
+  const succeeded = {
+    ...leasedJob(built.input_fingerprint, "-budget-succeeded"),
+    status: "succeeded",
+  };
+  assert.equal(deferJobForBudgetInMemory({
+    state: { jobs: [succeeded] },
+    job: succeeded,
+    workerId: "worker-a",
+    now: "2026-07-28T05:30:00.000Z",
+  }).reason, "invalid_status");
+}
+
+// Test 8f — DB consumer preflight guard
+{
+  assert.throws(
+    () => validateBoundedDbConsumerPreflight({ live: false, fixturePath: null }),
+    /bounded_db_consumer_requires_live_provider_or_fixture/,
+  );
+  assert.throws(
+    () => validateBoundedDbConsumerPreflight({ live: false, fixturePath: "missing-fixture.json" }),
+    /fixture_not_found/,
+  );
+  fs.mkdirSync("fixtures/analysis-unit-3", { recursive: true });
+  const invalidFixture = "fixtures/analysis-unit-3/invalid-fixture.json";
+  fs.writeFileSync(invalidFixture, "{not-json");
+  assert.throws(
+    () => validateBoundedDbConsumerPreflight({ live: false, fixturePath: invalidFixture }),
+    /fixture_invalid_json/,
+  );
+  fs.writeFileSync(invalidFixture, JSON.stringify({ notice: {} }));
+  assert.throws(
+    () => validateBoundedDbConsumerPreflight({ live: false, fixturePath: invalidFixture }),
+    /fixture_missing_provider_response/,
+  );
+  fs.unlinkSync(invalidFixture);
+  const prevKey = process.env.ANTHROPIC_API_KEY;
+  delete process.env.ANTHROPIC_API_KEY;
+  assert.throws(
+    () => validateBoundedDbConsumerPreflight({ live: true, fixturePath: null }),
+    /provider_credentials_missing/,
+  );
+  process.env.ANTHROPIC_API_KEY = prevKey ?? "test-key";
+  validateBoundedDbConsumerPreflight({
+    live: false,
+    fixturePath: "fixtures/analysis-unit-1/eligible-analysis.json",
+  });
+}
+
+// Test 8g — Valid fixture consumer preflight
+{
+  const preflight = validateBoundedDbConsumerPreflight({
+    live: false,
+    fixturePath: "fixtures/analysis-unit-1/eligible-analysis.json",
+  });
+  assert.equal(preflight.mode, "fixture");
+  assert.ok(preflight.replayResponse);
+  let claimCalls = 0;
+  const mockClient = {
+    rpc: (name) => {
+      if (name === "claim_notice_analysis_jobs") claimCalls += 1;
+      return Promise.resolve({ data: [], error: null });
+    },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { message: "skip" } }),
+          maybeSingle: async () => ({ data: null, error: null }),
+        }),
+      }),
+    }),
+  };
+  await runBoundedDbConsumer({
+    client: mockClient,
+    workerId: "worker-a",
+    limit: 1,
+    live: false,
+    replayResponse: preflight.replayResponse,
+    claimFn: async () => {
+      claimCalls += 1;
+      return [];
+    },
+  });
+  assert.equal(claimCalls, 1);
 }
 
 // Test 9 — Budget

@@ -326,6 +326,7 @@ set search_path = public
 as $$
 declare
   job_row public.notice_analysis_jobs;
+  existing_decision public.notice_analysis_routing_decisions;
   evidence_row jsonb;
 begin
   select * into job_row
@@ -333,8 +334,37 @@ begin
   where id = p_job_id
   for update;
 
-  if job_row.id is null
-     or job_row.leased_by is distinct from p_worker_id
+  if job_row.id is null then
+    raise exception 'finalize_notice_analysis_routing_rejected_job';
+  end if;
+
+  select * into existing_decision
+  from public.notice_analysis_routing_decisions
+  where job_id = p_job_id;
+
+  if existing_decision.id is not null then
+    if existing_decision.decision_fingerprint = p_decision->>'decision_fingerprint'
+       and existing_decision.selected_run_id = p_selected_run_id
+       and existing_decision.selected_result_id = p_selected_result_id
+       and existing_decision.economy_run_id is not distinct from
+         nullif(p_decision->>'economy_run_id', '')::uuid
+       and existing_decision.escalation_run_id is not distinct from
+         nullif(p_decision->>'escalation_run_id', '')::uuid
+       and existing_decision.policy_version = p_decision->>'policy_version'
+    then
+      return jsonb_build_object(
+        'replayed', true,
+        'job_id', p_job_id,
+        'status', 'succeeded',
+        'routing_decision_id', existing_decision.id,
+        'selected_run_id', existing_decision.selected_run_id,
+        'selected_result_id', existing_decision.selected_result_id
+      );
+    end if;
+    raise exception 'routing_decision_conflict';
+  end if;
+
+  if job_row.leased_by is distinct from p_worker_id
      or job_row.status not in ('leased', 'running')
      or job_row.lease_expires_at is null
      or job_row.lease_expires_at <= now() then
@@ -582,9 +612,84 @@ begin
       leased_by = null, lease_expires_at = null
   where id = p_job_id;
 
-  return jsonb_build_object('job_id', p_job_id, 'status', 'succeeded');
+  return jsonb_build_object(
+    'replayed', false,
+    'job_id', p_job_id,
+    'status', 'succeeded',
+    'routing_decision_id', (p_decision->>'id')::uuid,
+    'selected_run_id', p_selected_run_id,
+    'selected_result_id', p_selected_result_id
+  );
 end;
 $$;
+
+create or replace function public.defer_notice_analysis_job_for_budget(
+  p_job_id uuid,
+  p_worker_id text,
+  p_reason_codes jsonb default '[]'::jsonb,
+  p_error_message text default null,
+  p_estimated_cost_micros bigint default null
+)
+returns public.notice_analysis_jobs
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  job_row public.notice_analysis_jobs;
+begin
+  select * into job_row
+  from public.notice_analysis_jobs
+  where id = p_job_id
+  for update;
+
+  if job_row.id is null then
+    raise exception 'defer_notice_analysis_job_for_budget_rejected_job';
+  end if;
+
+  if job_row.status = 'budget_deferred'
+     and job_row.last_error_code = 'budget_deferred' then
+    return job_row;
+  end if;
+
+  if job_row.leased_by is distinct from p_worker_id
+     or job_row.status not in ('leased', 'running')
+     or job_row.lease_expires_at is null
+     or job_row.lease_expires_at <= now() then
+    raise exception 'defer_notice_analysis_job_for_budget_rejected_lease';
+  end if;
+
+  update public.notice_analysis_jobs
+  set status = 'budget_deferred',
+      last_error_code = 'budget_deferred',
+      last_error_message = coalesce(
+        p_error_message,
+        coalesce(p_reason_codes, '[]'::jsonb)::text,
+        'budget_deferred'
+      ),
+      updated_at = now(),
+      leased_by = null,
+      lease_expires_at = null,
+      completed_at = null,
+      metadata = case
+        when p_estimated_cost_micros is not null then
+          coalesce(metadata, '{}'::jsonb)
+          || jsonb_build_object('estimated_cost_micros', p_estimated_cost_micros)
+        else metadata
+      end
+  where id = p_job_id
+  returning * into job_row;
+
+  return job_row;
+end;
+$$;
+
+revoke all on function public.defer_notice_analysis_job_for_budget(
+  uuid, text, jsonb, text, bigint
+) from public, anon, authenticated;
+grant execute on function public.defer_notice_analysis_job_for_budget(
+  uuid, text, jsonb, text, bigint
+) to service_role;
 
 revoke all on function public.finalize_notice_analysis_routing(
   uuid, text, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid, uuid

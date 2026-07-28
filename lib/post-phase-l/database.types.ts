@@ -470,6 +470,16 @@ export interface PostPhaseLDatabase {
         };
         Returns: Json;
       };
+      defer_notice_analysis_job_for_budget: {
+        Args: {
+          p_job_id: string;
+          p_worker_id: string;
+          p_reason_codes?: Json;
+          p_error_message?: string | null;
+          p_estimated_cost_micros?: number | null;
+        };
+        Returns: LAnalysisJob;
+      };
       record_notice_analysis_review: {
         Args: {
           p_result_id: string;

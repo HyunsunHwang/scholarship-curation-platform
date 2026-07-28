@@ -29,6 +29,7 @@ union all select 'post_phase_l_environment_guard', count(*) from public.post_pha
 
 drop function if exists public.post_phase_l_rollback_run(uuid, text);
 drop function if exists public.post_phase_l_apply_legacy_review_decision(bigint, text, text, text, bigint);
+drop function if exists public.defer_notice_analysis_job_for_budget(uuid, text, jsonb, text, bigint);
 drop function if exists public.finalize_notice_analysis_routing(uuid, text, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, jsonb, uuid, uuid);
 drop function if exists public.finalize_notice_analysis_success(uuid, text, jsonb, jsonb, jsonb);
 drop function if exists public.claim_notice_analysis_job_by_revision(uuid, text, integer);

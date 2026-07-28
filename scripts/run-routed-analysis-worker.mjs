@@ -5,7 +5,10 @@ import { createClient } from "@supabase/supabase-js";
 import { assertPostPhaseLTarget } from "../lib/post-phase-l/target-guard.mjs";
 import { executeRoutedAnalysisJob } from "../lib/analysis/analysis-routing.mjs";
 import { createBudgetGuard } from "../lib/analysis/model-routing-policy.mjs";
-import { runBoundedDbConsumer } from "../lib/analysis/analysis-db-consumer.mjs";
+import {
+  runBoundedDbConsumer,
+  validateBoundedDbConsumerPreflight,
+} from "../lib/analysis/analysis-db-consumer.mjs";
 import { createReplayProvider } from "../lib/analysis/analysis-worker-core.mjs";
 import { buildAnalysisInput } from "../lib/analysis/analysis-input-builder.mjs";
 import { stableAnalysisUuid } from "../lib/analysis/analysis-identifiers.mjs";
@@ -124,20 +127,19 @@ async function main() {
   }
   if (mode !== "bounded-db-consumer") throw new Error("unsupported_mode");
   if (!options["allow-db-queue"]) throw new Error("--allow-db-queue is required");
-  const live = Boolean(options["allow-live-provider"]);
+  const preflight = validateBoundedDbConsumerPreflight({
+    live: Boolean(options["allow-live-provider"]),
+    fixturePath: options.fixture ? path.resolve(String(options.fixture)) : null,
+  });
   const client = dbClient();
   const workerId = `routed-analysis-${process.pid}`;
   const limit = Math.max(1, Math.min(Number(options.limit ?? 3), 10));
-  let replayResponse = null;
-  if (!live && options.fixture) {
-    replayResponse = JSON.parse(fs.readFileSync(path.resolve(String(options.fixture)), "utf8")).provider_response;
-  }
   const result = await runBoundedDbConsumer({
     client,
     workerId,
     limit,
-    live,
-    replayResponse,
+    live: preflight.mode === "live",
+    replayResponse: preflight.replayResponse,
     budgetOptions: {
       maxJobs: limit,
       maxRuns: Number(options["max-runs"] ?? limit * 2),
@@ -149,7 +151,7 @@ async function main() {
   console.log(JSON.stringify({
     mode,
     writes_performed: true,
-    provider_calls_live: live,
+    provider_calls_live: preflight.mode === "live",
     ...result,
   }, null, 2));
   if (result.summaries.some((row) => !row.ok)) process.exitCode = 1;
