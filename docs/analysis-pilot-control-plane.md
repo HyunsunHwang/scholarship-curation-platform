@@ -39,8 +39,11 @@ provider activity.
 The control plane stores only bounded diagnostics. Raw provider responses, complete prompts,
 notice bodies, attachment bodies, credentials, and connection strings are prohibited.
 
-Migration 009 has not been applied by Codex. The SQL golden vector, concurrency behavior,
-RLS, and privileges must be verified in the sandbox before registration.
+Migration 009 was applied by the operator, who also remediated a routed-finalizer privilege
+drift and confirmed the full verifier passes. Migration 010 persists the same state:
+`PUBLIC`, `anon`, and `authenticated` execute are revoked and `service_role` execute is
+granted. It intentionally has no rollback because rollback would restore an unsafe
+privilege state.
 
 The approved sandbox prerequisite is `pgcrypto` in the `extensions` schema. Migration 009
 calls `extensions.digest(text,text)` and `pg_catalog.encode(bytea,text)` explicitly and

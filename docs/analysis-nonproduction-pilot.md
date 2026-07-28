@@ -5,8 +5,10 @@ This runbook applies only to the isolated Post-Phase L sandbox
 target guard. Migration, registration, smoke, and expansion are operator actions; repository
 tests do not connect to Supabase or Anthropic.
 
-Migration 009 is still unapplied as of this repository revision. Database-native
-verification and concurrency checks remain operator gates.
+Migration 009 has been applied to the approved sandbox. The operator also corrected a
+discovered `finalize_notice_analysis_routing` execute-privilege drift and confirmed the full
+read-only verifier passes. Migration 010 reproduces that verified state additively:
+`PUBLIC`, `anon`, and `authenticated` cannot execute the finalizer; only `service_role` can.
 
 The approved sandbox must have `pgcrypto` installed in the `extensions` schema with
 `extensions.digest(text,text)`. Migration 009 fails before helper creation if that exact
@@ -28,13 +30,17 @@ than a dynamic search-path fallback.
   `POST_PHASE_L_ALLOW_LIVE_PROVIDER=true`. Either one alone is rejected before DB client or
   provider construction. Fixture/replay paths do not require the live permission.
 
-## 1. Apply migration 009
+## 1. Schema state and Migration 010
 
-The operator applies
-`supabase/post-phase-l/009_analysis_pilot_control_plane.sql` in the approved sandbox SQL
-Editor or approved transaction transport. Codex must not apply it. Migration 009 adds the
-pilot run, immutable member manifest, provider usage receipt, exact pilot claim, member
-completion, and expansion approval contracts.
+Migration 009 is already applied in the approved sandbox and must not be reapplied as part
+of this remediation. It provides the pilot run, immutable member manifest, provider usage
+receipt, exact pilot claim, member completion, and expansion approval contracts.
+
+After 009, apply
+`supabase/post-phase-l/010_finalize_routing_privilege_hardening.sql`. It is idempotent,
+checks the exact function signature, and fails closed unless the four-role privilege
+contract is satisfied. No rollback is provided because restoring the drift would weaken the
+safety boundary.
 
 ## 2. Read-only schema verification
 

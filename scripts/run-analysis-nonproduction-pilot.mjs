@@ -20,6 +20,7 @@ const MIGRATIONS = [
   "007_analysis_routing_and_identity_hardening.sql",
   "008_live_pilot_failed_run_and_lease_hardening.sql",
   "009_analysis_pilot_control_plane.sql",
+  "010_finalize_routing_privilege_hardening.sql",
 ];
 
 function parseArgs(argv) {

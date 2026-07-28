@@ -46,6 +46,26 @@ const workerSource = fs.readFileSync("scripts/run-routed-analysis-worker.mjs", "
 const registrationSource = fs.readFileSync(
   "scripts/register-analysis-live-pilot-v2.mjs", "utf8",
 );
+const privilegeMigration = fs.readFileSync(
+  "supabase/post-phase-l/010_finalize_routing_privilege_hardening.sql", "utf8",
+);
+
+matches(privilegeMigration, /begin;/);
+matches(privilegeMigration, /perform public\.post_phase_l_assert_environment\(\)/);
+matches(privilegeMigration, /to_regprocedure\(target_signature\) is null/);
+matches(privilegeMigration, /finalize_notice_analysis_routing_signature_missing/);
+matches(
+  privilegeMigration,
+  /revoke execute on function public\.finalize_notice_analysis_routing\([\s\S]*?\) from public, anon, authenticated;/,
+);
+matches(
+  privilegeMigration,
+  /grant execute on function public\.finalize_notice_analysis_routing\([\s\S]*?\) to service_role;/,
+);
+matches(privilegeMigration, /has_function_privilege\('authenticated'/);
+matches(privilegeMigration, /not has_function_privilege\('service_role'/);
+matches(privilegeMigration, /finalize_notice_analysis_routing_privilege_hardening_failed/);
+matches(privilegeMigration, /commit;/);
 
 matches(migration, /extension\.extname = 'pgcrypto'/);
 matches(migration, /namespace\.nspname = 'extensions'/);

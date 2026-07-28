@@ -1,4 +1,4 @@
--- Read-only verification for analysis migrations 004 through 009.
+-- Read-only verification for analysis migrations 004 through 010.
 -- Run only after verify_post_phase_l_schema.sql on the exact L sandbox.
 begin transaction read only;
 
@@ -134,6 +134,16 @@ select
     'public.finalize_notice_analysis_routing(uuid,text,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,uuid)',
     'EXECUTE'
   ) as anon_finalize_execute_revoked,
+  not has_function_privilege(
+    'authenticated',
+    'public.finalize_notice_analysis_routing(uuid,text,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,uuid)',
+    'EXECUTE'
+  ) as authenticated_finalize_execute_revoked,
+  has_function_privilege(
+    'service_role',
+    'public.finalize_notice_analysis_routing(uuid,text,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,uuid)',
+    'EXECUTE'
+  ) as service_role_finalize_execute_granted,
   has_function_privilege(
     'service_role',
     'public.claim_notice_analysis_pilot_job(uuid,text,text,integer)',
