@@ -1,0 +1,125 @@
+{
+  "evaluation": "db-independent-minimal-llm-evaluation-v1",
+  "generated_at": "2026-07-29T04:54:36.555Z",
+  "fixture_path": "fixtures/llm-analysis/ewha-real-notices-4.json",
+  "fixture_validation": {
+    "valid": true,
+    "errors": []
+  },
+  "model": "claude-sonnet-4-6",
+  "live": true,
+  "retry_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "provider_call_count": 1,
+  "results": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "model": "claude-sonnet-4-6",
+      "started_at": "2026-07-29T04:54:36.556Z",
+      "finished_at": "2026-07-29T04:55:02.207Z",
+      "status": "validation_failed",
+      "structured_result": {
+        "scholarship_name": {
+          "value": "성적우수장학금 이월수혜",
+          "evidence": [
+            "2026학년도 2학기 성적우수장학금 이월수혜 신청 안내"
+          ]
+        },
+        "organizer": {
+          "value": "학생처 장학복지팀",
+          "evidence": [
+            "학생처 장학복지팀"
+          ]
+        },
+        "eligibility": [
+          {
+            "condition": "휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자)",
+            "evidence": "휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자)"
+          },
+          {
+            "condition": "해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수",
+            "evidence": "해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수"
+          }
+        ],
+        "benefits": [
+          {
+            "description": "등록금 고지서 감면",
+            "amount_krw": null,
+            "evidence": "지급 방법: 등록금 고지서 감면"
+          }
+        ],
+        "application_period": {
+          "start": "2026.07.01",
+          "end": "2026.08.31",
+          "raw_text": "신청기간 2026.07.01 ~ 2026.08.31",
+          "evidence": [
+            "신청기간 2026.07.01 ~ 2026.08.31",
+            "조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금)",
+            "조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금)",
+            "일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)"
+          ]
+        },
+        "required_documents": [],
+        "application_method": [
+          {
+            "method": "유레카시스템에서 복학 신청 시 이월수혜 신청 - 유레카통합행정> 학적> '복학신청/취소' 또는 '조기복학신청/취소' 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청",
+            "evidence": "유레카통합행정> 학적> '복학신청/취소' 또는 '조기복학신청/취소' 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청함"
+          }
+        ],
+        "important_constraints": [
+          {
+            "constraint": "복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함",
+            "evidence": "복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함."
+          },
+          {
+            "constraint": "2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함",
+            "evidence": "2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함."
+          },
+          {
+            "constraint": "이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정",
+            "evidence": "이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+          }
+        ],
+        "contact": [
+          {
+            "value": "02-3277-2274, 2840",
+            "evidence": "02-3277-2274, 2840"
+          }
+        ],
+        "unknown_or_ambiguous": []
+      },
+      "schema_validation_status": "invalid",
+      "evidence_validation_status": "invalid",
+      "validation_errors": [
+        "invalid_date:application_period.start",
+        "invalid_date:application_period.end",
+        "evidence_not_found:application_method[0]"
+      ],
+      "critical_hallucination_indicators": [
+        "evidence_not_found:application_method[0]"
+      ],
+      "usage": {
+        "input_tokens": 2436,
+        "output_tokens": 1147,
+        "cached_input_tokens": 0
+      },
+      "sanitized_error_category": null,
+      "manual_assessment": {
+        "scholarship_name": "CORRECT",
+        "organizer": "CORRECT",
+        "eligibility": "PARTIAL",
+        "benefits_amount": "CORRECT",
+        "application_period": "PARTIAL",
+        "required_documents": "CORRECT",
+        "application_method": "PARTIAL",
+        "important_constraints": "CORRECT",
+        "contact": "CORRECT",
+        "ambiguity_handling": "CORRECT",
+        "summary": "The extracted facts align with the notice, but the date format violates the schema and the application-method quote is not an exact input substring."
+      }
+    }
+  ],
+  "status": "validation_hold"
+}
