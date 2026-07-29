@@ -1,0 +1,206 @@
+{
+  "evaluation": "segment-reference-generalization-v3.4",
+  "generated_at": "2026-07-29T07:11:12.855Z",
+  "live": true,
+  "model": "claude-sonnet-4-6",
+  "provider_policy": {
+    "timeout_ms": 120000,
+    "max_output_tokens": 4096,
+    "retry_count": 0,
+    "fallback_count": 0,
+    "max_calls": 6,
+    "sequential": true
+  },
+  "provider_attempt_count": 2,
+  "provider_call_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "crawler_run_count": 0,
+  "production_access_count": 0,
+  "selection": {
+    "requested_fixture_count": 4,
+    "persisted_candidate_count": 2,
+    "selected_fixture_count": 2,
+    "provider_plan": {
+      "plan": [
+        {
+          "fixture_id": "persisted-4fd429ec0cff",
+          "tier": "SIMPLE"
+        },
+        {
+          "fixture_id": "persisted-c29c99eca95c",
+          "tier": "SIMPLE"
+        }
+      ],
+      "total_calls": 2
+    },
+    "selected": [
+      {
+        "fixture_id": "persisted-4fd429ec0cff",
+        "source_id": "yonsei_060",
+        "article_id": "4fd429ec0cff6626",
+        "title": "UIC Scholarship Application Announcement: 2026 Fall (Jun 16, 2026)",
+        "body_text": "UIC Scholarship Application Announcement: 2026 Fall * From 2022 winter, documents for Need-based Scholarship(언더우드자유장학금) should be submitted via Yonsei Portal System(http://portal.yonsei.ac.kr) during the application period. (Log in -> Academic Information -> Scholarship -> Students Scholarship Application(학생장학신청) -> Select 2026-2 semester ->Step 1. Applicable Scholarship -> 언더우드자유장학금 -> Download Notice File -> ADD -> Step 2. Apply for Scholarship ->Upload Application Form (Notice File) and Suppl",
+        "selection_provenance": {
+          "report_path": "reports/post-phase-m-live/cycle-1/crawler/scholarship-notices-20260716.json",
+          "notice_url": "https://uic.yonsei.ac.kr/main/news.php?mid=m06_01_02&act=view&uid=14407",
+          "source_record_kind": "observedItem_excerpt"
+        },
+        "complexity_preview": "SIMPLE"
+      },
+      {
+        "fixture_id": "persisted-c29c99eca95c",
+        "source_id": "cau_001",
+        "article_id": "c29c99eca95c71c8",
+        "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+        "body_text": "제 목 [★] 경영학부생 <외부장학 추천> 신청 방법 안내 2026.03.05 | 749 첨부파일 등록된 첨부파일이 없습니다. 경영학부 학생 중 외부 장학재단 등 타 기관 장학금 수혜를 위해 경영학부의 추천서가 필요한 학생은 다음과 같이 신청해주시기 바랍니다. 1. 신청시기: 추천서 수령 희망일 기준 최소 7일 전까지 (기한 엄수/ 이후 신청할 경우 희망 수령일 이내로 추천서 승인이 이루어지지 않을 수 있음) 2. 신청절차 1) 기한 내 구글 폼 양식을 통해 신청 후 경영학부 사무실로 전화하여 접수 요청 (https://forms.gle/tYtfGqEw5fQGYSNt9) 2) 수령 희망일 방문 전 경영학부 사무실로 확인 전화 후 방문 수령 문의: 경영학부 사무실 02-820-5539, 5540 목록",
+        "selection_provenance": {
+          "report_path": "reports/post-phase-l-live/2026-07-15T15-09-41-370Z-cau_001/crawler/scholarship-notices-20260716.json",
+          "notice_url": "https://biz.cau.ac.kr/2016/sub06/sub06_01_view.php?bbsIdx=7345&gotoPage=1&searchKind=&searchStr=&searchBbsCode=",
+          "source_record_kind": "newNotice"
+        },
+        "complexity_preview": "SIMPLE"
+      }
+    ]
+  },
+  "results": [
+    {
+      "fixture_id": "persisted-4fd429ec0cff",
+      "source_id": "yonsei_060",
+      "article_id": "4fd429ec0cff6626",
+      "title": "UIC Scholarship Application Announcement: 2026 Fall (Jun 16, 2026)",
+      "complexity": {
+        "tier": "SIMPLE",
+        "score": 0,
+        "features": {
+          "body_length": 500,
+          "segment_count": 1,
+          "date_candidate_count": 1,
+          "amount_rate_candidate_count": 0,
+          "contact_candidate_count": 0,
+          "table_list_density": 0,
+          "expected_claim_density": 1
+        }
+      },
+      "segmentation": {
+        "valid": true,
+        "segment_count": 1
+      },
+      "provider_attempt_count": 1,
+      "provider_call_count": 0,
+      "passes": [
+        {
+          "name": "SIMPLE",
+          "status": "failed",
+          "error": "provider_credentials_missing",
+          "latency_ms": 0,
+          "usage": null
+        }
+      ],
+      "parse_status": "failed",
+      "claim_result": {
+        "input_claim_count": 0,
+        "accepted": 0,
+        "accepted_with_normalization": 0,
+        "needs_review": 0,
+        "rejected": 0,
+        "duplicate_removal": 0,
+        "deterministic_recovery": 0,
+        "genuinely_unresolved": 0,
+        "provider_repair_candidates": 0
+      },
+      "final_claims": [],
+      "source_segments": [
+        {
+          "segment_id": "S001",
+          "text": "UIC Scholarship Application Announcement: 2026 Fall * From 2022 winter, documents for Need-based Scholarship(언더우드자유장학금) should be submitted via Yonsei Portal System(http://portal.yonsei.ac.kr) during the application period. (Log in -> Academic Information -> Scholarship -> Students Scholarship Application(학생장학신청) -> Select 2026-2 semester ->Step 1. Applicable Scholarship -> 언더우드자유장학금 -> Download Notice File -> ADD -> Step 2. Apply for Scholarship ->Upload Application Form (Notice File) and Suppl",
+          "start_offset": 0,
+          "end_offset": 500,
+          "segment_type": "paragraph"
+        }
+      ]
+    },
+    {
+      "fixture_id": "persisted-c29c99eca95c",
+      "source_id": "cau_001",
+      "article_id": "c29c99eca95c71c8",
+      "title": "[★] 경영학부생 <외부장학 추천> 신청 방법 안내",
+      "complexity": {
+        "tier": "SIMPLE",
+        "score": 0,
+        "features": {
+          "body_length": 395,
+          "segment_count": 2,
+          "date_candidate_count": 3,
+          "amount_rate_candidate_count": 0,
+          "contact_candidate_count": 1,
+          "table_list_density": 1,
+          "expected_claim_density": 2
+        }
+      },
+      "segmentation": {
+        "valid": true,
+        "segment_count": 2
+      },
+      "provider_attempt_count": 1,
+      "provider_call_count": 0,
+      "passes": [
+        {
+          "name": "SIMPLE",
+          "status": "failed",
+          "error": "provider_credentials_missing",
+          "latency_ms": 0,
+          "usage": null
+        }
+      ],
+      "parse_status": "failed",
+      "claim_result": {
+        "input_claim_count": 0,
+        "accepted": 0,
+        "accepted_with_normalization": 0,
+        "needs_review": 0,
+        "rejected": 0,
+        "duplicate_removal": 0,
+        "deterministic_recovery": 0,
+        "genuinely_unresolved": 0,
+        "provider_repair_candidates": 0
+      },
+      "final_claims": [],
+      "source_segments": [
+        {
+          "segment_id": "S001",
+          "text": "제 목 [★] 경영학부생 <외부장학 추천> 신청 방법 안내 2026.03.05 | 749 첨부파일 등록된 첨부파일이 없습니다. 경영학부 학생 중 외부 장학재단 등 타 기관 장학금 수혜를 위해 경영학부의 추천서가 필요한 학생은 다음과 같이 신청해주시기 바랍니다.",
+          "start_offset": 0,
+          "end_offset": 145,
+          "segment_type": "paragraph"
+        },
+        {
+          "segment_id": "S002",
+          "text": " 1. 신청시기: 추천서 수령 희망일 기준 최소 7일 전까지 (기한 엄수/ 이후 신청할 경우 희망 수령일 이내로 추천서 승인이 이루어지지 않을 수 있음) 2. 신청절차 1) 기한 내 구글 폼 양식을 통해 신청 후 경영학부 사무실로 전화하여 접수 요청 (https://forms.gle/tYtfGqEw5fQGYSNt9) 2) 수령 희망일 방문 전 경영학부 사무실로 확인 전화 후 방문 수령 문의: 경영학부 사무실 02-820-5539, 5540 목록",
+          "start_offset": 145,
+          "end_offset": 395,
+          "segment_type": "section"
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "fixture_count": 2,
+    "completed": 0,
+    "partial": 0,
+    "failed": 2,
+    "simple_success_rate": 0,
+    "complex_success_rate": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "accepted_claim_ratio": null,
+    "manual_review_claim_ratio": null,
+    "deterministic_recovery_ratio": null,
+    "provider_repair_candidate_ratio": null,
+    "semantic_audit": {
+      "status": "NOT_EVALUATED",
+      "reason": "no parsed claims because provider credentials were unavailable"
+    }
+  },
+  "decision": "HOLD"
+}
