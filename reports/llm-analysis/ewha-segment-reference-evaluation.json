@@ -1,0 +1,500 @@
+{
+  "evaluation": "db-independent-segment-reference-llm-evaluation-v2",
+  "schema_version": "segment-reference-extraction-v2",
+  "generated_at": "2026-07-29T05:19:18.811Z",
+  "fixture_path": "fixtures/llm-analysis/ewha-real-notices-4.json",
+  "fixture_validation": {
+    "valid": true,
+    "errors": []
+  },
+  "model": "claude-sonnet-4-6",
+  "live": true,
+  "retry_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "provider_call_count": 2,
+  "segmentation": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "body_length": 902,
+      "segment_count": 4,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365405",
+      "body_length": 8229,
+      "segment_count": 17,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "body_length": 8699,
+      "segment_count": 21,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365911",
+      "body_length": 1564,
+      "segment_count": 7,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    }
+  ],
+  "results": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "article_id": "365300",
+      "model": "claude-sonnet-4-6",
+      "started_at": "2026-07-29T05:19:18.812Z",
+      "finished_at": "2026-07-29T05:19:34.633Z",
+      "status": "completed",
+      "parsed_model_output": {
+        "scholarship_name": {
+          "semantic_value": "2026학년도 2학기 성적우수장학금 이월수혜",
+          "source_refs": [
+            "S001"
+          ]
+        },
+        "organizer": {
+          "semantic_value": "이화여자대학교 학생처 장학복지팀",
+          "source_refs": [
+            "S004"
+          ]
+        },
+        "eligibility": [
+          {
+            "category": "재학상태",
+            "semantic_value": "휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자)",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "category": "해당 장학금 종류",
+            "semantic_value": "단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수",
+            "source_refs": [
+              "S002"
+            ]
+          }
+        ],
+        "benefits": [
+          {
+            "benefit_type": "등록금 감면",
+            "semantic_value": "등록금 고지서 감면 방식으로 지급",
+            "raw_amount_text": "등록금 고지서 감면",
+            "source_refs": [
+              "S004"
+            ]
+          }
+        ],
+        "application_periods": [
+          {
+            "label": "조기복학자(1차)",
+            "raw_start": "2026. 7. 1.(수)",
+            "raw_end": "7. 31.(금)",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "label": "조기복학자(2차)",
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 28.(금)",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "label": "일반복학자",
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 31.(월)",
+            "source_refs": [
+              "S002"
+            ]
+          }
+        ],
+        "required_documents": [],
+        "application_methods": [
+          {
+            "method_type": "온라인",
+            "semantic_value": "유레카시스템에서 복학 신청 시 이월수혜 신청 — 유레카통합행정 > 학적 > '복학신청/취소' 또는 '조기복학신청/취소' 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청",
+            "source_refs": [
+              "S003"
+            ]
+          }
+        ],
+        "important_constraints": [
+          {
+            "category": "신청 기한 효과",
+            "semantic_value": "2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임.",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "category": "미신청 시 불이익",
+            "semantic_value": "복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함.",
+            "source_refs": [
+              "S003"
+            ]
+          }
+        ],
+        "contacts": [
+          {
+            "contact_type": "전화",
+            "raw_value": "02-3277-2274, 2840",
+            "source_refs": [
+              "S004"
+            ]
+          },
+          {
+            "contact_type": "부서",
+            "raw_value": "학생처 장학복지팀",
+            "source_refs": [
+              "S004"
+            ]
+          }
+        ],
+        "unknown_or_ambiguous": []
+      },
+      "reconstructed_evidence": {
+        "scholarship_name": {
+          "semantic_value": "2026학년도 2학기 성적우수장학금 이월수혜",
+          "source_refs": [
+            "S001"
+          ],
+          "evidence": [
+            {
+              "segment_id": "S001",
+              "text": "공지 [학부] 2026학년도 2학기 성적우수장학금 이월수혜 신청 안내 작성처장학복지팀 신청기간 2026.07.01 ~ 2026.08.31 조회1451 2026학년도 2학기 성적우수장학금 이월수혜 신청 안내2026학년도 2학기 복학 예정인 학부생 중 성적우수 장학금 이월수혜 대상자는 아래 내용을 참고하여 온라인 복학 신청 시 이월수혜 신청을 함께 하시기 바랍니다."
+            }
+          ]
+        },
+        "organizer": {
+          "semantic_value": "이화여자대학교 학생처 장학복지팀",
+          "source_refs": [
+            "S004"
+          ],
+          "evidence": [
+            {
+              "segment_id": "S004",
+              "text": "4. 지급 방법: 등록금 고지서 감면학생처 장학복지팀02-3277-2274, 2840 페이스북 트위터 블로그 URL Copy 이전글 [학부] 2026-2학기 국가/이화복지 장학금 지급비율 안내 다음글 [대학원] 2026학년도 2학기 한국장학재단 학자금대출 신청 안내 목록"
+            }
+          ]
+        },
+        "eligibility": [
+          {
+            "category": "재학상태",
+            "semantic_value": "휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자)",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ]
+          },
+          {
+            "category": "해당 장학금 종류",
+            "semantic_value": "단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ]
+          }
+        ],
+        "benefits": [
+          {
+            "benefit_type": "등록금 감면",
+            "semantic_value": "등록금 고지서 감면 방식으로 지급",
+            "raw_amount_text": "등록금 고지서 감면",
+            "source_refs": [
+              "S004"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S004",
+                "text": "4. 지급 방법: 등록금 고지서 감면학생처 장학복지팀02-3277-2274, 2840 페이스북 트위터 블로그 URL Copy 이전글 [학부] 2026-2학기 국가/이화복지 장학금 지급비율 안내 다음글 [대학원] 2026학년도 2학기 한국장학재단 학자금대출 신청 안내 목록"
+              }
+            ],
+            "normalized_amount": {
+              "raw_amount_text": "등록금 고지서 감면",
+              "amount_krw": null,
+              "status": "not_numeric"
+            }
+          }
+        ],
+        "application_periods": [
+          {
+            "label": "조기복학자(1차)",
+            "raw_start": "2026. 7. 1.(수)",
+            "raw_end": "7. 31.(금)",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ],
+            "normalized_period": {
+              "raw_start": "2026. 7. 1.(수)",
+              "raw_end": "7. 31.(금)",
+              "normalized_start": "2026-07-01",
+              "normalized_end": "2026-07-31",
+              "normalization_status": "normalized"
+            }
+          },
+          {
+            "label": "조기복학자(2차)",
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 28.(금)",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ],
+            "normalized_period": {
+              "raw_start": "2026. 8. 1.(토)",
+              "raw_end": "8. 28.(금)",
+              "normalized_start": "2026-08-01",
+              "normalized_end": "2026-08-28",
+              "normalization_status": "normalized"
+            }
+          },
+          {
+            "label": "일반복학자",
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 31.(월)",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ],
+            "normalized_period": {
+              "raw_start": "2026. 8. 1.(토)",
+              "raw_end": "8. 31.(월)",
+              "normalized_start": "2026-08-01",
+              "normalized_end": "2026-08-31",
+              "normalization_status": "normalized"
+            }
+          }
+        ],
+        "required_documents": [],
+        "application_methods": [
+          {
+            "method_type": "온라인",
+            "semantic_value": "유레카시스템에서 복학 신청 시 이월수혜 신청 — 유레카통합행정 > 학적 > '복학신청/취소' 또는 '조기복학신청/취소' 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청",
+            "source_refs": [
+              "S003"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S003",
+                "text": "3. 신청 방법: 유레카시스템에서 복학 신청 시 이월수혜 신청 유레카통합행정> 학적> ‘복학신청/취소’ 또는 ‘조기복학신청/취소’ 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청함※ 복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함."
+              }
+            ]
+          }
+        ],
+        "important_constraints": [
+          {
+            "category": "신청 기한 효과",
+            "semantic_value": "2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임.",
+            "source_refs": [
+              "S002"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S002",
+                "text": "1. 신청 대상 휴학으로 인하여 성적우수 장학금을 수혜하지 않은 학부생 중 2026학년도 2학기 복학 예정자(조기복학신청자 및 일반복학신청자) ※ 해당 장학금: 단과대학 수석, 단과대학 차석, 전공 수석, 최우수, 우수2. 신청 기간 (복학 신청기간과 동일) ▶ 조기복학자(1차) : 2026. 7. 1.(수) ~ 7. 31.(금) ▶ 조기복학자(2차) : 2026. 8. 1.(토) ~ 8. 28.(금) ▶ 일반복학자 : 2026. 8. 1.(토) ~ 8. 31.(월)※ 2026. 8. 4.(화)까지 이월신청을 완료하여야 2026년 8월 정규등록기간에 성적우수장학금이 반영된 고지서 확인이 가능함. 이후 이월신청 하는 경우 정규등록기간 및 추가등록기간에 순차적으로 고지서에 장학금이 반영될 예정임."
+              }
+            ]
+          },
+          {
+            "category": "미신청 시 불이익",
+            "semantic_value": "복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함.",
+            "source_refs": [
+              "S003"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S003",
+                "text": "3. 신청 방법: 유레카시스템에서 복학 신청 시 이월수혜 신청 유레카통합행정> 학적> ‘복학신청/취소’ 또는 ‘조기복학신청/취소’ 메뉴에서 복학 신청 시 성적우수장학금 이월수혜를 함께 신청함※ 복학하는 학기에 이월수혜 신청을 하지 않을 경우 추후 성적우수 장학금 이월수혜 불가함."
+              }
+            ]
+          }
+        ],
+        "contacts": [
+          {
+            "contact_type": "전화",
+            "raw_value": "02-3277-2274, 2840",
+            "source_refs": [
+              "S004"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S004",
+                "text": "4. 지급 방법: 등록금 고지서 감면학생처 장학복지팀02-3277-2274, 2840 페이스북 트위터 블로그 URL Copy 이전글 [학부] 2026-2학기 국가/이화복지 장학금 지급비율 안내 다음글 [대학원] 2026학년도 2학기 한국장학재단 학자금대출 신청 안내 목록"
+              }
+            ],
+            "normalized_contact": {
+              "raw_value": "02-3277-2274, 2840",
+              "phone_numbers": [
+                "02-3277-2274"
+              ],
+              "emails": []
+            }
+          },
+          {
+            "contact_type": "부서",
+            "raw_value": "학생처 장학복지팀",
+            "source_refs": [
+              "S004"
+            ],
+            "evidence": [
+              {
+                "segment_id": "S004",
+                "text": "4. 지급 방법: 등록금 고지서 감면학생처 장학복지팀02-3277-2274, 2840 페이스북 트위터 블로그 URL Copy 이전글 [학부] 2026-2학기 국가/이화복지 장학금 지급비율 안내 다음글 [대학원] 2026학년도 2학기 한국장학재단 학자금대출 신청 안내 목록"
+              }
+            ],
+            "normalized_contact": {
+              "raw_value": "학생처 장학복지팀",
+              "phone_numbers": [],
+              "emails": []
+            }
+          }
+        ],
+        "unknown_or_ambiguous": []
+      },
+      "normalized_values": {
+        "application_periods": [
+          {
+            "raw_start": "2026. 7. 1.(수)",
+            "raw_end": "7. 31.(금)",
+            "normalized_start": "2026-07-01",
+            "normalized_end": "2026-07-31",
+            "normalization_status": "normalized"
+          },
+          {
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 28.(금)",
+            "normalized_start": "2026-08-01",
+            "normalized_end": "2026-08-28",
+            "normalization_status": "normalized"
+          },
+          {
+            "raw_start": "2026. 8. 1.(토)",
+            "raw_end": "8. 31.(월)",
+            "normalized_start": "2026-08-01",
+            "normalized_end": "2026-08-31",
+            "normalization_status": "normalized"
+          }
+        ],
+        "benefits": [
+          {
+            "raw_amount_text": "등록금 고지서 감면",
+            "amount_krw": null,
+            "status": "not_numeric"
+          }
+        ],
+        "contacts": [
+          {
+            "raw_value": "02-3277-2274, 2840",
+            "phone_numbers": [
+              "02-3277-2274"
+            ],
+            "emails": []
+          },
+          {
+            "raw_value": "학생처 장학복지팀",
+            "phone_numbers": [],
+            "emails": []
+          }
+        ]
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "schema_valid": true,
+        "source_ref_valid": true,
+        "raw_value_valid": true,
+        "critical_claims_without_refs": 0
+      },
+      "usage": {
+        "input_tokens": 2836,
+        "output_tokens": 909,
+        "cached_input_tokens": 0
+      },
+      "sanitized_error_category": null,
+      "manual_assessment": {
+        "scholarship_name": "CORRECT",
+        "organizer": "HALLUCINATED",
+        "eligibility": "CORRECT",
+        "benefits": "CORRECT",
+        "application_periods": "CORRECT",
+        "required_documents": "NOT_PRESENT",
+        "application_methods": "CORRECT",
+        "important_constraints": "CORRECT",
+        "contacts": "CORRECT",
+        "ambiguity_handling": "CORRECT",
+        "summary": "The selected segments support the extracted notice facts and deterministic code normalized all three date ranges. The organizer adds '이화여자대학교', which is not stated in its selected S004 segment, so it is marked HALLUCINATED under the strict source-reference contract."
+      }
+    },
+    {
+      "fixture_id": "ewha_068_365405",
+      "article_id": "365405",
+      "model": "claude-sonnet-4-6",
+      "started_at": "2026-07-29T05:19:34.635Z",
+      "finished_at": "2026-07-29T05:20:19.641Z",
+      "status": "failed",
+      "parsed_model_output": null,
+      "reconstructed_evidence": null,
+      "normalized_values": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      },
+      "usage": null,
+      "sanitized_error_category": "transport",
+      "manual_assessment": "NOT_AVAILABLE"
+    }
+  ],
+  "status": "provider_connectivity_hold",
+  "not_executed_fixture_ids": [
+    "ewha_068_365411",
+    "ewha_068_365911"
+  ],
+  "critical_risk_summary": {
+    "critical_hallucination_count": 1,
+    "invalid_source_ref_count": 0,
+    "critical_claims_without_refs": 0,
+    "raw_values_not_found": 0,
+    "normalization_failures": 0,
+    "schema_failures": 0,
+    "provider_transport_failures": 1
+  }
+}
