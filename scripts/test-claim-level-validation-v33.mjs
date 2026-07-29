@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import { summarizePass, validateClaimLevel } from "../lib/analysis/claim-level-validator-v33.mjs";
+const segments = [{ segment_id: "S001", text: "기간: 2026. 7. 1.(수) ~ 7. 31.(금), 금액 300만원 연락처 02-1234-5678" }];
+const base = { field: "eligibility", category: null, role: "대상학생", semantic_value: "대상학생", raw_values: ["없는 raw"], source_refs: ["S001"] };
+const normalized = validateClaimLevel(base, segments); assert.equal(normalized.status, "ACCEPTED_WITH_NORMALIZATION"); assert.equal(normalized.canonical_claim.scope_label, "대상학생"); assert.deepEqual(normalized.discarded_raw_hints, ["없는 raw"]);
+assert.equal(validateClaimLevel({ ...base, field: "application_period", raw_values: ["2026.7.1.(수)", "7.31.(금)"] }, segments).status, "ACCEPTED_WITH_NORMALIZATION");
+assert.equal(validateClaimLevel({ ...base, field: "application_period", raw_values: ["2026.7.2."] }, segments).status, "NEEDS_REVIEW");
+assert.equal(validateClaimLevel({ ...base, field: "scholarship_organization", role: "donor", raw_values: [] }, segments).status, "ACCEPTED_WITH_NORMALIZATION");
+assert.equal(validateClaimLevel({ ...base, field: "scholarship_organization", role: "unknown", raw_values: [] }, segments).status, "NEEDS_REVIEW");
+assert.equal(validateClaimLevel({ ...base, source_refs: ["S999"] }, segments).status, "REJECTED");
+const summary = summarizePass([{ ...base }, { ...base, source_refs: ["S999"] }], segments); assert.equal(summary.accepted_with_normalization.length, 1); assert.equal(summary.rejected_claims.length, 1); console.log("claim-level v3.3 tests passed");
