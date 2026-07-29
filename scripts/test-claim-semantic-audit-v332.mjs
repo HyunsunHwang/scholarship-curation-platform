@@ -1,0 +1,3 @@
+import assert from "node:assert/strict";
+import { extractRawCandidates } from "../lib/analysis/raw-candidate-extractor-v332.mjs";
+const result = extractRawCandidates("기간 2026. 7. 1.(수) 09:00 ~ 11.17.(화) 18:00, 연 400만원 학기당 200만원 연 1.70% 수업료 전액 연락처 02-1234-5678 a@test.com", "S001"); assert.ok(result.dates.length >= 2); assert.ok(result.amounts.some((row) => row.raw_candidate.includes("400만원"))); assert.ok(result.amounts.some((row) => row.rate_percent === "1.70")); assert.ok(result.amounts.some((row) => row.scope === "full_tuition")); assert.deepEqual(result.contacts.map((row) => row.raw_candidate), ["02-1234-5678", "a@test.com"]); console.log("claim semantic audit v3.3.2 tests passed");
