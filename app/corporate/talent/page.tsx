@@ -27,12 +27,7 @@ export default async function CorporateTalentExplorePage({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-bold text-ink">인재 찾기</h1>
-        <p className="mt-1 text-sm text-ink/50">
-          프로필 공개에 동의한 학생만 표시됩니다. 이름은 마스킹되어 제공됩니다.
-        </p>
-      </div>
+      <h1 className="text-xl font-bold text-ink">인재 찾기</h1>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <Suspense fallback={<div className="w-full lg:w-64" />}>

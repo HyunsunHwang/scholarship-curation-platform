@@ -102,6 +102,7 @@ export function parseBrowseParams(searchParams: {
   page?: string;
   list?: string;
   interest?: string;
+  industry?: string;
   benefit?: string;
   org?: string;
   q?: string;
@@ -111,6 +112,7 @@ export function parseBrowseParams(searchParams: {
   const section = parseBrowseSection(searchParams.section);
   const facets = parseBrowseFacets({
     interest: searchParams.interest,
+    industry: searchParams.industry,
     benefit: searchParams.benefit,
     org: searchParams.org,
     q: searchParams.q,
@@ -185,6 +187,9 @@ function applyContestFacetFilters(
       query = query.overlaps("interest_categories", jobIds);
     }
   }
+  if (facets.industries.length) {
+    query = query.overlaps("interest_industries", facets.industries);
+  }
   if (facets.benefits.length) {
     const tags = rawBenefitTagsForIds(facets.benefits);
     if (tags.length) query = query.overlaps("benefits", tags);
@@ -211,6 +216,10 @@ function applyScholarshipFacetFilters(
   query: any,
   facets: BrowseFacetFilters
 ) {
+  if (facets.industries.length) {
+    // 장학금에는 산업 태그가 없으므로 산업 필터 시 공모전 계열만 노출한다.
+    return query.eq("id", -1);
+  }
   const fieldCodes = fieldCodesForInterestIds(facets.interests);
   if (fieldCodes.length) {
     query = query.overlaps("qual_field_codes", fieldCodes);

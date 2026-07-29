@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-07-29T07:40:50.000Z",
+  "classifier_version": "2026-07-29.4",
+  "baseline_scan": "reports/opportunity-tagging-quality-scan-1785308890398.json",
+  "latest_scan": "reports/opportunity-tagging-quality-scan-1785310843585.json",
+  "goldset": {
+    "samples": 30,
+    "jobs_precision": 1,
+    "jobs_recall": 1,
+    "industries_precision": 1,
+    "industries_recall": 1
+  },
+  "comparison": {
+    "ad_title_still_missing_marketing": {
+      "before": 40,
+      "after": 0,
+      "delta": -40,
+      "note": "Title heuristic miss for marketing jobs after rule patches"
+    },
+    "design_title_missing_design_jobs": {
+      "before": 3,
+      "after": 3,
+      "delta": 0
+    },
+    "ad_title_missing_marketing_in_db": {
+      "before": 27,
+      "after": 27,
+      "note": "Unchanged until remap --apply; classifier now predicts marketing tags for these"
+    },
+    "auto_tagged": {
+      "before": 1408,
+      "after": 1169,
+      "note": "Dropped mainly because public_edu_npo ignores body-only 대학교/재단 noise; fewer false industries → fewer auto_tagged"
+    },
+    "needs_review_pct": {
+      "before": 58.9,
+      "after": 65.9
+    }
+  },
+  "success_criteria": {
+    "goldset_precision_recall": "pass (1.0 / 1.0)",
+    "ad_heuristic_miss_half_reduction": "pass (40 → 0)",
+    "empty_jobs_regression_poetry_scholarship": "pass (goldset empty cases)"
+  },
+  "remaining_for_next_cycle": [
+    "Apply migration for interest_industries + contest_tagging_metadata",
+    "Dry-run then remap --apply for contests",
+    "Review needs_review queue / optional LLM for residual ambiguous titles",
+    "Investigate remaining design_title_missing_design_jobs (3)"
+  ]
+}

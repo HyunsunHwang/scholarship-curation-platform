@@ -208,7 +208,7 @@ export const getCachedHomeContests = unstable_cache(
         let query = supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories, interest_industries"
           )
           .eq("is_verified", true)
           .eq("list_on_home", true)
@@ -286,6 +286,7 @@ export const getCachedHomeContests = unstable_cache(
         is_advertisement: false,
         content_kind: kind,
         interest_categories: contest.interest_categories ?? null,
+        interest_industries: contest.interest_industries ?? null,
       };
     });
   },
@@ -310,7 +311,7 @@ export const getCachedCategoryCharts = unstable_cache(
         let query = supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories, interest_industries"
           )
           .eq("is_verified", true)
           .eq("list_on_home", true)
@@ -387,6 +388,7 @@ export const getCachedCategoryCharts = unstable_cache(
         is_advertisement: false,
         content_kind: kind,
         interest_categories: contest.interest_categories ?? null,
+        interest_industries: contest.interest_industries ?? null,
       };
     };
 

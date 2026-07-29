@@ -21,9 +21,11 @@ import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import { contestBenefitStorageLabels } from "../lib/benefit-categories";
 import {
-  INTEREST_CONTEST_MAX,
-  normalizeInterestCategories,
-} from "../lib/interestCategories";
+  classifyOpportunityTags,
+  OPPORTUNITY_TAGGING_VERSION,
+  type OpportunityTaggingResult,
+} from "../lib/opportunity-tagging";
+import { classifyOpportunityTagsWithLlm } from "../lib/opportunity-tagging-llm";
 import {
   formatAndExtractContestNotice,
   type NoticeDraftStage,
@@ -384,6 +386,28 @@ async function demoteLinkareerHomepage(
   );
 }
 
+async function saveTaggingMetadata(
+  supabase: ReturnType<typeof createClient<Database>>,
+  contestId: number,
+  tagging: OpportunityTaggingResult
+) {
+  const { error } = await supabase.from("contest_tagging_metadata").upsert(
+    {
+      contest_id: contestId,
+      taxonomy_version: OPPORTUNITY_TAGGING_VERSION,
+      classifier_version: tagging.version,
+      status: tagging.status,
+      confidence: tagging.confidence,
+      tagging_source: "automatic",
+      evidence: tagging.evidence,
+      reviewed_at: null,
+      reviewed_by: null,
+    },
+    { onConflict: "contest_id" }
+  );
+  if (error) throw new Error(`tagging metadata: ${error.message}`);
+}
+
 async function promoteQueue(
   supabase: ReturnType<typeof createClient<Database>>,
   opts: {
@@ -477,7 +501,7 @@ async function promoteQueue(
 
   let promoted = 0;
   let republished = 0;
-  let skipped = 0;
+  const skipped = 0;
   let failed = 0;
 
   for (const item of targets) {
@@ -542,6 +566,30 @@ async function promoteQueue(
       contentKind,
       name: title,
     });
+    const taggingInput = {
+      title,
+      organization,
+      organizationType: asString(draft.organization_type),
+      body: noticeText || body,
+      note: extracted?.draft.note ?? asString(draft.note),
+      benefits: benefitLabels,
+      contentKind,
+    };
+    let tagging = classifyOpportunityTags(taggingInput);
+    if (
+      tagging.status === "needs_review" &&
+      process.env.TAGGING_LLM_ENABLED === "true"
+    ) {
+      try {
+        tagging = await classifyOpportunityTagsWithLlm(taggingInput);
+      } catch (error) {
+        console.log(
+          `tagging-llm-fail: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
+    }
 
     const applyUrl = urls.applyUrl;
     const homepageUrl = urls.homepageUrl;
@@ -566,6 +614,14 @@ async function promoteQueue(
         : {}),
       ...(supportAmountText ? { support_amount_text: supportAmountText } : {}),
       ...(benefitLabels.length ? { benefits: benefitLabels } : {}),
+      interest_categories: tagging.jobs,
+      interest_industries: tagging.industries,
+      tagging: {
+        version: tagging.version,
+        confidence: tagging.confidence,
+        status: tagging.status,
+        evidence: tagging.evidence,
+      },
       homepage_url: homepageUrl,
       apply_url: applyUrl,
       demote_reason: null,
@@ -580,6 +636,8 @@ async function promoteQueue(
         list_on_home: true,
         ...(noticeText ? { original_notice_text: noticeText } : {}),
         ...(benefitLabels.length ? { benefits: benefitLabels } : {}),
+        interest_categories: tagging.jobs.length ? tagging.jobs : null,
+        interest_industries: tagging.industries.length ? tagging.industries : null,
         ...(extracted?.draft.announcement_date
           ? { announcement_date: extracted.draft.announcement_date }
           : {}),
@@ -603,6 +661,7 @@ async function promoteQueue(
         if (delayMs > 0) await sleep(delayMs);
         continue;
       }
+      await saveTaggingMetadata(supabase, item.oldContestId, tagging);
 
       const { error: markError } = await supabase
         .from("crawled_contests")
@@ -680,13 +739,8 @@ async function promoteQueue(
       apply_types: asStringArray(draft.apply_types).length
         ? asStringArray(draft.apply_types)
         : null,
-      interest_categories: (() => {
-        const normalized = normalizeInterestCategories(
-          asStringArray(draft.interest_categories),
-          INTEREST_CONTEST_MAX
-        );
-        return normalized.length ? normalized : null;
-      })(),
+      interest_categories: tagging.jobs.length ? tagging.jobs : null,
+      interest_industries: tagging.industries.length ? tagging.industries : null,
       required_documents: asStringArray(
         extracted?.draft.required_documents?.length
           ? extracted.draft.required_documents
@@ -732,6 +786,7 @@ async function promoteQueue(
       if (delayMs > 0) await sleep(delayMs);
       continue;
     }
+    if (inserted?.id) await saveTaggingMetadata(supabase, inserted.id, tagging);
 
     if (stages.length > 0 && inserted?.id) {
       const stageRows = stages.map((s, index) => ({

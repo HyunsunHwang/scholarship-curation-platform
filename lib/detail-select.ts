@@ -84,5 +84,6 @@ export const CONTEST_DETAIL_SELECT = [
   "view_count",
   "scrap_count",
   "interest_categories",
+  "interest_industries",
   "is_verified",
 ].join(", ");

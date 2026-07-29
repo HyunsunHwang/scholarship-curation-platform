@@ -56,6 +56,7 @@ export async function loadHomePersonalizationPrimary(
   const profile = bundle.profile;
   const forYou = buildForYouCurated(catalog, {
     interests: profile?.interest_categories ?? null,
+    industries: profile?.interest_industries ?? null,
     savedItems: bookmarks.cards,
     recentViews: recent,
     collaborativeKeys: new Set(),
@@ -102,8 +103,9 @@ export async function loadHomePersonalizationRails(
   const profile = bundle.profile;
   const isOnboarded = Boolean(profile?.is_onboarded);
   const interests = profile?.interest_categories ?? null;
+  const industries = profile?.interest_industries ?? null;
 
-  if (!isOnboarded && !interests?.length) {
+  if (!isOnboarded && !interests?.length && !industries?.length) {
     return {
       interestRails: [],
       campusRail: null,
@@ -114,6 +116,7 @@ export async function loadHomePersonalizationRails(
 
   const forYou = buildForYouCurated(catalog, {
     interests,
+    industries,
     savedItems: bookmarks.cards,
     recentViews: recent,
     collaborativeKeys: cfResult.keys,
@@ -123,6 +126,7 @@ export async function loadHomePersonalizationRails(
     catalog,
     forYou,
     interests,
+    industries,
     profile: {
       schoolName: profile?.school_name,
       schoolLocation: profile?.school_location,

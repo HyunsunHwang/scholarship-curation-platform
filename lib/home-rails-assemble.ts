@@ -3,9 +3,11 @@ import type { HomeRail } from "@/lib/home-rails";
 import {
   buildCampusRail,
   buildCollaborativeRail,
+  buildIndustryRails,
   buildInterestRails,
   buildRegionRail,
   collectRailKeys,
+  HOME_INTEREST_RAIL_LIMIT,
   type HomeProfileSignals,
 } from "@/lib/home-rails";
 
@@ -26,16 +28,32 @@ export function assemblePersonalizedRails(options: {
   catalog: CardScholarship[];
   forYou: CardScholarship[];
   interests: readonly string[] | null | undefined;
+  industries: readonly string[] | null | undefined;
   profile: HomeProfileSignals;
   campusItems: CardScholarship[];
   collaborativeItems: CardScholarship[];
 }): AssembledHomeRails {
-  const { catalog, forYou, interests, profile, campusItems, collaborativeItems } =
-    options;
+  const {
+    catalog,
+    forYou,
+    interests,
+    industries,
+    profile,
+    campusItems,
+    collaborativeItems,
+  } = options;
 
   let seen = collectRailKeys(forYou);
 
-  const interestRails = buildInterestRails(catalog, interests, seen);
+  const jobRails = buildInterestRails(catalog, interests, seen);
+  const seenAfterJobs = collectRailKeys(forYou, ...jobRails.map((r) => r.items));
+  const industryRails = buildIndustryRails(
+    catalog,
+    industries,
+    seenAfterJobs,
+    Math.max(0, HOME_INTEREST_RAIL_LIMIT - jobRails.length)
+  );
+  const interestRails = [...jobRails, ...industryRails];
   seen = collectRailKeys(forYou, ...interestRails.map((r) => r.items));
 
   const campusRail = buildCampusRail(campusItems, profile, seen);

@@ -14,6 +14,7 @@
 import fs from "fs";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
+import { classifyOpportunityTags } from "../lib/opportunity-tagging.ts";
 
 const BUCKET = "contest-files";
 const DOC_TYPE = "지원서 및 안내자료";
@@ -21,89 +22,6 @@ const POSTER_TYPE = "포스터";
 const THUMB_TYPE = "썸네일";
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-
-/** Linkareer 카테고리 → 관심 직무 대분류 (lib/interestCategories.ts) */
-const CATEGORY_TO_INTEREST = {
-  "기획/아이디어": "pm",
-  "광고/마케팅": "marketing",
-  "디자인/순수미술/공예": "design",
-  "사진/영상/UCC": "media",
-  "문학/시나리오": "media",
-  "과학/공학": "hw_eng",
-  "학술": "research",
-  "예체능/패션": "design",
-  "캐릭터/만화/게임": "design",
-  "전시/페스티벌": "media",
-  "건축/건설/인테리어": "hw_eng",
-  "창업": "business",
-  "네이밍/슬로건": "marketing",
-  // education / activity labels
-  "프론트엔드 개발": "dev_eng",
-  "백엔드 개발": "dev_eng",
-  "모바일 앱 개발": "dev_eng",
-  "게임 개발": "dev_eng",
-  "프로그래밍": "dev_eng",
-  "컴퓨터 공학/SW 엔지니어링": "dev_eng",
-  "DevOps/Infra": "dev_eng",
-  "블록체인 개발": "dev_eng",
-  IOS: "dev_eng",
-  안드로이드: "dev_eng",
-  "AI/ML": "dev_eng",
-  머신러닝: "dev_eng",
-  딥러닝: "dev_eng",
-  데이터사이언스: "dev_eng",
-  데이터분석: "pm",
-  데이터엔지니어링: "dev_eng",
-  인공지능: "dev_eng",
-  자연어처리: "dev_eng",
-  컴퓨터비전: "dev_eng",
-  ChatGPT: "dev_eng",
-  로보틱스: "hw_eng",
-  임베디드: "hw_eng",
-  반도체: "hw_eng",
-  IoT: "hw_eng",
-  "IoT · 임베디드 · 반도체": "hw_eng",
-  "3D/CG": "design",
-  "3D/건축": "design",
-  "2D/그래픽/브랜딩": "design",
-  콘텐츠마케팅: "marketing",
-  브랜드마케팅: "marketing",
-  "PM/PO/기획": "pm",
-  "봉사단-국내": "business",
-  "봉사단-해외": "business",
-  자격증: "hr_admin",
-  "취업/이직": "business",
-  비즈니스: "business",
-  영업: "sales_cx",
-  인사: "hr_admin",
-  재무: "hr_admin",
-  물류: "scm",
-  구매: "scm",
-  생산: "manufacturing",
-  품질: "manufacturing",
-};
-
-const INTEREST_LABEL_TO_ID = {
-  "디자인/사진/예술/영상": "design",
-  "콘텐츠": "media",
-  "과학/공학/기술/IT": "hw_eng",
-  "사회공헌/교류": "business",
-  "문화/역사": "media",
-  "정치/사회/법률": "hr_admin",
-  "환경/에너지": "hw_eng",
-  "행사/페스티벌": "media",
-  "언론/미디어": "media",
-  "교육": "hr_admin",
-  "창업/자기계발": "business",
-  "경영/컨설팅/마케팅": "marketing",
-  "여행/호텔/항공": "sales_cx",
-  "경제/금융": "research",
-  "의료/보건": "research",
-  "체육/헬스": "media",
-  "요리/식품": "media",
-  "유통/물류": "scm",
-  "뷰티/미용/화장품": "marketing",
-};
 
 function loadEnvLocal() {
   const envPath = ".env.local";
@@ -250,34 +168,6 @@ function extractBodyImages(html) {
   return out;
 }
 
-function mapInterestCategories(item) {
-  const out = [];
-  const push = (id) => {
-    if (!id || out.includes(id) || out.length >= 5) return;
-    out.push(id);
-  };
-  for (const c of item.categories || []) push(CATEGORY_TO_INTEREST[c]);
-  for (const i of item.interests || []) push(INTEREST_LABEL_TO_ID[i]);
-
-  const blob = `${item.title || ""} ${(item.categories || []).join(" ")}`.toLowerCase();
-  if (/ai|인공지능|머신러닝|딥러닝|llm|rag|데이터\s*엔지니|데이터\s*사이언/.test(blob)) push("dev_eng");
-  if (/개발|프로그래밍|코딩|소프트웨어|앱|웹|풀스택|프론트|백엔드|devops/.test(blob)) push("dev_eng");
-  if (/마케팅|광고|브랜딩|퍼포먼스|crm/.test(blob)) push("marketing");
-  if (/기획|아이디어|전략|pm|product\s*owner|프로덕트/.test(blob)) push("pm");
-  if (/창업|스타트업|사업\s*개발|bd\b/.test(blob)) push("business");
-  if (/영업|고객\s*성공|cs\b|cx\b/.test(blob)) push("sales_cx");
-  if (/인사|hrd|재무|회계|총무|법무/.test(blob)) push("hr_admin");
-  if (/교육|부트캠프|국비|아카데미/.test(blob)) push("hr_admin");
-  if (/영상|콘텐츠|에디터|기자|카피/.test(blob)) push("media");
-  if (/디자인|ux|ui|브랜딩\s*디자인|모션/.test(blob)) push("design");
-  if (/연구|r&d|바이오|제약|금융|자산운용/.test(blob)) push("research");
-  if (/생산|품질|공정|설비|보전|ehs|안전\s*환경/.test(blob)) push("manufacturing");
-  if (/로봇|반도체|임베디드|iot|cae|cad|기계\s*설계|회로|화공/.test(blob)) push("hw_eng");
-  if (/구매|소싱|scm|물류|무역|수출입/.test(blob)) push("scm");
-
-  return out;
-}
-
 /** Keep raw body for LLM formatting; only normalize whitespace. */
 function lightFormatNotice(title, body) {
   const raw = String(body || "").replace(/\r\n/g, "\n").trim();
@@ -392,6 +282,24 @@ async function upsertContest(row) {
     .single();
   if (error) throw new Error(`insert: ${error.message}`);
   return { id: data.id, action: "inserted", docs: data.document_files?.length ?? 0 };
+}
+
+async function upsertTaggingMetadata(contestId, tagging) {
+  const { error } = await supabase.from("contest_tagging_metadata").upsert(
+    {
+      contest_id: contestId,
+      taxonomy_version: tagging.version,
+      classifier_version: tagging.version,
+      status: tagging.status,
+      confidence: tagging.confidence,
+      tagging_source: "automatic",
+      evidence: tagging.evidence,
+      reviewed_at: null,
+      reviewed_by: null,
+    },
+    { onConflict: "contest_id" }
+  );
+  if (error) throw new Error(`tagging metadata: ${error.message}`);
 }
 
 /**
@@ -540,8 +448,18 @@ async function ingestOne(item, index, total, contentKind) {
     }));
   }
 
-  const interest = mapInterestCategories(item);
   const noticeText = lightFormatNotice(item.title, item.body_text);
+  const tagging = classifyOpportunityTags({
+    title: item.title,
+    organization: item.organization_name,
+    organizationType: item.organization_type,
+    body: item.body_text,
+    note: item.additional_benefit,
+    benefits: item.benefits,
+    sourceCategories: item.categories,
+    sourceInterests: item.interests,
+    contentKind,
+  });
   const requiredDocs = documentFiles.map((d) => d.name).filter(Boolean);
   const defaultLabel = KIND_DEFAULT_NAME[contentKind] || "공고";
 
@@ -568,7 +486,14 @@ async function ingestOne(item, index, total, contentKind) {
     targets: item.targets?.length ? item.targets : null,
     benefits,
     apply_types: item.apply_types?.length ? item.apply_types : null,
-    interest_categories: interest.length ? interest : null,
+    interest_categories: tagging.jobs.length ? tagging.jobs : null,
+    interest_industries: tagging.industries.length ? tagging.industries : null,
+    tagging: {
+      version: tagging.version,
+      confidence: tagging.confidence,
+      status: tagging.status,
+      evidence: tagging.evidence,
+    },
     required_documents: requiredDocs,
     apply_method: buildApplyMethod(item),
     apply_url: applyUrl,
@@ -593,7 +518,8 @@ async function ingestOne(item, index, total, contentKind) {
     targets: item.targets?.length ? item.targets : null,
     benefits,
     apply_types: item.apply_types?.length ? item.apply_types : null,
-    interest_categories: interest.length ? interest : null,
+    interest_categories: tagging.jobs.length ? tagging.jobs : null,
+    interest_industries: tagging.industries.length ? tagging.industries : null,
     required_documents: requiredDocs,
     document_files: documentFiles,
     apply_method: buildApplyMethod(item),
@@ -643,7 +569,7 @@ async function ingestOne(item, index, total, contentKind) {
 
   if (DRY_RUN) {
     console.log(
-      `dry-run ${TO_QUEUE ? "queue" : "publish"} kind=${contentKind} interests=${interest.join(",")} docs=${documentFiles.length} poster=${!!posterUrl}`
+      `dry-run ${TO_QUEUE ? "queue" : "publish"} kind=${contentKind} jobs=${tagging.jobs.join(",")} industries=${tagging.industries.join(",")} status=${tagging.status} docs=${documentFiles.length} poster=${!!posterUrl}`
     );
     return { dry: true };
   }
@@ -679,6 +605,7 @@ async function ingestOne(item, index, total, contentKind) {
   }
 
   const result = await upsertContest(row);
+  await upsertTaggingMetadata(result.id, tagging);
   console.log(`${result.action} id=${result.id} kind=${contentKind} docs=${result.docs}`);
   return result;
 }

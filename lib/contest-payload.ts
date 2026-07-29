@@ -12,6 +12,11 @@ import {
 } from "@/lib/interestCategories";
 import type { ContestContentKind } from "@/lib/admin-kinds";
 import { isContestContentKind } from "@/lib/admin-kinds";
+import {
+  INTEREST_INDUSTRY_MAX,
+  isInterestIndustryId,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
 
 export type ContestInsert = Database["public"]["Tables"]["contests"]["Insert"];
 export type ContestSelectionStageInsert =
@@ -26,6 +31,19 @@ function parseInterestCategories(val: string | null): InterestJobId[] {
     seen.add(item);
     out.push(item);
     if (out.length >= INTEREST_CONTEST_MAX) break;
+  }
+  return out;
+}
+
+function parseInterestIndustries(val: string | null): InterestIndustryId[] {
+  const items = parseTextArray(val);
+  const seen = new Set<InterestIndustryId>();
+  const out: InterestIndustryId[] = [];
+  for (const item of items) {
+    if (!isInterestIndustryId(item) || seen.has(item)) continue;
+    seen.add(item);
+    out.push(item);
+    if (out.length >= INTEREST_INDUSTRY_MAX) break;
   }
   return out;
 }
@@ -91,6 +109,9 @@ export function buildContestPayload(
     apply_types: parseTextArray(formData.get("apply_types") as string | null),
     interest_categories: parseInterestCategories(
       formData.get("interest_categories") as string | null
+    ),
+    interest_industries: parseInterestIndustries(
+      formData.get("interest_industries") as string | null
     ),
     required_documents: parseJsonTextArray(
       formData.get("required_documents") as string | null

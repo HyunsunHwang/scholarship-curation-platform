@@ -143,6 +143,7 @@ export default function BrowseFeed({
         </div>
 
         <BrowseFacetBar
+          key={JSON.stringify(facets)}
           kind={kind}
           sort={sort}
           section={section}

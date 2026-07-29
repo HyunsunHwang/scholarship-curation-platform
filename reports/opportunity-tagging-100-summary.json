@@ -1,0 +1,421 @@
+{
+  "generated_at": "2026-07-29T08:10:05.634Z",
+  "source": "reports/opportunity-tagging-dry-run-1785312520751.json",
+  "classifier_version": "2026-07-29.4",
+  "total": 100,
+  "changed": 74,
+  "needs_review": 71,
+  "status": {
+    "auto_tagged": 29,
+    "needs_review": 71
+  },
+  "kinds": {
+    "contest": 100
+  },
+  "topJobs": [
+    {
+      "id": "pd",
+      "count": 21
+    },
+    {
+      "id": "content_prod",
+      "count": 18
+    },
+    {
+      "id": "graphic",
+      "count": 11
+    },
+    {
+      "id": "brand_marketing",
+      "count": 4
+    },
+    {
+      "id": "product_design",
+      "count": 4
+    },
+    {
+      "id": "data_analyst",
+      "count": 3
+    },
+    {
+      "id": "ae",
+      "count": 2
+    },
+    {
+      "id": "cs",
+      "count": 2
+    },
+    {
+      "id": "rnd_general",
+      "count": 2
+    },
+    {
+      "id": "embedded",
+      "count": 2
+    },
+    {
+      "id": "pr",
+      "count": 1
+    },
+    {
+      "id": "bx",
+      "count": 1
+    }
+  ],
+  "topIndustries": [
+    {
+      "id": "media_entertainment",
+      "count": 20
+    },
+    {
+      "id": "public_edu_npo",
+      "count": 15
+    },
+    {
+      "id": "commerce_logistics",
+      "count": 6
+    },
+    {
+      "id": "marketing_agency",
+      "count": 5
+    },
+    {
+      "id": "electronics",
+      "count": 4
+    },
+    {
+      "id": "manufacturing_chem",
+      "count": 4
+    },
+    {
+      "id": "finance_fintech",
+      "count": 3
+    },
+    {
+      "id": "it_software",
+      "count": 3
+    },
+    {
+      "id": "consumer_goods",
+      "count": 3
+    },
+    {
+      "id": "semiconductor",
+      "count": 1
+    },
+    {
+      "id": "game",
+      "count": 1
+    },
+    {
+      "id": "bio_pharma",
+      "count": 1
+    }
+  ],
+  "empty_jobs": 58,
+  "ad_titles": [
+    {
+      "id": 1,
+      "name": "2026 CHAI 대학생 AI 광고 공모전",
+      "jobs": [
+        "content_prod",
+        "ae",
+        "brand_marketing",
+        "pd"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "status": "auto_tagged",
+      "previous_jobs": [
+        "ml_engineer",
+        "brand_marketing"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "[한국방송광고진흥공사] 2026 대한민국 공익광고제 공모전 “선(善)을 잇다, 우리를 담다“",
+      "jobs": [
+        "ae"
+      ],
+      "industries": [
+        "marketing_agency",
+        "media_entertainment"
+      ],
+      "status": "auto_tagged",
+      "previous_jobs": [
+        "brand_marketing"
+      ]
+    }
+  ],
+  "chai": {
+    "id": 1,
+    "name": "2026 CHAI 대학생 AI 광고 공모전",
+    "jobs": [
+      "content_prod",
+      "ae",
+      "brand_marketing",
+      "pd"
+    ],
+    "industries": [
+      "marketing_agency"
+    ],
+    "previous_jobs": [
+      "ml_engineer",
+      "brand_marketing"
+    ],
+    "status": "auto_tagged"
+  },
+  "auto_samples": [
+    {
+      "id": 1,
+      "name": "2026 CHAI 대학생 AI 광고 공모전",
+      "jobs": [
+        "content_prod",
+        "ae",
+        "brand_marketing",
+        "pd"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "previous_jobs": [
+        "ml_engineer",
+        "brand_marketing"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 3,
+      "name": "[한국전시산업진흥회] 2026 전시산업 대학생 경진대회",
+      "jobs": [
+        "brand_marketing",
+        "graphic"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.75
+    },
+    {
+      "id": 4,
+      "name": "[ICOTEC 2026] 제15회 저작권 기술 어워드 수상 후보자 모집 공고",
+      "jobs": [
+        "rnd_general"
+      ],
+      "industries": [
+        "commerce_logistics"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.75
+    },
+    {
+      "id": 5,
+      "name": "뇌성마비 인식개선 「슬로건, 디자인, 미디어, 보조기기」통합 공모전",
+      "jobs": [
+        "content_prod",
+        "pr",
+        "product_design",
+        "bx",
+        "graphic",
+        "pd"
+      ],
+      "industries": [
+        "media_entertainment",
+        "commerce_logistics"
+      ],
+      "previous_jobs": [
+        "ux_ui"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 6,
+      "name": "2026년 제5회 성동문화재단 신진 청년작가 공모전",
+      "jobs": [
+        "graphic"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 9,
+      "name": "[제18회 DMZ국제다큐멘터리영화제] 38초 다큐공모전 ‘당신의 용기를 응원합니다’",
+      "jobs": [
+        "pd",
+        "brand_marketing"
+      ],
+      "industries": [
+        "media_entertainment",
+        "marketing_agency"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 13,
+      "name": "[이랜드문화재단] 17기 공모전",
+      "jobs": [
+        "graphic"
+      ],
+      "industries": [
+        "public_edu_npo",
+        "media_entertainment"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 14,
+      "name": "[(재)전남여성가족재단] 일상 속 성평등 콘텐츠 공모전",
+      "jobs": [
+        "pd"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "content_prod"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 21,
+      "name": "제24회 임베디드SW경진대회 자유공모 부문 참가자 모집",
+      "jobs": [
+        "embedded"
+      ],
+      "industries": [
+        "it_software",
+        "public_edu_npo",
+        "electronics"
+      ],
+      "previous_jobs": [
+        "embedded"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 26,
+      "name": "[한국방송광고진흥공사] 2026 대한민국 공익광고제 공모전 “선(善)을 잇다, 우리를 담다“",
+      "jobs": [
+        "ae"
+      ],
+      "industries": [
+        "marketing_agency",
+        "media_entertainment"
+      ],
+      "previous_jobs": [
+        "brand_marketing"
+      ],
+      "confidence": 0.88
+    }
+  ],
+  "review_samples": [
+    {
+      "id": 2,
+      "name": "1350 고용노동부 고객상담센터 숏폼 영상 공모전",
+      "jobs": [
+        "content_prod",
+        "cs",
+        "pd"
+      ],
+      "industries": [],
+      "previous_jobs": [
+        "cs",
+        "content_prod"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 7,
+      "name": "제2회 대구광역시 청소년 탄소중립 토론대회 개최",
+      "jobs": [],
+      "industries": [],
+      "previous_jobs": [],
+      "confidence": 0.35
+    },
+    {
+      "id": 8,
+      "name": "2026년 청년창업 아이디에이션 4.0 참가자 모집",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 10,
+      "name": "2026년「부산지역인재 장학금」상반기 생활장학금 지원 신청 공고",
+      "jobs": [],
+      "industries": [],
+      "previous_jobs": [],
+      "confidence": 0.35
+    },
+    {
+      "id": 11,
+      "name": "2026 유쾌한반란 <구멍뒤주 시즌6 '청소년들의 꿈과 도전을 응원합니다!'>",
+      "jobs": [],
+      "industries": [],
+      "previous_jobs": [],
+      "confidence": 0.35
+    },
+    {
+      "id": 12,
+      "name": "2026년 제13회 아름다운 우리말 되살리기 영상 공모전",
+      "jobs": [
+        "content_prod",
+        "pd"
+      ],
+      "industries": [],
+      "previous_jobs": [
+        "content_prod"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 15,
+      "name": "2026 성남시 정책 아이디어 청년 해커톤 대회 개최 공고",
+      "jobs": [],
+      "industries": [],
+      "previous_jobs": [
+        "service_pm"
+      ],
+      "confidence": 0.35
+    },
+    {
+      "id": 16,
+      "name": "2026 전국 고등학생 금융투자아카데미",
+      "jobs": [],
+      "industries": [
+        "finance_fintech",
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 17,
+      "name": "2026년 서울詩(시) 지하철 공모",
+      "jobs": [],
+      "industries": [],
+      "previous_jobs": [],
+      "confidence": 0.35
+    },
+    {
+      "id": 18,
+      "name": "2026 경기AI기업 글로벌 공동연구ㆍ해외진출 예비참여기업 공개 모집",
+      "jobs": [
+        "rnd_general"
+      ],
+      "industries": [],
+      "previous_jobs": [],
+      "confidence": 0.75
+    }
+  ]
+}

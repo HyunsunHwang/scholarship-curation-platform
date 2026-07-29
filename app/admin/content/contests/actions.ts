@@ -8,6 +8,30 @@ import {
   buildContestSelectionStagesPayload,
   getAdminReturnPath,
 } from "@/lib/contest-payload";
+import { OPPORTUNITY_TAGGING_VERSION } from "@/lib/opportunity-tagging";
+
+async function markContestTagsApproved(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  contestId: number,
+  userId: string
+): Promise<{ error?: string }> {
+  const now = new Date().toISOString();
+  const { error } = await supabase.from("contest_tagging_metadata").upsert(
+    {
+      contest_id: contestId,
+      taxonomy_version: OPPORTUNITY_TAGGING_VERSION,
+      classifier_version: OPPORTUNITY_TAGGING_VERSION,
+      status: "approved",
+      confidence: 1,
+      tagging_source: "manual",
+      evidence: { source: "admin_contest_form" },
+      reviewed_at: now,
+      reviewed_by: userId,
+    },
+    { onConflict: "contest_id" }
+  );
+  return error ? { error: error.message } : {};
+}
 
 /**
  * contest_selection_stages 동기화 (전체 교체).
@@ -66,6 +90,14 @@ export async function createContest(formData: FormData) {
   if (error) return { error: error.message };
 
   if (inserted?.id) {
+    const taggingResult = await markContestTagsApproved(
+      supabase,
+      inserted.id,
+      user.id
+    );
+    if (taggingResult.error) {
+      return { error: `태그 검수 상태 저장 실패: ${taggingResult.error}` };
+    }
     const stagesResult = await syncContestSelectionStages(supabase, inserted.id, formData);
     if (stagesResult.error) return { error: `선발 단계 저장 실패: ${stagesResult.error}` };
   }
@@ -96,6 +128,10 @@ export async function updateContest(id: number, formData: FormData) {
 
   const { error } = await supabase.from("contests").update(payload).eq("id", id);
   if (error) return { error: error.message };
+  const taggingResult = await markContestTagsApproved(supabase, id, user.id);
+  if (taggingResult.error) {
+    return { error: `태그 검수 상태 저장 실패: ${taggingResult.error}` };
+  }
 
   const stagesResult = await syncContestSelectionStages(supabase, id, formData);
   if (stagesResult.error) return { error: `선발 단계 저장 실패: ${stagesResult.error}` };

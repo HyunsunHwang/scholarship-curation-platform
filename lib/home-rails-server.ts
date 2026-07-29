@@ -161,7 +161,7 @@ export async function fetchCollaborativeCards(
       ? supabase
           .from("contests")
           .select(
-            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories, interest_industries"
           )
           .in("id", contestIds)
       : Promise.resolve({ data: [] as const }),
@@ -235,6 +235,7 @@ export async function fetchCollaborativeCards(
         is_recommended: c.is_recommended,
         recommended_sort_order: c.recommended_sort_order,
         interest_categories: c.interest_categories ?? null,
+        interest_industries: c.interest_industries ?? null,
       };
     })
     .sort(
@@ -314,7 +315,7 @@ type BrowseEventRow = {
 };
 
 const RECENT_CONTEST_CARD_SELECT =
-  "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories";
+  "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories, interest_industries";
 
 export async function fetchRecentBrowseCards(
   supabase: SupabaseServerClient,
@@ -435,6 +436,7 @@ export async function fetchRecentBrowseCards(
           is_recommended: c.is_recommended,
           recommended_sort_order: c.recommended_sort_order,
           interest_categories: c.interest_categories ?? null,
+          interest_industries: c.interest_industries ?? null,
         },
       ];
     })

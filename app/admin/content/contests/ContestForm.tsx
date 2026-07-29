@@ -8,6 +8,12 @@ import {
   type InterestJobId,
 } from "@/lib/interestCategories";
 import InterestJobPicker from "@/components/profile/InterestJobPicker";
+import InterestIndustryPicker from "@/components/profile/InterestIndustryPicker";
+import {
+  INTEREST_INDUSTRY_MAX,
+  normalizeInterestIndustries,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
 import { adminKindLabel } from "@/lib/admin-kinds";
 import type { ContestContentKind } from "@/lib/admin-kinds";
 
@@ -73,6 +79,9 @@ export default function ContestForm({
   const [selectedJobs, setSelectedJobs] = useState<InterestJobId[]>(() =>
     normalizeInterestCategories(dv.interest_categories ?? null, INTEREST_CONTEST_MAX)
   );
+  const [selectedIndustries, setSelectedIndustries] = useState<InterestIndustryId[]>(() =>
+    normalizeInterestIndustries(dv.interest_industries ?? null)
+  );
 
   // selection stages
   const [stageRows, setStageRows] = useState<SelectionStageRow[]>(() =>
@@ -93,6 +102,7 @@ export default function ContestForm({
     setError(null);
     const formData = new FormData(e.currentTarget);
     formData.set("interest_categories", selectedJobs.join(","));
+    formData.set("interest_industries", selectedIndustries.join(","));
     // Inject selection_stages_json
     formData.set(
       "selection_stages_json",
@@ -226,6 +236,16 @@ export default function ContestForm({
             value={selectedJobs}
             onChange={setSelectedJobs}
             max={INTEREST_CONTEST_MAX}
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            관심 산업 (최대 {INTEREST_INDUSTRY_MAX}개)
+          </label>
+          <InterestIndustryPicker
+            value={selectedIndustries}
+            onChange={setSelectedIndustries}
+            max={INTEREST_INDUSTRY_MAX}
           />
         </div>
       </Section>

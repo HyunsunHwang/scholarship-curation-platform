@@ -4,8 +4,10 @@
  */
 
 export type ForYouWeights = {
-  /** L1 관심사 오버랩 */
-  interest: number;
+  /** 관심 직무 오버랩 */
+  jobInterest: number;
+  /** 관심 산업 오버랩 */
+  industryInterest: number;
   /** 저장한 공고와 유사도 */
   similarSaved: number;
   /** 인기(스크랩·조회 log) */
@@ -18,7 +20,8 @@ export type ForYouWeights = {
 };
 
 const VARIANT_A: ForYouWeights = {
-  interest: 14,
+  jobInterest: 14,
+  industryInterest: 7,
   similarSaved: 12,
   popularity: 1.2,
   recommended: 6,
@@ -29,7 +32,8 @@ const VARIANT_A: ForYouWeights = {
 
 /** 관심사·저장 유사 비중을 더 준 실험군 */
 const VARIANT_B: ForYouWeights = {
-  interest: 18,
+  jobInterest: 18,
+  industryInterest: 9,
   similarSaved: 14,
   popularity: 1,
   recommended: 4,

@@ -11,6 +11,11 @@ import {
 } from "@/lib/interestCategories";
 import { fieldCodesForInterest } from "@/lib/interest-field-map";
 import {
+  interestIndustryLabel,
+  normalizeInterestIndustries,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
+import {
   getForYouWeights,
   type ForYouWeights,
 } from "@/lib/home-ranking-weights";
@@ -94,6 +99,18 @@ function interestOverlapScore(
   return score;
 }
 
+function industryOverlapScore(
+  item: CardScholarship,
+  industries: InterestIndustryId[]
+): number {
+  if (industries.length === 0) return 0;
+  const itemIndustries = new Set(item.interest_industries ?? []);
+  return industries.reduce(
+    (score, industry) => score + (itemIndustries.has(industry) ? 1 : 0),
+    0
+  );
+}
+
 function recentAffinityScore(
   item: CardScholarship,
   recent: CardScholarship[]
@@ -116,6 +133,10 @@ function recentAffinityScore(
     const rInterests = new Set(r.interest_categories ?? []);
     for (const ic of item.interest_categories ?? []) {
       if (rInterests.has(ic)) score += 0.8;
+    }
+    const rIndustries = new Set(r.interest_industries ?? []);
+    for (const industry of item.interest_industries ?? []) {
+      if (rIndustries.has(industry)) score += 0.5;
     }
   }
   return score;
@@ -142,6 +163,10 @@ export function similarToSavedScore(
     for (const ic of item.interest_categories ?? []) {
       if (sInterests.has(ic)) score += 1.1;
     }
+    const sIndustries = new Set(s.interest_industries ?? []);
+    for (const industry of item.interest_industries ?? []) {
+      if (sIndustries.has(industry)) score += 0.7;
+    }
     const sFields = new Set(s.qual_field_codes ?? []);
     for (const f of item.qual_field_codes ?? []) {
       if (sFields.has(f)) score += 0.9;
@@ -160,13 +185,15 @@ export function popularityScore(item: CardScholarship): number {
 function forYouScore(
   item: CardScholarship,
   interests: InterestJobId[],
+  industries: InterestIndustryId[],
   saved: CardScholarship[],
   recent: CardScholarship[],
   cfKeys: ReadonlySet<string>,
   weights: ForYouWeights
 ): number {
   return (
-    interestOverlapScore(item, interests) * weights.interest +
+    interestOverlapScore(item, interests) * weights.jobInterest +
+    industryOverlapScore(item, industries) * weights.industryInterest +
     similarToSavedScore(item, saved) * weights.similarSaved +
     popularityScore(item) * weights.popularity +
     (item.is_recommended ? weights.recommended : 0) +
@@ -184,6 +211,7 @@ export function softRankForYou(
   items: CardScholarship[],
   options: {
     interests?: readonly string[] | null;
+    industries?: readonly string[] | null;
     savedItems?: CardScholarship[];
     recentViews?: CardScholarship[];
     collaborativeKeys?: ReadonlySet<string>;
@@ -191,6 +219,7 @@ export function softRankForYou(
   } = {}
 ): CardScholarship[] {
   const interests = normalizeInterestCategories(options.interests);
+  const industries = normalizeInterestIndustries(options.industries);
   const saved = options.savedItems ?? [];
   const recent = options.recentViews ?? [];
   const cfKeys = options.collaborativeKeys ?? new Set<string>();
@@ -198,8 +227,8 @@ export function softRankForYou(
 
   return [...items].sort(
     (a, b) =>
-      forYouScore(b, interests, saved, recent, cfKeys, weights) -
-      forYouScore(a, interests, saved, recent, cfKeys, weights)
+      forYouScore(b, interests, industries, saved, recent, cfKeys, weights) -
+      forYouScore(a, interests, industries, saved, recent, cfKeys, weights)
   );
 }
 
@@ -210,6 +239,7 @@ export function buildForYouCurated(
   catalog: CardScholarship[],
   options: {
     interests?: readonly string[] | null;
+    industries?: readonly string[] | null;
     savedItems?: CardScholarship[];
     recentViews?: CardScholarship[];
     collaborativeKeys?: ReadonlySet<string>;
@@ -229,6 +259,7 @@ export function buildForYouCurated(
 
   const ranked = softRankForYou(candidates, {
     interests: options.interests,
+    industries: options.industries,
     savedItems: saved,
     recentViews: options.recentViews,
     collaborativeKeys: options.collaborativeKeys,
@@ -429,6 +460,38 @@ export function buildInterestRails(
       key: `interest-${interestId}`,
       title: `${label} 관심 공고`,
       subtitle: "관심사에 맞는 추천",
+      href: "/browse",
+      items,
+    });
+  }
+
+  return rails;
+}
+
+/** 관심 산업별 동적 레일 */
+export function buildIndustryRails(
+  catalog: CardScholarship[],
+  rawIndustries: readonly string[] | null | undefined,
+  excludeKeys: ReadonlySet<string> = new Set(),
+  limit: number = HOME_INTEREST_RAIL_LIMIT
+): HomeRail[] {
+  const industries = normalizeInterestIndustries(rawIndustries).slice(0, limit);
+  const rails: HomeRail[] = [];
+
+  for (const industryId of industries) {
+    const items = finalizeRailItems(
+      sortByDeadline(
+        catalog.filter((item) =>
+          (item.interest_industries ?? []).includes(industryId)
+        )
+      ),
+      excludeKeys
+    );
+    if (items.length < HOME_RAIL_MIN_ITEMS) continue;
+    rails.push({
+      key: `industry-${industryId}`,
+      title: `${interestIndustryLabel(industryId)} 관심 공고`,
+      subtitle: "관심 산업에 맞는 추천",
       href: "/browse",
       items,
     });

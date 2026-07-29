@@ -1,0 +1,498 @@
+{
+  "meta": {
+    "generated_at": "2026-07-29T05:33:34.722Z",
+    "version": "2026-07-29.2",
+    "total": 100,
+    "changed": 99,
+    "llm_attempted": 70,
+    "llm_failed": 1
+  },
+  "statusCounts": {
+    "auto_tagged": 73,
+    "needs_review": 26,
+    "not_applicable": 1
+  },
+  "kindCounts": {
+    "contest": 100
+  },
+  "confBuckets": {
+    "0.9+": 16,
+    "0.8–0.89": 39,
+    "0.7–0.79": 37,
+    "0.6–0.69": 8,
+    "<0.6": 0
+  },
+  "topJobs": [
+    {
+      "id": "pd",
+      "count": 27,
+      "label": "PD/영상 제작"
+    },
+    {
+      "id": "content_prod",
+      "count": 21,
+      "label": "콘텐츠 기획/제작"
+    },
+    {
+      "id": "graphic",
+      "count": 19,
+      "label": "그래픽/시각 디자인"
+    },
+    {
+      "id": "biz_strategy",
+      "count": 15,
+      "label": "사업기획/전략기획"
+    },
+    {
+      "id": "product_design",
+      "count": 7,
+      "label": "제품/산업 디자인"
+    },
+    {
+      "id": "data_analyst",
+      "count": 6,
+      "label": "데이터 분석가"
+    },
+    {
+      "id": "rnd_general",
+      "count": 3,
+      "label": "R&D(일반)"
+    },
+    {
+      "id": "embedded",
+      "count": 3,
+      "label": "임베디드/펌웨어"
+    },
+    {
+      "id": "ml_engineer",
+      "count": 3,
+      "label": "AI/ML 엔지니어"
+    },
+    {
+      "id": "cs",
+      "count": 2,
+      "label": "고객상담/CS"
+    },
+    {
+      "id": "backend",
+      "count": 2,
+      "label": "백엔드/서버 개발"
+    },
+    {
+      "id": "editor",
+      "count": 2,
+      "label": "기자/에디터"
+    }
+  ],
+  "topIndustries": [
+    {
+      "id": "public_edu_npo",
+      "count": 77,
+      "label": "공공·교육·비영리"
+    },
+    {
+      "id": "media_entertainment",
+      "count": 31,
+      "label": "미디어·콘텐츠·엔터테인먼트"
+    },
+    {
+      "id": "it_software",
+      "count": 11,
+      "label": "IT·소프트웨어·인터넷"
+    },
+    {
+      "id": "commerce_logistics",
+      "count": 8,
+      "label": "커머스·유통·물류"
+    },
+    {
+      "id": "electronics",
+      "count": 6,
+      "label": "전자·전기·하드웨어"
+    },
+    {
+      "id": "finance_fintech",
+      "count": 5,
+      "label": "금융·핀테크"
+    },
+    {
+      "id": "manufacturing_chem",
+      "count": 4,
+      "label": "제조·화학·소재"
+    },
+    {
+      "id": "game",
+      "count": 3,
+      "label": "게임"
+    },
+    {
+      "id": "consumer_goods",
+      "count": 3,
+      "label": "소비재·식품·뷰티·패션"
+    },
+    {
+      "id": "marketing_agency",
+      "count": 2,
+      "label": "마케팅·광고·디자인 서비스"
+    },
+    {
+      "id": "bio_pharma",
+      "count": 2,
+      "label": "바이오·제약·헬스케어"
+    },
+    {
+      "id": "battery_energy",
+      "count": 2,
+      "label": "이차전지·에너지·친환경"
+    }
+  ],
+  "samples": {
+    "auto_tagged": [
+      {
+        "id": 1,
+        "name": "2026 CHAI 대학생 AI 광고 공모전",
+        "kind": "contest",
+        "previousJobs": "AI/ML 엔지니어, 브랜드 마케팅",
+        "jobs": "사업기획/전략기획, PD/영상 제작",
+        "industries": "금융·핀테크",
+        "confidence": 75,
+        "changed": true,
+        "reason": "body:사업\\s*기획|전략\\s*기획|경영\\s*기획|사업\\s*전략|전략\\s*컨설팅"
+      },
+      {
+        "id": 2,
+        "name": "1350 고용노동부 고객상담센터 숏폼 영상 공모전",
+        "kind": "contest",
+        "previousJobs": "고객상담/CS, 콘텐츠 기획/제작",
+        "jobs": "고객상담/CS, PD/영상 제작",
+        "industries": "공공·교육·비영리",
+        "confidence": 88,
+        "changed": true,
+        "reason": "title:고객\\s*상담|고객\\s*센터|콜\\s*센터|\\bcs\\b(?:\\s*직무|\\s*상담|\\s*담당)"
+      },
+      {
+        "id": 3,
+        "name": "[한국전시산업진흥회] 2026 전시산업 대학생 경진대회",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "그래픽/시각 디자인",
+        "industries": "공공·교육·비영리",
+        "confidence": 75,
+        "changed": true,
+        "reason": "body:그래픽\\s*디자인|시각\\s*디자인|비주얼\\s*디자인|편집\\s*디자인|포스터|일러스트|로고\\s*(및|&)?\\s*ci|ci\\s*(디자인|공모)|그림\\s*(공모|부문)|디자인\\"
+      },
+      {
+        "id": 4,
+        "name": "[ICOTEC 2026] 제15회 저작권 기술 어워드 수상 후보자 모집 공고",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "R&D(일반)",
+        "industries": "커머스·유통·물류",
+        "confidence": 75,
+        "changed": true,
+        "reason": "body:\\br&d\\b|연구\\s*개발|연구원\\s*(직무|채용|인턴)"
+      },
+      {
+        "id": 5,
+        "name": "뇌성마비 인식개선 「슬로건, 디자인, 미디어, 보조기기」통합 공모전",
+        "kind": "contest",
+        "previousJobs": "UX/UI 디자인",
+        "jobs": "콘텐츠 기획/제작, 홍보/PR, 제품/산업 디자인, 브랜드 디자인(BX), 그래픽/시각 디자인, PD/영상 제작",
+        "industries": "미디어·콘텐츠·엔터테인먼트, 커머스·유통·물류, 공공·교육·비영리",
+        "confidence": 88,
+        "changed": true,
+        "reason": "title:콘텐츠\\s*(기획|제작|크리에이터)|디지털\\s*콘텐츠\\s*제작|미디어\\s*(부문|분야|공모)|사진\\s*또는\\s*영상|영상\\s*컨텐츠|사진\\s*(공모|부문|콘테스트)|미디"
+      },
+      {
+        "id": 6,
+        "name": "2026년 제5회 성동문화재단 신진 청년작가 공모전",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "그래픽/시각 디자인",
+        "industries": "공공·교육·비영리",
+        "confidence": 88,
+        "changed": true,
+        "reason": "body:그래픽\\s*디자인|시각\\s*디자인|비주얼\\s*디자인|편집\\s*디자인|포스터|일러스트|로고\\s*(및|&)?\\s*ci|ci\\s*(디자인|공모)|그림\\s*(공모|부문)|디자인\\"
+      },
+      {
+        "id": 7,
+        "name": "제2회 대구광역시 청소년 탄소중립 토론대회 개최",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리",
+        "confidence": 70,
+        "changed": true,
+        "reason": "탄소중립 정책제안서 작성 및 토론대회로 정책기획 유사 과제 수행, 공공·비영리 산업"
+      },
+      {
+        "id": 8,
+        "name": "2026년 청년창업 아이디에이션 4.0 참가자 모집",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리, IT·소프트웨어·인터넷",
+        "confidence": 70,
+        "changed": true,
+        "reason": "혁신기술 기반 창업 아이디어 발굴 및 사업화(피칭·고도화) 프로그램으로 사업기획 직무에 해당, 주관은 비영리 재단이며 대상 기술분야는 IT 관련"
+      },
+      {
+        "id": 9,
+        "name": "[제18회 DMZ국제다큐멘터리영화제] 38초 다큐공모전 ‘당신의 용기를 응원합니다’",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "콘텐츠 기획/제작, PD/영상 제작",
+        "industries": "미디어·콘텐츠·엔터테인먼트, 공공·교육·비영리",
+        "confidence": 80,
+        "changed": true,
+        "reason": "38초 다큐멘터리 영상 제작 공모전으로 영상 콘텐츠 기획·제작 직무에 해당하며 미디어·엔터테인먼트 및 공공 캠페인 성격의 산업 태그 부여"
+      },
+      {
+        "id": 12,
+        "name": "2026년 제13회 아름다운 우리말 되살리기 영상 공모전",
+        "kind": "contest",
+        "previousJobs": "콘텐츠 기획/제작",
+        "jobs": "콘텐츠 기획/제작, PD/영상 제작",
+        "industries": "공공·교육·비영리, 미디어·콘텐츠·엔터테인먼트",
+        "confidence": 85,
+        "changed": true,
+        "reason": "영상 공모전으로 콘텐츠 기획/제작 및 PD 직무 수행, 공공기관(대학) 주관의 공익 캠페인 성격"
+      },
+      {
+        "id": 13,
+        "name": "[이랜드문화재단] 17기 공모전",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "그래픽/시각 디자인",
+        "industries": "공공·교육·비영리, 미디어·콘텐츠·엔터테인먼트",
+        "confidence": 88,
+        "changed": true,
+        "reason": "body:그래픽\\s*디자인|시각\\s*디자인|비주얼\\s*디자인|편집\\s*디자인|포스터|일러스트|로고\\s*(및|&)?\\s*ci|ci\\s*(디자인|공모)|그림\\s*(공모|부문)|디자인\\"
+      },
+      {
+        "id": 14,
+        "name": "[(재)전남여성가족재단] 일상 속 성평등 콘텐츠 공모전",
+        "kind": "contest",
+        "previousJobs": "콘텐츠 기획/제작",
+        "jobs": "PD/영상 제작",
+        "industries": "공공·교육·비영리",
+        "confidence": 88,
+        "changed": true,
+        "reason": "body:영상\\s*(기획|제작|컨텐츠|콘텐츠)|\\bpd\\b(?:\\s*직무|\\s*채용|\\s*교육)|프로듀서|숏폼\\s*영상"
+      },
+      {
+        "id": 15,
+        "name": "2026 성남시 정책 아이디어 청년 해커톤 대회 개최 공고",
+        "kind": "contest",
+        "previousJobs": "서비스 기획 · PM/PO",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리",
+        "confidence": 70,
+        "changed": true,
+        "reason": "정책 아이디어 제안 공모로 정책기획 성격의 사업/전략기획 직무에 해당하며 공공 영역 산업"
+      },
+      {
+        "id": 16,
+        "name": "2026 전국 고등학생 금융투자아카데미",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "데이터 분석가",
+        "industries": "금융·핀테크, 공공·교육·비영리",
+        "confidence": 70,
+        "changed": true,
+        "reason": "모의주식투자·투자전략보고서 작성으로 데이터 분석 유사 직무 수행, 금융·교육 산업 결정론적 태그 반영"
+      },
+      {
+        "id": 18,
+        "name": "2026 경기AI기업 글로벌 공동연구ㆍ해외진출 예비참여기업 공개 모집",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "R&D(일반)",
+        "industries": "공공·교육·비영리",
+        "confidence": 75,
+        "changed": true,
+        "reason": "body:\\br&d\\b|연구\\s*개발|연구원\\s*(직무|채용|인턴)"
+      }
+    ],
+    "needs_review": [
+      {
+        "id": 10,
+        "name": "2026년「부산지역인재 장학금」상반기 생활장학금 지원 신청 공고",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "장학금 지원 공고로 수행 직무 없음"
+      },
+      {
+        "id": 11,
+        "name": "2026 유쾌한반란 <구멍뒤주 시즌6 '청소년들의 꿈과 도전을 응원합니다!'>",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "청소년 자기설계 도전장학금 지원 프로그램으로, 특정 직무 수행 없이 장학금 지급이 목적임"
+      },
+      {
+        "id": 17,
+        "name": "2026년 서울詩(시) 지하철 공모",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "시 공모전으로 수행 직무 없음"
+      },
+      {
+        "id": 23,
+        "name": "제11회 전기사랑 스피치대회",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리, 제조·화학·소재",
+        "confidence": 85,
+        "changed": true,
+        "reason": "스피치대회는 아이디어 발표 공모로 실제 수행 직무가 없으며, 전력정책 주제상 공공·에너지 관련 산업으로 분류"
+      },
+      {
+        "id": 30,
+        "name": "[대전도시공사] 2026년 사회공헌 아이디어 공모전",
+        "kind": "contest",
+        "previousJobs": "서비스 기획 · PM/PO",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리",
+        "confidence": 60,
+        "changed": true,
+        "reason": "사회공헌 아이디어 기획 공모로 별도 디자인·미디어 산출물 명시 없이 기획 성격의 아이디어 제안 활동"
+      },
+      {
+        "id": 31,
+        "name": "[시흥시] 2027년 시흥시 고향사랑 기금사업 아이디어 공모",
+        "kind": "contest",
+        "previousJobs": "서비스 기획 · PM/PO",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리",
+        "confidence": 60,
+        "changed": true,
+        "reason": "지역 기금사업 아이디어(예산 포함) 제안으로 사업기획 성격이나 명시적 직무 수행은 아님"
+      },
+      {
+        "id": 32,
+        "name": "제26회 2·28학생문학상 전국 공모전",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "운문/산문 문학 공모전으로 수행 직무 없음"
+      },
+      {
+        "id": 35,
+        "name": "2026 관광지식정보시스템 <관광데이터 분석 포스터 공모전>",
+        "kind": "contest",
+        "previousJobs": "데이터 분석가",
+        "jobs": "데이터 분석가, 그래픽/시각 디자인",
+        "industries": "",
+        "confidence": 90,
+        "changed": true,
+        "reason": "관광 데이터를 분석해 포스터로 시각화하는 공모전으로 데이터 분석과 그래픽 디자인 직무가 명시적으로 요구됨"
+      },
+      {
+        "id": 38,
+        "name": "제26회 대학(원)생 국제법 논문경시대회 개최 안내",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "국제법 논문경시대회로 수행 직무 없이 순수 논문 공모"
+      },
+      {
+        "id": 41,
+        "name": "책 읽는 청주 독후감",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "독후감 공모전으로 수행 직무 없음, 공공도서관 주최"
+      },
+      {
+        "id": 44,
+        "name": "2026 하남 어텀 패밀리 마라톤",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "마라톤 참가자 모집으로 수행 직무 없음"
+      },
+      {
+        "id": 48,
+        "name": "문학秀 신인문학상 공모",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "문학 신인상 공모로 시/소설/수필 등 순수 창작·수상후보 모집이며 수행 직무 없음"
+      },
+      {
+        "id": 54,
+        "name": "2026 경청마라톤",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "단순 마라톤 참가 행사로 수행 직무 없음"
+      },
+      {
+        "id": 61,
+        "name": "Ocean 20 Challenge : 청년 해커톤 대회",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "사업기획/전략기획",
+        "industries": "공공·교육·비영리",
+        "confidence": 60,
+        "changed": true,
+        "reason": "해양 거버넌스 혁신 방안을 도출하는 아이디어 해커톤으로 구체적 기술 직무 없이 정책·전략 기획 성격에 가까움"
+      },
+      {
+        "id": 63,
+        "name": "2026 마스터즈 하프 마라톤",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "공공·교육·비영리",
+        "confidence": 90,
+        "changed": true,
+        "reason": "단순 마라톤 참가 대회로 수행 직무 없음"
+      }
+    ],
+    "not_applicable": [
+      {
+        "id": 24,
+        "name": "제6회 열 줄 소설 공모전",
+        "kind": "contest",
+        "previousJobs": "",
+        "jobs": "",
+        "industries": "",
+        "confidence": 90,
+        "changed": false,
+        "reason": ""
+      }
+    ]
+  }
+}

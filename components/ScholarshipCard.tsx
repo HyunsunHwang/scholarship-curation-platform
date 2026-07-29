@@ -42,6 +42,8 @@ export type CardScholarship = {
   content_kind?: "scholarship" | "contest" | "education" | "activity";
   /** 공모전·교육·대외활동 관심 태그 (interestCategories) */
   interest_categories?: string[] | null;
+  /** 공모전·교육·대외활동 관심 산업 태그 */
+  interest_industries?: string[] | null;
   /** 장학금 계열 코드 (인문|사회|교육|공학|자연|의약|예체능) */
   qual_field_codes?: string[] | null;
   qual_university?: string[] | null;

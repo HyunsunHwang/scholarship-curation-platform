@@ -55,6 +55,7 @@ export default async function ReviewContestDetailPage({
   if (row.content_kind !== kind) notFound();
 
   const draft = isDraftRecord(row.extracted_draft) ? row.extracted_draft : {};
+  const tagging = isDraftRecord(draft.tagging) ? draft.tagging : {};
   const imageUrls = (row.image_urls ?? []).filter(
     (url): url is string => typeof url === "string" && url.trim().length > 0
   );
@@ -81,6 +82,9 @@ export default async function ReviewContestDetailPage({
     benefits: asStringArray(draft.benefits),
     apply_types: asStringArray(draft.apply_types),
     interest_categories: asStringArray(draft.interest_categories) as Contest["interest_categories"],
+    interest_industries: asStringArray(
+      draft.interest_industries
+    ) as Contest["interest_industries"],
     required_documents: asStringArray(draft.required_documents),
     document_files: row.document_files ?? [],
     apply_method: asString(draft.apply_method) ?? "",
@@ -176,6 +180,29 @@ export default async function ReviewContestDetailPage({
           {row.body?.trim() || "(본문 없음)"}
         </pre>
       </section>
+
+      {typeof tagging.status === "string" ? (
+        <section className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="font-semibold text-amber-950">자동 태깅</span>
+            <span className="rounded-full bg-white px-2.5 py-1 font-medium text-amber-900">
+              {tagging.status === "auto_tagged"
+                ? "자동 분류 완료"
+                : tagging.status === "not_applicable"
+                  ? "직무·산업 태그 비대상"
+                  : "관리자 검수 필요"}
+            </span>
+            {typeof tagging.confidence === "number" ? (
+              <span className="text-amber-800">
+                신뢰도 {Math.round(tagging.confidence * 100)}%
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-2 text-xs text-amber-800">
+            아래 직무·산업 태그를 확인하고 등록하면 관리자 승인 상태로 저장됩니다.
+          </p>
+        </section>
+      ) : null}
 
       <ContestForm
         key={formResetKey}

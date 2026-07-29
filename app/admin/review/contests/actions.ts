@@ -14,6 +14,7 @@ import {
   type NoticeDraftStage,
 } from "@/lib/notice-extraction";
 import type { ContestContentKind } from "@/lib/admin-kinds";
+import { OPPORTUNITY_TAGGING_VERSION } from "@/lib/opportunity-tagging";
 
 function asDraftRecord(value: unknown): Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -77,6 +78,7 @@ export async function promoteCrawledContest(
 ) {
   const { supabase, user, error: authError } = await ensureAdmin();
   if (authError) return { error: authError };
+  if (!user) return { error: "로그인이 필요합니다." };
 
   const { data: reviewRow, error: reviewRowError } = await supabase
     .from("crawled_contests")
@@ -147,6 +149,25 @@ export async function promoteCrawledContest(
   if (error) return { error: error.message };
 
   if (inserted?.id) {
+    const { error: taggingError } = await supabase
+      .from("contest_tagging_metadata")
+      .upsert(
+        {
+          contest_id: inserted.id,
+          taxonomy_version: OPPORTUNITY_TAGGING_VERSION,
+          classifier_version: OPPORTUNITY_TAGGING_VERSION,
+          status: "approved",
+          confidence: 1,
+          tagging_source: "manual",
+          evidence: { source: "admin_review_form", crawled_id: crawledId },
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: user.id,
+        },
+        { onConflict: "contest_id" }
+      );
+    if (taggingError) {
+      return { error: `태그 검수 상태 저장 실패: ${taggingError.message}` };
+    }
     const stages =
       stagesFromForm.length > 0
         ? stagesFromForm.map((s) => ({ ...s, contest_id: inserted.id }))

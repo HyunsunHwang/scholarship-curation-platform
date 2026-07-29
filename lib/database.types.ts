@@ -703,8 +703,10 @@ export interface Database {
           targets: string[] | null;
           benefits: string[] | null;
           apply_types: string[] | null;
-          /** lib/interestCategories.ts 관심 직무 대분류 ID */
+          /** lib/interestCategories.ts 관심 직무 세부 ID */
           interest_categories: string[] | null;
+          /** lib/interestIndustries.ts 관심 산업 ID */
+          interest_industries: string[] | null;
           /** contest | education | activity */
           content_kind: "contest" | "education" | "activity";
           required_documents: string[];
@@ -736,15 +738,58 @@ export interface Database {
         };
         Insert: Omit<
           Database["public"]["Tables"]["contests"]["Row"],
-          "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind"
+          "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind" | "interest_industries"
         > &
           Partial<
             Pick<
               Database["public"]["Tables"]["contests"]["Row"],
-              "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind"
+              "id" | "created_at" | "updated_at" | "view_count" | "scrap_count" | "document_files" | "content_kind" | "interest_industries"
             >
           >;
         Update: Partial<Database["public"]["Tables"]["contests"]["Insert"]>;
+        Relationships: [];
+      };
+
+      contest_tagging_metadata: {
+        Row: {
+          contest_id: number;
+          taxonomy_version: string;
+          classifier_version: string;
+          status:
+            | "pending"
+            | "auto_tagged"
+            | "needs_review"
+            | "not_applicable"
+            | "approved";
+          confidence: number | null;
+          tagging_source: "automatic" | "manual";
+          evidence: Record<string, unknown>;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          contest_id: number;
+          taxonomy_version: string;
+          classifier_version: string;
+          status?:
+            | "pending"
+            | "auto_tagged"
+            | "needs_review"
+            | "not_applicable"
+            | "approved";
+          confidence?: number | null;
+          tagging_source?: "automatic" | "manual";
+          evidence?: Record<string, unknown>;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["contest_tagging_metadata"]["Insert"]
+        >;
         Relationships: [];
       };
 

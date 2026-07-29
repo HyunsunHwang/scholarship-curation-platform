@@ -30,6 +30,10 @@ import {
   isInterestJobId,
   type InterestJobId,
 } from "@/lib/interestCategories";
+import {
+  interestIndustryLabel,
+  isInterestIndustryId,
+} from "@/lib/interestIndustries";
 import { cleanScholarshipName } from "@/lib/scholarship-name";
 import type { Contest, Database } from "@/lib/database.types";
 import type { SelectionStageDetail } from "@/app/scholarships/[id]/ScholarshipTabs";
@@ -105,6 +109,11 @@ async function fetchContestPayload(
   const interestLabels = (contest.interest_categories ?? [])
     .filter(isInterestJobId)
     .map((cid: InterestJobId) => interestJobLabel(cid));
+  interestLabels.push(
+    ...(contest.interest_industries ?? [])
+      .filter(isInterestIndustryId)
+      .map(interestIndustryLabel)
+  );
 
   const detail = contestToScholarshipDetail(contest);
   const benefits = resolveContestBenefits({

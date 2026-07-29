@@ -13,6 +13,11 @@ import {
   type InterestCategoryId,
 } from "@/lib/interestCategories";
 import { fieldCodesForInterest } from "@/lib/interest-field-map";
+import {
+  INTEREST_INDUSTRIES,
+  isInterestIndustryId,
+  type InterestIndustryId,
+} from "@/lib/interestIndustries";
 
 /** browse-data의 BrowseKind / BrowseSection과 동일 — 순환 import 방지 */
 type BrowseKind = "all" | "contest" | "education" | "activity" | "scholarship";
@@ -48,10 +53,11 @@ export const SCHOLARSHIP_ORG_TYPES = [
 
 /** contests.targets — UI 필터에서는 쓰지 않음(대학생 전용 정책) */
 
-export type BrowseFacetTab = "interest" | "benefit" | "org";
+export type BrowseFacetTab = "interest" | "industry" | "benefit" | "org";
 
 export type BrowseFacetFilters = {
   interests: InterestCategoryId[];
+  industries: InterestIndustryId[];
   benefits: BenefitCategoryId[];
   orgs: string[];
   q: string;
@@ -59,6 +65,7 @@ export type BrowseFacetFilters = {
 
 export const EMPTY_BROWSE_FACETS: BrowseFacetFilters = {
   interests: [],
+  industries: [],
   benefits: [],
   orgs: [],
   q: "",
@@ -225,14 +232,29 @@ function parseInterestIds(
   return out;
 }
 
+function parseIndustryIds(
+  raw: string | null | undefined
+): InterestIndustryId[] {
+  const out: InterestIndustryId[] = [];
+  const seen = new Set<string>();
+  for (const value of parseCsv(raw)) {
+    if (!isInterestIndustryId(value) || seen.has(value)) continue;
+    seen.add(value);
+    out.push(value);
+  }
+  return out;
+}
+
 export function parseBrowseFacets(searchParams: {
   interest?: string;
+  industry?: string;
   benefit?: string;
   org?: string;
   q?: string;
 }): BrowseFacetFilters {
   return {
     interests: parseInterestIds(searchParams.interest),
+    industries: parseIndustryIds(searchParams.industry),
     benefits: parseBenefitIds(searchParams.benefit),
     orgs: parseCsv(searchParams.org), // kind별 허용 목록은 UI/적용 시 검증
     q: (searchParams.q ?? "").trim().slice(0, 80),
@@ -242,6 +264,7 @@ export function parseBrowseFacets(searchParams: {
 export function hasBrowseFacets(f: BrowseFacetFilters): boolean {
   return (
     f.interests.length > 0 ||
+    f.industries.length > 0 ||
     f.benefits.length > 0 ||
     f.orgs.length > 0 ||
     f.q.length > 0
@@ -253,6 +276,7 @@ export function browseFacetsToSearchParams(
 ): Record<string, string> {
   const out: Record<string, string> = {};
   if (f.interests.length) out.interest = f.interests.join(",");
+  if (f.industries.length) out.industry = f.industries.join(",");
   if (f.benefits.length) out.benefit = f.benefits.join(",");
   if (f.orgs.length) out.org = f.orgs.join(",");
   if (f.q) out.q = f.q;
@@ -267,6 +291,9 @@ export function facetTabsFor(
 
   return [
     { key: "interest", label: "관심 직무" },
+    ...(!isScholarship
+      ? ([{ key: "industry", label: "관심 산업" }] as const)
+      : []),
     {
       key: "benefit",
       label: isScholarship ? "지원유형" : "활동혜택",
@@ -281,6 +308,12 @@ export function facetOptionsFor(
 ): { id: string; label: string }[] {
   if (tab === "interest") {
     return INTEREST_CATEGORIES.map((c) => ({ id: c.id, label: c.label }));
+  }
+  if (tab === "industry") {
+    return INTEREST_INDUSTRIES.map((industry) => ({
+      id: industry.id,
+      label: industry.label,
+    }));
   }
   if (tab === "benefit") {
     if (kind === "scholarship") {
@@ -333,7 +366,12 @@ export function searchPlaceholder(kind: BrowseKind): string {
 
 /** 검색어 제외 — 필터 버튼 배지용 */
 export function countBrowseFacetSelections(f: BrowseFacetFilters): number {
-  return f.interests.length + f.benefits.length + f.orgs.length;
+  return (
+    f.interests.length +
+    f.industries.length +
+    f.benefits.length +
+    f.orgs.length
+  );
 }
 
 export type BrowseFacetChip = {
@@ -355,6 +393,9 @@ export function listBrowseFacetChips(
   const benefitLabel = Object.fromEntries(
     BENEFIT_CATEGORIES.map((c) => [c.id, c.label])
   );
+  const industryLabel = Object.fromEntries(
+    INTEREST_INDUSTRIES.map((industry) => [industry.id, industry.label])
+  );
 
   for (const id of f.interests) {
     chips.push({
@@ -362,6 +403,14 @@ export function listBrowseFacetChips(
       dimension: "interest",
       id,
       label: interestLabel[id] ?? id,
+    });
+  }
+  for (const id of f.industries) {
+    chips.push({
+      key: `industry:${id}`,
+      dimension: "industry",
+      id,
+      label: industryLabel[id] ?? id,
     });
   }
   for (const id of f.benefits) {
@@ -405,6 +454,12 @@ export function removeBrowseFacetChip(
     return {
       ...f,
       benefits: f.benefits.filter((x) => x !== chip.id),
+    };
+  }
+  if (chip.dimension === "industry") {
+    return {
+      ...f,
+      industries: f.industries.filter((x) => x !== chip.id),
     };
   }
   if (chip.dimension === "org") {

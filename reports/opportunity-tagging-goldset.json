@@ -1,0 +1,435 @@
+{
+  "generated_at": "2026-07-29T07:40:36.096Z",
+  "classifier_version": "2026-07-29.4",
+  "samples": 30,
+  "jobs": {
+    "tp": 40,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1,
+    "recall": 1
+  },
+  "industries": {
+    "tp": 20,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1,
+    "recall": 1
+  },
+  "rows": [
+    {
+      "title": "React와 TypeScript로 배우는 프론트엔드 개발 부트캠프",
+      "expected_jobs": [
+        "frontend"
+      ],
+      "actual_jobs": [
+        "frontend"
+      ],
+      "expected_industries": [
+        "it_software"
+      ],
+      "actual_industries": [
+        "it_software"
+      ]
+    },
+    {
+      "title": "Spring Boot 백엔드 서버 개발 실무 프로젝트",
+      "expected_jobs": [
+        "backend"
+      ],
+      "actual_jobs": [
+        "backend"
+      ],
+      "expected_industries": [
+        "it_software"
+      ],
+      "actual_industries": [
+        "it_software"
+      ]
+    },
+    {
+      "title": "반도체 공정 엔지니어 실무교육",
+      "expected_jobs": [
+        "process_eng",
+        "semiconductor"
+      ],
+      "actual_jobs": [
+        "process_eng",
+        "semiconductor"
+      ],
+      "expected_industries": [
+        "semiconductor"
+      ],
+      "actual_industries": [
+        "semiconductor"
+      ]
+    },
+    {
+      "title": "제약·바이오 연구개발 인턴십",
+      "expected_jobs": [
+        "bio_pharma",
+        "rnd_general"
+      ],
+      "actual_jobs": [
+        "bio_pharma",
+        "rnd_general"
+      ],
+      "expected_industries": [
+        "bio_pharma"
+      ],
+      "actual_industries": [
+        "bio_pharma"
+      ]
+    },
+    {
+      "title": "퍼포먼스 마케팅 광고 운영 실무 과정",
+      "expected_jobs": [
+        "performance"
+      ],
+      "actual_jobs": [
+        "performance"
+      ],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "금융 데이터 분석가 프로젝트",
+      "expected_jobs": [
+        "data_analyst"
+      ],
+      "actual_jobs": [
+        "data_analyst"
+      ],
+      "expected_industries": [
+        "finance_fintech"
+      ],
+      "actual_industries": [
+        "finance_fintech"
+      ]
+    },
+    {
+      "title": "게임 시스템 기획 공모전",
+      "expected_jobs": [
+        "game_planning"
+      ],
+      "actual_jobs": [
+        "game_planning"
+      ],
+      "expected_industries": [
+        "game"
+      ],
+      "actual_industries": [
+        "game"
+      ]
+    },
+    {
+      "title": "이차전지 생산기술 아카데미",
+      "expected_jobs": [
+        "production_tech"
+      ],
+      "actual_jobs": [
+        "production_tech"
+      ],
+      "expected_industries": [
+        "battery_energy"
+      ],
+      "actual_industries": [
+        "battery_energy"
+      ]
+    },
+    {
+      "title": "UN산업개발기구 GreenEnerTEC 2026 통역자원봉사자 모집",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "2026 D-Robotics Innovation Contest",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "Physical AI 활용 반도체 패키지 설계 및 CAE 해석 스쿨",
+      "expected_jobs": [
+        "semiconductor"
+      ],
+      "actual_jobs": [
+        "semiconductor"
+      ],
+      "expected_industries": [
+        "semiconductor"
+      ],
+      "actual_industries": [
+        "semiconductor"
+      ]
+    },
+    {
+      "title": "뇌성마비 인식개선 「슬로건, 디자인, 미디어, 보조기기」통합 공모전",
+      "expected_jobs": [
+        "pr",
+        "graphic",
+        "product_design",
+        "content_prod",
+        "bx",
+        "pd"
+      ],
+      "actual_jobs": [
+        "content_prod",
+        "pr",
+        "product_design",
+        "bx",
+        "graphic",
+        "pd"
+      ],
+      "expected_industries": [
+        "media_entertainment"
+      ],
+      "actual_industries": [
+        "media_entertainment"
+      ]
+    },
+    {
+      "title": "공공기관 경영지원 사무 인턴",
+      "expected_jobs": [
+        "office_support"
+      ],
+      "actual_jobs": [
+        "office_support"
+      ],
+      "expected_industries": [
+        "public_edu_npo"
+      ],
+      "actual_industries": [
+        "public_edu_npo"
+      ]
+    },
+    {
+      "title": "2026 CHAI 대학생 AI 광고 공모전",
+      "expected_jobs": [
+        "ae",
+        "brand_marketing",
+        "content_prod"
+      ],
+      "actual_jobs": [
+        "ae",
+        "brand_marketing",
+        "content_prod"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "[한국방송광고진흥공사] 2026 대한민국 공익광고제 공모전",
+      "expected_jobs": [
+        "ae"
+      ],
+      "actual_jobs": [
+        "ae"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "[콜랩코리아] 광고마케팅(CPS1 광고마케팅) 실전 직무 프로그램",
+      "expected_jobs": [
+        "brand_marketing"
+      ],
+      "actual_jobs": [
+        "brand_marketing"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "[발렌라이프] 미래내일 일경험 - IMC 마케팅 인턴 채용",
+      "expected_jobs": [
+        "brand_marketing"
+      ],
+      "actual_jobs": [
+        "brand_marketing"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "역사 내외 디지털 광고 사업화 및 성과 측정 아이디어 공모전",
+      "expected_jobs": [
+        "ae",
+        "performance"
+      ],
+      "actual_jobs": [
+        "ae",
+        "performance"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "2026 단양 관광 마케팅 기념품 공모전",
+      "expected_jobs": [
+        "brand_marketing",
+        "md"
+      ],
+      "actual_jobs": [
+        "brand_marketing",
+        "md"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "1350 고용노동부 고객상담센터 숏폼 영상 공모전",
+      "expected_jobs": [
+        "cs",
+        "pd",
+        "content_prod"
+      ],
+      "actual_jobs": [
+        "content_prod",
+        "cs",
+        "pd"
+      ],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "2026년 제13회 아름다운 우리말 되살리기 영상 공모전",
+      "expected_jobs": [
+        "pd",
+        "content_prod"
+      ],
+      "actual_jobs": [
+        "content_prod",
+        "pd"
+      ],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "포스터·로고 CI 디자인 공모전",
+      "expected_jobs": [
+        "graphic",
+        "bx"
+      ],
+      "actual_jobs": [
+        "bx",
+        "graphic"
+      ],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "2026년 서울詩(시) 지하철 공모",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "2026년「부산지역인재 장학금」상반기 생활장학금 지원 신청 공고",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "책 읽는 청주 독후감",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "2026 하남 어텀 패밀리 마라톤",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "제26회 2·28학생문학상 전국 공모전",
+      "expected_jobs": [],
+      "actual_jobs": [],
+      "expected_industries": [],
+      "actual_industries": []
+    },
+    {
+      "title": "[양천구시설관리공단] 1기 프로그램(광고마케팅)",
+      "expected_jobs": [
+        "brand_marketing"
+      ],
+      "actual_jobs": [
+        "brand_marketing"
+      ],
+      "expected_industries": [
+        "marketing_agency",
+        "public_edu_npo"
+      ],
+      "actual_industries": [
+        "marketing_agency",
+        "public_edu_npo"
+      ]
+    },
+    {
+      "title": "생성형 AI 활용 마케팅",
+      "expected_jobs": [
+        "brand_marketing"
+      ],
+      "actual_jobs": [
+        "brand_marketing"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    },
+    {
+      "title": "융합_데이터분석 기술을 활용한 디지털콘텐츠&마케팅 기획",
+      "expected_jobs": [
+        "data_analyst",
+        "brand_marketing",
+        "content_prod"
+      ],
+      "actual_jobs": [
+        "brand_marketing",
+        "content_prod",
+        "data_analyst"
+      ],
+      "expected_industries": [
+        "marketing_agency"
+      ],
+      "actual_industries": [
+        "marketing_agency"
+      ]
+    }
+  ]
+}

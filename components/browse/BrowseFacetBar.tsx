@@ -31,6 +31,7 @@ import {
 } from "@/lib/browse-facets";
 import type { BenefitCategoryId } from "@/lib/benefit-categories";
 import type { InterestCategoryId } from "@/lib/interestCategories";
+import type { InterestIndustryId } from "@/lib/interestIndustries";
 
 type BrowseFacetBarProps = {
   kind: BrowseKind;
@@ -46,6 +47,7 @@ function toggleInList<T extends string>(list: T[], id: T): T[] {
 function cloneFacets(f: BrowseFacetFilters): BrowseFacetFilters {
   return {
     interests: [...f.interests],
+    industries: [...f.industries],
     benefits: [...f.benefits],
     orgs: [...f.orgs],
     q: f.q,
@@ -144,6 +146,11 @@ function BrowseFilterSheet({
     const next = cloneFacets(draft);
     if (tab === "interest") {
       next.interests = toggleInList(draft.interests, id as InterestCategoryId);
+    } else if (tab === "industry") {
+      next.industries = toggleInList(
+        draft.industries,
+        id as InterestIndustryId
+      );
     } else if (tab === "benefit") {
       next.benefits = toggleInList(draft.benefits, id as BenefitCategoryId);
     } else {
@@ -154,13 +161,14 @@ function BrowseFilterSheet({
 
   function selectedFor(tab: BrowseFacetTab): readonly string[] {
     if (tab === "interest") return draft.interests;
+    if (tab === "industry") return draft.industries;
     if (tab === "benefit") return draft.benefits;
     return draft.orgs;
   }
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-80 flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-4"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -241,14 +249,6 @@ export default function BrowseFacetBar({
     cloneFacets(facets)
   );
   const [draftQ, setDraftQ] = useState(facets.q);
-
-  useEffect(() => {
-    setDraftQ(facets.q);
-  }, [facets.q]);
-
-  useEffect(() => {
-    if (!open) setDraft(cloneFacets(facets));
-  }, [facets, open]);
 
   const selectionCount = countBrowseFacetSelections(facets);
   const chips = listBrowseFacetChips(facets, kind);

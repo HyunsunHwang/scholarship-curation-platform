@@ -76,7 +76,9 @@ async function main() {
       continue;
     }
 
-    await run("node", [
+    await run("npx", [
+      "--yes",
+      "tsx",
       "scripts/ingest-linkareer-contests.mjs",
       "--kind",
       kind,

@@ -1,0 +1,676 @@
+{
+  "generated_at": "2026-07-29T08:28:33.763Z",
+  "source": "reports/opportunity-tagging-dry-run-1785313668782.json",
+  "classifier_version": "2026-07-29.4",
+  "total": 100,
+  "changed": 88,
+  "needs_review_count": 17,
+  "llm_attempted": 71,
+  "llm_failed": 0,
+  "status": {
+    "auto_tagged": 71,
+    "needs_review": 17,
+    "not_applicable": 12
+  },
+  "empty_jobs": 23,
+  "topJobs": [
+    {
+      "id": "pd",
+      "count": 27
+    },
+    {
+      "id": "content_prod",
+      "count": 25
+    },
+    {
+      "id": "graphic",
+      "count": 18
+    },
+    {
+      "id": "biz_strategy",
+      "count": 12
+    },
+    {
+      "id": "product_design",
+      "count": 6
+    },
+    {
+      "id": "data_analyst",
+      "count": 6
+    },
+    {
+      "id": "brand_marketing",
+      "count": 4
+    },
+    {
+      "id": "ae",
+      "count": 3
+    },
+    {
+      "id": "embedded",
+      "count": 3
+    },
+    {
+      "id": "service_pm",
+      "count": 3
+    },
+    {
+      "id": "cs",
+      "count": 2
+    },
+    {
+      "id": "rnd_general",
+      "count": 2
+    }
+  ],
+  "topIndustries": [
+    {
+      "id": "public_edu_npo",
+      "count": 44
+    },
+    {
+      "id": "media_entertainment",
+      "count": 31
+    },
+    {
+      "id": "it_software",
+      "count": 13
+    },
+    {
+      "id": "marketing_agency",
+      "count": 6
+    },
+    {
+      "id": "commerce_logistics",
+      "count": 6
+    },
+    {
+      "id": "manufacturing_chem",
+      "count": 6
+    },
+    {
+      "id": "electronics",
+      "count": 5
+    },
+    {
+      "id": "consumer_goods",
+      "count": 4
+    },
+    {
+      "id": "finance_fintech",
+      "count": 3
+    },
+    {
+      "id": "battery_energy",
+      "count": 3
+    },
+    {
+      "id": "game",
+      "count": 3
+    },
+    {
+      "id": "bio_pharma",
+      "count": 2
+    }
+  ],
+  "chai": {
+    "id": 1,
+    "name": "2026 CHAI 대학생 AI 광고 공모전",
+    "content_kind": "contest",
+    "previous_jobs": [
+      "ml_engineer",
+      "brand_marketing"
+    ],
+    "jobs": [
+      "content_prod",
+      "ae",
+      "brand_marketing",
+      "pd"
+    ],
+    "previous_industries": [],
+    "industries": [
+      "marketing_agency"
+    ],
+    "confidence": 0.88,
+    "status": "auto_tagged",
+    "changed": true,
+    "evidence": {
+      "jobs": [
+        {
+          "tag": "content_prod",
+          "score": 6,
+          "matched": [
+            "body:콘텐츠\\s*(기획|제작|크리에이터)|디지털\\s*콘텐츠|미디어\\s*(부문|분야|공모)|사진\\s*또는\\s*영상|영상\\s*컨텐츠|사진\\s*(공모|부문|콘테스트)|미디어[,，]",
+            "body:크리에이티브[를을]?\\s*(제안|제작|아이디어)|영상\\s*공모|숏폼\\s*(공모|영상|콘텐츠)|유튜브\\s*컨텐츠"
+          ]
+        },
+        {
+          "tag": "ae",
+          "score": 5,
+          "matched": [
+            "title:광고\\s*(의\\s*)?기획|광고기획|광고\\s*상품|광고\\s*(공모|캠페인|아이디어|산업|사업화)|광고\\s*크리에이티브|광고인"
+          ]
+        },
+        {
+          "tag": "brand_marketing",
+          "score": 3,
+          "matched": [
+            "body:브랜드\\s*마케팅|브랜딩\\s*캠페인|brand\\s*marketing|브랜드\\s*(과제|문제)|광고\\s*캠페인"
+          ]
+        },
+        {
+          "tag": "pd",
+          "score": 3,
+          "matched": [
+            "body:영상\\s*(기획|제작|컨텐츠|콘텐츠|공모)|\\bpd\\b(?:\\s*직무|\\s*채용|\\s*교육)|프로듀서|숏폼\\s*(영상|공모)|다큐(?:멘터리)?"
+          ]
+        }
+      ],
+      "industries": [
+        {
+          "tag": "marketing_agency",
+          "score": 5,
+          "matched": [
+            "title:광고\\s*(대행|공모|캠페인|회사|에이전시|산업)|광고제|공익\\s*광고|광고마케팅|광고\\s*마케팅"
+          ]
+        }
+      ]
+    }
+  },
+  "ad_titles": [
+    {
+      "id": 1,
+      "name": "2026 CHAI 대학생 AI 광고 공모전",
+      "jobs": [
+        "content_prod",
+        "ae",
+        "brand_marketing",
+        "pd"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "previous_jobs": [
+        "ml_engineer",
+        "brand_marketing"
+      ],
+      "status": "auto_tagged",
+      "confidence": 0.88
+    },
+    {
+      "id": 26,
+      "name": "[한국방송광고진흥공사] 2026 대한민국 공익광고제 공모전 “선(善)을 잇다, 우리를 담다“",
+      "jobs": [
+        "ae"
+      ],
+      "industries": [
+        "marketing_agency",
+        "media_entertainment"
+      ],
+      "previous_jobs": [
+        "brand_marketing"
+      ],
+      "status": "auto_tagged",
+      "confidence": 0.88
+    }
+  ],
+  "auto_samples": [
+    {
+      "id": 1,
+      "name": "2026 CHAI 대학생 AI 광고 공모전",
+      "jobs": [
+        "content_prod",
+        "ae",
+        "brand_marketing",
+        "pd"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "previous_jobs": [
+        "ml_engineer",
+        "brand_marketing"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 2,
+      "name": "1350 고용노동부 고객상담센터 숏폼 영상 공모전",
+      "jobs": [
+        "content_prod",
+        "pd",
+        "cs"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "cs",
+        "content_prod"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": 3,
+      "name": "[한국전시산업진흥회] 2026 전시산업 대학생 경진대회",
+      "jobs": [
+        "brand_marketing",
+        "graphic"
+      ],
+      "industries": [
+        "marketing_agency"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.75
+    },
+    {
+      "id": 4,
+      "name": "[ICOTEC 2026] 제15회 저작권 기술 어워드 수상 후보자 모집 공고",
+      "jobs": [
+        "rnd_general"
+      ],
+      "industries": [
+        "commerce_logistics"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.75
+    },
+    {
+      "id": 5,
+      "name": "뇌성마비 인식개선 「슬로건, 디자인, 미디어, 보조기기」통합 공모전",
+      "jobs": [
+        "content_prod",
+        "pr",
+        "product_design",
+        "bx",
+        "graphic",
+        "pd"
+      ],
+      "industries": [
+        "media_entertainment",
+        "commerce_logistics"
+      ],
+      "previous_jobs": [
+        "ux_ui"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 6,
+      "name": "2026년 제5회 성동문화재단 신진 청년작가 공모전",
+      "jobs": [
+        "graphic"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 8,
+      "name": "2026년 청년창업 아이디에이션 4.0 참가자 모집",
+      "jobs": [
+        "biz_strategy"
+      ],
+      "industries": [
+        "it_software",
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    },
+    {
+      "id": 9,
+      "name": "[제18회 DMZ국제다큐멘터리영화제] 38초 다큐공모전 ‘당신의 용기를 응원합니다’",
+      "jobs": [
+        "pd",
+        "brand_marketing"
+      ],
+      "industries": [
+        "media_entertainment",
+        "marketing_agency"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 12,
+      "name": "2026년 제13회 아름다운 우리말 되살리기 영상 공모전",
+      "jobs": [
+        "content_prod",
+        "pd"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "content_prod"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "id": 13,
+      "name": "[이랜드문화재단] 17기 공모전",
+      "jobs": [
+        "graphic"
+      ],
+      "industries": [
+        "public_edu_npo",
+        "media_entertainment"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.88
+    },
+    {
+      "id": 14,
+      "name": "[(재)전남여성가족재단] 일상 속 성평등 콘텐츠 공모전",
+      "jobs": [
+        "pd"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "content_prod"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "id": 15,
+      "name": "2026 성남시 정책 아이디어 청년 해커톤 대회 개최 공고",
+      "jobs": [
+        "biz_strategy"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "service_pm"
+      ],
+      "confidence": 0.7
+    }
+  ],
+  "review_samples": [
+    {
+      "id": 7,
+      "name": "제2회 대구광역시 청소년 탄소중립 토론대회 개최",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    },
+    {
+      "id": 23,
+      "name": "제11회 전기사랑 스피치대회",
+      "jobs": [],
+      "industries": [
+        "battery_energy",
+        "manufacturing_chem"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 24,
+      "name": "제6회 열 줄 소설 공모전",
+      "jobs": [],
+      "industries": [
+        "media_entertainment"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 25,
+      "name": "2026 적극행정·규제합리화 아이디어 대국민 공모전",
+      "jobs": [
+        "biz_strategy"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "service_pm"
+      ],
+      "confidence": 0.6
+    },
+    {
+      "id": 27,
+      "name": "KIPRIS 30주년 기념 대한민국 지식재산 검색 챌린지",
+      "jobs": [
+        "content_sns"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 30,
+      "name": "[대전도시공사] 2026년 사회공헌 아이디어 공모전",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "service_pm"
+      ],
+      "confidence": 0.7
+    },
+    {
+      "id": 38,
+      "name": "제26회 대학(원)생 국제법 논문경시대회 개최 안내",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    },
+    {
+      "id": 53,
+      "name": "2026 제5회 청소년 메이커 경진대회 YOUTH",
+      "jobs": [
+        "product_design"
+      ],
+      "industries": [
+        "it_software",
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 61,
+      "name": "Ocean 20 Challenge : 청년 해커톤 대회",
+      "jobs": [
+        "biz_strategy"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 67,
+      "name": "청소년 아티스트 앨범 제작 프로젝트",
+      "jobs": [],
+      "industries": [
+        "media_entertainment"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    },
+    {
+      "id": 71,
+      "name": "[경상북도] 제19회 경상북도 아마추어 e스포츠 대회 참가 모집",
+      "jobs": [],
+      "industries": [
+        "game"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 72,
+      "name": "[농림축산검역본부] 2026년도 농림축산검역본부 식물병해충 검색·분류동정 경진대회 참가자 모집",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo",
+        "consumer_goods"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 78,
+      "name": "2026태권도의 날 기념 전국 대학생 태권도 학술경진대회",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    },
+    {
+      "id": 85,
+      "name": "제19회 도서관 장애인서비스 아이디어 및 우수사례 공모",
+      "jobs": [],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [
+        "service_pm"
+      ],
+      "confidence": 0.7
+    },
+    {
+      "id": 91,
+      "name": "2026년 부산여행 체험수기 공모전",
+      "jobs": [
+        "content_prod"
+      ],
+      "industries": [
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 96,
+      "name": "2026 JST공유대학 두드림(Do-Dream) 챌린지 해커톤 경진대회",
+      "jobs": [
+        "biz_strategy"
+      ],
+      "industries": [
+        "bio_pharma",
+        "battery_energy",
+        "public_edu_npo"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.6
+    },
+    {
+      "id": 99,
+      "name": "2026 글로벌 김치요리 레시피 콘테스트",
+      "jobs": [],
+      "industries": [
+        "consumer_goods",
+        "commerce_logistics"
+      ],
+      "previous_jobs": [],
+      "confidence": 0.7
+    }
+  ],
+  "na_samples": [
+    {
+      "id": 10,
+      "name": "2026년「부산지역인재 장학금」상반기 생활장학금 지원 신청 공고",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 11,
+      "name": "2026 유쾌한반란 <구멍뒤주 시즌6 '청소년들의 꿈과 도전을 응원합니다!'>",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 17,
+      "name": "2026년 서울詩(시) 지하철 공모",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 32,
+      "name": "제26회 2·28학생문학상 전국 공모전",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 41,
+      "name": "책 읽는 청주 독후감",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 44,
+      "name": "2026 하남 어텀 패밀리 마라톤",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 48,
+      "name": "문학秀 신인문학상 공모",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 54,
+      "name": "2026 경청마라톤",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 63,
+      "name": "2026 마스터즈 하프 마라톤",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 69,
+      "name": "2026 안양천 하프 마라톤",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.9
+    },
+    {
+      "id": 80,
+      "name": "[청주시] 제25회 망선루 전국서예공모대전",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.85
+    },
+    {
+      "id": 83,
+      "name": "[화천청소년수련관] 2026 제16회 화천 T&U전국청소년가요제",
+      "jobs": [],
+      "industries": [],
+      "confidence": 0.85
+    }
+  ]
+}
