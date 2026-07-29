@@ -1,0 +1,897 @@
+{
+  "version": "v3.4.3",
+  "provider_call_count": 0,
+  "claims": [
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:0",
+      "field": "scholarship_name",
+      "semantic_value": "외부장학 추천",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S001",
+          "canonical_value": "S001"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:1",
+      "field": "publishing_department",
+      "semantic_value": "경영학부",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S001",
+          "canonical_value": "S001"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:2",
+      "field": "eligibility",
+      "semantic_value": "경영학부 학생",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S001",
+          "canonical_value": "S001"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:3",
+      "field": "eligibility",
+      "semantic_value": "외부 장학재단 등 타 기관 장학금 수혜를 위해 경영학부의 추천서가 필요한 학생",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S001",
+          "canonical_value": "S001"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:4",
+      "field": "application_period",
+      "semantic_value": "추천서 수령 희망일 기준 최소 7일 전까지",
+      "source_refs": [
+        "S002"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S002에 semantic value가 직접 나타난다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S002",
+          "canonical_value": "S002"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:5",
+      "field": "application_method",
+      "semantic_value": "기한 내 구글 폼 양식(https://forms.gle/tYtfGqEw5fQGYSNt9)을 통해 신청 후 경영학부 사무실로 전화하여 접수 요청",
+      "source_refs": [
+        "S002"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S002의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S002",
+          "canonical_value": "S002"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:6",
+      "field": "application_method",
+      "semantic_value": "수령 희망일 방문 전 경영학부 사무실로 확인 전화 후 방문 수령",
+      "source_refs": [
+        "S002"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S002에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S002",
+          "canonical_value": "S002"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:7",
+      "field": "important_constraint",
+      "semantic_value": "기한 엄수 / 이후 신청할 경우 희망 수령일 이내로 추천서 승인이 이루어지지 않을 수 있음",
+      "source_refs": [
+        "S002"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S002의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S002",
+          "canonical_value": "S002"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-cau-external-recommendation",
+      "claim_id": "unseen-v341-cau-external-recommendation:8",
+      "field": "contact",
+      "semantic_value": "경영학부 사무실 02-820-5539, 5540",
+      "source_refs": [
+        "S002"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S002에 semantic value가 직접 나타난다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "source_ref_prefix_removed",
+          "provider_value": "cau_001/c29c99eca95c71c8/S002",
+          "canonical_value": "S002"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:0",
+      "field": "scholarship_name",
+      "semantic_value": "Merit-based Scholarship (성적우수장학금)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "name"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:1",
+      "field": "scholarship_name",
+      "semantic_value": "Need-based Scholarship (가계곤란장학금)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "name"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:2",
+      "field": "scholarship_name",
+      "semantic_value": "ESP (Exchange Student Program) Scholarship (교환학생장학금)",
+      "source_refs": [
+        "S004"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S004에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "name"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:3",
+      "field": "scholarship_name",
+      "semantic_value": "언더우드자유장학금",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "name"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:4",
+      "field": "scholarship_name",
+      "semantic_value": "진리장학금",
+      "source_refs": [
+        "S001"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S001에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "name"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:5",
+      "field": "publishing_department",
+      "semantic_value": "Underwood International College",
+      "source_refs": [
+        "S012"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S012에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "publisher"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:6",
+      "field": "eligibility",
+      "semantic_value": "Minimum of 12 credits in 2026 Spring Semester (or the most current semester for those on leave of absence)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "credit requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:7",
+      "field": "eligibility",
+      "semantic_value": "No overlapping scholarships are permitted except for 국가장학금 (the scholarship provided by Korea Student Aid Foundation)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "overlap restriction"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:8",
+      "field": "eligibility",
+      "semantic_value": "Students who have completed more than 8 semesters as of 2026 Spring Semester cannot apply",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "semester limit"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:9",
+      "field": "eligibility",
+      "semantic_value": "Outstanding 2026 Spring Semester (or the most current semester for those on leave of absence) GPA",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "academic requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:10",
+      "field": "eligibility",
+      "semantic_value": "2026 Spring Semester (or the most current semester for those on leave of absence) GPA 2.5 or higher",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "GPA requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:11",
+      "field": "eligibility",
+      "semantic_value": "2026 Spring Semester (or the most current semester for those on leave of absence) GPA 2.5 or higher",
+      "source_refs": [
+        "S004"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S004에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "GPA requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:12",
+      "field": "eligibility",
+      "semantic_value": "Outbound exchange students who have been selected to be dispatched in the 2026 Fall Semester",
+      "source_refs": [
+        "S004"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S004에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "student status requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:13",
+      "field": "eligibility",
+      "semantic_value": "Must apply for 국가장학금 (I, II type); those who do not apply are excluded from need-based scholarship review",
+      "source_refs": [
+        "S007"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S007의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "additional requirement"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:14",
+      "field": "benefit",
+      "semantic_value": "Full tuition, 1/2 of the tuition, 1/3 of the tuition, etc.",
+      "source_refs": [
+        "S004"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S004에 semantic value가 직접 나타난다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "amount"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:15",
+      "field": "benefit",
+      "semantic_value": "Automatic deduction on tuition statements",
+      "source_refs": [
+        "S012"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S012에 semantic value가 직접 나타난다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "payment method"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:16",
+      "field": "application_period",
+      "semantic_value": "9AM June 18th (Thu) to 5PM July 16th (Thu), 2026 (Korea Standard Time)",
+      "source_refs": [
+        "S006"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S006의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "submission window"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:17",
+      "field": "application_period",
+      "semantic_value": "By July 16th, 2026",
+      "source_refs": [
+        "S005"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S005의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "critical",
+      "normalization_log": [
+        {
+          "type": "provider_role_moved_to_scope",
+          "provider_value": "email submission deadline"
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:18",
+      "field": "required_document",
+      "semantic_value": "Scholarship Application Form (가계곤란장학금신청서): downloaded from Yonsei Portal, must be filled out in English",
+      "source_refs": [
+        "S007"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S007의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:19",
+      "field": "required_document",
+      "semantic_value": "Other financial hardship supporting documents such as bankruptcy certificate, debt certificate, long-term hospitalization certificate of immediate family, unemployment certificate (구직등록필증 issued by employment center), etc. (if applicable)",
+      "source_refs": [
+        "S007"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S007의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:20",
+      "field": "required_document",
+      "semantic_value": "Multiple supporting documents (excluding application form) must be merged into one PDF file, standardized to A4 size",
+      "source_refs": [
+        "S007"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S007의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:21",
+      "field": "required_document",
+      "semantic_value": "Scholarship Application Form: downloadable from Yonsei Portal, prepared in English",
+      "source_refs": [
+        "S008"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S008의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:22",
+      "field": "required_document",
+      "semantic_value": "Tax return statements from both the student and parent(s) or guardian(s) (if applicable)",
+      "source_refs": [
+        "S008"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S008의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:23",
+      "field": "required_document",
+      "semantic_value": "Copy of salary statement from the student and/or guardian(s) for the last six or twelve months (if applicable)",
+      "source_refs": [
+        "S008"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S008의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:24",
+      "field": "required_document",
+      "semantic_value": "Other income/asset information documents (if applicable)",
+      "source_refs": [
+        "S008"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S008에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:25",
+      "field": "required_document",
+      "semantic_value": "Any other documents proving a need for financial aid",
+      "source_refs": [
+        "S008"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S008에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:26",
+      "field": "required_document",
+      "semantic_value": "All documents except the application form merged into one PDF file; documents not in English or Korean must be translated",
+      "source_refs": [
+        "S008",
+        "S009"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S008, S009의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:27",
+      "field": "required_document",
+      "semantic_value": "Copies of banking and credit card statements for the past 6 months (12 months preferred), housing lease agreement, statements of unemployment and bankruptcy by guardian, income tax and estate tax statements by student and/or guardian",
+      "source_refs": [
+        "S009"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S009의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:28",
+      "field": "required_document",
+      "semantic_value": "Merit-based scholarship application form (attached), submitted via email to each division's office",
+      "source_refs": [
+        "S005"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S005의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:29",
+      "field": "application_method",
+      "semantic_value": "Click Download on Scholarship Application Form, fill out and save, upload saved application, click Apply button; scan or photograph supplementary documents and upload; merge multiple documents into one PDF (A4 size); file size limit is 10MB",
+      "source_refs": [
+        "S010"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S010의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:30",
+      "field": "application_method",
+      "semantic_value": "Submit merit-based scholarship application via email to each division's office by July 16th, 2026",
+      "source_refs": [
+        "S005"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S005의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:31",
+      "field": "application_method",
+      "semantic_value": "Students who meet qualifications are automatically selected without any additional application procedures",
+      "source_refs": [
+        "S005"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S005의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:32",
+      "field": "important_constraint",
+      "semantic_value": "Minimum of 12 credits required in 2026 Spring Semester (or most current semester for those on leave of absence)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S003의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:33",
+      "field": "important_constraint",
+      "semantic_value": "No overlapping scholarships permitted except for 국가장학금 (provided by Korea Student Aid Foundation)",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S003의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:34",
+      "field": "important_constraint",
+      "semantic_value": "Students who have completed more than 8 semesters as of 2026 Spring Semester cannot apply",
+      "source_refs": [
+        "S003"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S003에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:35",
+      "field": "important_constraint",
+      "semantic_value": "Merit-based scholarship (진리장학금) applicants do NOT need to submit a scholarship application, except for students currently on leave planning to return in 2026 Fall Semester",
+      "source_refs": [
+        "S001",
+        "S002"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S001, S002의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:36",
+      "field": "important_constraint",
+      "semantic_value": "Applicants must apply for 국가장학금 (Type I and II); those who do not apply for 국가장학금 are excluded from need-based scholarship review (exception: those unable to apply due to exceeding application count may still apply, but must note this on the application form)",
+      "source_refs": [
+        "S007"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S007의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:37",
+      "field": "important_constraint",
+      "semantic_value": "Documents must be submitted via Yonsei Portal during the application period",
+      "source_refs": [
+        "S006"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S006의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:38",
+      "field": "important_constraint",
+      "semantic_value": "All documents must be prepared in English; documents not in English or Korean must be translated into English or Korean",
+      "source_refs": [
+        "S008",
+        "S009"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S008, S009의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:39",
+      "field": "important_constraint",
+      "semantic_value": "Upload file capacity is limited to 10MB",
+      "source_refs": [
+        "S010"
+      ],
+      "assessment": "CORRECT",
+      "reason": "S010에 semantic value가 직접 나타난다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:40",
+      "field": "important_constraint",
+      "semantic_value": "Application must be submitted by July 16th, 2026; it is each student's responsibility to check application status with each division's office",
+      "source_refs": [
+        "S005"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S005의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:41",
+      "field": "important_constraint",
+      "semantic_value": "Results announced during 2026 Fall Tuition Fee Bill Print Period via Bill Print Menu on Yonsei Portal System; payment method is automatic deduction on tuition statements",
+      "source_refs": [
+        "S012"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S012의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": []
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:42",
+      "field": "application_method",
+      "semantic_value": "Submit documents via Yonsei Portal System (http://portal.yonsei.ac.kr) during the application period: Log in - Academic Information - Scholarship - Students Scholarship Application (학생장학신청) - Select 2026-2 semester - Step 1. Applicable Scholarship - 언더우드자유장학금 - Download Notice File - ADD - Step 2. Apply for Scholarship - Upload Application Form and Supplementary Documents in combined PDF file - Apply",
+      "source_refs": [
+        "S001",
+        "S006"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S001, S006의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "unexpected_raw_hints_discarded",
+          "provider_values": [
+            "http://portal.yonsei.ac.kr"
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:43",
+      "field": "application_method",
+      "semantic_value": "If file exceeds 10MB, send to division office via email with title '2026-2 Needbased_Student ID_Name.pdf'",
+      "source_refs": [
+        "S010"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S010의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "unexpected_raw_hints_discarded",
+          "provider_values": [
+            "2026-2 Needbased_Student ID_Name.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "fixture_id": "unseen-v341-yonsei-uic-scholarship",
+      "claim_id": "unseen-v341-yonsei-uic-scholarship:44",
+      "field": "important_constraint",
+      "semantic_value": "Application period: 9AM June 18th (Thu) ~ 5PM July 16th (Thu), 2026 (Korea Standard Time)",
+      "source_refs": [
+        "S006"
+      ],
+      "assessment": "PARTIAL",
+      "reason": "S006의 원문 문맥과 값은 관련되지만 표기·범위 차이를 수동 검토해야 한다.",
+      "risk": "sample",
+      "normalization_log": [
+        {
+          "type": "unexpected_raw_hints_discarded",
+          "provider_values": [
+            "9AM June 18th (Thu) ~ 5PM July 16th (Thu), 2026 (Korea Standard Time)"
+          ]
+        }
+      ]
+    }
+  ],
+  "related_organization_mentions": [
+    {
+      "semantic_value": "Korea Student Aid Foundation (한국장학재단)",
+      "organization_role": null,
+      "mention_status": "SUPPORTED",
+      "role_status": "UNSUPPORTED_FOR_CURRENT_PROGRAM",
+      "source_refs": [
+        "S003",
+        "S007"
+      ],
+      "assessment": "UNSUPPORTED",
+      "reason": "국가장학금 중복수혜 예외 문맥은 현재 UIC 장학사업의 기관 역할을 직접 지지하지 않는다."
+    }
+  ],
+  "summary": {
+    "CORRECT": 26,
+    "PARTIAL": 28,
+    "UNSUPPORTED": 1,
+    "HALLUCINATED": 0
+  }
+}
