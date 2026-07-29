@@ -11,6 +11,7 @@
  * Env:
  *   SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL
  *   SUPABASE_SERVICE_ROLE_KEY
+ *   SLACK_ACTIVITY_WEBHOOK_URL  (optional; posts 대외활동 digest to #대외활동-검수)
  */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -89,6 +90,22 @@ async function main() {
 
     const ids = (payload.items || []).map((x) => String(x.id)).filter(Boolean);
     summary.push({ kind, crawled: count, queued: true, ids: ids.length });
+
+    // 대외활동만 Slack(#대외활동-검수)에 5개 필드 요약 전송
+    if (kind === "activity") {
+      try {
+        await run("node", [
+          "scripts/send-slack-linkareer-activity.mjs",
+          "--in",
+          out,
+        ]);
+        summary[summary.length - 1].slack = true;
+      } catch (err) {
+        console.error("[daily] slack activity notify failed:", err);
+        summary[summary.length - 1].slack = false;
+        summary[summary.length - 1].slack_error = String(err?.message || err);
+      }
+    }
   }
 
   console.log("[daily] summary", JSON.stringify(summary, null, 2));

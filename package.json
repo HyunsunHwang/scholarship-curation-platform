@@ -161,6 +161,7 @@
     "feedback:notices": "node scripts/summarize-crawled-feedback.mjs",
     "repair:notices": "node scripts/repair-notice-urls.mjs",
     "notify:slack": "node scripts/send-slack-notice-summary.mjs",
+    "notify:slack:activity": "node scripts/send-slack-linkareer-activity.mjs",
     "reformat:notices": "npx --yes tsx scripts/reformat-open-notice-texts.ts",
     "reformat:contests": "npx --yes tsx scripts/reformat-contest-notice-texts.ts",
     "queue:promote-and-demote-linkareer": "npx --yes tsx scripts/promote-queue-and-demote-linkareer.ts"
