@@ -9,6 +9,13 @@ import {
 } from "@/lib/support-amount";
 import { effectiveContestScrapCount } from "@/lib/contest-scrap-counts";
 import { applyContestStudentAudienceFilter } from "@/lib/contest-audience";
+import {
+  HOME_CATEGORY_CHART_LIMIT,
+  HOME_CATEGORY_CHART_MIN,
+  categoryChartColumnMeta,
+  sortByTrending,
+  type HomeCategoryChartColumn,
+} from "@/lib/home-rails";
 type SiteSettingsLogoRow = Pick<
   Database["public"]["Tables"]["site_settings"]["Row"],
   "header_logo_url" | "updated_at"
@@ -283,6 +290,118 @@ export const getCachedHomeContests = unstable_cache(
     });
   },
   ["home-contests-v15"],
+  { revalidate: 60 }
+);
+
+/**
+ * 홈 인기 차트 — 공모전/대외활동/교육 각각 스크랩순 TOP.
+ * 홈 카탈로그(마감·추천순)와 분리해 탐색 스크랩순과 같은 기준으로 맞춘다.
+ */
+export const getCachedCategoryCharts = unstable_cache(
+  async (): Promise<HomeCategoryChartColumn[]> => {
+    const supabase = createPublicSupabaseClient();
+    const today = todayKoreaYYYYMMDD();
+    /** bookmark scrap 반영 후 재정렬을 위해 여유분 조회 */
+    const overscan = Math.max(HOME_CATEGORY_CHART_LIMIT * 8, 32);
+    const meta = categoryChartColumnMeta();
+
+    const kindResults = await Promise.all(
+      meta.map(async (col) => {
+        let query = supabase
+          .from("contests")
+          .select(
+            "id, name, organization, organization_type, support_amount_text, benefits, note, apply_end_date, poster_image_url, created_at, view_count, scrap_count, is_recommended, recommended_sort_order, content_kind, interest_categories"
+          )
+          .eq("is_verified", true)
+          .eq("list_on_home", true)
+          .eq("content_kind", col.kind)
+          .gte("apply_end_date", today);
+        query = applyContestStudentAudienceFilter(query);
+        return query
+          .order("scrap_count", { ascending: false, nullsFirst: false })
+          .order("view_count", { ascending: false, nullsFirst: false })
+          .limit(overscan);
+      })
+    );
+
+    for (const result of kindResults) {
+      if (result.error) {
+        console.error("Failed to load category chart contests", result.error);
+        return [];
+      }
+    }
+
+    const allRows = kindResults.flatMap((result) => result.data ?? []);
+    const noticeIds = contestIdsNeedingNotice(allRows);
+    const noticeById = new Map<number, string | null>();
+    if (noticeIds.length > 0) {
+      const { data: noticeRows } = await supabase
+        .from("contests")
+        .select("id, original_notice_text")
+        .in("id", noticeIds);
+      for (const row of noticeRows ?? []) {
+        noticeById.set(row.id, row.original_notice_text);
+      }
+    }
+
+    const scrapCounts = await getPublicContestScrapCountMap(
+      supabase,
+      allRows.map((contest) => contest.id)
+    );
+
+    const mapRow = (contest: (typeof allRows)[number]) => {
+      const kind = (contest.content_kind ?? "contest") as
+        | "contest"
+        | "education"
+        | "activity";
+      const supportFields = buildContestCardSupportFields({
+        name: contest.name,
+        contentKind: kind,
+        supportAmountText: contest.support_amount_text,
+        benefits: contest.benefits,
+        additionalNote: contest.note,
+        originalNoticeText: noticeById.get(contest.id) ?? null,
+      });
+
+      return {
+        id: contest.id,
+        name: contest.name,
+        organization: contest.organization,
+        institution_type: contest.organization_type || "기타",
+        support_types: [] as string[],
+        support_amount_text: contest.support_amount_text,
+        benefits: contest.benefits ?? null,
+        benefit_note: contest.note ?? null,
+        benefit_notice_text: supportFields.benefit_notice_text,
+        card_support_line: supportFields.card_support_line,
+        apply_end_date: contest.apply_end_date ?? today,
+        poster_image_url: contest.poster_image_url,
+        created_at: contest.created_at,
+        view_count: contest.view_count,
+        scrap_count: effectiveContestScrapCount(
+          contest.scrap_count,
+          scrapCounts.get(contest.id) ?? 0
+        ),
+        is_recommended: contest.is_recommended,
+        recommended_sort_order: contest.recommended_sort_order,
+        is_advertisement: false,
+        content_kind: kind,
+        interest_categories: contest.interest_categories ?? null,
+      };
+    };
+
+    return meta
+      .map((col, index) => {
+        const rows = kindResults[index]?.data ?? [];
+        const items = sortByTrending(rows.map(mapRow)).slice(
+          0,
+          HOME_CATEGORY_CHART_LIMIT
+        );
+        return { ...col, items };
+      })
+      .filter((col) => col.items.length >= HOME_CATEGORY_CHART_MIN);
+  },
+  ["home-category-charts-v2"],
   { revalidate: 60 }
 );
 

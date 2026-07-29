@@ -11,6 +11,8 @@ import {
 import HomeSectionTitle from "@/components/home/HomeSectionTitle";
 import HorizontalShelf from "@/components/home/HorizontalShelf";
 import RecentViewsShelf from "@/components/home/RecentViewsShelf";
+import HomeCategoryCharts from "@/components/home/HomeCategoryCharts";
+import type { HomeCategoryChartColumn } from "@/lib/home-rails";
 
 function itemKey(item: CardScholarship) {
   return `${item.content_kind ?? "scholarship"}-${item.id}`;
@@ -37,6 +39,7 @@ export default function HomePersonalizationPrimaryBlocks({
   serverRecent,
   userName,
   isOnboarded,
+  categoryCharts = [],
 }: {
   catalog: CardScholarship[];
   bookmarkedKeys: string[];
@@ -44,6 +47,7 @@ export default function HomePersonalizationPrimaryBlocks({
   serverRecent: CardScholarship[];
   userName: string | null;
   isOnboarded: boolean;
+  categoryCharts?: HomeCategoryChartColumn[];
 }) {
   const forYouTitle = userName
     ? `${userName}님을 위해 엄선한 공고`
@@ -93,6 +97,8 @@ export default function HomePersonalizationPrimaryBlocks({
         serverRecent={serverRecent}
         catalog={catalog}
       />
+
+      <HomeCategoryCharts columns={categoryCharts} catalog={catalog} />
     </>
   );
 }

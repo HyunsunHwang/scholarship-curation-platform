@@ -85,7 +85,7 @@ function parseBrowseSort(raw: string | null | undefined): BrowseSort {
   ) {
     return raw;
   }
-  return "deadline";
+  return "latest";
 }
 
 function parseBrowseSection(raw: string | null | undefined): BrowseSection {
@@ -145,7 +145,7 @@ export function browseHref(opts: {
 }): string {
   const params = new URLSearchParams();
   if (opts.kind && opts.kind !== "all") params.set("kind", opts.kind);
-  if (opts.sort && opts.sort !== "deadline") params.set("sort", opts.sort);
+  if (opts.sort && opts.sort !== "latest") params.set("sort", opts.sort);
   if (
     opts.section === "trending" ||
     opts.section === "internship" ||

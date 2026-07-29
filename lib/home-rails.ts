@@ -24,6 +24,9 @@ export const HOME_RAIL_ITEM_LIMIT = 16;
 export const HOME_RAIL_MIN_ITEMS = 4;
 export const HOME_CONTINUE_LIMIT = 16;
 export const HOME_MAX_PER_ORG = 3;
+/** 홈 카테고리 차트(공모전·대외활동·교육) 열당 노출 수 */
+export const HOME_CATEGORY_CHART_LIMIT = 4;
+export const HOME_CATEGORY_CHART_MIN = 1;
 
 export type HomeRail = {
   key: string;
@@ -282,6 +285,51 @@ export function sortByTrending(items: CardScholarship[]): CardScholarship[] {
     if (scrapDiff !== 0) return scrapDiff;
     return (b.view_count ?? 0) - (a.view_count ?? 0);
   });
+}
+
+export type HomeCategoryChartKind = "contest" | "activity" | "education";
+
+export type HomeCategoryChartColumn = {
+  kind: HomeCategoryChartKind;
+  title: string;
+  moreLabel: string;
+  items: CardScholarship[];
+};
+
+const CATEGORY_CHART_COLUMNS: {
+  kind: HomeCategoryChartKind;
+  title: string;
+  moreLabel: string;
+}[] = [
+  { kind: "contest", title: "공모전 1위", moreLabel: "공모전 차트 더보기" },
+  { kind: "activity", title: "대외활동 1위", moreLabel: "대외활동 차트 더보기" },
+  { kind: "education", title: "교육 1위", moreLabel: "교육 차트 더보기" },
+];
+
+/** 카탈로그에서 종류별 스크랩순 TOP N 차트 열을 만든다. */
+export function buildCategoryCharts(
+  catalog: CardScholarship[],
+  limit: number = HOME_CATEGORY_CHART_LIMIT
+): HomeCategoryChartColumn[] {
+  return CATEGORY_CHART_COLUMNS.map((col) => {
+    const pool = catalog.filter(
+      (item) => (item.content_kind ?? "scholarship") === col.kind
+    );
+    // 탐색 스크랩순과 동일: 기관 다양성 재정렬 없이 순수 스크랩·조회순
+    const items = sortByTrending(pool).slice(0, limit);
+    return { ...col, items };
+  }).filter((col) => col.items.length >= HOME_CATEGORY_CHART_MIN);
+}
+
+export function categoryChartColumnMeta(): Omit<
+  HomeCategoryChartColumn,
+  "items"
+>[] {
+  return CATEGORY_CHART_COLUMNS.map(({ kind, title, moreLabel }) => ({
+    kind,
+    title,
+    moreLabel,
+  }));
 }
 
 /** 저장한 공고 중 마감 N일 이내 */
