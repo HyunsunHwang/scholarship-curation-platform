@@ -1,0 +1,209 @@
+{
+  "evaluation": "db-independent-segment-reference-llm-evaluation-v3",
+  "schema_version": "segment-reference-extraction-v3",
+  "generated_at": "2026-07-29T05:36:39.312Z",
+  "model": "claude-sonnet-4-6",
+  "live": true,
+  "configured_timeout_ms": 120000,
+  "retry_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "provider_call_count": 4,
+  "fixture_validation": {
+    "valid": true,
+    "errors": []
+  },
+  "source_context": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "source_id": "ewha_068",
+      "publishing_institution": "이화여자대학교"
+    },
+    {
+      "fixture_id": "ewha_068_365405",
+      "source_id": "ewha_068",
+      "publishing_institution": "이화여자대학교"
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "source_id": "ewha_068",
+      "publishing_institution": "이화여자대학교"
+    },
+    {
+      "fixture_id": "ewha_068_365911",
+      "source_id": "ewha_068",
+      "publishing_institution": "이화여자대학교"
+    }
+  ],
+  "segmentation": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "body_length": 902,
+      "segment_count": 4,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365405",
+      "body_length": 8229,
+      "segment_count": 17,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "body_length": 8699,
+      "segment_count": 21,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    },
+    {
+      "fixture_id": "ewha_068_365911",
+      "body_length": 1564,
+      "segment_count": 7,
+      "id_uniqueness": true,
+      "offset_integrity": true,
+      "reconstruction_valid": true
+    }
+  ],
+  "results": [
+    {
+      "fixture_id": "ewha_068_365300",
+      "article_id": "365300",
+      "model": "claude-sonnet-4-6",
+      "status": "failed",
+      "started_at": "2026-07-29T05:36:39.315Z",
+      "finished_at": "2026-07-29T05:36:41.745Z",
+      "latency_ms": 2430,
+      "request_id": "req_011CdVoneAnpMKazs79WTvVd",
+      "http_status": 400,
+      "usage": null,
+      "sanitized_error_category": "provider_4xx",
+      "timeout": {
+        "occurred": false,
+        "configured_timeout_ms": 120000
+      },
+      "parsed_model_output": null,
+      "reconstructed_evidence": null,
+      "normalized_values": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      },
+      "organization_role_assessment": null,
+      "manual_assessment": "NOT_EVALUATED"
+    },
+    {
+      "fixture_id": "ewha_068_365405",
+      "article_id": "365405",
+      "model": "claude-sonnet-4-6",
+      "status": "failed",
+      "started_at": "2026-07-29T05:36:41.745Z",
+      "finished_at": "2026-07-29T05:36:42.137Z",
+      "latency_ms": 392,
+      "request_id": "req_011CdVonhRkFSp28iMA1KV6k",
+      "http_status": 400,
+      "usage": null,
+      "sanitized_error_category": "provider_4xx",
+      "timeout": {
+        "occurred": false,
+        "configured_timeout_ms": 120000
+      },
+      "parsed_model_output": null,
+      "reconstructed_evidence": null,
+      "normalized_values": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      },
+      "organization_role_assessment": null,
+      "manual_assessment": "NOT_EVALUATED"
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "article_id": "365411",
+      "model": "claude-sonnet-4-6",
+      "status": "failed",
+      "started_at": "2026-07-29T05:36:42.137Z",
+      "finished_at": "2026-07-29T05:36:42.560Z",
+      "latency_ms": 423,
+      "request_id": "req_011CdVonizWDcegSS4RkmBYU",
+      "http_status": 400,
+      "usage": null,
+      "sanitized_error_category": "provider_4xx",
+      "timeout": {
+        "occurred": false,
+        "configured_timeout_ms": 120000
+      },
+      "parsed_model_output": null,
+      "reconstructed_evidence": null,
+      "normalized_values": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      },
+      "organization_role_assessment": null,
+      "manual_assessment": "NOT_EVALUATED"
+    },
+    {
+      "fixture_id": "ewha_068_365911",
+      "article_id": "365911",
+      "model": "claude-sonnet-4-6",
+      "status": "failed",
+      "started_at": "2026-07-29T05:36:42.565Z",
+      "finished_at": "2026-07-29T05:36:43.021Z",
+      "latency_ms": 456,
+      "request_id": "req_011CdVonm9ja12tfmPsA6wCk",
+      "http_status": 400,
+      "usage": null,
+      "sanitized_error_category": "provider_4xx",
+      "timeout": {
+        "occurred": false,
+        "configured_timeout_ms": 120000
+      },
+      "parsed_model_output": null,
+      "reconstructed_evidence": null,
+      "normalized_values": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      },
+      "organization_role_assessment": null,
+      "manual_assessment": "NOT_EVALUATED"
+    }
+  ],
+  "status": "completed_with_provider_failures",
+  "transport_summary": {
+    "timeout": 0,
+    "authentication": 0,
+    "rate_limited": 0,
+    "provider_5xx": 0,
+    "provider_4xx": 4,
+    "network_error": 0,
+    "empty_content": 0,
+    "json_parse": 0,
+    "unknown_provider_error": 0
+  },
+  "critical_risk_summary": {
+    "critical_hallucinations": 0,
+    "role_confusions": 0,
+    "invalid_source_refs": 0,
+    "unsupported_critical_claims": 0,
+    "normalization_failures": 0,
+    "transport_failures": 4
+  },
+  "evaluation_decision": "HOLD",
+  "manual_assessment_summary": {
+    "ewha_068_365300": "NOT_EVALUATED",
+    "ewha_068_365405": "NOT_EVALUATED",
+    "ewha_068_365411": "NOT_EVALUATED",
+    "ewha_068_365911": "NOT_EVALUATED",
+    "reason": "All four independent provider requests returned HTTP 400 before parsed model output was available."
+  },
+  "fixture_path": "fixtures/llm-analysis/ewha-real-notices-4.json",
+  "max_provider_calls": 4
+}
