@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { classifyNullClaim, recoverContact, recoverPeriod } from '../lib/analysis/reconcile-partial-claims-v334.mjs';
+
+const accepted = [{ claim_id: 'period:application', field: 'application_period', semantic_value: '2026.07.01 ~ 2026.11.17', scope_label: '등록금·생활비 대출 신청', source_refs: ['S004', 'S015'] }];
+assert.equal(classifyNullClaim({ expected_value: '2026.07.01 ~ 2026.11.17', expected_scope: '등록금·생활비 대출 신청', source_refs: ['S004', 'S015', 'S999'] }, accepted).resolution, 'REDUNDANT_DUPLICATE');
+assert.equal(classifyNullClaim({ expected_value: '2026.07.01 ~ 2026.11.17', expected_scope: '등록금 대출 실행', source_refs: ['S004'] }, accepted).resolution, 'GENUINELY_UNRESOLVED');
+assert.equal(classifyNullClaim({ expected_value: '2026.07.01 ~ 2026.11.17', expected_scope: '등록금·생활비 대출 신청', source_refs: ['S999'] }, accepted).resolution, 'GENUINELY_UNRESOLVED');
+const conversionEvidence = [{ excerpt: '전환 실행: 2026. 7. 1.(수) ~ 11. 19.(목)' }];
+const livingEvidence = [{ excerpt: '생활비 대출 실행: 2026. 7. 1.(수) 09:00 ~ 11. 18.(수) 17:00' }];
+assert.equal(recoverPeriod({ claim_id: 'x', category: '전환 실행', value: '2026.07.01 ~ 2026.11.19', raw_candidate: '전환 실행: 2026. 7. 1.(수) ~ 11. 19.(목)', scope_label: '실행', source_refs: ['S006'], source_evidence: conversionEvidence }).origin, 'deterministic_recovery');
+assert.equal(recoverPeriod({ claim_id: 'x', category: '생활비 실행', value: '2026.07.01 09:00 ~ 2026.11.18 17:00', raw_candidate: '생활비 대출 실행: 2026. 7. 1.(수) 09:00 ~ 11. 18.(수) 17:00', scope_label: '실행', source_refs: ['S015'], source_evidence: livingEvidence }).field, 'application_period');
+assert.equal(recoverContact({ claim_id: 'x', contact_type: 'phone', value: '1599-2000', raw_candidate: '1599-2000', scope_label: '콜센터', source_refs: ['S021'], source_evidence: [{ excerpt: '문의 1599-2000' }] }).semantic_value, '1599-2000');
+assert.equal(recoverContact({ claim_id: 'x', contact_type: 'email', value: 'scholarship@ewha.ac.kr', raw_candidate: 'scholarship@ewha.ac.kr', scope_label: '장학복지팀', source_refs: ['S019'], source_evidence: [{ excerpt: 'scholarship@ewha.ac.kr' }] }).contact_type, 'email');
+assert.throws(() => recoverContact({ claim_id: 'x', contact_type: 'phone', value: '02-3277-2274 / 1599-2000', raw_candidate: '02-3277-2274 / 1599-2000', scope_label: 'ambiguous', source_refs: ['S021'], source_evidence: [{ excerpt: '02-3277-2274 / 1599-2000' }] }));
+assert.throws(() => recoverPeriod({ claim_id: 'x', category: 'x', value: '2026.07.01 ~ 2026.11.20', raw_candidate: '2026. 7. 1. ~ 11. 19.', scope_label: '실행', source_refs: ['S006'], source_evidence: [] }));
+const report = JSON.parse(await readFile('reports/llm-analysis/ewha-segment-reference-reconciled-v334.json', 'utf8'));
+assert.equal(report.provider_calls, 0); assert.equal(report.db_reads, 0); assert.equal(report.db_writes, 0);
+assert.equal(report.resolutions.length, 8); assert.equal(report.genuinely_unresolved_claims.length, 0); assert.equal(report.provider_repair_candidates.length, 0);
+assert.equal(report.resolutions.filter((item) => item.resolution === 'REDUNDANT_DUPLICATE').length, 4);
+assert.equal(report.resolutions.filter((item) => item.resolution === 'DETERMINISTICALLY_RECOVERABLE').length, 4);
+assert.equal(report.consolidated_claims.length, 13);
+console.log('v3.3.4 deterministic reconciliation tests passed; provider/db calls: 0/0/0');
