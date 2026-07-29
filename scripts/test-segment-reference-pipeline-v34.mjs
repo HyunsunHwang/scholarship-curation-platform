@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { classifyComplexity, planProviderCalls, runSegmentReferencePipelineV34, V34_PROVIDER_POLICY } from '../lib/analysis/segment-reference-pipeline-v34.mjs';
+import { classifyComplexity, normalizeProviderSourceRefs, planProviderCalls, runSegmentReferencePipelineV34, V34_PROVIDER_POLICY } from '../lib/analysis/segment-reference-pipeline-v34.mjs';
 import { claimsAreDuplicates, recoverGenericClaim } from '../lib/analysis/generic-claim-reconciler-v34.mjs';
 
 const simple = '장학금 신청기간 2026. 1. 1. ~ 1. 2. 문의 02-123-4567';
@@ -17,6 +17,7 @@ assert.equal(claimsAreDuplicates(base, { ...base, scope_label: '생활비 신청
 assert.equal(recoverGenericClaim({ field: 'contact', semantic_value: null, source_refs: ['S001'] }, [{ segment_id: 'S001', text: '문의 02-123-4567' }]).semantic_value, '02-123-4567');
 assert.equal(recoverGenericClaim({ field: 'contact', semantic_value: null, source_refs: ['S001'] }, [{ segment_id: 'S001', text: '문의 02-123-4567, 02-222-3333' }]), null);
 assert.equal(recoverGenericClaim({ field: 'contact', semantic_value: null, source_refs: [] }, [{ segment_id: 'S001', text: '문의 02-123-4567' }]), null);
+assert.deepEqual(normalizeProviderSourceRefs({ claims: [{ source_refs: ['source/article/S001'] }] }, [{ segment_id: 'S001' }]).claims[0].source_refs, ['S001']);
 let calls = 0; const record = { fixture_id: 'synthetic', source_id: 'test', article_id: 'x', title: '장학금', body_text: simple };
 const output = { claims: [{ field: 'contact', category: null, role: null, semantic_value: '02-123-4567', raw_values: ['02-123-4567'], source_refs: ['S001'] }], unknown_or_ambiguous: [] };
 const result = await runSegmentReferencePipelineV34({ record, providerCall: async () => { calls += 1; return { text: JSON.stringify(output), latency_ms: 1, usage: {} }; } });
