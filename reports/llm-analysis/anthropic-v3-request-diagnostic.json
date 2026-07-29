@@ -1,0 +1,31 @@
+{
+  "diagnostic": "anthropic-v3-request-diagnostic",
+  "schema_version": "segment-reference-extraction-v3",
+  "fixture_id": "ewha_068_365300",
+  "model": "claude-sonnet-4-6",
+  "configured_timeout_ms": 120000,
+  "provider_call_count": 1,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "schema_metrics": {
+    "object_count": 11,
+    "array_count": 19,
+    "max_nesting_depth": 4,
+    "property_count": 40,
+    "optional_property_count": 0,
+    "union_type_array_count": 6,
+    "enum_count": 1,
+    "enum_value_count": 6,
+    "nullable_field_count": 6,
+    "objects_missing_additional_properties_false": 0
+  },
+  "status": "failed",
+  "latency_ms": 1883,
+  "http_status": 400,
+  "request_id": "req_011CdVpXwiS7VtRSoucBFaDx",
+  "provider_error_type": "invalid_request_error",
+  "provider_error_code": null,
+  "provider_error_message": "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.",
+  "diagnostic_subtype": "schema_too_complex"
+}

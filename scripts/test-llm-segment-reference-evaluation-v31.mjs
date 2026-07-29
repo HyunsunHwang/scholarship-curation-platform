@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import { schemaMetrics } from "../lib/analysis/anthropic-request-diagnostics.mjs";
+import { segmentNoticeBody } from "../lib/analysis/notice-segmentation.mjs";
+import { segmentReferenceV3OutputSchema } from "../lib/analysis/segment-reference-schema-v3.mjs";
+import { SEGMENT_REFERENCE_V31_SCHEMA_VERSION, regroupSegmentReferenceV31, segmentReferenceV31OutputSchema, validateSegmentReferenceV31Output } from "../lib/analysis/segment-reference-schema-v31.mjs";
+const fixture = JSON.parse(fs.readFileSync("fixtures/llm-analysis/ewha-real-notices-4.json", "utf8"))[0]; const segments = segmentNoticeBody(fixture.body_text);
+const output = { claims: [{ field: "scholarship_name", category: null, role: null, semantic_value: "성적우수장학금 이월수혜", raw_value: null, raw_start: null, raw_end: null, source_refs: ["S001"] }, { field: "publishing_department", category: null, role: null, semantic_value: "학생처 장학복지팀", raw_value: null, raw_start: null, raw_end: null, source_refs: ["S004"] }, { field: "application_method", category: "online", role: null, semantic_value: "유레카시스템에서 복학 신청 시 이월수혜 신청", raw_value: null, raw_start: null, raw_end: null, source_refs: ["S003"] }], unknown_or_ambiguous: [] };
+assert.equal(validateSegmentReferenceV31Output(output, segments).valid, true); assert.equal(regroupSegmentReferenceV31(output).publishing_department.semantic_value, "학생처 장학복지팀"); assert.equal(validateSegmentReferenceV31Output({ ...output, organizer: {} }, segments).valid, false); assert.equal(validateSegmentReferenceV31Output({ ...output, claims: [{ ...output.claims[0], field: "scholarship_organization", role: null }] }, segments).valid, false);
+const before = schemaMetrics(segmentReferenceV3OutputSchema), after = schemaMetrics(segmentReferenceV31OutputSchema); assert.ok(after.object_count < before.object_count); assert.ok(after.array_count < before.array_count); assert.ok(after.property_count < before.property_count); assert.equal(SEGMENT_REFERENCE_V31_SCHEMA_VERSION, "segment-reference-extraction-v3.1"); console.log("segment-reference v3.1 tests passed");

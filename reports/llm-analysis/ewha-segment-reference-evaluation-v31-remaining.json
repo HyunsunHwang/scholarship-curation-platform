@@ -1,0 +1,645 @@
+{
+  "evaluation": "db-independent-segment-reference-llm-evaluation-v3.1",
+  "schema_version": "segment-reference-extraction-v3.1",
+  "model": "claude-sonnet-4-6",
+  "live": true,
+  "configured_timeout_ms": 120000,
+  "provider_call_count": 3,
+  "retry_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "fixture_ids": [
+    "ewha_068_365405",
+    "ewha_068_365411",
+    "ewha_068_365911"
+  ],
+  "schema_metrics": {
+    "object_count": 2,
+    "array_count": 3,
+    "max_nesting_depth": 4,
+    "property_count": 10,
+    "optional_property_count": 0,
+    "union_type_array_count": 6,
+    "enum_count": 1,
+    "enum_value_count": 10,
+    "nullable_field_count": 6,
+    "objects_missing_additional_properties_false": 0
+  },
+  "results": [
+    {
+      "fixture_id": "ewha_068_365405",
+      "article_id": "365405",
+      "status": "failed",
+      "latency_ms": 64541,
+      "model": "claude-sonnet-4-6",
+      "sanitized_error_category": "json_parse",
+      "http_status": null,
+      "request_id": null,
+      "provider_error_type": null,
+      "provider_error_code": null,
+      "provider_error_message": null,
+      "diagnostic_subtype": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      }
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "article_id": "365411",
+      "status": "failed",
+      "latency_ms": 49298,
+      "model": "claude-sonnet-4-6",
+      "sanitized_error_category": "json_parse",
+      "http_status": null,
+      "request_id": null,
+      "provider_error_type": null,
+      "provider_error_code": null,
+      "provider_error_message": null,
+      "diagnostic_subtype": null,
+      "validation": {
+        "valid": false,
+        "errors": []
+      }
+    },
+    {
+      "fixture_id": "ewha_068_365911",
+      "article_id": "365911",
+      "status": "validation_failed",
+      "latency_ms": 39419,
+      "model": "claude-sonnet-4-6",
+      "usage": {
+        "input_tokens": 2312,
+        "output_tokens": 3378,
+        "cached_input_tokens": 0
+      },
+      "request_id": "req_011CdVpuKsGfXyeM1fKx4shd",
+      "http_status": 200,
+      "sanitized_error_category": "schema_validation",
+      "parsed_model_output": {
+        "claims": [
+          {
+            "field": "scholarship_name",
+            "category": null,
+            "role": null,
+            "semantic_value": "양영재단 장학생",
+            "raw_value": "양영재단 장학생 선발 안내",
+            "raw_start": "[학부] 2026-2학기 ",
+            "raw_end": " N 작성처",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "publishing_department",
+            "category": null,
+            "role": null,
+            "semantic_value": "장학복지팀",
+            "raw_value": "장학복지팀",
+            "raw_start": "작성처",
+            "raw_end": " 신청기간",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "scholarship_organization",
+            "category": null,
+            "role": "donor",
+            "semantic_value": "양영재단",
+            "raw_value": "양영재단",
+            "raw_start": "2026-2학기 ",
+            "raw_end": " 추천서양식",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "eligibility",
+            "category": "소속",
+            "role": null,
+            "semantic_value": "경영대학 학부생",
+            "raw_value": "경영대학 학부생 1명",
+            "raw_start": "추천 인원 : ",
+            "raw_end": "2. 추천 조건",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "eligibility",
+            "category": "학년",
+            "role": null,
+            "semantic_value": "2026학년도 2학기 기준 2학년 2학기(4학기) 진학예정인 학부생",
+            "raw_value": "2026학년도 2학기 기준 2학년 2학기(4학기) 진학예정인 학부생",
+            "raw_start": "가. ",
+            "raw_end": " 나. 직전학년도",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "eligibility",
+            "category": "성적",
+            "role": null,
+            "semantic_value": "직전학년도 1년간 학업 성적이 2.80/4.30만점 이상",
+            "raw_value": "직전학년도 1년간 학업 성적이 2.80/4.30만점 이상인 학생",
+            "raw_start": "나. ",
+            "raw_end": " 다. 한국장학재단",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "eligibility",
+            "category": "소득분위",
+            "role": null,
+            "semantic_value": "한국장학재단 학자금 지원구간 8구간 이내",
+            "raw_value": "한국장학재단 학자금 지원구간이 8구간 이내인 학생",
+            "raw_start": "다. ",
+            "raw_end": " 라. 타장학금",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "eligibility",
+            "category": "중복수혜",
+            "role": null,
+            "semantic_value": "타장학금 및 부모의 회사로부터 학자금 지원을 받지 않는 자",
+            "raw_value": "타장학금 및 부모의 회사로부터 학자금 지원을 받지 않는 자",
+            "raw_start": "라. ",
+            "raw_end": " 3. 장학금액",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "benefit",
+            "category": "수업료",
+            "role": null,
+            "semantic_value": "수업료 전액",
+            "raw_value": "수업료전액",
+            "raw_start": "3. 장학금액 및 지급기간: ",
+            "raw_end": ", 학업보조비",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "benefit",
+            "category": "학업보조비",
+            "role": null,
+            "semantic_value": "학업보조비 300만원/학기(월 50만원)",
+            "raw_value": "학업보조비 300만원/학기(월 50만원)",
+            "raw_start": "수업료전액, ",
+            "raw_end": " 정규학기 내",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "benefit",
+            "category": "지급기간",
+            "role": null,
+            "semantic_value": "정규학기 내 최대 5학기",
+            "raw_value": "정규학기 내 최대 5학기",
+            "raw_start": "학업보조비 300만원/학기(월 50만원) ",
+            "raw_end": " ※ 단,",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "important_constraint",
+            "category": "수업료 지급 조건",
+            "role": null,
+            "semantic_value": "교내 및 국가장학금 등 선감면이 있을 경우 수업료는 차액만 지급",
+            "raw_value": "교내 및 국가장학금 등 선감면이 있을 경우 수업료는 차액만 지급",
+            "raw_start": "※ ",
+            "raw_end": " 4. 제출서류",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "field": "important_constraint",
+            "category": "유지조건",
+            "role": null,
+            "semantic_value": "학업성적이 재단 기준을 유지하고 결격사유 없을 시에 한함",
+            "raw_value": "학업성적이 재단 기준을 유지하고 결격사유 없을 시에 한함",
+            "raw_start": "※ 단, ",
+            "raw_end": ".",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "application_period",
+            "category": null,
+            "role": null,
+            "semantic_value": "2026년 7월 28일 ~ 2026년 7월 31일",
+            "raw_value": "2026.07.28 ~ 2026.07.31",
+            "raw_start": "신청기간 ",
+            "raw_end": " 조회51",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "field": "application_period",
+            "category": "마감시간",
+            "role": null,
+            "semantic_value": "2026년 7월 31일 12:00",
+            "raw_value": "2026. 7. 31(금) 12:00",
+            "raw_start": "5. 신청기한: ",
+            "raw_end": "6. 신청방법",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "required_document",
+            "category": "추천서",
+            "role": null,
+            "semantic_value": "추천서 1부(재단 서식)",
+            "raw_value": "추천서 1부(재단 서식)(맨 하단의 총장님 직인은 추후 장학복지팀에서 처리함)",
+            "raw_start": "가. ",
+            "raw_end": " 나. 신청서,",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "field": "required_document",
+            "category": "신청서류",
+            "role": null,
+            "semantic_value": "신청서, 자기소개서·학업계획장래희망기술서, 개인정보동의서 1부",
+            "raw_value": "신청서, 자기소개서‧학업계획장래희망기술서, 개인정보동의서 1부",
+            "raw_start": "나. ",
+            "raw_end": ".",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "field": "required_document",
+            "category": "성적증명서",
+            "role": null,
+            "semantic_value": "성적증명서 1부",
+            "raw_value": "성적증명서 1부",
+            "raw_start": "다. ",
+            "raw_end": ".",
+            "source_refs": [
+              "S003"
+            ]
+          },
+          {
+            "field": "required_document",
+            "category": "소득분위확인서",
+            "role": null,
+            "semantic_value": "한국장학재단 학자금 지원구간 통지서(신청학기: 2026년도 2학기) 1부",
+            "raw_value": "한국장학재단 학자금 지원구간 통지서(신청학기: 2026년도 2학기) 1부",
+            "raw_start": "라. ",
+            "raw_end": ".",
+            "source_refs": [
+              "S004"
+            ]
+          },
+          {
+            "field": "required_document",
+            "category": "통장사본",
+            "role": null,
+            "semantic_value": "학생 본인 명의 통장사본 1부",
+            "raw_value": "학생 본인 명의 통장사본 1부",
+            "raw_start": "마. ",
+            "raw_end": ".",
+            "source_refs": [
+              "S005"
+            ]
+          },
+          {
+            "field": "application_method",
+            "category": "온라인신청",
+            "role": null,
+            "semantic_value": "유레카시스템에서 온라인 신청 및 구비서류 업로드(컬러 PDF파일)",
+            "raw_value": "유레카시스템에서온라인 신청 및 구비서류 업로드(컬러 PDF파일)",
+            "raw_start": "6. 신청방법: ",
+            "raw_end": " (4. 제출서류",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "application_method",
+            "category": "신청경로",
+            "role": null,
+            "semantic_value": "마이유레카 > 학사 > 장학 > '장학금신청' 화면에서 '양영재단' 선택하여 온라인 신청 및 구비서류 업로드",
+            "raw_value": "마이유레카>학사>장학> '장학금신청' 화면에서 신청 대상 장학금 중 '양영재단'을 선택하여 온라인 신 청 및 구비서류 업로드",
+            "raw_start": "▶ ",
+            "raw_end": "▶ 추천서(제출서류에",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "application_method",
+            "category": "추천서제출",
+            "role": null,
+            "semantic_value": "추천서는 지도교수님 또는 학과장에게 학생이 추천 의견을 받아서 제출(교수의 서명 또는 날인 반드시 있어야 함)",
+            "raw_value": "추천서(제출서류에 추천서가 있을 경우)는 지도교수님 또는 학과장에게 학생이 추천 의견을 받아서 제출(교수의 서명 또는 날인 반드시 있어야 함)",
+            "raw_start": "▶ ",
+            "raw_end": " (또는 교수님이",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "important_constraint",
+            "category": "서류미비",
+            "role": null,
+            "semantic_value": "서류미비 또는 누락의 경우 추가 안내가 불가하며 선발 불가",
+            "raw_value": "서류미비 또는 누락의 경우 추가 안내가 불가하므로 서류누락 또는 미비가 없도록 유의바람(서류 누 락, 미비의 경우 선발 불가, 특히 서명 날인 등이 누락 되지 않게 유의)",
+            "raw_start": "▶ ",
+            "raw_end": "▶ 제출 파일은",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "important_constraint",
+            "category": "파일품질",
+            "role": null,
+            "semantic_value": "제출 파일은 인쇄할 경우 서류 원본과 동일한 내용과 형태를 갖추고 식별이 가능해야 하며, 해상도 저하·작은 이미지 크기·증명서의 일부분 스캔 등의 경우 심사에서 제외됨",
+            "raw_value": "제출 파일은 인쇄할 경우 서류 원본과 동일한 내용과 형태를 갖추고 식별이 가능해야 함 (서류페이지 전면 스캔) →해상도 저하, 작은 이미지 크기, 증명서의 일부분 스캔 등의 경우 심사에서 제외됨",
+            "raw_start": "▶ ",
+            "raw_end": ".",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "field": "important_constraint",
+            "category": "계좌등록",
+            "role": null,
+            "semantic_value": "유레카시스템에 계좌번호가 등록되어 있지 않은 학생은 장학금 신청이 되지 않으므로 장학금 신청 전 미비사항 입력 요망",
+            "raw_value": "유레카시스템에 계좌번호가 등록 되어있지 않은 학생은 장학금 신청이 되지 않으므로, 장학금 신청 전 미비사항 입력 요망",
+            "raw_start": "▶ ",
+            "raw_end": " ※ 계좌번호입력:",
+            "source_refs": [
+              "S007"
+            ]
+          },
+          {
+            "field": "contact",
+            "category": "전화",
+            "role": null,
+            "semantic_value": "장학복지팀 02-3277-2274",
+            "raw_value": "장학복지팀(02-3277-2274)",
+            "raw_start": "붙임: 추천서양식 및 선발안내 1부..",
+            "raw_end": " 페이스북",
+            "source_refs": [
+              "S007"
+            ]
+          },
+          {
+            "field": "contact",
+            "category": "이메일",
+            "role": null,
+            "semantic_value": "scholarship@ewha.ac.kr",
+            "raw_value": "scholarship@ewha.ac.kr",
+            "raw_start": "장학복지팀으로 제출하는 것도 가능함/",
+            "raw_end": "[추천 학생의 이름",
+            "source_refs": [
+              "S006"
+            ]
+          }
+        ],
+        "unknown_or_ambiguous": []
+      },
+      "regrouped_result": {
+        "scholarship_name": {
+          "semantic_value": "양영재단 장학생",
+          "source_refs": [
+            "S001"
+          ]
+        },
+        "publishing_department": {
+          "semantic_value": "장학복지팀",
+          "source_refs": [
+            "S001"
+          ]
+        },
+        "scholarship_organizations": [
+          {
+            "role": "donor",
+            "semantic_value": "양영재단",
+            "source_refs": [
+              "S001"
+            ]
+          }
+        ],
+        "eligibility": [
+          {
+            "category": "소속",
+            "semantic_value": "경영대학 학부생",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "category": "학년",
+            "semantic_value": "2026학년도 2학기 기준 2학년 2학기(4학기) 진학예정인 학부생",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "category": "성적",
+            "semantic_value": "직전학년도 1년간 학업 성적이 2.80/4.30만점 이상",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "category": "소득분위",
+            "semantic_value": "한국장학재단 학자금 지원구간 8구간 이내",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "category": "중복수혜",
+            "semantic_value": "타장학금 및 부모의 회사로부터 학자금 지원을 받지 않는 자",
+            "source_refs": [
+              "S001"
+            ]
+          }
+        ],
+        "benefits": [
+          {
+            "benefit_type": "수업료",
+            "semantic_value": "수업료 전액",
+            "raw_amount_text": "수업료전액",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "benefit_type": "학업보조비",
+            "semantic_value": "학업보조비 300만원/학기(월 50만원)",
+            "raw_amount_text": "학업보조비 300만원/학기(월 50만원)",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "benefit_type": "지급기간",
+            "semantic_value": "정규학기 내 최대 5학기",
+            "raw_amount_text": "정규학기 내 최대 5학기",
+            "source_refs": [
+              "S001"
+            ]
+          }
+        ],
+        "application_periods": [
+          {
+            "label": null,
+            "raw_start": "신청기간 ",
+            "raw_end": " 조회51",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "label": "마감시간",
+            "raw_start": "5. 신청기한: ",
+            "raw_end": "6. 신청방법",
+            "source_refs": [
+              "S006"
+            ]
+          }
+        ],
+        "required_documents": [
+          {
+            "semantic_value": "추천서 1부(재단 서식)",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "semantic_value": "신청서, 자기소개서·학업계획장래희망기술서, 개인정보동의서 1부",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "semantic_value": "성적증명서 1부",
+            "source_refs": [
+              "S003"
+            ]
+          },
+          {
+            "semantic_value": "한국장학재단 학자금 지원구간 통지서(신청학기: 2026년도 2학기) 1부",
+            "source_refs": [
+              "S004"
+            ]
+          },
+          {
+            "semantic_value": "학생 본인 명의 통장사본 1부",
+            "source_refs": [
+              "S005"
+            ]
+          }
+        ],
+        "application_methods": [
+          {
+            "method_type": "온라인신청",
+            "semantic_value": "유레카시스템에서 온라인 신청 및 구비서류 업로드(컬러 PDF파일)",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "method_type": "신청경로",
+            "semantic_value": "마이유레카 > 학사 > 장학 > '장학금신청' 화면에서 '양영재단' 선택하여 온라인 신청 및 구비서류 업로드",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "method_type": "추천서제출",
+            "semantic_value": "추천서는 지도교수님 또는 학과장에게 학생이 추천 의견을 받아서 제출(교수의 서명 또는 날인 반드시 있어야 함)",
+            "source_refs": [
+              "S006"
+            ]
+          }
+        ],
+        "important_constraints": [
+          {
+            "category": "수업료 지급 조건",
+            "semantic_value": "교내 및 국가장학금 등 선감면이 있을 경우 수업료는 차액만 지급",
+            "source_refs": [
+              "S002"
+            ]
+          },
+          {
+            "category": "유지조건",
+            "semantic_value": "학업성적이 재단 기준을 유지하고 결격사유 없을 시에 한함",
+            "source_refs": [
+              "S001"
+            ]
+          },
+          {
+            "category": "서류미비",
+            "semantic_value": "서류미비 또는 누락의 경우 추가 안내가 불가하며 선발 불가",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "category": "파일품질",
+            "semantic_value": "제출 파일은 인쇄할 경우 서류 원본과 동일한 내용과 형태를 갖추고 식별이 가능해야 하며, 해상도 저하·작은 이미지 크기·증명서의 일부분 스캔 등의 경우 심사에서 제외됨",
+            "source_refs": [
+              "S006"
+            ]
+          },
+          {
+            "category": "계좌등록",
+            "semantic_value": "유레카시스템에 계좌번호가 등록되어 있지 않은 학생은 장학금 신청이 되지 않으므로 장학금 신청 전 미비사항 입력 요망",
+            "source_refs": [
+              "S007"
+            ]
+          }
+        ],
+        "contacts": [
+          {
+            "contact_type": "전화",
+            "raw_value": "장학복지팀(02-3277-2274)",
+            "source_refs": [
+              "S007"
+            ]
+          },
+          {
+            "contact_type": "이메일",
+            "raw_value": "scholarship@ewha.ac.kr",
+            "source_refs": [
+              "S006"
+            ]
+          }
+        ],
+        "unknown_or_ambiguous": []
+      },
+      "reconstructed_evidence": null,
+      "validation": {
+        "valid": false,
+        "errors": [
+          "invalid_organization_role:scholarship_organizations[0]"
+        ]
+      },
+      "organization_role_assessment": null
+    }
+  ],
+  "status": "completed_with_failures"
+}
