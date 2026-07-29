@@ -10,10 +10,12 @@ export default function SpotifyHomeShell({
   scholarships,
   afterHero = null,
   afterTop10 = null,
+  heroIntroContent = null,
 }: {
   scholarships: CardScholarship[];
   afterHero?: ReactNode;
   afterTop10?: ReactNode;
+  heroIntroContent?: ReactNode;
 }) {
   return (
     <AnnouncementModalProvider>
@@ -22,6 +24,7 @@ export default function SpotifyHomeShell({
           scholarships={scholarships}
           afterHero={afterHero}
           afterTop10={afterTop10}
+          heroIntroContent={heroIntroContent}
         />
       </HomeBookmarkProvider>
     </AnnouncementModalProvider>

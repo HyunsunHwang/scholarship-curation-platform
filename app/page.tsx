@@ -6,6 +6,8 @@ import HomePersonalizationPrimary from "@/components/home/HomePersonalizationPri
 import HomePersonalizationUrgent from "@/components/home/HomePersonalizationUrgent";
 import HomePersonalizationRails from "@/components/home/HomePersonalizationRails";
 import HomeGuestSections from "@/components/home/HomeGuestSections";
+import HomeDashboardHero from "@/components/home/HomeDashboardHero";
+import { HomeDashboardHeroSkeleton } from "@/components/home/HomeDashboardHeroView";
 import { HomePersonalizationShelfFallback } from "@/components/skeletons/HomeLoadingSkeleton";
 import NavbarSkeleton from "@/components/skeletons/NavbarSkeleton";
 import type { CardScholarship } from "@/components/ScholarshipCard";
@@ -51,6 +53,13 @@ export default async function Home({
         <main className="flex-1">
           <SpotifyHomeShell
             scholarships={catalog}
+            heroIntroContent={
+              user ? (
+                <Suspense fallback={<HomeDashboardHeroSkeleton />}>
+                  <HomeDashboardHero catalog={catalog} user={user} />
+                </Suspense>
+              ) : null
+            }
             afterHero={
               user ? (
                 <Suspense fallback={<HomePersonalizationShelfFallback />}>

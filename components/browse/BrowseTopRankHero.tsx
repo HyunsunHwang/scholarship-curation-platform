@@ -41,6 +41,11 @@ type BrowseTopRankHeroProps = {
   gradientClassName?: string;
   /** 홈 등 — 왼쪽 상단 문구 + 유도 버튼 */
   intro?: HeroIntro | null;
+  /**
+   * intro 대신 렌더할 커스텀 왼쪽 슬롯 (로그인 대시보드 히어로 등).
+   * 있으면 intro 타이틀/CTA UI는 쓰지 않음.
+   */
+  introContent?: ReactNode;
   /** 미지정 시 /browse 로 돌아가는 탐색 링크. null 이면 숨김 */
   backHref?: string | null;
   backLabel?: string;
@@ -129,6 +134,7 @@ export default function BrowseTopRankHero({
   backgroundSrc = DEFAULT_HERO_BG,
   gradientClassName = DEFAULT_GRADIENT,
   intro = null,
+  introContent = null,
   backHref = "/browse",
   backLabel = "탐색",
   badge = "TODAY TOP 10",
@@ -142,6 +148,7 @@ export default function BrowseTopRankHero({
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
   const useGradient = backgroundSrc === null;
+  const hasIntro = Boolean(introContent || intro);
 
   const updateArrows = useCallback(() => {
     const el = scrollerRef.current;
@@ -183,17 +190,17 @@ export default function BrowseTopRankHero({
 
   return (
     <section
-      aria-labelledby={intro ? "home-hero-intro-heading" : headingId}
+      aria-labelledby={hasIntro ? "home-hero-intro-heading" : headingId}
       className={
-        intro
+        hasIntro
           ? "relative mb-0 -mt-14 sm:-mt-15"
           : "relative mb-3 sm:mb-4"
       }
     >
       <div
         className={`relative ${
-          intro
-            ? "min-h-[calc(17.5rem+3.5rem)] sm:min-h-[calc(20rem+3.75rem)] lg:min-h-[calc(22.5rem+3.75rem)]"
+          hasIntro
+            ? "min-h-[calc(18rem+3.5rem)] sm:min-h-[calc(20rem+3.75rem)] lg:min-h-[calc(21rem+3.75rem)]"
             : "min-h-70 sm:min-h-80 lg:min-h-90"
         }`}
       >
@@ -221,8 +228,8 @@ export default function BrowseTopRankHero({
 
         <div
           className={`relative mx-auto flex h-full flex-col px-4 sm:px-6 md:px-10 ${
-            intro
-              ? "min-h-[calc(17.5rem+3.5rem)] max-w-440 justify-center gap-6 pt-[calc(3.5rem+2rem)] pb-6 sm:min-h-[calc(20rem+3.75rem)] sm:gap-8 sm:pt-[calc(3.75rem+2.5rem)] sm:pb-7 lg:min-h-[calc(22.5rem+3.75rem)] lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:pt-[calc(3.75rem+3rem)] lg:pb-8"
+            hasIntro
+              ? "min-h-[calc(18rem+3.5rem)] max-w-440 justify-center gap-5 pt-[calc(3.5rem+1.25rem)] pb-5 sm:min-h-[calc(20rem+3.75rem)] sm:gap-6 sm:pt-[calc(3.75rem+1.5rem)] sm:pb-6 lg:min-h-[calc(21rem+3.75rem)] lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:pt-[calc(3.75rem+1.75rem)] lg:pb-7"
               : "min-h-70 max-w-6xl justify-end pt-12 pb-5 sm:min-h-80 sm:pt-14 sm:pb-6 lg:min-h-90"
           }`}
         >
@@ -238,7 +245,9 @@ export default function BrowseTopRankHero({
             </Link>
           ) : null}
 
-          {intro ? (
+          {introContent ? (
+            introContent
+          ) : intro ? (
             <div className="relative z-10 w-full shrink-0 lg:max-w-md xl:max-w-lg">
               <h2
                 id="home-hero-intro-heading"
@@ -262,7 +271,7 @@ export default function BrowseTopRankHero({
 
           <div
             className={`flex w-full flex-col items-stretch sm:items-end ${
-              intro ? "min-w-0 lg:ml-auto lg:w-auto" : ""
+              hasIntro ? "min-w-0 lg:ml-auto lg:w-auto" : ""
             }`}
           >
             <div className="mb-4 w-full text-right sm:mb-5 sm:w-auto sm:max-w-none">
@@ -273,20 +282,26 @@ export default function BrowseTopRankHero({
                   className="inline-block h-1.5 w-1.5 rounded-full bg-brand"
                 />
               </p>
-              {intro ? (
-                <p
-                  id={headingId}
-                  className="mt-2 text-lg font-extrabold leading-snug tracking-tight text-ink sm:text-xl md:text-[1.35rem]"
-                >
-                  {title}
-                </p>
+              {title ? (
+                hasIntro ? (
+                  <p
+                    id={headingId}
+                    className="mt-2 text-lg font-extrabold leading-snug tracking-tight text-ink sm:text-xl md:text-[1.35rem]"
+                  >
+                    {title}
+                  </p>
+                ) : (
+                  <h2
+                    id={headingId}
+                    className="mt-2 text-2xl font-extrabold tracking-tight text-ink drop-shadow-[0_1px_0_rgba(255,255,255,0.9)] sm:text-3xl"
+                  >
+                    {title}
+                  </h2>
+                )
               ) : (
-                <h2
-                  id={headingId}
-                  className="mt-2 text-2xl font-extrabold tracking-tight text-ink drop-shadow-[0_1px_0_rgba(255,255,255,0.9)] sm:text-3xl"
-                >
-                  {title}
-                </h2>
+                <span id={headingId} className="sr-only">
+                  TOP 10 공고
+                </span>
               )}
               {subtitle ? (
                 <p className="mt-1.5 text-sm font-medium text-ink/70">

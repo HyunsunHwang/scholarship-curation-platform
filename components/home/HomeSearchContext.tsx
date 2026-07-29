@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { ContentCategoryKey } from "@/lib/content-categories";
+import type { HomeCategoryTabKey } from "@/lib/home-category-tabs";
 
 type HomeSearchQueryValue = {
   query: string;
@@ -18,8 +18,8 @@ type HomeSearchQueryValue = {
 
 type HomeSearchFilterValue = {
   deferredQuery: string;
-  category: ContentCategoryKey;
-  setCategory: (category: ContentCategoryKey) => void;
+  category: HomeCategoryTabKey;
+  setCategory: (category: HomeCategoryTabKey) => void;
 };
 
 const HomeSearchQueryContext = createContext<HomeSearchQueryValue | null>(null);
@@ -35,12 +35,12 @@ export function HomeSearchProvider({
   initialQuery?: string;
 }) {
   const [query, setQueryState] = useState(initialQuery);
-  const [category, setCategoryState] = useState<ContentCategoryKey>("all");
+  const [category, setCategoryState] = useState<HomeCategoryTabKey>("all");
   const deferredQuery = useDeferredValue(query);
   const setQuery = useCallback((next: string) => {
     setQueryState(next);
   }, []);
-  const setCategory = useCallback((next: ContentCategoryKey) => {
+  const setCategory = useCallback((next: HomeCategoryTabKey) => {
     setCategoryState(next);
   }, []);
 
