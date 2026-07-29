@@ -1,0 +1,2403 @@
+{
+  "evaluation": "db-independent-segment-reference-llm-evaluation-v3.2",
+  "schema_version": "segment-reference-extraction-v3.2",
+  "model": "claude-sonnet-4-6",
+  "live": true,
+  "configured_timeout_ms": 120000,
+  "max_output_tokens": 4096,
+  "provider_call_count": 4,
+  "retry_count": 0,
+  "db_read_count": 0,
+  "db_write_count": 0,
+  "production_access_count": 0,
+  "results": [
+    {
+      "fixture_id": "ewha_068_365405",
+      "article_id": "365405",
+      "status": "failed",
+      "passes": [
+        {
+          "pass": "A",
+          "status": "validation_failed",
+          "latency_ms": 38442,
+          "request_id": "req_011CdVs1owdPRiyCannzvp3F",
+          "usage": {
+            "input_tokens": 8594,
+            "output_tokens": 2446,
+            "cached_input_tokens": 0
+          },
+          "response_metadata": {
+            "stop_reason": "end_turn",
+            "response_content_types": [
+              "text"
+            ],
+            "response_text_length": 4878,
+            "response_text_sha256": "42fe22c745f00340a2458a155a51cd2d5941e649595974e58b6a218d21301705",
+            "starts_with_object": true,
+            "ends_with_object": true,
+            "json_parser_position": null,
+            "json_parse_category": null
+          },
+          "parsed_claims": {
+            "claims": [
+              {
+                "field": "scholarship_name",
+                "category": null,
+                "role": null,
+                "semantic_value": "한국장학재단 학자금대출 (2026학년도 2학기)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "publishing_department",
+                "category": null,
+                "role": null,
+                "semantic_value": "대학원행정실",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "scholarship_organization",
+                "category": null,
+                "role": null,
+                "semantic_value": "한국장학재단",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "대상",
+                "role": "취업후상환 학자금대출",
+                "semantic_value": "교육부 또는 재단과 협약을 체결한 국내 고등교육기관 학부생, 전문기술석사 및 대학원생 (학점은행제 교육기관, 외국대학 제외)",
+                "raw_values": [],
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "대상",
+                "role": "일반상환 학자금대출",
+                "semantic_value": "국내 고등교육기관 학부생 및 전문기술석사 및 대학원생, 학점은행제 교육훈련기관 학습자 (외국대학 제외)",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "연령",
+                "role": "취업후상환 학자금대출 대학원",
+                "semantic_value": "만 40세 이하",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "연령",
+                "role": "일반상환 학자금대출",
+                "semantic_value": "만 55세 이하 (만 55세 이전 입학자는 만 59세까지)",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "성적기준",
+                "role": "취업후상환 학자금대출 대학원",
+                "semantic_value": "제한 없음 (신입생, 재학생 모두 기준 없음)",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "성적기준",
+                "role": "일반상환 학자금대출 대학원 신입생",
+                "semantic_value": "제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "성적기준",
+                "role": "일반상환 학자금대출 대학원 재학생",
+                "semantic_value": "직전학기 성적 70/100점(C학점) 이상 (장애인 제외)",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "소득기준",
+                "role": "취업후상환 학자금대출 대학원 등록금",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "소득기준",
+                "role": "취업후상환 학자금대출 대학원 생활비",
+                "semantic_value": "학자금 지원 구간 6구간 이내",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "소득기준",
+                "role": "일반상환 학자금대출 대학원",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "신용요건",
+                "role": "취업후상환 학자금대출",
+                "semantic_value": "제한 없음 (금융채무불이행자, 저신용자 가능)",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "신용요건",
+                "role": "일반상환 학자금대출",
+                "semantic_value": "학자금대출 연체자 및 금융채무불이행자 등 대출 제한",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출금리",
+                "role": "취업후상환 학자금대출",
+                "semantic_value": "변동금리 연 1.70%",
+                "raw_values": [
+                  "변동금리(연 1.70%)"
+                ],
+                "source_refs": [
+                  "S010",
+                  "S011"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출금리",
+                "role": "일반상환 학자금대출",
+                "semantic_value": "고정금리 연 1.70%",
+                "raw_values": [
+                  "고정금리(연 1.70%)"
+                ],
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출한도",
+                "role": "등록금대출 대학원",
+                "semantic_value": "당해학기 소요액 전액 (한도 있음): 일반·특수/전문기술석사 6천만원, 전문/의치의한의계열 석사 9천만원, 일반·특수 박사(석박사통합과정 포함) 9천만원, 전문/의치의한의계열 박사(석박사통합과정 포함) 1억2천만원",
+                "raw_values": [
+                  "일반, 특수/전문기술석사 : 6천만원",
+                  "전문/의,치의,한의계열 석사 : 9천만원",
+                  "일반, 특수 박사(석박사 통합과정 포함) : 9천만원",
+                  "전문/의,치의,한의계열 박사(석박사통합과정포함) : 1억2천만원"
+                ],
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출한도",
+                "role": "생활비대출",
+                "semantic_value": "연 400만원 (학기당 200만원)",
+                "raw_values": [
+                  "연 400만원(학기당 200만원)"
+                ],
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "생활비 총한도",
+                "role": "생활비대출 개인 총한도",
+                "semantic_value": "석사 3천6백만원, 박사 4천4백만원",
+                "raw_values": [
+                  "생활비 총한도: 석사 3천6백만원, 박사 4천4백만원"
+                ],
+                "source_refs": [
+                  "S017"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "등록금대출 신청기간",
+                "role": "신청",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.17 18:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11.17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "취업후상환대출(전환대출) 신청기간",
+                "role": "신청",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.18 18:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11.18.(수) 18:00"
+                ],
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "등록금대출 실행기간",
+                "role": "실행",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.18 17:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "취업후상환대출(전환대출) 실행기간",
+                "role": "실행",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.19 17:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 19.(목) 17:00"
+                ],
+                "source_refs": [
+                  "S008",
+                  "S009"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "생활비대출 신청기간",
+                "role": "신청",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.17 18:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "생활비대출 실행기간",
+                "role": "실행",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.18 17:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "분할납부 대출 신청기간",
+                "role": "신청",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.17 18:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "분할납부 대출 실행기간",
+                "role": "실행",
+                "semantic_value": "2026.07.01 09:00 ~ 2026.11.18 17:00",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": []
+          },
+          "validation": {
+            "valid": false,
+            "errors": [
+              "raw_value_not_found:claims[16]",
+              "raw_value_not_found:claims[23]",
+              "invalid_organization_role:scholarship_organizations[0]",
+              "raw_value_not_found:benefits[1].raw_amount_text",
+              "raw_value_not_found:application_periods[3].raw_end"
+            ]
+          },
+          "regrouped_result": {
+            "scholarship_name": {
+              "semantic_value": "한국장학재단 학자금대출 (2026학년도 2학기)",
+              "source_refs": [
+                "S001"
+              ]
+            },
+            "publishing_department": {
+              "semantic_value": "대학원행정실",
+              "source_refs": [
+                "S001"
+              ]
+            },
+            "scholarship_organizations": [
+              {
+                "role": null,
+                "semantic_value": "한국장학재단",
+                "source_refs": [
+                  "S001"
+                ]
+              }
+            ],
+            "eligibility": [
+              {
+                "category": "대상",
+                "semantic_value": "교육부 또는 재단과 협약을 체결한 국내 고등교육기관 학부생, 전문기술석사 및 대학원생 (학점은행제 교육기관, 외국대학 제외)",
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "category": "대상",
+                "semantic_value": "국내 고등교육기관 학부생 및 전문기술석사 및 대학원생, 학점은행제 교육훈련기관 학습자 (외국대학 제외)",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "연령",
+                "semantic_value": "만 40세 이하",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "연령",
+                "semantic_value": "만 55세 이하 (만 55세 이전 입학자는 만 59세까지)",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "성적기준",
+                "semantic_value": "제한 없음 (신입생, 재학생 모두 기준 없음)",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "성적기준",
+                "semantic_value": "제한 없음",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "성적기준",
+                "semantic_value": "직전학기 성적 70/100점(C학점) 이상 (장애인 제외)",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "소득기준",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "소득기준",
+                "semantic_value": "학자금 지원 구간 6구간 이내",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "소득기준",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "신용요건",
+                "semantic_value": "제한 없음 (금융채무불이행자, 저신용자 가능)",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "신용요건",
+                "semantic_value": "학자금대출 연체자 및 금융채무불이행자 등 대출 제한",
+                "source_refs": [
+                  "S010"
+                ]
+              }
+            ],
+            "benefits": [
+              {
+                "benefit_type": "대출금리",
+                "semantic_value": "변동금리 연 1.70%",
+                "raw_amount_text": "변동금리(연 1.70%)",
+                "source_refs": [
+                  "S010",
+                  "S011"
+                ]
+              },
+              {
+                "benefit_type": "대출금리",
+                "semantic_value": "고정금리 연 1.70%",
+                "raw_amount_text": "고정금리(연 1.70%)",
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "benefit_type": "대출한도",
+                "semantic_value": "당해학기 소요액 전액 (한도 있음): 일반·특수/전문기술석사 6천만원, 전문/의치의한의계열 석사 9천만원, 일반·특수 박사(석박사통합과정 포함) 9천만원, 전문/의치의한의계열 박사(석박사통합과정 포함) 1억2천만원",
+                "raw_amount_text": "일반, 특수/전문기술석사 : 6천만원",
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "benefit_type": "대출한도",
+                "semantic_value": "연 400만원 (학기당 200만원)",
+                "raw_amount_text": "연 400만원(학기당 200만원)",
+                "source_refs": [
+                  "S011"
+                ]
+              },
+              {
+                "benefit_type": "생활비 총한도",
+                "semantic_value": "석사 3천6백만원, 박사 4천4백만원",
+                "raw_amount_text": "생활비 총한도: 석사 3천6백만원, 박사 4천4백만원",
+                "source_refs": [
+                  "S017"
+                ]
+              }
+            ],
+            "application_periods": [
+              {
+                "label": "등록금대출 신청기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11.17.(화) 18:00",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "label": "취업후상환대출(전환대출) 신청기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11.18.(수) 18:00",
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "label": "등록금대출 실행기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 18.(수) 17:00",
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "label": "취업후상환대출(전환대출) 실행기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 19.(목) 17:00",
+                "source_refs": [
+                  "S008",
+                  "S009"
+                ]
+              },
+              {
+                "label": "생활비대출 신청기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 17.(화) 18:00",
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "label": "생활비대출 실행기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 18.(수) 17:00",
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "label": "분할납부 대출 신청기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 17.(화) 18:00",
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "label": "분할납부 대출 실행기간",
+                "raw_start": "2026. 7. 1.(수) 09:00",
+                "raw_end": "11. 18.(수) 17:00",
+                "source_refs": [
+                  "S015"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_methods": [],
+            "important_constraints": [],
+            "contacts": [],
+            "unknown_or_ambiguous": []
+          }
+        },
+        {
+          "pass": "B",
+          "status": "validation_failed",
+          "latency_ms": 44063,
+          "request_id": "req_011CdVs4dW9o6sze19xCqP1X",
+          "usage": {
+            "input_tokens": 8574,
+            "output_tokens": 2660,
+            "cached_input_tokens": 0
+          },
+          "response_metadata": {
+            "stop_reason": "end_turn",
+            "response_content_types": [
+              "text"
+            ],
+            "response_text_length": 5951,
+            "response_text_sha256": "9c0665d7b25e4f4b40f2173683d595b0915d4995a99d3008c218348c32603d41",
+            "starts_with_object": true,
+            "ends_with_object": true,
+            "json_parser_position": null,
+            "json_parse_category": null
+          },
+          "parsed_claims": {
+            "claims": [
+              {
+                "field": "application_method",
+                "category": "loan_application",
+                "role": "applicant",
+                "semantic_value": "한국장학재단 홈페이지(www.kosaf.go.kr) 또는 모바일 앱에서 신청 및 서류제출",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S007"
+                ]
+              },
+              {
+                "field": "application_method",
+                "category": "loan_execution",
+                "role": "applicant",
+                "semantic_value": "대출승인 후 한국장학재단 홈페이지에서 대출실행(지급신청)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S008"
+                ]
+              },
+              {
+                "field": "application_method",
+                "category": "special_approval_request",
+                "role": "applicant",
+                "semantic_value": "대출거절 상태에서 대학원행정실 이메일(gradean@ewha.ac.kr)로 특별승인 요청 메일 발송, 메일제목: [대학원] 2026-2 학자금대출 특별승인 요청(학번/이름)",
+                "raw_values": [],
+                "source_refs": [
+                  "S014"
+                ]
+              },
+              {
+                "field": "application_method",
+                "category": "document_submission",
+                "role": "applicant",
+                "semantic_value": "스캔한 이미지 사진 파일을 한국장학재단 홈페이지 또는 모바일앱에 업로드",
+                "raw_values": [],
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "등록금대출 신청기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "취업후상환대출(전환대출) 신청기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 18.(수) 18:00"
+                ],
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "등록금대출 실행기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "취업후상환대출(전환대출) 실행기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 19.(목) 17:00"
+                ],
+                "source_refs": [
+                  "S008",
+                  "S009"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "생활비대출 신청기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "생활비대출 실행기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "분할납부 대출 신청기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": null,
+                "semantic_value": "분할납부 대출 실행기간",
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "deadline",
+                "role": "취업후상환 대출 희망자",
+                "semantic_value": "등록마감 약 8주 전까지 대출신청 완료 필수",
+                "raw_values": [],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "deadline",
+                "role": "일반상환 대출 희망 대학원생",
+                "semantic_value": "본인 등록금 납부 예정일 2영업일 이전까지 신청 완료 필수",
+                "raw_values": [],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "deadline",
+                "role": "서류제출 대상자",
+                "semantic_value": "등록금 납부 마감 8주 전까지 서류제출 필수",
+                "raw_values": [],
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "교육대학원생",
+                "semantic_value": "학자금대출 신청 시 소속을 이화여자대학교 - 교육학과(교육대학원)으로 선택 필요",
+                "raw_values": [],
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "신입생",
+                "semantic_value": "대학원 합격발표 전이라도 소속대학미정으로 신청 가능하며, 합격 후 학적정보 기준으로 대출심사 진행",
+                "raw_values": [],
+                "source_refs": [
+                  "S005"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "재학생",
+                "semantic_value": "등록금을 납부한 후에는 대출 불가(특별승인 요청 및 승인 후 가능)",
+                "raw_values": [],
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "휴학 예정자·자퇴 예정자",
+                "semantic_value": "대출 불가",
+                "raw_values": [],
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "복학생",
+                "semantic_value": "복학 신청 여부와 무관하게 재학생 신청기간까지 대출신청 완료 필수",
+                "raw_values": [],
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "분납 연계대출 신청자",
+                "semantic_value": "1회차 분할납부금은 자비 납부 필수, 신입생·편입생·재입학생은 분납대출 대상 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "중복지원자",
+                "semantic_value": "등록금 초과분 대출 상환 또는 장학금 반환 필요, 해소 시까지 학자금 대출 및 장학금 대상 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S016",
+                  "S017"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "loan_condition",
+                "role": "취업후상환 대출 대학원생",
+                "semantic_value": "가구원 동의 필수(최초 1회, 가구원 변동 시 재동의 필요)",
+                "raw_values": [],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "loan_condition",
+                "role": "일반상환 대출 희망 대학원 재학생",
+                "semantic_value": "직전학기 성적 70/100점(C학점) 이상 필요, 장애인 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "loan_condition",
+                "role": "취업후상환 대출 대학원생",
+                "semantic_value": "연령 만 40세 이하",
+                "raw_values": [],
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "execution",
+                "role": "applicant",
+                "semantic_value": "반드시 본교 등록금 납부기간 동안 대출실행을 하여야 등록금 납부 완료",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S009"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "electronic_signature",
+                "role": "applicant",
+                "semantic_value": "본인 전자서명 수단(공동인증서 등)",
+                "raw_values": [],
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "electronic_signature",
+                "role": "가구원(취업후상환 대출 희망자)",
+                "semantic_value": "가구원(부모 또는 배우자) 전자서명 수단(공동인증서 등)",
+                "raw_values": [],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "supporting_documents",
+                "role": "applicant",
+                "semantic_value": "학자금신청서 내 제출서류 안내에 따른 해당 서류 일체(스캔 이미지 파일로 업로드)",
+                "raw_values": [],
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "supporting_documents",
+                "role": "소득요건 면제 대상자",
+                "semantic_value": "기초/차상위 등 소득요건 면제 자격 증빙서류",
+                "raw_values": [],
+                "source_refs": [
+                  "S007"
+                ]
+              },
+              {
+                "field": "contact",
+                "category": "loan_inquiry",
+                "role": "한국장학재단 학자금대출 콜센터",
+                "semantic_value": "1599-2000",
+                "raw_values": [
+                  "1599-2000"
+                ],
+                "source_refs": [
+                  "S017"
+                ]
+              },
+              {
+                "field": "contact",
+                "category": "special_approval_request",
+                "role": "대학원행정실",
+                "semantic_value": "gradean@ewha.ac.kr",
+                "raw_values": [
+                  "gradean@ewha.ac.kr"
+                ],
+                "source_refs": [
+                  "S014"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": [
+              "본교 등록금 납부기간 구체적 일정은 본교 홈페이지 공지사항에서 별도 확인 필요(S002)",
+              "대출 심사 승인을 위한 학사정보 업로드 시점은 고지서출력 당일 직전으로 명시되어 있으나 구체적 날짜 불명(S003,S012)"
+            ]
+          },
+          "validation": {
+            "valid": false,
+            "errors": [
+              "raw_value_not_found:claims[4]",
+              "schema:unexpected_raw_values:claims[4]",
+              "raw_value_not_found:claims[5]",
+              "schema:unexpected_raw_values:claims[5]",
+              "raw_value_not_found:claims[6]",
+              "schema:unexpected_raw_values:claims[6]",
+              "raw_value_not_found:claims[7]",
+              "schema:unexpected_raw_values:claims[7]",
+              "raw_value_not_found:claims[8]",
+              "schema:unexpected_raw_values:claims[8]",
+              "raw_value_not_found:claims[9]",
+              "schema:unexpected_raw_values:claims[9]",
+              "raw_value_not_found:claims[10]",
+              "schema:unexpected_raw_values:claims[10]",
+              "raw_value_not_found:claims[11]",
+              "schema:unexpected_raw_values:claims[11]"
+            ]
+          },
+          "regrouped_result": {
+            "scholarship_name": {
+              "semantic_value": null,
+              "source_refs": []
+            },
+            "publishing_department": {
+              "semantic_value": null,
+              "source_refs": []
+            },
+            "scholarship_organizations": [],
+            "eligibility": [],
+            "benefits": [],
+            "application_periods": [],
+            "required_documents": [
+              {
+                "semantic_value": "본인 전자서명 수단(공동인증서 등)",
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "semantic_value": "가구원(부모 또는 배우자) 전자서명 수단(공동인증서 등)",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "semantic_value": "학자금신청서 내 제출서류 안내에 따른 해당 서류 일체(스캔 이미지 파일로 업로드)",
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "semantic_value": "기초/차상위 등 소득요건 면제 자격 증빙서류",
+                "source_refs": [
+                  "S007"
+                ]
+              }
+            ],
+            "application_methods": [
+              {
+                "method_type": "loan_application",
+                "semantic_value": "한국장학재단 홈페이지(www.kosaf.go.kr) 또는 모바일 앱에서 신청 및 서류제출",
+                "source_refs": [
+                  "S001",
+                  "S007"
+                ]
+              },
+              {
+                "method_type": "loan_execution",
+                "semantic_value": "대출승인 후 한국장학재단 홈페이지에서 대출실행(지급신청)",
+                "source_refs": [
+                  "S001",
+                  "S008"
+                ]
+              },
+              {
+                "method_type": "special_approval_request",
+                "semantic_value": "대출거절 상태에서 대학원행정실 이메일(gradean@ewha.ac.kr)로 특별승인 요청 메일 발송, 메일제목: [대학원] 2026-2 학자금대출 특별승인 요청(학번/이름)",
+                "source_refs": [
+                  "S014"
+                ]
+              },
+              {
+                "method_type": "document_submission",
+                "semantic_value": "스캔한 이미지 사진 파일을 한국장학재단 홈페이지 또는 모바일앱에 업로드",
+                "source_refs": [
+                  "S008"
+                ]
+              }
+            ],
+            "important_constraints": [
+              {
+                "category": "application_period",
+                "semantic_value": "등록금대출 신청기간",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "취업후상환대출(전환대출) 신청기간",
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "등록금대출 실행기간",
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "취업후상환대출(전환대출) 실행기간",
+                "source_refs": [
+                  "S008",
+                  "S009"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "생활비대출 신청기간",
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "생활비대출 실행기간",
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "분할납부 대출 신청기간",
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": "분할납부 대출 실행기간",
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "category": "deadline",
+                "semantic_value": "등록마감 약 8주 전까지 대출신청 완료 필수",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "category": "deadline",
+                "semantic_value": "본인 등록금 납부 예정일 2영업일 이전까지 신청 완료 필수",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "category": "deadline",
+                "semantic_value": "등록금 납부 마감 8주 전까지 서류제출 필수",
+                "source_refs": [
+                  "S008"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "학자금대출 신청 시 소속을 이화여자대학교 - 교육학과(교육대학원)으로 선택 필요",
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "대학원 합격발표 전이라도 소속대학미정으로 신청 가능하며, 합격 후 학적정보 기준으로 대출심사 진행",
+                "source_refs": [
+                  "S005"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "등록금을 납부한 후에는 대출 불가(특별승인 요청 및 승인 후 가능)",
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "대출 불가",
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "복학 신청 여부와 무관하게 재학생 신청기간까지 대출신청 완료 필수",
+                "source_refs": [
+                  "S009"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "1회차 분할납부금은 자비 납부 필수, 신입생·편입생·재입학생은 분납대출 대상 제외",
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "등록금 초과분 대출 상환 또는 장학금 반환 필요, 해소 시까지 학자금 대출 및 장학금 대상 제외",
+                "source_refs": [
+                  "S016",
+                  "S017"
+                ]
+              },
+              {
+                "category": "loan_condition",
+                "semantic_value": "가구원 동의 필수(최초 1회, 가구원 변동 시 재동의 필요)",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "category": "loan_condition",
+                "semantic_value": "직전학기 성적 70/100점(C학점) 이상 필요, 장애인 제외",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "loan_condition",
+                "semantic_value": "연령 만 40세 이하",
+                "source_refs": [
+                  "S010"
+                ]
+              },
+              {
+                "category": "execution",
+                "semantic_value": "반드시 본교 등록금 납부기간 동안 대출실행을 하여야 등록금 납부 완료",
+                "source_refs": [
+                  "S001",
+                  "S009"
+                ]
+              }
+            ],
+            "contacts": [
+              {
+                "contact_type": "loan_inquiry",
+                "raw_value": "1599-2000",
+                "source_refs": [
+                  "S017"
+                ]
+              },
+              {
+                "contact_type": "special_approval_request",
+                "raw_value": "gradean@ewha.ac.kr",
+                "source_refs": [
+                  "S014"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": [
+              "본교 등록금 납부기간 구체적 일정은 본교 홈페이지 공지사항에서 별도 확인 필요(S002)",
+              "대출 심사 승인을 위한 학사정보 업로드 시점은 고지서출력 당일 직전으로 명시되어 있으나 구체적 날짜 불명(S003,S012)"
+            ]
+          }
+        }
+      ],
+      "merged": null,
+      "manual_assessment": "PENDING_MANUAL_REVIEW"
+    },
+    {
+      "fixture_id": "ewha_068_365411",
+      "article_id": "365411",
+      "status": "failed",
+      "passes": [
+        {
+          "pass": "A",
+          "status": "validation_failed",
+          "latency_ms": 34780,
+          "request_id": "req_011CdVs7suRAmjvhNF7HAcp2",
+          "usage": {
+            "input_tokens": 9244,
+            "output_tokens": 2025,
+            "cached_input_tokens": 0
+          },
+          "response_metadata": {
+            "stop_reason": "end_turn",
+            "response_content_types": [
+              "text"
+            ],
+            "response_text_length": 3703,
+            "response_text_sha256": "3700110ba1f6fb714b807c7373f6fbbf8138c6c607791a2153583b7eb3d0095d",
+            "starts_with_object": true,
+            "ends_with_object": true,
+            "json_parser_position": null,
+            "json_parse_category": null
+          },
+          "parsed_claims": {
+            "claims": [
+              {
+                "field": "scholarship_name",
+                "category": null,
+                "role": null,
+                "semantic_value": "2026학년도 제2학기 한국장학재단 학자금대출 (취업 후 상환 학자금대출 / 일반 상환 학자금대출)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "publishing_department",
+                "category": null,
+                "role": null,
+                "semantic_value": "학생처 장학복지팀",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "scholarship_organization",
+                "category": null,
+                "role": null,
+                "semantic_value": "한국장학재단",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "대상",
+                "role": "취업 후 상환",
+                "semantic_value": "교육부 또는 재단과 협약을 체결한 국내 고등교육기관(학점은행제 교육훈련기관, 외국대학 제외) 학부생",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "대상",
+                "role": "일반 상환",
+                "semantic_value": "국내 고등교육기관 학부생, 학점은행제 교육훈련기관 학습자(외국대학 제외)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "연령",
+                "role": "취업 후 상환",
+                "semantic_value": "만 35세 이하(선취업 후진학자 등은 만 45세까지)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "연령",
+                "role": "일반 상환",
+                "semantic_value": "만 55세 이하(만 55세 이전 입학자는 만 59세까지)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "성적기준",
+                "role": "취업 후 상환",
+                "semantic_value": "신입생: 제한 없음 / 재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적기준 없음. 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "성적기준",
+                "role": "일반 상환",
+                "semantic_value": "신입생: 제한 없음 / 재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적 70/100점(C학점) 이상. 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "소득기준",
+                "role": "취업 후 상환",
+                "semantic_value": "등록금: 학자금 지원 구간 제한 없음 / 생활비: 학자금 지원 8구간 이내 또는 9구간 중 긴급생계곤란자. 단, 다자녀가구 학생 및 자립준비청년은 지원구간 제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "소득기준",
+                "role": "일반 상환",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "신용요건",
+                "role": "취업 후 상환",
+                "semantic_value": "제한 없음(금융채무불이행자, 저신용자 가능)",
+                "raw_values": [],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "eligibility",
+                "category": "신용요건",
+                "role": "일반 상환",
+                "semantic_value": "학자금대출 연체자 및 금융채무 불이행자 등 대출 제한",
+                "raw_values": [],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출금리",
+                "role": "취업 후 상환",
+                "semantic_value": "변동금리 연 1.70%",
+                "raw_values": [
+                  "변동금리(연 1.70%)"
+                ],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출금리",
+                "role": "일반 상환",
+                "semantic_value": "고정금리 연 1.70%",
+                "raw_values": [
+                  "고정금리(연 1.70%)"
+                ],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출조건",
+                "role": "취업 후 상환",
+                "semantic_value": "등록금: 당해학기 소요액 전액(한도 없음) / 생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)",
+                "raw_values": [
+                  "등록금: 당해학기 소요액 전액(한도 없음)",
+                  "생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)"
+                ],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "benefit",
+                "category": "대출조건",
+                "role": "일반 상환",
+                "semantic_value": "등록금: 당해학기 소요액 전액(대학 4천만원, 5·6년제 6천만원, 의·치의·한의계열 9천만원) / 생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)",
+                "raw_values": [
+                  "등록금: 당해학기 소요액 전액",
+                  "대학(전문대학 포함): 4천만원",
+                  "5, 6년제 대학: 6천만원",
+                  "의/치의/한의계열 대학: 9천만원",
+                  "생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)"
+                ],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "대출신청",
+                "role": "등록금·생활비 대출 신청",
+                "semantic_value": "2026.07.01 ~ 2026.11.17",
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 17.(화)"
+                ],
+                "source_refs": [
+                  "S004",
+                  "S015"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "대출실행",
+                "role": "등록금 대출 실행",
+                "semantic_value": "2026.07.01 ~ 2026.11.18",
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 18.(수)"
+                ],
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "field": "application_period",
+                "category": "대출신청",
+                "role": "취업 후 상환 전환대출 신청",
+                "semantic_value": "2026.07.01 ~ 2026.11.18",
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 18.(수)"
+                ],
+                "source_refs": [
+                  "S004"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": [
+              "생활비 우선대출 등록 확인 기준 세부 내용",
+              "분납 일정 종료일 변경 가능성 여부",
+              "특별승인 긴급곤란 유형 적용 범위"
+            ]
+          },
+          "validation": {
+            "valid": false,
+            "errors": [
+              "raw_value_not_found:claims[17]",
+              "raw_value_not_found:claims[18]",
+              "raw_value_not_found:claims[19]",
+              "invalid_organization_role:scholarship_organizations[0]",
+              "raw_value_not_found:application_periods[0].raw_end",
+              "raw_value_not_found:application_periods[1].raw_end",
+              "raw_value_not_found:application_periods[2].raw_end"
+            ]
+          },
+          "regrouped_result": {
+            "scholarship_name": {
+              "semantic_value": "2026학년도 제2학기 한국장학재단 학자금대출 (취업 후 상환 학자금대출 / 일반 상환 학자금대출)",
+              "source_refs": [
+                "S001"
+              ]
+            },
+            "publishing_department": {
+              "semantic_value": "학생처 장학복지팀",
+              "source_refs": [
+                "S001"
+              ]
+            },
+            "scholarship_organizations": [
+              {
+                "role": null,
+                "semantic_value": "한국장학재단",
+                "source_refs": [
+                  "S001"
+                ]
+              }
+            ],
+            "eligibility": [
+              {
+                "category": "대상",
+                "semantic_value": "교육부 또는 재단과 협약을 체결한 국내 고등교육기관(학점은행제 교육훈련기관, 외국대학 제외) 학부생",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "대상",
+                "semantic_value": "국내 고등교육기관 학부생, 학점은행제 교육훈련기관 학습자(외국대학 제외)",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "연령",
+                "semantic_value": "만 35세 이하(선취업 후진학자 등은 만 45세까지)",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "연령",
+                "semantic_value": "만 55세 이하(만 55세 이전 입학자는 만 59세까지)",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "성적기준",
+                "semantic_value": "신입생: 제한 없음 / 재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적기준 없음. 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "category": "성적기준",
+                "semantic_value": "신입생: 제한 없음 / 재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적 70/100점(C학점) 이상. 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "category": "소득기준",
+                "semantic_value": "등록금: 학자금 지원 구간 제한 없음 / 생활비: 학자금 지원 8구간 이내 또는 9구간 중 긴급생계곤란자. 단, 다자녀가구 학생 및 자립준비청년은 지원구간 제한 없음",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "category": "소득기준",
+                "semantic_value": "학자금 지원 구간 제한 없음",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "category": "신용요건",
+                "semantic_value": "제한 없음(금융채무불이행자, 저신용자 가능)",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "category": "신용요건",
+                "semantic_value": "학자금대출 연체자 및 금융채무 불이행자 등 대출 제한",
+                "source_refs": [
+                  "S002"
+                ]
+              }
+            ],
+            "benefits": [
+              {
+                "benefit_type": "대출금리",
+                "semantic_value": "변동금리 연 1.70%",
+                "raw_amount_text": "변동금리(연 1.70%)",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "benefit_type": "대출금리",
+                "semantic_value": "고정금리 연 1.70%",
+                "raw_amount_text": "고정금리(연 1.70%)",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "benefit_type": "대출조건",
+                "semantic_value": "등록금: 당해학기 소요액 전액(한도 없음) / 생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)",
+                "raw_amount_text": "등록금: 당해학기 소요액 전액(한도 없음)",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "benefit_type": "대출조건",
+                "semantic_value": "등록금: 당해학기 소요액 전액(대학 4천만원, 5·6년제 6천만원, 의·치의·한의계열 9천만원) / 생활비: 연 400만원(학기당 200만원), 총 한도 2천 4백만원(5~6년제 3천 2백만원)",
+                "raw_amount_text": "등록금: 당해학기 소요액 전액",
+                "source_refs": [
+                  "S002"
+                ]
+              }
+            ],
+            "application_periods": [
+              {
+                "label": "대출신청",
+                "raw_start": "2026. 7. 1.(수)",
+                "raw_end": "2026. 11. 17.(화)",
+                "source_refs": [
+                  "S004",
+                  "S015"
+                ]
+              },
+              {
+                "label": "대출실행",
+                "raw_start": "2026. 7. 1.(수)",
+                "raw_end": "2026. 11. 18.(수)",
+                "source_refs": [
+                  "S006"
+                ]
+              },
+              {
+                "label": "대출신청",
+                "raw_start": "2026. 7. 1.(수)",
+                "raw_end": "2026. 11. 18.(수)",
+                "source_refs": [
+                  "S004"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_methods": [],
+            "important_constraints": [],
+            "contacts": [],
+            "unknown_or_ambiguous": [
+              "생활비 우선대출 등록 확인 기준 세부 내용",
+              "분납 일정 종료일 변경 가능성 여부",
+              "특별승인 긴급곤란 유형 적용 범위"
+            ]
+          }
+        },
+        {
+          "pass": "B",
+          "status": "validation_failed",
+          "latency_ms": 54362,
+          "request_id": "req_011CdVsASsMdZrV8Rj8nkwV3",
+          "usage": {
+            "input_tokens": 9224,
+            "output_tokens": 3483,
+            "cached_input_tokens": 0
+          },
+          "response_metadata": {
+            "stop_reason": "end_turn",
+            "response_content_types": [
+              "text"
+            ],
+            "response_text_length": 6662,
+            "response_text_sha256": "09ff0b00f93c02700f512e956897d852fabf4d1a98ac37745fd69990f1bac45f",
+            "starts_with_object": true,
+            "ends_with_object": true,
+            "json_parser_position": null,
+            "json_parse_category": null
+          },
+          "parsed_claims": {
+            "claims": [
+              {
+                "field": "application_method",
+                "category": "online",
+                "role": "primary",
+                "semantic_value": "한국장학재단 홈페이지(www.kosaf.go.kr) 또는 모바일 앱에서 이용자 등록 후 학자금대출 신청 (본인 전자서명 수단 준비 필요)",
+                "raw_values": [],
+                "source_refs": [
+                  "S004",
+                  "S005"
+                ]
+              },
+              {
+                "field": "application_method",
+                "category": "document_submission",
+                "role": "supporting",
+                "semantic_value": "신청 완료 후 1~3일(영업일 기준) 후 재단 홈페이지 또는 모바일 앱에서 서류제출 대상 여부 확인 후 스캔 이미지 파일 등록 또는 모바일 앱 사진 업로드",
+                "raw_values": [],
+                "source_refs": [
+                  "S005",
+                  "S006"
+                ]
+              },
+              {
+                "field": "application_method",
+                "category": "special_approval_request",
+                "role": "supporting",
+                "semantic_value": "성적 외 기준(기등록자) 특별승인 추천 요청: 장학복지팀 이메일(scholarship@ewha.ac.kr)로 요청, 메일 제목: [학자금대출 특별승인] 학번 이름",
+                "raw_values": [],
+                "source_refs": [
+                  "S019"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "등록금 대출 신청기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S004",
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "등록금 대출 실행기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S006",
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "취업 후 상환대출(전환대출) 신청기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 18.(수) 18:00"
+                ],
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "취업 후 상환대출(전환대출) 실행기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수)",
+                  "2026. 11. 19.(목) 17:00"
+                ],
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "생활비 대출 신청기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 17.(화) 18:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "application_period",
+                "role": "생활비 대출 실행기간",
+                "semantic_value": null,
+                "raw_values": [
+                  "2026. 7. 1.(수) 09:00",
+                  "2026. 11. 18.(수) 17:00"
+                ],
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "deadline",
+                "role": "사전신청 권고",
+                "semantic_value": "학자금 지원구간 산정 및 통지 기간을 감안하여 등록마감일로부터 최소 8주 전까지 대출 신청(가구원 정보제공 동의 포함) 완료 필수",
+                "raw_values": [],
+                "source_refs": [
+                  "S004",
+                  "S009"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "성적기준(일반 상환)",
+                "semantic_value": "재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적 70/100점(C학점) 이상; 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "성적기준(취업 후 상환)",
+                "semantic_value": "재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상); 성적기준 없음; 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "연령기준(취업 후 상환)",
+                "semantic_value": "만 35세 이하 (선취업 후진학자 등은 만 45세까지)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "연령기준(일반 상환)",
+                "semantic_value": "만 55세 이하 (만 55세 이전 입학자는 만 59세까지)",
+                "raw_values": [],
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "eligibility",
+                "role": "소득기준(취업 후 상환 생활비)",
+                "semantic_value": "학자금 지원 8구간 이내 또는 9구간 중 긴급생계곤란자; 다자녀가구 학생 및 자립준비청년은 지원구간 제한 없음",
+                "raw_values": [],
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "대출 불가 대상",
+                "semantic_value": "휴학 및 자퇴 예정자는 대출 신청 불가; 등록금 납부 후에는 일반 대출 신청 불가(특별승인제도 이용 필요)",
+                "raw_values": [],
+                "source_refs": [
+                  "S011",
+                  "S013"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "중복지원 제한",
+                "semantic_value": "장학금과 학자금대출 합계가 해당 학기 등록금 초과 시 초과분 상환 또는 장학금 반환 필요; 해소 시까지 한국장학재단 장학금 및 학자금대출 지원 제외",
+                "raw_values": [],
+                "source_refs": [
+                  "S021"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "복학생 신청기간",
+                "semantic_value": "복학생의 경우 복학 신청과 별개로 대출신청은 재학생 신청기간과 동일",
+                "raw_values": [],
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "대출 미실행 시 처리",
+                "semantic_value": "대출 승인 후 등록금 납부기간 내 대출 실행을 하지 않을 경우 대출 신청을 취소한 것으로 간주하여 일괄 취소",
+                "raw_values": [],
+                "source_refs": [
+                  "S014"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "restriction",
+                "role": "분할납부 연계대출 제외 대상",
+                "semantic_value": "신입생군(신입생, 편입생, 재입학생) 제외; 등록금 분할납부 2회차부터 지원(1회차 분할납부금은 자비 납부)",
+                "raw_values": [],
+                "source_refs": [
+                  "S019"
+                ]
+              },
+              {
+                "field": "important_constraint",
+                "category": "consent",
+                "role": "가구원 정보제공 동의",
+                "semantic_value": "학자금 지원구간 산정을 위해 (미혼)부모 또는 (기혼)배우자의 가구원 정보제공 동의 필요; 최초 1회 동의 시 재학 기간 동안 유효(가구원 변동 시 재동의 필요)",
+                "raw_values": [],
+                "source_refs": [
+                  "S005"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "본인 인증",
+                "role": "신청자",
+                "semantic_value": "본인 전자서명 수단(공동인증서/금융인증서/간편인증서 등)",
+                "raw_values": [],
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "가구원 동의",
+                "role": "가구원(부모/배우자)",
+                "semantic_value": "가구원 정보제공 동의를 위한 가구원의 전자서명 수단",
+                "raw_values": [],
+                "source_refs": [
+                  "S005"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 부·모 사망",
+                "semantic_value": "주민등록말소자초본(사망일자 확인), 1년 이내 사유 발생",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 부·모 파산",
+                "semantic_value": "당사자 파산선고 결정문(면책결정 포함)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 부·모 개인회생",
+                "semantic_value": "당사자 개인회생 개시결정문(면책결정 포함)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 부·모 실직",
+                "semantic_value": "당사자 건강보험자격득실확인서 (1개월 이내 발급분, 1년 이내 사유 발생)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 부·모 폐업",
+                "semantic_value": "①폐업사실증명서, ②사실증명서(총사업자등록내역), ③건강보험자격득실확인서 (1개월 이내 발급분, 1년 이내 사유 발생)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 본인 파산",
+                "semantic_value": "본인의 파산면책 결정문(면책결정 포함)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 본인 개인회생",
+                "semantic_value": "본인의 개인회생 개시결정문(면책결정 포함)",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 본인 폐업",
+                "semantic_value": "본인의 ①폐업사실증명서, ②사실증명서(총사업자등록내역), ③건강보험자격득실확인서",
+                "raw_values": [],
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "field": "required_document",
+                "category": "긴급생계곤란 증빙(9구간)",
+                "role": "신청자 본인 청소년쉼터 거주",
+                "semantic_value": "청소년쉼터 입·퇴소확인서 (5년 이내 3개월 이상 거주, 1개월 이내 발급분)",
+                "raw_values": [],
+                "source_refs": [
+                  "S017"
+                ]
+              },
+              {
+                "field": "contact",
+                "category": "장학재단 콜센터",
+                "role": "학자금대출 문의",
+                "semantic_value": null,
+                "raw_values": [
+                  "1599-2000"
+                ],
+                "source_refs": [
+                  "S021"
+                ]
+              },
+              {
+                "field": "contact",
+                "category": "교내 담당부서",
+                "role": "학생처 장학복지팀",
+                "semantic_value": null,
+                "raw_values": [
+                  "02-3277-2274",
+                  "scholarship@ewha.ac.kr"
+                ],
+                "source_refs": [
+                  "S019",
+                  "S021"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": [
+              "등록금 납부기간(신입생/재학생 상이)은 본교 홈페이지 공지사항에서 별도 확인 필요하며 본 공지에 명시되지 않음",
+              "분할납부 연계대출 일정 종료일은 본교 등록금 납부일정에 따라 변경될 수 있음",
+              "서류제출 대상 여부는 신청 후 1~3일(영업일) 후 개별 확인 필요하며 제출 서류 목록이 개인별로 상이할 수 있음"
+            ]
+          },
+          "validation": {
+            "valid": false,
+            "errors": [
+              "raw_value_not_found:claims[3]",
+              "schema:unexpected_raw_values:claims[3]",
+              "raw_value_not_found:claims[4]",
+              "schema:unexpected_raw_values:claims[4]",
+              "raw_value_not_found:claims[5]",
+              "schema:unexpected_raw_values:claims[5]",
+              "raw_value_not_found:claims[6]",
+              "schema:unexpected_raw_values:claims[6]",
+              "raw_value_not_found:claims[7]",
+              "schema:unexpected_raw_values:claims[7]",
+              "raw_value_not_found:claims[8]",
+              "schema:unexpected_raw_values:claims[8]",
+              "schema:important_constraints[0]",
+              "schema:important_constraints[1]",
+              "schema:important_constraints[2]",
+              "schema:important_constraints[3]",
+              "schema:important_constraints[4]",
+              "schema:important_constraints[5]"
+            ]
+          },
+          "regrouped_result": {
+            "scholarship_name": {
+              "semantic_value": null,
+              "source_refs": []
+            },
+            "publishing_department": {
+              "semantic_value": null,
+              "source_refs": []
+            },
+            "scholarship_organizations": [],
+            "eligibility": [],
+            "benefits": [],
+            "application_periods": [],
+            "required_documents": [
+              {
+                "semantic_value": "본인 전자서명 수단(공동인증서/금융인증서/간편인증서 등)",
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "semantic_value": "가구원 정보제공 동의를 위한 가구원의 전자서명 수단",
+                "source_refs": [
+                  "S005"
+                ]
+              },
+              {
+                "semantic_value": "주민등록말소자초본(사망일자 확인), 1년 이내 사유 발생",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "당사자 파산선고 결정문(면책결정 포함)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "당사자 개인회생 개시결정문(면책결정 포함)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "당사자 건강보험자격득실확인서 (1개월 이내 발급분, 1년 이내 사유 발생)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "①폐업사실증명서, ②사실증명서(총사업자등록내역), ③건강보험자격득실확인서 (1개월 이내 발급분, 1년 이내 사유 발생)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "본인의 파산면책 결정문(면책결정 포함)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "본인의 개인회생 개시결정문(면책결정 포함)",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "본인의 ①폐업사실증명서, ②사실증명서(총사업자등록내역), ③건강보험자격득실확인서",
+                "source_refs": [
+                  "S016"
+                ]
+              },
+              {
+                "semantic_value": "청소년쉼터 입·퇴소확인서 (5년 이내 3개월 이상 거주, 1개월 이내 발급분)",
+                "source_refs": [
+                  "S017"
+                ]
+              }
+            ],
+            "application_methods": [
+              {
+                "method_type": "online",
+                "semantic_value": "한국장학재단 홈페이지(www.kosaf.go.kr) 또는 모바일 앱에서 이용자 등록 후 학자금대출 신청 (본인 전자서명 수단 준비 필요)",
+                "source_refs": [
+                  "S004",
+                  "S005"
+                ]
+              },
+              {
+                "method_type": "document_submission",
+                "semantic_value": "신청 완료 후 1~3일(영업일 기준) 후 재단 홈페이지 또는 모바일 앱에서 서류제출 대상 여부 확인 후 스캔 이미지 파일 등록 또는 모바일 앱 사진 업로드",
+                "source_refs": [
+                  "S005",
+                  "S006"
+                ]
+              },
+              {
+                "method_type": "special_approval_request",
+                "semantic_value": "성적 외 기준(기등록자) 특별승인 추천 요청: 장학복지팀 이메일(scholarship@ewha.ac.kr)로 요청, 메일 제목: [학자금대출 특별승인] 학번 이름",
+                "source_refs": [
+                  "S019"
+                ]
+              }
+            ],
+            "important_constraints": [
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S004",
+                  "S015"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S006",
+                  "S015"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S004"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S006",
+                  "S007"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "category": "application_period",
+                "semantic_value": null,
+                "source_refs": [
+                  "S015"
+                ]
+              },
+              {
+                "category": "deadline",
+                "semantic_value": "학자금 지원구간 산정 및 통지 기간을 감안하여 등록마감일로부터 최소 8주 전까지 대출 신청(가구원 정보제공 동의 포함) 완료 필수",
+                "source_refs": [
+                  "S004",
+                  "S009"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상), 성적 70/100점(C학점) 이상; 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "source_refs": [
+                  "S001",
+                  "S002"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "재학생: 직전학기 이수학점 12학점 이상(또는 소속대학 최소 이수학점 이상); 성적기준 없음; 장애인 및 졸업학년 학부생 이수학점 기준 적용 제외",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "만 35세 이하 (선취업 후진학자 등은 만 45세까지)",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "만 55세 이하 (만 55세 이전 입학자는 만 59세까지)",
+                "source_refs": [
+                  "S001"
+                ]
+              },
+              {
+                "category": "eligibility",
+                "semantic_value": "학자금 지원 8구간 이내 또는 9구간 중 긴급생계곤란자; 다자녀가구 학생 및 자립준비청년은 지원구간 제한 없음",
+                "source_refs": [
+                  "S002"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "휴학 및 자퇴 예정자는 대출 신청 불가; 등록금 납부 후에는 일반 대출 신청 불가(특별승인제도 이용 필요)",
+                "source_refs": [
+                  "S011",
+                  "S013"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "장학금과 학자금대출 합계가 해당 학기 등록금 초과 시 초과분 상환 또는 장학금 반환 필요; 해소 시까지 한국장학재단 장학금 및 학자금대출 지원 제외",
+                "source_refs": [
+                  "S021"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "복학생의 경우 복학 신청과 별개로 대출신청은 재학생 신청기간과 동일",
+                "source_refs": [
+                  "S012"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "대출 승인 후 등록금 납부기간 내 대출 실행을 하지 않을 경우 대출 신청을 취소한 것으로 간주하여 일괄 취소",
+                "source_refs": [
+                  "S014"
+                ]
+              },
+              {
+                "category": "restriction",
+                "semantic_value": "신입생군(신입생, 편입생, 재입학생) 제외; 등록금 분할납부 2회차부터 지원(1회차 분할납부금은 자비 납부)",
+                "source_refs": [
+                  "S019"
+                ]
+              },
+              {
+                "category": "consent",
+                "semantic_value": "학자금 지원구간 산정을 위해 (미혼)부모 또는 (기혼)배우자의 가구원 정보제공 동의 필요; 최초 1회 동의 시 재학 기간 동안 유효(가구원 변동 시 재동의 필요)",
+                "source_refs": [
+                  "S005"
+                ]
+              }
+            ],
+            "contacts": [
+              {
+                "contact_type": "장학재단 콜센터",
+                "raw_value": "1599-2000",
+                "source_refs": [
+                  "S021"
+                ]
+              },
+              {
+                "contact_type": "교내 담당부서",
+                "raw_value": "02-3277-2274",
+                "source_refs": [
+                  "S019",
+                  "S021"
+                ]
+              }
+            ],
+            "unknown_or_ambiguous": [
+              "등록금 납부기간(신입생/재학생 상이)은 본교 홈페이지 공지사항에서 별도 확인 필요하며 본 공지에 명시되지 않음",
+              "분할납부 연계대출 일정 종료일은 본교 등록금 납부일정에 따라 변경될 수 있음",
+              "서류제출 대상 여부는 신청 후 1~3일(영업일) 후 개별 확인 필요하며 제출 서류 목록이 개인별로 상이할 수 있음"
+            ]
+          }
+        }
+      ],
+      "merged": null,
+      "manual_assessment": "PENDING_MANUAL_REVIEW"
+    }
+  ],
+  "status": "completed_with_failures"
+}
