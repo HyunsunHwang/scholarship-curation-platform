@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { normalizeProviderClaimV342 } from '../lib/analysis/provider-output-normalizer-v342.mjs';
+import { gateOrganizationRelation } from '../lib/analysis/organization-relation-gate-v342.mjs';
+import { validateClaimsInIsolationV342 } from '../lib/analysis/claim-isolation-validator-v342.mjs';
+const record = { source_id: 'source', article_id: 'article' }; const segments = [{ segment_id: 'S001', text: '신청 방법과 문의 02-123-4567' }];
+assert.equal(normalizeProviderClaimV342({ field: 'contact', raw_values: ['02-123-4567'], source_refs: ['source/article/S001'] }, record, segments).canonical_claim.source_refs[0], 'S001');
+assert.equal(normalizeProviderClaimV342({ field: 'contact', raw_values: [], source_refs: ['other/article/S001'] }, record, segments).canonical_claim.source_refs[0], 'other/article/S001');
+assert.equal(normalizeProviderClaimV342({ field: 'application_method', raw_values: ['x'], source_refs: ['S001'] }, record, segments).canonical_claim.raw_values.length, 0);
+assert.equal(gateOrganizationRelation({ semantic_value: '기관', source_refs: ['S001'] }, [{ segment_id: 'S001', text: '국가장학금 중복수혜 예외' }]).accepted, false);
+const isolated = validateClaimsInIsolationV342([{ field: 'contact', category: null, role: null, semantic_value: '02-123-4567', raw_values: ['02-123-4567'], source_refs: ['source/article/S001'] }, { field: 'contact', category: null, role: null, semantic_value: 'x', raw_values: [], source_refs: ['bad/S001'] }], record, segments);
+assert.equal(isolated.accepted_with_normalization.length, 1); assert.equal(isolated.rejected_claims.length, 1); console.log('v3.4.2 replay isolation tests passed');
