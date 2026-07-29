@@ -7,5 +7,6 @@ assert.equal(validateClaimLevel({ ...base, field: "application_period", raw_valu
 assert.equal(validateClaimLevel({ ...base, field: "application_period", raw_values: ["2026.7.2."] }, segments).status, "NEEDS_REVIEW");
 assert.equal(validateClaimLevel({ ...base, field: "scholarship_organization", role: "donor", raw_values: [] }, segments).status, "ACCEPTED_WITH_NORMALIZATION");
 assert.equal(validateClaimLevel({ ...base, field: "scholarship_organization", role: "unknown", raw_values: [] }, segments).status, "NEEDS_REVIEW");
+assert.equal(validateClaimLevel({ ...base, field: "scholarship_organization", role: null, raw_values: [] }, segments).reason, "organization_role_missing");
 assert.equal(validateClaimLevel({ ...base, source_refs: ["S999"] }, segments).status, "REJECTED");
 const summary = summarizePass([{ ...base }, { ...base, source_refs: ["S999"] }], segments); assert.equal(summary.accepted_with_normalization.length, 1); assert.equal(summary.rejected_claims.length, 1); console.log("claim-level v3.3 tests passed");
