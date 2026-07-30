@@ -1,0 +1,11 @@
+source_id,source_name,previous_status,previous_observed,current_status,current_observed,current_reason,likely_cause
+ou_1878_univ_001,경성대학교 장학공지,success,15,timeout,0,attempt_timeout,transient_or_hard_failure
+ou_2010_univ_001,광주대학교 장학공지,success,1,success,0,success,success_but_zero_items_lookback_or_empty
+ou_2155_univ_001,나사렛대학교 장학공지,success,6,success,0,success,success_but_zero_items_lookback_or_empty
+ou_2254_univ_001,대전신학대학교 장학공지,success,1,success,0,success,success_but_zero_items_lookback_or_empty
+ou_2503_univ_001,서울과학기술대학교 장학공지,success,3,success,0,success,success_but_zero_items_lookback_or_empty
+ou_2773_univ_001,신경주대학교 장학공지,success,1,success,0,success,success_but_zero_items_lookback_or_empty
+ou_2901_univ_001,예수대학교 장학공지,success,2,success,0,success,success_but_zero_items_lookback_or_empty
+ou_3110_univ_001,제주대학교 장학공지,success,2,success,0,success,success_but_zero_items_lookback_or_empty
+ou_3409_univ_001,한동대학교 장학공지,success,1,success,0,success,success_but_zero_items_lookback_or_empty
+ou_3525_univ_001,호남대학교 장학공지,success,1,success,0,success,success_but_zero_items_lookback_or_empty

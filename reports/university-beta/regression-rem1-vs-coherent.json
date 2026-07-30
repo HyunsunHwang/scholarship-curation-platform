@@ -1,0 +1,143 @@
+{
+  "created_at": "2026-07-30T12:52:28.168Z",
+  "rem1": {
+    "success": 137,
+    "with_items": 110
+  },
+  "current": {
+    "success": 158,
+    "with_items": 123,
+    "source_count": 187
+  },
+  "expected_floor_if_no_regression": {
+    "success": 137,
+    "with_items": 110,
+    "note": "If no rem-1 regression and N recovered_with_items added, success>=137+N_unique and with_items>=110+N_unique (minus overlaps)."
+  },
+  "groups": {
+    "success_to_non_success": {
+      "count": 1,
+      "rows": [
+        {
+          "source_id": "ou_1878_univ_001",
+          "source_name": "경성대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 15,
+          "current_status": "timeout",
+          "current_observed": 0,
+          "current_reason": "attempt_timeout",
+          "likely_cause": "transient_network_or_timeout"
+        }
+      ]
+    },
+    "with_items_to_zero_or_non_success": {
+      "count": 10,
+      "rows": [
+        {
+          "source_id": "ou_1878_univ_001",
+          "source_name": "경성대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 15,
+          "current_status": "timeout",
+          "current_observed": 0,
+          "current_reason": "attempt_timeout",
+          "likely_cause": "transient_or_hard_failure"
+        },
+        {
+          "source_id": "ou_2010_univ_001",
+          "source_name": "광주대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 1,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_2155_univ_001",
+          "source_name": "나사렛대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 6,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_2254_univ_001",
+          "source_name": "대전신학대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 1,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_2503_univ_001",
+          "source_name": "서울과학기술대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 3,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_2773_univ_001",
+          "source_name": "신경주대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 1,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_2901_univ_001",
+          "source_name": "예수대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 2,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_3110_univ_001",
+          "source_name": "제주대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 2,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_3409_univ_001",
+          "source_name": "한동대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 1,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        },
+        {
+          "source_id": "ou_3525_univ_001",
+          "source_name": "호남대학교 장학공지",
+          "previous_status": "success",
+          "previous_observed": 1,
+          "current_status": "success",
+          "current_observed": 0,
+          "current_reason": "success",
+          "likely_cause": "success_but_zero_items_lookback_or_empty"
+        }
+      ]
+    },
+    "recovered_with_items_to_full_non_success": {
+      "count": 0,
+      "rows": []
+    }
+  }
+}

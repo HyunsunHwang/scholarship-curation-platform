@@ -1,32 +1,36 @@
-# Unresolved-51 root cause clusters
+# Unresolved-51 root cause clusters (revised classification)
 
-Generated: 2026-07-30T12:35:57.501Z
+Generated: 2026-07-30T12:53:00.757Z
 
 ## Probe clusters (pre-fix evidence)
 
-| Cluster | Count | Source IDs |
-|---------|------:|------------|
-| selector_mismatch | 21 | ou_1732_univ_001, ou_1786_univ_001, ou_1821_univ_001, ou_1864_univ_001, ou_1986_univ_001, ou_2074_univ_001, ou_2081_univ_001, ou_2106_univ_001, ou_2112_univ_001, ou_2163_univ_001, ou_2246_univ_001, ou_2468_univ_001, ou_2515_univ_001, ou_10_univ_001, ou_2909_univ_001, ou_3064_univ_001, ou_8_univ_001, ou_3209_univ_001, ou_3436_univ_001, ou_3437_univ_001, ou_3518_univ_001 |
-| http_403_waf | 7 | ou_1737_univ_001, ou_1751_univ_001, ou_2015_univ_001, ou_2173_univ_001, ou_2700_univ_001, ou_3198_univ_001, ou_3229_univ_001 |
-| onclick_post_event_url | 7 | ou_1745_univ_001, ou_1779_univ_001, ou_2266_univ_001, ou_12_univ_001, ou_2292_univ_001, ou_2791_univ_001, ou_3509_univ_001 |
-| tls_network_timeout | 13 | ou_1888_univ_001, ou_1923_univ_001, ou_1_univ_001, ou_2062_univ_001, ou_2149_univ_001, ou_2238_univ_001, ou_2257_univ_001, ou_2579_univ_001, ou_2981_univ_001, ou_3003_univ_001, ou_3187_univ_001, ou_3342_univ_001, ou_1618_univ_001 |
-| other | 1 | ou_2097_univ_001 |
-| invalid_list_url | 2 | ou_2355_univ_001, ou_2401_univ_001 |
+| Cluster | Count |
+|---------|------:|
+| selector_mismatch | 21 |
+| http_403_waf | 7 |
+| onclick_post_event_url | 7 |
+| tls_network_timeout | 13 |
+| other | 1 |
+| invalid_list_url | 2 |
 
-## Probe root_cause_category counts
+## Outcome taxonomy (strict)
 
-| Category | Count |
-|----------|------:|
-| list_selector_mismatch | 21 |
-| network_dns_or_tls_failure | 13 |
-| login_required | 6 |
-| detail_url_resolution_failed | 6 |
-| not_a_notice_list | 2 |
-| http_403 | 1 |
-| unknown_requires_manual_review | 1 |
-| onclick_javascript | 1 |
+- `invalid_list_url`: configured URL is not a usable notice list (404 / homepage redirect / non-list page).
+- `replacement_source_found`: official replacement (or canonical merged) source identified.
+- `replacement_source_not_found`: invalid URL + replacement search attempted without a verified board.
+- `verified_no_central_board`: **only** when official university site investigation shows no central scholarship board exists.
+- HTTP 404 / redirect alone never upgrades to `verified_no_central_board`.
 
-## Notes
+## Outcome counts (sum=51)
 
-- Probe intentionally avoided treating bare `network_error` / `empty_observed` / `partial` as final root causes.
-- Common remediations applied: expanded detail URL pattern (`view.do`, `nttSn`, `brdIdx`, `DOC_NO`, `BoardView`, `portalBbs`, …), `data-id`→`selectNttInfo`, `jf_view`, `goView` (boardCnts), `goDetail`, `fn_search_detail`, `fnView` (UOS), `goBdView`, `pf_DetailMove`, `doDetail`, `fn_View` (CUP), `cau_portal` defaults, `duksung_bbs_ajax` adapter.
+| Outcome | Count |
+|---------|------:|
+| recovered_with_items | 22 |
+| recovered_valid_zero | 0 |
+| replacement_source_found | 1 |
+| replacement_source_not_found | 2 |
+| invalid_list_url | 0 |
+| verified_external_block | 6 |
+| verified_no_central_board | 0 |
+| temporarily_unavailable | 16 |
+| still_unresolved | 4 |

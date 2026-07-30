@@ -1,0 +1,8 @@
+source_id,source_name,previous_status,previous_observed,current_status,current_observed,current_reason,likely_cause
+ou_1878_univ_001,경성대학교 장학공지,success,15,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_2051_univ_001,국립금오공과대학교 장학공지,success,5,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_2091_univ_001,국립한국교통대학교 장학공지,success,1,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_7_univ_001,이화여자대학교 장학공지,success,13,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_3194_univ_001,청운대학교 장학공지,success,9,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_3307_univ_001,한국기술교육대학교 장학공지,success,19,timeout,0,attempt_timeout,transient_network_or_timeout
+ou_3397_univ_001,한남대학교 장학공지,success,21,timeout,0,attempt_timeout,transient_network_or_timeout

@@ -1,0 +1,2 @@
+source_id,source_name,previous_status,previous_observed,current_status,current_observed,current_reason,likely_cause
+ou_3229_univ_001,충남대학교 장학공지,success(51-best),5,timeout,0,attempt_timeout,full188_missed_51_recovery

@@ -1,9 +1,19 @@
 /**
- * Build unresolved-51 remediation deliverables from probe + crawl results.
+ * Build unresolved-51 remediation deliverables with strict outcome taxonomy.
+ *
+ * Outcomes (must sum to 51):
+ *   recovered_with_items
+ *   recovered_valid_zero
+ *   replacement_source_found
+ *   replacement_source_not_found
+ *   invalid_list_url
+ *   verified_external_block
+ *   verified_no_central_board   // only with explicit central-board absence evidence
+ *   temporarily_unavailable
+ *   still_unresolved
+ *
  * Usage:
- *   node scripts/build-unresolved-51-deliverables.mjs \
- *     exports/notices-unresolved-51-retry2/scholarship-notices-latest.json \
- *     [exports/notices-four-year-univ-final/scholarship-notices-latest.json]
+ *   node scripts/build-unresolved-51-deliverables.mjs <51-coherent-crawl.json> [coherent-188.json]
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -12,7 +22,7 @@ const OUT = "reports/university-beta";
 const crawlPath = process.argv[2];
 const fullCrawlPath = process.argv[3] || "";
 if (!crawlPath) {
-  console.error("Usage: node scripts/build-unresolved-51-deliverables.mjs <51-crawl.json> [full-188.json]");
+  console.error("Usage: node scripts/build-unresolved-51-deliverables.mjs <51-crawl.json> [coherent-188.json]");
   process.exit(1);
 }
 
@@ -26,21 +36,75 @@ const OUTCOME = {
   RECOVERED_WITH_ITEMS: "recovered_with_items",
   RECOVERED_VALID_ZERO: "recovered_valid_zero",
   REPLACEMENT_SOURCE_FOUND: "replacement_source_found",
+  REPLACEMENT_SOURCE_NOT_FOUND: "replacement_source_not_found",
+  INVALID_LIST_URL: "invalid_list_url",
   VERIFIED_EXTERNAL_BLOCK: "verified_external_block",
   VERIFIED_NO_CENTRAL_BOARD: "verified_no_central_board",
   TEMPORARILY_UNAVAILABLE: "temporarily_unavailable",
   STILL_UNRESOLVED: "still_unresolved",
 };
 
+/**
+ * Manual evidence overrides. `verified_no_central_board` requires explicit
+ * investigation notes that a central scholarship board does not exist.
+ * 404 / homepage redirect alone must NOT map to verified_no_central_board.
+ */
+const MANUAL = {
+  // 2021 merger: GNTECH absorbed into GNU; canonical active source is ou_1864.
+  ou_1821_univ_001: {
+    outcome: OUTCOME.REPLACEMENT_SOURCE_FOUND,
+    confidence: "confirmed",
+    detail:
+      "경남과학기술대는 2021년 경상국립대(GNU)로 통합. 동일 list_url 중복 수집 방지를 위해 ou_1821 비활성화, 공식 운영 주체 보드는 ou_1864_univ_001로 통합.",
+  },
+  // KMOU configured URL returns HTTP 404; replacement search did not yield a
+  // verified public central scholarship board URL in this pass.
+  ou_2097_univ_001: {
+    outcome: OUTCOME.REPLACEMENT_SOURCE_NOT_FOUND,
+    confidence: "high",
+    detail:
+      "Configured list_url HTTP 404 (invalid_list_url). Official kmou.ac.kr board IDs near mi=5689–5691 also 404; no verified central scholarship board replacement confirmed this pass.",
+    prior_label: OUTCOME.INVALID_LIST_URL,
+  },
+  // Luther URL points at English notice / dead host; no verified Korean central
+  // scholarship board replacement confirmed.
+  ou_2355_univ_001: {
+    outcome: OUTCOME.REPLACEMENT_SOURCE_NOT_FOUND,
+    confidence: "high",
+    detail:
+      "Configured English notice URL is invalid/dead (invalid_list_url; hosts resolve to 404 parking). Official Korean central scholarship board URL not confirmed this pass — not enough evidence to claim verified absence.",
+    prior_label: OUTCOME.INVALID_LIST_URL,
+  },
+};
+
 function classify(base, probe, crawlRow) {
+  if (MANUAL[base.source_id]) {
+    const m = MANUAL[base.source_id];
+    return {
+      outcome: m.outcome,
+      confidence: m.confidence,
+      detail: m.detail,
+      invalid_list_url_first: m.prior_label === OUTCOME.INVALID_LIST_URL,
+    };
+  }
+
   const fs_ = crawlRow?.finalStatus || "";
   const crawled = Number(crawlRow?.crawledCount || 0);
   const matched = Number(crawlRow?.matchedCount || 0);
   const reason = crawlRow?.reasonCode || "";
   const root = probe?.root_cause_category || base.prior_root_cause_category || "unknown";
   const cluster = probe?.cluster || "other";
+  const enabled = crawlRow?.enabled !== false;
 
-  if (fs_ === "success" && crawled > 0) {
+  if (!enabled && crawled === 0) {
+    return {
+      outcome: OUTCOME.STILL_UNRESOLVED,
+      confidence: "medium",
+      detail: "source disabled without replacement classification",
+    };
+  }
+
+  if ((fs_ === "success" || fs_ === "partial") && crawled > 0) {
     return {
       outcome: OUTCOME.RECOVERED_WITH_ITEMS,
       confidence: "confirmed",
@@ -54,15 +118,7 @@ function classify(base, probe, crawlRow) {
       detail: "success with 0 list items",
     };
   }
-  if (fs_ === "partial" && crawled > 0) {
-    return {
-      outcome: OUTCOME.RECOVERED_WITH_ITEMS,
-      confidence: "high",
-      detail: `partial but crawled=${crawled}; matched=${matched}`,
-    };
-  }
 
-  // Evidence-based terminal classifications (not bare network_error)
   if (probe?.http_status === 403 || root === "http_403") {
     return {
       outcome: OUTCOME.VERIFIED_EXTERNAL_BLOCK,
@@ -70,21 +126,29 @@ function classify(base, probe, crawlRow) {
       detail: `HTTP ${probe.http_status}; ${probe.evidence_summary || ""}`,
     };
   }
-  if (root === "login_required" || (probe?.has_login_signal && crawled === 0 && probe?.candidate_anchor_count === 0)) {
+  if (
+    root === "login_required"
+    || (probe?.has_login_signal && crawled === 0 && Number(probe?.candidate_anchor_count || 0) === 0)
+  ) {
     return {
       outcome: OUTCOME.VERIFIED_EXTERNAL_BLOCK,
       confidence: probe?.root_cause_confidence || "high",
       detail: probe?.evidence_summary || "login wall / no public list",
     };
   }
+
+  // Bad URL signals: keep as invalid_list_url unless MANUAL override already
+  // promoted to replacement_* / verified_no_central_board.
   if (root === "not_a_notice_list" || root === "redirected_to_homepage" || probe?.http_status === 404) {
-    // No verified replacement found in this pass
     return {
-      outcome: OUTCOME.VERIFIED_NO_CENTRAL_BOARD,
-      confidence: probe?.root_cause_confidence || "medium",
-      detail: probe?.evidence_summary || `http=${probe?.http_status}; ${root}`,
+      outcome: OUTCOME.INVALID_LIST_URL,
+      confidence: probe?.root_cause_confidence || "high",
+      detail:
+        `Invalid or non-list URL evidence only (http=${probe?.http_status}; root=${root}). `
+        + "Not classified as verified_no_central_board without official-site absence proof.",
     };
   }
+
   if (
     root === "network_dns_or_tls_failure"
     || reason === "network_error"
@@ -124,6 +188,7 @@ const rows = baseline.sources.map((base) => {
     crawl_reason_code: crawlRow.reasonCode || "",
     crawled_count: crawlRow.crawledCount ?? 0,
     matched_count: crawlRow.matchedCount ?? 0,
+    enabled: crawlRow.enabled !== false,
     outcome: cls.outcome,
     outcome_confidence: cls.confidence,
     outcome_detail: cls.detail,
@@ -134,7 +199,7 @@ const counts = Object.fromEntries(Object.values(OUTCOME).map((k) => [k, 0]));
 for (const r of rows) counts[r.outcome] += 1;
 const sum = Object.values(counts).reduce((a, b) => a + b, 0);
 if (rows.length !== 51 || sum !== 51) {
-  throw new Error(`Outcome sum mismatch: rows=${rows.length} sum=${sum}`);
+  throw new Error(`Outcome sum mismatch: rows=${rows.length} sum=${sum} counts=${JSON.stringify(counts)}`);
 }
 
 function toCsv(objects) {
@@ -148,98 +213,52 @@ function toCsv(objects) {
 
 fs.writeFileSync(path.join(OUT, "unresolved-51-remediation.csv"), toCsv(rows), "utf8");
 
-const clusterDoc = `# Unresolved-51 root cause clusters
+const clusterDoc = `# Unresolved-51 root cause clusters (revised classification)
 
 Generated: ${new Date().toISOString()}
 
 ## Probe clusters (pre-fix evidence)
 
-| Cluster | Count | Source IDs |
-|---------|------:|------------|
+| Cluster | Count |
+|---------|------:|
 ${Object.entries(diagnostics.clusters || {})
-  .map(([k, v]) => `| ${k} | ${v.count} | ${v.source_ids.join(", ")} |`)
+  .map(([k, v]) => `| ${k} | ${v.count} |`)
   .join("\n")}
 
-## Probe root_cause_category counts
+## Outcome taxonomy (strict)
 
-| Category | Count |
-|----------|------:|
-${Object.entries(diagnostics.root_cause_counts || {})
-  .sort((a, b) => b[1] - a[1])
+- \`invalid_list_url\`: configured URL is not a usable notice list (404 / homepage redirect / non-list page).
+- \`replacement_source_found\`: official replacement (or canonical merged) source identified.
+- \`replacement_source_not_found\`: invalid URL + replacement search attempted without a verified board.
+- \`verified_no_central_board\`: **only** when official university site investigation shows no central scholarship board exists.
+- HTTP 404 / redirect alone never upgrades to \`verified_no_central_board\`.
+
+## Outcome counts (sum=51)
+
+| Outcome | Count |
+|---------|------:|
+${Object.entries(counts)
   .map(([k, v]) => `| ${k} | ${v} |`)
   .join("\n")}
-
-## Notes
-
-- Probe intentionally avoided treating bare \`network_error\` / \`empty_observed\` / \`partial\` as final root causes.
-- Common remediations applied: expanded detail URL pattern (\`view.do\`, \`nttSn\`, \`brdIdx\`, \`DOC_NO\`, \`BoardView\`, \`portalBbs\`, …), \`data-id\`→\`selectNttInfo\`, \`jf_view\`, \`goView\` (boardCnts), \`goDetail\`, \`fn_search_detail\`, \`fnView\` (UOS), \`goBdView\`, \`pf_DetailMove\`, \`doDetail\`, \`fn_View\` (CUP), \`cau_portal\` defaults, \`duksung_bbs_ajax\` adapter.
 `;
-
 fs.writeFileSync(path.join(OUT, "unresolved-51-root-cause-clusters.md"), clusterDoc, "utf8");
 
 let fullSummary = null;
 if (fullCrawlPath && fs.existsSync(fullCrawlPath)) {
   const full = JSON.parse(fs.readFileSync(fullCrawlPath, "utf8"));
-  const per = full.perSource || [];
-  const success = per.filter((s) => s.finalStatus === "success").length;
-  const withItems = per.filter((s) => s.finalStatus === "success" && s.crawledCount > 0).length;
-  const errors = per.filter((s) => s.finalStatus !== "success").length;
-  fullSummary = {
-    sourceCount: per.length,
-    success,
-    withItems,
-    successZero: success - withItems,
-    errors,
-    crawledCount: full.totals?.crawledCount,
-    matchedCount: full.totals?.matchedCount,
+  fullSummary = full.totals || null;
+  // Keep coherent JSON as the final artifact (already written by build-coherent-final-188).
+  const annotated = {
+    ...(typeof full === "object" ? full : {}),
+    unresolved_51_outcome_counts: counts,
+    unresolved_51_rows: rows,
+    duplicate_source_resolution: {
+      disabled_source_id: "ou_1821_univ_001",
+      canonical_source_id: "ou_1864_univ_001",
+      reason: "2021 GNTECH→GNU merger; identical list_url",
+    },
   };
-
-  // final.csv/json: merge rem1-style inventory for all 188
-  const finalRows = per.map((s) => ({
-    source_id: s.sourceId,
-    source_name: s.sourceName,
-    university_slug: s.universitySlug,
-    final_status: s.finalStatus,
-    reason_code: s.reasonCode || "",
-    crawled_count: s.crawledCount ?? 0,
-    matched_count: s.matchedCount ?? 0,
-    new_count: s.newCount ?? 0,
-    in_unresolved_51_baseline: baseline.sources.some((b) => b.source_id === s.sourceId),
-    unresolved_51_outcome: rows.find((r) => r.source_id === s.sourceId)?.outcome || "",
-  }));
-  fs.writeFileSync(path.join(OUT, "four-year-university-final.csv"), toCsv(finalRows), "utf8");
-  fs.writeFileSync(
-    path.join(OUT, "four-year-university-final.json"),
-    JSON.stringify(
-      {
-        created_at: new Date().toISOString(),
-        baseline_unresolved: 51,
-        outcome_counts: counts,
-        full_crawl: fullSummary,
-        regression_baselines: {
-          prior_success: 137,
-          prior_with_items: 110,
-          prior_launch_eligible: 60,
-        },
-        sources: finalRows,
-      },
-      null,
-      2,
-    ),
-    "utf8",
-  );
+  fs.writeFileSync(path.join(OUT, "four-year-university-final.json"), JSON.stringify(annotated, null, 2), "utf8");
 }
 
-console.log(
-  JSON.stringify(
-    {
-      baseline: 51,
-      outcome_counts: counts,
-      sum,
-      fullSummary,
-      remediation_csv: path.join(OUT, "unresolved-51-remediation.csv"),
-    },
-    null,
-    2,
-  ),
-);
+console.log(JSON.stringify({ baseline: 51, outcome_counts: counts, sum, fullSummary }, null, 2));

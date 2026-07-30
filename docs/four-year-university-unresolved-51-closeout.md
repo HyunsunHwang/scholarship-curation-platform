@@ -86,58 +86,45 @@ Examples: UOS `li.main_notice_news`, CAU/KKU `adapter=cau_portal`, Duksung `adap
 
 ## 7. Verification
 
-### Unresolved-51 re-crawl
+### Unresolved-51 re-crawl + coherent merge
+
+See also `docs/four-year-university-unresolved-51-verification-fix.md` for the corrected regression accounting.
 
 ```
-CRAWL_SOURCE_ID_ALLOWLIST=<51 ids>
-CRAWL_MAX_PAGES_PER_SOURCE=2
-CRAWL_MAX_ITEMS_PER_SOURCE=15
-CRAWL_LOOKBACK_DAYS=120
-node scripts/crawl-scholarship-notices.mjs data/notice-sources-four-year-univ.csv exports/notices-unresolved-51-retry2 ...
+# 51 retry / timeout micro-retry / full 188 / regression retries
+node scripts/crawl-scholarship-notices.mjs data/notice-sources-four-year-univ.csv <out> <state>
+node scripts/build-coherent-final-188.mjs <full> <reg-retry...> <51-best>
+node scripts/compare-rem1-vs-full188.mjs exports/notices-four-year-univ-coherent/scholarship-notices-coherent.json ...
+node scripts/build-unresolved-51-deliverables.mjs <51-from-coherent.json> <coherent-188.json>
 ```
 
-Timeout micro-retry (6 sources, max items 5) merged into best-of result.
+### Full / coherent regression vs rem-1
 
-Recovered sources were checked for **list title + detail URL identity** (not list count alone). Examples:
+| Metric | Rem-1 | Raw full-188 | Coherent active |
+|--------|------:|-------------:|----------------:|
+| Success | 137 | 150–152 | **158** |
+| Success with list items | 110 | 115–117 | **123** |
+| success→non remaining | — | 7 | **1** |
+| with-items→zero/non remaining | — | 16 | **10** |
 
-- 동국대 `.../article/notice/detail/213247`
-- 창원대 `.../selectNttInfo.do?...&nttSn=...`
-- 중앙대 `BoardView.do?...&BBS_SEQ=...` via `cau_portal`
-- 덕성여대 `boardView.do?bsIdx=36&bIdx=...` via `duksung_bbs_ajax`
-
-### Full 188 regression crawl
-
-```
-node scripts/crawl-scholarship-notices.mjs data/notice-sources-four-year-univ.csv exports/notices-four-year-univ-final ...
-```
-
-| Metric | Rem-1 baseline | After unresolved-51 |
-|--------|---------------:|--------------------:|
-| Success | 137 | **150** |
-| Success with list items | 110 | **115** |
-| Errors / non-success | 51 | **38** (incl. partial) |
-| Observed / matched | — | 1001 / 713 |
-
-No regression on rem-1 success floor (137 → 150, with-items 110 → 115).
+The earlier “No regression” statement was **incorrect**: raw full-188 dropped several rem-1 success boards (mostly timeouts). After best-of regression retries, one rem-1 success board remains unavailable (`ou_1878`, HTTP 429).
 
 ## 8. Outcome accounting (must sum to 51)
 
 | Outcome | Count |
 |---------|------:|
-| recovered with items | **23** |
+| recovered with items | **22** |
 | recovered valid zero | **0** |
-| replacement source found | **0** |
+| replacement source found | **1** (GNTECH→GNU canonical) |
+| replacement source not found | **2** |
+| invalid list url | **0** |
 | verified external block | **6** |
-| verified no central board | **2** |
+| verified no central board | **0** |
 | temporarily unavailable | **16** |
 | still unresolved | **4** |
 | **Sum** | **51** |
 
-Artifacts:
-
-- `reports/university-beta/unresolved-51-remediation.csv`
-- `reports/university-beta/four-year-university-final.csv`
-- `reports/university-beta/four-year-university-final.json`
+Note: `verified_no_central_board` is unused unless official-site investigation proves absence. 404/redirect alone maps to `invalid_list_url` / `replacement_source_not_found`.
 
 ## 9. Still open / next actions
 

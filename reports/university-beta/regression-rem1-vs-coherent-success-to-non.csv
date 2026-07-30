@@ -1,0 +1,2 @@
+source_id,source_name,previous_status,previous_observed,current_status,current_observed,current_reason,likely_cause
+ou_1878_univ_001,경성대학교 장학공지,success,15,timeout,0,attempt_timeout,transient_network_or_timeout
