@@ -6,7 +6,8 @@ const outputPath = process.argv[3] ?? inputPath;
 const sourcePrefix = String(process.argv[4] ?? "").trim().toLowerCase();
 
 const DEFAULT_KEYWORDS = "장학|장학금|학자금|등록금|scholarship|tuition|fellowship";
-const DO_DETAIL_URL_PATTERN = "(mode=view|articleNo=|boardNo=|nttNo=|idx=|no=\\d+)";
+const DO_DETAIL_URL_PATTERN =
+  "(mode=view|sMode=VIEW_FORM|iBrdContNo=|articleNo=|boardNo=|nttNo=|nttId=|idx=\\d+|no=\\d+|wr_id=\\d+|boardSeq=\\d+|b_idx=\\d+|seq=\\d+|uid=\\d+|artclNo=|artclView\\.do|notice-view\\?id=|mod=document)";
 
 function parseCsv(text) {
   const rows = [];

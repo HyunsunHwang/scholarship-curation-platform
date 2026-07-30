@@ -1,0 +1,24 @@
+{
+  "reportPath": "exports/notices-four-year-univ/scholarship-notices-latest.json",
+  "sourceCsvPath": "data/notice-sources-four-year-univ.csv",
+  "sourceCsvSha256": "e5ffec4ea5089314d5d69bc8dab05581cf381f4d8088a41158351ebea4653911",
+  "total": 188,
+  "error_90": 90,
+  "success_zero_20": 20,
+  "success_with_items": 78,
+  "errorBuckets": {
+    "empty_observed": 65,
+    "attempt_timeout": 6,
+    "http_error": 2,
+    "transport_http_forbidden": 1,
+    "network_error": 11,
+    "partial": 4,
+    "transport_redirect_limit": 1
+  },
+  "outputs": {
+    "allCsvPath": "reports\\university-beta\\four-year-initial-source-inventory.csv",
+    "errCsvPath": "reports\\university-beta\\four-year-error-90-sources.csv",
+    "zeroCsvPath": "reports\\university-beta\\four-year-success-zero-20-sources.csv",
+    "filteredSourceCsv": "reports\\university-beta\\notice-sources-error-and-zero.csv"
+  }
+}

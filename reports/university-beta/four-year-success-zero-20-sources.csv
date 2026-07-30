@@ -1,0 +1,21 @@
+﻿source_id,source_name,university_name,list_url,base_url,org_unit_id,university_slug,notes,initial_status,initial_error_bucket,initial_observed_count,initial_matched_count,initial_new_count,cohort
+ou_1798_univ_001,경기대학교 장학공지,경기대학교,https://www.kyonggi.ac.kr/scholarship/selectBbsNttList.do?bbsNo=518&key=3078,https://www.kyonggi.ac.kr,1798,ou_1798,confidence=high | 장학지원팀 공지사항,success,success,0,0,0,success_zero_20
+ou_1841_univ_001,경북대학교 장학공지,경북대학교,https://knu.ac.kr/wbbs/wbbs/bbs/btin/list.action?bbs_cde=1&menu_idx=67,https://knu.ac.kr,1841,ou_1841,confidence=medium | 학사공지(장학 포함); 전용보드 미확인,success,success,0,0,0,success_zero_20
+ou_1982_univ_001,공주교육대학교 장학공지,공주교육대학교,https://www.gjue.ac.kr/kor/article/BBSMSTR_000000000108,https://www.gjue.ac.kr,1982,ou_1982,confidence=high | 학교소식>장학공지,success,success,0,0,0,success_zero_20
+ou_2065_univ_001,국립부경대학교 장학공지,국립부경대학교,https://www.pknu.ac.kr/main/163?cd=10004,https://www.pknu.ac.kr,2065,ou_2065,confidence=high | 공지사항 > 등록·장학 카테고리,success,success,0,0,0,success_zero_20
+ou_2228_univ_001,대구예술대학교 장학공지,대구예술대학교,https://www.dgau.ac.kr/notice_sch,https://www.dgau.ac.kr,2228,ou_2228,confidence=high | 장학(대출) 전용 공지 목록,success,success,0,0,0,success_zero_20
+ou_2335_univ_001,동양대학교 장학공지,동양대학교,https://www.dyu.ac.kr/plaza/news/encourage-inform/,https://www.dyu.ac.kr,2335,ou_2335,confidence=high | 장학정보 게시판,success,success,0,0,0,success_zero_20
+ou_2376_univ_001,목포가톨릭대학교 장학공지,목포가톨릭대학교,https://www.mcu.ac.kr/co/contentsView.php?pageID=mcu0708000000,https://www.mcu.ac.kr,2376,ou_2376,confidence=high | 장학 게시판,success,success,0,0,0,success_zero_20
+ou_2379_univ_001,배재대학교 장학공지,배재대학교,https://www.pcu.ac.kr/kor/article/scholarship,https://www.pcu.ac.kr,2379,ou_2379,confidence=high | 학사공지>장학공지,success,success,0,0,0,success_zero_20
+ou_2407_univ_001,부산교육대학교 장학공지,부산교육대학교,https://www.bnue.ac.kr/board/community01_03,https://www.bnue.ac.kr,2407,ou_2407,confidence=high | 한새커뮤니티>장학정보,success,success,0,0,0,success_zero_20
+ou_2439_univ_001,부산장신대학교 장학공지,부산장신대학교,https://www.bpu.ac.kr/Board/BoardList.aspx?BoardMstNo=26,https://www.bpu.ac.kr,2439,ou_2439,confidence=high | 장학금/학자금안내,success,success,0,0,0,success_zero_20
+ou_4_univ_001,서강대학교 장학공지,서강대학교,https://sogang.ac.kr/ko/scholarship-notice,https://sogang.ac.kr,4,ou_4,confidence=medium | 공식 장학공지 URL. 페이지가 JS 로드되어 스냅샷상 비어 보일 수 있음,success,success,0,0,0,success_zero_20
+ou_2679_univ_001,세명대학교 장학공지,세명대학교,http://setopia.semyung.ac.kr/program/homepage/Notice_u2.jsp?boardTypeID=2,http://setopia.semyung.ac.kr,2679,ou_2679,confidence=medium | 캠퍼스 통합 공지 게시판; 장학복지팀 장학 공지도 여기 게시,success,success,0,0,0,success_zero_20
+ou_2703_univ_001,송원대학교 장학공지,송원대학교,https://www.songwon.ac.kr/sb/SE_Board.asp?boardID=NOTICE&pgKey=64,https://www.songwon.ac.kr,2703,ou_2703,confidence=medium | 장학금 및 학자금 대출 메뉴 하위 공지사항,success,success,0,0,0,success_zero_20
+ou_2708_univ_001,수원가톨릭대학교 장학공지,수원가톨릭대학교,https://www.suwoncatholic.ac.kr/bbs/board.php?bo_table=free,https://www.suwoncatholic.ac.kr,2708,ou_2708,confidence=low | 전용 장학 게시판 미확인; 일반 공지사항만 공개 확인,success,success,0,0,0,success_zero_20
+ou_2711_univ_001,수원대학교 장학공지,수원대학교,https://www.suwon.ac.kr/index.html?menuno=2041,https://www.suwon.ac.kr,2711,ou_2711,confidence=high | 포털시스템게시판 장학/대출 전용 목록,success,success,0,0,0,success_zero_20
+ou_2924_univ_001,우석대학교 장학공지,우석대학교,http://www.woosuk.ac.kr/main/?menu=110,http://www.woosuk.ac.kr,2924,ou_2924,confidence=high | 등록/장학/대출 공지사항 전용 게시판,success,success,0,0,0,success_zero_20
+ou_3168_univ_001,중원대학교 장학공지,중원대학교,http://www.jwu.ac.kr/site/siteView.jwu?bbsCategoryId=0&categoryId=D3_928&depth=3&jobType=0&pageNo=1&search=&searchType=&taskType=0,http://www.jwu.ac.kr,3168,ou_3168,confidence=medium | 공지사항; '장학-학자금' 카테고리 필터 사용,success,success,0,0,0,success_zero_20
+ou_3329_univ_001,한국예술종합학교 장학공지,한국예술종합학교,https://www.karts.ac.kr/nri/bbs/NuriBbsList.do?bbsId=BBSNURI_001,https://www.karts.ac.kr,3329,ou_3329,confidence=medium | 공지사항(장학/생활 카테고리),success,success,0,0,0,success_zero_20
+ou_3393_univ_001,한국항공대학교 장학공지,한국항공대학교,https://kau.ac.kr/kaulife/scholnoti.php,https://kau.ac.kr,3393,ou_3393,confidence=high | 장학/대출공지,success,success,0,0,0,success_zero_20
+ou_6_univ_001,한양대학교 장학공지,한양대학교,https://sc.hanyang.ac.kr/-12,https://sc.hanyang.ac.kr,6,ou_6,confidence=high | 장학공지,success,success,0,0,0,success_zero_20

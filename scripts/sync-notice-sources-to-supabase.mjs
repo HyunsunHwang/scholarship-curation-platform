@@ -198,9 +198,11 @@ function toBool(value, fallback = true) {
 }
 
 function deriveUniversitySlug(sourceId, fallback = "") {
+  const normalizedFallback = normalize(fallback).toLowerCase();
+  if (normalizedFallback) return normalizedFallback;
   const normalizedId = normalize(sourceId).toLowerCase();
   if (normalizedId.includes("_")) return normalizedId.split("_")[0];
-  return normalize(fallback).toLowerCase();
+  return normalizedId;
 }
 
 function deriveDepartmentName(sourceName, sourceLevel, fallback = "") {

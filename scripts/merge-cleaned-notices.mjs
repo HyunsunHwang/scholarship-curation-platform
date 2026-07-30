@@ -62,9 +62,11 @@ function cleanText(value) {
 }
 
 function deriveUniversitySlug(sourceId, fallback = "") {
+  const normalizedFallback = cleanText(fallback).toLowerCase();
+  if (normalizedFallback) return normalizedFallback;
   const normalizedSourceId = cleanText(sourceId).toLowerCase();
   if (normalizedSourceId.includes("_")) return normalizedSourceId.split("_")[0];
-  return cleanText(fallback).toLowerCase();
+  return normalizedSourceId;
 }
 
 function deriveDepartmentName(sourceName, sourceLevel = "department", fallback = "") {

@@ -113,7 +113,15 @@
         "korea_037",
         "skku_059",
         "yonsei_015",
-        "yonsei_024"
+        "yonsei_024",
+        "ou_2355_univ_001",
+        "ou_2679_univ_001",
+        "ou_2924_univ_001",
+        "ou_3110_univ_001",
+        "ou_3168_univ_001",
+        "ou_3172_univ_001",
+        "ou_3342_univ_001",
+        "ou_3397_univ_001"
       ],
       "profile": "legacy-http-only",
       "reason": "Source registry declares an HTTP-only list endpoint",

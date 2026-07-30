@@ -1,0 +1,209 @@
+﻿org_unit_id,school_name,school_type,region_sido,scholarship_notice_url,confidence,note
+1688,가야대학교(고령),대학교,경상북도,https://www.kaya.ac.kr/Home/BBSList.mbz?action=MAPP_0000000411,high,장학공지(고령·김해 공통)
+1689,가야대학교(김해),대학교,경상남도,https://www.kaya.ac.kr/Home/BBSList.mbz?action=MAPP_0000000411,high,장학공지(고령·김해 공통)
+1690,가천대학교,대학교,경기도,https://www.gachon.ac.kr/kor/1146/subview.do,high,장학공지 게시판
+1700,가톨릭관동대학교,대학교,강원특별자치도,https://www.cku.ac.kr/bbs/cku_kr/1202/artclList.do,high,장학공지
+1707,가톨릭꽃동네대학교,대학교,충청북도,https://www.kkot.ac.kr/welfare/board/list?boardManagementNo=1252&menuLevel=2&menuNo=288,medium,커뮤니티 공지사항(장학 글 혼재); 전용 장학보드 미확인
+1711,가톨릭대학교,대학교,경기도,https://www.catholic.ac.kr/ko/campuslife/notice.do?mode=list&srCategoryId=22,high,공지사항>장학
+1732,감리교신학대학교,대학교,서울특별시,https://www.mtu.ac.kr/mtu/board/list.do?mId=160,high,장학/학자금 공지
+1737,강남대학교,대학교,경기도,https://web.kangnam.ac.kr/menu/f19069e6134f8f8aa7f689a4a675e66f.do?searchMenuSeq=117,high,강남광장>공지사항>장학
+1745,강서대학교,대학교,서울특별시,https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703,high,강서소통광장>장학공지
+1751,강원대학교,대학교,강원특별자치도,https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232,high,대학생활>장학안내>장학 게시판
+11,건국대학교,대학교,서울특별시,https://www.konkuk.ac.kr/bbs/konkuk/235/artclList.do,high,장학공지
+1779,건국대학교(글로컬),대학교,충청북도,https://www.kku.ac.kr/cms/FR_CON/index.do?MENU_ID=1750,high,글로컬 장학공지
+1786,건양대학교,대학교,충청남도,https://www.konyang.ac.kr/cop/bbs/BBSMSTR_000000000585/selectBoardList.do,high,장학·학자금 공지
+1798,경기대학교,대학교,경기도,https://www.kyonggi.ac.kr/scholarship/selectBbsNttList.do?bbsNo=518&key=3078,high,장학지원팀 공지사항
+1821,경남과학기술대학교,대학교,경상남도,https://www.gnu.ac.kr/eng/na/ntt/selectNttList.do?bbsId=12788&mi=49470,low,2021년 경상국립대 통합; 별도 보드 없음→GNU Today 장학
+1826,경남대학교,대학교,경상남도,https://www.kyungnam.ac.kr/ko/8460/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa28lMkYxNDA3JTJGYXJ0Y2xMaXN0LmRvJTNG,high,장학공지
+1836,경동대학교,대학교,강원특별자치도,https://kduniv.ac.kr/kor/CMS/Board/Board.do?mCode=MN284&mgr_seq=509&mode=list,high,경동알림>장학공지
+1841,경북대학교,대학교,대구광역시,https://knu.ac.kr/wbbs/wbbs/bbs/btin/list.action?bbs_cde=1&menu_idx=67,medium,학사공지(장학 포함); 전용보드 미확인
+1864,경상국립대학교,대학교,경상남도,https://www.gnu.ac.kr/eng/na/ntt/selectNttList.do?bbsId=12788&mi=49470,medium,GNU Today>Scholarships(한글 mi 미확인)
+1878,경성대학교,대학교,부산광역시,https://kscms.ks.ac.kr/janghak/CMS/Board/Board.do?mCode=MN060,high,장학정보 공지
+1888,경운대학교,대학교,경상북도,https://www.ikw.ac.kr/page/link.tc?mn=2589&pageSeq=1929,high,장학/학자금 공지
+1892,경인교육대학교,교육대학,경기도,https://www.ginue.ac.kr/kor/CMS/Board/Board.do?mCode=MN126&mgr_seq=90&mode=list,high,커뮤니티>장학공지
+1895,경일대학교,대학교,경상북도,https://www.kiu.ac.kr/pages/sub.htm?nav_code=kiu1540189661,high,경일소식>장학/학자금
+9,경희대학교,대학교,서울특별시,https://janghak.khu.ac.kr/janghak/user/bbs/BMSR00040/list.do?menuNo=12300032,high,장학 포털
+1923,계명대학교,대학교,대구광역시,https://www.kmu.ac.kr/uni/main/page.jsp?mnu_uid=145,high,열린마당>장학
+1,고려대학교,대학교,서울특별시,https://scholarship.korea.ac.kr/scholarship/application/notice.do,high,학부 장학 공지
+1961,고려대학교(세종),대학교,세종특별자치시,https://sejong.korea.ac.kr/koreaSejong/7906/subview.do,high,장학공지
+1973,고신대학교,대학교,부산광역시,https://www.kosin.ac.kr/kr/index.php?pCode=scholarshipNews,high,장학소식
+1982,공주교육대학교,교육대학,충청남도,https://www.gjue.ac.kr/kor/article/BBSMSTR_000000000108,high,학교소식>장학공지
+1986,광신대학교,대학교,광주광역시,https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442,medium,커뮤니티 공지사항(장학 포함); 전용보드 미확인
+1995,광운대학교,대학교,서울특별시,https://www.kw.ac.kr/ko/life/notice.jsp?srCategoryId=4,high,등록/장학 공지
+2003,광주가톨릭대학교,대학교,전라남도,,low,신학대(전원 수업료 면제); 별도 장학공지 게시판 미확인
+2005,광주과학기술원,대학교,광주광역시,https://www.gist.ac.kr/site/kr/html/sub05/050209.html,medium,학사공지(장학/납입금 분류)
+2007,광주교육대학교,교육대학,광주광역시,https://www.gnue.ac.kr/planweb/board/list.9is?contentUid=4a9f18ab5c48fe8c015cec61f46c1131&boardUid=4a9f18ab5d53940b015d539a2f9e002e&contentUid=4a9f18ab5c48fe8c015cec61f46c1131,high,장학공지(수동 확인)
+2010,광주대학교,대학교,광주광역시,https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju,medium,커뮤니티>장학/학자금 공지
+2015,광주여자대학교,대학교,광주광역시,https://www.kwu.ac.kr/mod/board/list.do?MID=KWU_B06010401,high,송강광장 > 알림마당 > 장학공지 전용 게시판
+2021,국립강릉원주대학교,대학교,강원특별자치도,https://gwnu.ac.kr/kr/7899/subview.do,high,장학정보 게시판
+2026,국립경국대학교,대학교,경상북도,https://www.gknu.ac.kr/main/board/index.do?manage_idx=1&menu_idx=333&search.category1=107,high,공지사항 > 장학안내 카테고리 필터
+2032,국립공주대학교,대학교,충청남도,https://homepage.kongju.ac.kr/KNU/16909/subview.do,medium,학생소식 게시판; [장학] 말머리 공지 혼재
+2046,국립군산대학교,대학교,전북특별자치도,https://www.kunsan.ac.kr/board/list.kunsan?boardId=BBS_0000009,high,KSNU 광장 > 학사/장학
+2051,국립금오공과대학교,대학교,경상북도,https://www.kumoh.ac.kr/ko/sub06_01_01_01.do,medium,금오광장 공지사항; [장학] 태그 글 다수
+2056,국립목포대학교,대학교,전라남도,https://scholarship.mokpo.ac.kr/scholarship/6366/subview.do,high,장학홈페이지 > 공지사항
+2062,국립목포해양대학교,대학교,전라남도,https://www.mmu.ac.kr/main/board/303,high,장학공지 전용 게시판
+2065,국립부경대학교,대학교,부산광역시,https://www.pknu.ac.kr/main/163?cd=10004,high,공지사항 > 등록·장학 카테고리
+2074,국립순천대학교,대학교,전라남도,https://www.scnu.ac.kr/SCNU/na/ntt/selectNttList.do?bbsId=4487&mi=8690,medium,국가장학금 게시판
+2081,국립창원대학교,대학교,경상남도,https://www.changwon.ac.kr/haksa/na/ntt/selectNttList.do?bbsId=5849&mi=15814,high,학사안내 > 장학안내
+2091,국립한국교통대학교,대학교,경기도,https://www.ut.ac.kr/cop/bbs/BBSMSTR_000000000060/selectBoardList.do,high,소통광장 > 장학안내
+2097,국립한국해양대학교,대학교,부산광역시,https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041,high,정보광장 > 장학정보
+2106,국립한밭대학교,대학교,대전광역시,https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do,high,장학공지 전용 게시판
+2112,국민대학교,대학교,서울특별시,https://www.kookmin.ac.kr/user/kmuNews/notice/7/index.do,high,KMU 주요소식 > 장학공지
+2138,극동대학교,대학교,충청북도,https://www.kdu.ac.kr/home/sub.do?mncd=179&mode=list,high,장학공지목록 전용 게시판
+2146,금강대학교,대학교,충청남도,https://www.ggu.ac.kr/sub01080108,medium,장학공지 게시판
+2149,김천대학교,대학교,경상북도,https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703,high,강서소통광장 > 장학
+2155,나사렛대학교,대학교,충청남도,https://kornu.ac.kr/mbs/kornukr/jsp/board/list.jsp?boardId=18&id=kornukr_080104000000,high,장학공지 전용 게시판
+2163,남부대학교,대학교,광주광역시,https://www.nambu.ac.kr/board/NAMBU_BOARD_0016/boardList.do?menuCd=KR006006004,high,장학/학자금 공지
+2173,남서울대학교,대학교,충청남도,https://www.nsu.ac.kr/?m1=page&menu_id=134,medium,장학공지 게시판
+2179,단국대학교,대학교,경기도,,low,학부 통합 장학공지 LIST 미확인; 학과별·캠퍼스별 분산
+2195,대구가톨릭대학교,대학교,경상북도,https://www.cu.ac.kr/plaza/notice/scholarship,high,DCU 광장 > 장학공지
+2208,대구경북과학기술원,대학교,대구광역시,,low,공개 장학 전용 notice LIST 미확인
+2214,대구교육대학교,교육대학,대구광역시,https://www.dnue.ac.kr/kor/CMS/Board/Board.do?mCode=MN169,medium,장학공지 게시판
+2217,대구대학교,대학교,경상북도,,low,본부 통합 장학공지 LIST 미확인; 학과별 분산
+2228,대구예술대학교,대학교,경상북도,https://www.dgau.ac.kr/notice_sch,high,장학(대출) 전용 공지 목록
+2229,대구한의대학교,대학교,경상북도,https://www.dhu.ac.kr/pages/sub.htm?nav_code=dhu1574335885,high,장학공지 전용 게시판
+2238,대신대학교,대학교,경상북도,https://www.daeshin.ac.kr/html/05_community/01.php,medium,일반 공지 게시판; 전용 장학보드 미확인
+2243,대전가톨릭대학교,대학교,세종특별자치시,https://www.dcatholic.ac.kr/bbs/board.php?bo_table=notice,low,통합 공지사항; 장학 전용 보드 없음
+2246,대전대학교,대학교,대전광역시,https://www.dju.ac.kr/dju/na/ntt/selectNttList.do?bbsId=1853&mi=3957,high,장학 공지
+2254,대전신학대학교,대학교,대전광역시,https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04,high,장학 전용 게시판
+2257,대진대학교,대학교,경기도,https://www.daejin.ac.kr/daejin/1004/subview.do,high,장학 게시판
+2266,덕성여자대학교,대학교,서울특별시,https://www.duksung.ac.kr/bbs/board.do?bsIdx=36&menuId=1059,low,공식 장학 보드이나 공개 목록 비어 있음; 실제 공지 분산
+12,동국대학교,대학교,서울특별시,https://scholarship.dongguk.edu/article/notice/list,high,장학처 공지 목록
+2285,동국대학교(WISE),대학교,경상북도,https://wise.dongguk.ac.kr/article/servicenotice/list,high,장학/봉사 공지 목록
+2292,동덕여자대학교,대학교,서울특별시,https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti,medium,통합공지; [학생처][장학] 태그로 게시. 포털 bulletin도 사용
+2304,동명대학교,대학교,부산광역시,https://www.tu.ac.kr/tuhome/sub07_01_03.do,high,정보광장>공지사항>장학
+2309,동서대학교,대학교,부산광역시,https://www.dongseo.ac.kr/kr/?pCode=MN2000195,high,
+2315,동신대학교,대학교,전라남도,https://www.dsu.ac.kr/kr/?pCode=notischlr,high,장학/학자금 공지(교내·국가·교외 분류)
+2319,동아대학교,대학교,부산광역시,https://www.donga.ac.kr/kor/CMS/Board/Board.do?mCode=MN172,high,
+2335,동양대학교,대학교,경기도,https://www.dyu.ac.kr/plaza/news/encourage-inform/,high,장학정보 게시판
+2343,동의대학교,대학교,부산광역시,https://www.deu.ac.kr/www/deu-scholarship.do,high,
+2355,루터대학교,대학교,경기도,http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice,low,일반 공지(장학 포함). 전용 장학게시판 미확인
+2358,명지대학교,대학교,경기도,https://www.mju.ac.kr/mjukr/259/subview.do,high,장학/학자금공지
+2371,목원대학교,대학교,대전광역시,https://www.mokwon.ac.kr/kr/html/sub06/0603.html,high,알림마당>장학공지
+2376,목포가톨릭대학교,대학교,전라남도,https://www.mcu.ac.kr/co/contentsView.php?pageID=mcu0708000000,high,장학 게시판
+2379,배재대학교,대학교,대전광역시,https://www.pcu.ac.kr/kor/article/scholarship,high,학사공지>장학공지
+2389,백석대학교,대학교,충청남도,https://www.bu.ac.kr/web/6559/subview.do,high,
+2401,부산가톨릭대학교,대학교,부산광역시,https://www.cup.ac.kr/entrance/home/front/board/List294.do,high,CUP광장>장학공지
+2407,부산교육대학교,교육대학,부산광역시,https://www.bnue.ac.kr/board/community01_03,high,한새커뮤니티>장학정보
+2409,부산대학교,대학교,부산광역시,https://www.pusan.ac.kr/kor/CMS/Board/Board.do?mCode=MN095&mgr_seq=3&mode=list&searchID=title&searchKeyword=%EC%9E%A5%ED%95%99,medium,전용 장학보드 없음. 공식 안내대로 커뮤니티 공지에서 '장학' 검색
+2433,부산외국어대학교,대학교,부산광역시,https://www.bufs.ac.kr/bbs/board.php?bo_table=notice_sch,high,
+2439,부산장신대학교,대학교,경상남도,https://www.bpu.ac.kr/Board/BoardList.aspx?BoardMstNo=26,high,장학금/학자금안내
+2451,삼육대학교,대학교,서울특별시,https://www.syu.ac.kr/academic/scholarship-information/scholarship-notice/,high,
+2459,상명대학교,대학교,충청남도,https://www.smu.ac.kr/kor/life/notice.do,medium,통합공지; '등록/장학' 카테고리 필터 사용
+2468,상지대학교,대학교,강원특별자치도,https://www.sangji.ac.kr/prog/bbsArticle/BBSMSTR_000000000042/list.do,high,
+4,서강대학교,대학교,서울특별시,https://sogang.ac.kr/ko/scholarship-notice,medium,공식 장학공지 URL. 페이지가 JS 로드되어 스냅샷상 비어 보일 수 있음
+2493,서경대학교,대학교,서울특별시,https://www.skuniv.ac.kr/notice,medium,공지사항 내 '장학공지' 탭/분류. 카테고리 전용 고정 URL 미확인
+2503,서울과학기술대학교,대학교,서울특별시,https://www.seoultech.ac.kr/service/info/janghak/,high,
+2515,서울교육대학교,교육대학,서울특별시,https://www.snue.ac.kr/snue/na/ntt/selectNttList.do?bbsId=1083&mi=3004,high,교육지원>장학제도>공지사항
+2518,서울기독대학교,대학교,서울특별시,,low,장학제도 안내 페이지만 확인. 장학/홍보 공지 목록 URL 미검증
+3,서울대학교,대학교,서울특별시,https://student.snu.ac.kr/%EC%86%8C%EC%8B%9D%C2%B7%EC%95%8C%EB%A6%BC/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/?category1=%EC%9D%BC%EB%B0%98%EA%B3%B5%EC%A7%80&mod=list,medium,notice_sources (general notice)
+10,서울시립대학교,대학교,서울특별시,https://scholarship.uos.ac.kr/scholarship/main.do?identified=anonymous,medium,장학 포털 메인에 공지 노출. 전용 list는 세션 의존으로 보임
+2560,서울신학대학교,대학교,경기도,https://www.stu.ac.kr/CmsHome/stu06_03_03.eznic,high,커뮤니티>장학/취업(장학/대출 탭)
+2571,서울여자대학교,대학교,서울특별시,https://www.swu.ac.kr/swu/744/subview.do,high,열린캠퍼스 공지사항(장학)
+2579,서울장신대학교,대학교,경기도,https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php,medium,일반 공지(학생성장지원처 장학 공지 포함). 전용 장학보드 미확인
+2591,서울한영대학교,대학교,서울특별시,https://www.shyu.ac.kr/fro_end/html/dep_05/5120.php,high,대출·장학 게시판
+2595,서원대학교,대학교,충청북도,https://www.seowon.ac.kr/seowon/435/subview.do,medium,통합 공지(학생지원팀 장학 공지 포함). 전용 장학보드 미확인
+2602,선문대학교,대학교,충청남도,https://lily.sunmoon.ac.kr/Page2/Story/Notice.aspx?ca=003,high,공지사항>장학공지 필터
+2616,성결대학교,대학교,경기도,https://www.sungkyul.ac.kr/skukr/344/subview.do?mode=list,high,학생지원과 장학/등록/학자금 전용 게시판
+2624,성공회대학교,대학교,서울특별시,https://www.skhu.ac.kr/skhu/4197/subview.do?mode=list,high,학생복지처 장학 전용 게시판
+5,성균관대학교,대학교,서울특별시,https://www.skku.edu/skku/campus/skk_comm/notice06.do,high,성균광장 장학 공지
+2667,성신여자대학교,대학교,서울특별시,https://www.sungshin.ac.kr/main_kor/18962/subview.do?mode=list,low,공개 장학생 모집공고 요약 게시판; 세부 공지는 성신포탈 로그인 필요
+2679,세명대학교,대학교,충청북도,http://setopia.semyung.ac.kr/program/homepage/Notice_u2.jsp?boardTypeID=2,medium,캠퍼스 통합 공지 게시판; 장학복지팀 장학 공지도 여기 게시
+2685,세종대학교,대학교,서울특별시,https://www.sejong.ac.kr/kor/intro/notice7.do?mode=list,high,세종소개 공지사항 중 장학 카테고리
+2700,세한대학교,대학교,충청남도,https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2,high,호등광장 장학공지 전용 게시판
+2703,송원대학교,대학교,광주광역시,https://www.songwon.ac.kr/sb/SE_Board.asp?boardID=NOTICE&pgKey=64,medium,장학금 및 학자금 대출 메뉴 하위 공지사항
+2708,수원가톨릭대학교,대학교,경기도,https://www.suwoncatholic.ac.kr/bbs/board.php?bo_table=free,low,전용 장학 게시판 미확인; 일반 공지사항만 공개 확인
+2711,수원대학교,대학교,경기도,https://www.suwon.ac.kr/index.html?menuno=2041,high,포털시스템게시판 장학/대출 전용 목록
+2729,숙명여자대학교,대학교,서울특별시,https://www.sookmyung.ac.kr/kr/news/important-notice.do?mode=list&srCategoryId=46,high,주요공지 장학 카테고리 필터
+2749,순복음총회신학교,각종학교(대학),충청북도,https://kcc.ac.kr/main/sub.html?boardID=www58,medium,장학/취업 게시판
+2751,순천향대학교,대학교,충청남도,https://home.sch.ac.kr/sch/06/010300.jsp,high,장학공지(교내장학금 목록) 전용 게시판
+2762,숭실대학교,대학교,서울특별시,https://scatch.ssu.ac.kr/%EA%B3%B5%EC%A7%80%EC%82%AC%ED%95%AD/?f&category=%EC%9E%A5%ED%95%99,high,Scatch 장학 카테고리 공지
+2773,신경주대학교,대학교,경상북도,https://sgu.ac.kr/ko/media/notice.php,medium,대학 통합 공지사항; 장학 글은 [장학] 접두어로 게시
+2777,신라대학교,대학교,부산광역시,https://www.silla.ac.kr/ko/?pCode=scnotice,high,신라광장 장학공지 전용 게시판
+2786,신한대학교,대학교,경기도,https://welfare.shinhan.ac.kr/kr/194/subview.do?mode=list,medium,학생복지처 공지사항; 장학·근로·학자금 공지 포함
+2791,아신대학교,대학교,경기도,https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1,high,공지사항(장학) 전용 게시판
+2799,아주대학교,대학교,경기도,https://www.ajou.ac.kr/kr/ajou/notice_scholarship.do?mode=list,high,아주광장 장학공지 전용 게시판
+2818,안양대학교,대학교,경기도,https://www.anyang.ac.kr/main/academic/external-scholarship.do,medium,교외장학 안내 게시판
+2,연세대학교,대학교,인천광역시,https://www.yonsei.ac.kr/sc/254/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGc2MlMkY1OCUyRmFydGNsTGlzdC5kbyUzRmZpbmRDbFNlcSUzRDI1NyUyNg%3D%3D,high,notice_sources
+2848,연세대학교(미래),대학교,강원특별자치도,https://wsw.yonsei.ac.kr/wsw/notice/scholarship-board.do,high,미래캠퍼스 학생복지처 장학금 전용 게시판
+2857,영남대학교,대학교,경상북도,https://www.yu.ac.kr/scholar/notice/notice.do?mode=list,high,장학안내 공지사항 전용 게시판
+2869,영남신학대학교,대학교,경상북도,,low,공개 장학 공지 목록 URL 미확인
+2880,영산대학교(양산),대학교,경상남도,https://www.ysu.ac.kr/kor/CMS/Board/Board.do?mCode=MN016&searchCategory=c002&mode=list,high,와이즈유 공지사항 장학 카테고리(양산·해운대 공통)
+2887,영산대학교(해운대),대학교,부산광역시,https://www.ysu.ac.kr/kor/CMS/Board/Board.do?mCode=MN016&searchCategory=c002&mode=list,high,와이즈유 공지사항 장학 카테고리(양산·해운대 공통)
+2897,영산선학대학교,대학교,전라남도,,low,공개 장학 공지 목록 URL 미확인
+2901,예수대학교,대학교,전북특별자치도,https://www.jesus.ac.kr/main/?menu=191,medium,커뮤니티 일반 공지사항; 장학 글이 혼재
+2903,예원예술대학교,대학교,경기도,https://www.yewon.ac.kr/main/?menu=191,high,장학공지 전용 메뉴
+2909,용인대학교,대학교,경기도,https://yongin.ac.kr/cmn/board/SYSTEM_DEFAULT000001/scholarList.do,high,장학 공지 전용 게시판
+2924,우석대학교,대학교,충청북도,http://www.woosuk.ac.kr/main/?menu=110,high,등록/장학/대출 공지사항 전용 게시판
+2931,우송대학교,대학교,대전광역시,https://wsjanghak.wsu.ac.kr/board/index.jsp?code=wsjanghak0401,high,장학 포털 공지
+2939,울산과학기술원,대학교,울산광역시,,low,재학생 장학 공지는 UNIST 포털(로그인 필요); 공개 목록 URL 미확인
+2946,울산대학교,대학교,울산광역시,,low,학생 신청 장학 공지는 UWINS 학사공지(로그인 필요); 공개 통합 목록 URL 미확인
+2956,원광대학교,대학교,전북특별자치도,https://www.wku.ac.kr/category/notice/scholar-notice,high,장학공지 전용 카테고리 게시판
+2972,위덕대학교,대학교,경상북도,https://www.uu.ac.kr/home/uu_notice_06,high,전용 장학공지 게시판
+2978,유원대학교,대학교,충청북도,https://www.u1.ac.kr/u1/community/scholarship.do,high,커뮤니티 > 장학공지
+2981,을지대학교,대학교,경기도,https://www.eulji.ac.kr/?menuno=4005,high,공지사항-장학
+7,이화여자대학교,대학교,서울특별시,https://www.ewha.ac.kr/ewha/bachelor/scholarship-notice.do,high,notice_sources
+3003,인제대학교,대학교,경상남도,https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0,medium,인제소식 > 장학 카테고리 목록(상세글 breadcrumb 기준)
+3010,인천가톨릭대학교,대학교,인천광역시,https://www.iccu.ac.kr/bbs/board.php?bo_table=notice_b,medium,학사공지 통합 게시판(장학금 공지 혼재)
+3013,인천대학교,대학교,인천광역시,https://inuchina.inu.ac.kr/inu/1519/subview.do,high,전용 장학금 게시판
+3023,인하대학교,대학교,인천광역시,,low,대학 통합 장학공지 목록 페이지 미확인; 학과·단과대별 장학공지 운영
+3036,장로회신학대학교,대학교,서울특별시,https://www.pcts.ac.kr/www/board/list.general.asp?bd_name=jangshin_jnotice02&design=lounge&m1=6&m2=3&m3=1,medium,장신Lounge 공지사항; 장학 카테고리 필터 사용
+3046,전남대학교,대학교,광주광역시,https://www.jnu.ac.kr/WebApp/web/HOM/COM/Board/board.aspx?boardID=5&cate=8,high,공지사항 > 장학안내 필터
+3064,전북대학교,대학교,전북특별자치도,https://www.jbnu.ac.kr/web/news/notice/sub01.do,medium,교내공지 통합 게시판(#장학 태그 공지 혼재)
+3082,전주교육대학교,교육대학,전북특별자치도,https://www.jnue.kr/portal/jnue/bbs/list.do?menuId=M0004000100010000,medium,학사공지 게시판(장학 공지 혼재)
+3085,전주대학교,대학교,전북특별자치도,https://jj.ac.kr/jj/community/notice03.do,high,전주대소식 > 장학
+3098,정석대학,기술대학,서울특별시,,high,인하대학교 평생교육 단과대; 별도 공개 장학공지 목록 없음
+3101,제주국제대학교,대학교,제주특별자치도,https://www.jeju.ac.kr/square/scholarship.htm,high,전용 장학공지
+3110,제주대학교,대학교,제주특별자치도,http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320,high,공지사항 > 장학 카테고리 필터
+3124,조선대학교,대학교,광주광역시,https://www3.chosun.ac.kr/scho/2138/subview.do,high,장학안내 사이트 공지사항
+3139,중부대학교,대학교,충청남도,https://www.joongbu.ac.kr/board.es?bid=0008&mid=a10302000000,high,전용 장학공지
+8,중앙대학교,대학교,서울특별시,https://www.cau.ac.kr/cms/FR_CON/index.do?MENU_ID=100&CONTENTS_NO=5&P_TAB_NO=5,high,notice_sources
+3166,중앙승가대학교,대학교,경기도,,low,전용 장학공지 목록 페이지 미확인
+3168,중원대학교,대학교,충청북도,http://www.jwu.ac.kr/site/siteView.jwu?bbsCategoryId=0&categoryId=D3_928&depth=3&jobType=0&pageNo=1&search=&searchType=&taskType=0,medium,공지사항; '장학-학자금' 카테고리 필터 사용
+3172,진주교육대학교,교육대학,경상남도,http://www.cue.ac.kr/kor/CMS/Board/Board.do?mCode=MN186,high,CUE소식 > 장학공지
+3176,차의과학대학교,대학교,경기도,,medium,교내 장학 공지는 포털(pt.cha.ac.kr) 게재; 공개 www 목록 페이지 없음
+3187,창신대학교,대학교,경상남도,https://www.cs.ac.kr/board/board_community1?category_id=5,high,공지사항 > 장학 카테고리 필터
+3194,청운대학교,산업대학,충청남도,https://home.chungwoon.ac.kr/home/selectBbsNttList.do?bbsNo=44&key=829&searchCtgry=%EC%9E%A5%ED%95%99%EA%B3%B5%EC%A7%80,high,장학공지 카테고리 필터
+3198,청주교육대학교,교육대학,충청북도,https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219,high,전용 장학공지
+3201,청주대학교,대학교,충청북도,https://www.cju.ac.kr/www/selectBbsNttList.do?bbsNo=881&key=4577&searchCtgry=%EC%9E%A5%ED%95%99%E3%86%8D%EB%8C%80%EC%B6%9C,high,장학ㆍ대출 카테고리 필터
+3209,초당대학교,대학교,전라남도,https://dream.cdu.ac.kr/mod/board/list.do?MID=DRM_B05010100,high,초당 장학안내 사이트 공지사항
+3212,총신대학교,대학교,서울특별시,,low,본교 통합 장학공지 목록 미확인(부설 평생·원격 기관만 확인)
+3222,추계예술대학교,대학교,서울특별시,https://www.chugye.ac.kr/mbs/university/jsp/board/list.jsp?boardId=6768&id=university_040803000000,high,장학 및 학자금 공지사항
+3226,춘천교육대학교,교육대학,강원특별자치도,https://www.cnue.ac.kr/cnue/news/notice03.do,medium,학생공지 게시판([장학] 태그 공지 혼재)
+3229,충남대학교,대학교,대전광역시,https://plus.cnu.ac.kr/_prog/_board/?code=sub07_0713,high,백마광장 > 장학게시판
+3245,충북대학교,대학교,충청북도,https://www.chungbuk.ac.kr/www/selectBbsNttList.do?bbsNo=8&key=815&searchCtgry=%ED%95%99%EC%82%AC%2F%EC%9E%A5%ED%95%99,high,공지사항 > 학사/장학 카테고리 필터
+3261,칼빈대학교,대학교,경기도,,low,메인 홈페이지 공지에 장학 공지 혼재; 전용 장학공지 목록 URL 미확인
+3265,평택대학교,대학교,경기도,https://www.ptu.ac.kr/www/410/subview.do,high,장학금안내 게시판
+3278,포항공과대학교,대학교,경상북도,,low,공개 장학공지 리스트 없음; POVIS 내부 게시
+3284,한경국립대학교,대학교,경기도,https://www.hknu.ac.kr/kor/563/subview.do,high,장학공지
+3294,한국공학대학교,대학교,경기도,https://www.tukorea.ac.kr/tukorea/1097/subview.do,high,장학공지
+3300,한국과학기술원,대학교,대전광역시,,low,캠퍼스 통합 장학공지 리스트 없음; 학과별·포털 분산
+3303,한국교원대학교,대학교,충청북도,https://www.knue.ac.kr/www/selectBbsNttList.do?bbsNo=207&key=1443,high,장학금 공지사항
+3307,한국기술교육대학교,대학교,충청남도,https://www.koreatech.ac.kr/notice/list.es?board_id=15&mid=a10604020000,high,장학공지
+3318,한국성서대학교,대학교,서울특별시,https://www.bible.ac.kr/ko/life/tuition_notice,high,장학/등록금 공지사항
+3325,한국에너지공과대학교,대학교,전라남도,,low,전용 장학공지 리스트 미확인
+3329,한국예술종합학교,각종학교(대학),서울특별시,https://www.karts.ac.kr/nri/bbs/NuriBbsList.do?bbsId=BBSNURI_001,medium,공지사항(장학/생활 카테고리)
+1153,한국외국어대학교,대학교,경기도,https://www.hufs.ac.kr/hufs/11283/subview.do,high,notice_sources
+3342,한국전통문화대학교,대학교,충청남도,http://www.nuch.ac.kr/mec/ots/brd/list.do?mnuBaseId=MNU0000146&topBaseId=MNU0000009&tplSer=2,medium,대학홍보 공지사항
+3347,한국체육대학교,대학교,서울특별시,https://www.knsu.ac.kr/knsu/unilife/notice.do,medium,공지사항(장학 카테고리 필터)
+3352,한국침례신학대학교,대학교,대전광역시,,low,전용 리스트 URL 미확인
+3393,한국항공대학교,대학교,경기도,https://kau.ac.kr/kaulife/scholnoti.php,high,장학/대출공지
+3397,한남대학교,대학교,대전광역시,http://janghak.hannam.ac.kr/sub4/menu_1.html,high,장학공지
+3409,한동대학교,대학교,경상북도,https://www.handong.edu/kor/square/notice/bbs/college/,medium,대학 공지(장학 글 포함)
+3417,한라대학교,대학교,강원특별자치도,https://www.halla.ac.kr/kr/244/subview.do,high,장학공지
+3420,한림대학교,대학교,강원특별자치도,https://www.hallym.ac.kr/hallym/1135/subview.do,high,장학/등록 공지
+3436,한밭대학교(산업대),산업대학,대전광역시,https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do,medium,국립한밭대학교 장학공지
+3437,한서대학교,대학교,충청남도,https://www.hanseo.ac.kr/boardCnts/list.do?boardID=301&m=040104&s=hs,high,장학공지
+3447,한성대학교,대학교,서울특별시,https://www.hansung.ac.kr/hansung/6172/subview.do,high,대학 공지사항(장학 글 다수)
+3456,한세대학교,대학교,경기도,https://www.hansei.ac.kr/kor/1700/subview.do,high,장학
+3463,한신대학교,대학교,경기도,https://www.hs.ac.kr/kor/4957/subview.do,high,장학/사회봉사
+6,한양대학교,대학교,서울특별시,https://sc.hanyang.ac.kr/-12,high,장학공지
+3491,한양대학교(ERICA),대학교,경기도,,low,캠퍼스 통합 장학공지 리스트 미확인
+3509,한일장신대학교,대학교,전북특별자치도,https://www.hanil.ac.kr/portal/default/bbs/list.do?menuId=M0004000100040000,medium,장학공지 메뉴
+3518,협성대학교,대학교,경기도,https://www.uhs.ac.kr/uhs/155/subview.do,medium,협성소식(장학 글 포함)
+3525,호남대학교,대학교,광주광역시,https://www.honam.ac.kr/Scholarship_SchFees,high,장학/학자금
+3529,호남신학대학교,대학교,광주광역시,https://www.htus.ac.kr/board/board.php?b_id=001,medium,학사공지(장학 글 포함)
+3538,호서대학교,대학교,충청남도,https://www.hoseo.ac.kr/Home/BBSList.mbz?action=MAPP_1708240139&schCategorycode=CTG_17082400013,medium,공지사항 장학공지 카테고리
+3550,호원대학교,산업대학,전북특별자치도,https://www.howon.ac.kr/web/_guide/index.html?sm=scholarshipboard,high,장학안내 게시판
+13,홍익대학교,대학교,서울특별시,https://www.hongik.ac.kr/kr/education/notice-undergrad.do?noCat=24,high,대학공지 장학 카테고리
+1618,화성의과학대학교,대학교,경기도,https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do,high,장학공지

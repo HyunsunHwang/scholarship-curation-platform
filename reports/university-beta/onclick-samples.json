@@ -1,0 +1,243 @@
+[
+  {
+    "name": "konkuk",
+    "status": 200,
+    "len": 62073,
+    "samples": [
+      {
+        "text": "2026학년도 2학기 국가근로 희망근로지 1차 신청기간 안내 (~8/9(일))",
+        "href": "/bbs/konkuk/235/1202379/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202379')",
+        "dataHref": ""
+      },
+      {
+        "text": "[교외][기숙사] 2026학년도 2학기 한국사학진흥재단 행복기숙사(연합) 정기모집(7. 2",
+        "href": "/bbs/konkuk/235/1202369/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202369')",
+        "dataHref": ""
+      },
+      {
+        "text": "[교외][생활비] 2026학년도 화성시인재육성재단 코나아이 소상공인 장학생 모집(7. 20",
+        "href": "/bbs/konkuk/235/1202323/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202323')",
+        "dataHref": ""
+      },
+      {
+        "text": "[교외][포상성] 2026학년도 김해시미래인재장학재단 제3회 장학수기 공모전(7. 20. ",
+        "href": "/bbs/konkuk/235/1202320/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202320')",
+        "dataHref": ""
+      },
+      {
+        "text": "[학교추천][교외][등록금] 2026학년도 2학기 해성문화재단 장학 추천학생 선발 안내(7",
+        "href": "/bbs/konkuk/235/1202293/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202293')",
+        "dataHref": ""
+      }
+    ],
+    "artcl": [
+      {
+        "href": "/bbs/konkuk/235/1202379/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202379')",
+        "text": "2026학년도 2학기 국가근로 희망근로지 1차 신청기간 안내 (~8/9("
+      },
+      {
+        "href": "/bbs/konkuk/235/1202369/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202369')",
+        "text": "[교외][기숙사] 2026학년도 2학기 한국사학진흥재단 행복기숙사(연합)"
+      },
+      {
+        "href": "/bbs/konkuk/235/1202323/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202323')",
+        "text": "[교외][생활비] 2026학년도 화성시인재육성재단 코나아이 소상공인 장학"
+      },
+      {
+        "href": "/bbs/konkuk/235/1202320/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202320')",
+        "text": "[교외][포상성] 2026학년도 김해시미래인재장학재단 제3회 장학수기 공"
+      },
+      {
+        "href": "/bbs/konkuk/235/1202293/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1202293')",
+        "text": "[학교추천][교외][등록금] 2026학년도 2학기 해성문화재단 장학 추천"
+      },
+      {
+        "href": "/bbs/konkuk/235/1201864/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1201864')",
+        "text": "[교내][등록금] 2026학년도 1학기 건국희망(교내장학금(저소득)) 장"
+      },
+      {
+        "href": "/bbs/konkuk/235/1201830/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1201830')",
+        "text": "[교외] 2026학년도 2학기 총동문회 장학생 선발 안내(~8.5.(수)"
+      },
+      {
+        "href": "/bbs/konkuk/235/1201751/artclView.do",
+        "onclick": "jf_viewArtcl('konkuk', '235', '1201751')",
+        "text": "[교외][등록금] 2026학년도 하반기 성림교회 대학장학생 공개 선발 안"
+      }
+    ]
+  },
+  {
+    "name": "cku",
+    "status": 200,
+    "len": 70354,
+    "samples": [
+      {
+        "text": "전체",
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '')",
+        "dataHref": ""
+      },
+      {
+        "text": "CKU공지",
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1579')",
+        "dataHref": ""
+      },
+      {
+        "text": "비교과",
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1587')",
+        "dataHref": ""
+      },
+      {
+        "text": "현장실습",
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1588')",
+        "dataHref": ""
+      },
+      {
+        "text": "취업",
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1582')",
+        "dataHref": ""
+      }
+    ],
+    "artcl": [
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '')",
+        "text": "전체"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1579')",
+        "text": "CKU공지"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1587')",
+        "text": "비교과"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1588')",
+        "text": "현장실습"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1582')",
+        "text": "취업"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1581')",
+        "text": "장학"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1583')",
+        "text": "입학"
+      },
+      {
+        "href": "/bbs/cku_kr/1202/artclList.do",
+        "onclick": "jf_searchArtcl('bbsClSeq', '1580')",
+        "text": "행사"
+      }
+    ]
+  },
+  {
+    "name": "mtu",
+    "status": 200,
+    "len": 197975,
+    "samples": [
+      {
+        "text": "대학소개",
+        "href": "/mtu/contents/view.do?mId=42",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "총장실",
+        "href": "/mtu/contents/view.do?mId=42",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "인사말",
+        "href": "/mtu/contents/view.do?mId=42",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "프로필",
+        "href": "/mtu/contents/view.do?mId=43",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "총장동정",
+        "href": "/mtu/board/list.do?mId=532",
+        "onclick": "",
+        "dataHref": ""
+      }
+    ],
+    "artcl": []
+  },
+  {
+    "name": "konyang",
+    "status": 200,
+    "len": 123342,
+    "samples": [
+      {
+        "text": "",
+        "href": "javascript:void(0);",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "",
+        "href": "javascript:void(0);",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "",
+        "href": "javascript:void(0);",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "",
+        "href": "javascript:void(0);",
+        "onclick": "",
+        "dataHref": ""
+      },
+      {
+        "text": "",
+        "href": "javascript:void(0);",
+        "onclick": "",
+        "dataHref": ""
+      }
+    ],
+    "artcl": []
+  },
+  {
+    "name": "kyongnam",
+    "status": 200,
+    "len": 6334,
+    "samples": [],
+    "artcl": []
+  }
+]
