@@ -150,8 +150,8 @@ Artifacts:
 
 - Branch: `remediation/unresolved-51-deep-fix`
 - Start commit: `d4864f3` — Freeze unresolved-51 baseline and live diagnostics
-- Final commit: (this closeout commit)
-- Remote push: pending at closeout authoring time
+- Final commit: `8403f2a` — Remediate unresolved-51 four-year university crawl sources
+- Remote: pushed `origin/remediation/unresolved-51-deep-fix`
 - Production ingest: not run
 
 ### Changed files (this workstream)
