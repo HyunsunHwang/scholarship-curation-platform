@@ -214,6 +214,13 @@ export default function BrowseTopRankHero({
           {useGradient ? (
             <>
               <div className={`absolute inset-0 ${gradientClassName}`} />
+              {hasIntro ? (
+                <>
+                  <div className="absolute -left-[10%] top-[8%] h-[55%] w-[42%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(2,0,128,0.07),transparent_70%)]" />
+                  <div className="absolute right-[8%] top-[12%] h-[48%] w-[38%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(128,25,222,0.08),transparent_68%)]" />
+                  <div className="absolute bottom-[18%] left-[28%] h-[30%] w-[28%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(235,224,248,0.55),transparent_70%)]" />
+                </>
+              ) : null}
               <div className="absolute inset-x-0 bottom-0 h-1/4 bg-linear-to-t from-white to-transparent" />
             </>
           ) : (
@@ -235,7 +242,7 @@ export default function BrowseTopRankHero({
         <div
           className={`relative mx-auto flex h-full flex-col px-4 sm:px-6 md:px-10 ${
             hasIntro
-              ? "min-h-[calc(18rem+3.5rem)] max-w-440 justify-center gap-5 pt-[calc(3.5rem+1.25rem)] pb-5 sm:min-h-[calc(20rem+3.75rem)] sm:gap-6 sm:pt-[calc(3.75rem+1.5rem)] sm:pb-6 lg:min-h-[calc(21rem+3.75rem)] lg:flex-row lg:items-end lg:justify-between lg:gap-6 lg:pt-[calc(3.75rem+1.75rem)] lg:pb-7"
+              ? "min-h-[calc(18rem+3.5rem)] max-w-440 justify-center gap-5 pt-[calc(3.5rem+1.25rem)] pb-5 sm:min-h-[calc(20rem+3.75rem)] sm:gap-6 sm:pt-[calc(3.75rem+1.5rem)] sm:pb-6 lg:min-h-[calc(21rem+3.75rem)] lg:flex-row lg:items-stretch lg:justify-between lg:gap-6 lg:pt-[calc(3.75rem+1.75rem)] lg:pb-7"
               : "min-h-70 max-w-6xl justify-end pt-12 pb-5 sm:min-h-80 sm:pt-14 sm:pb-6 lg:min-h-90"
           }`}
         >
@@ -277,7 +284,7 @@ export default function BrowseTopRankHero({
 
           <div
             className={`flex w-full flex-col items-stretch sm:items-end ${
-              hasIntro ? "min-w-0 lg:ml-auto lg:w-auto" : ""
+              hasIntro ? "min-w-0 lg:ml-auto lg:w-auto lg:self-end" : ""
             }`}
           >
             <div className="mb-4 w-full text-right sm:mb-5 sm:w-auto sm:max-w-none">

@@ -15,6 +15,7 @@ import { buildTop10 } from "@/lib/home-rails";
 import { useHomeSearchFilters } from "./HomeSearchContext";
 import { useHomeBookmarkChecker } from "./HomeBookmarkContext";
 import HomeSectionTitle from "./HomeSectionTitle";
+import HomeGuestHeroIntro from "./HomeGuestHeroIntro";
 
 const INTERNSHIP_BENEFIT_TAGS = [
   "인턴쉽 기회",
@@ -148,7 +149,7 @@ export default function HomeFeed({
   afterHero?: ReactNode;
   /** 로그인: 마감임박·관심/교내/CF 레일 / 비로그인: 로드맵 레일 — Suspense 슬롯 */
   afterTop10?: ReactNode;
-  /** 로그인: 개인화 대시보드 히어로. 없으면 마케팅 카피 */
+  /** 로그인: 개인화 대시보드 히어로. 없으면 HomeGuestHeroIntro */
   heroIntroContent?: ReactNode;
 }) {
   const {
@@ -195,24 +196,8 @@ export default function HomeFeed({
           badge="TODAY TOP 10"
           subtitle={null}
           headingId="home-top10-heading"
-          introContent={heroIntroContent}
-          intro={
-            heroIntroContent
-              ? null
-              : {
-                  title: (
-                    <>
-                      나에게 꼭 맞는
-                      <br />
-                      커리어 정보를 한눈에
-                    </>
-                  ),
-                  description:
-                    "교내 장학금부터 대외활동까지, 내 프로필 기반 맞춤 추천",
-                  ctaLabel: "내 공고 보러가기",
-                  ctaHref: "/matched",
-                }
-          }
+          introContent={heroIntroContent ?? <HomeGuestHeroIntro />}
+          intro={null}
         />
       ) : null}
 

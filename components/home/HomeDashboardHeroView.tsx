@@ -99,7 +99,7 @@ export default function HomeDashboardHeroView({
   ];
 
   return (
-    <div className="relative z-10 w-full shrink-0 lg:max-w-md xl:max-w-lg">
+    <div className="relative z-10 w-full shrink-0 lg:max-w-md lg:self-end xl:max-w-lg">
       <div className="pointer-events-none absolute -left-6 -top-8 h-32 w-32 rounded-full bg-brand/8 blur-3xl" />
       <div className="pointer-events-none absolute right-2 top-0 h-24 w-24 rounded-full bg-peach/10 blur-3xl" />
 
@@ -175,7 +175,7 @@ export default function HomeDashboardHeroView({
 
 export function HomeDashboardHeroSkeleton() {
   return (
-    <div className="relative z-10 w-full shrink-0 lg:max-w-md xl:max-w-lg">
+    <div className="relative z-10 w-full shrink-0 lg:max-w-md lg:self-end xl:max-w-lg">
       <div className="h-9 w-[80%] max-w-sm animate-pulse rounded-lg bg-ink/10" />
       <div className="mt-2 h-4 w-52 animate-pulse rounded bg-ink/8" />
       <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-2.5">
