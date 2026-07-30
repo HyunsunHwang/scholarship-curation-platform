@@ -12,6 +12,10 @@ export default function RecentViewTracker({
   posterImageUrl,
   applyEndDate,
   contentKind,
+  cardSupportLine = null,
+  supportAmountText = null,
+  benefits = null,
+  benefitNote = null,
 }: {
   id: number;
   name: string;
@@ -19,6 +23,11 @@ export default function RecentViewTracker({
   posterImageUrl: string | null;
   applyEndDate: string;
   contentKind: "scholarship" | "contest" | "education" | "activity";
+  /** 상세 혜택 하이라이트와 동일 문구 */
+  cardSupportLine?: string | null;
+  supportAmountText?: string | null;
+  benefits?: string[] | null;
+  benefitNote?: string | null;
 }) {
   useEffect(() => {
     recordRecentView({
@@ -28,6 +37,10 @@ export default function RecentViewTracker({
       poster_image_url: posterImageUrl,
       apply_end_date: applyEndDate,
       content_kind: contentKind,
+      card_support_line: cardSupportLine,
+      support_amount_text: supportAmountText,
+      benefits,
+      benefit_note: benefitNote,
     });
     void trackBrowseEventClient({
       contentKind,
@@ -37,7 +50,18 @@ export default function RecentViewTracker({
       posterImageUrl,
       applyEndDate,
     });
-  }, [id, name, organization, posterImageUrl, applyEndDate, contentKind]);
+  }, [
+    id,
+    name,
+    organization,
+    posterImageUrl,
+    applyEndDate,
+    contentKind,
+    cardSupportLine,
+    supportAmountText,
+    benefits,
+    benefitNote,
+  ]);
 
   return null;
 }

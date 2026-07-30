@@ -337,6 +337,19 @@ export default async function ScholarshipDetailPage({
         posterImageUrl={scholarship.poster_image_url}
         applyEndDate={scholarship.apply_end_date}
         contentKind="scholarship"
+        cardSupportLine={
+          benefitHighlights
+            .map((b) => b.label)
+            .filter(
+              (label) =>
+                Boolean(label) &&
+                label !== "기타" &&
+                label !== "기관 확인 필요"
+            )
+            .slice(0, 5)
+            .join(", ") || null
+        }
+        supportAmountText={scholarship.support_amount_text}
       />
 
       <SiteFooter

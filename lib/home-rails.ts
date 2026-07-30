@@ -572,29 +572,77 @@ export function buildRegionRail(
 }
 
 /**
- * 이어서 보기: 서버 조회 이력 우선 + localStorage/긴급 북마크 보강.
+ * 이어서 보기: localStorage 순서 유지 + 서버/긴급 보강.
+ * 같은 키면 혜택·지원문구가 더 채워진 쪽을 남긴다.
  */
+export function preferRicherCard(
+  current: CardScholarship,
+  incoming: CardScholarship
+): CardScholarship {
+  const curLine = current.card_support_line?.trim() || "";
+  const inLine = incoming.card_support_line?.trim() || "";
+  const curLineOk = Boolean(curLine && curLine !== "기관 확인 필요");
+  const inLineOk = Boolean(inLine && inLine !== "기관 확인 필요");
+
+  return {
+    ...current,
+    ...incoming,
+    // 로컬 스텁이 서버 richer 필드를 덮어쓰지 않도록
+    name: incoming.name || current.name,
+    organization: incoming.organization || current.organization,
+    institution_type:
+      incoming.institution_type && incoming.institution_type !== "기타"
+        ? incoming.institution_type
+        : current.institution_type,
+    poster_image_url: incoming.poster_image_url ?? current.poster_image_url,
+    support_amount_text:
+      incoming.support_amount_text ?? current.support_amount_text,
+    benefits:
+      incoming.benefits?.length ? incoming.benefits : current.benefits,
+    benefit_note: incoming.benefit_note ?? current.benefit_note,
+    benefit_notice_text:
+      incoming.benefit_notice_text ?? current.benefit_notice_text,
+    card_support_line: inLineOk
+      ? inLine
+      : curLineOk
+        ? curLine
+        : inLine || curLine || null,
+    support_types: incoming.support_types?.length
+      ? incoming.support_types
+      : current.support_types,
+    interest_categories:
+      incoming.interest_categories ?? current.interest_categories,
+    interest_industries:
+      incoming.interest_industries ?? current.interest_industries,
+  };
+}
+
 export function buildContinueWatching(options: {
   serverRecent: CardScholarship[];
   localRecent?: CardScholarship[];
   urgentBookmarks?: CardScholarship[];
 }): CardScholarship[] {
-  const seen = new Set<string>();
+  const seen = new Map<string, number>();
   const out: CardScholarship[] = [];
 
   function pushAll(list: CardScholarship[]) {
     for (const item of list) {
       if (isScholarshipExpired(item.apply_end_date)) continue;
       const key = cardItemKey(item);
-      if (seen.has(key)) continue;
-      seen.add(key);
+      const existingIdx = seen.get(key);
+      if (existingIdx !== undefined) {
+        out[existingIdx] = preferRicherCard(out[existingIdx], item);
+        continue;
+      }
+      if (out.length >= HOME_CONTINUE_LIMIT) continue;
+      seen.set(key, out.length);
       out.push(item);
-      if (out.length >= HOME_CONTINUE_LIMIT) return;
     }
   }
 
   // localStorage가 방금 본 순서를 갖고 있으므로 로컬을 먼저 쓴다.
   // (홈 RSC 캐시의 serverRecent가 앞서면 재조회해도 순서가 안 바뀜)
+  // 이후 서버/북마크가 같은 키로 오면 preferRicherCard로 혜택 필드를 채운다.
   pushAll(options.localRecent ?? []);
   pushAll(options.serverRecent);
   pushAll(options.urgentBookmarks ?? []);

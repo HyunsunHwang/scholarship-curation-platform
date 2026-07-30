@@ -340,6 +340,21 @@ export default async function OpportunityDetailPage({
         posterImageUrl={contest.poster_image_url}
         applyEndDate={contest.apply_end_date || "2099-12-31"}
         contentKind={kind}
+        cardSupportLine={
+          benefitHighlights
+            .map((b) => b.label)
+            .filter(
+              (label) =>
+                Boolean(label) &&
+                label !== "기타" &&
+                label !== "기관 확인 필요"
+            )
+            .slice(0, 5)
+            .join(", ") || null
+        }
+        supportAmountText={contest.support_amount_text}
+        benefits={contest.benefits}
+        benefitNote={contest.note}
       />
 
       <SiteFooter

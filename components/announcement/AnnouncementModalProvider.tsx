@@ -147,6 +147,18 @@ export default function AnnouncementModalProvider({
           poster_image_url: payload.posterImageUrl,
           apply_end_date: payload.scholarship.apply_end_date || "2099-12-31",
           content_kind: payload.kind,
+          // 상세 혜택 하이라이트와 동일한 라벨을 카드 하단에 그대로 쓴다
+          card_support_line:
+            payload.benefits
+              ?.map((b) => b.label)
+              .filter(
+                (label) =>
+                  Boolean(label) &&
+                  label !== "기타" &&
+                  label !== "기관 확인 필요"
+              )
+              .slice(0, 5)
+              .join(", ") || null,
         });
         void trackBrowseEventClient({
           contentKind: payload.kind,

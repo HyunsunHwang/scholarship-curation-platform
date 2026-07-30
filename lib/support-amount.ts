@@ -108,11 +108,12 @@ export function formatCardSupportLine(opts: {
         label !== "상금" &&
         !/^총\s*상금\b/.test(label)
     );
-    return [prize, ...rest].slice(0, 3).join(", ");
+    return [prize, ...rest].slice(0, 5).join(", ");
   }
 
   if (labels.length === 0) return "기관 확인 필요";
-  return labels.slice(0, 3).join(", ");
+  // 상세 하이라이트와 같이 주요 혜택을 모두 이어 붙인다 (카드 UI에서 line-clamp)
+  return labels.slice(0, 5).join(", ");
 }
 
 /** 카드 UI용 — 서버 precompute가 있으면 재계산하지 않는다 */

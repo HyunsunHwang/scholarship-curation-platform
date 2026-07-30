@@ -8,6 +8,11 @@ export type RecentViewItem = {
   apply_end_date: string;
   content_kind: "scholarship" | "contest" | "education" | "activity";
   viewedAt: number;
+  /** 상세와 동일 소스의 카드 하단 혜택 문구 */
+  card_support_line?: string | null;
+  support_amount_text?: string | null;
+  benefits?: string[] | null;
+  benefit_note?: string | null;
 };
 
 export const RECENT_VIEWS_STORAGE_KEY = "janghakssam:recent-views";
