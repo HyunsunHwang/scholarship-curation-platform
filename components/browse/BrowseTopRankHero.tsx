@@ -34,11 +34,13 @@ type BrowseTopRankHeroProps = {
   items: CardScholarship[];
   /**
    * 배경 이미지. null 이면 단색 그라데이션.
-   * 기본: browse-rank-hero(고양이). 탐색용.
+   * 기본: null(그라데이션). 홈·탐색 카테고리 공통.
    */
   backgroundSrc?: string | null;
   /** backgroundSrc=null 일 때 쓰는 그라데이션 클래스 */
   gradientClassName?: string;
+  /** 카드 좌하단 순위 숫자. 탐색 카테고리는 false */
+  showRankNumbers?: boolean;
   /** 홈 등 — 왼쪽 상단 문구 + 유도 버튼 */
   intro?: HeroIntro | null;
   /**
@@ -63,9 +65,11 @@ type BrowseTopRankHeroProps = {
 function RankCardLink({
   item,
   rank,
+  showRank = true,
 }: {
   item: CardScholarship;
   rank: number;
+  showRank?: boolean;
 }) {
   const name = cleanScholarshipName(item.name);
   const href = contentKindHref(item.content_kind, item.id);
@@ -102,11 +106,12 @@ function RankCardLink({
           aria-hidden
           className="absolute inset-x-0 top-0 h-[42%] bg-linear-to-b from-black/72 via-black/35 to-transparent"
         />
-        {/* 하단: 순위 숫자 가독용 그라데이션 */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[38%] bg-linear-to-t from-black/75 via-black/25 to-transparent"
-        />
+        {showRank ? (
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-[38%] bg-linear-to-t from-black/75 via-black/25 to-transparent"
+          />
+        ) : null}
 
         <p
           className="absolute inset-x-0 top-0 z-10 px-1.5 pt-1.5 text-[10px] font-bold leading-snug tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.55)] sm:px-2 sm:pt-2 sm:text-[11px]"
@@ -115,16 +120,18 @@ function RankCardLink({
           <span className="line-clamp-2">{name}</span>
         </p>
 
-        <span
-          aria-hidden
-          className="absolute bottom-0 left-1 z-10 select-none text-[42px] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:bottom-0.5 sm:left-1.5 sm:text-[48px]"
-          style={{
-            WebkitTextStroke: "1px rgba(0,0,0,0.15)",
-            paintOrder: "stroke fill",
-          }}
-        >
-          {rank}
-        </span>
+        {showRank ? (
+          <span
+            aria-hidden
+            className="absolute bottom-0 left-1 z-10 select-none text-[42px] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:bottom-0.5 sm:left-1.5 sm:text-[48px]"
+            style={{
+              WebkitTextStroke: "1px rgba(0,0,0,0.15)",
+              paintOrder: "stroke fill",
+            }}
+          >
+            {rank}
+          </span>
+        ) : null}
       </div>
     </Link>
   );
@@ -137,8 +144,9 @@ function RankCardLink({
 export default function BrowseTopRankHero({
   title,
   items,
-  backgroundSrc = DEFAULT_HERO_BG,
+  backgroundSrc = null,
   gradientClassName = DEFAULT_GRADIENT,
+  showRankNumbers = true,
   intro = null,
   introContent = null,
   backHref = "/browse",
@@ -389,6 +397,7 @@ export default function BrowseTopRankHero({
                     key={`${item.content_kind ?? "scholarship"}-${item.id}`}
                     item={item}
                     rank={index + 1}
+                    showRank={showRankNumbers}
                   />
                 ))}
               </div>

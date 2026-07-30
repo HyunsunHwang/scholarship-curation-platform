@@ -73,7 +73,12 @@ export default function BrowseFeed({
     <AnnouncementModalProvider>
     <div className="w-full">
       {showTopRank ? (
-        <BrowseTopRankHero title={title} items={topRank} />
+        <BrowseTopRankHero
+          title={title}
+          items={topRank}
+          backgroundSrc={null}
+          showRankNumbers={false}
+        />
       ) : null}
 
       <div
