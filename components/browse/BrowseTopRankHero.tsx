@@ -97,10 +97,23 @@ function RankCardLink({
           </div>
         )}
 
+        {/* 상단: 제목 가독용 그라데이션 */}
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/75 via-black/25 to-transparent"
+          className="absolute inset-x-0 top-0 h-[42%] bg-linear-to-b from-black/72 via-black/35 to-transparent"
         />
+        {/* 하단: 순위 숫자 가독용 그라데이션 */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-[38%] bg-linear-to-t from-black/75 via-black/25 to-transparent"
+        />
+
+        <p
+          className="absolute inset-x-0 top-0 z-10 px-1.5 pt-1.5 text-[10px] font-bold leading-snug tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.55)] sm:px-2 sm:pt-2 sm:text-[11px]"
+          title={name}
+        >
+          <span className="line-clamp-2">{name}</span>
+        </p>
 
         <span
           aria-hidden
@@ -113,13 +126,6 @@ function RankCardLink({
           {rank}
         </span>
       </div>
-
-      <p
-        className="mt-1.5 line-clamp-2 text-[11px] font-semibold leading-snug text-ink group-hover:text-brand sm:text-xs"
-        title={name}
-      >
-        {name}
-      </p>
     </Link>
   );
 }
@@ -229,7 +235,7 @@ export default function BrowseTopRankHero({
         <div
           className={`relative mx-auto flex h-full flex-col px-4 sm:px-6 md:px-10 ${
             hasIntro
-              ? "min-h-[calc(18rem+3.5rem)] max-w-440 justify-center gap-5 pt-[calc(3.5rem+1.25rem)] pb-5 sm:min-h-[calc(20rem+3.75rem)] sm:gap-6 sm:pt-[calc(3.75rem+1.5rem)] sm:pb-6 lg:min-h-[calc(21rem+3.75rem)] lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:pt-[calc(3.75rem+1.75rem)] lg:pb-7"
+              ? "min-h-[calc(18rem+3.5rem)] max-w-440 justify-center gap-5 pt-[calc(3.5rem+1.25rem)] pb-5 sm:min-h-[calc(20rem+3.75rem)] sm:gap-6 sm:pt-[calc(3.75rem+1.5rem)] sm:pb-6 lg:min-h-[calc(21rem+3.75rem)] lg:flex-row lg:items-end lg:justify-between lg:gap-6 lg:pt-[calc(3.75rem+1.75rem)] lg:pb-7"
               : "min-h-70 max-w-6xl justify-end pt-12 pb-5 sm:min-h-80 sm:pt-14 sm:pb-6 lg:min-h-90"
           }`}
         >
