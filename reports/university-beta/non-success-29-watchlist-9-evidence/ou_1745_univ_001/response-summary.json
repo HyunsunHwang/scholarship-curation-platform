@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_1745_univ_001",
+  "checked_at": "2026-07-31T01:50:30.806Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+    "redirect_chain": [
+      {
+        "url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1103,
+    "response_size": 54725,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+        "response_time_ms": 1103,
+        "response_size": 54725,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+        "response_time_ms": 896,
+        "response_size": 54725,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "강서광장>강서대학교 소통광장>공지사항",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "학부증명발급",
+    "sample_detail_url": "https://uni.webminwon.com/servlet/WMINDEX?COMMAND=ACTIVEX&GIWANNO=021107",
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

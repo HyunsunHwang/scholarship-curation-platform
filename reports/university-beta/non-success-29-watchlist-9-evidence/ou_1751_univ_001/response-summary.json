@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_1751_univ_001",
+  "checked_at": "2026-07-31T01:50:32.055Z",
+  "transport": {
+    "http_status": 403,
+    "final_url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+    "redirect_chain": [
+      {
+        "url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+        "status": 403,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1193,
+    "response_size": 1579,
+    "retry_results": [
+      {
+        "status": 403,
+        "final_url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+        "response_time_ms": 1193,
+        "response_size": 1579,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+            "status": 403,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 403,
+        "final_url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+        "response_time_ms": 51,
+        "response_size": 1579,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+            "status": 403,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "403",
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

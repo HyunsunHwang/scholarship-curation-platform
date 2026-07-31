@@ -1,0 +1,53 @@
+{
+  "source_id": "ou_1618_univ_001",
+  "checked_at": "2026-07-31T01:50:26.324Z",
+  "transport": {
+    "http_status": null,
+    "final_url": "https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do",
+    "redirect_chain": [],
+    "response_time_ms": 37,
+    "response_size": 0,
+    "retry_results": [
+      {
+        "status": null,
+        "final_url": "https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do",
+        "response_time_ms": 247,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do",
+        "response_time_ms": 39,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do",
+        "response_time_ms": 37,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

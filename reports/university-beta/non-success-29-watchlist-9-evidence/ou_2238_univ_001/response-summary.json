@@ -1,0 +1,53 @@
+{
+  "source_id": "ou_2238_univ_001",
+  "checked_at": "2026-07-31T01:50:46.476Z",
+  "transport": {
+    "http_status": null,
+    "final_url": "https://www.daeshin.ac.kr/html/05_community/01.php",
+    "redirect_chain": [],
+    "response_time_ms": 33,
+    "response_size": 0,
+    "retry_results": [
+      {
+        "status": null,
+        "final_url": "https://www.daeshin.ac.kr/html/05_community/01.php",
+        "response_time_ms": 2558,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.daeshin.ac.kr/html/05_community/01.php",
+        "response_time_ms": 35,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.daeshin.ac.kr/html/05_community/01.php",
+        "response_time_ms": 33,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2097_univ_001",
+  "checked_at": "2026-07-31T01:50:39.301Z",
+  "transport": {
+    "http_status": 404,
+    "final_url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+    "redirect_chain": [
+      {
+        "url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+        "status": 404,
+        "location": null
+      }
+    ],
+    "response_time_ms": 174,
+    "response_size": 211,
+    "retry_results": [
+      {
+        "status": 404,
+        "final_url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+        "response_time_ms": 174,
+        "response_size": 211,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+            "status": 404,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 404,
+        "final_url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+        "response_time_ms": 86,
+        "response_size": 211,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+            "status": 404,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "시스템안내",
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

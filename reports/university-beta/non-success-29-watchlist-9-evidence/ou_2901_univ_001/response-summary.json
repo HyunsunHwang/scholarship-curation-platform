@@ -1,0 +1,78 @@
+{
+  "source_id": "ou_2901_univ_001",
+  "checked_at": "2026-07-31T01:51:12.703Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.jesus.ac.kr/main/",
+    "redirect_chain": [
+      {
+        "url": "https://www.jesus.ac.kr/main/?menu=191",
+        "status": 302,
+        "location": "./"
+      },
+      {
+        "url": "https://www.jesus.ac.kr/main/",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 780,
+    "response_size": 113673,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.jesus.ac.kr/main/",
+        "response_time_ms": 780,
+        "response_size": 113673,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.jesus.ac.kr/main/?menu=191",
+            "status": 302,
+            "location": "./"
+          },
+          {
+            "url": "https://www.jesus.ac.kr/main/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.jesus.ac.kr/main/",
+        "response_time_ms": 739,
+        "response_size": 113673,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.jesus.ac.kr/main/?menu=191",
+            "status": 302,
+            "location": "./"
+          },
+          {
+            "url": "https://www.jesus.ac.kr/main/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "예수대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "2026.07.27 2026학년도 예수대학교 지역협력센터 계약직원(출산 및 육.. 2026학년도 예수대학교 지역협력센터 계약직원(출산 및 육아휴직 대체) 채용 공고 ■ 채용분야 및 지원자격구분채용분야담당업무자격요건우대사항계약직(출..",
+    "sample_detail_url": "https://www.jesus.ac.kr/main/?menu=56&mode=view&no=5632",
+    "sample_detail_title": "공지사항 | 예수대학교",
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

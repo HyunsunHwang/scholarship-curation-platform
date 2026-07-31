@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_3525_univ_001",
+  "checked_at": "2026-07-31T01:51:18.932Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.honam.ac.kr/Scholarship_SchFees",
+    "redirect_chain": [
+      {
+        "url": "https://www.honam.ac.kr/Scholarship_SchFees",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 570,
+    "response_size": 72355,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.honam.ac.kr/Scholarship_SchFees",
+        "response_time_ms": 570,
+        "response_size": 72355,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.honam.ac.kr/Scholarship_SchFees",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.honam.ac.kr/Scholarship_SchFees",
+        "response_time_ms": 1009,
+        "response_size": 72355,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.honam.ac.kr/Scholarship_SchFees",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "호남대학교 커뮤니티 공지사항 장학/학자금 장학/학자금",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": true,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "사이버안전교육",
+    "sample_detail_url": "http://www.safetyedu.org/Account/LogOn?UserAgencyNo=24",
+    "sample_detail_title": "안전교육센터",
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_1986_univ_001",
+  "checked_at": "2026-07-31T01:50:37.531Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+    "redirect_chain": [
+      {
+        "url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 2675,
+    "response_size": 53753,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+        "response_time_ms": 2675,
+        "response_size": 53753,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+        "response_time_ms": 286,
+        "response_size": 53753,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "HOME > 커뮤니티 > 공지사항",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "대학소개",
+    "sample_detail_url": "https://www.kwangshin.ac.kr/home/contentsInfo.do?menu_no=391",
+    "sample_detail_title": "HOME > 대학소개 > 교가",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

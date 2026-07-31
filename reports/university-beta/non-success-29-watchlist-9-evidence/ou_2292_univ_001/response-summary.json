@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2292_univ_001",
+  "checked_at": "2026-07-31T01:50:50.987Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+    "redirect_chain": [
+      {
+        "url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 2595,
+    "response_size": 96233,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+        "response_time_ms": 2595,
+        "response_size": 96233,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+        "response_time_ms": 814,
+        "response_size": 96229,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "동덕여자대학교",
+    "visible_notice_list": true,
+    "empty_board_message": true,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "[교무처]동덕여자대학교 제11대 총장 선임 공고",
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

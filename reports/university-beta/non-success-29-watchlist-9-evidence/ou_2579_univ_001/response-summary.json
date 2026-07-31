@@ -1,0 +1,77 @@
+{
+  "source_id": "ou_2579_univ_001",
+  "checked_at": "2026-07-31T01:50:52.378Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+    "redirect_chain": [
+      {
+        "url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 722,
+    "response_size": 56338,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+        "response_time_ms": 722,
+        "response_size": 56338,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+        "response_time_ms": 280,
+        "response_size": 56338,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+        "response_time_ms": 193,
+        "response_size": 56338,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "[��������ó] 2026 �츮�� ����� �츮 �б� �̾߱� ������ ������ �ɻ� ��� �ȳ�",
+    "sample_detail_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php?pagetype=&bbs_idx=50046&pageno=1&pagekind=c&bbsid=main3010&cafeid=&ref_code=&keyword=&keyfield=&category=&qstr=&gopage=/ht_ml/w_03ed/3010.php?",
+    "sample_detail_title": null,
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

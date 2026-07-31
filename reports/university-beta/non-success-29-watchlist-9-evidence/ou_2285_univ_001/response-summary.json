@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2285_univ_001",
+  "checked_at": "2026-07-31T01:51:02.515Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+    "redirect_chain": [
+      {
+        "url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 332,
+    "response_size": 86017,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+        "response_time_ms": 332,
+        "response_size": 86017,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+        "response_time_ms": 91,
+        "response_size": 86017,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "동국대학교 WISE캠퍼스 - 커뮤니티 - 공지사항 - 장학/봉사",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "학사일정",
+    "sample_detail_url": "https://wise.dongguk.ac.kr/schedule/detail?schedule_info_seq=22",
+    "sample_detail_title": "동국대학교 WISE캠퍼스 - 학사/장학 - 학사 - 학사일정",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

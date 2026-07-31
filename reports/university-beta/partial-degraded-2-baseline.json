@@ -1,0 +1,25 @@
+{
+  "count": 2,
+  "sources": [
+    {
+      "source_id": "ou_2285_univ_001",
+      "university_name": "동국대학교(WISE)",
+      "source_name": "동국대학교(WISE) 장학공지",
+      "list_url": "https://wise.dongguk.ac.kr/article/servicenotice/list",
+      "base_url": "https://wise.dongguk.ac.kr",
+      "coherent_final_status": "partial",
+      "coherent_reason_code": "partial",
+      "current_observed": 5
+    },
+    {
+      "source_id": "ou_3518_univ_001",
+      "university_name": "협성대학교",
+      "source_name": "협성대학교 장학공지",
+      "list_url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+      "base_url": "https://www.uhs.ac.kr",
+      "coherent_final_status": "partial",
+      "coherent_reason_code": "partial",
+      "current_observed": 2
+    }
+  ]
+}

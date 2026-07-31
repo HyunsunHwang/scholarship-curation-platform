@@ -1,0 +1,53 @@
+{
+  "source_id": "ou_3003_univ_001",
+  "checked_at": "2026-07-31T01:50:58.155Z",
+  "transport": {
+    "http_status": null,
+    "final_url": "https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0",
+    "redirect_chain": [],
+    "response_time_ms": 69,
+    "response_size": 0,
+    "retry_results": [
+      {
+        "status": null,
+        "final_url": "https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0",
+        "response_time_ms": 190,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0",
+        "response_time_ms": 90,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0",
+        "response_time_ms": 69,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

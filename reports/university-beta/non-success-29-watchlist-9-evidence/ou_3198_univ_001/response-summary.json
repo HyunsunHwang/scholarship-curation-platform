@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_3198_univ_001",
+  "checked_at": "2026-07-31T01:51:00.082Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+    "redirect_chain": [
+      {
+        "url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 837,
+    "response_size": 400943,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+        "response_time_ms": 837,
+        "response_size": 400943,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+        "response_time_ms": 712,
+        "response_size": 400943,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "장학공지 - 장학지원 - 대학생활 - 청주교육대학교",
+    "visible_notice_list": false,
+    "empty_board_message": true,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

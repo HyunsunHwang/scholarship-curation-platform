@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_3409_univ_001",
+  "checked_at": "2026-07-31T01:51:17.045Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+    "redirect_chain": [
+      {
+        "url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1237,
+    "response_size": 63828,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+        "response_time_ms": 1237,
+        "response_size": 63828,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+        "response_time_ms": 1048,
+        "response_size": 63828,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "한동대학교 - 한동광장 - 한동공지 - 공지사항 - 대학 공지",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "[교무처] 2026학년도 2학기 등록금 납부 및 분납 안내",
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

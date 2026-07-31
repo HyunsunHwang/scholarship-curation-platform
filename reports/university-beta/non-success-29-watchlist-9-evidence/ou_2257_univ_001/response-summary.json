@@ -1,0 +1,237 @@
+{
+  "source_id": "ou_2257_univ_001",
+  "checked_at": "2026-07-31T01:50:47.562Z",
+  "transport": {
+    "http_status": 302,
+    "final_url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+    "redirect_chain": [
+      {
+        "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "status": 302,
+        "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+        "status": 302,
+        "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43GtxD6r%2BX3Oo7UGpNqR8%2FuMQ0fmHPbeSnXQxttGr3tdIZrObs26k6rF2gpKHTQDp0%2BZbze%2FboY%2FCvSScTfQ5uhVe%2BN97n8sTQI9kFnMCp0jsfJpLYGoJmaYBG%2Fi%2FQ4s%2Fv%2BwKDdJcDR9bEnKqHMZJBZjd3p8zy%2FRhQnd1Ua9ncQZmZkNT6Oi%2Bu%2FV6fNFmxvEqxY%2F74NkvcTGQZbzkgz4Z4PD%2FTvAi0eIw5NHeXU8cXeRjxEwVbaNrpZDuWNIJihi%2BhTNppW079phJ3Kh2gwFlDfkl9YON0Ga0o8D0evqzaNOD&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+      },
+      {
+        "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43GtxD6r%2BX3Oo7UGpNqR8%2FuMQ0fmHPbeSnXQxttGr3tdIZrObs26k6rF2gpKHTQDp0%2BZbze%2FboY%2FCvSScTfQ5uhVe%2BN97n8sTQI9kFnMCp0jsfJpLYGoJmaYBG%2Fi%2FQ4s%2Fv%2BwKDdJcDR9bEnKqHMZJBZjd3p8zy%2FRhQnd1Ua9ncQZmZkNT6Oi%2Bu%2FV6fNFmxvEqxY%2F74NkvcTGQZbzkgz4Z4PD%2FTvAi0eIw5NHeXU8cXeRjxEwVbaNrpZDuWNIJihi%2BhTNppW079phJ3Kh2gwFlDfkl9YON0Ga0o8D0evqzaNOD&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+        "status": 302,
+        "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+        "status": 302,
+        "location": "/daejin/1004/subview.do"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "status": 302,
+        "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+        "status": 302,
+        "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGFCFfo1v%2FhOz7MPUHWiDZwv0YHCmum7bqYOkCrt9zrbA%2BNijmXw1HC7crErgyVd7%2BlgtDg0tTLMEuYJbJGqz99eOI5F0cxUIESWv81AwsnDIDiwxEkr8i5VGJ3MNuv4HL&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+      },
+      {
+        "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGFCFfo1v%2FhOz7MPUHWiDZwv0YHCmum7bqYOkCrt9zrbA%2BNijmXw1HC7crErgyVd7%2BlgtDg0tTLMEuYJbJGqz99eOI5F0cxUIESWv81AwsnDIDiwxEkr8i5VGJ3MNuv4HL&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+        "status": 302,
+        "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+        "status": 302,
+        "location": "/daejin/1004/subview.do"
+      },
+      {
+        "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "status": 302,
+        "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+      }
+    ],
+    "response_time_ms": 26,
+    "response_size": 0,
+    "retry_results": [
+      {
+        "status": 302,
+        "final_url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "response_time_ms": 26,
+        "response_size": 0,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43GtxD6r%2BX3Oo7UGpNqR8%2FuMQ0fmHPbeSnXQxttGr3tdIZrObs26k6rF2gpKHTQDp0%2BZbze%2FboY%2FCvSScTfQ5uhVe%2BN97n8sTQI9kFnMCp0jsfJpLYGoJmaYBG%2Fi%2FQ4s%2Fv%2BwKDdJcDR9bEnKqHMZJBZjd3p8zy%2FRhQnd1Ua9ncQZmZkNT6Oi%2Bu%2FV6fNFmxvEqxY%2F74NkvcTGQZbzkgz4Z4PD%2FTvAi0eIw5NHeXU8cXeRjxEwVbaNrpZDuWNIJihi%2BhTNppW079phJ3Kh2gwFlDfkl9YON0Ga0o8D0evqzaNOD&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43GtxD6r%2BX3Oo7UGpNqR8%2FuMQ0fmHPbeSnXQxttGr3tdIZrObs26k6rF2gpKHTQDp0%2BZbze%2FboY%2FCvSScTfQ5uhVe%2BN97n8sTQI9kFnMCp0jsfJpLYGoJmaYBG%2Fi%2FQ4s%2Fv%2BwKDdJcDR9bEnKqHMZJBZjd3p8zy%2FRhQnd1Ua9ncQZmZkNT6Oi%2Bu%2FV6fNFmxvEqxY%2F74NkvcTGQZbzkgz4Z4PD%2FTvAi0eIw5NHeXU8cXeRjxEwVbaNrpZDuWNIJihi%2BhTNppW079phJ3Kh2gwFlDfkl9YON0Ga0o8D0evqzaNOD&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGFCFfo1v%2FhOz7MPUHWiDZwv0YHCmum7bqYOkCrt9zrbA%2BNijmXw1HC7crErgyVd7%2BlgtDg0tTLMEuYJbJGqz99eOI5F0cxUIESWv81AwsnDIDiwxEkr8i5VGJ3MNuv4HL&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGFCFfo1v%2FhOz7MPUHWiDZwv0YHCmum7bqYOkCrt9zrbA%2BNijmXw1HC7crErgyVd7%2BlgtDg0tTLMEuYJbJGqz99eOI5F0cxUIESWv81AwsnDIDiwxEkr8i5VGJ3MNuv4HL&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          }
+        ]
+      },
+      {
+        "status": 302,
+        "final_url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "response_time_ms": 28,
+        "response_size": 0,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGXeQyeHdNjZs%2BkfF1UhCeN5%2BrRl36WbgJ8PZUyi6bA96vmzyQGXgj2aOC18FGwgmUtHpqHJ9vgwrRR%2FEsqxbR7NxyvzB4XwZnRgWXtjHTpvRI6jQfpTeTcfmv1UtYu7w1&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGXeQyeHdNjZs%2BkfF1UhCeN5%2BrRl36WbgJ8PZUyi6bA96vmzyQGXgj2aOC18FGwgmUtHpqHJ9vgwrRR%2FEsqxbR7NxyvzB4XwZnRgWXtjHTpvRI6jQfpTeTcfmv1UtYu7w1&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGU7h3Xw0Cx3A5RmC53UiN2pU7D2exjrIg6WLsRHbG7%2B8ifrGUkfwG1cuF1%2F3gf4RrTMnjwCFtT%2FxpKzBCfXnbau7FjIrEXo3pqe8KOm3M4HujpA%2FaFyUHwJS%2FqdoDoibc&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGU7h3Xw0Cx3A5RmC53UiN2pU7D2exjrIg6WLsRHbG7%2B8ifrGUkfwG1cuF1%2F3gf4RrTMnjwCFtT%2FxpKzBCfXnbau7FjIrEXo3pqe8KOm3M4HujpA%2FaFyUHwJS%2FqdoDoibc&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          }
+        ]
+      },
+      {
+        "status": 302,
+        "final_url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+        "response_time_ms": 27,
+        "response_size": 0,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGlDK2pQxAlVq9Kkl97mjb43fGdNxCB6mfBf%2FY9IWv0X49JeqeWwbxKlNgArMRMvipF8f%2BsVADH6%2BCoBgi7LC9fGxoYGV4%2FAlGWlOfzPGJzZ16IWN6q%2Fj6COEFpa0NjANQ&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGlDK2pQxAlVq9Kkl97mjb43fGdNxCB6mfBf%2FY9IWv0X49JeqeWwbxKlNgArMRMvipF8f%2BsVADH6%2BCoBgi7LC9fGxoYGV4%2FAlGWlOfzPGJzZ16IWN6q%2Fj6COEFpa0NjANQ&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do",
+            "status": 302,
+            "location": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGJzBw0Bj28r9PcVwIEwEvxClDg5063IqFGgOd1NSXbSww5wqHu7QIqv32Nusm7khH8sG8S9zQUHv1zeSdzU5gESIX5HWaekSZJiifMwgdsqNnTCUHo%2BesT4Ly%2FHk%2Brt21&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do"
+          },
+          {
+            "url": "https://nsso.daejin.ac.kr:8443/sso/pmi-sso2.jsp?pmi-sso2=WrcfPu71kUy5IGWXc4Y43Fk5iWPH2H3LiiHOmpQ0yeTpSiVCZ8GyKjiGvTFZrmuOYV3HUEqOZMDuBwns5h3GKyKsugbvWmZFZSivjkn2t8IEFx5DuqgJhcvz1wMvJAF44%2FEVpNTXIbZewQzf9PcmJIALW58zQHJ10BLmTNlO3x08RgOgdKYyl4Bk%2F9WklMzGJzBw0Bj28r9PcVwIEwEvxClDg5063IqFGgOd1NSXbSww5wqHu7QIqv32Nusm7khH8sG8S9zQUHv1zeSdzU5gESIX5HWaekSZJiifMwgdsqNnTCUHo%2BesT4Ly%2FHk%2Brt21&sinfo=BrhO0BzZY0TSjW2sPD%2FVaggBRaff7fvrcjtuCSzIz8JSC9Q%2FFIfLkibSL8B5ZcNVXRrUbdO0hSXid3tRgquFJg%3D%3D&from=gid_home&returl=https%3A%2F%2Fwww.daejin.ac.kr%3A443%2Fsso%2FcheckToken.do%3FreturnUrl%3D%2Fdaejin%2F1004%2Fsubview.do",
+            "status": 302,
+            "location": "https://www.daejin.ac.kr:443/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/sso/checkToken.do?returnUrl=/daejin/1004/subview.do&sso=ok",
+            "status": 302,
+            "location": "/daejin/1004/subview.do"
+          },
+          {
+            "url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+            "status": 302,
+            "location": "/sso/checkToken.do?returnUrl=/daejin/1004/subview.do"
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

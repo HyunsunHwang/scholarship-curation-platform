@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_3110_univ_001",
+  "checked_at": "2026-07-31T01:51:14.745Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+    "redirect_chain": [
+      {
+        "url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1530,
+    "response_size": 115484,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+        "response_time_ms": 1530,
+        "response_size": 115484,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+        "response_time_ms": 200,
+        "response_size": 115484,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "공지사항 - 제주대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "2026학년도 2학기 휴학 및 복학 시행 안내(수정)",
+    "sample_detail_url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320&act=view&seq=278515",
+    "sample_detail_title": "2026학년도 2학기 휴학 및 복학 시행 안내(수정) - 제주대학교",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

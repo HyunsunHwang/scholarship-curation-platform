@@ -1,0 +1,77 @@
+{
+  "source_id": "ou_2791_univ_001",
+  "checked_at": "2026-07-31T01:50:56.955Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+    "redirect_chain": [
+      {
+        "url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1149,
+    "response_size": 68968,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+        "response_time_ms": 1149,
+        "response_size": 68968,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+        "response_time_ms": 1089,
+        "response_size": 68968,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+        "response_time_ms": 974,
+        "response_size": 68968,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "��������(����) ����Ʈ > �ƽŴ��б�",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": "https://www.acts.ac.kr/modules/board/bd_view.asp?no=3045&ListBlock=&gotopage=1&Pagecount=57&sk=&sv=&id=board_grad&ca_no=&mncode=&left=unilife4_1&sleft=&title=&lnb_id=",
+    "sample_detail_title": "��������(�л�) �󼼺��� > �ƽŴ��б�",
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

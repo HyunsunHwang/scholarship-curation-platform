@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2010_univ_001",
+  "checked_at": "2026-07-31T01:51:06.539Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+    "redirect_chain": [
+      {
+        "url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 641,
+    "response_size": 282526,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+        "response_time_ms": 641,
+        "response_size": 282526,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+        "response_time_ms": 440,
+        "response_size": 282526,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "장학/학자금 > 공지사항 > 커뮤니티 > 광주대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "예비군대대",
+    "sample_detail_url": "https://www.gwangju.ac.kr/page/?site=gwangju&mn=616&d_idx=566&type=1",
+    "sample_detail_title": "조직도 > 기구조직도 > 대학기관안내 > 대학소개 > 광주대학교",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

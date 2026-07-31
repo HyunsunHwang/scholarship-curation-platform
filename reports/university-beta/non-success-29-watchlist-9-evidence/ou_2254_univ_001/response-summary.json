@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2254_univ_001",
+  "checked_at": "2026-07-31T01:51:07.911Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+    "redirect_chain": [
+      {
+        "url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 264,
+    "response_size": 31970,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+        "response_time_ms": 264,
+        "response_size": 31970,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+        "response_time_ms": 56,
+        "response_size": 31970,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "장학 1 페이지 | 대전신학대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "2026-2학기 국가근로 선발안내",
+    "sample_detail_url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04&wr_id=505",
+    "sample_detail_title": "2026-2학기 국가근로 선발안내 > 장학 | 대전신학대학교",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

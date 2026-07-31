@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2773_univ_001",
+  "checked_at": "2026-07-31T01:51:08.722Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://sgu.ac.kr/ko/media/notice.php",
+    "redirect_chain": [
+      {
+        "url": "https://sgu.ac.kr/ko/media/notice.php",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 132,
+    "response_size": 76670,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://sgu.ac.kr/ko/media/notice.php",
+        "response_time_ms": 132,
+        "response_size": 76670,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://sgu.ac.kr/ko/media/notice.php",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://sgu.ac.kr/ko/media/notice.php",
+        "response_time_ms": 25,
+        "response_size": 76670,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://sgu.ac.kr/ko/media/notice.php",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "공지사항 | 신경주대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "2026학년도 1학기 성적포기 신청 안내",
+    "sample_detail_url": "https://sgu.ac.kr/ko/media/notices_detail.php?uid=481&subCategory=academic",
+    "sample_detail_title": "공지사항 | 신경주대학교",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

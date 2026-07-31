@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_3518_univ_001",
+  "checked_at": "2026-07-31T01:51:04.830Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+    "redirect_chain": [
+      {
+        "url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 1051,
+    "response_size": 150680,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+        "response_time_ms": 1051,
+        "response_size": 150680,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+        "response_time_ms": 544,
+        "response_size": 150680,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.uhs.ac.kr/uhs/155/subview.do",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "협성소식",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": "https://www.uhs.ac.kr/uhs/1644/subview.do?enc=Zm5jdDF8QEB8JTJGc3ViTG9naW4lMkZ1aHMlMkZ2aWV3LmRvJTNG",
+    "sample_detail_title": "로그인",
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

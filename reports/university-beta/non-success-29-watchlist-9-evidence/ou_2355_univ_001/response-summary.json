@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2355_univ_001",
+  "checked_at": "2026-07-31T01:50:51.145Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+    "redirect_chain": [
+      {
+        "url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 138,
+    "response_size": 135,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+        "response_time_ms": 138,
+        "response_size": 135,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+        "response_time_ms": 18,
+        "response_size": 135,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

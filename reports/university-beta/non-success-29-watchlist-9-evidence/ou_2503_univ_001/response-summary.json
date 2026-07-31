@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2503_univ_001",
+  "checked_at": "2026-07-31T01:51:08.516Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.seoultech.ac.kr/service/info/janghak/",
+    "redirect_chain": [
+      {
+        "url": "https://www.seoultech.ac.kr/service/info/janghak/",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 195,
+    "response_size": 73844,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.seoultech.ac.kr/service/info/janghak/",
+        "response_time_ms": 195,
+        "response_size": 73844,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.seoultech.ac.kr/service/info/janghak/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.seoultech.ac.kr/service/info/janghak/",
+        "response_time_ms": 154,
+        "response_size": 73844,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.seoultech.ac.kr/service/info/janghak/",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "서울과학기술대학교 - 정보·민원서비스 - 대학정보알림 - 장학공지",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "Q&A",
+    "sample_detail_url": "http://www.acrc.go.kr/acrc/board.do?command=searchDetail&menuId=0506031903",
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

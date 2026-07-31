@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2700_univ_001",
+  "checked_at": "2026-07-31T01:50:52.798Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+    "redirect_chain": [
+      {
+        "url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 313,
+    "response_size": 45235,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+        "response_time_ms": 313,
+        "response_size": 45235,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+        "response_time_ms": 97,
+        "response_size": 45235,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "장학공지 - 세한대학교 SEHAN UNIVERSITY",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

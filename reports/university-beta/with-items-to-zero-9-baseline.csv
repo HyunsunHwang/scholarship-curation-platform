@@ -1,0 +1,10 @@
+source_id,university_name,source_name,list_url,previous_observed,current_observed,coherent_final_status
+ou_2010_univ_001,광주대학교,광주대학교 장학공지,https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju,1,0,success
+ou_2155_univ_001,나사렛대학교,나사렛대학교 장학공지,https://kornu.ac.kr/mbs/kornukr/jsp/board/list.jsp?boardId=18&id=kornukr_080104000000,6,0,success
+ou_2254_univ_001,대전신학대학교,대전신학대학교 장학공지,https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04,1,0,success
+ou_2503_univ_001,서울과학기술대학교,서울과학기술대학교 장학공지,https://www.seoultech.ac.kr/service/info/janghak/,3,0,success
+ou_2773_univ_001,신경주대학교,신경주대학교 장학공지,https://sgu.ac.kr/ko/media/notice.php,1,0,success
+ou_2901_univ_001,예수대학교,예수대학교 장학공지,https://www.jesus.ac.kr/main/?menu=191,2,0,success
+ou_3110_univ_001,제주대학교,제주대학교 장학공지,http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320,2,0,success
+ou_3409_univ_001,한동대학교,한동대학교 장학공지,https://www.handong.edu/kor/square/notice/bbs/college/,1,0,success
+ou_3525_univ_001,호남대학교,호남대학교 장학공지,https://www.honam.ac.kr/Scholarship_SchFees,1,0,success

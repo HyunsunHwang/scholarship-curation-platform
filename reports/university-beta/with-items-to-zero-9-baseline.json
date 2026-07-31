@@ -1,0 +1,86 @@
+{
+  "count": 9,
+  "sources": [
+    {
+      "source_id": "ou_2010_univ_001",
+      "university_name": "광주대학교",
+      "source_name": "광주대학교 장학공지",
+      "list_url": "https://www.gwangju.ac.kr/bbs/?b_id=gwangju_notice_se&mn=538&site=gwangju",
+      "previous_observed": 1,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_2155_univ_001",
+      "university_name": "나사렛대학교",
+      "source_name": "나사렛대학교 장학공지",
+      "list_url": "https://kornu.ac.kr/mbs/kornukr/jsp/board/list.jsp?boardId=18&id=kornukr_080104000000",
+      "previous_observed": 6,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_2254_univ_001",
+      "university_name": "대전신학대학교",
+      "source_name": "대전신학대학교 장학공지",
+      "list_url": "https://www.daejeon.ac.kr/bbs/board.php?bo_table=N01_04",
+      "previous_observed": 1,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_2503_univ_001",
+      "university_name": "서울과학기술대학교",
+      "source_name": "서울과학기술대학교 장학공지",
+      "list_url": "https://www.seoultech.ac.kr/service/info/janghak/",
+      "previous_observed": 3,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_2773_univ_001",
+      "university_name": "신경주대학교",
+      "source_name": "신경주대학교 장학공지",
+      "list_url": "https://sgu.ac.kr/ko/media/notice.php",
+      "previous_observed": 1,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_2901_univ_001",
+      "university_name": "예수대학교",
+      "source_name": "예수대학교 장학공지",
+      "list_url": "https://www.jesus.ac.kr/main/?menu=191",
+      "previous_observed": 2,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_3110_univ_001",
+      "university_name": "제주대학교",
+      "source_name": "제주대학교 장학공지",
+      "list_url": "http://www.jejunu.ac.kr/ara/noticesurvey/outEvent.htm?category=320",
+      "previous_observed": 2,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_3409_univ_001",
+      "university_name": "한동대학교",
+      "source_name": "한동대학교 장학공지",
+      "list_url": "https://www.handong.edu/kor/square/notice/bbs/college/",
+      "previous_observed": 1,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    },
+    {
+      "source_id": "ou_3525_univ_001",
+      "university_name": "호남대학교",
+      "source_name": "호남대학교 장학공지",
+      "list_url": "https://www.honam.ac.kr/Scholarship_SchFees",
+      "previous_observed": 1,
+      "current_observed": 0,
+      "coherent_final_status": "success"
+    }
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "count": 29,
+  "sources": [
+    {
+      "source_id": "ou_1_univ_001",
+      "university_name": "고려대학교",
+      "source_name": "고려대학교 장학공지",
+      "list_url": "https://scholarship.korea.ac.kr/scholarship/application/notice.do",
+      "base_url": "https://scholarship.korea.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_1618_univ_001",
+      "university_name": "화성의과학대학교",
+      "source_name": "화성의과학대학교 장학공지",
+      "list_url": "https://www.hsmu.ac.kr/user/board/HSMU40102000_list_HSMU40102000.do",
+      "base_url": "https://www.hsmu.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_1737_univ_001",
+      "university_name": "강남대학교",
+      "source_name": "강남대학교 장학공지",
+      "list_url": "https://web.kangnam.ac.kr/menu/f19069e6134f8f8aa7f689a4a675e66f.do?searchMenuSeq=117",
+      "base_url": "https://web.kangnam.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_1745_univ_001",
+      "university_name": "강서대학교",
+      "source_name": "강서대학교 장학공지",
+      "list_url": "https://gangseo.ac.kr/kcua/boardList?menuCode=BC0703",
+      "base_url": "https://gangseo.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "still_unresolved"
+    },
+    {
+      "source_id": "ou_1751_univ_001",
+      "university_name": "강원대학교",
+      "source_name": "강원대학교 장학공지",
+      "list_url": "https://itcall.kangwon.ac.kr/www/selectBbsNttList.do?bbsNo=34&key=232",
+      "base_url": "https://itcall.kangwon.ac.kr",
+      "coherent_final_status": "http_error",
+      "coherent_reason_code": "http_error",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_1878_univ_001",
+      "university_name": "경성대학교",
+      "source_name": "경성대학교 장학공지",
+      "list_url": "https://kscms.ks.ac.kr/janghak/CMS/Board/Board.do?mCode=MN060",
+      "base_url": "https://kscms.ks.ac.kr",
+      "coherent_final_status": "timeout",
+      "coherent_reason_code": "attempt_timeout",
+      "previous_outcome": ""
+    },
+    {
+      "source_id": "ou_1888_univ_001",
+      "university_name": "경운대학교",
+      "source_name": "경운대학교 장학공지",
+      "list_url": "https://www.ikw.ac.kr/page/link.tc?mn=2589&pageSeq=1929",
+      "base_url": "https://www.ikw.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "transport_http_forbidden",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_1923_univ_001",
+      "university_name": "계명대학교",
+      "source_name": "계명대학교 장학공지",
+      "list_url": "https://www.kmu.ac.kr/uni/main/page.jsp?mnu_uid=145",
+      "base_url": "https://www.kmu.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_1986_univ_001",
+      "university_name": "광신대학교",
+      "source_name": "광신대학교 장학공지",
+      "list_url": "https://www.kwangshin.ac.kr/front/boardList.do?brd_mgrno=180&menu_no=442",
+      "base_url": "https://www.kwangshin.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "still_unresolved"
+    },
+    {
+      "source_id": "ou_2015_univ_001",
+      "university_name": "광주여자대학교",
+      "source_name": "광주여자대학교 장학공지",
+      "list_url": "https://www.kwu.ac.kr/mod/board/list.do?MID=KWU_B06010401",
+      "base_url": "https://www.kwu.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_2062_univ_001",
+      "university_name": "국립목포해양대학교",
+      "source_name": "국립목포해양대학교 장학공지",
+      "list_url": "https://www.mmu.ac.kr/main/board/303",
+      "base_url": "https://www.mmu.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2097_univ_001",
+      "university_name": "국립한국해양대학교",
+      "source_name": "국립한국해양대학교 장학공지",
+      "list_url": "https://www.kmou.ac.kr/kmou/na/ntt/selectNttList.do?mi=5691&bbsId=1041",
+      "base_url": "https://www.kmou.ac.kr",
+      "coherent_final_status": "http_error",
+      "coherent_reason_code": "http_error",
+      "previous_outcome": "replacement_source_not_found"
+    },
+    {
+      "source_id": "ou_2106_univ_001",
+      "university_name": "국립한밭대학교",
+      "source_name": "국립한밭대학교 장학공지",
+      "list_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+      "base_url": "https://www.hanbat.ac.kr",
+      "coherent_final_status": "timeout",
+      "coherent_reason_code": "attempt_timeout",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2112_univ_001",
+      "university_name": "국민대학교",
+      "source_name": "국민대학교 장학공지",
+      "list_url": "https://www.kookmin.ac.kr/user/kmuNews/notice/7/index.do",
+      "base_url": "https://www.kookmin.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "still_unresolved"
+    },
+    {
+      "source_id": "ou_2149_univ_001",
+      "university_name": "김천대학교",
+      "source_name": "김천대학교 장학공지",
+      "list_url": "https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703",
+      "base_url": "https://www.kcu.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2173_univ_001",
+      "university_name": "남서울대학교",
+      "source_name": "남서울대학교 장학공지",
+      "list_url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+      "base_url": "https://www.nsu.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_2238_univ_001",
+      "university_name": "대신대학교",
+      "source_name": "대신대학교 장학공지",
+      "list_url": "https://www.daeshin.ac.kr/html/05_community/01.php",
+      "base_url": "https://www.daeshin.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2257_univ_001",
+      "university_name": "대진대학교",
+      "source_name": "대진대학교 장학공지",
+      "list_url": "https://www.daejin.ac.kr/daejin/1004/subview.do",
+      "base_url": "https://www.daejin.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "transport_redirect_limit",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2292_univ_001",
+      "university_name": "동덕여자대학교",
+      "source_name": "동덕여자대학교 장학공지",
+      "list_url": "https://www.dongduk.ac.kr/www/contents/kor-noti.do?gotoMenuNo=kor-noti",
+      "base_url": "https://www.dongduk.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "still_unresolved"
+    },
+    {
+      "source_id": "ou_2355_univ_001",
+      "university_name": "루터대학교",
+      "source_name": "루터대학교 장학공지",
+      "list_url": "http://english.ltu.ac.kr/Board/bbs.list.php?bid=Notice",
+      "base_url": "http://english.ltu.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "replacement_source_not_found"
+    },
+    {
+      "source_id": "ou_2579_univ_001",
+      "university_name": "서울장신대학교",
+      "source_name": "서울장신대학교 장학공지",
+      "list_url": "https://www.sjs.ac.kr/ht_ml/w_03ed/3010.php",
+      "base_url": "https://www.sjs.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2700_univ_001",
+      "university_name": "세한대학교",
+      "source_name": "세한대학교 장학공지",
+      "list_url": "https://house.sehan.ac.kr/main/board/janghakList1.do?sub_node=1_2",
+      "base_url": "https://house.sehan.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_2791_univ_001",
+      "university_name": "아신대학교",
+      "source_name": "아신대학교 장학공지",
+      "list_url": "https://www.acts.ac.kr/modules/board/bd_list.asp?id=board_notice05&left=unilife4_1",
+      "base_url": "https://www.acts.ac.kr",
+      "coherent_final_status": "timeout",
+      "coherent_reason_code": "attempt_timeout",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_2981_univ_001",
+      "university_name": "을지대학교",
+      "source_name": "을지대학교 장학공지",
+      "list_url": "https://www.eulji.ac.kr/?menuno=4005",
+      "base_url": "https://www.eulji.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_3003_univ_001",
+      "university_name": "인제대학교",
+      "source_name": "인제대학교 장학공지",
+      "list_url": "https://www.inje.ac.kr/kor/Template/Bsub_page.asp?Ltype=5&Ltype2=0&Ltype3=0&Tname=S_News&Ldir=board/S_News&Lpage=Tboard_L&div=10&d1n=5&d2n=1&d3n=6&d4n=0",
+      "base_url": "https://www.inje.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_3187_univ_001",
+      "university_name": "창신대학교",
+      "source_name": "창신대학교 장학공지",
+      "list_url": "https://www.cs.ac.kr/board/board_community1?category_id=5",
+      "base_url": "https://www.cs.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_3198_univ_001",
+      "university_name": "청주교육대학교",
+      "source_name": "청주교육대학교 장학공지",
+      "list_url": "https://www.cje.ac.kr/web/board/brdList.do?menu_cd=000219",
+      "base_url": "https://www.cje.ac.kr",
+      "coherent_final_status": "empty_observed",
+      "coherent_reason_code": "empty_observed",
+      "previous_outcome": "verified_external_block"
+    },
+    {
+      "source_id": "ou_3342_univ_001",
+      "university_name": "한국전통문화대학교",
+      "source_name": "한국전통문화대학교 장학공지",
+      "list_url": "http://www.nuch.ac.kr/mec/ots/brd/list.do?mnuBaseId=MNU0000146&topBaseId=MNU0000009&tplSer=2",
+      "base_url": "http://www.nuch.ac.kr",
+      "coherent_final_status": "network_error",
+      "coherent_reason_code": "network_error",
+      "previous_outcome": "temporarily_unavailable"
+    },
+    {
+      "source_id": "ou_3436_univ_001",
+      "university_name": "한밭대학교(산업대)",
+      "source_name": "한밭대학교(산업대) 장학공지",
+      "list_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+      "base_url": "https://www.hanbat.ac.kr",
+      "coherent_final_status": "timeout",
+      "coherent_reason_code": "attempt_timeout",
+      "previous_outcome": "temporarily_unavailable"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "source_id": "ou_2173_univ_001",
+  "checked_at": "2026-07-31T01:50:43.849Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+    "redirect_chain": [
+      {
+        "url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 303,
+    "response_size": 147368,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+        "response_time_ms": 303,
+        "response_size": 147368,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+        "response_time_ms": 248,
+        "response_size": 147368,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.nsu.ac.kr/?m1=page&menu_id=134",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "남서울대학교 홈페이지",
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

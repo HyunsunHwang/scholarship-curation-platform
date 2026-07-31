@@ -1,0 +1,77 @@
+{
+  "source_id": "ou_2106_univ_001",
+  "checked_at": "2026-07-31T01:50:41.055Z",
+  "transport": {
+    "http_status": 200,
+    "final_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+    "redirect_chain": [
+      {
+        "url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+        "status": 200,
+        "location": null
+      }
+    ],
+    "response_time_ms": 549,
+    "response_size": 445541,
+    "retry_results": [
+      {
+        "status": 200,
+        "final_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+        "response_time_ms": 549,
+        "response_size": 445541,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+        "response_time_ms": 462,
+        "response_size": 445541,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+            "status": 200,
+            "location": null
+          }
+        ]
+      },
+      {
+        "status": 200,
+        "final_url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+        "response_time_ms": 389,
+        "response_size": 445541,
+        "error": null,
+        "redirect_chain": [
+          {
+            "url": "https://www.hanbat.ac.kr/bbs/BBSMSTR_000000001261/list.do",
+            "status": 200,
+            "location": null
+          }
+        ]
+      }
+    ]
+  },
+  "page": {
+    "page_title": "장학공지 > 장학금 > 학사 및 장학정보 > 국립한밭대학교",
+    "visible_notice_list": true,
+    "empty_board_message": false,
+    "login_required": true,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": "대학통계",
+    "sample_detail_url": "https://www.hanbat.ac.kr/prog/dataDetail/STAT/view.do?kind=&detailNo=132",
+    "sample_detail_title": "통계연보 > 대학통계 > 대학소개 > HI HANBAT >",
+    "title_detail_identity_verified": true
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}

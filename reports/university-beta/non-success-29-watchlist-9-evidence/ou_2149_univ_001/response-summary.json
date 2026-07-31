@@ -1,0 +1,53 @@
+{
+  "source_id": "ou_2149_univ_001",
+  "checked_at": "2026-07-31T01:50:43.284Z",
+  "transport": {
+    "http_status": null,
+    "final_url": "https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703",
+    "redirect_chain": [],
+    "response_time_ms": 28,
+    "response_size": 0,
+    "retry_results": [
+      {
+        "status": null,
+        "final_url": "https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703",
+        "response_time_ms": 188,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703",
+        "response_time_ms": 108,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      },
+      {
+        "status": null,
+        "final_url": "https://www.kcu.ac.kr/kcua/boardList?menuCode=BC0703",
+        "response_time_ms": 28,
+        "response_size": 0,
+        "error": "TypeError",
+        "redirect_chain": []
+      }
+    ]
+  },
+  "page": {
+    "page_title": null,
+    "visible_notice_list": false,
+    "empty_board_message": false,
+    "login_required": false,
+    "captcha_or_waf": false,
+    "iframe_present": false,
+    "javascript_rendered": false
+  },
+  "detail": {
+    "sample_notice_title": null,
+    "sample_detail_url": null,
+    "sample_detail_title": null,
+    "title_detail_identity_verified": false
+  },
+  "note": "Screenshot omitted: read-only response summary is retained; no credentials or full HTML stored."
+}
